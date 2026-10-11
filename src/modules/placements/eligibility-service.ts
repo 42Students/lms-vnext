@@ -37,6 +37,43 @@ import {
   type PlacementEligibilityPolicyInput,
 } from "./validation";
 
+type Client = ReturnType<typeof getDb>;
+type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
+
+async function lockEligibilityJob(tx: Tx, jobId: string) {
+  const [job] = await tx
+    .select({
+      id: placementJobs.id,
+      collegeId: placementJobs.collegeId,
+      status: placementJobs.status,
+    })
+    .from(placementJobs)
+    .where(eq(placementJobs.id, jobId))
+    .for("update")
+    .limit(1);
+  if (!job) {
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  }
+  return job;
+}
+
+async function lockEvidenceMembership(tx: Tx, membershipId: string) {
+  const [membership] = await tx
+    .select({
+      id: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+    })
+    .from(collegeMemberships)
+    .where(eq(collegeMemberships.id, membershipId))
+    .for("update")
+    .limit(1);
+  if (!membership || membership.status !== "ACTIVE") {
+    throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+  }
+  return membership;
+}
+
 type CheckStatus = "PASS" | "FAIL" | "MISSING";
 
 export type PlacementEligibilityCheck = {
@@ -257,45 +294,51 @@ export async function upsertOwnAcademicEvidence(
   await requireLearnerPlacementAccess(context);
   const input =
     candidateAcademicEvidenceInputSchema.parse(rawInput);
-  const [current] = await getDb()
-    .select()
-    .from(placementCandidateAcademicEvidence)
-    .where(
-      eq(
-        placementCandidateAcademicEvidence.membershipId,
-        membership.id,
-      ),
-    )
-    .limit(1);
-
-  if (current?.source === "VERIFIED") {
-    throw new PlacementsServiceError(
-      "PLACEMENT_ACADEMIC_EVIDENCE_VERIFIED",
-    );
-  }
-
   const values = evidenceValues(input);
-  const [row] = await getDb()
-    .insert(placementCandidateAcademicEvidence)
-    .values({
-      membershipId: membership.id,
-      ...values,
-      source: "SELF",
-    })
-    .onConflictDoUpdate({
-      target:
-        placementCandidateAcademicEvidence.membershipId,
-      set: {
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    await lockEvidenceMembership(tx, membership.id);
+    const [current] = await tx
+      .select()
+      .from(placementCandidateAcademicEvidence)
+      .where(
+        eq(
+          placementCandidateAcademicEvidence.membershipId,
+          membership.id,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (current?.source === "VERIFIED") {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ACADEMIC_EVIDENCE_VERIFIED",
+      );
+    }
+
+    const [row] = await tx
+      .insert(placementCandidateAcademicEvidence)
+      .values({
+        membershipId: membership.id,
         ...values,
         source: "SELF",
-        verifiedByUserId: null,
-        verifiedAt: null,
-        updatedAt: new Date(),
-      },
-    })
-    .returning();
+      })
+      .onConflictDoUpdate({
+        target:
+          placementCandidateAcademicEvidence.membershipId,
+        set: {
+          ...values,
+          source: "SELF",
+          verifiedByUserId: null,
+          verifiedAt: null,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
 
-  return row;
+    return row;
+  });
 }
 
 export async function upsertVerifiedAcademicEvidence(
@@ -330,83 +373,37 @@ export async function upsertVerifiedAcademicEvidence(
     candidateAcademicEvidenceInputSchema.parse(rawInput);
   const values = evidenceValues(input);
   const now = new Date();
-  const [row] = await getDb()
-    .insert(placementCandidateAcademicEvidence)
-    .values({
-      membershipId,
-      ...values,
-      source: "VERIFIED",
-      verifiedByUserId: context.user.id,
-      verifiedAt: now,
-    })
-    .onConflictDoUpdate({
-      target:
-        placementCandidateAcademicEvidence.membershipId,
-      set: {
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    const lockedMembership = await lockEvidenceMembership(tx, membershipId);
+    if (lockedMembership.collegeId !== membership.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+    }
+    const [row] = await tx
+      .insert(placementCandidateAcademicEvidence)
+      .values({
+        membershipId,
         ...values,
         source: "VERIFIED",
         verifiedByUserId: context.user.id,
         verifiedAt: now,
-        updatedAt: now,
-      },
-    })
-    .returning();
+      })
+      .onConflictDoUpdate({
+        target:
+          placementCandidateAcademicEvidence.membershipId,
+        set: {
+          ...values,
+          source: "VERIFIED",
+          verifiedByUserId: context.user.id,
+          verifiedAt: now,
+          updatedAt: now,
+        },
+      })
+      .returning();
 
-  return row;
-}
-
-async function validateEligibilityAcademicScope(
-  collegeId: string,
-  allowedProgramIds: readonly string[],
-  allowedCohortIds: readonly string[],
-) {
-  const db = getDb();
-
-  if (allowedProgramIds.length > 0) {
-    const rows = await db
-      .select({ id: programs.id })
-      .from(programs)
-      .innerJoin(
-        departments,
-        eq(departments.id, programs.departmentId),
-      )
-      .where(
-        and(
-          inArray(programs.id, [...allowedProgramIds]),
-          eq(departments.collegeId, collegeId),
-        ),
-      );
-    if (rows.length !== allowedProgramIds.length) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
-      );
-    }
-  }
-
-  if (allowedCohortIds.length > 0) {
-    const rows = await db
-      .select({ id: cohorts.id })
-      .from(cohorts)
-      .innerJoin(
-        programs,
-        eq(programs.id, cohorts.programId),
-      )
-      .innerJoin(
-        departments,
-        eq(departments.id, programs.departmentId),
-      )
-      .where(
-        and(
-          inArray(cohorts.id, [...allowedCohortIds]),
-          eq(departments.collegeId, collegeId),
-        ),
-      );
-    if (rows.length !== allowedCohortIds.length) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
-      );
-    }
-  }
+    return row;
+  });
 }
 
 export async function getJobEligibilityPolicy(
@@ -543,18 +540,30 @@ export async function upsertJobEligibilityPolicy(
       input.missingEvidencePolicy,
     updatedByUserId: context.user.id,
   };
-  const [row] = await getDb()
-    .insert(placementJobEligibilityPolicies)
-    .values({ jobId, ...values })
-    .onConflictDoUpdate({
-      target: placementJobEligibilityPolicies.jobId,
-      set: {
-        ...values,
-        updatedAt: new Date(),
-      },
-    })
-    .returning();
-  return row;
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const liveJob = await lockEligibilityJob(tx, jobId);
+    if (
+      liveJob.collegeId !== job.collegeId ||
+      liveJob.status !== "DRAFT"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_POLICY_LOCKED",
+      );
+    }
+    const [row] = await tx
+      .insert(placementJobEligibilityPolicies)
+      .values({ jobId, ...values })
+      .onConflictDoUpdate({
+        target: placementJobEligibilityPolicies.jobId,
+        set: {
+          ...values,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return row;
+  });
 }
 
 export async function setEligibilityOverride(
@@ -579,6 +588,10 @@ export async function setEligibilityOverride(
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    const liveJob = await lockEligibilityJob(tx, jobId);
+    if (liveJob.collegeId !== job.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+    }
     await tx
       .update(placementEligibilityOverrides)
       .set({ revokedAt: new Date() })
@@ -622,28 +635,36 @@ export async function revokeEligibilityOverride(
   requirePermission(context, "placements.manage", {
     collegeId: job.collegeId,
   });
+  const db = getDb();
 
-  const [row] = await getDb()
-    .update(placementEligibilityOverrides)
-    .set({ revokedAt: new Date() })
-    .where(
-      and(
-        eq(placementEligibilityOverrides.jobId, jobId),
-        eq(
-          placementEligibilityOverrides.membershipId,
-          membershipId,
+  return db.transaction(async (tx) => {
+    const liveJob = await lockEligibilityJob(tx, jobId);
+    if (liveJob.collegeId !== job.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+    }
+
+    const [row] = await tx
+      .update(placementEligibilityOverrides)
+      .set({ revokedAt: new Date() })
+      .where(
+        and(
+          eq(placementEligibilityOverrides.jobId, jobId),
+          eq(
+            placementEligibilityOverrides.membershipId,
+            membershipId,
+          ),
+          isNull(placementEligibilityOverrides.revokedAt),
         ),
-        isNull(placementEligibilityOverrides.revokedAt),
-      ),
-    )
-    .returning();
+      )
+      .returning();
 
-  if (!row) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
-    );
-  }
-  return row;
+    if (!row) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
+      );
+    }
+    return row;
+  });
 }
 
 function numericCheck(
