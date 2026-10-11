@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:52:00.000Z",
+  "updatedOn": "2026-10-11T08:54:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2600,21 +2600,31 @@
         "scripts/db41-history-schema-drift.mjs",
         "tests/db41-history-schema-drift.test.mjs"
       ],
-      "status": "READY",
-      "pickedBy": null,
-      "pickedAt": null,
+      "status": "PICKED",
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T08:54:00.000Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T08:54:00.000Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Independent contributor repaired historical DB35 source syntax and grade actor/feedback snapshot SQL; attendance semantics and executable proof remain; no worker has claimed this new follow-on."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T08:54:00.000Z",
+          "reason": "Chat 1 claims DB-045 to reconcile the 12-column attendance history drift and produce a single source-backed migration-integrator contract."
         }
       ],
       "latestEvidenceSha": "7b1a9ba387c2b51ba833b92709e9d54f2a0a631c",
