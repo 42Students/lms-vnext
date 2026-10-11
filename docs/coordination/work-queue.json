@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T11:09:00+05:30",
+  "updatedOn": "2026-10-11T05:38:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -26,17 +26,17 @@
         "scripts/db-test-prepare.ts",
         "docs/coordination/six-chat-operating-system.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "d25f9aa9a31ea217bb0b87d6c2d22387604e5f00",
+      "status": "COMPLETED",
+      "latestEvidenceSha": "eadb9b5ed8120cb4e366452132a805764589b928",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "CI billing restriction is acknowledged by user as non-blocking. Task is actionable through independent local/ephemeral test execution; final verification remains pending until real PostgreSQL commands run. Prior CI investigations remain historical, not an active blocker.",
+      "completionNote": "CI-independent PostgreSQL verification implementation complete: added npm run db:verify:independent, disposable postgres:17-alpine or provided TEST_DATABASE_URL mode, exact evidence capture, cleanup, static contract test, worker runbook, and hosted-runtime preflight. Current hosted runtime has Node 22/npm but no Docker/psql and no shell GitHub DNS, so real PostgreSQL replay/negative witnesses remain PG_VERIFICATION_PENDING. GitHub Actions billing is intentionally irrelevant; no DB pass claimed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T05:31:00.000Z",
       "startedAt": "2026-10-11T05:33:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T05:38:00.000Z",
+      "completionCommitSha": "eadb9b5ed8120cb4e366452132a805764589b928",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -89,9 +89,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T05:33:00.000Z",
           "reason": "Building and attempting real CI-independent disposable PostgreSQL verification."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T05:38:00.000Z",
+          "reason": "Independent DB verification harness/runbook/preflight committed; executable PostgreSQL acceptance pending on an approved Docker or disposable TEST_DATABASE_URL environment, so not DONE_VERIFIED."
         }
       ],
-      "qualityGateNote": "ACCEPTANCE_NOT_EXECUTED: independent disposable PostgreSQL verification still needs real run logs; Actions billing is NOT a blocker."
+      "qualityGateNote": "PG_VERIFICATION_PENDING: harness authored and committed; no PostgreSQL execution in this hosted runtime."
     },
     {
       "id": "DB-002",
