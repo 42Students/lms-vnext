@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-045",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB041_QUIZ_SHUFFLE_SOURCE_COMPLETED",
+    "checkpointKind": "DB045_HISTORY_RECONCILIATION_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "4e9b69eaf7781308553a4699731e79bef2fb617a",
-    "lastWorkerMergedSha": "7bf177e24018e52903e33b905b5e5b5ba17daeeb",
+    "observedMainSha": "f0a42f9f59d4b48fd9fd2421f9dd4e0f3b90b52b",
+    "lastWorkerMergedSha": "f492552c21138e7c2099c248ca5cf649517edffd",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-041 source-only quiz shuffle persistence parity completed. Two active false-default legacy booleans staged; 11/11 connector source checks true; no Node/PG/API/UI claims."
+    "summary": "DB-044 one-submission assignment parity completed. Chat 1 now owns DB-045 to reconcile staged grade/attendance immutable-history schema and producer transaction contracts."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -38,7 +38,8 @@
     "tests/db-independent-verifier.test.mjs",
     "tests/db01-test-database-guard.test.mjs",
     "tests/db06-assessment-retention-staging.test.mjs",
-    "tests/db06-quiz-shuffle-staging.test.mjs"
+    "tests/db06-quiz-shuffle-staging.test.mjs",
+    "tests/db06-assignment-attempt-staging.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
@@ -47,7 +48,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh global DATABASE queue; the primary remaining isolated DB06 source decision is assignment re-attempt persistence (legacy attempt_number vs current one-submission uniqueness).",
+  "nextAction": "Diff db06-history-staged.ts vs canonical SQL/legacy/runtime attendance semantics; select one attendance event identity/version model, align source artifacts and guards, and document producer atomicity + PG witness matrix without broad API phase cutover.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -80,7 +81,9 @@
     "DB-025",
     "DB-028",
     "DB-038",
-    "DB-041"
+    "DB-041",
+    "DB-044",
+    "DB-045"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -91,10 +94,11 @@
     "DB-025",
     "DB-028",
     "DB-038",
-    "DB-041"
+    "DB-041",
+    "DB-044"
   ],
-  "lastPickedAt": "2026-10-11T08:39:00.000Z",
-  "lastCompletedAt": "2026-10-11T08:44:30.000Z",
+  "lastPickedAt": "2026-10-11T08:54:00.000Z",
+  "lastCompletedAt": "2026-10-11T08:52:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -105,7 +109,8 @@
     "DB-025",
     "DB-028",
     "DB-038",
-    "DB-041"
+    "DB-041",
+    "DB-044"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
