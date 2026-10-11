@@ -1878,17 +1878,17 @@
         "docs/planning/database-parity-app-settings-contract.md",
         "tests/db10-app-setting-disposition.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "432dcd558f9147c75914c0de5fc7e1afb8643b46",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Dispositioned 25 explicitly evidenced legacy app_setting keys by domain instead of falsely mapping the generic table to module_access_rules: DB01=7, DB05=1, DB08=1, DB10=8, module_access_rules=6, source-retired course toggles=2. Recorded arbitrary GLOBAL/ORGANIZATION/COLLEGE non-module key writes as REDESIGN_REQUIRED_TYPED_KEY_REGISTRY and unknown dynamic keys as unresolved. Added 15 acceptance requirements and 8 static test definitions. Fresh connector source matrix passed 28/28; Node/runtime NOT RUN.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:24:00+05:30",
       "startedAt": "2026-10-11T13:24:30+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T13:31:00+05:30",
+      "completionCommitSha": "432dcd558f9147c75914c0de5fc7e1afb8643b46",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1912,6 +1912,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:24:30+05:30",
           "reason": "Chat 5 started source-active app_setting key/domain disposition; implementation owners remain separated."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:31:00+05:30",
+          "reason": "Known active-key cross-domain registry + contract + static guards committed; domain-owner implementation/runtime evidence remains downstream."
         }
       ]
     }
