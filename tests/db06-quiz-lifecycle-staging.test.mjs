@@ -157,7 +157,15 @@ test("DB052 row-event completeness is bidirectional and deferred", () => {
   );
   assert.match(
     sql,
-    /quiz lifecycle event does not match final quiz state/,
+    /quiz lifecycle event is orphaned or ahead of final quiz state/,
+  );
+  assert.match(
+    sql,
+    /quiz lifecycle event breaks version\/state chain/,
+  );
+  assert.match(
+    sql,
+    /latest lifecycle event does not match final quiz state/,
   );
 });
 
@@ -238,5 +246,33 @@ test("DB052 lifecycle version is database-managed on state mutations", () => {
   assert.match(
     contract,
     /callers may not supply\/skip\/reuse lifecycle versions/,
+  );
+});
+
+
+test("DB052 ordered event chain supports multi-step lifecycle transactions", () => {
+  assert.match(
+    sql,
+    /NEW\.lifecycle_version_after > final_version/,
+  );
+  assert.match(
+    sql,
+    /previous\.lifecycle_version_after = NEW\.lifecycle_version_before/,
+  );
+  assert.match(
+    sql,
+    /previous\.new_status = NEW\.previous_status/,
+  );
+  assert.match(
+    sql,
+    /previous\.new_results_published IS NOT DISTINCT FROM[\s\S]*NEW\.previous_results_published/,
+  );
+  assert.match(
+    contract,
+    /Multiple ordered lifecycle mutations in one transaction are allowed/,
+  );
+  assert.match(
+    contract,
+    /CREATE\(DRAFT, version 0\).*PUBLISH\(version 1\)/,
   );
 });
