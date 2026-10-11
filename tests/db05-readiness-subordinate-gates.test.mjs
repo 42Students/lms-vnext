@@ -12,6 +12,8 @@ test("DB05 readiness checker requires per-subordinate database execution, not fi
   assert.match(checker, /entry\.postgresExecuted !== true/);
   assert.match(checker, /entry\.readyForProduction !== true/);
   assert.match(checker, /Subordinate NOT acceptance-ready/);
+  assert.match(checker, /Repeated subordinate SQL reference/);
+  assert.match(checker, /Invalid subordinate SQL path/);
   assert.match(checker, /entry\.path !== path/);
   assert.match(checker, /subordinateCompanions: subordinateDetail/);
 });
