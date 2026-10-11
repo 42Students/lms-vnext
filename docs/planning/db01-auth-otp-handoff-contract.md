@@ -115,3 +115,23 @@ The source tests and PostgreSQL witness are **authored**, not evidenced as
 Node or PostgreSQL executions in this documentation; passing source-text
 assertions alone do not satisfy DB-004 verification or unlock the global
 DATABASE phase.
+
+
+## DB-004 accelerated security closure — 2026-10-12 (source-level only)
+
+**Why this batch matters:** the initial source-stage OTP and handoff guards previously protected only UPDATEs. Direct SQL could INSERT a row already used or verified and satisfy the row CHECK, or verify a challenge after real-clock expiry by backdating `verified_at`. The active source work now rejects these cases while preserving single-use and retry version semantics.
+
+**Staged SQL hardening committed to `main`:**
+
+- `db01-auth-attempt-lifecycle-guard-staging.sql` now has an INSERT gate requiring unused/unverified challenge, zero retries/resends, version 1, nonfuture creation and unexpired issuance; the trigger covers INSERT and UPDATE.
+- Under UPDATE, it checks **`clock_timestamp() >= LEAST(OLD.expires_at, NEW.expires_at)`** after locking the row, rejecting expired verification, consumption, retry and resend increments. Using `LEAST` blocks same-write shortening of expiry paired with backdated verification. Independently it rejects newly written future `verified_at` or `used_at` even when within the challenge's expiry window.
+- `db01-auth-handoff-lifecycle-guard-staging.sql` now rejects INSERT of pre-consumed or expired handoff proofs and rejects future-dated UPDATE `consumed_at`; it retains its real-clock post-lock expiry check, immutable target host/principal/MAC envelope and terminal consumed replay protection.
+- Original source-owned draft behavior, proposed Drizzle models, API/session provider, numbered migrations, schema barrel and CI remain untouched. **Neither draft SQL file is registered/applied to any database.**
+
+**Exact-source execution performed:** After final edits, all 20 OTP and 15 handoff existing-plus-new `node:test` callback bodies were executed using the exact GitHub-fetched test, model and SQL text in an isolated JavaScript V8 evaluation context: **35/35 passed**, zero failed. This is **NOT an execution of Node's `node --test` runner** and does not attest PostgreSQL runtime syntax or behavior. The committed source blobs at this point were: OTP guard `fd0274b6b284590b0092d10fe39d8ded2ce31a75`, OTP source tests `1ab41e80a50ed7a645feece76ea134dd9489966e`, handoff guard `8471b0d447daebd2a559a7558ee1cf706191b1d3`, and handoff source tests `57129c05cef058a573b1660f41fbdc45507a2021`.
+
+**Authored but NOT executed in PostgreSQL:** `tests/db01-auth-attempt-lifecycle-pg.test.mjs` now adds expired backdated verify/consume, expired counter reservation, future-event proofs and same-write shortened-expiry cases; `tests/db01-auth-handoff-lifecycle-pg.test.mjs` now covers fabricated spent/expired INSERTs, legitimate expiry after issuance and future-dated consumed evidence. Both use opt-in isolated temporary schemas and require independent PostgreSQL execution before migration registration or runtime acceptance.
+
+**Integration dependency:** Registration of auth OTP/handoff tables remains contingent on the product/provider choice (Identity Platform versus database-backed challenges). Source-only tests do not approve adding a second OTP engine. Chat 1's reserved migration/schema-barrel authority remains unchanged. **DB-004 remains IN_PROGRESS and global DATABASE remains ACTIVE.**
+
+**Fastest real completion path:** Execute both opt-in disposable PostgreSQL witnesses and independently generated registered schema replay, reconcile the source-to-provider account-verification and token-revocation decisions, and then verify end-to-end auth session issuance against that exact database revision. GitHub Actions billing is intentionally irrelevant; use a local or ephemeral PostgreSQL runner and record actual output.
