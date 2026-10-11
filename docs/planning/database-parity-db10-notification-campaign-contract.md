@@ -17,14 +17,15 @@ The staged additive model creates `notification_campaigns` for **college-scoped 
 
 ## Pinned executable behavior that cannot disappear
 
-1. The normal legacy `NotificationServiceImpl.save` accepts optional `scheduledAt`. Only a **future** time marks a row `SCHEDULED`; otherwise it sets `SENT`, records `deliveredAt`, and may publish SSE immediately.
-2. `NotificationRepository.findDueScheduled` selects only due, non-deleted `SCHEDULED` rows. The learner recipient queries filter out future `scheduled_at`; admin queries may view scheduled rows.
-3. A positive `class_id` targets a section/class. `class_id = 0` plus `course_id` is **course-wide**, not an unknown UUID or the absence of an audience. `learner_id` was overloaded as a learner/faculty/mentor recipient ID: it must become authenticated `users.id` with appropriate college membership/grant checks.
-4. A combined positive class/course identifies the related section delivery and must not allow arbitrary cross-college or unrelated course+section IDs.
-5. Broadcast `is_read` was shared for all learners; the legacy service protects against changing that boolean for broadcasts. vNext must keep `read_at` per recipient and expose an authored campaign admin view separately from the learner feed.
-6. Direct `notification.assessment_url` allowed any `http://` or `https://` destination. That is **not a safe browser redirect** and could embed private bearer links. vNext must use reviewed, internal action paths and a server-side ownership-checked assessment destination; this is an explicit security redesign.
-7. For HTML authoring legacy sanitized incoming HTML with Jsoup rules. vNext currently bounds plaintext receipt body and a safe action path; full rich HTML parity requires a separate approved trusted renderer or a documented sanitized, safe redesign. Do not silently render arbitrary untrusted HTML.
-8. Admin update and soft delete/recycle are distinct from deleting already-delivered personalized notices. `created_at`, `updated_at`, and actor history cannot be inferred from recipient `read_at` or `created_at`.
+1. `NotificationServiceImpl.ensureNotificationType` actively defaults a null non-course type to `GENERAL`; `GENERAL` must remain accepted alongside explicit `JOB`, `COURSE` and `SYSTEM` producer types.
+2. The normal legacy `NotificationServiceImpl.save` accepts optional `scheduledAt`. Only a **future** time marks a row `SCHEDULED`; otherwise it sets `SENT`, records `deliveredAt`, and may publish SSE immediately.
+3. `NotificationRepository.findDueScheduled` selects only due, non-deleted `SCHEDULED` rows. The learner recipient queries filter out future `scheduled_at`; admin queries may view scheduled rows.
+4. A positive `class_id` targets a section/class. `class_id = 0` plus `course_id` is **course-wide**, not an unknown UUID or the absence of an audience. `learner_id` was overloaded as a learner/faculty/mentor recipient ID: it must become authenticated `users.id` with appropriate college membership/grant checks.
+5. A combined positive class/course identifies the related section delivery and must not allow arbitrary cross-college or unrelated course+section IDs.
+6. Broadcast `is_read` was shared for all learners; the legacy service protects against changing that boolean for broadcasts. vNext must keep `read_at` per recipient and expose an authored campaign admin view separately from the learner feed.
+7. Direct `notification.assessment_url` allowed any `http://` or `https://` destination. That is **not a safe browser redirect** and could embed private bearer links. vNext must use reviewed, internal action paths and a server-side ownership-checked assessment destination; this is an explicit security redesign.
+8. For HTML authoring legacy sanitized incoming HTML with Jsoup rules. vNext currently bounds plaintext receipt body and a safe action path; full rich HTML parity requires a separate approved trusted renderer or a documented sanitized, safe redesign. Do not silently render arbitrary untrusted HTML.
+9. Admin update and soft delete/recycle are distinct from deleting already-delivered personalized notices. `created_at`, `updated_at`, and actor history cannot be inferred from recipient `read_at` or `created_at`.
 
 ## All 21 physical fields accounted for
 
