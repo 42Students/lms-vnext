@@ -146,7 +146,10 @@ BEGIN
   WHERE q.id = target_quiz;
 
   IF configured IS NULL THEN
-    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+    IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
   END IF;
 
   SELECT COALESCE(sum(qq.points), 0) INTO authored
@@ -158,7 +161,10 @@ BEGIN
       USING ERRCODE='23514';
   END IF;
 
-  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
 END;
 $db06_quiz_total$;
 
@@ -197,7 +203,10 @@ BEGIN
     RAISE EXCEPTION 'DB06 quiz question parent is immutable'
       USING ERRCODE='23514';
   END IF;
-  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
 END;
 $db06_question_authoring$;
 
@@ -233,7 +242,10 @@ BEGIN
     RAISE EXCEPTION 'DB06 quiz option parent is immutable'
       USING ERRCODE='23514';
   END IF;
-  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
 END;
 $db06_option_authoring$;
 
