@@ -36,12 +36,28 @@ npm run db:reset
 - `db:seed`: idempotently apply deterministic development seed records
 - `db:reset`: drop disposable schemas, re-run migrations, and reseed
 
-Reset refuses PostgreSQL system databases. Localhost resets remain explicit developer operations. A non-local reset requires **both**:
+Reset refuses PostgreSQL system databases and target-changing URL query parameters.
 
-- `ALLOW_DB_RESET=true`;
-- `DB_RESET_CONFIRM=RESET:<host>:<port>/<database>` matching the parsed target exactly (default PostgreSQL port is `5432`).
+**Localhost is not automatically disposable.** Cloud SQL Auth Proxy and similar tunnels also present as `localhost`/`127.0.0.1`.
 
-The confirmation string contains no username/password. Never set either override for staging, production, shared databases, or data that must survive.
+- Explicitly test/E2E-named local databases such as `lms_vnext_test`, `lms_vnext_test_4242`, or `lms_vnext_e2e` remain frictionless.
+- Any other local database requires exact `DB_RESET_CONFIRM=RESET:<host>:<port>/<database>`.
+- A non-local reset requires both `ALLOW_DB_RESET=true` **and** the exact `DB_RESET_CONFIRM` token.
+- Omitted PostgreSQL ports normalize to `5432`.
+
+The confirmation string contains no username/password. Never set these overrides for staging, production, shared databases, or data that must survive.
+
+### Local development reset example
+
+The default development database is named `lms_vnext`, so a destructive reset must be explicitly confirmed:
+
+```bash
+DATABASE_URL='postgresql://postgres:postgres@localhost:5432/lms_vnext' \
+DB_RESET_CONFIRM='RESET:localhost:5432/lms_vnext' \
+npm run db:reset
+```
+
+If the URL uses `127.0.0.1`, the confirmation must also use `127.0.0.1`; the token matches the parsed target exactly.
 
 ### Remote disposable reset example
 
