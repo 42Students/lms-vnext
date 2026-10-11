@@ -96,3 +96,38 @@ This draft proposes a bounded remedy for **DB02-S06** without editing Chat 1's s
 **DB02-S06 disposition: PROPOSED MITIGATION / NOT ACCEPTED.** Chat 1 must reconcile with existing DB01 and DB03 parent triggers, register an approved migration and run disposable PostgreSQL direct-SQL and concurrent writer tests. Broader cross-organization `colleges.organization_id` ownership remains a DB01 responsibility. Membership suspension/role revocation after historical assignments, and the controlled legacy class-with-roster transfer workflow, remain separate behavioral decisions.
 
 Do not count the 10 authored source tests or 12 static source checks as PostgreSQL runtime acceptance. DB-005 and the DATABASE global phase remain IN_PROGRESS.
+
+## Follow-up: timestamp resurrection, progression identity, historical parent reassignment
+
+**Status as of 2026-10-11, later Chat 4 continuation:** Other concurrent Chat 4 edits consolidated the parent/enrollment draft, timestamp-room overlay, and history-parent draft into the ONE canonical source file `scripts/sql/db02-academic-progression-and-rooms-staging.sql`. **Do not execute/refer to removed standalone draft paths.** Canonical structural inspection after consolidation found **45/45 functions with paired dollar quote delimiters, 53 uniquely named triggers, zero duplicate function/trigger names, and 0 unmatched PL/pgSQL delimiters.** Static inspection is NOT execution/acceptance.
+
+### DB02-S09 · HIGH · Archived lecture hall timestamp-only event resurrection
+
+A `SCHEDULED` historical event could exist against a now-ARCHIVED hall, then be moved from the past into the future by `UPDATE starts_at, ends_at` alone. The earlier canonical schedule hall guard fired only for section/faculty/hall/status changes and did not re-check an archive transition on pure time edits.
+
+**Staged remedy (now folded into canonical):** `db02_guard_future_schedule_room_lifecycle` with `BEFORE INSERT OR UPDATE OF starts_at, ends_at, status, lecture_hall_id`, `statement_timestamp()` and `SELECT ... FROM lecture_halls ... FOR SHARE` to serialize with hall status changes. This does not restrict preserving truly historical past events when a hall is archived. **Acceptance authored:** `scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql` (rollback-only). **NOT EXECUTED.**
+
+### DB02-S10 · HIGH · Canonical progression identity could be reassigned or removed
+
+The original progression guard enforced version and term changes but did not fire for direct `UPDATE cohort_progression_state SET cohort_id=...`, `DELETE`, or `TRUNCATE`. This could detach academic state from immutable progression history or remove it from a living cohort.
+
+**Staged remedy (now folded into canonical):** `db02_guard_progression_state_identity` with `BEFORE UPDATE OF cohort_id OR DELETE` plus `BEFORE TRUNCATE`. The separate actor-FK lifecycle fix is now directly in canonical `db02_guard_cohort_progression_state`: nested FK-driven user deletion may only null `updated_by_user_id` with all academic progression fields unchanged; `db02_cohort_progression_history` now ignores actor-only updates. **Acceptance authored:** same rollback-only overlay acceptance script. Direct actor-forgery still must fail. **NOT EXECUTED.**
+
+### DB02-S11 · HIGH · History-backed offering/delivery/event parent mutation
+
+Link-time matching of course offering → delivery → event is insufficient if the parent later changes course, cohort, term, section, or period. Similarly moving a schedule event to another section after attendance can mutate historical student/faculty associations without changing the attendance record. Merely relying on FKs' KEY SHARE locks does not serialize against non-key parent UPDATEs.
+
+**Staged remedy (now folded into canonical):** `db02_guard_historic_offering_parent`, `db02_guard_historic_delivery_parent`, `db02_guard_historic_event_section` reject changes after dependent history; history-producing writers take parent `FOR SHARE` locks, including deliveries, course teaching, event-course links, attendance sessions and attendance records. **Acceptance authored:** `scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql` (rollback-only). **NOT EXECUTED.**
+
+### Source test consolidation and freshness
+
+Three new/update source contract test suites were reconciled after deletion of the superseded drafts:
+
+- `tests/db02-academic-parent-tenancy-contract.test.mjs` — 15 cases.
+- `tests/db02-schedule-progression-integrity-overlay.test.mjs` — 6 cases, now reads canonical.
+- `tests/db02-historic-parent-reassignment-contract.test.mjs` — 7 cases, now reads canonical.
+- `tests/db02-staging-contract.test.mjs` — 12 cases.
+
+**40 authored source-test cases across these four files; 0 node:test runs and 0 PostgreSQL runs claimed by this continuation.** Static file-inspection checks found no stale references to the removed parent/enrollment, lifecycle overlay, or history-parent draft SQL paths. This is not substitute evidence for source tests actually executing.
+
+**Registration gate unchanged:** Chat 1 alone authors numbered Drizzle/schema-index integration and must run a full zero-to-current disposable PostgreSQL migration replay, all three rollback-only acceptance scripts, the two-session concurrency harness and tenant/history negative tests. The new history-parent lock ordering needs race/deadlock evaluation before certification; other DB domain triggers may interact. No DB02 field can be marked runtime-verified on static source proof alone.
