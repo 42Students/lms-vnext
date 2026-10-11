@@ -7866,6 +7866,36 @@
         "boundary": "This is not product-level retirement approval. If a detached external CRM/roster importer exists outside connected source, model that actual import contract separately rather than cloning the historical table.",
         "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
         "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
+      },
+      {
+        "id": "CURRICULUM_DISPLAY_ORDER_NON_UNIQUE_PARITY",
+        "status": "SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "databaseTarget": "program_term_courses.display_order >= 1 with NO uniqueness on (program_term_id, display_order)",
+        "rationale": "Legacy SemesterCourse is unique only by semester+course; single-row courseOrder updates may collide and reads use courseOrder ASC, id ASC.",
+        "acceptanceCommit": "7215cbaf5d3897100de6ffc43f3a43a8290423eb",
+        "staticContractCommit": "6d86a114083f8698f1562e4e02e06a53c156988d",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "COHORT_ARCHIVE_LIFECYCLE_SEPARATION",
+        "status": "STAGED_UNREGISTERED",
+        "databaseTarget": "DB guard separates reversible legacy ACTIVE/INACTIVE/COMPLETED from native terminal ARCHIVED",
+        "rule": "No create-as-ARCHIVED; archive only from PLANNED/COMPLETED; ARCHIVED cannot resurrect; INACTIVE remains reversible and is not archive.",
+        "stagingCommit": "abb19cda68fae13853e401f5077f39e286dc819c",
+        "acceptanceCommit": "e9399eb938f14a020d2995e728e5870cfc6a9cd5",
+        "staticContractCommit": "0d93ff7e20f0a96a1b0048f0f61c06c54821904c",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "MATERIALIZED_CURRICULUM_TYPE_IMMUTABILITY",
+        "status": "STAGED_UNREGISTERED",
+        "databaseTarget": "program_term_courses.type may change only while no course_offering references its concrete row ID",
+        "rationale": "Changing a materialized CORE row to ELECTIVE would contradict persisted offering identity. CORE creation locks row FOR SHARE; both concurrency orders are specified.",
+        "stagingCommit": "a068cbdfc7152a69de2a2be6b0913f06efaedb6a",
+        "acceptanceCommit": "dd08408d6a330dafaba9d77c640e667883e31783",
+        "concurrencyCommit": "16bf5166433f7a0c3a120148227534831a777897",
+        "staticContractCommit": "028924fe581aa82acebc2debc008288fc391c1d7",
+        "postgresStatus": "NOT_EXECUTED"
       }
     ],
     "targetDispositionCoverage": {
@@ -7925,7 +7955,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "83830d3456a6f6377e0343b7fa195b27b362a0a8",
+      "observedMainSha": "5fb084496afb09927e259bdd50c633749fcf761f",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7936,10 +7966,10 @@
       },
       "canonicalStaging": {
         "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-        "blobSha": "f42abb83897a63c74bfe90a500b26677e91dd392",
-        "plpgsqlFunctions": 48,
-        "triggers": 56,
-        "pairedDollarQuoteOpenings": 48,
+        "blobSha": "c1f1e9f0e19f82c06f9e63fbfef0471027424586",
+        "plpgsqlFunctions": 49,
+        "triggers": 57,
+        "pairedDollarQuoteOpenings": 49,
         "malformedSingleDollarBodies": false,
         "duplicateFunctionNames": [],
         "duplicateTriggerNames": [],
@@ -7949,14 +7979,16 @@
           "progression-state and future-room lifecycle",
           "historic offering/delivery/event parent integrity",
           "referenced-period and cohort-window parent stability",
-          "CORE concrete curriculum-row identity",
-          "history-safe empty cohort deletion"
+          "CORE concrete curriculum-row identity and materialized type freeze",
+          "history-safe empty cohort deletion",
+          "cohort archive terminal lifecycle",
+          "legacy-compatible non-unique curriculum display ordering"
         ]
       },
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "04e51aa3d332020c57f694c2a3e8eb3b51aad5d8",
+          "blobSha": "b73bec6826a7b4e53b62e33ae040d0f5a7cf5e4b",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
             "tenant owner immutability",
@@ -7977,17 +8009,18 @@
           ],
           "executedPostgres": false,
           "addedCoverage": [
-            "historic offering/delivery/event identity",
-            "progression actor deletion without fake event",
-            "referenced academic-period date stability",
+            "referenced period-date stability",
             "cohort expected-end shrink protection",
-            "CORE concrete curriculum-row FK and ELECTIVE-null rule",
-            "history-free cohort hard delete plus historical delete rejection"
+            "CORE concrete curriculum-row identity",
+            "history-free cohort deletion / historical rejection",
+            "duplicate curriculum display-order compatibility",
+            "cohort archive lifecycle",
+            "materialized CORE curriculum type immutability"
           ]
         },
         {
           "path": "scripts/sql/db02-postgres-concurrency-unregistered.sh",
-          "blobSha": "5d5511f1848b9e1378085a9393372b5956d422ad",
+          "blobSha": "f3bf4d6905793895f9085e88793bdb53aa60c381",
           "type": "TWO_SESSION_PSQL_RACES",
           "covers": [
             "promotion CAS",
@@ -7997,7 +8030,8 @@
             "event reparent/attendance both orders",
             "CORE offering/curriculum delete both orders",
             "academic-period edit/cohort creation both orders",
-            "empty cohort delete/section creation both orders"
+            "empty cohort delete/section creation both orders",
+            "CORE offering/curriculum-type rewrite both orders"
           ],
           "executedPostgres": false
         },
@@ -8025,21 +8059,22 @@
         }
       ],
       "staticChecks": {
-        "canonicalFunctionDelimiterPairs": "48/48",
-        "canonicalTriggerCount": 56,
+        "canonicalFunctionDelimiterPairs": "49/49",
+        "canonicalTriggerCount": 57,
         "duplicateCanonicalFunctions": 0,
         "duplicateCanonicalTriggers": 0,
         "malformedSingleDollarBodies": 0,
         "singleSessionHarnessEndsWithRollback": true,
-        "concurrencyRaceFamilies": 15,
-        "authoredSourceTestCases": 42,
+        "concurrencyRaceFamilies": 17,
+        "authoredSourceTestCases": 45,
+        "sourceTestFiles": 4,
         "consolidatedOverlayDraftsRemaining": 0
       },
       "registeredDrizzleDb02Found": false,
       "postgresTestsExecuted": 0,
       "runtimeEquivalenceVerifiedFields": 0,
       "status": "READY_FOR_CHAT1_REGISTRATION_REVIEW_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
-      "warning": "Source and target mapping are 125/125 and the canonical unregistered DB02 stage is structurally reconciled. Runtime proof remains 0: Chat 1 must register reviewed Drizzle/migrations, replay zero-to-current and execute all rollback/concurrency PostgreSQL harnesses.",
+      "warning": "DB02 source/target mapping is 125/125 and canonical unregistered staging is source/static reconciled. Runtime proof remains zero; Chat 1 registration plus disposable PostgreSQL replay/acceptance is mandatory before verification.",
       "apiFollowupMatrix": {
         "path": "docs/planning/db02-api-followup-after-database.md",
         "commitSha": "c463accc1839f3513c851354261a30393e7a2454",
