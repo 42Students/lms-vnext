@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "worker": "CHAT_02",
+  "phase": "DATABASE",
+  "status": "SOURCE_SUPPORTED_POLICY_PROPOSAL_NOT_APPROVED_NOT_REGISTERED",
+  "source": {
+    "registry": "docs/planning/database-parity-app-setting-disposition.json",
+    "backend": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/AppSettingsService.java"
+  },
+  "intent": "Keep security-sensitive DB01 global settings typed and non-public; distinguish deployment-host/cookie configuration from optionally persisted, narrowly constrained OTP/identity policy. Source default matching is not behavior acceptance.",
+  "entries": [
+    {
+      "key": "baseDomain",
+      "defaultValue": "42lms.com",
+      "valueType": "HOSTNAME",
+      "scope": "GLOBAL",
+      "storage": "DEPLOYMENT_CONFIG",
+      "consumer": "PUBLIC_TENANT_BOOTSTRAP",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "DNS_FQDN",
+        "maxLength": 253
+      }
+    },
+    {
+      "key": "globalHost",
+      "defaultValue": "",
+      "valueType": "HOSTNAME_OR_EMPTY",
+      "scope": "GLOBAL",
+      "storage": "DEPLOYMENT_CONFIG",
+      "consumer": "PUBLIC_TENANT_BOOTSTRAP",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "DNS_FQDN_OR_EMPTY",
+        "maxLength": 253
+      }
+    },
+    {
+      "key": "cookieDomain",
+      "defaultValue": "",
+      "valueType": "COOKIE_DOMAIN_OR_EMPTY",
+      "scope": "GLOBAL",
+      "storage": "DEPLOYMENT_CONFIG",
+      "consumer": "SERVER_AUTH_COOKIE",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "HOST_ONLY_BY_DEFAULT_ALLOWLISTED_SUFFIX_ONLY",
+        "maxLength": 253
+      }
+    },
+    {
+      "key": "cookieSameSite",
+      "defaultValue": "Lax",
+      "valueType": "COOKIE_SAMESITE",
+      "scope": "GLOBAL",
+      "storage": "DEPLOYMENT_CONFIG",
+      "consumer": "SERVER_AUTH_COOKIE",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "LAX_OR_STRICT_DEFAULT",
+        "accepted": [
+          "Lax",
+          "Strict"
+        ],
+        "noneRequiresExplicitSecurityException": true
+      }
+    },
+    {
+      "key": "otp.maxAttempts",
+      "defaultValue": 5,
+      "valueType": "INTEGER",
+      "scope": "GLOBAL",
+      "storage": "TYPED_GLOBAL_POLICY_DRAFT",
+      "consumer": "SERVER_AUTH_THROTTLE",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "INTEGER_RANGE",
+        "min": 1,
+        "max": 5
+      }
+    },
+    {
+      "key": "otp.windowSeconds",
+      "defaultValue": 900,
+      "valueType": "INTEGER",
+      "scope": "GLOBAL",
+      "storage": "TYPED_GLOBAL_POLICY_DRAFT",
+      "consumer": "SERVER_AUTH_THROTTLE",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "INTEGER_RANGE",
+        "min": 60,
+        "max": 3600
+      }
+    },
+    {
+      "key": "ops.identityMaxJsonSize",
+      "defaultValue": 10000,
+      "valueType": "INTEGER",
+      "scope": "GLOBAL",
+      "storage": "TYPED_GLOBAL_POLICY_DRAFT",
+      "consumer": "SERVER_REQUEST_BOUNDARY",
+      "clientSettingsExposed": false,
+      "validation": {
+        "rule": "INTEGER_RANGE",
+        "min": 1024,
+        "max": 131072
+      }
+    }
+  ],
+  "sourceDecisions": [
+    "All seven values are GLOBAL-only in active AppSettingsService getters; legacy superadmin generic overrides exist, so replacing editable values with deploy-only values requires explicit UX/API redesign consent.",
+    "HOST/cookie settings stay deployment-managed by default; a persisted cookie Domain or SameSite mutation could disrupt existing sessions and cookie isolation across hosts.",
+    "Three numeric controls may use a one-row typed global DB policy after Chat 1 migration approval. Defaults are legacy-matched; proposed bounds strengthen security, not literal legacy acceptance of arbitrary integers.",
+    "Existing identity_auth_attempts.verification_attempts check caps attempts at 5. Runtime limit must be min(configured maxAttempts, 5), applied in a single conditional UPDATE, not a read-then-write.",
+    "No key may be emitted by general client-settings. Public tenant-bootstrap host metadata requires an explicit allowlist and public origin/host checks, never a generic dump.",
+    "Do not build unrestricted app_setting clones, module_access_rules pseudo-module rows, or per-tenant OTP policy as incidental DB01 parity.",
+    "SQL staged proposal and source tests are not registered migrations, executed PostgreSQL, API/identity-provider proof or signed retirement decisions."
+  ],
+  "gate": {
+    "policyApproved": false,
+    "numberedMigrationRegistered": false,
+    "sqliteAccepted": false,
+    "postgresAccepted": false,
+    "providerAccepted": false,
+    "apiBehaviorAccepted": false
+  }
+}
