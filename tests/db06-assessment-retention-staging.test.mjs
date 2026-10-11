@@ -194,6 +194,21 @@ test("DB038 mirrors option-set scoring shape at the DB boundary", () => {
   );
 });
 
+test("DB038 option normalization mirrors the live authoring validator", () => {
+  assert.match(
+    sql,
+    /quiz_options_question_lower_text_uq[\s\S]*lower\(trim\(option_text\)\)/,
+  );
+  assert.match(
+    sql,
+    /option text must be trimmed and 1 to 2000 characters/,
+  );
+  assert.match(
+    sql,
+    /invalid quiz option-set shape/,
+  );
+});
+
 test("DB038 validates answer snapshots against the committed question and option definition", () => {
   for (const token of [
     "db06_quiz_answer_snapshot_guard",
@@ -252,12 +267,32 @@ test("DB038 preflight is non-destructive and covers score, sequence and definiti
     "invalid quiz attempt sequence/max-attempt history",
     "inconsistent quiz attempt",
     "answer snapshots mismatch committed definition",
+    "invalid quiz option-set shape",
+    "invalid selected-option/correctness history",
   ]) {
     assert.ok(preflight.includes(token), token);
   }
   assert.doesNotMatch(preflight, /\bDELETE\s+FROM\b/i);
   assert.doesNotMatch(preflight, /\bUPDATE\s+\w+\s+SET\b/i);
   assert.doesNotMatch(preflight, /\bTRUNCATE\b/i);
+});
+
+test("DB038 closes the student_assignment retained-history disposition", () => {
+  const assignment = ledger.tables.find(
+    (table) => table.legacyTable === "student_assignment",
+  );
+  assert.ok(assignment);
+  const deleted = assignment.fields.find(
+    (field) => field.legacyField === "is_deleted",
+  );
+  assert.equal(
+    deleted.decision,
+    "NORMALIZED_TO_IMMUTABLE_HISTORY",
+  );
+  assert.match(
+    deleted.validationEvidence,
+    /db06-assessment-history-retention-candidate\.sql/,
+  );
 });
 
 test("DB038 closes the DB009 quiz status and soft-delete disposition gaps", () => {
@@ -307,6 +342,37 @@ test("DB038 contract preserves the 26 PostgreSQL promotion witnesses", () => {
       contract,
       new RegExp(`^\\s*${i}\\.\\s`, "m"),
       `missing PostgreSQL witness ${i}`,
+    );
+  }
+});
+
+
+test("DB038 keeps unregistered assignment file attestation outside this candidate", () => {
+  assert.doesNotMatch(sql, /assignment_submission_files|course_upload_receipts/);
+  assert.match(
+    contract,
+    /course_upload_receipts[\s\S]*assignment_submission_files[\s\S]*not exported from the canonical schema barrel/i,
+  );
+});
+
+test("DB038 preserves editable quiz metadata while freezing submitted definitions", () => {
+  assert.match(
+    contract,
+    /Title, description, due date and sequence remain editable metadata/,
+  );
+  const scoringGuardStart = sql.indexOf(
+    "CREATE FUNCTION db06_guard_quiz_history_definition",
+  );
+  const scoringGuardEnd = sql.indexOf(
+    "CREATE TRIGGER db06_quiz_history_definition_guard",
+    scoringGuardStart,
+  );
+  const scoringGuard = sql.slice(scoringGuardStart, scoringGuardEnd);
+  for (const field of ["title", "description", "due_at", "sequence"]) {
+    assert.equal(
+      scoringGuard.includes(`NEW.${field}`),
+      false,
+      `metadata field unexpectedly frozen: ${field}`,
     );
   }
 });
