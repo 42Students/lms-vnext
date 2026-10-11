@@ -1139,12 +1139,12 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "scripts/sql/db05-lesson-content-owner-membership.draft.sql: lesson_contents.owner_membership_id; nullable owner separate from createdByUserId, same-college guard, role service proof missing",
+      "targetProposal": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql: lesson_contents.faculty_owner_membership_id, nullable owner distinct from creator; same-college and ACTIVE FACULTY role required on new/reassigned owner. Historical owner retained on later suspension; teaching assignment and API ACL still unverified.",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_FACULTY_OWNER_TEACHING_SCOPE_SOURCE_CONFIRMED",
+      "sourceContractStatus": "LEGACY_FACULTY_OWNER_SOURCE_CONFIRMED_CANONICAL_ACTIVE_MEMBERSHIP_GUARD_STAGED_UNVERIFIED",
       "sourceProducerEvidence": "42Students/lms@21bad59d: LessonContents.java @Column faculty_id Integer nullable; LessonContentsServiceImpl.createLessonContents lines ~140-149 overwrites facultyId for ordinary authenticated faculty; setLessonContents line 461 persists owner; updateLessonContent ~794-812 and deleteLessonContent ~1011-1026 compare owner vs trusted principal and also enforce teaching scope; admin faculty exception.",
       "vnextConsumerGap": "vNext lesson_contents.created_by_user_id is creator provenance; current lesson-content-service.ts only uses delivery teaching-scope management, no persisted explicit faculty owner. Owner != creator and owner-specific authorization are not yet implemented.",
       "proposedFacultyOwnerDraft": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
@@ -1330,7 +1330,7 @@
     "evidenceContract": "docs/planning/db05-lesson-soft-delete-owner-contract.md",
     "sqlCompanions": [
       "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql",
-      "scripts/sql/db05-lesson-content-owner-membership.draft.sql",
+      "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
       "scripts/sql/db05-lesson-active-enabled.draft.sql"
     ],
     "sourceFiles": [
