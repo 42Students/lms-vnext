@@ -112,5 +112,13 @@ test("direct concurrency scripts fail closed to the explicitly named disposable 
     assert.match(source, /SELECT current_database\(\)/, name);
     assert.match(source, /DB name mismatch/, name);
     assert.match(source, /Refusing to run: explicitly set DB02_DISPOSABLE_ACCEPTANCE=YES/, name);
+
+    const executableCheck = source.indexOf("command -v psql");
+    const databaseCheck = source.indexOf('ACTUAL_DATABASE="$(psql');
+    assert.ok(executableCheck >= 0, name + ": missing psql executable preflight");
+    assert.ok(
+      databaseCheck > executableCheck,
+      name + ": database identity check must run only after psql availability is established",
+    );
   }
 });
