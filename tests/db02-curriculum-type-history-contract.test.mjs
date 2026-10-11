@@ -7,16 +7,19 @@ const read = (name) => readFileSync(
   new URL("../scripts/sql/" + name, import.meta.url), "utf8",
 );
 const base = read("db02-academic-progression-and-rooms-staging.sql");
-const guard = read("db02-curriculum-type-history-guard.draft.sql");
+// The guard and its trigger are now within canonical DB02 staging.
+const typeStart = base.indexOf("CREATE FUNCTION db02_guard_program_term_course_type_history()");
+const typeEnd = base.indexOf("-- Legacy semester-course credits", typeStart);
+const guard = base.slice(typeStart, typeEnd);
 const acceptance = read("db02-curriculum-type-history-acceptance-unregistered.sql");
 const races = read("db02-curriculum-type-history-concurrency-unregistered.sh");
 
-test("curriculum-type guard has one paired trigger and does not duplicate canonical SQL", () => {
+test("consolidated curriculum-type guard has one paired trigger", () => {
   assert.match(guard, /CREATE FUNCTION db02_guard_program_term_course_type_history\(\)/);
   assert.match(guard, /CREATE TRIGGER db02_program_term_course_type_history_guard/);
   assert.equal([...guard.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length, 1);
   assert.equal([...guard.matchAll(/\$\$/g)].length, 2);
-  assert.doesNotMatch(base, /CREATE TRIGGER db02_program_term_course_type_history_guard/);
+  assert.match(base, /CREATE TRIGGER db02_program_term_course_type_history_guard/);
 });
 
 test("only retyping a materialized CORE curriculum is blocked", () => {
