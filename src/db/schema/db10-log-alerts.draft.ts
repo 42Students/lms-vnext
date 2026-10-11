@@ -86,24 +86,7 @@ export const db10LogAlertSignatureAccounts = pgTable(
     primaryKey({ columns: [t.signatureId, t.accountKeyHash] }),
     index("db10_log_alert_signature_accounts_hash_idx").on(t.accountKeyHash, t.firstSeenAt),
     check("db10_log_alert_signature_accounts_hash_ck",
-      sql`${t.accountKeyHash} ~ '^[0-9a-f]{64}
-  ],
-);
-
-export const db10LogAlertStates = pgTable(
-  "log_alert_states",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    stateKey: varchar("state_key", { length: 64 }).notNull(),
-    pollCursorAt: timestamp("poll_cursor_at", { withTimezone: true }),
-    adminLastViewedAt: timestamp("admin_last_viewed_at", { withTimezone: true }),
-  },
-  (t) => [
-    uniqueIndex("db10_log_alert_states_key_uq").on(t.stateKey),
-    check("db10_log_alert_states_key_ck", sql`length(trim(${t.stateKey})) > 0`),
-  ],
-);
-`),
+      sql`${t.accountKeyHash} ~ '^[0-9a-f]{64}$'`),
   ],
 );
 

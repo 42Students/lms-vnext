@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import ts from "typescript";
 
 const schema = readFileSync("src/db/schema/db10-log-alerts.draft.ts","utf8");
 const sql = readFileSync("scripts/sql/db10-log-alerts-staging.sql","utf8");
@@ -62,4 +63,32 @@ test("DB23 signature state and durable cursors retain constraints", () => {
   }
   assert.match(sql, /fix_status IN \('OPEN','FIXED','EXPECTED'\)/);
   assert.match(doc, /out-of-order/);
+});
+
+test("DB23 draft hex digest predicate closes before the states table", () => {
+  assert.ok(
+    schema.includes("sql`${t.accountKeyHash} ~ '^[0-9a-f]{64}$'`"),
+    "draft must use the same anchored, closed 64-hex predicate as staged SQL",
+  );
+  assert.equal(
+    schema.split("export const db10LogAlertStates =").length - 1,
+    1,
+    "states must be declared exactly once, outside of the SQL template",
+  );
+});
+
+test("DB23 draft parses as TypeScript", () => {
+  const parsed = ts.createSourceFile(
+    "db10-log-alerts.draft.ts",
+    schema,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  assert.deepEqual(
+    parsed.parseDiagnostics.map((diagnostic) =>
+      ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
+    [],
+    "log-alert draft must not absorb table declarations into SQL templates",
+  );
 });
