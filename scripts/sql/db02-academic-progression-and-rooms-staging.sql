@@ -542,6 +542,40 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
 -- ARCHIVED is a separate vNext terminal/storage concern and cannot substitute for INACTIVE.
 ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE';
 
+-- Preserve the editable legacy ACTIVE/INACTIVE/COMPLETED states while protecting vNext's
+-- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
+-- ACTIVE/INACTIVE cohorts behind the service state machine, or resurrect an archived cohort.
+CREATE FUNCTION db02_guard_cohort_status_lifecycle()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.status = 'ARCHIVED' THEN
+      RAISE EXCEPTION 'Cohort cannot be created already archived'
+        USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+  END IF;
+
+  IF OLD.status = 'ARCHIVED' AND NEW.status IS DISTINCT FROM OLD.status THEN
+    RAISE EXCEPTION 'Archived cohort status is terminal'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.status = 'ARCHIVED'
+     AND OLD.status NOT IN ('PLANNED', 'COMPLETED') THEN
+    RAISE EXCEPTION 'Cohort may archive only from PLANNED or COMPLETED'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER db02_cohort_status_lifecycle_guard
+BEFORE INSERT OR UPDATE OF status ON cohorts
+FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
+
+
 
 -- Legacy batch dates are optional, independently editable lifecycle metadata. Period FKs
 -- remain the scheduling/calendar anchors, but cannot reproduce arbitrary batch-specific dates.
