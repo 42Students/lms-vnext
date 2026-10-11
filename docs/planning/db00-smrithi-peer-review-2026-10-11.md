@@ -65,7 +65,48 @@ Crucially, the commit did **not** add a Flyway drop for the seven Smrithi tables
 
 This supports a source disposition of **RETIRED_FROM_CURRENT_BACKEND_ON_2026-04-23** for the Smrithi producers/consumers. It still does not prove that no detached external process talks directly to those tables, but the current LMS backend itself no longer does.
 
-## 4. Why deployed table presence would not prove activity
+## 4. `smrithi_notification_template` was explicitly superseded
+
+The seventh table has its own earlier retirement event.
+
+Before notification consolidation, `SmrithiNotificationTemplate` is an explicit JPA entity:
+
+- `@Table(name = "smrithi_notification_template")`;
+- documented as "For 42Learn/42University internal workflows";
+- queried by `SmrithiNotificationTemplateRepository`;
+- selected by `NotificationTemplateServiceImpl` when `NotificationTemplateContext.SMRITHI` is requested.
+
+Commit `a09917dea5e30135f0454cfccc4852d1aafb1176` on **2026-02-15** ("Add notification system, scoping & placement audit") removes:
+
+- `NotificationTemplateController`;
+- `BaseNotificationTemplate`;
+- `NotificationTemplate`;
+- `LmsNotificationTemplate`;
+- `SmrithiNotificationTemplate`;
+- their repositories and `NotificationTemplateServiceImpl`;
+- the old template-management DTO/type surface.
+
+The same commit adds `NotificationEventRegistry` with the explicit comment **"No DB or CSV"** for in-app channel/content configuration and adds the stateless `NotificationTemplateRenderer`. Email delivery is resolved by configured Zepto template IDs instead of querying `smrithi_notification_template`.
+
+The current frozen backend still contains `NotificationEventRegistry`, `NotificationDispatcherServiceImpl`, stateless `NotificationTemplateRenderer`, and provider-template properties, while no Smrithi notification-template entity/repository/service remains.
+
+Therefore `smrithi_notification_template` has source disposition **SUPERSEDED_BY_CENTRAL_NOTIFICATION_DISPATCH_ON_2026-02-15**. The old table may physically remain, but it is no longer the current backend's notification source of truth.
+
+### Seven-table source disposition summary
+
+| Historical table | Source disposition evidence |
+| --- | --- |
+| `smrithi_application` | Smrithi application/controller/repo/auth/approval/student-application stack removed in `dd8d7ab` on 2026-04-23 |
+| `smrithi_college` | `SmrithiCollege` + master-data controller/service/seeder/CSV removed in `dd8d7ab` |
+| `smrithi_college_keywords` | `SmrithiCollege.keywords` `@ElementCollection` owned this table; entity + master-data DDL/CSV removed in `dd8d7ab` |
+| `smrithi_education_type` | entity/repo/master-data APIs/seeding removed in `dd8d7ab` |
+| `smrithi_program` | entity/repo/master-data APIs/seeding removed in `dd8d7ab` |
+| `smrithi_specialization` | entity/repo/master-data APIs/seeding removed in `dd8d7ab` |
+| `smrithi_notification_template` | DB-backed context-specific template system removed/superseded by centralized dispatcher in `a09917d` on 2026-02-15 |
+
+All seven now have a concrete source-retirement/supersession event; none relies only on current-tree absence.
+
+## 5. Why deployed table presence would not prove activity
 
 The frozen backend also sets:
 
@@ -84,7 +125,7 @@ Therefore use these evidence labels separately:
 - **safe retirement:** **not approved**;
 - **product disposition:** still required.
 
-## 5. Implication for the seven tables
+## 6. Implication for the seven tables
 
 The current evidence supports changing the open question from:
 
@@ -106,7 +147,7 @@ That decision applies to:
 
 Do not map them into vNext merely because historical tables/config exist, and do not retire them merely because current source producers were not found.
 
-## 6. Remaining proof needed to close DB-003
+## 7. Remaining proof needed to close DB-003
 
 One of these must be recorded explicitly:
 
