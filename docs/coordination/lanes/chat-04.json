@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_CONSOLIDATED_45_FUNCTIONS_53_TRIGGERS_HISTORY_GATES_AUTHORED",
+    "checkpointKind": "DB005_PROMOTION_READINESS_STAGED_CURRICULUM_AND_RACES_UNVERIFIED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "19fc69d96f3d94fa6052623f432a0118cbe99e80",
-    "lastWorkerMergedSha": "09009a5390c3457211f9f7b304aba498513e5471",
+    "lastWorkerMergedSha": "b450f37043b996890ce94cb1f1e725d717388116",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 125/125 source+design classified. Canonical unregistered staging now structurally has 45 paired PostgreSQL trigger functions and 53 unique triggers after concurrent consolidation. New history parent-reassignment, schedule timestamp-to-archived-hall, cohort identity and actor-lifecycle acceptance cases are authored; four static DB02 test suites total 40 cases. No Node/PG/CI execution and no numbered Drizzle migration integration, so DB-005 remains IN_PROGRESS."
+    "summary": "DB02 125/125 legacy source+proposed-target design dispositions complete, runtime 0. Canonical still UNREGISTERED, latest observed 48 trigger functions/56 triggers. New isolated DB02 promotion readiness guard captures pinned BatchServiceImpl active batch/active target semester/nonempty mapped courses, plus authored rollback PG acceptance, two-session term deactivation/last-course-delete races and 6 source tests. 12/12 read-only structure checks passed; no Node, PG or CI tests executed; DB-005 IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -32,7 +32,10 @@
     "tests/db02-schedule-progression-integrity-overlay.test.mjs",
     "tests/db02-historic-parent-reassignment-contract.test.mjs",
     "scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql",
-    "scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql"
+    "scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql",
+    "tests/db02-promotion-readiness-contract.test.mjs",
+    "scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql",
+    "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -76,7 +79,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Chat 1 must integrate canonical DB02 into numbered Drizzle migration; execute zero-to-current disposable PostgreSQL replay, DB02 single-session + both new rollback-only acceptance scripts and two-session race harness; reconcile all failure evidence. Do not count static matching or 40 authored tests as executed/verified.",
+  "nextAction": "Continue DATABASE phase DB-005: Chat 1 integrate canonical DB02 and source-backed promotion readiness draft into numbered Drizzle schema, then run clean disposable PostgreSQL replay, source test runner, rollback-only promotion/tenant/history acceptance and two-session races; require exact logs before completion/verification. Preserve service-level CAS and outgoing faculty assignment deactivation handoff to API phase.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -136,7 +139,12 @@
     "https://github.com/42Students/lms-vnext/commit/09009a5390c3457211f9f7b304aba498513e5471",
     "https://github.com/42Students/lms-vnext/commit/f874cdd1e55ff26db224349a35970d4c377d1477",
     "https://github.com/42Students/lms-vnext/commit/1fcc1c6f015ca71bcb3547b2a3940f6f31fbaa65",
-    "https://github.com/42Students/lms-vnext/commit/c33e71a9bb72fa8faecc1cdc8f75d7b4126cf79f"
+    "https://github.com/42Students/lms-vnext/commit/c33e71a9bb72fa8faecc1cdc8f75d7b4126cf79f",
+    "https://github.com/42Students/lms-vnext/commit/b9f8f55a1e40f3dfeaa746c22cf502cdd075e37d",
+    "https://github.com/42Students/lms-vnext/commit/ce7bd82d000f8e6887c2afa108938f2640a870aa",
+    "https://github.com/42Students/lms-vnext/commit/f8f845e44e399b2f55157563aa40ad2aa0e1adfa",
+    "https://github.com/42Students/lms-vnext/commit/daf10c933abda96137bb0852e60c0ffbc5480f83",
+    "https://github.com/42Students/lms-vnext/commit/b450f37043b996890ce94cb1f1e725d717388116"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
