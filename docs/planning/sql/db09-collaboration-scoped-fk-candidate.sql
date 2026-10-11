@@ -73,6 +73,39 @@ LANGUAGE sql STABLE AS $$
   );
 $$;
 
+CREATE FUNCTION db09_has_active_tpo_actor(
+  p_user_id uuid,
+  p_college_id uuid
+) RETURNS boolean
+LANGUAGE sql STABLE AS $$
+  SELECT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+      JOIN users u ON u.id = m.user_id
+      JOIN colleges c ON c.id = m.college_id
+     WHERE m.user_id = p_user_id
+       AND m.college_id = p_college_id
+       AND m.status = 'ACTIVE'
+       AND u.platform_status = 'ACTIVE'
+       AND c.status = 'ACTIVE'
+       AND (
+         EXISTS (
+           SELECT 1
+             FROM membership_roles r
+            WHERE r.membership_id = m.id
+              AND r.role IN ('TPO','COLLEGE_ADMIN')
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM placement_tpo_team_members tm
+            WHERE tm.membership_id = m.id
+              AND tm.college_id = p_college_id
+              AND tm.role IN ('TPO_ADMIN','FACULTY_COORDINATOR')
+         )
+       )
+  );
+$$;
+
 CREATE FUNCTION db09_has_active_recruiter_grant(
   p_recruiter_user_id uuid,
   p_college_id uuid,
@@ -167,7 +200,7 @@ BEGIN
         USING ERRCODE = '23514';
     END IF;
   ELSIF NEW.sender_type = 'TPO' THEN
-    IF NOT db09_has_active_college_membership(
+    IF NOT db09_has_active_tpo_actor(
       NEW.sender_user_id,
       v_college_id
     ) THEN
@@ -257,11 +290,11 @@ CREATE TRIGGER db09_recruiter_read_scope_guard
 CREATE FUNCTION db09_assert_share_creator_scope() RETURNS trigger
 LANGUAGE plpgsql AS $
 BEGIN
-  IF NOT db09_has_active_college_membership(
+  IF NOT db09_has_active_tpo_actor(
     NEW.created_by_user_id,
     NEW.college_id
   ) THEN
-    RAISE EXCEPTION 'share creator is not active in share college'
+    RAISE EXCEPTION 'share creator lacks active TPO scope in share college'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
@@ -274,8 +307,8 @@ CREATE TRIGGER db09_share_creator_scope_guard
 CREATE FUNCTION db09_assert_tpo_user_state_scope() RETURNS trigger
 LANGUAGE plpgsql AS $
 BEGIN
-  IF NOT db09_has_active_college_membership(NEW.user_id,NEW.college_id) THEN
-    RAISE EXCEPTION 'TPO user-scoped record belongs to inactive/foreign user'
+  IF NOT db09_has_active_tpo_actor(NEW.user_id,NEW.college_id) THEN
+    RAISE EXCEPTION 'TPO user-scoped record belongs to user without TPO scope'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
@@ -295,18 +328,20 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1
       FROM college_memberships m
+      JOIN membership_roles r ON r.membership_id = m.id
      WHERE m.id = NEW.learner_membership_id
        AND m.college_id = NEW.college_id
        AND m.status = 'ACTIVE'
+       AND r.role = 'LEARNER'
   ) THEN
     RAISE EXCEPTION 'student note learner is not active in note college'
       USING ERRCODE = '23514';
   END IF;
-  IF NOT db09_has_active_college_membership(
+  IF NOT db09_has_active_tpo_actor(
     NEW.created_by_user_id,
     NEW.college_id
   ) THEN
-    RAISE EXCEPTION 'student note author is not active in note college'
+    RAISE EXCEPTION 'student note author lacks active TPO scope in note college'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
@@ -377,3 +412,7 @@ CREATE TRIGGER db09_share_event_immutable
 -- 15. Share creators, TPO preferences/views, student-note authors and team
 --     members require active same-college principals; team rows require a
 --     current staff membership role.
+-- 16. TPO-authored collaboration rows require TPO/COLLEGE_ADMIN role or an
+--     explicit placement_tpo_team_members role; ordinary LEARNER membership
+--     alone cannot satisfy the DB principal check. Student-note subjects must
+--     themselves carry an ACTIVE LEARNER membership role.
