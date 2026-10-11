@@ -49,8 +49,11 @@ export function classify(sql) {
 }
 export function inspect(item){
   const body=stripSqlLiterals(item.sql);
+  const allCreates=[...body.matchAll(creations)].map(m=>m[1].replaceAll('"',"").toLowerCase());
+  const createDuplicates=[...new Set(allCreates.filter((t,i)=>allCreates.indexOf(t)!==i))];
   return {path:item.path,state:classify(item.sql),
-    create:take(body,creations),alter:take(body,alters),references:take(body,refs),
+    create:[...new Set(allCreates)],createDuplicates,
+    alter:take(body,alters),references:take(body,refs),
     destructive:/\b(?:DROP\s+TABLE|TRUNCATE\s+TABLE|DELETE\s+FROM)\b/i.test(body)};
 }
 export function analyze({candidates,registered=[],declared=[]}) {
@@ -63,6 +66,8 @@ export function analyze({candidates,registered=[],declared=[]}) {
     creators.set(name,[...(creators.get(name)||[]),f.path]);
   }
   const duplicates=[...creators].filter(([,p])=>p.length>1).map(([table,files])=>({table,files}));
+  const repeatedWithinFile=active.filter(f=>f.createDuplicates.length).map(f=>
+    ({file:f.path,tables:f.createDuplicates}));
   const registeredOverlap=[...creators.keys()].filter(k=>known.has(k)).sort();
   const ignoredExecutable=ignored.filter(x=>x.create.length||x.alter.length||x.destructive).map(x=>x.path);
   const unresolved=[],required=[],dependencies=new Map(active.map(f=>[f.path,new Set()]));
@@ -85,7 +90,7 @@ export function analyze({candidates,registered=[],declared=[]}) {
   const cycles=[...dependencies].filter(([p])=>!visited.has(p)).map(([p,deps])=>({file:p,
     unmet:[...deps].filter(d=>!visited.has(d))}));
   const destructive=active.filter(x=>x.destructive).map(x=>x.path);
-  const hazards=!!(duplicates.length||registeredOverlap.length||ignoredExecutable.length||
+  const hazards=!!(duplicates.length||repeatedWithinFile.length||registeredOverlap.length||ignoredExecutable.length||
     unresolved.length||cycles.length||destructive.length);
   return {
     verification:"SOURCE_ONLY_NO_MIGRATION_OR_POSTGRES_EXECUTED",
@@ -93,7 +98,7 @@ export function analyze({candidates,registered=[],declared=[]}) {
     hazards,counts:{scanned:files.length,active:active.length,ignored:ignored.length,
       createdTableNames:creators.size,unresolvedParents:unresolved.length,
       stagedDependencies:required.length},
-    duplicates,registeredOverlap,ignoredExecutable,unresolved,required,cycles,
+    duplicates,repeatedWithinFile,registeredOverlap,ignoredExecutable,unresolved,required,cycles,
     destructive,proposedSourceOrder:ordered,
   };
 }
