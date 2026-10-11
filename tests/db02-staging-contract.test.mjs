@@ -155,7 +155,7 @@ test("DB02 user deletion scrubs progression actor references without creating ac
 });
 
 
-test("DB02 concurrency harness preserves all fifteen race families", () => {
+test("DB02 concurrency harness preserves all seventeen race families", () => {
   for (const label of [
     "Race 1:",
     "Race 2A:",
@@ -172,6 +172,8 @@ test("DB02 concurrency harness preserves all fifteen race families", () => {
     "Race 7B:",
     "Race 8A:",
     "Race 8B:",
+    "Race 9A:",
+    "Race 9B:",
   ]) {
     assert.match(concurrencyShell, new RegExp("# " + label));
   }
@@ -192,6 +194,8 @@ test("DB02 concurrency harness preserves all fifteen race families", () => {
     "PASS period race B",
     "PASS cohort delete race A",
     "PASS cohort delete race B",
+    "PASS curriculum type race A",
+    "PASS curriculum type race B",
   ]) {
     assert.ok(concurrencyShell.includes(pass), "missing concurrency witness: " + pass);
   }
@@ -299,4 +303,25 @@ test("cohort archive lifecycle stays separate from reversible legacy statuses", 
   assert.match(acceptanceSql, /cohort was created directly in ARCHIVED state/);
   assert.match(acceptanceSql, /ACTIVE cohort bypassed archive lifecycle/);
   assert.match(acceptanceSql, /ARCHIVED cohort was resurrected/);
+});
+
+
+test("materialized CORE curriculum row cannot change type", () => {
+  const start = sql.indexOf("CREATE FUNCTION db02_guard_program_term_course_identity()");
+  const end = sql.indexOf("CREATE TRIGGER db02_program_term_course_identity_guard", start);
+  assert.ok(start !== -1 && end > start);
+  const guard = sql.slice(start, end);
+  assert.match(guard, /NEW\.type IS DISTINCT FROM OLD\.type/);
+  assert.match(guard, /co\.program_term_course_id = OLD\.id/);
+  assert.match(
+    guard,
+    /Program-term course type cannot change after an offering materializes it/,
+  );
+  assert.match(
+    sql,
+    /BEFORE UPDATE OF program_term_id, course_id, type ON program_term_courses/,
+  );
+  assert.match(acceptanceSql, /materialized CORE curriculum row changed type/);
+  assert.match(concurrencyShell, /PASS curriculum type race A/);
+  assert.match(concurrencyShell, /PASS curriculum type race B/);
 });
