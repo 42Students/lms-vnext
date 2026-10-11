@@ -258,7 +258,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "e5d9fe6e9a4eccba8faa3c9e40d8e9297fac7906",
+      "latestEvidenceSha": "8c2c63d8a28d41dcba1c188a3a551c60390ab742",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -293,7 +293,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 125/125 source/proposed target fields classified; 0 runtime verified. Canonical DB02 staging unregistered, structurally 51 paired functions, 59 distinct triggers; active-cohort/active-target-semester/nonempty-curriculum promotion readiness and materialized CORE curriculum type historical invariants consolidated. Duplicate standalone drafts removed; promotion/Core source-test suites retargeted to canonical. Added DB02 guarded disposable acceptance runner (6 source test files + 5 rollback-only PG scripts + 3 two-session race harnesses). 15/15 read-only QA checks true; 0 Node/PG/CI tests actually executed. Chat1 must register numbered migration, complete PG replay and actual acceptance. DB-005 remains IN_PROGRESS."
+      "progressNote": "DB02 source classification and target design mapping remain 125/125; runtime verified remains 0. Canonical UNREGISTERED stage is statically reconciled at 52 paired PL/pgSQL functions / 60 unique triggers with zero malformed or duplicate definitions. 60 authored source-test cases across 6 files; 5 rollback-only PostgreSQL acceptance suites; 3 two-session concurrency harnesses (combined harness has 17 named race families, plus focused promotion/type suites). Latest hardening covers concrete CORE curriculum-row identity/type history, source-parity promotion readiness, progression-backed program-term retention, history-safe empty cohort delete, archive-vs-INACTIVE separation, referenced-period/window integrity, parent/history races, rooms/faculty lifecycle. Shared CAS harnesses were repaired to satisfy the new promotion-readiness preconditions. No Node/PostgreSQL/CI execution claimed. Chat1 must register numbered Drizzle/migrations, replay zero-to-current, and execute disposable PostgreSQL acceptance before verification; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
