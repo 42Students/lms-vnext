@@ -41,13 +41,11 @@ test("DB05 offering guard models independent course, program, period and cohort 
 
 test("DB05 delivery guard enforces section's exact cohort and period, not just same college", () => {
   for (const term of [
-    "section_cohort_id IS DISTINCT FROM offering_cohort_id",
     "offering_cohort_id IS DISTINCT FROM section_cohort_id",
     "offering_period_id IS DISTINCT FROM section_period_id",
     "offering_course_college_id IS DISTINCT FROM section_period_college_id",
     "offering_course_college_id IS DISTINCT FROM section_program_college_id",
   ]) {
-    if (term.startsWith("section_cohort_id IS DISTINCT")) continue;
     assert.ok(sql.includes(term), term);
   }
   assert.match(delivery, /offering\.cohortId !== section\.cohortId/);
