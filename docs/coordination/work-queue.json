@@ -3099,14 +3099,14 @@
         "tests/db06-assignment-upload-receipt-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:27:47.324Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T14:28:01.617Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -3128,6 +3128,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:27:47.324Z",
           "reason": "Chat 1 claims DB06 private assignment upload receipt hardening; source-only, no migration registration."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:28:01.617Z",
+          "reason": "Reconciling DB06 staged receipt/file schema with DB-016 safety minimums and assignment/submission ownership semantics."
         }
       ]
     }
