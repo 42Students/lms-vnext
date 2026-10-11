@@ -267,7 +267,7 @@ CREATE TRIGGER db09_recruiter_private_note_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_private_note_scope();
 
 CREATE FUNCTION db09_assert_recruiter_read_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT db09_has_active_recruiter_grant(
     NEW.recruiter_user_id,
@@ -299,7 +299,8 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
+
 CREATE TRIGGER db09_recruiter_read_scope_guard
   BEFORE INSERT OR UPDATE
   ON placement_recruiter_notification_reads
@@ -323,7 +324,7 @@ CREATE TRIGGER db09_share_creator_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_share_creator_scope();
 
 CREATE FUNCTION db09_restrict_share_link_update() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_code_rotated boolean;
   v_revoked_now boolean;
@@ -382,7 +383,8 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
+
 CREATE TRIGGER db09_share_link_update_guard
   BEFORE UPDATE ON placement_tpo_share_links
   FOR EACH ROW EXECUTE FUNCTION db09_restrict_share_link_update();
@@ -479,7 +481,7 @@ CREATE UNIQUE INDEX db09_share_events_revoked_uq
   WHERE action = 'REVOKED';
 
 CREATE FUNCTION db09_assert_share_link_event_completeness() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -503,14 +505,15 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
+
 CREATE CONSTRAINT TRIGGER db09_share_link_event_completeness_guard
   AFTER INSERT OR UPDATE ON placement_tpo_share_links
   DEFERRABLE INITIALLY DEFERRED
   FOR EACH ROW EXECUTE FUNCTION db09_assert_share_link_event_completeness();
 
 CREATE FUNCTION db09_assert_share_event_state() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_created_at timestamptz;
   v_revoked_at timestamptz;
@@ -546,7 +549,8 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
+
 CREATE CONSTRAINT TRIGGER db09_share_event_state_guard
   AFTER INSERT ON placement_tpo_share_events
   DEFERRABLE INITIALLY DEFERRED
