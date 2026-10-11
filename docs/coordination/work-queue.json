@@ -2690,6 +2690,43 @@
           "reason": "Chat 5 reserved a ledger/source-evidence closure pass only; no new schema or migration ownership overlaps active workers."
         }
       ]
+    },
+    {
+      "id": "DB-047",
+      "phase": "DATABASE",
+      "title": "Align DB09 company share defaults with canonical placement schema",
+      "scope": "Close a proven DB09 structural drift: legacy industry_company.export_columns_json is explicitly redesigned to tenant-safe placement_company_relationships.share_column_defaults and staged in candidate SQL, but the canonical Drizzle placementCompanyRelationships table lacks the column/check. Add structural parity + static source/drift evidence only; no journal registration or runtime consumer claim.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/sql/db09-company-export-preference-candidate.sql",
+        "docs/planning/database-parity-db09-company-share-defaults.md",
+        "tests/db09-company-share-defaults-staging.test.mjs",
+        "docs/planning/db09-integration-manifest-2026-10-11.md"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T13:40:00+05:30",
+          "reason": "Chat 3 independent integration-readiness sweep proved candidate SQL/ledger target share_column_defaults is absent from canonical placementCompanyRelationships Drizzle schema; new non-overlapping DATABASE gap."
+        }
+      ]
     }
   ],
   "eventModel": {
