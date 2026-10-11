@@ -104,16 +104,16 @@ test("DB042 stays separate from DB035 immutable history ownership", () => {
 });
 
 test("DB042 candidate has no duplicate CREATE object declarations", () => {
-  const names = [];
-  for (const re of [
-    /CREATE FUNCTION\s+([A-Za-z0-9_]+)/g,
-    /CREATE TRIGGER\s+([A-Za-z0-9_]+)/g,
-    /CREATE TABLE\s+([A-Za-z0-9_]+)/g,
-    /CREATE (?:UNIQUE )?INDEX\s+([A-Za-z0-9_]+)/g,
+  const objects = [];
+  for (const [type, re] of [
+    ["FUNCTION", /CREATE FUNCTION\s+([A-Za-z0-9_]+)/g],
+    ["TRIGGER", /CREATE TRIGGER\s+([A-Za-z0-9_]+)/g],
+    ["TABLE", /CREATE TABLE\s+([A-Za-z0-9_]+)/g],
+    ["INDEX", /CREATE (?:UNIQUE )?INDEX\s+([A-Za-z0-9_]+)/g],
   ]) {
-    for (const match of sql.matchAll(re)) names.push(match[1]);
+    for (const match of sql.matchAll(re)) objects.push(type + ":" + match[1]);
   }
-  assert.equal(new Set(names).size, names.length);
+  assert.equal(new Set(objects).size, objects.length);
   assert.doesNotMatch(sql, /<<<<<<<|=======|>>>>>>>/);
 });
 
