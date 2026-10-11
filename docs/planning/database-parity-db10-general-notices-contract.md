@@ -52,9 +52,10 @@ Additional fields: organization/college scope, `sourceEventId` FK to the canonic
 - **DB24-07:** digest events grouped by college+recipient+local date at next 08:00 Asia/Kolkata produce one external digest receipt, with a safe retries/history rule.
 - **DB24-08:** external EMAIL/SMS handoff is encrypted and idempotent, distinct from delivered/sent; suppression and membership/grant are rechecked immediately before external dispatch.
 - **DB24-09:** invalid channel, event, idempotency digest, status/claimed/sent shape and mismatched optional digest time zone fail SQL checks.
-- **DB24-10:** same **source event**/recipient/channel enqueue retry does not add a second logical notice; a later occurrence with the same event name gets a different sourceEventId and must not be collapsed. Changed payload under the same logical idempotency key is rejected, never silently reused.
+- **DB24-10:** same **source event**/recipient/role/channel enqueue retry does not add a second logical notice; a later occurrence with the same event name gets a different sourceEventId and must not be collapsed. Changed payload under the same logical idempotency key is rejected, never silently reused.
 - **DB24-11:** no raw token, email, phone, provider error payload or secret appears in `safe_payload_json`, audit metadata, exception/log or client notice.
 - **DB24-12:** fresh numbered Drizzle replay, schema snapshot/catalog drift, tenant, race and app notification producer→consumer lifecycle pass against a disposable PostgreSQL instance.
+- **DB24-13:** same event/user/channel may create both LEARNER and FACULTY notices only with valid role memberships; the same event/user/role/channel must reject duplicates even if a caller sends a different HMAC, and reusing the same HMAC must always reject. The test must execute against disposable PostgreSQL; it is NOT_RUN. Recheck idempotency producer keys include recipient role and tenant scope.
 
 ## Handoff and evidence
 
