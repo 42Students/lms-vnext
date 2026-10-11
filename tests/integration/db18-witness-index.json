@@ -79,6 +79,15 @@
       "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
       "expectedSqlState": "23514",
       "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N09",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects a group membership whose parent group does not exist",
+      "guard": "lms_group_members_group_id_lms_groups_id_fk",
+      "migration": "drizzle/0037_db03_groups_electives.sql",
+      "expectedSqlState": "23503",
+      "execution": "NOT_RUN"
     }
   ],
   "existingConcurrencyWitnesses": [
@@ -142,7 +151,7 @@
     }
   ],
   "counts": {
-    "directNegativeAuthored": 8,
+    "directNegativeAuthored": 9,
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 2,
     "draftUnregisteredExcluded": 3,
