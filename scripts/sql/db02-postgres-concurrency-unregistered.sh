@@ -42,9 +42,13 @@ MEMBERSHIP_ID="$(new_uuid)"
 HALL_ID="$(new_uuid)"
 COURSE_RACE_A_ID="$(new_uuid)"
 COURSE_RACE_B_ID="$(new_uuid)"
+COURSE_RACE_C_ID="$(new_uuid)"
+COURSE_RACE_D_ID="$(new_uuid)"
 TERM_RACE_ID="$(new_uuid)"
 OFFERING_RACE_A_ID="$(new_uuid)"
 OFFERING_RACE_B_ID="$(new_uuid)"
+OFFERING_RACE_C_ID="$(new_uuid)"
+OFFERING_RACE_D_ID="$(new_uuid)"
 EVENT_RACE_A_ID="$(new_uuid)"
 EVENT_RACE_B_ID="$(new_uuid)"
 
@@ -144,7 +148,7 @@ echo "Fixture committed: $RUN_TAG"
 # ---------------------------------------------------------------------------
 PROMOTE_A="$(mktemp)"
 PROMOTE_B="$(mktemp)"
-trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}"' EXIT
+trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}" "${OFFERING_FIRST:-}" "${CURRICULUM_DELETE_AFTER:-}" "${CURRICULUM_DELETE_FIRST:-}" "${OFFERING_AFTER_DELETE:-}"' EXIT
 
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" <<'SQL'
@@ -442,15 +446,21 @@ psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v race_section_a_id="$RACE_SECTION_A_ID" \
   -v course_race_a_id="$COURSE_RACE_A_ID" \
   -v course_race_b_id="$COURSE_RACE_B_ID" \
+  -v course_race_c_id="$COURSE_RACE_C_ID" \
+  -v course_race_d_id="$COURSE_RACE_D_ID" \
   -v term_race_id="$TERM_RACE_ID" \
   -v offering_race_a_id="$OFFERING_RACE_A_ID" \
   -v offering_race_b_id="$OFFERING_RACE_B_ID" \
+  -v offering_race_c_id="$OFFERING_RACE_C_ID" \
+  -v offering_race_d_id="$OFFERING_RACE_D_ID" \
   -v event_race_a_id="$EVENT_RACE_A_ID" \
   -v event_race_b_id="$EVENT_RACE_B_ID" <<'SQL' >/dev/null
 INSERT INTO courses(id, department_id, name, code)
 VALUES
   (:'course_race_a_id', :'dept_id', :'run_tag' || ' history course A', :'run_tag' || '-hist-course-a'),
-  (:'course_race_b_id', :'dept_id', :'run_tag' || ' history course B', :'run_tag' || '-hist-course-b');
+  (:'course_race_b_id', :'dept_id', :'run_tag' || ' history course B', :'run_tag' || '-hist-course-b'),
+  (:'course_race_c_id', :'dept_id', :'run_tag' || ' curriculum race course C', :'run_tag' || '-curr-course-c'),
+  (:'course_race_d_id', :'dept_id', :'run_tag' || ' curriculum race course D', :'run_tag' || '-curr-course-d');
 
 INSERT INTO program_terms(id, program_id, term_number, name, is_active)
 VALUES (:'term_race_id', :'program_id', 1, :'run_tag' || ' history term', true);
@@ -458,7 +468,9 @@ VALUES (:'term_race_id', :'program_id', 1, :'run_tag' || ' history term', true);
 INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
 VALUES
   (:'term_race_id', :'course_race_a_id', 'CORE', 3, 1),
-  (:'term_race_id', :'course_race_b_id', 'CORE', 3, 2);
+  (:'term_race_id', :'course_race_b_id', 'CORE', 3, 2),
+  (:'term_race_id', :'course_race_c_id', 'CORE', 3, 3),
+  (:'term_race_id', :'course_race_d_id', 'CORE', 3, 4);
 
 INSERT INTO course_offerings(
   id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
@@ -699,5 +711,123 @@ if [[ "$EVENT_B_STATE" != "1:1" ]]; then
 fi
 
 echo "PASS event race B: move committed before serialized attendance history"
+
+# ---------------------------------------------------------------------------
+# Race 6A: CORE offering creation takes SHARE on its curriculum row first.
+# Concurrent curriculum deletion must block and reject after the offering commits.
+# ---------------------------------------------------------------------------
+OFFERING_FIRST="$(mktemp)"
+CURRICULUM_DELETE_AFTER="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v offering_id="$OFFERING_RACE_C_ID" -v course_id="$COURSE_RACE_C_ID" \
+    -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" <<'SQL'
+BEGIN;
+INSERT INTO course_offerings(
+  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+) VALUES (
+  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id', 'CORE', 3, 3
+);
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$OFFERING_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v course_id="$COURSE_RACE_C_ID" -v term_id="$TERM_RACE_ID" <<'SQL' >"$CURRICULUM_DELETE_AFTER" 2>&1
+DELETE FROM program_term_courses
+ WHERE program_term_id = :'term_id'
+   AND course_id = :'course_id';
+SQL
+DELETE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$DELETE_STATUS" -eq 0 ]]; then
+  echo "Curriculum offering-first race failed: materialized curriculum delete succeeded" >&2
+  cat "$CURRICULUM_DELETE_AFTER" >&2
+  exit 1
+fi
+
+CURR_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_C_ID" -v course_id="$COURSE_RACE_C_ID" -v term_id="$TERM_RACE_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM course_offerings WHERE id = :'offering_id') || ':' ||
+  (SELECT count(*) FROM program_term_courses
+    WHERE program_term_id = :'term_id' AND course_id = :'course_id');
+SQL
+)"
+
+if [[ "$CURR_A_STATE" != "1:1" ]]; then
+  echo "Curriculum offering-first final state mismatch: $CURR_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS curriculum race A: committed CORE offering protected curriculum row"
+
+# ---------------------------------------------------------------------------
+# Race 6B: curriculum deletion owns the row first. CORE offering creation blocks
+# on SELECT ... FOR SHARE and must reject after the delete commits.
+# ---------------------------------------------------------------------------
+CURRICULUM_DELETE_FIRST="$(mktemp)"
+OFFERING_AFTER_DELETE="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v course_id="$COURSE_RACE_D_ID" -v term_id="$TERM_RACE_ID" <<'SQL'
+BEGIN;
+DELETE FROM program_term_courses
+ WHERE program_term_id = :'term_id'
+   AND course_id = :'course_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$CURRICULUM_DELETE_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_D_ID" -v course_id="$COURSE_RACE_D_ID" \
+  -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" <<'SQL' >"$OFFERING_AFTER_DELETE" 2>&1
+INSERT INTO course_offerings(
+  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+) VALUES (
+  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id', 'CORE', 3, 4
+);
+SQL
+OFFERING_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$OFFERING_STATUS" -eq 0 ]]; then
+  echo "Curriculum delete-first race failed: CORE offering unexpectedly succeeded" >&2
+  cat "$OFFERING_AFTER_DELETE" >&2
+  exit 1
+fi
+
+CURR_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_D_ID" -v course_id="$COURSE_RACE_D_ID" -v term_id="$TERM_RACE_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM course_offerings WHERE id = :'offering_id') || ':' ||
+  (SELECT count(*) FROM program_term_courses
+    WHERE program_term_id = :'term_id' AND course_id = :'course_id');
+SQL
+)"
+
+if [[ "$CURR_B_STATE" != "0:0" ]]; then
+  echo "Curriculum delete-first final state mismatch: $CURR_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS curriculum race B: committed curriculum delete rejected stale CORE offering"
 echo "DB02 concurrency acceptance PASS"
 echo "Fixture rows are intentionally left in this disposable database under tag: $RUN_TAG"
