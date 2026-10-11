@@ -445,6 +445,12 @@
       ],
       "sourceEvidence": "docs/planning/db01-chat02-otp-p0-source-static-evidence.json",
       "authoredSourceNodeTests": 13
+    },
+    "gitWriteProof": {
+      "date": "2026-10-11",
+      "branch": "main",
+      "kind": "CAS write + readback requested by user",
+      "scope": "chat-02 checkpoint only; no task status change"
     }
   },
   "qualityGates": {
