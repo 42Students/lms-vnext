@@ -108,6 +108,13 @@ async function loadActiveRecruiterGrant(
       and(
         eq(placementRecruiterProfiles.userId, userId),
         eq(placementCompanyRelationships.collegeId, collegeId),
+        // A grant's relationship must belong to the profile's own company.
+        // Active flags and college scope alone cannot prevent a cross-company
+        // grant row from authorizing recruiter message reads.
+        eq(
+          placementCompanyRelationships.companyId,
+          placementRecruiterProfiles.companyId,
+        ),
         eq(users.platformStatus, "ACTIVE"),
         eq(placementRecruiterProfiles.status, "ACTIVE"),
         eq(placementCompanies.status, "ACTIVE"),
