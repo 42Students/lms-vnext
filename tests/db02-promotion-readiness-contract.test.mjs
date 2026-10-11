@@ -68,3 +68,17 @@ test("canonical CAS concurrency requirement is not silently replaced by a trigge
   assert.match(draft, /Staffing readiness is informational/);
   assert.match(draft, /Faculty-teaching assignment deactivation must remain transactional/);
 });
+
+test("two-session race harness cannot pass on unrelated SQL errors", () => {
+  const races = readFileSync(
+    new URL("../scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh", import.meta.url),
+    "utf8",
+  );
+  assert.match(races, /ON_ERROR_STOP=1/);
+  assert.match(races, /PROMOTE_RC=\$\?/);
+  assert.match(races, /Promotion target program term must be configured and ACTIVE/);
+  assert.match(races, /Promotion target term requires at least one mapped course/);
+  assert.doesNotMatch(races, /grep -Eq '23514\|check constraint'/);
+  assert.match(races, /RACE1_STATE/);
+  assert.match(races, /RACE2_STATE/);
+});
