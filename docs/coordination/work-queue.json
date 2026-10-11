@@ -209,7 +209,7 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "0f38b998326f5b6955e2abef05ca7729c7482a74",
+      "latestEvidenceSha": "14dabc3698f5fc638e538852a6f436f598d50e01",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "DB-004 IN_PROGRESS: 312/312 legacy DB01 candidates source-triaged; all 38 P0 no-target fields have source policy but 0 vNext runtime-semantic verified. Three P0 named-source gap paths now resolved (not runtime parity); legacy deleted-role authority bypass is classified as security exception. DB01 tenant/session/OTP/lifecycle schema candidates remain UNREGISTERED; ended-membership role mutation has source-confirmed parent-lock race, with 11 authored Node tests and two-way PostgreSQL acceptance contract but NO executed PG witness. Actions CI intentionally disabled for billing, NOT engineering blocker.",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 main source batch: 38 P0 auth/security fields retain zero vNext verified; 3 previously unnamed current legacy producer/consumer paths pinned (role.is_deleted authority bypass, tenant_domain.is_deleted active query guards, user.password bcrypt save/login) with 30/30 exact GitHub-blob in-process assertions. New vNext ended-membership/role-grant TOCTOU audit: current service checks status before transaction; repository locks role rows, not parent; membership END locks parent. 11 new authored Node source-drift cases; 20/20 in-process source assertions. No new Node/PostgreSQL tests executed, no registered migration, no provider acceptance. CI billing intentionally not blocked."
+      "progressNote": "Chat 2 main source batch: 38 P0 auth/security fields retain zero vNext verified; 3 previously unnamed current legacy producer/consumer paths pinned (role.is_deleted authority bypass, tenant_domain.is_deleted active query guards, user.password bcrypt save/login) with 30/30 exact GitHub-blob in-process assertions. New vNext ended-membership/role-grant TOCTOU audit: current service checks status before transaction; repository locks role rows, not parent; membership END locks parent. 11 new authored Node source-drift cases; 20/20 in-process source assertions. No new Node/PostgreSQL tests executed, no registered migration, no provider acceptance. CI billing intentionally not blocked.\nChat 2 staged domain tombstone SQL transition guard (no history/host rebind or revival, explicit hard-DELETE rejection) plus 15 Node source test cases and a two-session PG delete/verify race witness. Source-only connected JS assertions 43/43 PASS; Node 0 executed, PG 0 executed, no migration activated. API hard-delete-to-tombstone cutover is mandatory. Evidence docs/planning/db01-chat02-domain-tombstone-race-source-evidence.json."
     },
     {
       "id": "DB-005",
