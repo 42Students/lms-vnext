@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "BLOCKED",
+  "activeTaskId": "DB-030",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB028_E2E_RESET_GUARD_COMPLETED",
+    "checkpointKind": "DB030_REGISTERED_PG_EXECUTION_BLOCKED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "bf62a8c56df91831c908de3c4d4b81ba1a6efd71",
-    "lastWorkerMergedSha": "de31827c4baf216b777088ee04f5c283daabad5a",
+    "observedMainSha": "0a0f961aa16d6d3c40718b3eba7fb89ae66bf294",
+    "lastWorkerMergedSha": "3c88d2d99a34061b82766a0e6dba920d06d7f8f5",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-028 source work complete: browser E2E destructive database preparation now uses the shared fail-closed disposable-target guard before DB URL assignment/import/reset; 12/12 current-main source invariants checked, Node/PG execution pending."
+    "summary": "DB-030 registered 0041 trigger-only assessment integrity migration: 11 functions/triggers, non-destructive poison preflight, offering/section/learner locks, history reparent guards, assignment score-scale freeze, PG01–PG16 suite and independent-verifier opt-in. Source acceptance clean; 0 real PostgreSQL witnesses executed in current runtime."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -39,9 +39,11 @@
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
   ],
-  "blockers": [],
+  "blockers": [
+    "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
+  ],
   "handoffs": [],
-  "nextAction": "Refresh global DATABASE queue; if no dependency-satisfied task exists, identify a nonconflicting independent DATABASE gap rather than starting API/UI.",
+  "nextAction": "Do not idle on DB-030. Refresh global DATABASE queue and work another dependency-satisfied unowned task; return to DB-030 when a disposable PostgreSQL checkout is available.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
