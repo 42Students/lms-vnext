@@ -1692,21 +1692,31 @@
         "docs/planning/sql/db06-assessment-parent-scope-candidate.sql",
         "tests/db028-assessment-parent-scope.test.mjs"
       ],
-      "status": "READY",
-      "pickedBy": null,
-      "pickedAt": null,
+      "status": "PICKED",
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T07:42:10.439Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T07:42:10.439Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Independent coordinator source/audit contribution on main; no worker has picked or completed promotion/test task."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T07:42:10.439Z",
+          "reason": "Chat 1 CAS claim after DB-028 completion; DB06 assessment relational integrity promotion."
         }
       ],
       "latestEvidenceSha": "7d61e776a608b9b9ddf12dda95193ffbd65273f0",
