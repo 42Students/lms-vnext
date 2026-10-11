@@ -247,7 +247,7 @@
       "notes": "Archive organization/child activation can race to persisted ACTIVE college under ARCHIVED org; staged twin trigger + parent FOR UPDATE requires W01 review and independent two-connection PG tests."
     },
     "db01MainDirectAcceptance": {
-      "status": "ON_MAIN_SOURCE_CHECKS_18_OF_18_RUNTIME_PG_VITEST_PENDING",
+      "status": "ON_MAIN_36_PG_14_UNIT_AUTHORED_18_STATIC_PASS_RUNTIME_PENDING",
       "testFiles": [
         "tests/integration/db01-tenant-identity-invariants.test.ts",
         "tests/integration/db01-identity-fk-invariants.test.ts",
@@ -289,6 +289,29 @@
       "hostRoutingTestCases": 4,
       "hostRoutingCommit": "743dbe9352c63390cc98eb0030d90c0902bd93f1",
       "hostRoutingAcceptanceCommit": "7646e9440f81a536863361d53cc444bbe02feb50"
+    },
+    "db01UnmappedActiveFieldQueue": {
+      "status": "SOURCE_ONLY_173_OPEN_ZERO_VNEXT_RUNTIME_VERIFIED",
+      "queue": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+      "queueCommit": "30d88955c3ce6eed6197bbca5cb0e441f522b42f",
+      "priorityCorrectionCommit": "2f9a82a4b7ae6555a46091870d75520aff6c5f15",
+      "driftTest": "tests/db01-no-target-disposition-queue.test.mjs",
+      "driftTestCommit": "a063cfdd007ff8ef1e57d5b5b2b40b216c9e52d6",
+      "authoredNodeCases": 13,
+      "executedNodeCases": 0,
+      "sourceChecksExecuted": 12,
+      "sourceChecksPassed": 12,
+      "totalActiveSourceNoTarget": 173,
+      "perDomain": {
+        "DB01": 78,
+        "DB04": 76,
+        "DB09": 19
+      },
+      "securityP0": 38,
+      "latestJournal": "0041_db06_assessment_parent_scope",
+      "identityRegisteredTableDiffFrom0040": 0,
+      "postgresVerifiedFields": 0,
+      "warning": "Do not confuse no single-column target with 173 missing physical columns; normalized/provider, staged and retirement policy require explicit proof."
     }
   },
   "qualityGates": {
@@ -308,7 +331,9 @@
     "totalExecutedNodeChecks": "PASS_LOCAL_NODE_26_OF_26",
     "db01SourceContract": "PASS_18_OF_18_IN_PROCESS_NO_PG",
     "db01NewPostgresCases": "AUTHORED_36_EXECUTED_0",
-    "db01NewUnitCases": "AUTHORED_14_EXECUTED_0"
+    "db01NewUnitCases": "AUTHORED_14_EXECUTED_0",
+    "db01MainSourceCases": "36_PG_PLUS_14_UNIT_AUTHORED",
+    "db01UnmappedSource": "173_OPEN_12_OF_12_SOURCE_CHECKS_PASS"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -328,7 +353,8 @@
     "tests/integration/db01-core-structure-invariants.test.ts",
     "tests/unit/db01-tenant-domain-authorization.test.ts",
     "tests/integration/db01-concurrent-integrity.test.ts",
-    "tests/integration/db01-tenant-routing-lifecycle.test.ts"
+    "tests/integration/db01-tenant-routing-lifecycle.test.ts",
+    "tests/db01-no-target-disposition-queue.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
@@ -348,7 +374,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DATABASE DB-004 IN_PROGRESS: on main 36 PostgreSQL +14 authorization unit cases authored; 18 in-process source checks PASS. Obtain independent disposable PG/node Vitest execution + 312-field semantic proof; keep migrations Chat 1-only; Actions billing not blocker.",
+  "nextAction": "DB-004 DATABASE IN_PROGRESS: direct-main 36 PG+14 unit cases authored, no runtime acceptance; 173 active/lifecycle no-target fields routed DB01=78 DB04=76 DB09=19; 13 Node queue guards authored but not executed. Independent PG/Vitest needed, staged DB01 migration integration reserved Chat1.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -422,7 +448,10 @@
     "https://github.com/42Students/lms-vnext/commit/2ce1933a0e47e07386a280d468a894de4541984f",
     "https://github.com/42Students/lms-vnext/commit/743dbe9352c63390cc98eb0030d90c0902bd93f1",
     "https://github.com/42Students/lms-vnext/commit/7646e9440f81a536863361d53cc444bbe02feb50",
-    "https://github.com/42Students/lms-vnext/commit/aeb7fc5ad8892a958476e5b905f73a876203d06a"
+    "https://github.com/42Students/lms-vnext/commit/aeb7fc5ad8892a958476e5b905f73a876203d06a",
+    "https://github.com/42Students/lms-vnext/commit/2f9a82a4b7ae6555a46091870d75520aff6c5f15",
+    "https://github.com/42Students/lms-vnext/commit/a063cfdd007ff8ef1e57d5b5b2b40b216c9e52d6",
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6106878447"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
