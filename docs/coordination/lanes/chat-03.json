@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
+  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
   "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "CHAT03_MAIN_BRANCH_RECONCILIATION_AUDITED_WITH_SAFE_DIRECT_MAIN_FIXES",
+    "checkpointKind": "DB042_ATTENDANCE_INTEGRITY_COMPLETED_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "325c5303efcc6599bdf4ecb49d8644f670b3c541",
-    "lastWorkerMergedSha": "31f147f5ec7ae0ae7159374f6e8d867b67a26a46",
+    "observedMainSha": "100fcd8d09ef231a3e7e1a3bfc33423b2a4bb941",
+    "lastWorkerMergedSha": "f28f77851ab9d782df4c3000eb524718f620587b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Audited all 8 chat3-db09 branches and open PRs. Seven branches are fully in main ancestry; sole diverged chat3-db09-drive-group-integrity branch has five historical commits. Safe missing creator/PLpgSQL fixes and regression tests ported directly to main; did NOT force-merge stale branch. Three affected exact test callbacks passed in isolated JS source evaluator, Node/PostgreSQL NOT executed; DB007/012 still acceptance blocked, global DATABASE active."
+    "summary": "DB-042 COMPLETED source/staging. Attendance event-delivery tenant scope, ordinary/elective roster, authorized marker, future/correction-window timing, session lifecycle and DB-035 current-row/history composition staged. 12/12 V8-shim callbacks and 43/43 source assertions passed; PostgreSQL/runtime remains unverified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "After this branch audit, resume the currently eligible DATABASE queue task. Do not force-merge historical chat3-db09-drive-group-integrity; source design has been reconciled on main, but independent PostgreSQL and API wave acceptance remain. Only Chat 1 may register/modify shared Drizzle migration journal and barrel.",
+  "nextAction": "Pick next eligible DATABASE task; do not mark DB-042 DONE_VERIFIED until disposable PostgreSQL executes the negative/concurrency/replay matrix.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -171,10 +171,11 @@
     "DB-027",
     "DB-032",
     "DB-034",
-    "DB-036"
+    "DB-036",
+    "DB-042"
   ],
   "lastPickedAt": "2026-10-11T13:12:00+05:30",
-  "lastCompletedAt": "2026-10-11T14:05:00+05:30",
+  "lastCompletedAt": "2026-10-11T13:35:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
   "trackingDefinitions": {
