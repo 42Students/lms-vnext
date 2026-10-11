@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-069",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB069_TPO_OWNER_LIFECYCLE_STARTED",
-    "updatedOn": "2026-10-12T02:46:00+05:30",
-    "observedMainSha": "ed0c52ebc553c488d65fb3a0950a8be36460e5f2",
-    "lastWorkerMergedSha": "ed0c52ebc553c488d65fb3a0950a8be36460e5f2",
+    "checkpointKind": "DB069_TPO_OWNER_LIFECYCLE_SOURCE_STAGING_COMPLETE",
+    "updatedOn": "2026-10-12T02:51:00+05:30",
+    "observedMainSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
+    "lastWorkerMergedSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-069 active. Frozen source proves mutable job.owner_faculty_id and lead owner semantics plus atomic reassign-before-team-remove behavior; canonical vNext placement_jobs currently has immutable created_by_user_id but no mutable drive owner."
+    "summary": "DB-069 COMPLETED source/staging: mutable drive owner separate from creator; live owner backfill/check; placement-owner scoping for drives and leads; direct team identity/delete orphan guards; atomic reassignment; full-identity advisory lock races. Connector audit 32/32. PG/runtime not verified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -33,7 +33,8 @@
     "tests/db09-notification-undo-digest-staging.test.mjs (6 node:test static source tests AUTHORED; command not executed)",
     "tests/unit/outbound-global-email-suppression.test.ts (7 Vitest cases AUTHORED NOT EXECUTED)",
     "tests/db10-global-email-suppression-contract.test.mjs (5 source callbacks AUTHORED; V8 shim 5/5 passed; Node command NOT RUN)",
-    "tests/db08-cross-parent-integrity.test.mjs (static + opt-in disposable PostgreSQL negatives/race AUTHORED; PostgreSQL command not executed)"
+    "tests/db08-cross-parent-integrity.test.mjs (static + opt-in disposable PostgreSQL negatives/race AUTHORED; PostgreSQL command not executed)",
+    "tests/db09-team-owner-lifecycle.test.mjs (static + opt-in disposable PostgreSQL direct SQL and 3 race shapes AUTHORED; not executed)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-11 10 read-only GitHub source assertions (not Node runner / PostgreSQL)",
@@ -41,7 +42,8 @@
     "2026-10-11 DB-032: 79/79 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
     "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
     "2026-10-11 DB-050: 5/5 exact standalone source-guard callbacks executed via V8 readFileSync/assert shim, NOT Node or PG",
-    "2026-10-12 DB-066: 16/16 connector-based read-only source/staging assertions clean (NOT node:test / PostgreSQL)"
+    "2026-10-12 DB-066: 16/16 connector-based read-only source/staging assertions clean (NOT node:test / PostgreSQL)",
+    "2026-10-12 DB-069: 32/32 connector-based source/staging assertions clean (NOT node:test/PostgreSQL)"
   ],
   "blockers": [],
   "handoffs": [
@@ -72,7 +74,7 @@
       "request": "Transferred by explicit user instruction. Original DB-056 and Chat3 contribution credited; Chat5 owns DB064 continuation."
     }
   ],
-  "nextAction": "Stage owner_membership_id and operation-specific drive-owner/team-removal relational guards without editing registered migrations/barrel; author source and disposable PostgreSQL witnesses.",
+  "nextAction": "Chat 3 available. DB-066 and DB-069 source/staging complete; take next non-conflicting DATABASE gap. Migration registration stays Chat 1-only.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -194,7 +196,12 @@
     "https://github.com/42Students/lms-vnext/commit/a282e35c93f0bdaed0229ca4fb1a7856d71d36e9",
     "https://github.com/42Students/lms-vnext/commit/37d6550783fd8500cc20a3b7b0c314df2f571b1c",
     "https://github.com/42Students/lms-vnext/commit/15988bac994e22a93e4523daf4868c8717d1e600",
-    "https://github.com/42Students/lms-vnext/commit/b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6"
+    "https://github.com/42Students/lms-vnext/commit/b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6",
+    "https://github.com/42Students/lms-vnext/commit/52b0351069b6a0f65e398c998a9017171ca81128",
+    "https://github.com/42Students/lms-vnext/commit/11af01b7f526a08d3b70b2834f11f7b299bd4e6a",
+    "https://github.com/42Students/lms-vnext/commit/1f31a6283ef13cbbd24313582d1c31164478b5a6",
+    "https://github.com/42Students/lms-vnext/commit/656b71e4ab0d2362302061925e0a93da2b7734e6",
+    "https://github.com/42Students/lms-vnext/commit/3f7b9c0f2a4bdebe807e12b9e26675949d00c33e"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -233,10 +240,11 @@
     "DB-061",
     "DB-062",
     "DB-063",
-    "DB-066"
+    "DB-066",
+    "DB-069"
   ],
   "lastPickedAt": "2026-10-12T02:46:00+05:30",
-  "lastCompletedAt": "2026-10-12T02:43:00+05:30",
+  "lastCompletedAt": "2026-10-12T02:51:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
   "trackingDefinitions": {
