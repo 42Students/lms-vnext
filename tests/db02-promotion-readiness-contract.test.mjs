@@ -83,3 +83,22 @@ test("two-session race harness cannot pass on unrelated SQL errors", () => {
   assert.match(races, /RACE1_STATE/);
   assert.match(races, /RACE2_STATE/);
 });
+
+
+test("progression-backed program terms are retained while unused terms stay deletable", () => {
+  const start = canonical.indexOf("CREATE FUNCTION db02_guard_program_term_delete_history()");
+  const end = canonical.indexOf("CREATE TRIGGER db02_program_term_delete_history_guard", start);
+  assert.ok(start !== -1 && end > start);
+  const guard = canonical.slice(start, end);
+  assert.match(guard, /FROM cohort_progression_state cps/);
+  assert.match(guard, /cps\.current_term_number = OLD\.term_number/);
+  assert.match(guard, /FROM cohort_progression_events cpe/);
+  assert.match(guard, /cpe\.from_term_number = OLD\.term_number/);
+  assert.match(guard, /cpe\.to_term_number = OLD\.term_number/);
+  assert.match(
+    guard,
+    /Program term cannot be deleted after cohort progression references it/,
+  );
+  assert.match(acceptance, /program term referenced by progression history was deleted/);
+  assert.match(acceptance, /unused program term could not be deleted/);
+});
