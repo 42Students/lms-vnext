@@ -91,12 +91,14 @@ It stages:
 6. **Current-record trigger** — immutable event/member identity, exact roster, marker/timing, sane timestamps.
 7. **Deferred current-row→session trigger** — an attendance row cannot commit unless its session ends MARKED.
 8. **Session trigger** — event identity immutable, MARKED cannot become UNMARKED, timing/marker enforced, mark time cannot move backward.
+9. **Current-row retention guard** — attendance current rows cannot be physically deleted once the normalized history design is adopted; PRESENT is a status correction.
+10. **Marked-session retention guard** — a MARKED session cannot be deleted and made indistinguishable from "never taken".
 
 ## Important boundary with DB-035
 
 DB-042 does **not** register or redefine `attendance_record_events`, row versions, or immutable correction history. DB-035 owns that history contract.
 
-Existing vNext services currently delete an exception row to represent PRESENT. DB-042 does not block DELETE. If DB-035's final producer cutover keeps a persistent PRESENT row/history event instead, W01/API phase must compose both designs once and update producers transactionally. Do not register contradictory history/current-row semantics independently.
+Existing vNext services currently delete an exception row to represent PRESENT. DB-035's immutable `attendance_record_events` FK is `ON DELETE RESTRICT`, so that behavior cannot remain once history is registered. DB-042 therefore stages the final fail-closed shape explicitly: physical DELETE of a current attendance row is rejected; a correction to PRESENT must UPDATE the retained row to `PRESENT` and append DB-035's matching `CORRECT` event in the same transaction. A MARKED session is also non-deletable. This is a required narrow producer cutover before registration, not runtime work claimed by DB-042.
 
 ## Acceptance matrix — must execute on disposable PostgreSQL
 
@@ -117,6 +119,9 @@ Existing vNext services currently delete an exception row to represent PRESENT. 
 - Session `marked_at` cannot move backwards.
 - Attendance row without final MARKED session fails at transaction commit.
 - Existing event/member unique constraint still rejects duplicates under concurrency.
+- Physical DELETE of an attendance current row is rejected after normalized history cutover.
+- PRESENT correction is represented by retained current row + DB-035 CORRECT history event.
+- MARKED session DELETE is rejected.
 - DB-035 history/version candidate composes with DB-042 without trigger/constraint collisions.
 - Empty-database registered migration replay and schema drift check pass.
 
