@@ -2706,17 +2706,17 @@
         "tests/db09-company-share-defaults-staging.test.mjs",
         "docs/planning/db09-integration-manifest-2026-10-11.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f1e8b53baf5278754bd9caeb7f86af8d0a0045fc",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-047 source/staging implementation complete. Canonical placementCompanyRelationships now owns nullable share_column_defaults with the exact 12-value source-backed disclosure allowlist. The prior DB09 company-export SQL is SOURCE REFERENCE ONLY/NO DDL, eliminating duplicate ALTER/snapshot drift. Contract preserves the historical global default as a tenant-safe relationship redesign without inventing a current live legacy consumer; actual secure share rows keep independent immutable column snapshots. 8/8 staging callbacks passed under isolated V8 read/assert shims and 29/29 independent frozen/current source assertions passed. No Node runner, TypeScript, PostgreSQL, registered migration replay or runtime/API execution claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:42:00+05:30",
       "startedAt": "2026-10-11T13:43:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T13:50:00+05:30",
+      "completionCommitSha": "f1e8b53baf5278754bd9caeb7f86af8d0a0045fc",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2740,6 +2740,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:43:00+05:30",
           "reason": "Chat 3 began canonical placementCompanyRelationships schema alignment against DB09 source ledger/candidate SQL."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:50:00+05:30",
+          "reason": "DB047 canonical share-default schema drift closed; 8/8 shim callbacks + 29/29 source assertions, PostgreSQL/runtime verification pending."
         }
       ]
     }
