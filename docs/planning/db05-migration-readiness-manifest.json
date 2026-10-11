@@ -433,6 +433,12 @@
       "status": "BLOCKED",
       "owner": "DB05_W01_API_PHASE",
       "evidence": "Legacy lesson.sequence is Java long, vNext course_lessons.sequence integer; positive range and JS/Drizzle types not yet reconciled, avoid silent truncation."
+    },
+    {
+      "id": "DB05_LEGACY_CLASS_RESCOPE_CLEAR_API_PARITY",
+      "status": "BLOCKED",
+      "owner": "DATABASE_TO_API_HANDOFF",
+      "evidence": "Legacy classId 0=null/omitted semantics differ between create/update; negative value clears during update; vNext updateLessonContentInputSchema has no delivery change. Contract docs/planning/db05-lesson-content-rescope-contract.md; no validated update/clear API and PG downstream reference acceptance."
     }
   ],
   "sourceReview": {
@@ -466,7 +472,8 @@
     "tests/db05-lesson-faculty-owner-guard.test.mjs",
     "tests/db05-lesson-content-tenant-scope.test.mjs",
     "tests/db05-lesson-delete-restore-and-owner.test.mjs",
-    "tests/db05-lesson-active-enabled.test.mjs"
+    "tests/db05-lesson-active-enabled.test.mjs",
+    "tests/db05-lesson-content-rescope-source.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -484,7 +491,8 @@
     "Lesson content basic optional delivery FK still allows wrong offering/cohort/period/college via direct SQL; companion staged, W01 integration and disposable PostgreSQL negatives pending.",
     "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending.",
     "Legacy delete lesson cascades content tombstones atomically; restore parent only. SQL draft is unregistered and current vNext reads do NOT filter these tombstones; stop release until atomic API/DB cutover and 2-session PG tests.",
-    "Legacy content owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof."
+    "Legacy content owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
+    "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
