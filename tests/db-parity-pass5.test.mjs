@@ -124,8 +124,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.status, "AUTHORED_EXECUTION_NOT_RUN");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
-  assert.equal(index.counts.explicitConcurrencyMissing, 2);
-  assert.equal(index.counts.draftUnregisteredExcluded, 3);
+  assert.equal(index.counts.explicitConcurrencyMissing, 0);
+  assert.equal(index.counts.draftUnregisteredExcluded, 3);\n  assert.equal(index.counts.knownRedRaceAuthored, 2);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
 
@@ -146,14 +146,21 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.existsSync(witness.file), witness.id + ": test file missing");
     const source = fs.readFileSync(witness.file, "utf8");
     assert.ok(source.includes(witness.title), witness.id + ": concurrency test title missing");
-    assert.match(witness.state, /NOT_RUN_IN_DB018$/);
+    assert.match(witness.state, /(NOT_RUN_IN_DB018|DB018_NOT_RUN)$/);
   }
 
+  assert.deepEqual(index.missingConcurrencyWitnesses, []);
   assert.deepEqual(
-    index.missingConcurrencyWitnesses.map((w) => w.raceProbe),
+    index.knownRedRaceWitnesses.map((w) => w.raceProbe),
     ["P5-R01", "P5-R02"],
   );
-  assert.ok(index.missingConcurrencyWitnesses.every((w) => /MISSING/.test(w.state)));
+  for (const witness of index.knownRedRaceWitnesses) {
+    assert.equal(witness.execution, "NOT_RUN");
+    assert.match(witness.state, /EXPECTED_FAIL_UNTIL_FIXED$/);
+    assert.ok(fs.existsSync(witness.file), witness.id + ": red race test file missing");
+    const source = fs.readFileSync(witness.file, "utf8");
+    assert.ok(source.includes(witness.title), witness.id + ": red race title missing");
+  }
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
 });
 
@@ -189,7 +196,8 @@ test("DB18 stale-check races stay red until transaction revalidation is implemen
 
   const index = load("tests/integration/db18-witness-index.json");
   assert.deepEqual(
-    index.missingConcurrencyWitnesses.map((w) => w.raceProbe),
+    index.knownRedRaceWitnesses.map((w) => w.raceProbe),
     ["P5-R01", "P5-R02"],
   );
+  assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
