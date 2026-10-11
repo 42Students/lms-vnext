@@ -64,11 +64,20 @@
       "prereqs": [
         "CORE_COURSE_LESSON_TABLES",
         "LESSON_DISCUSSIONS_TENANT_PARENT_NEGATIVE",
-        "DISCUSSION_RUNTIME_EXTENSION_DECISIONS"
+        "DISCUSSION_RUNTIME_EXTENSION_DECISIONS",
+        "LESSON_DISCUSSIONS_COURSE_PERIOD_DELIVERY_MATCH",
+        "LESSON_DISCUSSIONS_UPSTREAM_REPARENT_PROOF"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
-      "readyForProduction": false
+      "readyForProduction": false,
+      "companionIntegrityDraft": {
+        "path": "scripts/sql/db05-lesson-discussions-same-college.draft.sql",
+        "purpose": "COURSE_DEPARTMENT_AND_CONTENT_OFFERING_PERIOD_AND_OPTIONAL_DELIVERY_SECTION_AND_AUTHOR_RESOLVER_SAME_COLLEGE",
+        "registered": false,
+        "postgresExecuted": false,
+        "note": "REPLACE existing function body once; do NOT install duplicate trigger. W01 owns integration. Child guard does not protect later reparenting."
+      }
     },
     {
       "id": "db05-classroom-history",
@@ -222,6 +231,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Child course trigger cannot prevent later direct departments.college_id and academic_periods.college_id mutation; reconcile with DB02/DB05 parent owners."
+    },
+    {
+      "id": "LESSON_DISCUSSIONS_SAME_COLLEGE_FULL_PATH_GUARD",
+      "status": "BLOCKED",
+      "owner": 1,
+      "evidence": "Unregistered replacement function candidate checks actual course department, offering period, optional delivery's offering and section period, author and resolver membership. No PG execution."
+    },
+    {
+      "id": "LESSON_DISCUSSIONS_UPSTREAM_REPARENT_GUARD",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Existing discussion child trigger cannot prevent reparenting of lesson/content, course department, offerings, academic periods, delivery or memberships."
     }
   ],
   "sourceReview": {
@@ -255,7 +276,8 @@
     "Course-parent upstream reparent and discussions tenant integrity must be proven",
     "Course_display_contents itself remains staged/unregistered",
     "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered.",
-    "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded."
+    "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded.",
+    "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance."
 }
