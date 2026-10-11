@@ -215,7 +215,7 @@ Identity lifecycle is intentionally asymmetric:
 - removing the `LEARNER` role or changing the membership to `ENDED` closes active section enrollment and marks the active learner-program enrollment `WITHDRAWN`;
 - restoring a role/membership must not silently resurrect old academic history; reactivation/transfer is an explicit academic operation.
 
-The unregistered parent/enrollment extension and single-session acceptance harness encode these rules. They remain unexecuted PostgreSQL evidence.
+The canonical unregistered DB02 staging SQL and single-session acceptance harness encode these rules. They remain unexecuted PostgreSQL evidence.
 
 Calculated redesign does not mean “unmapped.” The producer, filter semantics, tenant scope and race behavior must still be recorded in the DB02 row-level audit.
 
@@ -258,44 +258,48 @@ It currently stages:
 - identity lifecycle cleanup that closes active faculty-course/teaching/section assignments and unassigns only future scheduled events while retaining past attribution;
 - tenant consistency, promotion monotonic/version and program-duration shrink guards.
 
-Deconflicted incremental extension:
+Consolidated integrity layers now live in the same canonical staging file:
 
-`scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`
+`scripts/sql/db02-academic-progression-and-rooms-staging.sql`
 
-This extension deliberately does **not** redefine canonical triggers. It adds only:
+The canonical file now also contains:
 
 - academic-period, membership and lecture-hall college-owner immutability;
 - cohort program/start-period and program-term identity immutability;
 - section historical reparent protection;
 - active LEARNER program-enrollment tenant/program/cohort checks;
 - learner section-enrollment cohort/period checks;
-- section parent row locks against history-insert vs structural-move races;
+- section parent SHARE locks against history-insert vs structural-move races;
 - immutable learner-program and section-enrollment parent identity;
-- LEARNER-role removal / membership-END lifecycle cleanup that withdraws active academic state, while temporary SUSPENDED membership preserves it; role-delete and membership-END use separate table-specific trigger functions. Cohort/program-term and learner-program/section-enrollment identity guards are also table-specific: the extension contains no `TG_TABLE_NAME` branching or heterogeneous `NEW/OLD` record coercion.
+- LEARNER-role removal / membership-END lifecycle cleanup while SUSPENDED preserves academic state;
+- progression-state identity/delete/truncate protection;
+- timestamp-only future-room lifecycle protection;
+- historic offering/delivery/event parent immutability after dependent teaching/course/attendance history;
+- SHARE-lock serialization for offering→delivery, delivery→teaching/course-link, and event→attendance history.
 
-Static deconfliction safety net:
+The previously separate DB02 parent/enrollment, progression/schedule and historic-parent drafts were consolidated and removed. Static source tests now read the canonical stage directly.
 
-`tests/db02-academic-parent-tenancy-contract.test.mjs`
+Current direct structural reconciliation on 2026-10-11 found:
 
-Direct latest-content reconciliation on 2026-10-11 found:
-
-- canonical PL/pgSQL functions: **25/25 paired**;
-- extension PL/pgSQL functions: **11/11 paired**;
-- canonical ↔ extension trigger-name overlap: **0**.
+- canonical PL/pgSQL functions: **45/45 paired**;
+- canonical triggers: **53 uniquely named**;
+- malformed single-dollar function bodies: **0**;
+- duplicate function names: **0**;
+- duplicate trigger names: **0**.
 
 Executable but still **unexecuted** PostgreSQL acceptance helpers:
 
 - `scripts/sql/db02-postgres-acceptance-unregistered.sql` — transactional single-session negative/positive invariants with rollback;
 - `scripts/sql/db02-postgres-concurrency-unregistered.sh` — two-session promotion CAS and hall archive-vs-booking races on a disposable DB.
 
-**Chat 1 remains the only worker allowed to register numbered Drizzle migrations or the shared schema barrel.** Both SQL drafts must be consolidated before registration; no staging file or authored harness counts as a PostgreSQL PASS.
+**Chat 1 remains the only worker allowed to register numbered Drizzle migrations or the shared schema barrel.** The DB02 SQL layers are already consolidated into one unregistered canonical stage; Chat 1 must translate/review that stage into numbered Drizzle migration/schema changes. No staging file or authored harness counts as a PostgreSQL PASS.
 
 ## 9. Acceptance required before DB-005 can be DONE_VERIFIED
 
 Design classification is complete, but DB-005 remains open until the registered implementation is proven on exact SHAs:
 
 1. re-check current legacy BE/FE oracle heads and confirm the 125/125 target map has no new producer/consumer drift;
-2. Chat 1 consolidates canonical DB02 + the deconflicted parent/enrollment extension into reviewed Drizzle schema/migrations with **no duplicate guards**;
+2. Chat 1 translates/reviews the single consolidated canonical DB02 stage into Drizzle schema/migrations with **no duplicate guards**;
 3. zero-to-current migration replay succeeds on disposable PostgreSQL;
 4. run `scripts/sql/db02-postgres-acceptance-unregistered.sql` and attach its exact DB/schema SHA evidence;
 5. run `scripts/sql/db02-postgres-concurrency-unregistered.sh` and attach exact outputs proving one promotion CAS winner and both hall lock-order race outcomes;
@@ -311,14 +315,12 @@ Design classification is complete, but DB-005 remains open until the registered 
 
 No source review, target design, staging SQL, static regex test, authored harness, CI absence or billing issue counts as runtime verification. **Current PostgreSQL/runtime verified fields remain 0.**
 
-## Direct SQL tenant stability extension (Chat 4)
+## Direct SQL tenant/history stability (Chat 4)
 
-**Incremental unregistered draft:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
-**Static safety net:** `tests/db02-academic-parent-tenancy-contract.test.mjs`  
-**Status:** deconflicted against canonical DB02; source/static reviewed; **not registered or PostgreSQL runtime verified**.
+**Canonical unregistered stage:** `scripts/sql/db02-academic-progression-and-rooms-staging.sql`  
+**Static safety nets:** `tests/db02-academic-parent-tenancy-contract.test.mjs`, `tests/db02-schedule-progression-integrity-overlay.test.mjs`, `tests/db02-historic-parent-reassignment-contract.test.mjs`  
+**Status:** consolidated and source/static reviewed; **not registered or PostgreSQL runtime verified**.
 
-The extension now contains only invariants not owned by the canonical progression/room draft. Its static contract explicitly fails if the two drafts ever reuse a trigger name. The integration goal is one consolidated Chat-1-owned migration, not two independently registered layers.
-
-A remaining product/API compatibility item is controlled **section transfer**: legacy class update can reassign batch/program, while the DB extension refuses silent reparent once learner/faculty/delivery/schedule history exists. Empty sections may still move within canonical same-college/period-window rules. Any historical transfer must become an explicit audited workflow during the API phase rather than rewriting old academic history.
+The canonical stage now refuses silent academic-parent rewrites once historical learner/faculty/delivery/schedule/attendance facts exist. Empty sections may still move within the canonical same-college/period-window rules; any historical transfer must become an explicit audited API workflow rather than rewriting old academic history. Offering, delivery and schedule-event history are similarly protected, with parent SHARE locks intended to serialize concurrent history creation against parent reparenting.
 
 No PostgreSQL witness has been executed from Chat 4; CI availability is not used as a completion gate.
