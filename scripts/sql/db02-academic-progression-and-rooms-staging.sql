@@ -611,6 +611,21 @@ DECLARE
   period_end_day date;
   period_status academic_period_status;
 BEGIN
+  -- ON DELETE SET NULL on users is an identity-lifecycle mutation, not an academic
+  -- correction. Allow only the FK-triggered nulling of the last-actor pointer when every
+  -- canonical progression field and version are unchanged. Direct actor-only UPDATEs still
+  -- arrive at trigger depth 1 and are rejected by the normal version/correction rules below.
+  IF TG_OP = 'UPDATE'
+     AND pg_trigger_depth() >= 2
+     AND OLD.updated_by_user_id IS NOT NULL
+     AND NEW.updated_by_user_id IS NULL
+     AND NEW.current_term_number IS NOT DISTINCT FROM OLD.current_term_number
+     AND NEW.current_academic_year_start IS NOT DISTINCT FROM OLD.current_academic_year_start
+     AND NEW.current_period_id IS NOT DISTINCT FROM OLD.current_period_id
+     AND NEW.version IS NOT DISTINCT FROM OLD.version THEN
+    RETURN NEW;
+  END IF;
+
   SELECT p.duration_terms, d.college_id, start_ap.start_date, end_ap.end_date
     INTO max_terms, cohort_college, cohort_start_day, cohort_end_day
     FROM cohorts c
@@ -732,7 +747,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_progression_history
-AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version, updated_by_user_id
+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 
@@ -1321,7 +1336,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_arc
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
 --    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
---    the event actor reference without creating a fake promotion event.
+--    both state/event actor references without changing version/term or creating a fake event.
 -- 10. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed;
 --     concurrently archiving a hall vs creating a future booking must yield exactly one valid winner.
 -- 11. Verify CANCELLED events release the scheduling resource while attendance/history remains.
