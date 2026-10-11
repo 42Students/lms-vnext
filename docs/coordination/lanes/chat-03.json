@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-056",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB007_PG_WITNESS_AUTHORED_NOT_EXECUTED",
+    "checkpointKind": "DB056_PRINCIPAL_GUARD_HARDENING_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "05aa3fd9619d7ea37fc603665875a18d048c2e1c",
-    "lastWorkerMergedSha": "05aa3fd9619d7ea37fc603665875a18d048c2e1c",
+    "observedMainSha": "aae3db52d4700184cdab763a9769a2f3b4e90973",
+    "lastWorkerMergedSha": "aae3db52d4700184cdab763a9769a2f3b4e90973",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-007 source/staging closure materially advanced. 103/103 candidates reviewed; 33 historical fields have strong retirement-candidate evidence, 0 approved retirements. Normalized education/profile-image Drizzle staging, hardened receipt parent keys, W01 manifest/static guards and opt-in disposable PostgreSQL witness are on main. PG witness is authored but unexecuted; no migration/barrel/runtime verification."
+    "summary": "Fresh DB-056 claimed after DB-012 source/design closure. Proven gap: staged db09_has_active_tpo_actor accepts FACULTY_COORDINATOR through placement_tpo_team_members, but canonical placements.manage authorizes only TPO/COLLEGE_ADMIN. Fixing staged DB guard + source regression only."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,12 +41,7 @@
     "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
     "2026-10-11 DB-050: 5/5 exact standalone source-guard callbacks executed via V8 readFileSync/assert shim, NOT Node or PG"
   ],
-  "blockers": [
-    "DB-012: W01 migration registration/dependency reconciliation pending.",
-    "DB-012: CI-independent disposable PostgreSQL replay/tenant/privacy/concurrency witnesses pending; Actions billing is irrelevant.",
-    "DB-012: runtime producer/consumer/API compatibility against exact registered schema pending.",
-    "DB-007 remains independently blocked on its own migration/runtime/historical-disposition gates."
-  ],
+  "blockers": [],
   "handoffs": [
     {
       "to": "CHAT_02/CHAT_04",
@@ -69,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "No unrestricted dependency-safe DATABASE task is free. Keep DB-007 blocked until W01 registers the approved shape, execute tests/db04-profile-education-images-pg.test.mjs only on disposable PostgreSQL, then prove runtime producer cutover and explicit historical retirements. DB-012 remains blocked on analogous W01/PG/runtime acceptance.",
+  "nextAction": "Restrict db09_has_active_tpo_actor to canonical persisted TPO/COLLEGE_ADMIN membership; document department-scoped coordinator non-equivalence; add exact static source regression and reconcile main before completion.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -198,7 +193,8 @@
     "DB-036",
     "DB-042",
     "DB-047",
-    "DB-050"
+    "DB-050",
+    "DB-056"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -209,7 +205,7 @@
     "DB-047",
     "DB-050"
   ],
-  "lastPickedAt": "2026-10-11T13:43:00+05:30",
+  "lastPickedAt": "2026-10-11T20:35:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
