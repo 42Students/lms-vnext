@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T20:45:00+05:30",
+  "updatedOn": "2026-10-11T20:49:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3333,17 +3333,17 @@
         "docs/planning/db09-recruiter-read-watermark-audit.md",
         "tests/db09-recruiter-read-watermark.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "cdd35f51172a5a7f0c4ee0f9cfccbabbd860094c",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-057 source/staging implementation complete. Recruiter notification read marker stays active-grant scoped, key identity is immutable, future watermark writes fail, and watermark regression fails. 5/5 exact committed source assertions executed in connector V8 and passed. Node test/registered migration/PostgreSQL/concurrency execution not claimed; COMPLETED not DONE_VERIFIED.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T20:44:00+05:30",
       "startedAt": "2026-10-11T20:45:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T20:49:00+05:30",
+      "completionCommitSha": "cdd35f51172a5a7f0c4ee0f9cfccbabbd860094c",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3367,6 +3367,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T20:45:00+05:30",
           "reason": "Chat 3 begins staged read-watermark monotonic/future/identity guard and source regression."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T20:49:00+05:30",
+          "reason": "Read watermark grant/future/monotonic/identity guards + audit/regression committed; 5/5 source assertions passed, PostgreSQL pending."
         }
       ]
     }
