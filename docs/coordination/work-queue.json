@@ -1859,6 +1859,51 @@
         }
       ],
       "progressNote": "Adversarial DB09 staging hardening in progress; scope expanded to canonical CRM staging after source review proved additional recruiter grant/company, owner/activity principal, invite-lifecycle and terminal follow-up invariants."
+    },
+    {
+      "id": "DB-033",
+      "phase": "DATABASE",
+      "title": "Disposition active legacy app_setting runtime keys",
+      "scope": "Prevent false app_setting→module_access_rules equivalence by enumerating source-active generic runtime keys, routing each to DB01/DB05/DB08/DB10 or canonical module_access_rules, recording explicitly retired course toggles, and flagging the legacy arbitrary-key super-admin surface for typed-registry redesign.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-app-setting-disposition.json",
+        "docs/planning/database-parity-app-settings-contract.md",
+        "tests/db10-app-setting-disposition.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T13:24:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T13:24:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh cross-domain source gap: active AppSettingsService/TenantAdminController generic key persistence is not semantically equivalent to vNext module_access_rules."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:24:00+05:30",
+          "reason": "Chat 5 CAS-created isolated disposition/docs/test task; no DB01/DB05/DB08 implementation or shared migration paths claimed."
+        }
+      ]
     }
   ],
   "eventModel": {
