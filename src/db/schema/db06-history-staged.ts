@@ -32,7 +32,11 @@ import { users } from "./users";
 import { assignmentSubmissions } from "./assessments";
 import { attendanceRecords } from "./attendance";
 import { sectionScheduleEvents } from "./academics";
-import { courseSectionDeliveries } from "./courses";
+import { attendanceRecords } from "./attendance";
+import {
+  courseSectionDeliveries,
+  sectionScheduleEventCourses,
+} from "./courses";
 
 export const assignmentGradeEventsStaged = pgTable(
   "assignment_grade_events",
@@ -151,18 +155,15 @@ export const attendanceRecordEventsStaged = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
 
-    // Canonical DB-045 identity: vNext persists every attendance state,
-    // including PRESENT, in one stable current row. History therefore follows
-    // that row and its optimistic version instead of legacy delete/recreate
-    // absence semantics.
+    // Final normalized current-row model: DB-042 retains one row for every
+    // learner once attendance is marked, including explicit PRESENT. History
+    // can therefore use immutable row identity plus monotonic row version.
     attendanceRecordId: uuid("attendance_record_id").notNull(),
     scheduleEventId: uuid("schedule_event_id")
       .notNull()
       .references(() => sectionScheduleEvents.id, { onDelete: "restrict" }),
-    // Nullable for source-compatible course-less schedule events. If a
-    // schedule is course-linked, the event scope guard requires this to equal
-    // the canonical section_schedule_event_courses delivery.
     deliveryId: uuid("delivery_id")
+      .notNull()
       .references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
     membershipId: uuid("membership_id")
       .notNull()
@@ -171,6 +172,7 @@ export const attendanceRecordEventsStaged = pgTable(
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
 
+    // Event actor is separate from the row's previous/new marker snapshot.
     actorUserId: uuid("actor_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -198,8 +200,8 @@ export const attendanceRecordEventsStaged = pgTable(
       .defaultNow(),
   },
   (table) => [
-    // Promotion prerequisite: attendance_records receives the matching
-    // composite UNIQUE plus version column in the synchronized migration.
+    // Promotion prerequisites add matching UNIQUE targets to both parent
+    // relations before these composite FKs are registered.
     foreignKey({
       name: "attendance_record_events_record_identity_fk",
       columns: [
@@ -213,6 +215,15 @@ export const attendanceRecordEventsStaged = pgTable(
         attendanceRecords.membershipId,
       ],
     }).onDelete("restrict"),
+    foreignKey({
+      name: "attendance_record_events_delivery_identity_fk",
+      columns: [table.scheduleEventId, table.deliveryId],
+      foreignColumns: [
+        sectionScheduleEventCourses.scheduleEventId,
+        sectionScheduleEventCourses.deliveryId,
+      ],
+    }).onDelete("restrict"),
+
     uniqueIndex("attendance_record_events_record_version_uq").on(
       table.attendanceRecordId,
       table.recordVersionAfter,
@@ -251,11 +262,11 @@ export const attendanceRecordEventsStaged = pgTable(
     ),
     check(
       "attendance_record_events_version_ck",
-      sql.raw(`("record_version_before" is null and "record_version_after" = 0) or ("record_version_before" >= 0 and "record_version_after" = "record_version_before" + 1)`),
+      sql.raw(`("action" = 'MARK' and "record_version_before" is null and "record_version_after" = 0) or ("action" = 'CORRECT' and "record_version_before" is not null and "record_version_before" >= 0 and "record_version_after" = "record_version_before" + 1)`),
     ),
     check(
       "attendance_record_events_shape_ck",
-      sql.raw(`(("action" = 'MARK' and "previous_status" is null and "previous_note" is null and "previous_marked_by_user_id" is null and "previous_marked_at" is null and "record_version_before" is null and "record_version_after" = 0) or ("action" = 'CORRECT' and "previous_status" is not null and "previous_marked_by_user_id" is not null and "previous_marked_at" is not null and "record_version_before" is not null and "record_version_after" = "record_version_before" + 1)) and "new_marked_by_user_id" is not null and "new_marked_at" is not null`),
+      sql.raw(`("action" = 'MARK' and "previous_status" is null and "previous_note" is null and "previous_marked_by_user_id" is null and "previous_marked_at" is null) or ("action" = 'CORRECT' and "previous_status" is not null and "previous_marked_by_user_id" is not null and "previous_marked_at" is not null)`),
     ),
   ],
 );
