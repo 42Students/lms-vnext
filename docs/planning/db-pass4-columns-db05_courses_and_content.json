@@ -501,7 +501,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "NO ACTIVE JAVA COURSE READ/WRITE IN BOUNDED 13-FILE SOURCE REVIEW; historical MySQL snapshot field; explicit typed-retain vs retire decision PENDING; see docs/planning/db05-historical-course-columns-source-evidence.json.",
+          "db008SourceDisposition": "HISTORICAL_SNAPSHOT_PERSISTED_ONLY_BOUNDED_CURRENT_RUNTIME_NEGATIVE_NO_PRODUCT_DECISION",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "src/test/resources/db/mysql-schema-snapshot.sql (historical column)",
+            "13 inspected current legacy course Java source surfaces, exact Git blob evidence stored in docs/planning/db05-historical-course-columns-source-evidence.json",
+            "Source scan is bounded, not a complete repository-wide proof",
+            "Migration/unification/retirement not approved; PostgreSQL not executed"
+          ]
         },
         {
           "legacyTable": "course",
@@ -563,7 +572,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "NO ACTIVE JAVA COURSE READ/WRITE IN BOUNDED 13-FILE SOURCE REVIEW; historical MySQL snapshot field; explicit typed-retain vs retire decision PENDING; see docs/planning/db05-historical-course-columns-source-evidence.json.",
+          "db008SourceDisposition": "HISTORICAL_SNAPSHOT_PERSISTED_ONLY_BOUNDED_CURRENT_RUNTIME_NEGATIVE_NO_PRODUCT_DECISION",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "src/test/resources/db/mysql-schema-snapshot.sql (historical column)",
+            "13 inspected current legacy course Java source surfaces, exact Git blob evidence stored in docs/planning/db05-historical-course-columns-source-evidence.json",
+            "Source scan is bounded, not a complete repository-wide proof",
+            "Migration/unification/retirement not approved; PostgreSQL not executed"
+          ]
         },
         {
           "legacyTable": "course",
