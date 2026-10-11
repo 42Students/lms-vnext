@@ -87,3 +87,13 @@ test("history-producing inserts lock section parents against reparent races", ()
     "db02_lock_section_for_schedule_event",
   ]) assert.match(sql, new RegExp("CREATE TRIGGER " + trigger));
 });
+
+test("direct SQL cannot enroll faculty as learners or non-faculty as instructors", () => {
+  assert.match(sql, /DB02 learner enrollment requires active college membership/);
+  assert.match(sql, /membership_id = NEW\.membership_id AND role = 'LEARNER'/);
+  assert.match(sql, /DB02 learner enrollment requires an active LEARNER/);
+  assert.match(sql, /DB02 section faculty assignment requires active membership/);
+  assert.match(sql, /membership_id = NEW\.membership_id AND role = 'FACULTY'/);
+  assert.match(sql, /DB02 section faculty assignment requires FACULTY role/);
+  assert.match(sql, /FOR SHARE/);
+});

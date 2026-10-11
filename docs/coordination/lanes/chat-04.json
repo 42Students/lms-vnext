@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_AND_TARGET_DISPOSITION_COMPLETE_STATIC_STAGING_HARDENED",
+    "checkpointKind": "DB005_SOURCE_TARGET_RECONCILED_PARENT_TENANT_GUARDS_STAGED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c777122ccc6abf2fddae98b918d22ef38ebff77c",
-    "lastWorkerMergedSha": "8d348b9da606aab3e83d35af6b940939dae235b2",
+    "lastWorkerMergedSha": "952e197d7f2945facec2cb928f2e951bcb9d9191",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 has 125/125 source dispositions and 125/125 target design dispositions. Canonical unregistered staging is statically reconciled on current main with no malformed exact PL/pgSQL delimiters; progression actor retention/TRUNCATE protection, hall archive-vs-booking serialization, stable offering term identity, cohort INACTIVE/dates, section compatibility fields and ACTIVE FACULTY course-pool guard are present. PostgreSQL/runtime verified fields remain 0."
+    "summary": "DB02 125/125 legacy fields source/target design-classified (0 runtime verified); isolated unregistered parent/enrollment tenant SQL draft protects college ownership, program/course within-college reassignment, cohort/section/learner/faculty scopes, immutable history and FOR SHARE section reparent serialization. 10 authored source regression tests, 12/12 read-only source checks. No PostgreSQL replay or Node test suite run."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -27,11 +27,13 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db02-staging-contract.test.mjs"
+    "tests/db02-staging-contract.test.mjs",
+    "tests/db02-academic-parent-tenancy-contract.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "DB-005 staging review: hall archival/booking race, history TRUNCATE, actor-FK delete semantics and migration replay remain unresolved; see docs/planning/db02-stage-adversarial-review-chat04-2026-10-11.md."
+    "DB-005 staging review: hall archival/booking race, history TRUNCATE, actor-FK delete semantics and migration replay remain unresolved; see docs/planning/db02-stage-adversarial-review-chat04-2026-10-11.md.",
+    "DB02 direct SQL parent/reparent and enrollment guard proposal remains unregistered and requires consolidation with Chat 1 DB01/DB03 migration guards plus disposable PostgreSQL tenant/concurrency verification. Controlled legacy class with history transfer still unspecified."
   ],
   "handoffs": [
     {
@@ -61,9 +63,16 @@
         "8d348b9da606aab3e83d35af6b940939dae235b2"
       ],
       "issueCommentId": 6102143870
+    },
+    {
+      "toChat": 1,
+      "issue": 21,
+      "topic": "DB02 parent/reparent and enrollment tenant guards require Chat 1 migration review",
+      "status": "DELIVERED",
+      "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Await/assist Chat 1 registered Drizzle integration from issue #21 handoff. After registration, independently inspect exact migration/schema/service changes and require disposable PostgreSQL zero-to-current replay plus DB02 tenant, lifecycle, offering-term, faculty-pool, promotion-CAS, immutable-journal, overlap/hall-race and cancellation/attendance acceptance before DB-005 can become COMPLETED/DONE_VERIFIED.",
+  "nextAction": "Continue active DB-005 source-driven DB02 reconciliation. Review parent/link drift and controlled class transfer policies with Chat 1; coordinate registered Drizzle integration. Run isolated disposable PostgreSQL zero-to-current, direct SQL tenant, role, overlap and concurrent reparent/promotion acceptance before status COMPLETED/DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -101,7 +110,13 @@
     "https://github.com/42Students/lms-vnext/commit/c408dd525d3e664f49719b4933df12226d60a460",
     "https://github.com/42Students/lms-vnext/commit/8d348b9da606aab3e83d35af6b940939dae235b2",
     "https://github.com/42Students/lms-vnext/issues/24#issuecomment-6102141592",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102143870"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102143870",
+    "https://github.com/42Students/lms-vnext/commit/fb4db55de66971205b508098b4fa2b41317e50a7",
+    "https://github.com/42Students/lms-vnext/commit/56b6c5c4cabb3bd59807c50f65383be0bf9fce69",
+    "https://github.com/42Students/lms-vnext/commit/b0e1c2a0fbf061e8a822a95aadde6c2ad712e64a",
+    "https://github.com/42Students/lms-vnext/commit/75b37a705e3c41682b32511c97aeca19e4fd86ce",
+    "https://github.com/42Students/lms-vnext/commit/4ea0d5a054582eadd5c4a663466321028849f33a",
+    "https://github.com/42Students/lms-vnext/commit/952e197d7f2945facec2cb928f2e951bcb9d9191"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
