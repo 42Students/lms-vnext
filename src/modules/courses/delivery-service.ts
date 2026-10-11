@@ -162,54 +162,54 @@ export async function endCourseSectionDelivery(
     collegeId: current.collegeId,
   });
 
-  const db = getDb();
-  const [activeTeacher] = await db
-    .select({ id: courseTeachingAssignments.id })
-    .from(courseTeachingAssignments)
-    .where(
-      and(
-        eq(
-          courseTeachingAssignments.deliveryId,
-          deliveryId,
-        ),
-        isNull(
-          courseTeachingAssignments.endedAt,
-        ),
-      ),
-    )
-    .limit(1);
+  // Serialize against new teaching assignments. Their delivery FK check
+  // takes KEY SHARE; FOR UPDATE on this delivery blocks that insert until
+  // the end operation commits (or observes the newly inserted teacher).
+  return getDb().transaction(async (tx) => {
+    const [lockedDelivery] = await tx
+      .select({ id: courseSectionDeliveries.id })
+      .from(courseSectionDeliveries)
+      .where(and(
+        eq(courseSectionDeliveries.id, deliveryId),
+        isNull(courseSectionDeliveries.endedAt),
+      ))
+      .for("update")
+      .limit(1);
 
-  if (activeTeacher) {
-    throw new CoursesServiceError(
-      "DELIVERY_HAS_ACTIVE_TEACHERS",
-    );
-  }
+    if (!lockedDelivery) {
+      throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+    }
 
-  const now = new Date();
-  const [updated] = await db
-    .update(courseSectionDeliveries)
-    .set({
-      endedAt: now,
-      updatedAt: now,
-    })
-    .where(
-      and(
-        eq(
-          courseSectionDeliveries.id,
-          deliveryId,
-        ),
-        isNull(
-          courseSectionDeliveries.endedAt,
-        ),
-      ),
-    )
-    .returning();
+    const [activeTeacher] = await tx
+      .select({ id: courseTeachingAssignments.id })
+      .from(courseTeachingAssignments)
+      .where(and(
+        eq(courseTeachingAssignments.deliveryId, deliveryId),
+        isNull(courseTeachingAssignments.endedAt),
+      ))
+      .limit(1);
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "SECTION_DELIVERY_NOT_FOUND",
-    );
-  }
+    if (activeTeacher) {
+      throw new CoursesServiceError("DELIVERY_HAS_ACTIVE_TEACHERS");
+    }
 
-  return updated;
+    const now = new Date();
+    const [updated] = await tx
+      .update(courseSectionDeliveries)
+      .set({
+        endedAt: now,
+        updatedAt: now,
+      })
+      .where(and(
+        eq(courseSectionDeliveries.id, deliveryId),
+        isNull(courseSectionDeliveries.endedAt),
+      ))
+      .returning();
+
+    if (!updated) {
+      throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+    }
+
+    return updated;
+  });
 }
