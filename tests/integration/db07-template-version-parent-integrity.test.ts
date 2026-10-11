@@ -123,20 +123,38 @@ async function createInstance(
 describe.skipIf(!enabled)("DB068 template-version parent composite FKs (disposable PostgreSQL)", () => {
   beforeAll(async () => {
     if (!pool) throw new Error("DB068 PostgreSQL pool not configured");
-    const result = await pool.query<{ conname: string }>(
-      `select conname from pg_constraint
-       where conname = any($1::text[])`,
+    const result = await pool.query<{
+      table_name: string;
+      conname: string;
+      definition: string;
+      contype: string;
+      convalidated: boolean;
+    }>(
+      `select rel.relname as table_name, con.conname,
+              pg_get_constraintdef(con.oid) as definition,
+              con.contype, con.convalidated
+         from pg_constraint con
+         join pg_class rel on rel.oid = con.conrelid
+        where con.conname = any($1::text[])`,
       [[
         "project_template_assignments_template_version_owner_fk",
         "project_instances_template_version_owner_fk",
       ]],
     );
-    expect(new Set(result.rows.map((row) => row.conname))).toEqual(
-      new Set([
-        "project_template_assignments_template_version_owner_fk",
-        "project_instances_template_version_owner_fk",
+    expect(result.rows).toHaveLength(2);
+    expect(new Map(result.rows.map((row) => [row.conname, row.table_name]))).toEqual(
+      new Map([
+        ["project_template_assignments_template_version_owner_fk", "project_template_college_assignments"],
+        ["project_instances_template_version_owner_fk", "project_instances"],
       ]),
     );
+    for (const row of result.rows) {
+      expect(row.contype).toBe("f");
+      expect(row.convalidated).toBe(true);
+      expect(row.definition).toMatch(
+        /FOREIGN KEY \(template_id, template_version_id\) REFERENCES project_template_versions\(template_id, id\)/i,
+      );
+    }
     const seed = await pool.query(
       "select id from users where id = $1",
       [SEED_IDS.superAdminUser],
