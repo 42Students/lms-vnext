@@ -128,6 +128,33 @@ if [[ "$INACTIVE_ENUM_WITNESS" != "1" ]]; then
   exit 2
 fi
 
+BTREE_GIST_WITNESS="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT count(*)::integer
+FROM pg_extension
+WHERE extname = 'btree_gist';
+SQL
+)"
+if [[ "$BTREE_GIST_WITNESS" != "1" ]]; then
+  echo "DB02 canonical migration is missing required btree_gist extension" >&2
+  exit 2
+fi
+
+EXCLUSION_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT count(*)::integer
+FROM pg_constraint
+WHERE contype = 'x'
+  AND conname IN (
+    'section_schedule_events_section_no_overlap_excl',
+    'section_schedule_events_faculty_no_overlap_excl',
+    'section_schedule_events_hall_no_overlap_excl'
+  );
+SQL
+)"
+if [[ "$EXCLUSION_WITNESSES" != "3" ]]; then
+  echo "DB02 canonical migration is missing schedule exclusion constraints (required: 3, found: $EXCLUSION_WITNESSES)" >&2
+  exit 2
+fi
+
 source_tests=(
   tests/db02-staging-contract.test.mjs
   tests/db02-academic-parent-tenancy-contract.test.mjs
