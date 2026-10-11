@@ -63,6 +63,28 @@ A new scheduled event now checks active faculty membership and `membership_roles
 
 **Disposition:** DB-005 stays **IN_PROGRESS**. These are registration blockers or explicit decisions, not evidence that any live database failed. Chat 1 owns numbered migration registration and runnable replay; Chat 4 may amend its source contracts and support independent review without claiming tests passed.
 
+## Latest reconciliation against current staging
+
+**Reconciled main:** `4c186c95a173c6f4816f64d75501512051bc6ad8`  
+**Current canonical staging blob:** `8007c078bec184dbedd8b96e368476d4e510343b`  
+**Current single-session acceptance blob:** `ed5c47421608bf0e851be93e33f5ba9332ebe4a1`  
+**Runtime PostgreSQL status:** **NOT EXECUTED**. This reconciliation is source/static evidence only.
+
+| Finding | Current draft status | Current evidence / remaining gate |
+| --- | --- | --- |
+| DB02-S01 hall archive vs booking race | **STATICALLY MITIGATED / runtime open** | Booking takes a hall row `FOR SHARE`; archive guard serializes on the hall and rejects future SCHEDULED references. `db02-postgres-concurrency-unregistered.sh` carries both archive-wins and booking-wins races. |
+| DB02-S02 actor deletion vs progression guard/history | **STATICALLY MITIGATED / runtime open** | `66ab926` permits only FK-triggered `updated_by_user_id -> NULL` when canonical state/version are unchanged; history trigger no longer fires for actor-only nulling. `cfb4a73` adds a disposable-PG witness that state version/term and event count remain unchanged while state/event actor refs null. |
+| DB02-S03 immutable events and TRUNCATE | **STATICALLY MITIGATED / runtime open** | Canonical stage now adds `db02_cohort_progression_events_no_truncate` with a statement-level BEFORE TRUNCATE guard. Runtime role ownership/DDL privileges still need deployment verification. |
+| DB02-S04 explicit academic-year override | **DATABASE DEFAULT DEFINED / API producer open** | Cohort insert initializes July-boundary canonical year; DB02 API handoff explicitly requires create/update support for a supplied legacy year override. This is API-phase work after database registration. |
+| DB02-S05 NOT NULL offering term replay | **OPEN RUNTIME GATE** | `course_offerings.program_term_id NOT NULL` is valid for the agreed greenfield zero-to-current path. A non-empty vNext dev DB must be reset or use a reviewed staged transition; no legacy production backfill is required. Disposable replay is still mandatory. |
+| DB02-S06 parent/reassignment tenant drift | **PROPOSED MITIGATION / integration + runtime open** | Canonical stage locks/guards core academic parents; `db02-academic-parent-enrollment-tenant-guards.draft.sql` adds learner/section/faculty parent history protections. Chat 1 must deconflict/register it with DB01/DB03 before PostgreSQL proof. |
+| DB02-S07 faculty de-role/suspension lifecycle | **STATICALLY MITIGATED / runtime open** | Role removal or membership non-ACTIVE closes broad/course/section assignments and unassigns future SCHEDULED events without rewriting past attribution. Acceptance harness covers no auto-reactivation. |
+| DB02-S08 PostgreSQL exclusion/replay/concurrency | **OPEN RUNTIME GATE** | Static contract checks are strong, but `btree_gist`, exclusion constraints, replay, promotion CAS and two-session races remain unexecuted until a disposable PostgreSQL runner exists. CI billing is not treated as a work blocker; no PASS is claimed. |
+
+### Additional static pre-integration checks
+
+The current staging has one definition for every DB02-created table/function/trigger inspected, paired PL/pgSQL `$` bodies, a stable `course_offerings.program_term_id`, a distinct broad `faculty_course_associations` pool, cohort/class compatibility fields, lecture-hall identity, and three half-open GiST overlap exclusions. The single-session acceptance harness covers tenant scope, program terms, CORE/ELECTIVE rules, zero credits, batch counts, class bounds/dates, learner parent history, progression corrections/promotions, faculty lifecycle, room archive/cancellation, and overlap behavior. These checks improve registration readiness but are **not PostgreSQL execution evidence**.
+
 ## Follow-up: isolated parent/learner tenant guard proposal
 
 **Draft committed:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
