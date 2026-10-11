@@ -70,7 +70,7 @@ test("DB05 owner upstream reparent and role security require independent proof",
   assert.match(owner, /upstream offering\/path\/department\/period\/membership/);
   assert.match(owner, /row-write trigger/);
   assert.match(owner, /membership_role\.role::text = 'FACULTY'/);
-  assert.match(cascade, /two-session delete\/move\/restore races/);
+  assert.match(cascade, /[Tt]wo-session delete\/move\/restore races/);
   assert.match(owner, /migration replay and wrong-tenant\/role\/concurrency tests actually run/);
 });
 
@@ -87,7 +87,7 @@ test("DB05 delete versus insert race remains PostgreSQL-unverified", () => {
   assert.match(cascade, /Must be verified with two PostgreSQL sessions/);
   assert.match(cascade, /parent deletion sees\/cascades the new child/);
   assert.match(cascade, /insert waits and then rejects/);
-  assert.match(cascade, /two-session delete\/move\/restore races/);
+  assert.match(cascade, /[Tt]wo-session delete\/move\/restore races/);
 });
 
 test("cascading child tombstones invalidate optimistic version CAS without resurrecting history", () => {
@@ -96,5 +96,5 @@ test("cascading child tombstones invalidate optimistic version CAS without resur
   assert.match(cascade, /SET legacy_deleted_at = NEW\.legacy_deleted_at,\s+version = c\.version \+ 1/);
   assert.match(cascade, /WHERE c\.lesson_id = NEW\.id\s+AND c\.legacy_deleted_at IS NULL/);
   assert.doesNotMatch(cascade, /SET legacy_deleted_at = NULL/);
-  assert.match(cascade, /Parent lesson\s+soft-delete service must increment course_lessons\.version/);
+  assert.match(cascade, /Parent lesson[\s\S]{0,30}soft-delete service must increment course_lessons\.version/);
 });
