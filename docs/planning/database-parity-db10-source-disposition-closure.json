@@ -1,0 +1,1270 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-046",
+  "domain": "DB10_SOURCE_DISPOSITION_CLOSURE",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceLedgerSha": "5c9a6239abb64057c97818a52056da66709d3711",
+  "status": "77_REMAINING_SOURCE_DISPOSITIONED_TARGET_221_OF_221_RUNTIME_VERIFIED_ZERO",
+  "counts": {
+    "overlayFields": 77,
+    "app_setting": 9,
+    "log_alert_signature": 17,
+    "log_alert_signature_account": 3,
+    "log_alert_state": 4,
+    "notification": 21,
+    "skill_synonyms": 3,
+    "skill_usage": 3,
+    "skills": 9,
+    "sms_delivery_log": 8
+  },
+  "invariant": "This overlay is source/design evidence only. Applying it to the shared ledger MUST NOT change any row status from UNMAPPED or any runtime verified count from zero.",
+  "notableDecisions": [
+    "notification GENERAL is an active source type and was added to DB-043 staged enum after adversarial review",
+    "app_setting.scope_id_key is retired MySQL V138 uniqueness machinery, not product state",
+    "log alert account_id becomes keyed HMAC of verified typed identity, never users.id",
+    "log occurrence_count retains bigint precision",
+    "skills.usage_count and skill_usage.usage_count remain independent",
+    "SMS legacy SENT maps to PROVIDER_ACCEPTED, not DELIVERED"
+  ],
+  "records": [
+    {
+      "legacyId": "DB10-APP_SETTING-01",
+      "legacyTable": "app_setting",
+      "legacyColumn": "id",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned typed setting identity",
+      "sourceDispositionRationale": "Generic row identity is not a business concept once settings are split into typed domain-owned targets.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-02",
+      "legacyTable": "app_setting",
+      "legacyColumn": "created_at",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned setting/config audit metadata",
+      "sourceDispositionRationale": "Creation audit belongs to the owning typed setting/config surface when persisted; do not recreate a universal K/V row solely for timestamps.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-03",
+      "legacyTable": "app_setting",
+      "legacyColumn": "updated_at",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned setting/config audit metadata",
+      "sourceDispositionRationale": "Update audit belongs to the owning typed setting/config surface when persisted.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-04",
+      "legacyTable": "app_setting",
+      "legacyColumn": "is_deleted",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed unset/delete fallback semantics",
+      "sourceDispositionRationale": "Legacy soft delete means remove override and fall back to default; typed targets must preserve unset semantics without generic tombstone rows.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-05",
+      "legacyTable": "app_setting",
+      "legacyColumn": "scope_type",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "registered setting definition allowedScopes + domain authorization",
+      "sourceDispositionRationale": "Allowed scope is part of each typed setting definition, not arbitrary persisted text.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-06",
+      "legacyTable": "app_setting",
+      "legacyColumn": "scope_id",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned UUID scope reference where applicable",
+      "sourceDispositionRationale": "Legacy integer scope ID must resolve to the owning domain's canonical UUID scope; GLOBAL remains no scope ID.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-07",
+      "legacyTable": "app_setting",
+      "legacyColumn": "setting_key",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed registered setting key",
+      "sourceDispositionRationale": "Only explicitly registered keys are supported; unknown arbitrary writes must fail closed in vNext.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-08",
+      "legacyTable": "app_setting",
+      "legacyColumn": "setting_value",
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed domain-owned value/config",
+      "sourceDispositionRationale": "String TEXT value is replaced by domain-specific typed validation/ranges/secrecy and defaults.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-APP_SETTING-09",
+      "legacyTable": "app_setting",
+      "legacyColumn": "scope_id_key",
+      "sourceDisposition": "SOURCE_RETIRED_MYSQL_STORAGE_HELPER",
+      "sourceDispositionTarget": "none",
+      "sourceDispositionRationale": "V138 generated IFNULL(scope_id,-1) only to make MySQL GLOBAL uniqueness work; it has no independent product semantics in PostgreSQL.",
+      "sourceEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-01",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.id",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-02",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "environment",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.environment",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-03",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "signature_hash",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.signature_hash",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-04",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "sample_message",
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.sample_message",
+      "sourceDispositionRationale": "Bounded sample is retained only after upstream PII/secret redaction and scoped retention/access policy.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-05",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "first_seen_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.first_seen_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-06",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "last_seen_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.last_seen_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-07",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "occurrence_count",
+      "sourceDisposition": "PRECISION_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.occurrence_count",
+      "sourceDispositionRationale": "Legacy BIGINT remains PostgreSQL bigint and Drizzle bigint mode; never coerce beyond JavaScript safe integer.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-08",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "muted",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.muted",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-09",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "fix_status",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fix_status",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-10",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "fixed_in_commit",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fixed_in_commit",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-11",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "fixed_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fixed_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-12",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "status_note",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.status_note",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-13",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "muted_reason",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.muted_reason",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-14",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "issue_public_id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.issue_public_id",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-15",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "last_seen_commit",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.last_seen_commit",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-16",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "regressed_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.regressed_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE-17",
+      "legacyTable": "log_alert_signature",
+      "legacyColumn": "sample_path",
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.sample_path",
+      "sourceDispositionRationale": "Bounded sample is retained only after upstream PII/secret redaction and scoped retention/access policy.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-01",
+      "legacyTable": "log_alert_signature_account",
+      "legacyColumn": "signature_id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.signature_id",
+      "sourceDispositionRationale": "Source blast-radius relationship/timestamp preserved in DB-023 isolated draft; raw identity is not copied.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-02",
+      "legacyTable": "log_alert_signature_account",
+      "legacyColumn": "account_id",
+      "sourceDisposition": "PRIVACY_IDENTITY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.account_key_hash",
+      "sourceDispositionRationale": "Legacy numeric role-scoped account marker is not a vNext users FK; DB-023 replaces it with keyed HMAC of server-verified typed identity.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-03",
+      "legacyTable": "log_alert_signature_account",
+      "legacyColumn": "first_seen_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.first_seen_at",
+      "sourceDispositionRationale": "Source blast-radius relationship/timestamp preserved in DB-023 isolated draft; raw identity is not copied.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_STATE-01",
+      "legacyTable": "log_alert_state",
+      "legacyColumn": "id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.id",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_STATE-02",
+      "legacyTable": "log_alert_state",
+      "legacyColumn": "state_key",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.state_key",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_STATE-03",
+      "legacyTable": "log_alert_state",
+      "legacyColumn": "poll_cursor_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.poll_cursor_at",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-LOG_ALERT_STATE-04",
+      "legacyTable": "log_alert_state",
+      "legacyColumn": "admin_last_viewed_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.admin_last_viewed_at",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-01",
+      "legacyTable": "notification",
+      "legacyColumn": "id",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.id",
+      "sourceDispositionRationale": "Greenfield UUID campaign identity; direct user delivery remains in_app_notifications.id.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-02",
+      "legacyTable": "notification",
+      "legacyColumn": "created_at",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.created_at",
+      "sourceDispositionRationale": "Creation precedes scheduled publication; recipient created_at is actual delivery receipt time.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-03",
+      "legacyTable": "notification",
+      "legacyColumn": "is_deleted",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.archived_at",
+      "sourceDispositionRationale": "Soft delete hides future/not-published campaigns; already published per-user history requires explicit privacy/retention policy.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-04",
+      "legacyTable": "notification",
+      "legacyColumn": "updated_at",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.updated_at",
+      "sourceDispositionRationale": "Preserve persisted admin edit/update timestamp.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-05",
+      "legacyTable": "notification",
+      "legacyColumn": "class_id",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_section_id",
+      "sourceDispositionRationale": "Legacy classId=0 course-wide must translate to typed COURSE scope, not UUID zero or null.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-06",
+      "legacyTable": "notification",
+      "legacyColumn": "course_id",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_course_id",
+      "sourceDispositionRationale": "Preserve course-scoped targeting through tenant-validated course reference, not legacy int.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-07",
+      "legacyTable": "notification",
+      "legacyColumn": "learner_id",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_user_id",
+      "sourceDispositionRationale": "Legacy optional learnerId was also overloaded as faculty/mentor recipient; canonical users UUID and scoped receipt.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-08",
+      "legacyTable": "notification",
+      "legacyColumn": "is_read",
+      "sourceDisposition": "REGISTERED_RECIPIENT_MODEL_PRODUCER_PENDING",
+      "sourceDispositionTarget": "in_app_notifications.read_at",
+      "sourceDispositionRationale": "Read timestamp per recipient avoids legacy class-broadcast shared boolean bug.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-09",
+      "legacyTable": "notification",
+      "legacyColumn": "message",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.body; in_app_notifications.body",
+      "sourceDispositionRationale": "Author body once, fan out sanitized content; legacy HTML requires explicit policy rather than raw HTML projection.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-10",
+      "legacyTable": "notification",
+      "legacyColumn": "title",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.title; in_app_notifications.title",
+      "sourceDispositionRationale": "Persist original author title and copied per-user receipt at release.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-11",
+      "legacyTable": "notification",
+      "legacyColumn": "context_label",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.context_label",
+      "sourceDispositionRationale": "Human-readable course/company label, not a permission authority.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-12",
+      "legacyTable": "notification",
+      "legacyColumn": "notification_type",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.notification_type; activity_events.module",
+      "sourceDispositionRationale": "Legacy GENERAL default plus JOB/COURSE/SYSTEM producer classifications become a typed campaign enum and activity taxonomy.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-13",
+      "legacyTable": "notification",
+      "legacyColumn": "application_id",
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed subject reference + safe internal actionHref",
+      "sourceDispositionRationale": "Revalidate application ownership; do not store unsafe legacy integer or action query payload.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-14",
+      "legacyTable": "notification",
+      "legacyColumn": "job_id",
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed subject reference + safe internal actionHref",
+      "sourceDispositionRationale": "Normalize placement job UUID and tenant/scope/authorization.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-15",
+      "legacyTable": "notification",
+      "legacyColumn": "assessment_url",
+      "sourceDisposition": "SECURITY_REDESIGN_PROOF_PENDING",
+      "sourceDispositionTarget": "safe internal assessment redirect only",
+      "sourceDispositionRationale": "Legacy URL allowed any http(s) external address; no unchecked browser-controlled URL or bearer link persistence.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-16",
+      "legacyTable": "notification",
+      "legacyColumn": "interview_id",
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed interview subject + safe internal actionHref",
+      "sourceDispositionRationale": "Scope interview to same college/user and type-safe internal route.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-17",
+      "legacyTable": "notification",
+      "legacyColumn": "creator_faculty_id",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.creator_membership_id",
+      "sourceDispositionRationale": "Server-verified college membership, never trusted client faculty integer.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-18",
+      "legacyTable": "notification",
+      "legacyColumn": "scheduled_at",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.scheduled_at",
+      "sourceDispositionRationale": "Timestamptz with explicit timezone policy; a future schedule is invisible until publish.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-19",
+      "legacyTable": "notification",
+      "legacyColumn": "delivery_status",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.status",
+      "sourceDispositionRationale": "SCHEDULED/FAILED/PUBLISHED are campaign states; PUBLISHED requires committed recipient receipts, not provider acceptance.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-20",
+      "legacyTable": "notification",
+      "legacyColumn": "delivery_error",
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.last_failure_code",
+      "sourceDispositionRationale": "Safe bounded machine code, never raw provider/exception response or PII.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-21",
+      "legacyTable": "notification",
+      "legacyColumn": "delivered_at",
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.published_at",
+      "sourceDispositionRationale": "Actual successful fan-out publish time, not schedule, not misleading transport provider acceptance.",
+      "sourceEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_SYNONYMS-01",
+      "legacyTable": "skill_synonyms",
+      "legacyColumn": "id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.id",
+      "sourceDispositionRationale": "Skill synonym identity/reference preserved in DB-022 isolated draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_SYNONYMS-02",
+      "legacyTable": "skill_synonyms",
+      "legacyColumn": "synonym",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.synonym",
+      "sourceDispositionRationale": "Persist alternate search term without global uniqueness; one term may match multiple skills in active legacy behavior.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_SYNONYMS-03",
+      "legacyTable": "skill_synonyms",
+      "legacyColumn": "skill_id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.skill_id",
+      "sourceDispositionRationale": "Skill synonym identity/reference preserved in DB-022 isolated draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_USAGE-01",
+      "legacyTable": "skill_usage",
+      "legacyColumn": "skill_name",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.skill_name",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_USAGE-02",
+      "legacyTable": "skill_usage",
+      "legacyColumn": "usage_count",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.usage_count",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILL_USAGE-03",
+      "legacyTable": "skill_usage",
+      "legacyColumn": "last_used",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.last_used",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-01",
+      "legacyTable": "skills",
+      "legacyColumn": "id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.id",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-02",
+      "legacyTable": "skills",
+      "legacyColumn": "category",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.category",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-03",
+      "legacyTable": "skills",
+      "legacyColumn": "created_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.created_at",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-04",
+      "legacyTable": "skills",
+      "legacyColumn": "display_name",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.display_name",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-05",
+      "legacyTable": "skills",
+      "legacyColumn": "is_active",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.is_active",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-06",
+      "legacyTable": "skills",
+      "legacyColumn": "name",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.name",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-07",
+      "legacyTable": "skills",
+      "legacyColumn": "search_priority",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.search_priority",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-08",
+      "legacyTable": "skills",
+      "legacyColumn": "updated_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.updated_at",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SKILLS-09",
+      "legacyTable": "skills",
+      "legacyColumn": "usage_count",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.usage_count",
+      "sourceDispositionRationale": "Legacy catalog popularity counter remains independent from skill_usage usage counter; do not merge ranking semantics.",
+      "sourceEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-01",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.id",
+      "sourceDispositionRationale": "Greenfield UUID provider-attempt identity.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-02",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "purpose",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.purpose",
+      "sourceDispositionRationale": "Support-visible business purpose remains queryable and is not enum-locked in the database.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-03",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "recipient_suffix",
+      "sourceDisposition": "PRIVACY_PRESERVING_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.recipient_suffix",
+      "sourceDispositionRationale": "Preserve only the last 1–4 digits; never persist full phone/body/OTP.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-04",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "status",
+      "sourceDisposition": "SEMANTIC_RENAME_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.outcome",
+      "sourceDispositionRationale": "Legacy SENT truthfully means provider acceptance, so canonical outcome is PROVIDER_ACCEPTED; FAILED remains FAILED.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-05",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "provider_message_id",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.provider_message_id",
+      "sourceDispositionRationale": "Opaque provider trace identifier retained for accepted attempts.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-06",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "error_summary",
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.safe_failure_code + sms_delivery_attempts.safe_failure_summary",
+      "sourceDispositionRationale": "Persist only fixed/sanitized failure detail, never raw provider response/request secrets.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-07",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "college_id",
+      "sourceDisposition": "TENANT_SCOPE_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.college_id + sms_delivery_attempts.organization_id",
+      "sourceDispositionRationale": "Optional college scope is upgraded to an organization/college pair with DB tenant guard; pre-login OTP may keep both null.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    },
+    {
+      "legacyId": "DB10-SMS_DELIVERY_LOG-08",
+      "legacyTable": "sms_delivery_log",
+      "legacyColumn": "created_at",
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.created_at",
+      "sourceDispositionRationale": "Attempt creation time preserved as timestamptz.",
+      "sourceEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "runtimeVerified": false,
+      "finalDispositionApproved": false
+    }
+  ]
+}
