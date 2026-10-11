@@ -567,6 +567,18 @@
       "owner": "DB05_W01_INTEGRATOR",
       "evidence": "Read-only preflight requires all three active-child-under-inactive-parent counts to be zero on disposable PG. Query authored but never run; zero counts would not prove race safety.",
       "sqlPath": "scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql"
+    },
+    {
+      "id": "CLASSROOM_MESSAGE_SCOPE_PREFLIGHT_17_CATEGORIES",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Read-only scripts/sql/db05-classroom-message-integrity-preflight.readonly.sql must return 0 counts for every one of 17 categories on disposable PostgreSQL at exact schema SHA; snapshot alone cannot prove races or authorize migration registration."
+    },
+    {
+      "id": "CLASSROOM_MESSAGE_PROGRAM_COLLEGE_AND_SHARED_ANCESTRY_LOCK",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Companion-only db05-classroom-chat-parity.draft.sql validates section cohort program-department college and uses DB05 advisory lock 605008003 under READ COMMITTED. Execute right-tenant, wrong-program-college, same-college wrong-cohort/period, upstream reparent, two-session deadlock tests before registering."
     }
   ],
   "sourceReview": {
