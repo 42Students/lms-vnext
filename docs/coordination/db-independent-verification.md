@@ -59,7 +59,7 @@ The verifier runs, in order:
 2. `npm run db:test:prepare` — destructive reset of the disposable database, zero-to-head migration replay, seed
 3. `npm run db:migrate` — migration idempotence/smoke
 4. `npm run test:db:parity`
-5. `npm run test:db` with `DB03_ISOLATED_TEST_DATABASE=1`
+5. `npm run test:db` with `DB03_ISOLATED_TEST_DATABASE=1` and `DB06_ISOLATED_TEST_DATABASE=1`
 
 A non-zero exit from any step fails the verifier. Later gates are not claimed as passed.
 
