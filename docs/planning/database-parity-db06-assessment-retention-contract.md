@@ -111,6 +111,23 @@ and the sum must be positive.
 
 The check is deferred because create/update code may replace the question set and update the quiz denominator in either order within one transaction.
 
+## Authoring option-set integrity
+
+The active quiz validator requires:
+
+- 2–20 options per question;
+- option sequence uniqueness;
+- case-insensitive option text uniqueness;
+- SINGLE_CHOICE → exactly one correct option;
+- MULTIPLE_CHOICE → at least one correct and at least one incorrect option.
+
+Base schema already owns option sequence uniqueness. DB-038 stages:
+
+- `quiz_options_question_lower_text_uq` for case-insensitive text uniqueness;
+- deferred question/option shape triggers so multi-row DRAFT rewrites may occur in any order inside one transaction, but invalid final option sets cannot commit.
+
+These constraints are required because the answer-snapshot validator derives correctness from the persisted option set. A malformed direct-SQL authoring state must not become a valid scoring oracle.
+
 ## Snapshot fidelity
 
 A subtle race exists in the current application shape: `submitCourseQuiz` loads questions/options before opening its write transaction. An authoring transaction can theoretically commit after that read but before the attempt write.
@@ -151,7 +168,7 @@ The staged preflight checks:
 - answer question type/prompt/points match current definition;
 - answer options snapshot matches the canonical current option set.
 
-Before actual registration, extend executed PostgreSQL preflight evidence to selected-option/correctness edge cases too.
+Before actual registration, extend executed PostgreSQL preflight evidence to selected-option/correctness edge cases and existing option-set duplicate/cardinality poison too.
 
 ## Interaction with registered 0041/0042
 
@@ -192,6 +209,8 @@ At minimum execute these witnesses before registration:
 21. attempt with missing answer snapshot fails at COMMIT;
 22. attempt score/max mismatch vs answers fails at COMMIT;
 23. authoring-first vs attempt-first concurrency leaves one coherent committed history;
-24. poisoned existing history makes the preflight fail without mutation.
+24. poisoned existing history makes the preflight fail without mutation;
+25. duplicate option text differing only by case fails;
+26. invalid option count/correct-option cardinality fails at COMMIT.
 
 Until those execute successfully on a disposable PostgreSQL replay, DB-038 is source-complete at most and must not be `DONE_VERIFIED`.
