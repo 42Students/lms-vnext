@@ -206,6 +206,8 @@ export const placementTpoCollegeSettings = pgTable(
     prepCourseIds: jsonb("prep_course_ids"),
     prepThresholdPct: integer("prep_threshold_pct").notNull().default(60),
     notifyToggles: jsonb("notify_toggles"),
+    jobTypes: jsonb("job_types"),
+    outcomeLabels: jsonb("outcome_labels"),
     recruiterAccessMonths: integer("recruiter_access_months")
       .notNull()
       .default(6),
@@ -222,6 +224,14 @@ export const placementTpoCollegeSettings = pgTable(
       sql`${table.smsMonthlyCap} >= 0
         and ${table.prepThresholdPct} between 0 and 100
         and ${table.recruiterAccessMonths} between 0 and 60`,
+    ),
+    check(
+      "placement_tpo_college_settings_job_types_ck",
+      sql`${table.jobTypes} is null or jsonb_typeof(${table.jobTypes}) = 'object'`,
+    ),
+    check(
+      "placement_tpo_college_settings_outcome_labels_ck",
+      sql`${table.outcomeLabels} is null or jsonb_typeof(${table.outcomeLabels}) = 'array'`,
     ),
   ],
 );

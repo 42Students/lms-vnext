@@ -100,3 +100,28 @@ test("DB09 composite child FKs use the canonical ID-first parent shapes", () => 
     /FOREIGN KEY\(application_id, job_id\)[\s\S]*REFERENCES placement_applications\(id, job_id\)/,
   );
 });
+
+
+test("DB09 college settings are structural, not post-create ALTERs", () => {
+  const schema = read("src/db/schema/tpo-collaboration.ts");
+  for (const field of [
+    'jobTypes: jsonb("job_types")',
+    'outcomeLabels: jsonb("outcome_labels")',
+    'recruiterAccessMonths: integer("recruiter_access_months")',
+    'recruiterDriveNeedsApproval: boolean("recruiter_drive_needs_approval")',
+  ]) {
+    assert.match(schema, new RegExp(field.replace(/[()]/g, "\\$&")));
+  }
+  assert.match(schema, /jsonb_typeof\(\$\{table\.jobTypes\}\) = 'object'/);
+  assert.match(schema, /jsonb_typeof\(\$\{table\.outcomeLabels\}\) = 'array'/);
+
+  const recruiterDraft = read(
+    "docs/planning/sql/db09-college-recruiter-settings-candidate.sql",
+  );
+  assert.match(recruiterDraft, /^-- SUPERSEDED/m);
+  assert.doesNotMatch(recruiterDraft, /^ALTER TABLE/m);
+
+  const v190 = read("docs/planning/sql/db09-job-outcome-settings-candidate.sql");
+  assert.match(v190, /SOURCE REFERENCE ONLY/);
+  assert.doesNotMatch(v190, /^ALTER TABLE/m);
+});
