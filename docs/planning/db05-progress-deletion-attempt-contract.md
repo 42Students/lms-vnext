@@ -30,7 +30,7 @@ This is a source-observed rule for **that counting query only**, not an authoriz
 6. Do not treat `deleted_at IS NULL` as a DB-level default for every aggregate without confirming legacy source and desired vNext behavior.
 7. Chat 1 must register numbered migration/schema barrel only after actual disposable PostgreSQL replay, negative tenant/race tests, and application consumer integration evidence.
 
-**Current disposition:** the legacy field remains MISSING_OR_UNPROVEN in the 92-field semantic review despite source evidence; this proposal **does not** mark it VERIFIED or DONE_VERIFIED. The review/decisions/manifest counters are managed independently on latest main to avoid a concurrent overwrite.
+**Current disposition (2026-10-11):** The legacy repository query, BaseModel annotation and V36/V132 migrations prove `learner_content_progress.is_deleted` is actively persisted and read. It is now **UNREGISTERED_DRAFT** in the 92-field semantic review, mapped only as a source-backed `deleted_at` proposal. This is **not VERIFIED or DONE_VERIFIED**: reader-specific vNext behavior, API writers, PostgreSQL tenant/race acceptance and registered migration remain outstanding. The unresolved decision remains OPEN, even though the field is no longer an unmapped historical column.
 
 ## Same-college database integrity companion (staged, not registered)
 
