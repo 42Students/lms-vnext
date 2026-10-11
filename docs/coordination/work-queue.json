@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11",
+  "updatedOn": "2026-10-11T07:49:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1580,17 +1580,17 @@
         "scripts/db01-test-database-guard.mjs",
         "tests/db01-test-database-guard.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "de31827c4baf216b777088ee04f5c283daabad5a",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Fail-closed browser E2E reset safety implemented: shared disposable-target guard recognizes explicit E2E names; db:e2e:prepare runs the shared guard before DATABASE_URL assignment/import/reset and removes DATABASE_URL from preflight env; DB28 process/source regressions are authored in the canonical DB parity test file. Current-main source audit: 12/12 invariants true. Node/PostgreSQL execution not claimed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T07:42:00.000Z",
       "startedAt": "2026-10-11T07:43:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T07:49:00.000Z",
+      "completionCommitSha": "de31827c4baf216b777088ee04f5c283daabad5a",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1614,6 +1614,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T07:43:00.000Z",
           "reason": "Auditing and hardening db:e2e:prepare destructive target selection before any DB module import or reset."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T07:49:00.000Z",
+          "reason": "DB-028 source implementation and source-level acceptance complete; executable Node/PostgreSQL proof remains pending, so not DONE_VERIFIED."
         }
       ]
     },
