@@ -32,7 +32,6 @@ import { users } from "./users";
 import { assignmentSubmissions } from "./assessments";
 import { attendanceRecords } from "./attendance";
 import { sectionScheduleEvents } from "./academics";
-import { attendanceRecords } from "./attendance";
 import {
   courseSectionDeliveries,
   sectionScheduleEventCourses,
