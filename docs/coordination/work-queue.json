@@ -4007,19 +4007,44 @@
         "docs/planning/db067-outbound-dispatch-fencing-contract.md",
         "tests/db067-outbound-dispatch-contract.test.mjs"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 2,
       "pickedAt": "2026-10-12T02:25:00+05:30",
       "startedAt": "2026-10-12T02:26:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-12T02:41:00+05:30",
+      "completionCommitSha": "28f8b58e9e9406a9f6a243100da9f4aaf9c7df81",
       "verifiedBy": null,
       "verifiedAt": null,
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": "",
+      "latestEvidenceSha": "28f8b58e9e9406a9f6a243100da9f4aaf9c7df81",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_NOT_DB_ACCEPTANCE",
+          "sourceSqlBlob": "32f7c55ba5c0f136d1cbc1b0f987d9948e861188",
+          "sourceTestBlob": "c697b8b2aade2354bbd62dadc8e9fdd499ee1aa8",
+          "sourceAssertions": {
+            "executed": 17,
+            "passed": 17,
+            "runner": "GITHUB_CONNECTOR_IN_PROCESS_JAVASCRIPT_V8"
+          },
+          "nodeTests": {
+            "authored": 13,
+            "executed": 0
+          },
+          "postgresTests": {
+            "authoredScenarios": 14,
+            "executed": 0
+          },
+          "runtimeVerified": false,
+          "document": "docs/planning/db067-outbound-dispatch-fencing-contract.md"
+        }
+      ],
+      "blockers": [
+        "DB10 outbound schema draft is unregistered; Chat1 migration integrator approval required.",
+        "Independent two-session PostgreSQL and provider idempotency/late-suppression acceptance NOT_RUN.",
+        "Subsequent trusted dispatcher implementation required; P5-R09 and P5-R21 still not runtime closed."
+      ],
+      "completionNote": "Source scope finished: four unregistered PG claim/presend/fenced-completion/unsent-expiry functions committed main, 13 Node static cases authored, 14 PostgreSQL acceptance scenarios documented. Exact GitHub source blobs validated 17/17 via V8 assertions, no node --test/PostgreSQL/provider invocation. P5-R09/R21 remain unverified until Chat1 integration, trusted sender and PG race witnesses.",
       "pickHistory": [
         {
           "chatNumber": 2,
@@ -4041,6 +4066,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T02:26:00+05:30",
           "reason": "Beginning staged DB10 outbound claim/fence/suppression source implementation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T02:41:00+05:30",
+          "reason": "Source staging, 13 authored regression cases and 14-scenario acceptance handoff committed on main. NOT DONE_VERIFIED; no Postgres."
         }
       ]
     },
