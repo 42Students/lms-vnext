@@ -2285,6 +2285,135 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 
 
 -- ---------------------------------------------------------------------------
+-- 9) Active-parent transition integrity
+-- ---------------------------------------------------------------------------
+-- Child writers take SHARE locks on active parents. These parent transition guards therefore
+-- close the opposite race ordering: if a child commits first, the parent transition rechecks
+-- dependencies after waiting; if the parent commits first, the child rechecks parent status.
+
+CREATE FUNCTION db02_guard_course_archive_dependencies()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE'
+     AND NEW.status <> 'ACTIVE'
+     AND EXISTS (
+       SELECT 1
+         FROM course_offerings co
+        WHERE co.course_id = OLD.id
+          AND co.status = 'ACTIVE'
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive course with active offerings'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_course_archive_dependency_guard
+BEFORE UPDATE OF status ON courses
+FOR EACH ROW EXECUTE FUNCTION db02_guard_course_archive_dependencies();
+
+CREATE FUNCTION db02_guard_course_offering_archive_dependencies()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE'
+     AND NEW.status <> 'ACTIVE'
+     AND EXISTS (
+       SELECT 1
+         FROM course_section_deliveries csd
+        WHERE csd.offering_id = OLD.id
+          AND csd.ended_at IS NULL
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive course offering with active deliveries'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_course_offering_archive_dependency_guard
+BEFORE UPDATE OF status ON course_offerings
+FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_archive_dependencies();
+
+CREATE FUNCTION db02_guard_delivery_end_dependencies()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.ended_at IS NULL
+     AND NEW.ended_at IS NOT NULL
+     AND EXISTS (
+       SELECT 1
+         FROM course_teaching_assignments cta
+        WHERE cta.delivery_id = OLD.id
+          AND cta.ended_at IS NULL
+     ) THEN
+    RAISE EXCEPTION 'Cannot end course delivery with active teaching assignments'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_delivery_end_dependency_guard
+BEFORE UPDATE OF ended_at ON course_section_deliveries
+FOR EACH ROW EXECUTE FUNCTION db02_guard_delivery_end_dependencies();
+
+CREATE FUNCTION db02_guard_section_archive_dependencies()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status <> 'ACTIVE' OR NEW.status <> 'ARCHIVED' THEN
+    RETURN NEW;
+  END IF;
+
+  IF EXISTS (
+       SELECT 1
+         FROM section_enrollments se
+        WHERE se.section_id = OLD.id
+          AND se.status = 'ACTIVE'
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive section with active learner enrollments'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF EXISTS (
+       SELECT 1
+         FROM section_faculty_assignments sfa
+        WHERE sfa.section_id = OLD.id
+          AND sfa.ended_at IS NULL
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive section with active faculty assignments'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF EXISTS (
+       SELECT 1
+         FROM course_section_deliveries csd
+        WHERE csd.section_id = OLD.id
+          AND csd.ended_at IS NULL
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive section with active course deliveries'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF EXISTS (
+       SELECT 1
+         FROM section_schedule_events e
+        WHERE e.section_id = OLD.id
+          AND e.status = 'SCHEDULED'
+          AND e.ends_at > statement_timestamp()
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive section with active or future scheduled sessions'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_section_archive_dependency_guard
+BEFORE UPDATE OF status ON sections
+FOR EACH ROW EXECUTE FUNCTION db02_guard_section_archive_dependencies();
+
+-- ---------------------------------------------------------------------------
 -- Registration / acceptance notes
 -- ---------------------------------------------------------------------------
 -- Before registration:
