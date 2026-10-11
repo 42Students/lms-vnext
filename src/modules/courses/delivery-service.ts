@@ -6,6 +6,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
   sections,
@@ -133,13 +134,32 @@ export async function createCourseSectionDelivery(
   }
 
   try {
-    const [created] = await getDb()
-      .insert(courseSectionDeliveries)
-      .values(input)
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // Recheck ACTIVE after acquiring the parent's SHARE row lock.
+      // An offering archival FOR UPDATE must serialize with this create.
+      const [activeOffering] = await tx
+        .select({ id: courseOfferings.id })
+        .from(courseOfferings)
+        .where(and(
+          eq(courseOfferings.id, input.offeringId),
+          eq(courseOfferings.status, "ACTIVE"),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!activeOffering) {
+        throw new CoursesServiceError("OFFERING_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courseSectionDeliveries)
+        .values(input)
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapDeliveryConstraint(error);
   }
 }
