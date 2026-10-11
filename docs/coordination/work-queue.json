@@ -2109,7 +2109,8 @@
       "paths": [
         "docs/planning/database-parity-db10-notification-template-disposition.json",
         "docs/planning/database-parity-db10-notification-template-contract.md",
-        "tests/db10-notification-template-disposition.test.mjs"
+        "tests/db10-notification-template-disposition.test.mjs",
+        "docs/planning/database-parity-db10-field-ledger.json"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
