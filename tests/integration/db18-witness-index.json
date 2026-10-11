@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-018",
+  "status": "AUTHORED_EXECUTION_NOT_RUN",
+  "safety": {
+    "database": "TEST_DATABASE_URL preferred; DATABASE_URL fallback remains subject to DB-025 destructive-target guard when reset tooling is used",
+    "fixtures": "New direct SQL witnesses use BEGIN/ROLLBACK and create only per-test rows",
+    "ciPolicy": "GitHub Actions billing is not an execution dependency or blocker; independent disposable PostgreSQL evidence is still required"
+  },
+  "directNegativeWitnesses": [
+    {
+      "id": "DB18-N01",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects a direct cross-college group membership insert",
+      "guard": "db03_member_tenant_guard",
+      "migration": "drizzle/0039_db03_scope_triggers.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N02",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects a direct group member_type that the membership does not hold",
+      "guard": "db03_member_tenant_guard",
+      "migration": "drizzle/0039_db03_scope_triggers.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N03",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects changing a populated group to another college",
+      "guard": "db03_group_owner_immutable_guard",
+      "migration": "drizzle/0039_db03_scope_triggers.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N04",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects an elective slot whose program belongs to another college",
+      "guard": "db03_elective_slot_scope_guard",
+      "migration": "drizzle/0039_db03_scope_triggers.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N05",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects a quiz bound to a delivery from another offering",
+      "guard": "db06_course_quiz_parent_guard",
+      "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N06",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects a quiz attempt using a different delivery than its quiz",
+      "guard": "db06_quiz_attempt_parent_guard",
+      "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N07",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects an answer whose question belongs to a different quiz",
+      "guard": "db06_quiz_answer_parent_guard",
+      "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-N08",
+      "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
+      "title": "rejects an assignment grade above the assignment maximum",
+      "guard": "db06_assignment_submission_parent_guard",
+      "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    }
+  ],
+  "existingConcurrencyWitnesses": [
+    {
+      "id": "DB18-C01",
+      "raceProbe": "P5-R04",
+      "file": "tests/integration/groups-db03.test.ts",
+      "title": "serializes simultaneous choices from different offerings of the same max_pick=1 slot",
+      "state": "AUTHORED_EXISTING_NOT_RUN_IN_DB018"
+    },
+    {
+      "id": "DB18-C02",
+      "raceProbe": "P5-R05",
+      "file": "tests/integration/courses-c4b-quizzes.test.ts",
+      "title": "allows only one concurrent final attempt and enforces database score bounds",
+      "state": "AUTHORED_EXISTING_NOT_RUN_IN_DB018"
+    }
+  ],
+  "missingConcurrencyWitnesses": [
+    {
+      "id": "DB18-M01",
+      "raceProbe": "P5-R01",
+      "domain": "PLACEMENTS",
+      "state": "SOURCE_CONFIRMED_GAP_TEST_MISSING",
+      "required": "Gate application insert against concurrent paid-module disable or inherited eligibility revocation inside the same ordering transaction."
+    },
+    {
+      "id": "DB18-M02",
+      "raceProbe": "P5-R02",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_CONFIRMED_GAP_TEST_MISSING",
+      "required": "Prove enrollment cannot commit after cohort becomes completed/archived between precheck and insert."
+    },
+    {
+      "id": "DB18-M03",
+      "raceProbe": "P5-R06",
+      "domain": "PROJECTS",
+      "state": "SOURCE_PROTECTED_EXPLICIT_CONCURRENCY_TEST_MISSING",
+      "required": "Two simultaneous submissions for one task must yield one task transition/submission and one clean loser with no orphan activity."
+    },
+    {
+      "id": "DB18-M04",
+      "raceProbe": "P5-R07",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_PROTECTED_EXPLICIT_CONCURRENCY_TEST_MISSING",
+      "required": "Two lifecycle transitions from one cohort expected state must produce exactly one winner."
+    }
+  ],
+  "excludedUntilRegistered": [
+    {
+      "raceProbe": "P5-R08",
+      "reason": "scheduled-job lease schema remains draft/unregistered"
+    },
+    {
+      "raceProbe": "P5-R09",
+      "reason": "outbound delivery schema remains draft/unregistered"
+    },
+    {
+      "raceProbe": "P5-R10",
+      "reason": "log-alert schema remains draft/unregistered"
+    }
+  ],
+  "counts": {
+    "directNegativeAuthored": 8,
+    "existingConcurrencyAuthored": 2,
+    "explicitConcurrencyMissing": 4,
+    "draftUnregisteredExcluded": 3,
+    "runtimeExecuted": 0,
+    "runtimePassed": 0
+  }
+}
