@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:44:30.000Z",
+  "updatedOn": "2026-10-11T08:47:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2516,6 +2516,52 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:22:00+05:30",
           "reason": "Chat 5 started 21-field notification campaign/recipient-delivery source reconciliation and isolated staging."
+        }
+      ]
+    },
+    {
+      "id": "DB-044",
+      "phase": "DATABASE",
+      "title": "Resolve DB06 assignment re-attempt persistence parity",
+      "scope": "Source-backed decision and staging for legacy student_assignment.attempt_number/semester-scoped re-attempt semantics versus vNext one-row assignment+membership uniqueness. Determine active behavior, normalized attempt identity/history, grading implications and safe uniqueness; source-only, no API/UI cutover or journal registration.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-db06-assignment-attempt-contract.md",
+        "docs/planning/sql/db06-assignment-attempt-parity-candidate.sql",
+        "tests/db06-assignment-attempt-staging.test.mjs",
+        "docs/planning/database-parity-db06-field-reconciliation.json"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T08:47:00.000Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T08:47:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T08:47:00.000Z",
+          "reason": "DB-041 follow-up: student_assignment.attempt_number remains the only active DB06 assessment field with TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION; current vNext unique assignment+membership key permits one row only."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T08:47:00.000Z",
+          "reason": "Chat 1 claims isolated assignment re-attempt persistence decision/staging; no overlap with active attendance/DB10/domain workers."
         }
       ]
     }
