@@ -63,3 +63,39 @@ test("DB05 scoped offering/delivery triggers share transaction race discipline a
   assert.match(sql, /upstream/i);
   assert.match(sql, /Two-session offering\/delivery insert-vs-parent-move/);
 });
+
+const manifest = JSON.parse(readFileSync(resolve(root, "docs/planning/db05-migration-readiness-manifest.json"), "utf8"));
+const verifier = source("scripts/db05-migration-readiness.mjs");
+
+test("DB05 offering/delivery companion must block migration readiness until actual PG proof", () => {
+  const companion = manifest.crossDomainCompanions.find(
+    item => item.id === "DB05_OFFERING_DELIVERY_DIRECT_WRITE_SCOPE"
+  );
+  assert.ok(companion);
+  assert.equal(companion.path, "scripts/sql/db05-offering-delivery-scope.draft.sql");
+  assert.equal(companion.registered, false);
+  assert.equal(companion.postgresExecuted, false);
+  assert.equal(companion.readyForProduction, false);
+  assert.ok(manifest.gates.some(g =>
+    g.id === "DB05_OFFERING_DELIVERY_CROSS_COLLEGE_AND_COHORT_TERM_NEGATIVES" &&
+    g.status === "NOT_RUN"
+  ));
+  assert.ok(manifest.gates.some(g =>
+    g.id === "DB05_OFFERING_DELIVERY_UPSTREAM_GRAPH_RACE" && g.status === "NOT_RUN"
+  ));
+  assert.match(verifier, /manifest\.crossDomainCompanions/);
+  assert.match(verifier, /Companion NOT acceptance-ready/);
+  assert.equal(manifest.artifacts.length, 7);
+});
+
+test("DB05 executed pure offering reference cases never promote PostgreSQL gate", () => {
+  const evidence = manifest.executedSourceReferenceSuites.find(
+    row => row.id === "DB05_OFFERING_DELIVERY_SOURCE_REFERENCE"
+  );
+  assert.equal(evidence.testCount, 19);
+  assert.equal(evidence.passed, 19);
+  assert.equal(evidence.failed, 0);
+  assert.equal(evidence.countsForPgGate, false);
+  assert.equal(evidence.countsForApplicationIntegration, false);
+  assert.equal(manifest.sourceReferenceTotals.countsForDatabasePromotion, false);
+});
