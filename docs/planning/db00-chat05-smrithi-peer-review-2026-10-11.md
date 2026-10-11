@@ -95,6 +95,33 @@ Mapping them into the core academic schema by table-name similarity would be sem
 
 `smrithi_notification_template` is a separate template registry with channel/language/version, bodies, provider/DLT IDs, variable schema and actor metadata. Current LMS notification runtime is independently reconciled under DB10. Do not resurrect this historical Smrithi copy unless an active Smrithi producer is proven.
 
+## 4.1 Current configuration residue is unconsumed in source
+
+The frozen backend still contains Smrithi-looking properties such as
+`smrithi.master-data.seed-on-startup`, `smrithi.master-data.csv-location`,
+`SMRITHI_COLLEGE_NAME`, `SMRITHI_ORG_NAME`, and comments for
+`/api/v1/smrithi/context`.
+
+However:
+
+- the configured `classpath:data/smrithi` resource directory is absent;
+- exact searches for those property keys, environment variable names,
+  `/api/v1/smrithi/context`, and “Vasan Master Data” find no current backend
+  or frontend consumer;
+- current `application.properties` alone therefore proves stale
+  configuration/intention, not an executing subsystem.
+
+## 4.2 Connected 42Students organization-wide detached-service search
+
+Using the connected GitHub organization, repository and code searches for
+`smrithi` and `42Learn` returned **zero repository matches and zero indexed
+code matches across 42Students**.
+
+This does not rule out a privately deployed service outside the connected
+GitHub organization, but it materially narrows the detached-consumer risk:
+there is no second connected 42Students repository that currently exposes the
+Smrithi implementation.
+
 ## 5. Recommended table-level disposition
 
 The seven tables should receive one coherent product decision:
@@ -133,7 +160,7 @@ The historical tables become source reference only.
 
 The remaining uncertainty is now narrow:
 
-> Does any detached/external Smrithi admissions application still operate outside `42Students/lms` and `42Students/lms2-fe`, and is it in vNext scope?
+> Does any detached/external Smrithi admissions application still operate **outside the connected 42Students GitHub organization**, and is it in vNext scope?
 
 No additional in-repository Smrithi producer/consumer ambiguity was found.
 
