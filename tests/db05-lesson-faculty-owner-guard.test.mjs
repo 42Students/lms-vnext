@@ -78,7 +78,7 @@ test("later API must combine faculty owner with teaching assignment access", () 
   assert.match(permissions, /courseTeachingAssignments/);
   assert.match(permissions, /hasFacultyDeliveryAccess/);
   assert.match(permissions, /requireDeliveryContentMutation/);
-  assert.match(service, /createdByUserId:\s*context\.user\.id/);
+  assert.match(service, /normalizedContentValues\(\s*input,\s*context\.user\.id/);
   assert.match(service, /requireDeliveryContentMutation/);
   assert.match(contract, /active teaching assignment/);
   assert.match(contract, /admin reassignment/i);
