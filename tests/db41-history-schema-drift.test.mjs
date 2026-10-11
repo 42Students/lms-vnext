@@ -7,17 +7,18 @@ const staged=fs.readFileSync("src/db/schema/db06-history-staged.ts","utf8");
 const sql=fs.readFileSync("docs/planning/sql/db06-assessment-attendance-history-candidate.sql","utf8");
 const original=()=>auditDb41(staged,sql);
 
-test("DB41 grade ledger is aligned while attendance history remains structurally divergent",()=>{
+test("DB41 grade and attendance history sources are structurally aligned but unverified",()=>{
   const r=original();
-  assert.equal(r.status,"BLOCKED_SOURCE_DRIFT");
-  assert.equal(r.fieldDifferences,12);
-  assert.deepEqual(r.tables.assignment_grade_events.missingSqlColumns,[]);
-  assert.deepEqual(r.tables.assignment_grade_events.missingStagedColumns,[]);
-  assert.deepEqual(r.tables.assignment_grade_events.missingSqlChecks,[]);
-  assert.deepEqual(r.tables.attendance_record_events.missingStagedColumns,[
-    "attendance_record_id","record_version_after","record_version_before"
-  ]);
-  assert.equal(r.tables.attendance_record_events.missingSqlColumns.length,9);
+  assert.equal(r.status,"STRUCTURALLY_ALIGNED_UNVERIFIED");
+  assert.equal(r.fieldDifferences,0);
+  for(const table of ["assignment_grade_events","attendance_record_events"]){
+    assert.deepEqual(r.tables[table].missingSqlColumns,[]);
+    assert.deepEqual(r.tables[table].missingStagedColumns,[]);
+    assert.deepEqual(r.tables[table].missingSqlChecks,[]);
+    assert.deepEqual(r.tables[table].missingStagedChecks,[]);
+  }
+  assert.equal(r.readyForPromotion,false);
+  assert.equal(r.verifiedPostgreSQL,false);
 });
 
 test("DB41 repaired staged TypeScript has no malformed sql.raw literals",()=>{
@@ -26,11 +27,11 @@ test("DB41 repaired staged TypeScript has no malformed sql.raw literals",()=>{
   assert.doesNotMatch(staged,/sql\.raw\(""/);
 });
 
-test("DB41 grade events now persist actor role, but attendance actor model remains unresolved",()=>{
+test("DB41 both event ledgers persist actor role with aligned CHECK names",()=>{
   const r=original();
-  assert.ok(!r.errors.includes("assignment_grade_events: SQL does not persist actor_role"));
-  assert.ok(r.errors.includes("attendance_record_events: SQL does not persist actor_role"));
+  assert.ok(!r.errors.some(error=>/does not persist actor_role/.test(error)));
   assert.equal(r.tables.assignment_grade_events.missingSqlChecks.length,0);
+  assert.equal(r.tables.attendance_record_events.missingSqlChecks.length,0);
 });
 
 test("DB41 grade completeness trigger now captures feedback-only mutations",()=>{
@@ -45,7 +46,7 @@ test("DB41 new staged field absent from SQL is detected",()=>{
     'extraUnmapped: text("injected_unmapped"),\n    actorRole: varchar("actor_role"');
   const r=auditDb41(modified,sql);
   assert.ok(r.tables.assignment_grade_events.missingSqlColumns.includes("injected_unmapped"));
-  assert.equal(r.fieldDifferences,13);
+  assert.equal(r.fieldDifferences,1);
 });
 
 test("DB41 extra SQL-only field not present in staged schema is detected",()=>{
@@ -85,11 +86,12 @@ test("DB41 rejects reintroduced malformed string quoting",()=>{
   assert.match(r.errors.join("\n"),/Malformed TypeScript sql.raw/);
 });
 
-test("DB41 grade actor CHECK parity is closed; attendance actor CHECK parity is still open",()=>{
+test("DB41 grade and attendance actor CHECK parity is closed",()=>{
   const r=original();
   assert.equal(r.tables.assignment_grade_events.missingSqlChecks.length,0);
-  assert.ok(r.tables.attendance_record_events.missingSqlChecks.some(x=>x.endsWith("_actor_role_ck")));
-  assert.ok(r.tables.attendance_record_events.missingSqlChecks.some(x=>x.endsWith("_actor_shape_ck")));
+  assert.equal(r.tables.assignment_grade_events.missingStagedChecks.length,0);
+  assert.equal(r.tables.attendance_record_events.missingSqlChecks.length,0);
+  assert.equal(r.tables.attendance_record_events.missingStagedChecks.length,0);
 });
 
 test("DB41 grade actor role is checked against its real membership grant",()=>{
@@ -100,4 +102,36 @@ test("DB41 grade actor role is checked against its real membership grant",()=>{
   assert.match(guard,/mr\.role = 'COLLEGE_ADMIN'/);
   assert.match(guard,/mr\.role = 'FACULTY'/);
   assert.match(guard,/DB06 grade event tenant actor role invalid/);
+});
+
+
+test("DB41 attendance completeness captures exact marker and mark-time snapshots",()=>{
+  const r=original();
+  assert.doesNotMatch(r.errors.join("\n"),/Attendance completeness trigger ignores/);
+  const trigger=sql.slice(sql.indexOf("CREATE FUNCTION db06_require_attendance_event()"));
+  for(const field of [
+    "previous_marked_by_user_id","new_marked_by_user_id",
+    "previous_marked_at","new_marked_at",
+  ]){
+    assert.match(trigger,new RegExp(field));
+  }
+  assert.match(sql,/DB06 attendance record identity is immutable/);
+  assert.match(sql,/DB06 attendance event actor must equal current marker/);
+});
+
+test("DB41 canonical attendance model uses stable record versions, not delete-recreate revision ids",()=>{
+  const table=sql.slice(
+    sql.indexOf("CREATE TABLE attendance_record_events ("),
+    sql.indexOf("-- Tenant/actor validation"),
+  );
+  for(const field of [
+    "attendance_record_id","record_version_before","record_version_after",
+    "delivery_id","actor_role",
+  ]){
+    assert.match(table,new RegExp("\\b"+field+"\\b"));
+  }
+  assert.doesNotMatch(
+    table,
+    /\brevision\b|previous_attendance_record_id|new_attendance_record_id/,
+  );
 });
