@@ -60,7 +60,7 @@ CREATE FUNCTION db09_has_active_recruiter_grant(
   p_college_id uuid,
   p_company_relationship_id uuid DEFAULT NULL
 ) RETURNS boolean
-LANGUAGE sql STABLE AS $
+LANGUAGE sql STABLE AS $$
   SELECT EXISTS (
     SELECT 1
       FROM placement_recruiter_college_grants g
@@ -79,10 +79,10 @@ LANGUAGE sql STABLE AS $
          OR r.id = p_company_relationship_id
        )
   );
-$;
+$$;
 
 CREATE FUNCTION db09_assert_message_thread_principal_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_job_relationship uuid;
 BEGIN
@@ -107,14 +107,14 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_message_thread_principal_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,recruiter_user_id,job_id
   ON placement_tpo_message_threads
   FOR EACH ROW EXECUTE FUNCTION db09_assert_message_thread_principal_scope();
 
 CREATE FUNCTION db09_assert_message_sender_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_college_id uuid;
   v_recruiter_user_id uuid;
@@ -155,7 +155,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_message_sender_scope_guard
   BEFORE INSERT ON placement_tpo_messages
   FOR EACH ROW EXECUTE FUNCTION db09_assert_message_sender_scope();
@@ -163,7 +163,7 @@ CREATE TRIGGER db09_message_sender_scope_guard
 -- Message content/identity is history. Legacy behavior only advances read_at;
 -- do not allow direct SQL to rewrite sender/body/thread after publication.
 CREATE FUNCTION db09_restrict_message_update() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.id IS DISTINCT FROM OLD.id
      OR NEW.thread_id IS DISTINCT FROM OLD.thread_id
@@ -180,13 +180,13 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_message_update_guard
   BEFORE UPDATE ON placement_tpo_messages
   FOR EACH ROW EXECUTE FUNCTION db09_restrict_message_update();
 
 CREATE FUNCTION db09_assert_recruiter_private_note_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_relationship uuid;
 BEGIN
@@ -206,14 +206,14 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_recruiter_private_note_scope_guard
   BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id,job_id,application_id
   ON placement_recruiter_applicant_notes
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_private_note_scope();
 
 CREATE FUNCTION db09_assert_recruiter_read_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT db09_has_active_recruiter_grant(
     NEW.recruiter_user_id,
@@ -224,7 +224,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_recruiter_read_scope_guard
   BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id
   ON placement_recruiter_notification_reads
@@ -232,11 +232,11 @@ CREATE TRIGGER db09_recruiter_read_scope_guard
 
 -- Share events are an audit trail. Their source service only appends.
 CREATE FUNCTION db09_reject_share_event_rewrite() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   RAISE EXCEPTION 'share event history is append-only'
     USING ERRCODE = '23514';
-END $;
+END $$;
 CREATE TRIGGER db09_share_event_immutable
   BEFORE UPDATE OR DELETE ON placement_tpo_share_events
   FOR EACH ROW EXECUTE FUNCTION db09_reject_share_event_rewrite();
