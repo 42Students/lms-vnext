@@ -31,7 +31,7 @@ test("DB05 lesson deletion tombstones contents but never resurrects separately d
 test("DB05 learner read filters currently lack tombstone; migration stays blocked", () => {
   assert.match(contentWriter, /lessonContents\.status,\s*"PUBLISHED"/);
   assert.doesNotMatch(contentWriter, /lessonContents\.legacyDeletedAt/);
-  assert.match(cascade, /API must\s+change atomically with registered W01 migrations/);
+  assert.match(cascade, /API must[\s\S]{0,20}change atomically with registered W01 migrations/);
   assert.equal(manifest.artifacts.filter(x => x.registered).length, 0);
 });
 
@@ -70,7 +70,7 @@ test("DB05 owner upstream reparent and role security require independent proof",
   assert.match(owner, /row-write trigger/);
   assert.match(owner, /membership_role\.role::text = 'FACULTY'/);
   assert.match(cascade, /two-session delete\/move\/restore races/);
-  assert.match(owner, /PostgreSQL clean replay/);
+  assert.match(owner, /migration replay and wrong-tenant\/role\/concurrency tests actually run/);
 });
 
 test("DB05 child insert and reparent block live content under deleted parent", () => {
