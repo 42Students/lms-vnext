@@ -101,7 +101,7 @@ test("deletion history is staged rather than counted as live", () => {
   const domain = byId.get("tenant_domain.is_deleted");
   assert.equal(domain?.candidateTarget, "tenant_domains.deleted_at");
   assert.equal(domain?.proposedDisposition, "STAGED_UNREGISTERED_TARGET_CANDIDATE");
-  assert.equal(mapping.summary.migrationAccepted, 0);
+  assert.equal(mapping.summary.productionMigrationsApplied, 0);
 });
 test("legacy user handle is not automatically a provider UID", () => {
   const user = byId.get("user.unique_id");
@@ -123,7 +123,7 @@ test("all unresolved decisions are listed explicitly with security exceptions", 
 
 test("no mapping silently declares PostgreSQL or provider verification", () => {
   assert.equal(mapping.summary.postgresVerified, 0);
-  assert.equal(mapping.summary.providerConfirmed, 0);
+  assert.equal(mapping.summary.providerVerified, 0);
   assert.ok(rows.every((row) => !row.postgresVerified && !row.providerAccepted));
 });
 test("staged target references have corresponding source declarations", () => {
