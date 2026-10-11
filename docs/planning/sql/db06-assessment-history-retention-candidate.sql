@@ -186,8 +186,13 @@ DECLARE
   selected_incorrect_count integer;
   expected_correct boolean;
 BEGIN
-  SELECT q.quiz_id, q.question_type::text, q.prompt, q.points,
-         COALESCE(
+  SELECT q.quiz_id, q.question_type::text, q.prompt, q.points
+    INTO q_quiz, q_type, q_prompt, q_points
+    FROM quiz_questions q
+    WHERE q.id = NEW.question_id
+    FOR SHARE;
+
+  SELECT COALESCE(
            jsonb_agg(
              jsonb_build_object(
                'id', o.id::text,
@@ -196,15 +201,12 @@ BEGIN
                'correct', o.is_correct
              )
              ORDER BY o.sequence, o.id
-           ) FILTER (WHERE o.id IS NOT NULL),
+           ),
            '[]'::jsonb
          )
-    INTO q_quiz, q_type, q_prompt, q_points, canonical_options
-    FROM quiz_questions q
-    LEFT JOIN quiz_options o ON o.question_id = q.id
-    WHERE q.id = NEW.question_id
-    GROUP BY q.id, q.quiz_id, q.question_type, q.prompt, q.points
-    FOR SHARE OF q;
+    INTO canonical_options
+    FROM quiz_options o
+    WHERE o.question_id = NEW.question_id;
 
   IF q_quiz IS NULL THEN
     RAISE EXCEPTION 'DB06 answer snapshot question is missing'
@@ -374,12 +376,29 @@ BEGIN
     FROM quiz_attempt_answers aa
     JOIN quiz_questions qq ON qq.id = aa.question_id
     JOIN quiz_attempts a ON a.id = aa.attempt_id
+    LEFT JOIN LATERAL (
+      SELECT COALESCE(
+               jsonb_agg(
+                 jsonb_build_object(
+                   'id', o.id::text,
+                   'text', o.option_text,
+                   'sequence', o.sequence,
+                   'correct', o.is_correct
+                 )
+                 ORDER BY o.sequence, o.id
+               ),
+               '[]'::jsonb
+             ) AS canonical_options
+      FROM quiz_options o
+      WHERE o.question_id = aa.question_id
+    ) snapshot ON true
     WHERE qq.quiz_id IS DISTINCT FROM a.quiz_id
        OR aa.question_type::text IS DISTINCT FROM qq.question_type::text
        OR aa.prompt_snapshot IS DISTINCT FROM qq.prompt
        OR aa.points_possible IS DISTINCT FROM qq.points
+       OR aa.options_snapshot IS DISTINCT FROM snapshot.canonical_options
   ) THEN
-    RAISE EXCEPTION 'DB06 retention preflight: answer snapshots mismatch question identity'
+    RAISE EXCEPTION 'DB06 retention preflight: answer snapshots mismatch committed definition'
       USING ERRCODE='23514';
   END IF;
 END;
