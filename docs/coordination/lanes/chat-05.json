@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-026",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB026_ELECTIVE_PROGRAM_ORACLE_RECONCILIATION_STARTED",
+    "checkpointKind": "DB026_ELECTIVE_PROGRAM_ORACLE_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "b5cb2b453043caf91cc1427432f2994cbae1f284",
-    "lastWorkerMergedSha": "26fb964665b0477c02aeeed34d5beb3d532bbcf3",
+    "observedMainSha": "6260e5cb53eb95e60c0d23fef01d6ac96b7f3d4a",
+    "lastWorkerMergedSha": "3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-026 started after current main was found to positively permit same-college cross-program elective learners while pinned executable ElectiveService.classEligibilityError rejects program mismatch. Reconcile current runtime oracle without folding DB02 semester/year into academic-period equality."
+    "summary": "DB-026 resolved the V167 prose vs executable ElectiveService conflict in favor of same-program runtime behavior. Main has join/move/read/backed-delivery program guards, negative regressions, canonical decision doc, and stale PR #55 closed. Fresh source matrix 9/9; PostgreSQL verification pending."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -34,7 +34,9 @@
     "tests/db08-outcome-fidelity-staging.test.mjs: six authored static contract tests, not executed",
     "tests/db10-skills-staging.test.mjs: five static source contract tests authored NOT_EXECUTED",
     "tests/db10-log-alerts-staging.test.mjs: five static privacy/precision contract tests authored NOT_RUN",
-    "tests/db10-general-notices-staging.test.mjs: six authored Node static tests NOT_EXECUTED"
+    "tests/db10-general-notices-staging.test.mjs: six authored Node static tests NOT_EXECUTED",
+    "tests/integration/groups-db03-roster.test.ts: deny stale elective access/rejoin after learner program transfer (authored, not PostgreSQL-executed)",
+    "tests/integration/groups-db03.test.ts: reject wrong-program backed delivery and reject admin elective move after learner program transfer atomically (authored, not PostgreSQL-executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -44,15 +46,20 @@
     "DB015 P5-R10: log-alert persistence is draft-only with no verified runtime producer.",
     "DB015 P5-R11: academic schedule create/update can race ACTIVE->CLOSED period transition.",
     "DB015 P5-R22: concurrent schedule edits have no explicit optimistic-version/lost-update policy.",
-    "All 23 DB015 race witnesses remain NOT_RUN until disposable PostgreSQL execution is available."
+    "All 23 DB015 race witnesses remain NOT_RUN until disposable PostgreSQL execution is available.",
+    "DB026: DB02 current semester/current academic year persistence remains unregistered; do not substitute academic-period equality for the legacy Batch currentSemester/academicYear rule.",
+    "DB026: registered DB03 SQL trigger still needs migration-integrator proof/enforcement of slot.program_id = backed delivery cohort program, including upstream parent edit bypasses.",
+    "DB026: PostgreSQL integration witnesses remain NOT_RUN; 9/9 source assertions are not runtime verification."
   ],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
     "Placement writer: move/repeat learner paid-module + inherited eligibility decision inside an ordering transaction/lock compatible with eligibility/module writers; see P5-R01.",
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
-    "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
+    "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified.",
+    "DB02/Chat 4: DB026 consumes canonical current term/year once registered; do not create DB03 progression state.",
+    "Chat 1 migration integrator: enforce elective slot-program/backed-delivery cohort-program equality in a new forward-only migration and test reverse-parent edits; canonical decision docs/planning/db03-elective-program-oracle-decision.md."
   ],
-  "nextAction": "Change only DB-026 claimed group/elective eligibility/read/test/docs paths; preserve DB02 term/year dependency and avoid migration/barrel edits.",
+  "nextAction": "Refresh shared DATABASE queue and CAS-pick the next eligible task; otherwise perform non-conflicting peer review while dependency-locked. Do not reopen DB-026 except for verification or DB02/migration integration evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -70,7 +77,9 @@
     "https://github.com/42Students/lms-vnext/commit/4bbb16b2cf2603764873e68cd061281de343bc85",
     "https://github.com/42Students/lms-vnext/actions/runs/38085390907",
     "https://github.com/42Students/lms-vnext/commit/bc71648077a9ca4e8a06b680438ef208410b3618",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105897209"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105897209",
+    "https://github.com/42Students/lms-vnext/commit/cfe939cd58e50791ccbeef16a35e0c83ca4e0324",
+    "https://github.com/42Students/lms-vnext/commit/3dcf5b167cf3324af5621ceb3b20249ad42ac78d"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -92,10 +101,11 @@
     "DB-021",
     "DB-022",
     "DB-023",
-    "DB-024"
+    "DB-024",
+    "DB-026"
   ],
   "lastPickedAt": "2026-10-11T11:00:00+05:30",
-  "lastCompletedAt": "2026-10-11T05:35:56.677Z",
+  "lastCompletedAt": "2026-10-11T13:13:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
@@ -105,7 +115,8 @@
     "DB-021",
     "DB-022",
     "DB-023",
-    "DB-024"
+    "DB-024",
+    "DB-026"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
