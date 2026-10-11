@@ -549,6 +549,24 @@
       "status": "NOT_RUN",
       "owner": "W01_DB02_DB05",
       "evidence": "Read-only aggregate mismatch preflight scripts/sql/db05-offering-delivery-preflight.readonly.sql authored, not executed on disposable PG. Zero wrong-tenant/wrong-cohort/term rows must be witnessed before enabling child guards; not sufficient for races."
+    },
+    {
+      "id": "DB05_ACTIVE_CHILD_ARCHIVE_SERIALIZATION_PG_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_INTEGRATOR",
+      "evidence": "DB05 Chat 6 unregistered scripts/sql/db05-hierarchy-active-child-archive-guard.draft.sql pairs course->offering, offering->delivery, delivery->teacher parent archive guards with active-child FOR SHARE row-locks. Twenty HL-01..20 acceptance cases, including two-session races, lock order, archived history and isolation; no real PostgreSQL execution. Static contract tests authored, not a PG acceptance witness.",
+      "companionDraft": "scripts/sql/db05-hierarchy-active-child-archive-guard.draft.sql",
+      "readonlyPreflight": "scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql",
+      "sqlRegistered": false,
+      "pgExecuted": false,
+      "requiredPGCases": 20
+    },
+    {
+      "id": "DB05_ACTIVE_CHILD_ARCHIVE_ZERO_STATE_DRIFT",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_INTEGRATOR",
+      "evidence": "Read-only preflight requires all three active-child-under-inactive-parent counts to be zero on disposable PG. Query authored but never run; zero counts would not prove race safety.",
+      "sqlPath": "scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql"
     }
   ],
   "sourceReview": {
@@ -616,7 +634,8 @@
     "DB05 cohort+academic period scope guards source-staged only; CP-01..CP-22 PostgreSQL wrong-cohort/term and upstream reparent acceptance NOT_RUN.",
     "DB05_TOMBSTONE_OPTIMISTIC_VERSION: Guard staged to close stale CAS hole for course/lesson/content deletion/restore and cascade. W01 must register after version columns and prove TV-01..TV-14 concurrent PostgreSQL; 0 live DB acceptance, API version writers not yet switched.",
     "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback.",
-    "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope."
+    "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope.",
+    "Course/offering/delivery active-child vs archived-parent concurrent INSERT/ARCHIVE race: SQL companion plus 20-case negative witness staged, not registered or executed; W01 must merge once and prove lock-order with DB02/DB05 existing triggers."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
