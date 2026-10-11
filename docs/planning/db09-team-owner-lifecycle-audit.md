@@ -152,8 +152,8 @@ The candidate uses a transaction-scoped advisory lock derived from the full
 The same lock is acquired by:
 
 - placement-job owner assignment;
-- recruiter-lead owner assignment/change (serialization only; existing DB09
-  lead-owner eligibility semantics remain authoritative);
+- recruiter-lead owner assignment/change (serialized and validated against the
+  active placement-owner scope);
 - team-member deletion/reassignment.
 
 This closes the stale-check race:
@@ -172,8 +172,11 @@ state; both cannot commit an orphaning interleaving.
 - Do not grant FACULTY_COORDINATOR the college-wide
   `db09_has_active_tpo_actor` authority.
 - Do not turn every historical closed-drive owner into an active team member.
-- Do not change recruiter-lead owner eligibility in this task; the new trigger
-  only serializes lead-owner changes against team removal.
+- Recruiter-lead owner eligibility is intentionally tightened in vNext:
+  the legacy bulk action accepted any same-college faculty, which allowed a
+  removed coordinator to regain ownership after removal. DB-069 requires the
+  same active placement-owner scope used by drive ownership. This is a
+  deliberate hardening, not a claim that the legacy check was already strict.
 - Do not register the candidate directly. Chat 1 owns Drizzle/migration order.
 
 ## API/runtime cutover requirements
@@ -194,23 +197,26 @@ Before migration activation:
 
 At minimum execute:
 
-1. same-college ACTIVE TPO owner succeeds;
-2. same-college delegated FACULTY_COORDINATOR owner succeeds;
-3. ordinary faculty outside the placement team is rejected as drive owner;
-4. learner membership is rejected;
-5. inactive membership/user/college is rejected;
-6. cross-college owner FK is rejected;
-7. direct team delete with owned lead is rejected;
-8. direct team delete with DRAFT/PUBLISHED drive is rejected;
-9. closed-only historical drive does not block no-replacement removal;
-10. atomic reassignment moves both leads and all jobs before deletion;
-11. invalid/cross-college replacement owner is rejected;
-12. self-removal is rejected;
-13. concurrent team-delete vs drive-owner assignment cannot orphan ownership;
-14. concurrent team-delete vs lead-owner assignment cannot pass a stale impact
-    check;
-15. creator identity remains unchanged after ownership reassignment;
-16. registered migration replay and schema drift match the final Drizzle model.
+1. every live `DRAFT | PUBLISHED` job has a non-null owner after backfill;
+2. same-college ACTIVE TPO owner succeeds;
+3. same-college delegated FACULTY_COORDINATOR owner succeeds;
+4. ordinary faculty outside the placement team is rejected as drive owner;
+5. learner membership is rejected;
+6. inactive membership/user/college is rejected;
+7. cross-college owner is rejected;
+8. lead owner outside the active placement team/TPO scope is rejected;
+9. direct team delete or identity mutation with owned lead is rejected;
+10. direct team delete or identity mutation with DRAFT/PUBLISHED drive is rejected;
+11. closed-only historical drive does not block no-replacement removal;
+12. atomic reassignment moves both leads and all jobs before deletion;
+13. invalid/cross-college replacement owner is rejected;
+14. self-removal is rejected;
+15. concurrent team-delete vs drive-owner assignment cannot orphan ownership;
+16. concurrent team-delete vs lead-owner assignment cannot orphan ownership;
+17. a closed drive whose former owner left cannot be republished until a valid
+    owner is restored;
+18. creator identity remains unchanged after ownership reassignment;
+19. registered migration replay and schema drift match the final Drizzle model.
 
 ## Evidence boundary
 
