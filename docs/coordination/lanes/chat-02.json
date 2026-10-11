@@ -387,6 +387,61 @@
       "crosswalkBlob": "a94ca33ff460cd75742691adc6a71848cff774a2",
       "guardBlob": "e5f5ea66bc50dec9f4e1fe0ce1d2b3f63d5a9ed8",
       "lastGuardCommit": "4093d49c0990c9f42d6cbab2a9bbd33b18041971"
+    },
+    "db01AuthMonotonicAttemptGuard": {
+      "status": "STAGED_OPTIONAL_NOT_REGISTERED_NOT_EXECUTED",
+      "sourceLegacyTTL": "PublicMobileAuthController: attempt expires five minutes after issue",
+      "sqlShape": "docs/planning/sql/db01-auth-attempts-staging.sql",
+      "drizzleDraft": "src/db/schema/db01-auth-attempts.staged.ts",
+      "sqlGuard": "docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql",
+      "sourceTests": "tests/db01-auth-attempt-lifecycle-source.test.mjs",
+      "postgresTests": "tests/db01-auth-attempt-lifecycle-pg.test.mjs",
+      "contract": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+      "commits": [
+        "3196232e2878cd03e1d2c35b195135ac1270427a",
+        "80d95a4d24f79ce15c174610466e024f2c4a565c",
+        "1567ed64bf8d726e007bc1b2c1caf0f67a2b3d31",
+        "431c44c51bbe59239400bc2751300d249cf39547",
+        "572e2fdaf28f70203d4d2eb7c5ab695360955cd6",
+        "f72ec43356a4119c77134e4d3f34541a81272b39",
+        "49816a3fc280db1856e8c703be6186048eda201d"
+      ],
+      "sourceNodeTestsAuthored": 14,
+      "sourceNodeTestsExecuted": 0,
+      "pgNodeSuiteAuthored": 1,
+      "pgCasesExecuted": 0,
+      "sourceAssertionsInProcess": "24 of 24 passed on pre-terminal-patch; rerun against latest SHA to confirm",
+      "providerStrategyApproved": false,
+      "registeredMigration": false
+    },
+    "db01AuthP0Crosswalk": {
+      "status": "38_FIELDS_POLICY_DRAFT_ZERO_RUNTIME_VERIFIED",
+      "artifact": "docs/planning/db01-auth-security-p0-field-crosswalk.json",
+      "sourceTests": "tests/db01-auth-security-p0-field-crosswalk.test.mjs",
+      "fields": 38,
+      "byDomain": {
+        "DB01": 33,
+        "DB04": 2,
+        "DB09": 3
+      },
+      "namedSourceEvidenceGaps": [
+        "role.is_deleted",
+        "tenant_domain.is_deleted",
+        "user.password"
+      ],
+      "registeredMigrations": 0,
+      "approvedRetirements": 0,
+      "providerVerified": 0,
+      "runtimeVerified": 0,
+      "commits": [
+        "5327e9a5366f5329f7d9db6d8bf1fed6d9ee3e42",
+        "a23c300bf5c967de909efe0e05ac538f6976cb27",
+        "af25ee0b3f20a0732606eed5340d9271d90fa40e"
+      ],
+      "handoffs": [
+        "https://github.com/42Students/lms-vnext/issues/23#issuecomment-6107273075",
+        "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6107273467"
+      ]
     }
   },
   "qualityGates": {
@@ -415,7 +470,10 @@
     "db01TypedPolicyFullRegistry": "PASS_10_OF_10_CONNECTOR_SOURCE",
     "db01Auth78Mapping": "PASS_17_OF_17_IN_PROCESS_SOURCE",
     "db01NewPostgres": "NOT_EXECUTED",
-    "db01SecurityPolicyNode": "PASS_16_OF_16_INDEPENDENT_NODE"
+    "db01SecurityPolicyNode": "PASS_16_OF_16_INDEPENDENT_NODE",
+    "authAttemptMonotonicSource": "24_IN_PROCESS_PASS_BEFORE_LAST_STAGED_GUARD_REVIEW; NODE_14_AUTHORED_NOT_RUN",
+    "authAttemptMonotonicPostgres": "ONE_PG_SUITE_AUTHORED_UNEXECUTED",
+    "db01SecurityP0Crosswalk": "38_FIELD_POLICY_CROSSWALK_3_NAMED_CURRENT_SOURCE_EVIDENCE_GAPS_ZERO_PROVEN"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -459,7 +517,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 remains DATABASE IN_PROGRESS. DB01 security settings 16/16 local Node source tests pass; 78 auth/tenant no-target fields mapped (55 staged, 19 open, 4 normalized), 17 source checks pass. No PostgreSQL acceptance or policy approval; Chat1 sole migration integrator. Continue other bounded DATABASE work without waiting for Actions billing.",
+  "nextAction": "DB-004 DATABASE: review 38 P0 auth/security source policy decisions and three missing named witnesses; Chat1 must decide provider-only vs staged DB auth before integration; run independent node and PG tests for retry/version/consumed immutability; coordinate four-way live tenant lifecycle with other domain owners. 0 verified DB01 runtime-semantic fields.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -545,7 +603,12 @@
     "https://github.com/42Students/lms-vnext/commit/8371bfaba1fdf029087faf074dc2b2385aae9559",
     "https://github.com/42Students/lms-vnext/commit/f5ca3369fc107125187ba73e524901b73908df18",
     "https://github.com/42Students/lms-vnext/commit/f1a31e14a33f35b91b9d41a1aca3e4075a713a14",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107170040"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107170040",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-auth-attempt-monotonic-contract.md",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-auth-security-p0-field-crosswalk.json",
+    "https://github.com/42Students/lms-vnext/commit/f72ec43356a4119c77134e4d3f34541a81272b39",
+    "https://github.com/42Students/lms-vnext/commit/af25ee0b3f20a0732606eed5340d9271d90fa40e",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107272754"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
