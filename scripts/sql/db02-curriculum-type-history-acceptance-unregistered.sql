@@ -1,6 +1,6 @@
 -- DB02/DB-005 curriculum type historical identity acceptance, UNREGISTERED.
 -- Run only on a DISPOSABLE PostgreSQL DB AFTER Chat 1 integrates canonical DB02
--- and db02-curriculum-type-history-guard.draft.sql. ROLLBACK all fixture data.
+-- and db02-academic-progression-and-rooms-staging.sql. ROLLBACK all fixture data.
 -- No runtime execution is claimed by the author.
 BEGIN;
 
