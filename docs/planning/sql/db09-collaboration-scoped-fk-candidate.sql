@@ -186,6 +186,15 @@ BEGIN
       USING ERRCODE = '23503';
   END IF;
 
+  IF NEW.read_at IS NOT NULL THEN
+    RAISE EXCEPTION 'new message must start unread'
+      USING ERRCODE = '23514';
+  END IF;
+  IF NEW.created_at > statement_timestamp() + interval '5 minutes' THEN
+    RAISE EXCEPTION 'message creation timestamp is unreasonably future dated'
+      USING ERRCODE = '23514';
+  END IF;
+
   IF NEW.sender_type = 'RECRUITER' THEN
     IF NEW.sender_user_id <> v_recruiter_user_id
        OR NOT db09_has_active_recruiter_grant(
@@ -215,10 +224,15 @@ CREATE TRIGGER db09_message_sender_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_message_sender_scope();
 
 -- Message content/identity is history. Legacy behavior only advances read_at;
--- do not allow direct SQL to rewrite sender/body/thread after publication.
+-- do not allow direct SQL to rewrite or delete published messages.
 CREATE FUNCTION db09_restrict_message_update() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
+  IF TG_OP = 'DELETE' THEN
+    RAISE EXCEPTION 'message history is append-only'
+      USING ERRCODE = '23514';
+  END IF;
+
   IF NEW.id IS DISTINCT FROM OLD.id
      OR NEW.thread_id IS DISTINCT FROM OLD.thread_id
      OR NEW.sender_type IS DISTINCT FROM OLD.sender_type
@@ -233,12 +247,59 @@ BEGIN
     RAISE EXCEPTION 'message read state cannot be rewound or rewritten'
       USING ERRCODE = '23514';
   END IF;
+  IF OLD.read_at IS NULL AND NEW.read_at IS NOT NULL THEN
+    IF NEW.read_at < OLD.created_at THEN
+      RAISE EXCEPTION 'message cannot be read before it was created'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.read_at > statement_timestamp() + interval '5 minutes' THEN
+      RAISE EXCEPTION 'message read timestamp is unreasonably future dated'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
   RETURN NEW;
 END $$;
 CREATE TRIGGER db09_message_update_guard
-  BEFORE UPDATE ON placement_tpo_messages
+  BEFORE UPDATE OR DELETE ON placement_tpo_messages
   FOR EACH ROW EXECUTE FUNCTION db09_restrict_message_update();
 
+CREATE FUNCTION db09_assert_thread_last_message_projection() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+  v_thread_id uuid;
+  v_last_message_at timestamptz;
+  v_max_message_at timestamptz;
+BEGIN
+  IF TG_TABLE_NAME = 'placement_tpo_messages' THEN
+    v_thread_id := NEW.thread_id;
+  ELSE
+    v_thread_id := NEW.id;
+  END IF;
+
+  SELECT t.last_message_at
+    INTO v_last_message_at
+    FROM placement_tpo_message_threads t
+   WHERE t.id = v_thread_id;
+
+  SELECT max(m.created_at)
+    INTO v_max_message_at
+    FROM placement_tpo_messages m
+   WHERE m.thread_id = v_thread_id;
+
+  IF v_last_message_at IS DISTINCT FROM v_max_message_at THEN
+    RAISE EXCEPTION 'message thread last_message_at does not match persisted chronology'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE CONSTRAINT TRIGGER db09_message_thread_projection_from_message_guard
+  AFTER INSERT ON placement_tpo_messages
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_thread_last_message_projection();
+CREATE CONSTRAINT TRIGGER db09_message_thread_projection_from_thread_guard
+  AFTER INSERT OR UPDATE ON placement_tpo_message_threads
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_thread_last_message_projection();
 CREATE FUNCTION db09_assert_recruiter_private_note_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 DECLARE
