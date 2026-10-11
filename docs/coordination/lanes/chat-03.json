@@ -6,20 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "BLOCKED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-012",
   "blockedTaskIds": [
-    "DB-007",
-    "DB-012"
+    "DB-007"
   ],
   "checkpoint": {
-    "checkpointKind": "DB09_279_OF_279_DISPOSITION_REVIEWED_15_BLOCKED_ZERO_VERIFIED",
+    "checkpointKind": "DB09_279_OF_279_DISPOSITION_CLOSED_ZERO_FIELD_BLOCKERS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "64774c0702ef2c582d54f3377f4d8d38b97ca136",
-    "lastWorkerMergedSha": "64774c0702ef2c582d54f3377f4d8d38b97ca136",
+    "observedMainSha": "ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0",
+    "lastWorkerMergedSha": "ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-012 blocked after canonical DB09 closure: 279/279 disposition-reviewed, 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 DB/runtime verified. Remaining blockers are 13 notification_outbox fields (DB10), prep assessment_id (DB06), and industry_company export_columns_json owner decision, plus Chat 1 migration/PG acceptance."
+    "summary": "DB-012 active for integration-readiness only. Canonical DB09 ledger is 279/279 disposition-reviewed: 199 MAPPED, 80 REDESIGNED, 0 field blockers, 0 DB/runtime verified. Remaining gates are W01 migration registration + CI-independent PostgreSQL replay/negative/concurrency witnesses and runtime producer/consumer cutover."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -32,11 +31,9 @@
   "lastAuthoredTests": [],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "DB-012: Chat 1 migration registration/disposable PostgreSQL acceptance unavailable.",
-    "DB-012/DB10: 13 notification_outbox fields need general APP/undo/digest delivery parity beyond current outbound draft.",
-    "DB-012/DB06: prep_assignment.assessment_id canonical resource identity unresolved.",
-    "DB-012 product ownership: industry_company.export_columns_json canonical audience/owner unresolved.",
-    "No next ANY task is dependency-eligible: DB-018 waits on DB-001; DB-019 waits on DB-003/004/005/007/008/012; DB-020 waits on DB-002/017/018/019."
+    "W01 migration registration and dependency-ordered replay pending.",
+    "CI-independent disposable PostgreSQL witnesses pending.",
+    "Runtime producer/consumer and API compatibility unverified."
   ],
   "handoffs": [
     {
@@ -50,7 +47,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Resume only when a DB-012 blocker is resolved or another DATABASE task becomes dependency-eligible. On DB-012 resume, keep canonical ledger counts separate from runtime verification and require migration/PostgreSQL evidence before completion.",
+  "nextAction": "Audit all DB09 staged SQL/schema artifacts for dependency order, duplicate table/constraint proposals and incompatible assumptions; produce a single integration manifest for W01. Do not edit drizzle journal/schema barrel.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -103,7 +100,15 @@
     "https://github.com/42Students/lms-vnext/commit/b448defe8187e334e6b8b5113acf42d49c60c16f",
     "https://github.com/42Students/lms-vnext/commit/64774c0702ef2c582d54f3377f4d8d38b97ca136",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-final-91-disposition-2026-10-11.md",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/database-parity-db09-field-ledger.json"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/database-parity-db09-field-ledger.json",
+    "https://github.com/42Students/lms-vnext/commit/0d06087d09c256fdbb05a84d2501f450252a9b53",
+    "https://github.com/42Students/lms-vnext/commit/417d947b63d9bbf1827125c6f6818b7fd4e6b435",
+    "https://github.com/42Students/lms-vnext/commit/8fc5d89bd442b396cdcc338ba5dc1b6642c7d46f",
+    "https://github.com/42Students/lms-vnext/commit/a0cd61bc5028b5928382fd217c0ae6d7dbc24aef",
+    "https://github.com/42Students/lms-vnext/commit/9aeaf0ac38242e6e1c2cf3dff655495efb1a9d18",
+    "https://github.com/42Students/lms-vnext/commit/ca86ade0b9971ce8c41724a5f85e10406f60d801",
+    "https://github.com/42Students/lms-vnext/commit/b8f8b3b773f2ab4cbf1b7171c82ec25724914e91",
+    "https://github.com/42Students/lms-vnext/commit/ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
