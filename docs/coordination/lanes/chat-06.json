@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_TENANT_SCOPE_PARENT_GRAPH_AND_DISCUSSION_COMPANIONS_UNVERIFIED",
+    "checkpointKind": "DB008_PARENT_DEDUP_STAGED_RECEIPT_TENANT_IMPORT_FIXED_UNVERIFIED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
-    "lastWorkerMergedSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
+    "lastWorkerMergedSha": "a862d47e9ea98b6a93f75653f97ff3bdd3951a94",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 active DATABASE: 92 historical DB05 source columns reviewed, 0 semantically DB-verified. 7 independent SQL drafts UNREGISTERED plus 4 companion-only integrity proposals (classroom chat, learner progress, course parent graph, per-lesson discussions). Parent proposal guards same-college, indirect cycles, old children/offerings on direct course department move under READ COMMITTED; lesson discussion proposal validates course dept/period, optional delivery/section, author/resolver colleges. 7 new Node test definitions authored, not run; 19/19 connector source/structural assertions true (not DB). Upstream department/academic period mutation and real PG races NOT verified; CI intentionally unused, not a task blocker."
+    "summary": "DB008 DATABASE remains IN_PROGRESS: 92 legacy DB05 source columns inventoried, zero formal DB verification. Seven independent SQL drafts remain UNREGISTERED; same-lock upstream department-college guard paired with canonical graph SQL; shared DB06/DB16 private course receipt college/owner/content/delivery consumption guard staged as companion, NOT eighth migration. Corrected staged receipt TypeScript lessonContents import. Duplicate parent guard removed. Source assertions pass; authored Node suites NOT EXECUTED, Postgres replay/negative/race NOT RUN, CI/typecheck/build NOT accepted. Upstream section/period/offering/membership reparent and DB16 object identity remain blockers."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -36,7 +36,12 @@
     "tests/db05-progress-deletion-attempt.test.mjs: authored, not executed",
     "tests/db05-progress-deletion-attempt.test.mjs: progress tenant companion checks added, authored only; Node not executed",
     "tests/db05-course-parent-graph-guard.test.mjs (4 authored tests, NOT executed)",
-    "tests/db05-lesson-discussion-college-scope.test.mjs (3 authored tests, NOT executed)"
+    "tests/db05-lesson-discussion-college-scope.test.mjs (3 authored tests, NOT executed)",
+    "tests/db05-course-parent-integrity.test.mjs: authored, not executed; dedup canonical guard",
+    "tests/db05-parent-readiness-manifest.test.mjs: authored, not executed",
+    "tests/db05-course-upload-schema-import.test.mjs: authored, not executed",
+    "tests/db05-course-receipt-college-scope.test.mjs: authored, not executed",
+    "tests/db05-receipt-readiness-manifest.test.mjs: authored, not executed"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -100,9 +105,21 @@
       "kind": "COURSE_PARENT_AND_LESSON_DISCUSSION_FULL_SCOPE_COMPANIONS",
       "message": "Two additional unregistered companion SQL proposals: scripts/sql/db05-course-parent-graph-guard.draft.sql (same-college, recursive cycle, direct course dept child/offering safety, read-committed advisory lock; upstream parent moves unguarded) and scripts/sql/db05-lesson-discussions-same-college.draft.sql (replaces discussion guard function to cover owning course college, offering period, optional delivery, author/resolver). W01 integrate once after PG negatives/races; DB02 workers own upstream departmental transitions.",
       "commitSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "COURSE_PARENT_CANONICAL_DEDUP_UPSTREAM_DEPARTMENT",
+      "message": "PR #82 removes competing parent trigger; existing canonical graph guard + new same-lock department move guard must integrate ONCE; PR #83 tracks blocked race/department reparent tests. No PG run.",
+      "commitSha": "a12ef3b6b01bc7d88013b312ae699cced68f9ce1"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "COURSE_PRIVATE_RECEIPT_DB06_DB16_SCOPE",
+      "message": "PR #86 fixes staged schema import; PR #87 adds standalone receipt tenant/owner/delivery/submission/object key scope; PR #88 records as cross-domain companion. Await DB06/DB16 service/immutable receipt and PG negative/reparent/race proof.",
+      "commitSha": "a862d47e9ea98b6a93f75653f97ff3bdd3951a94"
     }
   ],
-  "nextAction": "Continue DB008 25 unresolved source semantics and audit W01 integration readiness; coordinate DB02 department reassignment and academic periods as upstream tenant/parent integrity; run real disposable PG parent/lesson tenant negative+race gates when independent runner exists, never interpret source checks as DB-verification.",
+  "nextAction": "Resume DB-008 source/consumer parity, especially 25 semantic decisions and receipt/assignment file-binding. Chat1 integrate registered migrations ONLY after disposable PG tenant/race/rollback proof; keep global DATABASE. Do not count source assertions or failing CI as acceptance.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -163,7 +180,12 @@
     "https://github.com/42Students/lms-vnext/commit/57dcfc9fdc62b6880d7995fe039721c0d6a64a71",
     "https://github.com/42Students/lms-vnext/commit/66b18a797baabe0d17d37a0a2e7852ebba03a1a9",
     "https://github.com/42Students/lms-vnext/commit/2ce353f9fbba797433c740d001f64c5c023cbd35",
-    "https://github.com/42Students/lms-vnext/commit/cd1081a9fccaa0064d8fb23dc0e7913af97319bc"
+    "https://github.com/42Students/lms-vnext/commit/cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
+    "https://github.com/42Students/lms-vnext/pull/82",
+    "https://github.com/42Students/lms-vnext/pull/83",
+    "https://github.com/42Students/lms-vnext/pull/86",
+    "https://github.com/42Students/lms-vnext/pull/87",
+    "https://github.com/42Students/lms-vnext/pull/88"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
