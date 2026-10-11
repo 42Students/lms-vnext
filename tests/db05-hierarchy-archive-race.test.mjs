@@ -81,3 +81,17 @@ test("DB05 all twenty race/rollback/lifecycle PG acceptance cases stay explicitl
   assert.match(sql, /SERIALIZABLE\/REPEATABLE READ/);
   assert.match(sql, /deadlock/);
 });
+
+const drift = read("../scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql");
+
+test("DB05 read-only hierarchy drift preflight covers every active-child forbidden state", () => {
+  assert.doesNotMatch(drift, /\b(?:INSERT|UPDATE|DELETE|ALTER|TRUNCATE|DROP|CREATE)\s+(?:TABLE|FROM|INTO|SET|course_offerings|courses)/i);
+  for (const label of [
+    "ACTIVE_OFFERING_UNDER_ARCHIVED_COURSE",
+    "LIVE_DELIVERY_UNDER_ARCHIVED_OFFERING",
+    "ACTIVE_TEACHER_UNDER_ENDED_DELIVERY",
+  ]) assert.match(drift, new RegExp(label));
+  assert.equal((drift.match(/\bcount\(\*\)::bigint/g) || []).length, 3);
+  assert.match(drift, /No writes, no DDL/);
+  assert.match(drift, /NOT sufficient/);
+});
