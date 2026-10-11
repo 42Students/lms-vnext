@@ -649,6 +649,27 @@
       "postgresExecuted": 0,
       "migrationRegistered": false,
       "evidenceCommitSha": "f8afd44ed8b6835e72ed84748e06dc4492475ace"
+    },
+    "db07TemplateVersionPointers": {
+      "task": "DB-071",
+      "status": "COMPLETED_SOURCE_PG_UNVERIFIED",
+      "stagedSql": "docs/planning/sql/db07-template-version-pointer-fks-staging.sql",
+      "contract": "docs/planning/db07-template-version-pointer-contract.md",
+      "sourceTest": "tests/db07-template-version-pointer-source.test.mjs",
+      "pgTest": "tests/integration/db07-template-version-pointer-fks.test.ts",
+      "evidence": "docs/planning/db07-chat02-template-pointer-source-evidence.json",
+      "sourceV8Assertions": {
+        "total": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      "authoredNodeTests": 15,
+      "authoredPgTests": 7,
+      "nodeExecuted": 0,
+      "pgExecuted": 0,
+      "registeredMigration": false,
+      "sourceImplementationSha": "feccac8f4c7e14f863b5b8c7e92f292be1919b6b",
+      "missing": "Chat1 promotion, 0-to-head PG, deferred constraint catalog verification, 7 PG cases, full Node source runner"
     }
   },
   "qualityGates": {
@@ -713,7 +734,9 @@
     "tests/db07-template-version-parent-integrity-source.test.mjs",
     "tests/integration/db07-template-version-parent-integrity.test.ts",
     "tests/db07-template-version-append-only-source.test.mjs",
-    "tests/integration/db07-template-version-append-only.test.ts"
+    "tests/integration/db07-template-version-append-only.test.ts",
+    "tests/db07-template-version-pointer-source.test.mjs",
+    "tests/integration/db07-template-version-pointer-fks.test.ts"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)",
@@ -741,7 +764,7 @@
       "request": "User-authorized resumed database identity work; original Chat2 findings, commits, tests and pending policy decisions retained; Chat5 owns current source-only hardening."
     }
   ],
-  "nextAction": "Chat2 DB-068 and DB-070 source implementation completed, not verified. Chat 1 integrates DB07 template owner composite FKs + append-only revision trigger; then run 30 standalone Node and 16 opt-in PostgreSQL witnesses. Continue global DATABASE work only; DB004 transferred to Chat5.",
+  "nextAction": "Chat2 completed DB068/DB070/DB071 source implementations; 85/85 exact-blob in-process assertions passed, 45 authored Node & 23 authored PG cases unexecuted. Chat1 must promote registered constraints and run disposable PostgreSQL tests. Keep global DATABASE active, DB004 belongs Chat5.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -850,26 +873,30 @@
     "https://github.com/42Students/lms-vnext/commit/3111fb89575e8bf939263b15c0d0b0aa61fa2622",
     "https://github.com/42Students/lms-vnext/commit/b450951878901b52247d0e7c7bbe1a26a85b420e",
     "https://github.com/42Students/lms-vnext/commit/5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e",
-    "https://github.com/42Students/lms-vnext/commit/f8afd44ed8b6835e72ed84748e06dc4492475ace"
+    "https://github.com/42Students/lms-vnext/commit/f8afd44ed8b6835e72ed84748e06dc4492475ace",
+    "https://github.com/42Students/lms-vnext/commit/feccac8f4c7e14f863b5b8c7e92f292be1919b6b"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
     "DB-004",
     "DB-067",
     "DB-068",
-    "DB-070"
+    "DB-070",
+    "DB-071"
   ],
   "completedTaskIds": [
     "DB-067",
     "DB-068",
-    "DB-070"
+    "DB-070",
+    "DB-071"
   ],
   "lastPickedAt": "2026-10-10T20:26:41.998Z",
-  "lastCompletedAt": "2026-10-11T21:10:35.301Z",
+  "lastCompletedAt": "2026-10-11T21:15:41.072Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-068",
-    "DB-070"
+    "DB-070",
+    "DB-071"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
