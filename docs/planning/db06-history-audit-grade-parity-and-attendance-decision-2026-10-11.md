@@ -1,10 +1,14 @@
-# DB06 immutable history: grade parity repair and attendance decision gate
+# DB06 immutable history: grade parity and canonical attendance history decision
 
 **Date:** 2026-10-11 IST · **Global phase:** DATABASE (ACTIVE) · **Repository:** `42Students/lms-vnext` on `main`.
 
-## Scope and changes committed
+## Scope and current DB-045 decision
 
-This is an **independent review/correction batch** of already source-COMPLETED DB-035, not an attempt to claim a different worker's active DB-038/DB-042 package. Both affected history tables remain **STAGED/UNREGISTERED**. No numbered Drizzle migration, schema barrel, protected provider configuration, or API service was modified.
+DB-045 is the follow-up integration-design pass over source-COMPLETED DB-035. Both history tables remain **STAGED/UNREGISTERED**; no numbered migration, schema barrel or runtime producer is enabled yet.
+
+The attendance identity decision is now explicit: **vNext persists one stable `attendance_records` row for every attendance state, including PRESENT, and immutable history is keyed to that row plus optimistic record version.** Legacy absence-row soft delete/revive is source evidence, not target storage semantics.
+
+DB-045 also keeps grade-event field parity from the prior correction batch and defines the synchronized producer/migration cutover required before the deferred audit-completeness triggers can be registered.
 
 Artifacts:
 
@@ -20,22 +24,58 @@ The `db41` *file prefix* is a source identifier assigned while tasks were being 
 | Event ledger | Initially different field names | After correction | Decision |
 |---|---:|---:|---|
 | `assignment_grade_events` | 7 staged-only / 0 SQL-only | **0 staged-only / 0 SQL-only**; Drizzle **25**, SQL **25** | Field/shape checks source-aligned; producer & PG still missing |
-| `attendance_record_events` | 9 staged-only / 3 SQL-only | **9 staged-only / 3 SQL-only** (12 unresolved) | **BLOCKED:** choose one durable attendance history identity model |
+| `attendance_record_events` | 9 staged-only / 3 SQL-only | **0 staged-only / 0 SQL-only**; Drizzle **21**, SQL **21** | Stable record-id + version model chosen; source-aligned, runtime unverified |
 
 The *grade* source-model CHECK names are reconciled, including `actor_role_ck` and `actor_shape_ck`. SQL runtime semantics and the emitted migration are still unverified. This is **not** proof that Drizzle/SQL are equivalent in every expression or that the business rules are complete.
 
-### Attendance history conflict: requires an explicit canonical choice
+### Canonical attendance history model
 
-The existing `attendance_records` table stores current attendance state. The **SQL candidate** expects a durable `attendance_record_id` FK plus `record_version_before/after`, including a deferred matching-audit-event requirement. The **staged Drizzle model** instead records a session/learner **`revision`** and separate nullable `previous_attendance_record_id`/`new_attendance_record_id`, with a rule that PRESENT can have no current record. They cannot both be the deployed event identity, and silently combining them would create invalid FK/retention/producer assumptions.
+The former 12-column conflict is resolved in source.
 
-**Decision criteria:**
+**Current row:** `attendance_records` remains the normalized current-state table and keeps explicit `PRESENT|ABSENT|EXCUSED|MEDICAL|LATE` status. Promotion adds `version integer NOT NULL DEFAULT 0` plus an exact composite identity key `(id, schedule_event_id, membership_id)`.
 
-1. Verify actual active vNext attendance mark/re-mark/present/absent persistence; compare with legacy `attend` active behavior rather than equating legacy soft-delete with a vNext hard delete.
-2. Decide whether PRESENT is an explicit current `attendance_records` row or absence of a row. Grade/attendance reports, correction workflow, section schedule deletion, period archive and backfills must agree.
-3. Pick one event identity: immutable record-relative version (requires preserving record through transitions), or session+learner revision (survives deletion/recreation). Prove exactly-once monotonic revision under two concurrent faculty writes.
-4. Decide real actor membership attribution for COLLEGE_ADMIN/FACULTY versus SUPER_ADMIN and ensure the role asserted on events matches live grants at write time.
-5. Align Drizzle fields, SQL DDL, CHECKs, FKs and each `MARK`/`CORRECT` producer **before** registering migrations. Do not drop source columns to make an automatic comparison pass.
-6. Ensure a direct SQL attendance correction without an event fails at commit, and an attempted mutation, deletion or TRUNCATE of persisted events is denied.
+**Event identity:** `attendance_record_events` uses stable `attendance_record_id` + `record_version_before/after`. Initial MARK records version 0; each CORRECT records old version → old+1. History does not use legacy delete/recreate revision IDs.
+
+**Context snapshots:** each event also persists schedule event, optional canonical delivery snapshot, membership/college, actor user/membership/role, old/new status, note, marker and mark time. The event INSERT guard requires the new snapshot to equal the current row post-state and validates schedule→delivery, tenant and staff role/teaching scope.
+
+**Course-less schedules:** `delivery_id` is nullable. If `section_schedule_event_courses` has a canonical delivery, the event must record exactly that delivery; otherwise delivery must remain null.
+
+**Retention:** event FKs are `RESTRICT`. Because every current-row INSERT/correction must have a same-transaction event once the deferred triggers are enabled, history prevents silent attendance-row/schedule deletion from erasing audit evidence.
+
+**Fail-closed preflight:** migration promotion refuses any pre-existing attendance rows or already-graded assignment submissions. The current rollout has no production data to migrate; if that changes, an explicit audited backfill is required rather than fabricating actor/time/history.
+
+### Atomic producer cutover contract
+
+The migration **must not** enable deferred audit-completeness triggers before compatible writers deploy.
+
+**Assignment grading transaction**
+1. authorize using the existing service policy;
+2. load/lock the expected submission version;
+3. update grade state with optimistic expectedVersion;
+4. insert exactly one GRADE/REGRADE event with exact old/new grade, feedback, grader, timestamps and versions;
+5. commit; the deferred trigger verifies the event.
+
+**Grade publish transaction**
+1. authorize publisher;
+2. update publication state with expectedVersion;
+3. insert PUBLISH_GRADE using the **publisher** as event actor while preserving prior grader snapshots;
+4. commit under the deferred completeness trigger.
+
+**Attendance MARK transaction**
+1. authorize actor and resolve schedule + optional canonical delivery + learner roster;
+2. insert the stable current row with desired explicit status (PRESENT included), marker/time and version 0;
+3. insert MARK event with null previous snapshot and exact current post-state;
+4. update `attendance_sessions` lifecycle consistently;
+5. commit.
+
+**Attendance CORRECT transaction**
+1. authorize correction actor; for an existing historical row do not require the learner to still be active merely to preserve a legitimate correction path;
+2. lock current attendance row and enforce expected version;
+3. update status/note/marker/time with version = old+1;
+4. insert CORRECT event with exact old/new snapshots and actor role;
+5. commit.
+
+No producer should DELETE the current row to represent PRESENT. No direct SQL grade/attendance mutation may commit without its matching immutable event.
 
 ## Negative/positive acceptance still required (NOT RUN)
 
@@ -63,7 +103,7 @@ These witnesses must run against a disposable PostgreSQL database after synchron
 ## Evidence recorded in this source-only iteration
 
 - The **original** source comparison detected 19 field-name discrepancies (7 grade, 12 attendance), 14 invalid literal expressions and grade-only feedback audit omission.
-- After corrections, the source checker reports **12 field differences**, all confined to attendance, and no grade source model field/check mismatches; attendance actor role remains unpersisted in the SQL draft.
+- After DB-045 reconciliation, the source checker reports **0 field differences** and no grade/attendance CHECK-name mismatches. This is source alignment only; PostgreSQL and producer execution remain unverified.
 - **12/12** source/negative tests executed successfully in an isolated JavaScript evaluator with exact fetched GitHub source bytes. No Node project test runner, TypeScript project typecheck or PostgreSQL command executed in the hosted session.
 - The checker deliberately keeps `readyForPromotion: false` and `verifiedPostgreSQL: false`, even if the remaining source schema mismatch is resolved, to prevent fake certification.
 - GitHub Actions remains intentionally unused because of billing; use `npm run db:verify:independent` where Docker or a genuinely disposable PostgreSQL instance is available.
@@ -79,4 +119,4 @@ The second command **currently exits 2 by design**: the SQL and Drizzle attendan
 
 ## Handoff
 
-A new, separate shared DATABASE task should own the remaining **attendance history semantic decision, Drizzle/SQL parity, atomic producer cutover and negative PG acceptance**. Chat 1 remains the only writer for numbered migrations and the shared schema barrel. No existing worker's `PICKED`, `COMPLETED`, or `VERIFIED` history should be altered to take credit for this independent source correction.
+DB-045 owns the resolved attendance history semantic decision and source parity. Remaining blockers are synchronized producer implementation, numbered migration integration and executable PostgreSQL negative/race acceptance. Chat 1 remains the only writer for numbered migrations and the shared schema barrel.
