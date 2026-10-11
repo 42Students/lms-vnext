@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:47:00.000Z",
+  "updatedOn": "2026-10-11T08:47:30.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2533,14 +2533,14 @@
         "tests/db06-assignment-attempt-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:47:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T08:47:30.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2562,6 +2562,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:47:00.000Z",
           "reason": "Chat 1 claims isolated assignment re-attempt persistence decision/staging; no overlap with active attendance/DB10/domain workers."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T08:47:30.000Z",
+          "reason": "Auditing pinned assignment submit/count semantics and current vNext uniqueness to resolve re-attempt persistence without guessing."
         }
       ]
     }
