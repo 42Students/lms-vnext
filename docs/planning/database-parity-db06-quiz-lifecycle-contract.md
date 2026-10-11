@@ -45,8 +45,8 @@ Semantics:
 
 - CREATE starts at version 0;
 - metadata-only updates keep the version unchanged;
-- every status/result-visibility mutation increments exactly once;
-- version-only updates are rejected;
+- every status/result-visibility mutation increments exactly once **inside the database guard**;
+- callers may not supply/skip/reuse lifecycle versions; version-only updates are rejected;
 - status and result visibility cannot change in the same UPDATE;
 - event (quiz_id, lifecycle_version_after) is unique.
 
@@ -101,7 +101,7 @@ A DEFERRABLE INITIALLY DEFERRED trigger on course_quizzes requires the exact mat
 
 A second deferred trigger on the event requires its version/new state/result visibility/delivery to equal the final persisted quiz row.
 
-Together they allow row-first or event-first producer order in one transaction while rejecting missing events, orphan events, future/stale events, wrong versions, wrong audience, and fabricated transition shape.
+For an existing quiz they allow row-first or event-first transition/event order in one transaction while rejecting missing events, orphan events, future/stale events, wrong versions, wrong audience, and fabricated transition shape. CREATE necessarily inserts the quiz row before its CREATE event because the event FK and actor/scope validation require the quiz row to exist.
 
 The target deliberately allows at most one lifecycle mutation per quiz per transaction. Current service operations already perform one lifecycle operation per request.
 
@@ -120,9 +120,9 @@ Do not register this candidate by itself.
 The compatible cutover must update:
 
 1. createCourseQuiz: create version 0 row plus CREATE event in the same transaction.
-2. transitionCourseQuiz: lock/read current row, update one status transition plus next lifecycle_version, insert matching event.
+2. transitionCourseQuiz: lock/read current row, update one status transition and insert the matching event; the database guard increments lifecycle_version.
 3. API validation: add UNPUBLISH unless product explicitly retires the pinned legacy operation.
-4. setCourseQuizResults: update result visibility plus lifecycle_version and insert RESULTS_PUBLISH / RESULTS_UNPUBLISH using the actual actor.
+4. setCourseQuizResults: update result visibility and insert RESULTS_PUBLISH / RESULTS_UNPUBLISH using the actual actor; the database guard increments lifecycle_version.
 
 No event may infer actor from created_by_user_id except CREATE.
 
