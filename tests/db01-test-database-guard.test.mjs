@@ -423,3 +423,23 @@ test("DB48 browser E2E reset inherits exact remote confirmation instead of synth
     /await dbLib\.resetDatabase\(databaseUrl\)/,
   );
 });
+
+
+test("DB48 protected PostgreSQL database names are case-insensitive", () => {
+  const helperStart = dbLibSource.indexOf(
+    "export function assertResetAllowed",
+  );
+  const helperEnd = dbLibSource.indexOf(
+    "export async function migrateDatabase",
+    helperStart,
+  );
+  const helper = dbLibSource.slice(helperStart, helperEnd);
+
+  assert.match(
+    helper,
+    /target\.name\.toLowerCase\(\)/,
+  );
+  for (const name of ["postgres", "template0", "template1"]) {
+    assert.ok(helper.includes(`"${name}"`));
+  }
+});
