@@ -12,7 +12,9 @@
     "fields": 221,
     "verified": 0,
     "unmapped": 221,
-    "sourceReviewedFields": 221
+    "sourceReviewedFields": 221,
+    "notificationTemplateSourceDispositioned": 56,
+    "notificationTemplateFinalRetirementApproved": 0
   },
   "records": [
     {
@@ -4075,19 +4077,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-02",
@@ -4110,19 +4121,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-03",
@@ -4143,19 +4163,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.is_deleted",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-04",
@@ -4178,19 +4207,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.updated_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-05",
@@ -4211,19 +4249,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.action_url",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-06",
@@ -4244,19 +4291,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.body",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-07",
@@ -4277,19 +4333,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.channel",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-08",
@@ -4310,19 +4375,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.created_by",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-09",
@@ -4343,19 +4417,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.description",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-10",
@@ -4376,19 +4459,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.dlt_entity_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-11",
@@ -4409,19 +4501,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.dlt_template_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-12",
@@ -4444,19 +4545,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.example_data",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-13",
@@ -4477,19 +4587,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.external_template_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_PROVIDER_CONFIGURATION",
+      "sourceDispositionTarget": "provider template identifier configuration resolved per typed notification event",
+      "sourceDispositionRationale": "Pinned ZeptoMailTemplateIdResolver resolves event template IDs from environment/application configuration.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-14",
@@ -4510,19 +4629,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.html_body",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "external email provider template body or typed in-app content; no generic persisted HTML template",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-15",
@@ -4543,19 +4671,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.icon",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-16",
@@ -4576,19 +4713,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.is_active",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-17",
@@ -4609,19 +4755,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.is_default",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-18",
@@ -4642,19 +4797,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.is_dlt_compliant",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-19",
@@ -4675,19 +4839,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.is_sample",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-20",
@@ -4708,19 +4881,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.language",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed event/provider locale policy; current reviewed runtime is effectively fixed/default language",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-21",
@@ -4743,19 +4925,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.merge_variable_mapping",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-22",
@@ -4776,19 +4967,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.notification_type",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-23",
@@ -4809,19 +5009,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.sms_variable_format",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-24",
@@ -4842,19 +5051,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.subject",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-25",
@@ -4875,19 +5093,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.template_key",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-26",
@@ -4908,19 +5135,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.updated_by",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-27",
@@ -4943,19 +5179,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.variable_schema",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-28",
@@ -4976,19 +5221,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No persisted vNext equivalent for the legacy versioned multi-channel/DLT template registry; hardcoded recruiter templates are only a narrow slice.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:lms_notification_template.version",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-01",
@@ -6608,19 +6862,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-02",
@@ -6643,19 +6906,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-03",
@@ -6676,19 +6948,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.is_deleted",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-04",
@@ -6711,19 +6992,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.updated_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-05",
@@ -6744,19 +7034,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.action_url",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-06",
@@ -6777,19 +7076,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.body",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-07",
@@ -6810,19 +7118,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.channel",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-08",
@@ -6843,19 +7160,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.created_by",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-09",
@@ -6876,19 +7202,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.description",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-10",
@@ -6909,19 +7244,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.dlt_entity_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-11",
@@ -6942,19 +7286,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.dlt_template_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-12",
@@ -6977,19 +7330,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.example_data",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-13",
@@ -7010,19 +7372,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.external_template_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_PROVIDER_CONFIGURATION",
+      "sourceDispositionTarget": "provider template identifier configuration resolved per typed notification event",
+      "sourceDispositionRationale": "Pinned ZeptoMailTemplateIdResolver resolves event template IDs from environment/application configuration.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-14",
@@ -7043,19 +7414,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.html_body",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "external email provider template body or typed in-app content; no generic persisted HTML template",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-15",
@@ -7076,19 +7456,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.icon",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-16",
@@ -7109,19 +7498,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.is_active",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-17",
@@ -7142,19 +7540,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.is_default",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-18",
@@ -7175,19 +7582,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.is_dlt_compliant",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-19",
@@ -7208,19 +7624,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.is_sample",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-20",
@@ -7241,19 +7666,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.language",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed event/provider locale policy; current reviewed runtime is effectively fixed/default language",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-21",
@@ -7276,19 +7710,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.merge_variable_mapping",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-22",
@@ -7309,19 +7752,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.notification_type",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-23",
@@ -7342,19 +7794,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.sms_variable_format",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "sourceDispositionTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "sourceDispositionRationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-24",
@@ -7375,19 +7836,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.subject",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "sourceDispositionTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "sourceDispositionRationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-25",
@@ -7408,19 +7878,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.template_key",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "sourceDispositionTarget": "typed notification event/channel registry in application code",
+      "sourceDispositionRationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-26",
@@ -7441,19 +7920,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.updated_by",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-27",
@@ -7476,19 +7964,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.variable_schema",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "sourceDispositionTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "sourceDispositionRationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-28",
@@ -7509,19 +8006,28 @@
       "status": "UNMAPPED",
       "validationEvidence": [],
       "verifiedLegacySha": null,
-      "familyDisposition": "NO_CANONICAL_VNEXT_TEMPLATE_REGISTRY",
-      "familyReviewEvidence": "No canonical persisted vNext template registry; relationship to lms_notification_template must be explicitly consolidated/retired.",
+      "familyDisposition": "CURRENT_RUNTIME_CODE_CONFIG_REDESIGN_RETIREMENT_PENDING_GLOBAL_PROOF",
+      "familyReviewEvidence": "DB-037 reviewed both identical 28-field template families against current executable sources. No reviewed current dispatcher/provider path reads/writes either DB registry; active semantics route to typed code/provider/DLT config. Status remains UNMAPPED until DB00/DB19 prove no native/detached/live consumers and approve final retirement/redesign.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-037",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF",
+        "note": "Exact source disposition recorded; runtime/native-SQL/live-schema retirement proof not yet complete."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification_template.version",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "sourceDispositionTarget": null,
+      "sourceDispositionRationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "sourceDispositionEvidence": [
+        "DB-037 notification-template source disposition",
+        "Pinned NotificationEventRegistry explicitly uses in-code configuration and states No DB or CSV",
+        "Pinned NotificationDispatcherServiceImpl uses NotificationEventRegistry + ZeptoMailTemplateIdResolver + SmsService"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_FINAL_RETIREMENT_PENDING_GLOBAL_PROOF"
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-01",
@@ -8513,11 +9019,21 @@
     "sourceReviewedFields": 221,
     "exactFieldMappingsVerified": 0,
     "runtimeFieldsVerified": 0,
-    "interpretation": "Every source row has a family-level retained/redesigned/gap candidate. Individual records deliberately remain UNMAPPED until exact field semantics, producers/consumers and retirement/redesign decisions are evidenced."
+    "interpretation": "Every source row has a family-level retained/redesigned/gap candidate. Individual records deliberately remain UNMAPPED until exact field semantics, producers/consumers and retirement/redesign decisions are evidenced.",
+    "db037": {
+      "taskId": "DB-037",
+      "chatNumber": 5,
+      "reviewedOn": "2026-10-11",
+      "dispositionFile": "docs/planning/database-parity-db10-notification-template-disposition.json",
+      "sourceDispositionedFields": 56,
+      "finalRetirementApproved": 0,
+      "runtimeVerifiedFields": 0,
+      "interpretation": "The 56 duplicate notification-template fields now have exact source dispositions to typed code/provider/DLT config or retired row metadata. They deliberately remain UNMAPPED/unverified until DB00/DB19 global native/live proof approves retirement/redesign."
+    }
   },
   "blockingFindings": [
     "Unmigrated DB10 drafts: announcements, bug tracker, scheduled job leases and outbound messages/suppressions.",
-    "No canonical persisted vNext notification-template registry for either legacy 28-field template family.",
+    "DB-037 source-dispositioned all 56 duplicate notification-template fields to current code/provider/DLT owners or retired row metadata; final retirement still requires DB00 native/detached/live consumer proof and DB19 approval.",
     "No vNext log-alert signature/account/state persistence.",
     "No vNext skills/synonyms/usage persistence.",
     "Legacy app_setting is only partially represented by module_access_rules and requires a runtime configuration redesign/retirement decision.",
