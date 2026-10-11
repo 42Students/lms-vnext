@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # DB02 / DB-005 two-session promotion readiness test. UNREGISTERED / UNEXECUTED.
 # DATABASE_URL must point to a disposable PostgreSQL DB after Chat 1 integrates
-# canonical DB02 + db02-promotion-readiness-guard.draft.sql.
+# canonical DB02 + db02-academic-progression-and-rooms-staging.sql.
 # Creates committed fixtures for visibility; dispose entire database afterwards.
 set -euo pipefail
 
