@@ -41,6 +41,12 @@ test("runner fails closed when canonical trigger witnesses are incomplete", () =
     "db02_historic_offering_parent_guard",
     "db02_learner_program_enrollment_tenant",
     "db02_section_enrollment_cohort_period",
+    "db02_course_pool_reactivation_role_guard",
+    "db02_section_faculty_reactivation_role_guard",
+    "db02_teaching_reactivation_role_guard",
+    "db02_program_enrollment_reactivation_role_guard",
+    "db02_section_enrollment_reactivation_role_guard",
+    "db02_program_exit_close_active_sections",
   ]) {
     assert.ok(runner.includes(trigger), "missing runner trigger witness: " + trigger);
   }
@@ -76,12 +82,14 @@ test("runner verifies core DB02 tables, columns and INACTIVE enum registration",
 });
 
 test("runner inventory includes every DB02 rollback acceptance suite", () => {
+  assert.match(runner, /tests\/db02-role-reactivation-contract\.test\.mjs/);
   for (const path of [
     "db02-postgres-acceptance-unregistered.sql",
     "db02-schedule-progression-integrity-acceptance-unregistered.sql",
     "db02-historic-parent-reassignment-acceptance-unregistered.sql",
     "db02-promotion-readiness-acceptance-unregistered.sql",
     "db02-curriculum-type-history-acceptance-unregistered.sql",
+    "db02-activation-role-lifecycle-acceptance-unregistered.sql",
   ]) {
     assert.ok(runner.includes(path), "missing rollback suite: " + path);
   }
