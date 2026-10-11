@@ -30,14 +30,14 @@ const settings = [
 function quotedColumnNames(ts) {
   return [...ts.matchAll(/(?:uuid|varchar|text|integer|boolean|timestamp|bigint)\("([a-z_]+)"/g)]
     .map((match) => match[1])
-    .filter((value) => value !== "id"); // include id in original list below
+    ;
 }
 function countDeclared(ts, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return [...ts.matchAll(new RegExp("(?:uuid|varchar|text|integer|boolean|timestamp|bigint)\\(\"" + escaped + "\"", "g"))].length;
 }
 function assertColumnsMatch(ts, sql, expected) {
-  assert.deepEqual(quotedColumnNames(ts).concat("id").sort(), [...expected].sort());
+  assert.deepEqual(quotedColumnNames(ts).sort(), [...expected].sort());
   for (const column of expected) {
     assert.equal(countDeclared(ts, column), 1, "duplicate Drizzle column: " + column);
     assert.match(sql, new RegExp("\\b" + column + "\\b"), column);
