@@ -504,7 +504,7 @@
       "notes": "Named Java model plus active reader/writer paths located and pinned at legacy backend SHA. VNext does not store legacy user password or soft-deleted Role. This is not provider/permission runtime acceptance."
     },
     "db01EndedMembershipRoleRace": {
-      "status": "DIRECT_MAIN_TRANSACTION_LOCK_AND_SCOPE_PATCHED_PENDING_NODE_PG_TS_EXECUTION",
+      "status": "MAIN_APP_LOCK_SCOPE_FIXED_SOURCE_CHECKED_PG_PENDING",
       "sourceRepo": "src/modules/people/repository.ts",
       "sourceService": "src/modules/people/membership-service.ts",
       "sourceDomain": "src/modules/people/membership-domain.ts",
@@ -530,26 +530,31 @@
       "sourceCasesAuthored": 18,
       "realRepoPgTest": "tests/integration/db01-membership-role-parent-lock.test.ts",
       "realRepoPgTestSha": "d223c7414bcceeaa36ccb15f7c1696cf257c4833",
-      "realRepoPostgresCasesAuthored": 8,
+      "realRepoPostgresCasesAuthored": 10,
       "roleWritersMitigated": [
         "addMembershipRole",
         "removeMembershipRole",
         "persistPersonMembership"
       ],
       "parentLockProtocol": "Lock college_memberships parent with FOR UPDATE; recheck ENDED for grants/removals and ACTIVE for onboarding, before role mutation",
-      "sourceProof": "GITHUB_BLOB_V8_ASSERTIONS_22_OF_22_PASS",
+      "sourceProof": "CONNECTED_GITHUB_V8_EXACT_BLOBS_38_OF_38_PASS",
       "runtimeNodeCasesExecuted": 0,
       "runtimePostgresCasesExecuted": 0,
       "postgresVerified": false,
       "migrationRequiredForAppLock": false,
       "stillRequires": "Real PostgreSQL 2-connection race, acceptance tests, full typecheck; other direct SQL writers cannot bypass app-only parent lock; consider DB guard if policy requires.",
       "sourceTestSha": "b3041c17e83a36580f39b16f78545995305f579b",
-      "postgresSuiteSha": "9a28402590d513f0f56044ecb77175739d37b553",
+      "postgresSuiteSha": "9b1c0ac49c4eb27024d7ab08ba72ab44f423705f",
       "sourceEvidence": "docs/planning/db01-chat02-membership-parent-lock-source-evidence.json",
       "tsTypecheckExecuted": false,
       "postgreSqlVerified": false,
       "handoffToChat1": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364",
-      "notes": "Parent membership locked before grant/remove and onboard; rechecks status, userId, collegeId to prevent stale-scope grant. App-only fix. Direct-SQL DB trigger / migration remains optional W01 policy decision."
+      "notes": "Parent membership locked before grant/remove and onboard; rechecks status, userId, collegeId to prevent stale-scope grant. App-only fix. Direct-SQL DB trigger / migration remains optional W01 policy decision.",
+      "realPostgresCasesExecuted": 0,
+      "nodeTestsExecutedThisIteration": 0,
+      "typescriptTypecheckExecuted": false,
+      "registeredMigrationThisIteration": false,
+      "remainingAction": "Run 18 authored Node, 10 real PostgreSQL and typecheck independently; direct SQL bypass must be covered by W01 policy/migration if required. No DATABASE phase promotion."
     },
     "db01LegacyRegistrationSecuritySource": {
       "status": "SOURCE_CONFIRMED_PRIVILEGE_ASSIGNMENT_AND_POTENTIAL_PASSWORD_RESPONSE_LEAK_NOT_RUNTIME_REPRODUCED",
@@ -646,7 +651,8 @@
     "db01SecurityP0Crosswalk": "38_FIELD_POLICY_CROSSWALK_3_NAMED_CURRENT_SOURCE_EVIDENCE_GAPS_ZERO_PROVEN",
     "db01AuthP0SourceStatic": "EXECUTED_82_OF_82_IN_PROCESS_STATIC_ONLY_NO_NODE_PG",
     "db01AuthP0NodeTests": "27_AUTHORED_0_EXECUTED_THIS_BATCH",
-    "db01AuthP0Pg": "ONE_DISPOSABLE_PG_SUITE_AUTHORED_0_EXECUTED"
+    "db01AuthP0Pg": "ONE_DISPOSABLE_PG_SUITE_AUTHORED_0_EXECUTED",
+    "db01MembershipRoleLock": "APP_PATCH_COMMITTED_38_OF_38_EXACT_SOURCE_ASSERTIONS_PASS_NODE_18_PG_10_AUTHORED_NOT_EXECUTED"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -798,7 +804,8 @@
     "https://github.com/42Students/lms-vnext/commit/31f4a141bb5ef66a39b26f7c58063aac9f73a4bc",
     "https://github.com/42Students/lms-vnext/commit/e7bab10c76be3fd83a1c2e72ed9deef620c19b0c",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-membership-parent-lock-source-evidence.json",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364",
+    "https://github.com/42Students/lms-vnext/commit/3111fb89575e8bf939263b15c0d0b0aa61fa2622"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -815,5 +822,5 @@
     "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
     "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
   },
-  "next": "DB-004: continue source-backed DB01 tables and lifecycle. Parent-lock+scope code fix direct main is committed, independent Node 18, PG 8 and TS acceptance pending. Chat 1 sole migration integrator. Global DATABASE active; no false runtime field parity."
+  "next": "DB-004 source batch continues; membership role lifecycle/owner app locks committed direct main with 18 authored Node and 10 PG cases, 38/38 connector source checks, 0 PG. Respect concurrent Chat 2 tombstone/archive work; do not overwrite. Chat 1 migration owner. Global DATABASE phase remains active."
 }
