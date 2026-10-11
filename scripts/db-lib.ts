@@ -126,21 +126,30 @@ export function assertResetAllowed(databaseUrl: string) {
     "::1",
     "[::1]",
   ]);
-  if (localHosts.has(target.host)) {
+  const isLocal = localHosts.has(target.host);
+  const explicitlyDisposableName =
+    /^(?:(?:test|e2e)_[a-z0-9_]+|[a-z0-9_]+_(?:test|e2e)(?:_[a-z0-9]+)*)$/i.test(
+      target.name,
+    );
+  const expectedConfirmation =
+    `RESET:${target.host}:${target.port}/${target.name}`;
+
+  // Local authority is not sufficient proof of disposability: Cloud SQL Auth
+  // Proxy and similar tunnels also present as localhost. Only explicitly named
+  // test/E2E databases get the frictionless local path.
+  if (isLocal && explicitlyDisposableName) {
     return;
   }
 
-  if (process.env.ALLOW_DB_RESET !== "true") {
+  if (!isLocal && process.env.ALLOW_DB_RESET !== "true") {
     throw new Error(
       "Refusing to reset a non-local database. Set ALLOW_DB_RESET=true only for a deliberate disposable environment.",
     );
   }
 
-  const expectedConfirmation =
-    `RESET:${target.host}:${target.port}/${target.name}`;
   if (process.env.DB_RESET_CONFIRM !== expectedConfirmation) {
     throw new Error(
-      `Refusing remote reset without exact DB_RESET_CONFIRM=${expectedConfirmation}`,
+      `Refusing destructive reset without exact DB_RESET_CONFIRM=${expectedConfirmation}`,
     );
   }
 }
