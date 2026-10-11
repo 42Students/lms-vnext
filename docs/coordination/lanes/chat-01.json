@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-028",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB028_E2E_RESET_GUARD_STARTED",
+    "checkpointKind": "DB028_E2E_RESET_GUARD_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "6c9928f851d53a3fe6793b1cdf7704973f9fec97",
-    "lastWorkerMergedSha": "5088bbb27c2c2058f393dbda3da3f8872f1bb95b",
+    "observedMainSha": "bf62a8c56df91831c908de3c4d4b81ba1a6efd71",
+    "lastWorkerMergedSha": "de31827c4baf216b777088ee04f5c283daabad5a",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 1 started DB-028 CORE_INFRA hardening for destructive browser E2E database preparation."
+    "summary": "DB-028 source work complete: browser E2E destructive database preparation now uses the shared fail-closed disposable-target guard before DB URL assignment/import/reset; 12/12 current-main source invariants checked, Node/PG execution pending."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,7 +41,7 @@
   ],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Route db:e2e:prepare through the shared disposable-target preflight before DATABASE_URL assignment/imports, extend explicit disposable naming to E2E targets, and add static/process guards.",
+  "nextAction": "Refresh global DATABASE queue; if no dependency-satisfied task exists, identify a nonconflicting independent DATABASE gap rather than starting API/UI.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -80,10 +80,11 @@
     "DB-014",
     "DB-016",
     "DB-001",
-    "DB-025"
+    "DB-025",
+    "DB-028"
   ],
   "lastPickedAt": "2026-10-11T07:42:00.000Z",
-  "lastCompletedAt": "2026-10-11T07:37:43.189Z",
+  "lastCompletedAt": "2026-10-11T07:49:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -91,7 +92,8 @@
     "DB-014",
     "DB-016",
     "DB-001",
-    "DB-025"
+    "DB-025",
+    "DB-028"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
