@@ -117,3 +117,15 @@ Before DB-047/DB09 can be verified:
 This task closes the **canonical schema drift** and source-design ambiguity.
 It does not prove a live consumer for the historical global default and does
 not constitute PostgreSQL/runtime verification.
+
+
+## Source-level evidence executed
+
+Two CI-independent source/design checks were executed against fresh committed and frozen source:
+
+- **8 / 8 DB-047 staging test callback bodies passed** in an isolated V8 runtime with read-file/assert shims over the canonical placement schema, collaboration schema, source-reference SQL, DB09 ledger, this contract and the integration manifest.
+- **29 / 29 independent cross-repo source assertions passed** across frozen V162, frozen `TpoShareService`, frozen `IndustryCompany`, current vNext canonical schemas, ledger, source-reference SQL, contract and manifest.
+
+The second matrix specifically proved that V162 introduced the nullable global source field, the current JPA model and TPO share service do not consume that global default, active shares snapshot their own fixed 12-value column selection, the canonical relationship schema now owns the redesigned field/check exactly once, and the source-reference SQL contains no migration DDL.
+
+These are source/design checks only. They do not execute Node's test runner, TypeScript compilation, PostgreSQL DDL/checks, registered migration replay, API authorization or runtime share behavior.
