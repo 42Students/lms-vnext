@@ -10,16 +10,9 @@
 -- application/round ownership and scheduling API lifecycle.
 --
 -- Make composite job association enforceable for every child, even if
--- someone bypasses the app's college+job authorization code. The referenced
--- ids have ordinary UUID PKs; PostgreSQL also requires explicit composite
--- UNIQUE before a composite FK may reference them.
-ALTER TABLE placement_job_rounds
-  ADD CONSTRAINT placement_job_rounds_id_job_uq
-  UNIQUE (id, job_id);
-
-ALTER TABLE placement_applications
-  ADD CONSTRAINT placement_applications_id_job_uq
-  UNIQUE (id, job_id);
+-- someone bypasses app authorization. Required parent composite UNIQUE keys
+-- are centralized in db09-parent-composite-keys-candidate.sql; this file owns
+-- only the scheduling child relations.
 
 CREATE TABLE placement_round_slots (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -126,16 +119,8 @@ CREATE INDEX placement_round_reschedule_status_idx
 
 
 -- Date-scoped student coordinator authorization for drive-day attendance.
--- Kept in this canonical scheduling candidate so W01 does not need to combine
--- two competing scheduling drafts.
-ALTER TABLE placement_jobs
-  ADD CONSTRAINT placement_jobs_id_college_uq
-  UNIQUE (id, college_id);
-
-ALTER TABLE college_memberships
-  ADD CONSTRAINT college_memberships_id_college_uq
-  UNIQUE (id, college_id);
-
+-- Parent (id,college_id) keys for jobs/memberships come from the centralized
+-- DB09 parent-key candidate; this canonical file owns the child table.
 CREATE TABLE placement_drive_coordinator_assignments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
