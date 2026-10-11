@@ -65,11 +65,14 @@ These red tests are evidence of known defects, not failed infrastructure.
 
 The read-only Pass-5 runner requires `TEST_DATABASE_URL` and an explicit isolated-database flag. It never falls back to the normal application `DATABASE_URL`.
 
-The newer DB-018 fixture tests are intended for the same disposable test database. Their mutations are either rollback-only or clean up their isolated UUID fixtures. Any reset/provisioning must go through the DB-025 fail-closed test-database guard.
+The newer DB-018 mutation/race tests require an explicit `TEST_DATABASE_URL` plus `DB018_ISOLATED_TEST_DATABASE=1` or `DB03_ISOLATED_TEST_DATABASE=1`; they do **not** fall back to the application `DATABASE_URL`. Service-backed P5-R01/P5-R02 additionally require `DATABASE_URL === TEST_DATABASE_URL`, ensuring Drizzle service calls and raw `pg` coordination target the same disposable database. Their mutations are either rollback-only or clean up isolated UUID fixtures. Any reset/provisioning must go through the DB-025 fail-closed test-database guard.
 
 Recommended disposable-PostgreSQL execution once an environment is available:
 
 ```bash
+DB018_ISOLATED_TEST_DATABASE=1 \
+TEST_DATABASE_URL='postgresql://.../lms_vnext_test' \
+DATABASE_URL='postgresql://.../lms_vnext_test' \
 npx vitest run --config vitest.db.config.ts \
   tests/integration/db018-relational-and-boundary-witnesses.test.ts \
   tests/integration/db18-registered-negative-witnesses.test.ts \
