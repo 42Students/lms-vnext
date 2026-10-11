@@ -24,6 +24,26 @@ DECLARE
   content_college uuid;
   content_delivery uuid;
 BEGIN
+  IF NEW.scan_status <> 'PENDING'
+     OR NEW.scan_attested_by IS NOT NULL
+     OR NEW.scan_attested_at IS NOT NULL
+     OR NEW.attested_generation IS NOT NULL
+     OR NEW.actual_content_type IS NOT NULL
+     OR NEW.actual_size_bytes IS NOT NULL
+     OR NEW.sha256_hex IS NOT NULL
+     OR NEW.consumed_at IS NOT NULL
+     OR NEW.consumed_by_submission_id IS NOT NULL
+     OR NEW.revoked
+     OR NEW.revoked_at IS NOT NULL
+     OR NEW.revoked_by_user_id IS NOT NULL
+     OR NEW.revocation_reason IS NOT NULL
+     OR NEW.retention_until IS NOT NULL
+     OR NEW.deletion_requested_at IS NOT NULL
+     OR NEW.deleted_at IS NOT NULL THEN
+    RAISE EXCEPTION 'DB06 new upload receipt must start pending and unused'
+      USING ERRCODE='23514';
+  END IF;
+
   SELECT cm.college_id, cm.user_id
     INTO owner_college, owner_user
     FROM college_memberships cm
@@ -190,6 +210,16 @@ BEGIN
      AND NEW.scan_status IS DISTINCT FROM OLD.scan_status THEN
     RAISE EXCEPTION
       'DB06 upload receipt scan result is immutable'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF OLD.scan_status <> 'PENDING'
+     AND (
+       NEW.scan_attested_by IS DISTINCT FROM OLD.scan_attested_by
+       OR NEW.scan_attested_at IS DISTINCT FROM OLD.scan_attested_at
+     ) THEN
+    RAISE EXCEPTION
+      'DB06 upload receipt scan attestation evidence is immutable'
       USING ERRCODE='23514';
   END IF;
 
@@ -581,8 +611,10 @@ EXECUTE FUNCTION db06_require_consumed_receipt_file_row();
 -- B assignment receipt owner without LEARNER role fails.
 -- C wrong assignment/course target tenant fails.
 -- D malformed private object namespace/token hash/expiry fails.
--- E PENDING->CLEAN with exact privileged scanner + attestation succeeds once.
--- F CLEAN/REJECTED scan outcome and attestation cannot be rewritten.
+-- E new receipt inserted already CLEAN/consumed/revoked/retained/deleting fails;
+--   canonical PENDING unused grant succeeds.
+-- F PENDING->CLEAN/REJECTED requires exact privileged scanner/time; terminal
+--   scan outcome and scanner evidence cannot be rewritten.
 -- G consume after expiry, revoked/deleting/deleted, unscanned or mismatched
 --   MIME/size fails.
 -- H consume against wrong assignment/member/college/delivery/submission type
