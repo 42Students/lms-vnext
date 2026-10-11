@@ -38,3 +38,61 @@ Security decisions:
 - Clean Drizzle migration replay and snapshot drift validation succeed.
 
 This draft is a decision aid, **not registered schema, not an executed test, and not verified DB01 parity**. Keep DB-004 IN_PROGRESS until the required source-to-vNext proofs, migration, runtime acceptance, and cross-tenant security gates complete.
+
+## 2026-10-11 staged race-resistant tombstone transitions
+
+Chat 2 added the **unregistered** candidate
+`docs/planning/sql/db01-domain-tombstone-state-guard-staging.sql`,
+its mutation/source test `tests/db01-domain-tombstone-state-source.test.mjs`,
+and disposable two-session PostgreSQL witness
+`tests/db01-domain-tombstone-state-pg.test.mjs`. The dependency manifest now
+requires `DB01-DOMAIN-TOMBSTONE` before
+`DB01-DOMAIN-TOMBSTONE-STATE`. These are source-authored proposals,
+**not** active Drizzle migrations, activated triggers or PostgreSQL proof.
+
+The previous `deleted_at` candidate permitted a stale DNS verifier to
+update a tombstoned row and did not stop a direct SQL hard DELETE from
+discarding audit/history. The new `BEFORE UPDATE` trigger rejects **all**
+updates once `OLD.deleted_at` exists. A concurrent write waiting behind
+a delete will receive the terminal-state SQLSTATE `23514` after it sees
+the committed tombstone. A `BEFORE DELETE` trigger blocks hard deletion
+until a separately approved bounded-retention purge policy exists.
+
+The *deletion transition* may atomically clear `is_primary`, set
+`deleted_at`, the deleting actor and reason, and null the outstanding DNS
+verification token. It cannot rewrite the historic host, verified status,
+verified timestamp or diagnostic timestamps/results in the same deletion.
+`college_id` cannot change on any update. A nondeleted record's
+**hostname change** must clear `is_verified`, `is_primary`,
+`verified_at`, `last_checked_at` and `last_check_result`, and supply a
+new non-null proof token distinct from the old one. This is a guard for
+future/direct database writes; current application code has no domain-host
+edit operation. Pending product decision: whether a verified domain may
+be administratively revoked without changing the host is **not** altered
+by this guard.
+
+**Compatibility requirement:** Current vNext
+`src/modules/tenant-domains/repository.ts.deleteDomain` executes
+`DELETE FROM tenant_domains`; activating the hard-delete prevention
+trigger before replacing that operation would break the deletion workflow.
+Activation must bundle repository tombstone mutation, all active-list and
+host-lookup `deleted_at IS NULL` filters, verifier/set-primary race
+protection, and the DB migration. Current all-time hostname uniqueness
+must not be converted to a partial unique index just to allow reuse.
+
+A separate approved disposable PostgreSQL may run:
+
+```sh
+node --test tests/db01-domain-tombstone-state-source.test.mjs
+DB01_DOMAIN_DISPOSABLE=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA TEST_DATABASE_URL='<approved disposable URL>' node --test tests/db01-domain-tombstone-state-pg.test.mjs
+```
+
+The PostgreSQL witness uses a randomized temporary schema, synthetic user
+and college parents, and two separate writers. It asserts *both*
+delete-first (stale verifier must fail) and verify-first (tombstone must
+preserve the committed historical proof), direct owner/host/replay/history
+negatives, and case-insensitive host reservation after delete. It cleans
+up its own schema. **It has not been executed and is not a substitute
+for clean registered Drizzle migration replay, current route/tenant
+authorization, or full cross-domain schema tests.** GitHub Actions
+billing is intentionally not a development blocker.
