@@ -26,6 +26,7 @@ Current API gaps:
 - legacy batch **delete** is distinct from native cohort archive: compatibility delete must refuse while linked classes/sections, learner-program enrollments, offerings, or progression history exist; a truly history-free/child-free cohort may hard-delete and its version-0 initializer state cascades with it; native archive remains a separate endpoint/lifecycle;
 - expected-end-period updates must map the database conflict when shrinking the cohort window would exclude existing sections, offerings or current progression state.
 - progression-state CASCADE is only for cohort-owned initializer cleanup during a valid empty-cohort delete; API code must never directly delete `cohort_progression_state` or progression events.
+- native ARCHIVED remains terminal and is allowed only from PLANNED/COMPLETED; legacy reversible INACTIVE must use the compatibility status path and must never be implemented as archive/unarchive.
 
 Compatibility reads:
 
@@ -52,6 +53,7 @@ API work required:
 - program duration shrink conflict mapping;
 - compatibility projections for any retained `new_program_structure` API;
 - curriculum remove must map the database conflict once any offering materializes the term/course pair; do not silently delete historical curriculum identity.
+- curriculum CORE/ELECTIVE type may change only before materialization; once an offering references the row, map the database conflict instead of rewriting historical type identity.
 - do not add a uniqueness contract on `(programTermId, displayOrder)` during API work; legacy single-row reorder can create duplicate positions.
 
 Do not revive JSON `course_ids` storage.
