@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { auditLedgers, auditCheckout, DOMAIN_SUFFIXES, HISTORICAL_FLOOR } from '../scripts/db19-field-disposition-audit.mjs';
 
 const field = (table, col, overrides = {}) => ({
@@ -145,4 +146,53 @@ test('full-domain audit rejects unpinned source oracles', () => {
   entries[3].ledger.sourceSha = 'moving-main';
   const result = auditLedgers(entries, { enforceFloor: false });
   assert.ok(result.errors.some(x => x.code === 'INVALID_SOURCE_ORACLE_SHA'));
+});
+
+const DOMAIN_SHAPES = [
+  [39,732],[22,312],[13,125],[6,79],[7,103],[7,92],
+  [21,248],[16,358],[18,280],[31,279],[19,221],
+];
+function writeSyntheticFullInventory(root, subtractOneField = false) {
+  for (let d = 0; d < DOMAIN_SUFFIXES.length; d++) {
+    const domain = DOMAIN_SUFFIXES[d];
+    const [tables, fields] = DOMAIN_SHAPES[d];
+    const expected = fields - (subtractOneField && d === 0 ? 1 : 0);
+    const base = Math.floor(expected / tables);
+    const extra = expected % tables;
+    const specs = Array.from({ length: tables }, (_, t) => {
+      const name = 'domain_' + d + '_table_' + t;
+      const rows = Array.from({ length: base + (t < extra ? 1 : 0) }, (_, f) => field(name,'field_'+f));
+      return { table: name, sourceFieldCount: rows.length, rows };
+    });
+    const doc = { domain: domain.toUpperCase(), sourceSha: 'a'.repeat(40),
+      counts: { tables, fields: expected }, tables: specs };
+    const location = path.join(root, 'docs/planning/db-pass4-columns-' + domain + '.json');
+    fs.mkdirSync(path.dirname(location), { recursive: true });
+    fs.writeFileSync(location, JSON.stringify(doc));
+  }
+}
+test('DB19 CLI accepts complete independent synthetic 11-domain 2829-field inventory', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(),'db19-cli-'));
+  try {
+    writeSyntheticFullInventory(root);
+    const proc = spawnSync(process.execPath, [path.resolve(import.meta.dirname,'../scripts/db19-field-disposition-audit.mjs'), root], { encoding:'utf8' });
+    assert.equal(proc.status,0,proc.stderr);
+    const report = JSON.parse(proc.stdout);
+    assert.equal(report.sourceInventoryIntegrity,'PASS');
+    assert.equal(report.counts.domains,11);
+    assert.equal(report.counts.tables,199);
+    assert.equal(report.counts.fields,2829);
+    assert.equal(report.databaseParityVerified,false);
+  } finally { fs.rmSync(root,{recursive:true,force:true}); }
+});
+test('DB19 CLI rejects 2828-field inventory even if all internal counters agree', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(),'db19-cli-loss-'));
+  try {
+    writeSyntheticFullInventory(root,true);
+    const proc = spawnSync(process.execPath, [path.resolve(import.meta.dirname,'../scripts/db19-field-disposition-audit.mjs'), root], { encoding:'utf8' });
+    assert.equal(proc.status,2,proc.stderr);
+    const report = JSON.parse(proc.stdout);
+    assert.ok(report.errors.some(x => x.code === 'HISTORICAL_INVENTORY_REGRESSION'));
+    assert.equal(report.counts.fields,2828);
+  } finally { fs.rmSync(root,{recursive:true,force:true}); }
 });
