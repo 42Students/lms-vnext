@@ -54,6 +54,8 @@ export function inspectGate({phaseState, workQueue, lanes}) {
       else ownerTask.set(task.pickedBy,task.id);
       if (task.restriction === 'MIGRATION_INTEGRATOR' && task.pickedBy !== 1)
         push(errors,'MIGRATION_WRITER_NOT_CHAT1',{id:task.id,worker:task.pickedBy});
+      if (task.restriction === 'CORE_INFRA' && task.pickedBy !== 1)
+        push(errors,'CORE_INFRA_NOT_CHAT1',{id:task.id,worker:task.pickedBy});
     }
     if (task.status === 'COMPLETED' && !isSha(task.completionCommitSha))
       push(errors,'COMPLETED_WITHOUT_COMMIT',{id:task.id});
@@ -93,6 +95,8 @@ export function inspectGate({phaseState, workQueue, lanes}) {
   const unverified = all.filter(t=>t.phase===phase && t.status==='COMPLETED');
   if (open.length) blockers.push({code:'PHASE_TASKS_UNVERIFIED',count:open.length,
     implementedWithoutProof:unverified.length,verifiedTasks});
+  if (open.length && phaseState?.phases?.[phase]?.certifiedAt)
+    push(errors,'PREMATURE_PHASE_CERTIFICATION',{phase,openTaskCount:open.length});
   if (!phaseState?.phases?.[phase]?.certifiedAt)
     blockers.push({code:'NO_PHASE_CERTIFICATION'});
   const gates=(phaseState?.phases?.[phase]?.requiredGates || []);
