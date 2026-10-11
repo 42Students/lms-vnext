@@ -643,8 +643,13 @@ BEGIN
       RAISE EXCEPTION 'Cohort and academic period must belong to the same college'
         USING ERRCODE='23514';
     END IF;
-    IF period_status = 'CLOSED' THEN
-      RAISE EXCEPTION 'Cohort progression cannot target a closed academic period'
+    IF period_status = 'CLOSED'
+       AND (
+         TG_OP = 'INSERT'
+         OR NEW.current_term_number IS DISTINCT FROM OLD.current_term_number
+         OR NEW.current_period_id IS DISTINCT FROM OLD.current_period_id
+       ) THEN
+      RAISE EXCEPTION 'Cohort progression cannot advance or move into a closed academic period'
         USING ERRCODE='23514';
     END IF;
     IF period_start_day < cohort_start_day
