@@ -51,7 +51,7 @@ test("runner fails closed when canonical trigger witnesses are incomplete", () =
     assert.ok(runner.includes(trigger), "missing runner trigger witness: " + trigger);
   }
   assert.match(runner, /TRIGGER_WITNESSES/);
-  assert.match(runner, /!= "12"/);
+  assert.match(runner, /!= "18"/);
 });
 
 test("runner verifies core DB02 tables, columns and INACTIVE enum registration", () => {
