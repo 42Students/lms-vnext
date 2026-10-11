@@ -392,3 +392,18 @@ The source-backed promotion-readiness and materialized-CORE-curriculum checks ar
 - Source tests: `tests/db02-promotion-readiness-contract.test.mjs` and `tests/db02-curriculum-type-history-contract.test.mjs`, both reading only canonical DB02 SQL.
 
 **Runtime gate unchanged:** Chat 1 must register the canonical DB02 migration and run clean PostgreSQL replay, all DB02 acceptance/concurrency cases and role/tenant checks. Until then DB-005 remains `IN_PROGRESS`, runtime verified `0`.
+
+## Full DB02 disposable acceptance command (2026-10-11)
+
+After Chat 1 registers and replays the **numbered** DB02 migration onto a fresh, isolated PostgreSQL database, execute the independent acceptance entrypoint:
+
+```bash
+DB02_DISPOSABLE_ACCEPTANCE=YES \
+DB02_EXPECTED_DATABASE=db02_verify_fresh \
+DATABASE_URL='postgres://USER:REDACTED@HOST:5432/db02_verify_fresh' \
+bash scripts/sql/db02-run-disposable-acceptance.sh
+```
+
+The runner refuses execution without explicit disposable opt-in, an exact database name match and the five canonical DB02 trigger witnesses. It runs six source-test files, five rollback-only PostgreSQL acceptance scripts and three two-session concurrency harnesses. The two-session tests deliberately commit randomly tagged fixtures; **discard the disposable database after the run**. Capture the exact command with secrets redacted, main SHA, numbered journal SHA, PostgreSQL version and full output.
+
+This script is **authored, NOT EXECUTED** here. The runner does not replace the separate *zero-to-current numbered migration replay* prerequisite or prove Cloud SQL extension permissions. CI billing/Actions are not part of this independent verification gate. DB-005 stays IN_PROGRESS until actual outputs can be reviewed.
