@@ -145,9 +145,27 @@ Do **not** register a post-create ALTER for the four scalar fields. The old
 
 ### 5. Company relationship share defaults
 
-`docs/planning/sql/db09-company-export-preference-candidate.sql`
+**Canonical structural source:** `src/db/schema/placements.ts :: placementCompanyRelationships.shareColumnDefaults`
 
-Legacy `industry_company.export_columns_json` is redesigned to tenant-safe `placement_company_relationships.share_column_defaults`; actual share links continue to snapshot their own immutable column selection.
+Legacy `industry_company.export_columns_json` is redesigned to tenant-safe
+`placement_company_relationships.share_column_defaults`; actual share links
+continue to snapshot their own immutable `placement_tpo_share_links.columns`
+selection.
+
+DB-047 closed a staging drift where the ledger/candidate targeted this column
+but canonical Drizzle did not contain it. The Drizzle table now owns the
+nullable JSONB column and exact 12-value disclosure allowlist check.
+
+`docs/planning/sql/db09-company-export-preference-candidate.sql` is now
+**SOURCE REFERENCE ONLY / NO DDL**. **Do not register a post-create ALTER from
+that file.** W01 should generate the column/check exactly once from
+`placements.ts` and confirm the resulting snapshot matches the source
+reference.
+
+No current frozen producer/consumer of the historical global default was
+proven. Do not invent runtime default application during migration integration;
+the redesign preserves the source concept at a tenant-safe boundary without
+changing existing per-share snapshots.
 
 ### 6. Multi-college recruiter drive groups
 
