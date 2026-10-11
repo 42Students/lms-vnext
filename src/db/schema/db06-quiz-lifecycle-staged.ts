@@ -9,6 +9,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   foreignKey,
   index,
@@ -57,9 +58,9 @@ export const courseQuizLifecycleEventsStaged = pgTable(
       length: 24,
     }).notNull(),
     previousResultsPublished:
-      integer("previous_results_published"),
+      boolean("previous_results_published"),
     newResultsPublished:
-      integer("new_results_published").notNull(),
+      boolean("new_results_published").notNull(),
     lifecycleVersionBefore: integer(
       "lifecycle_version_before",
     ),
@@ -101,14 +102,6 @@ export const courseQuizLifecycleEventsStaged = pgTable(
         and (
           ${table.previousStatus} is null
           or ${table.previousStatus} in ('DRAFT','PUBLISHED','CLOSED','ARCHIVED')
-        )`,
-    ),
-    check(
-      "course_quiz_lifecycle_events_boolean_ck",
-      sql`${table.newResultsPublished} in (0,1)
-        and (
-          ${table.previousResultsPublished} is null
-          or ${table.previousResultsPublished} in (0,1)
         )`,
     ),
     check(
