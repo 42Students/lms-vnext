@@ -1051,17 +1051,17 @@
         "tests/integration/**",
         "tests/db-parity-pass5.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f92e752605158fbf71f3aadaca6e534f92965bc8",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-018 witness implementation authored: 21 read-only relational probes, 13 direct negative SQL boundary cases, 4 positive concurrency witnesses, and 2 deterministic known-defect red races (P5-R01 placements, P5-R02 academics). Machine-readable denominator and coverage doc committed. Runtime executed/passed remains 0; task is not DONE_VERIFIED.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T19:37:00+05:30",
       "startedAt": "2026-10-11T19:38:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T19:44:00+05:30",
+      "completionCommitSha": "f92e752605158fbf71f3aadaca6e534f92965bc8",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1104,6 +1104,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:38:00+05:30",
           "reason": "Chat 5 started self-contained registered-schema negative PostgreSQL witnesses with rollback-only fixtures; no schema/journal edits."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T19:44:00+05:30",
+          "reason": "Complete CI-independent witness suite and canonical denominator authored; execution evidence remains pending and P5-R01/P5-R02 stay red until domain fixes."
         }
       ]
     },
