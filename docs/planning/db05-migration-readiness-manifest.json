@@ -513,6 +513,12 @@
       "status": "NOT_RUN",
       "owner": "W01_DB05_INTEGRATOR",
       "evidence": "Opt-in read-only script scripts/db05-staged-schema-db-audit.mjs must observe exact two migrated tables, FK/index and strengthened tenant guard in disposable PG. Even PASS does not satisfy race/API/migration replay."
+    },
+    {
+      "id": "DB05_TOMBSTONE_CAS_RACE_PG_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered scripts/sql/db05-tombstone-version-invariant.draft.sql: course, lesson and content tombstone transitions bump version once; staged cascade also bumps each newly deleted child's version. TV-01..TV-14 disposable PostgreSQL delete/restore, stale CAS, atomic child cascade, multi-session race, rollback and isolation checks required. Companion after version and tombstone columns only. No executed PG/Node pass."
     }
   ],
   "sourceReview": {
@@ -577,7 +583,8 @@
     "Legacy content faculty owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
     "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending.",
     "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending.",
-    "DB05 cohort+academic period scope guards source-staged only; CP-01..CP-22 PostgreSQL wrong-cohort/term and upstream reparent acceptance NOT_RUN."
+    "DB05 cohort+academic period scope guards source-staged only; CP-01..CP-22 PostgreSQL wrong-cohort/term and upstream reparent acceptance NOT_RUN.",
+    "DB05_TOMBSTONE_OPTIMISTIC_VERSION: Guard staged to close stale CAS hole for course/lesson/content deletion/restore and cascade. W01 must register after version columns and prove TV-01..TV-14 concurrent PostgreSQL; 0 live DB acceptance, API version writers not yet switched."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -755,6 +762,22 @@
         "DISPOSABLE_POSTGRES_TWO_SESSION_RACE"
       ],
       "note": "Not independent eighth DB05 numbered migration. Legacy source refuses delete with any live lesson/content but ignores already deleted child rows. Restore only course, never descendants."
+    },
+    {
+      "id": "DB05_TOMBSTONE_OPTIMISTIC_VERSION_GUARD",
+      "path": "scripts/sql/db05-tombstone-version-invariant.draft.sql",
+      "type": "CROSS_DOMAIN_VERSION_CAS_COMPANION",
+      "purpose": "BUMP_COURSE_LESSON_CONTENT_VERSION_ON_TOMBSTONE_DELETE_AND_RESTORE",
+      "baseCandidate": "scripts/sql/db05-version-progress-attempts.draft.sql",
+      "dependencies": [
+        "scripts/sql/db05-version-progress-attempts.draft.sql",
+        "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+        "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql"
+      ],
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "note": "Do not register independently; W01 must integrate after version/tombstone columns; compare two-session CAS writer vs delete/restore and per-child cascade. Require 14 TV-01..TV-14 PostgreSQL negative cases, exact version bump once, no stale writes. Node test authored not executed; PG NOT_RUN."
     }
   ],
   "verifiedSourceReferenceTests": {
