@@ -117,3 +117,42 @@ test("DB018 runtime witness has current-journal schema grounding", () => {
     }
   }
 });
+
+test("DB18 witness index remains honest about authored versus executed coverage", () => {
+  const index = load("tests/integration/db18-witness-index.json");
+  assert.equal(index.task, "DB-018");
+  assert.equal(index.status, "AUTHORED_EXECUTION_NOT_RUN");
+  assert.equal(index.counts.directNegativeAuthored, 8);
+  assert.equal(index.counts.existingConcurrencyAuthored, 2);
+  assert.equal(index.counts.explicitConcurrencyMissing, 4);
+  assert.equal(index.counts.draftUnregisteredExcluded, 3);
+  assert.equal(index.counts.runtimeExecuted, 0);
+  assert.equal(index.counts.runtimePassed, 0);
+
+  const directSource = fs.readFileSync(
+    "tests/integration/db18-registered-negative-witnesses.test.ts",
+    "utf8",
+  );
+  for (const witness of index.directNegativeWitnesses) {
+    assert.equal(witness.execution, "NOT_RUN");
+    assert.equal(witness.expectedSqlState, "23514");
+    assert.ok(fs.existsSync(witness.migration), witness.id + ": migration missing");
+    assert.ok(directSource.includes(witness.title), witness.id + ": test title missing");
+    const migration = fs.readFileSync(witness.migration, "utf8");
+    assert.ok(migration.includes(witness.guard), witness.id + ": guard missing");
+  }
+
+  for (const witness of index.existingConcurrencyWitnesses) {
+    assert.ok(fs.existsSync(witness.file), witness.id + ": test file missing");
+    const source = fs.readFileSync(witness.file, "utf8");
+    assert.ok(source.includes(witness.title), witness.id + ": concurrency test title missing");
+    assert.match(witness.state, /NOT_RUN_IN_DB018$/);
+  }
+
+  assert.deepEqual(
+    index.missingConcurrencyWitnesses.map((w) => w.raceProbe),
+    ["P5-R01", "P5-R02", "P5-R06", "P5-R07"],
+  );
+  assert.ok(index.missingConcurrencyWitnesses.every((w) => /MISSING/.test(w.state)));
+  assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
+});
