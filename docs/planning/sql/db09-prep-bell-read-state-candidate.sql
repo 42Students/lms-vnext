@@ -24,6 +24,57 @@ CREATE TABLE placement_prep_assignments (
 CREATE INDEX placement_prep_assignments_student_idx
   ON placement_prep_assignments(learner_membership_id,created_at);
 
+CREATE FUNCTION db09_assert_prep_assignment_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+     WHERE m.id = NEW.learner_membership_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'prep learner membership is not active in assignment college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM courses c
+      JOIN departments d ON d.id = c.department_id
+     WHERE c.id = NEW.course_id
+       AND c.status = 'ACTIVE'
+       AND d.college_id = NEW.college_id
+  ) THEN
+    RAISE EXCEPTION 'prep course is not an active course in assignment college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.assigned_by_user_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+     WHERE m.user_id = NEW.assigned_by_user_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'prep assigning user is not active in assignment college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.due_at IS NOT NULL
+     AND NEW.due_at < NEW.created_at - interval '5 minutes' THEN
+    RAISE EXCEPTION 'prep due date is already past'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_prep_assignment_scope_guard
+  BEFORE INSERT OR UPDATE OF
+    college_id,learner_membership_id,course_id,due_at,assigned_by_user_id
+  ON placement_prep_assignments
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_prep_assignment_scope();
+
 -- Existing college_memberships(id,college_id) composite uniqueness is owned
 -- by db09-parent-composite-keys-candidate.sql; W01 must register/deduplicate
 -- that parent key before this child FK. Legacy prep_assignment.assessment_id is intentionally
@@ -68,18 +119,63 @@ CREATE TABLE placement_tpo_bell_receipts (
 CREATE INDEX placement_tpo_bell_reads_reader_time_idx
   ON placement_tpo_bell_receipts(reader_user_id,read_at);
 
+CREATE FUNCTION db09_assert_bell_reader_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+     WHERE m.user_id = NEW.reader_user_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'TPO bell reader is not active in bell college'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_bell_reader_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,reader_user_id
+  ON placement_tpo_bell_receipts
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_bell_reader_scope();
+
+CREATE FUNCTION db09_reject_bell_item_rewrite() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  RAISE EXCEPTION 'TPO bell event history is append-only'
+    USING ERRCODE = '23514';
+END $;
+CREATE TRIGGER db09_bell_item_immutable
+  BEFORE UPDATE OR DELETE ON placement_tpo_bell_items
+  FOR EACH ROW EXECUTE FUNCTION db09_reject_bell_item_rewrite();
+
+CREATE FUNCTION db09_reject_bell_receipt_rewrite() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  RAISE EXCEPTION 'TPO bell read receipt is append-only'
+    USING ERRCODE = '23514';
+END $;
+CREATE TRIGGER db09_bell_receipt_immutable
+  BEFORE UPDATE OR DELETE ON placement_tpo_bell_receipts
+  FOR EACH ROW EXECUTE FUNCTION db09_reject_bell_receipt_rewrite();
+
 -- Required tests (NOT EXECUTED):
--- 1. Learner A assignment references their own active college/eligible course;
---    forged learner B-college owner is rejected by a composite FK.
+-- 1. Learner A assignment references their own ACTIVE college and an ACTIVE
+--    course whose department belongs to that college; wrong-college learner,
+--    course or assigning user is rejected.
 -- 2. Assignment producer accepts only an authorized LMS course, validates
 --    deadline and dedupe, and cannot create an orphaned generic assessment ref.
 -- 3. Same bell: reader A marked read, reader B still unread, even when
 --    A and B belong to the same placement team; wrong-college bell rejected.
--- 4. Reader must hold current college TPO/eligible recruiter grant and active
---    identity; user FK alone is NOT authorization.
+-- 4. Reader must hold an ACTIVE college membership; user FK alone is NOT
+--    authorization. Recruiter notification read-through remains a separate
+--    DB09 relation and must not be mixed into the TPO bell receipt table.
 -- 5. Historical legacy shared `tpo_bell.read_at` fallback only applies if
 --    actual history is migrated. New greenfield records use per-person state.
 -- 6. Final actor-kind code RECRUITER (V193) maps to canonical user UUID,
 --    never mix faculty id / recruiter id identity spaces.
 -- 7. Deduped notifications and retention/reader privacy demonstrated under
 --    actual disposable PostgreSQL concurrency fixtures.
+
+-- 8. Bell item identity/content and per-reader receipt rows are append-only;
+--    direct SQL cannot rewrite an event or move a read timestamp after insert.
