@@ -6,7 +6,19 @@
 set -euo pipefail
 
 : "${DATABASE_URL:?DATABASE_URL must point to a disposable PostgreSQL database}"
+
+: "${DB02_EXPECTED_DATABASE:?Set the exact disposable PostgreSQL database name}"
+if [[ "${DB02_DISPOSABLE_ACCEPTANCE:-}" != "YES" ]]; then
+  echo "Refusing to run: explicitly set DB02_DISPOSABLE_ACCEPTANCE=YES" >&2
+  exit 2
+fi
 command -v psql >/dev/null || { echo "psql required" >&2; exit 2; }
+
+ACTUAL_DATABASE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -c 'SELECT current_database()')"
+if [[ "$ACTUAL_DATABASE" != "$DB02_EXPECTED_DATABASE" ]]; then
+  echo "Refusing to run: DB name mismatch; expected $DB02_EXPECTED_DATABASE, actual $ACTUAL_DATABASE" >&2
+  exit 2
+fi
 
 new_uuid() {
   if [[ -r /proc/sys/kernel/random/uuid ]]; then cat /proc/sys/kernel/random/uuid
