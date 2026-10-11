@@ -96,6 +96,47 @@ CREATE TRIGGER db02_program_term_course_tenant
 BEFORE INSERT OR UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 
+-- Semester-course parent identity is immutable in the active legacy service: only
+-- mandatory/type, credits and display order are editable. Keep the normalized pair stable.
+CREATE FUNCTION db02_guard_program_term_course_identity()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF NEW.program_term_id IS DISTINCT FROM OLD.program_term_id
+     OR NEW.course_id IS DISTINCT FROM OLD.course_id THEN
+    RAISE EXCEPTION 'Program-term course identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_program_term_course_identity_guard
+BEFORE UPDATE OF program_term_id, course_id ON program_term_courses
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_identity();
+
+-- A curriculum row may be removed while unused, matching legacy semester-course removal.
+-- Once any offering materializes the term/course pair, deletion would rewrite historical
+-- curriculum identity and is therefore rejected.
+CREATE FUNCTION db02_guard_program_term_course_delete()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM course_offerings co
+     WHERE co.program_term_id = OLD.program_term_id
+       AND co.course_id = OLD.course_id
+  ) THEN
+    RAISE EXCEPTION 'Program-term course cannot be removed after an offering exists'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN OLD;
+END;
+$;
+
+CREATE TRIGGER db02_program_term_course_delete_guard
+BEFORE DELETE ON program_term_courses
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_delete();
+
 -- Legacy semester-course credits are valid from 0..30. A zero-credit curriculum row
 -- must remain materializable as a cohort offering instead of failing a stricter vNext check.
 ALTER TABLE course_offerings
@@ -370,16 +411,20 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  -- CORE delivery must be backed by canonical curriculum. ELECTIVE delivery is still
-  -- term-bound, but legacy electives can select a course outside the fixed semester-course list.
-  IF NEW.type = 'CORE' AND NOT EXISTS (
-    SELECT 1
+  -- CORE delivery must be backed by canonical curriculum. Lock the exact curriculum row
+  -- so a concurrent semester-course removal cannot commit after this validation.
+  -- ELECTIVE delivery is term-bound but may sit outside the fixed curriculum list.
+  IF NEW.type = 'CORE' THEN
+    PERFORM 1
       FROM program_term_courses ptc
      WHERE ptc.program_term_id = NEW.program_term_id
        AND ptc.course_id = NEW.course_id
-  ) THEN
-    RAISE EXCEPTION 'Core course offering must belong to the selected program-term curriculum'
-      USING ERRCODE = '23514';
+     FOR SHARE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Core course offering must belong to the selected program-term curriculum'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
 
   RETURN NEW;
@@ -493,12 +538,14 @@ BEGIN
   SELECT co.cohort_id, co.academic_period_id
     INTO offering_cohort, offering_period
     FROM course_offerings co
-   WHERE co.id = NEW.offering_id;
+   WHERE co.id = NEW.offering_id
+   FOR SHARE OF co;
 
   SELECT s.cohort_id, s.academic_period_id
     INTO section_cohort, section_period
     FROM sections s
-   WHERE s.id = NEW.section_id;
+   WHERE s.id = NEW.section_id
+   FOR SHARE OF s;
 
   IF offering_cohort IS NULL OR section_cohort IS NULL THEN
     RAISE EXCEPTION 'Unknown offering or section'
@@ -525,15 +572,17 @@ DECLARE
   event_section uuid;
   delivery_section uuid;
 BEGIN
-  SELECT e.section_id
-    INTO event_section
-    FROM section_schedule_events e
-   WHERE e.id = NEW.schedule_event_id;
-
   SELECT d.section_id
     INTO delivery_section
     FROM course_section_deliveries d
-   WHERE d.id = NEW.delivery_id;
+   WHERE d.id = NEW.delivery_id
+   FOR SHARE OF d;
+
+  SELECT e.section_id
+    INTO event_section
+    FROM section_schedule_events e
+   WHERE e.id = NEW.schedule_event_id
+   FOR SHARE OF e;
 
   IF event_section IS NULL OR delivery_section IS NULL THEN
     RAISE EXCEPTION 'Unknown schedule event or course delivery'
@@ -1094,7 +1143,8 @@ BEGIN
     JOIN cohorts c ON c.id = co.cohort_id
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
-   WHERE csd.id = NEW.delivery_id;
+   WHERE csd.id = NEW.delivery_id
+   FOR SHARE OF csd;
 
   SELECT cm.college_id
     INTO membership_college
