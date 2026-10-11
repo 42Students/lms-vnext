@@ -92,6 +92,12 @@ Every `course_offerings` row must retain a stable `program_term_id` in addition 
 
 This link is also the historical semester anchor for delivery-bound teaching assignments. A cohort's mutable current progression state cannot reconstruct an old assignment's semester after promotion.
 
+### Zero-credit curriculum alignment
+
+Legacy `semester_course.credits` accepts **0..30**. Canonical `program_term_courses.credits` preserves that range, and DB02 stages `course_offerings.credits` as nullable **0..30** so a zero-credit CORE curriculum row can be materialized without a database contradiction.
+
+The current vNext course-offering create/update validator still uses `.min(1)`. That is an **API-phase follow-up**: change it to `.min(0)` before end-to-end parity can pass. DB02 does not modify API code while DATABASE is the active global phase.
+
 ## 3. DB03 elective dependency
 
 Legacy `ElectiveService.classEligibilityError` requires all of the following for a learner's primary section:
@@ -178,7 +184,7 @@ Promotion must end outgoing-term assignments through this delivery/offering chai
 The following legacy values may be redesigned as calculated values **only with exact documented filters and tests**:
 
 - `batch.current_students`: legacy response is server-managed and derived from learner → **ordinary/non-GROUP_BACKED primary class** → batch, excluding soft-deleted learner/class rows. It does **not** exclude a temporarily suspended learner.
-- class counts / usage counts;
+- batch `classCount`: legacy counts non-deleted classes linked to the batch. Legacy GROUP_BACKED elective classes have `batch_id = null`, so they do not inflate the count. Because vNext sections are period-scoped, compatibility `classCount` is the number of ACTIVE sections for `cohort_progression_state.current_period_id`, not all historical cohort sections;
 - some academic-year display strings when canonical start-year state is persisted.
 
 ### Exact `current_students` compatibility derivation
@@ -285,8 +291,8 @@ Design classification is complete, but DB-005 remains open until the registered 
 6. negative tests prove department/period/membership/hall ownership cannot cross colleges and program/course department movement stays within one college;
 7. cohort/section/offering/progression periods remain in the owning college and cohort window; closed/out-of-window targets fail;
 8. cohort lifecycle date round-trip/order plus section description/min/max/compatibility-date behavior matches source contract;
-9. program-term uniqueness, term bounds, curriculum 0..30 credits, 1-based ordering and CORE-vs-ELECTIVE offering rules pass;
-10. learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert; exact `current_students` compatibility must exclude unsectioned learners, preserve temporarily suspended academic membership, and drop LEARNER-role-removed / ENDED-membership state;
+9. program-term uniqueness, term bounds, curriculum/offering **0..30** credits, 1-based curriculum ordering and CORE-vs-ELECTIVE offering rules pass; API offering validation must also accept 0 before end-to-end parity is claimed;
+10. batch response compatibility proves current-period-only `classCount`, and learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert; exact `current_students` compatibility must exclude unsectioned learners, preserve temporarily suspended academic membership, and drop LEARNER-role-removed / ENDED-membership state;
 11. faculty-course pool, section faculty and course teaching assignment tests prove ACTIVE FACULTY role, tenant scope, historical deactivation and de-role/suspension cleanup;
 12. term jump/backward promotion fails; progression history rejects direct INSERT/UPDATE/DELETE/TRUNCATE while actor-FK cleanup does not create fake promotion history;
 13. same faculty/section/hall overlap fails, adjacent `[start,end)` succeeds, cancellation releases resources and attendance/history remains;
