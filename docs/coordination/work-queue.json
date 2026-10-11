@@ -1616,6 +1616,51 @@
           "reason": "Auditing and hardening db:e2e:prepare destructive target selection before any DB module import or reset."
         }
       ]
+    },
+    {
+      "id": "DB-029",
+      "phase": "DATABASE",
+      "title": "Stage DB08 offer selection/release/expiry/reversal lifecycle",
+      "scope": "Preserve source-active TPO offer states and transitions that current vNext cannot persist: selection before release, verified release, expiry, accepted-offer reversal, actor verification provenance, and explicit mapping of legacy RELEASED to canonical vNext ISSUED without duplicating normalized joining/private-letter state.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/sql/db08-offer-lifecycle-staging.sql",
+        "docs/planning/database-parity-db08-offer-lifecycle.md",
+        "tests/db08-offer-lifecycle-staging.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T13:05:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T13:05:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh source-backed gap: legacy TpoOfferService actively persists SELECTED→RELEASED, RELEASED→EXPIRED and ACCEPTED→RELEASED reversal while current vNext DB only permits ISSUED/ACCEPTED/DECLINED/WITHDRAWN."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:05:00+05:30",
+          "reason": "Chat 5 CAS-created and reserved an isolated DB08 lifecycle staging task after DB-026 completion; no active worker claims its files."
+        }
+      ]
     }
   ],
   "eventModel": {
