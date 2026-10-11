@@ -81,3 +81,16 @@ test("DB05 neither learning-path nor lesson-content creation uses autocommit INS
     assert.match(create, /getDb\(\)\.transaction\(async \(tx\)/);
   }
 });
+
+test("DB05 lesson content insert rechecks active section delivery and offering inside transaction", () => {
+  const create = segment(content, "createLessonContent");
+  const lessonLock = create.indexOf('.for("share")');
+  const deliveryRead = create.indexOf(".from(courseSectionDeliveries)", lessonLock);
+  const active = create.indexOf("isNull(courseSectionDeliveries.endedAt)", deliveryRead);
+  const deliveryLock = create.indexOf('.for("share")', active);
+  const offeringScope = create.indexOf("activeDelivery.offeringId !== lesson.offeringId", deliveryLock);
+  const insert = create.indexOf(".insert(lessonContents)", offeringScope);
+  assert.ok(lessonLock >= 0 && lessonLock < deliveryRead && deliveryRead < active && active < deliveryLock && deliveryLock < offeringScope && offeringScope < insert);
+  assert.match(create, /if \(input\.deliveryId\)/);
+  assert.match(create, /CONTENT_DELIVERY_MISMATCH/);
+});
