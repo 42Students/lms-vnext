@@ -92,6 +92,6 @@ test("DB49 declares all 16 negative and race witnesses as NOT_RUN", () => {
 test("DB49 scopes SQL safeguards to campaign, not arbitrary recipient authorization", () => {
   assert.match(sql, /Publisher must still re-evaluate every derived learner\/faculty\/mentor/);
   assert.match(contract, /A campaign target lock is not individual-recipient permission proof/);
-  assert.match(contract, /not\\*\\* a registered migration/i);
+  assert.ok(contract.includes("**not** a registered migration"));
   assert.match(contract, /not executed PostgreSQL race evidence/i);
 });
