@@ -134,6 +134,60 @@ BEFORE INSERT OR UPDATE OF organization_id,college_id,source_event_id,recipient_
 ON general_notification_outbox
 FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard();
 
+-- DB24 staging: immutable enqueue identity and database-clock undo deadline.
+-- The initial shape CHECK alone cannot stop a caller from backdating created_at
+-- or mutating the held event after insertion.
+CREATE OR REPLACE FUNCTION db10_general_notice_mutation_guard()
+RETURNS trigger LANGUAGE plpgsql AS $db10noticeimmut$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.status <> 'PENDING' THEN
+      RAISE EXCEPTION 'NOTIFICATION_INSERT_MUST_BE_PENDING' USING ERRCODE='23514';
+    END IF;
+    IF NEW.hold_for_undo
+       AND NEW.send_after < statement_timestamp() + interval '30 seconds' THEN
+      RAISE EXCEPTION 'NOTIFICATION_UNDO_HOLD_TOO_SHORT' USING ERRCODE='23514';
+    END IF;
+    RETURN NEW;
+  END IF;
+
+  IF ROW(NEW.organization_id, NEW.college_id, NEW.source_event_id,
+         NEW.event, NEW.recipient_type, NEW.recipient_user_id,
+         NEW.recipient_membership_id, NEW.channel, NEW.safe_payload_json,
+         NEW.undo_group_id, NEW.hold_for_undo, NEW.digest_local_date,
+         NEW.digest_timezone, NEW.created_at, NEW.idempotency_key)
+     IS DISTINCT FROM
+     ROW(OLD.organization_id, OLD.college_id, OLD.source_event_id,
+         OLD.event, OLD.recipient_type, OLD.recipient_user_id,
+         OLD.recipient_membership_id, OLD.channel, OLD.safe_payload_json,
+         OLD.undo_group_id, OLD.hold_for_undo, OLD.digest_local_date,
+         OLD.digest_timezone, OLD.created_at, OLD.idempotency_key) THEN
+    RAISE EXCEPTION 'NOTIFICATION_ENQUEUE_IDENTITY_IMMUTABLE' USING ERRCODE='23514';
+  END IF;
+
+  -- Holding a notice may be extended, never shortened after first enqueue.
+  IF OLD.hold_for_undo AND NEW.send_after < OLD.send_after THEN
+    RAISE EXCEPTION 'NOTIFICATION_UNDO_DEADLINE_CANNOT_DECREASE' USING ERRCODE='23514';
+  END IF;
+  IF OLD.status = 'PENDING'
+     AND NEW.status IN ('CLAIMED','HANDED_OFF','SENT')
+     AND NEW.send_after > statement_timestamp() THEN
+    RAISE EXCEPTION 'NOTIFICATION_NOT_DUE' USING ERRCODE='23514';
+  END IF;
+  IF NEW.status = 'CANCELLED'
+     AND OLD.status <> 'PENDING' AND NEW.status <> OLD.status THEN
+    RAISE EXCEPTION 'NOTIFICATION_CANCEL_AFTER_CLAIM' USING ERRCODE='23514';
+  END IF;
+  IF OLD.status IN ('SENT','CANCELLED') AND NEW.status <> OLD.status THEN
+    RAISE EXCEPTION 'NOTIFICATION_TERMINAL_STATE_IMMUTABLE' USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END;
+$db10noticeimmut$;
+CREATE TRIGGER db10_general_notice_mutation_guard_trg
+BEFORE INSERT OR UPDATE ON general_notification_outbox
+FOR EACH ROW EXECUTE FUNCTION db10_general_notice_mutation_guard();
+
 -- Claim/Undo/Delivery implementation contract (source-only):
 -- 1. App inserts become visible ONLY after undo deadline and transactionally
 --    insert in_app_notifications, with stable event idempotency. Never render
