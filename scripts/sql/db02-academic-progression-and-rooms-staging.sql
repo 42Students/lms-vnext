@@ -2023,8 +2023,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 -- Before registration:
 -- 1. Reconcile against latest main and any Chat 1 DB02 work.
 -- 2. Express these tables/columns in Drizzle schema under Chat 1 ownership.
--- 3. Keep program_term_courses.display_order 1-based as the active legacy service does; do not add
---    a uniqueness constraint until reorder concurrency has executed acceptance evidence.
+-- 3. Keep program_term_courses.display_order 1-based and NON-UNIQUE as the active legacy
+--    service does. semester_course is unique only by (semester_id, course_id); single-row
+--    courseOrder updates may collide. Deterministic reads must tie-break duplicate positions
+--    (legacy uses course_order ASC, id ASC). Do not add (program_term_id, display_order) uniqueness.
 -- 4. Verify direct SQL cannot create cross-college term/course/period/hall/faculty-association links.
 -- 5. Verify ACTIVE/INACTIVE/COMPLETED compatibility transitions (including re-activation from
 --    INACTIVE) while preserving vNext PLANNED/ARCHIVED semantics; verify cohort start/end dates
