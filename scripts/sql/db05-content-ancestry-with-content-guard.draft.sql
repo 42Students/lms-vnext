@@ -13,6 +13,13 @@
 -- ancestry. Empty lessons, paths, offerings and deliveries remain movable
 -- unless a different DB02/DB05 guard prohibits the change.
 --
+-- Course lesson-content readers use (delivery_id IS NULL OR delivery_id =
+-- requested delivery). Consequently, generic NULL-delivery content is
+-- visible in EVERY section delivery attached to its offering. Moving such
+-- a delivery (or section) changes the audience even when no content is
+-- directly keyed to that delivery; both paths below must check generic
+-- content by the delivery's OLD offering scope.
+--
 -- This pairs with db05_lesson_content_delivery_scope_guard(): it uses
 -- transaction-level advisory key 605008003, acquired BEFORE checking any
 -- descendants, under READ COMMITTED. Existing child guard uses the same key
@@ -91,6 +98,16 @@ BEGIN
         FROM lesson_contents content
         WHERE content.delivery_id = OLD.id
       ) INTO has_content;
+      IF NOT has_content THEN
+        SELECT EXISTS (
+          SELECT 1
+          FROM course_learning_paths path
+          INNER JOIN course_lessons lesson ON lesson.learning_path_id = path.id
+          INNER JOIN lesson_contents content ON content.lesson_id = lesson.id
+          WHERE path.offering_id = OLD.offering_id
+            AND content.delivery_id IS NULL
+        ) INTO has_content;
+      END IF;
     END IF;
 
   ELSIF TG_TABLE_NAME = 'sections' THEN
@@ -102,6 +119,17 @@ BEGIN
         INNER JOIN lesson_contents content ON content.delivery_id = delivery.id
         WHERE delivery.section_id = OLD.id
       ) INTO has_content;
+      IF NOT has_content THEN
+        SELECT EXISTS (
+          SELECT 1
+          FROM course_section_deliveries delivery
+          INNER JOIN course_learning_paths path ON path.offering_id = delivery.offering_id
+          INNER JOIN course_lessons lesson ON lesson.learning_path_id = path.id
+          INNER JOIN lesson_contents content ON content.lesson_id = lesson.id
+          WHERE delivery.section_id = OLD.id
+            AND content.delivery_id IS NULL
+        ) INTO has_content;
+      END IF;
     END IF;
 
   ELSE
@@ -148,8 +176,10 @@ COMMIT;
 -- CA-03 A path with descendant lesson content cannot change offering -> 23514.
 -- CA-04 Offering course/cohort/period change while authored content -> 23514.
 -- CA-05 Offering with delivery-targeted content also rejects reparent -> 23514.
--- CA-06 Delivery with class-targeted content cannot change offering/section.
--- CA-07 Section with attached content cannot change cohort/period.
+-- CA-06 Delivery with class-targeted OR generic offering-scoped content cannot
+--       change offering/section; generic content is visible to that delivery.
+-- CA-07 Section with attached class-targeted or generic offering content
+--       cannot change cohort/period while its delivery serves that content.
 -- CA-08 Same-value UPDATE on all five tables is allowed by this companion.
 -- CA-09 Two sessions content INSERT vs lesson/path/offering move serialize,
 --       never leave mismatched offering/section scope.
@@ -164,4 +194,8 @@ COMMIT;
 -- CA-15 DB02 academic-period/department and DB06 assignment-only ancestors
 --       remain separately guarded; test consumer-to-producer integration.
 -- CA-16 Clean journal replay, duplicate trigger checks, lock contention,
+-- CA-17 When delivery moves but its offering contains only generic NULL-
+--       delivery lesson content, reject 23514 (audience would change).
+-- CA-18 When section moves cohort/period but has only generic content via
+--       its existing deliveries, reject 23514 (audience would change).
 --       rollback/SQLSTATE and consumer behavior executed on exact SHA.
