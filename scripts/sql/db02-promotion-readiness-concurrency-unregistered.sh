@@ -84,8 +84,8 @@ if [[ "$PROMOTE_RC" -eq 0 ]]; then
   cat "$B_LOG" >&2
   exit 1
 fi
-if ! grep -Eq '23514|check constraint' "$B_LOG"; then
-  echo "FAIL: rejected promotion did not report expected DB check violation (SQLSTATE 23514)" >&2
+if ! grep -Fq "Promotion target program term must be configured and ACTIVE" "$B_LOG"; then
+  echo "FAIL: promotion failed for an unexpected reason, not DB02 readiness: Promotion target program term must be configured and ACTIVE" >&2
   cat "$B_LOG" >&2
   exit 1
 fi
@@ -129,8 +129,8 @@ if [[ "$PROMOTE_RC" -eq 0 ]]; then
   cat "$B_LOG" >&2
   exit 1
 fi
-if ! grep -Eq '23514|check constraint' "$B_LOG"; then
-  echo "FAIL: rejected promotion did not report expected DB check violation (SQLSTATE 23514)" >&2
+if ! grep -Fq "Promotion target term requires at least one mapped course" "$B_LOG"; then
+  echo "FAIL: promotion failed for an unexpected reason, not DB02 readiness: Promotion target term requires at least one mapped course" >&2
   cat "$B_LOG" >&2
   exit 1
 fi
