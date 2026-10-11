@@ -51,6 +51,10 @@ OFFERING_RACE_C_ID="$(new_uuid)"
 OFFERING_RACE_D_ID="$(new_uuid)"
 EVENT_RACE_A_ID="$(new_uuid)"
 EVENT_RACE_B_ID="$(new_uuid)"
+PERIOD_RACE_A_ID="$(new_uuid)"
+PERIOD_RACE_B_ID="$(new_uuid)"
+COHORT_RACE_A_ID="$(new_uuid)"
+COHORT_RACE_B_ID="$(new_uuid)"
 
 psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v run_tag="$RUN_TAG" \
@@ -148,7 +152,7 @@ echo "Fixture committed: $RUN_TAG"
 # ---------------------------------------------------------------------------
 PROMOTE_A="$(mktemp)"
 PROMOTE_B="$(mktemp)"
-trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}" "${OFFERING_FIRST:-}" "${CURRICULUM_DELETE_AFTER:-}" "${CURRICULUM_DELETE_FIRST:-}" "${OFFERING_AFTER_DELETE:-}"' EXIT
+trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}" "${OFFERING_FIRST:-}" "${CURRICULUM_DELETE_AFTER:-}" "${CURRICULUM_DELETE_FIRST:-}" "${OFFERING_AFTER_DELETE:-}" "${COHORT_FIRST:-}" "${PERIOD_EDIT_AFTER:-}" "${PERIOD_EDIT_FIRST:-}" "${COHORT_AFTER_EDIT:-}"' EXIT
 
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" <<'SQL'
@@ -829,5 +833,143 @@ if [[ "$CURR_B_STATE" != "0:0" ]]; then
 fi
 
 echo "PASS curriculum race B: committed curriculum delete rejected stale CORE offering"
+
+# ---------------------------------------------------------------------------
+# Prepare two unused periods for parent-date mutation races.
+# ---------------------------------------------------------------------------
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
+  -v run_tag="$RUN_TAG" -v college_id="$COLLEGE_ID" \
+  -v period_race_a_id="$PERIOD_RACE_A_ID" -v period_race_b_id="$PERIOD_RACE_B_ID" <<'SQL' >/dev/null
+INSERT INTO academic_periods(id, college_id, name, code, start_date, end_date, status)
+VALUES
+  (
+    :'period_race_a_id', :'college_id', :'run_tag' || ' period race A',
+    :'run_tag' || '-period-race-a', current_date + 400, current_date + 500, 'PLANNED'
+  ),
+  (
+    :'period_race_b_id', :'college_id', :'run_tag' || ' period race B',
+    :'run_tag' || '-period-race-b', current_date + 600, current_date + 700, 'PLANNED'
+  );
+SQL
+
+# ---------------------------------------------------------------------------
+# Race 7A: cohort creation locks its period first. Concurrent date edit blocks,
+# then rejects because the period became historical parent state.
+# ---------------------------------------------------------------------------
+COHORT_FIRST="$(mktemp)"
+PERIOD_EDIT_AFTER="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v cohort_id="$COHORT_RACE_A_ID" -v program_id="$PROGRAM_ID" \
+    -v period_id="$PERIOD_RACE_A_ID" -v run_tag="$RUN_TAG" <<'SQL'
+BEGIN;
+INSERT INTO cohorts(
+  id, program_id, name, code, start_period_id, expected_end_period_id, status
+) VALUES (
+  :'cohort_id', :'program_id', :'run_tag' || ' cohort period-race A',
+  :'run_tag' || '-cohort-period-race-a', :'period_id', :'period_id', 'PLANNED'
+);
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$COHORT_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v period_id="$PERIOD_RACE_A_ID" <<'SQL' >"$PERIOD_EDIT_AFTER" 2>&1
+UPDATE academic_periods
+   SET start_date = start_date + 1,
+       end_date = end_date + 1
+ WHERE id = :'period_id';
+SQL
+PERIOD_EDIT_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$PERIOD_EDIT_STATUS" -eq 0 ]]; then
+  echo "Period child-first race failed: referenced period date edit unexpectedly succeeded" >&2
+  cat "$PERIOD_EDIT_AFTER" >&2
+  exit 1
+fi
+
+PERIOD_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v cohort_id="$COHORT_RACE_A_ID" -v period_id="$PERIOD_RACE_A_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM cohorts WHERE id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM cohorts
+    WHERE id = :'cohort_id' AND start_period_id = :'period_id' AND expected_end_period_id = :'period_id');
+SQL
+)"
+
+if [[ "$PERIOD_A_STATE" != "1:1" ]]; then
+  echo "Period child-first final state mismatch: $PERIOD_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS period race A: cohort creation froze referenced period dates"
+
+# ---------------------------------------------------------------------------
+# Race 7B: unused period date edit owns the row first. Cohort creation blocks,
+# then validates the newly committed period and succeeds.
+# ---------------------------------------------------------------------------
+PERIOD_EDIT_FIRST="$(mktemp)"
+COHORT_AFTER_EDIT="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v period_id="$PERIOD_RACE_B_ID" <<'SQL'
+BEGIN;
+UPDATE academic_periods
+   SET start_date = start_date + 1,
+       end_date = end_date + 1
+ WHERE id = :'period_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$PERIOD_EDIT_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v cohort_id="$COHORT_RACE_B_ID" -v program_id="$PROGRAM_ID" \
+  -v period_id="$PERIOD_RACE_B_ID" -v run_tag="$RUN_TAG" <<'SQL' >"$COHORT_AFTER_EDIT" 2>&1
+INSERT INTO cohorts(
+  id, program_id, name, code, start_period_id, expected_end_period_id, status
+) VALUES (
+  :'cohort_id', :'program_id', :'run_tag' || ' cohort period-race B',
+  :'run_tag' || '-cohort-period-race-b', :'period_id', :'period_id', 'PLANNED'
+);
+SQL
+COHORT_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$COHORT_STATUS" -ne 0 ]]; then
+  echo "Period edit-first race failed: cohort insert did not validate new period state" >&2
+  cat "$COHORT_AFTER_EDIT" >&2
+  exit 1
+fi
+
+PERIOD_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v cohort_id="$COHORT_RACE_B_ID" -v period_id="$PERIOD_RACE_B_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM cohorts WHERE id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM academic_periods
+    WHERE id = :'period_id' AND start_date = current_date + 601 AND end_date = current_date + 701);
+SQL
+)"
+
+if [[ "$PERIOD_B_STATE" != "1:1" ]]; then
+  echo "Period edit-first final state mismatch: $PERIOD_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS period race B: parent edit committed before serialized cohort creation"
 echo "DB02 concurrency acceptance PASS"
 echo "Fixture rows are intentionally left in this disposable database under tag: $RUN_TAG"
