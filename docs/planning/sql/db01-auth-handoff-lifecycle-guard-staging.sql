@@ -8,7 +8,7 @@
 -- trigger enforces the immutable envelope and monotone one-time consume state.
 
 CREATE OR REPLACE FUNCTION db01_auth_handoff_lifecycle_guard()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- A newly issued high-entropy handoff must never arrive pre-consumed.
   -- Direct SQL insertion of a spent proof would bypass the UPDATE-only
