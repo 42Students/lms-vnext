@@ -1040,14 +1040,14 @@
         "tests/integration/**",
         "tests/db-parity-pass5.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11T19:37:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T19:38:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1088,6 +1088,11 @@
           "status": "PICKED",
           "at": "2026-10-11T19:37:00+05:30",
           "reason": "Chat 5 available; independent DB018 source/test coverage in new isolated files; no active domain draft overlap."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T19:38:00+05:30",
+          "reason": "Chat 5 started self-contained registered-schema negative PostgreSQL witnesses with rollback-only fixtures; no schema/journal edits."
         }
       ]
     },
