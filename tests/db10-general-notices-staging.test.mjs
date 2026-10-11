@@ -122,3 +122,29 @@ test("DB24 authorization witness rows remain locked during enqueue", () => {
   assert.match(spec, /DB24-14/);
   // PostgreSQL race proof still requires two actual transactions.
 });
+
+test("DB24 immutable enqueue and database-clock undo guard", () => {
+  assert.match(sql, /CREATE TRIGGER db10_general_notice_mutation_guard_trg/);
+  assert.match(sql, /BEFORE INSERT OR UPDATE ON general_notification_outbox/);
+  assert.match(sql, /NEW\.send_after < statement_timestamp\(\) \+ interval '30 seconds'/);
+  for (const code of [
+    "NOTIFICATION_INSERT_MUST_BE_PENDING",
+    "NOTIFICATION_UNDO_HOLD_TOO_SHORT",
+    "NOTIFICATION_ENQUEUE_IDENTITY_IMMUTABLE",
+    "NOTIFICATION_UNDO_DEADLINE_CANNOT_DECREASE",
+    "NOTIFICATION_NOT_DUE",
+    "NOTIFICATION_CANCEL_AFTER_CLAIM",
+    "NOTIFICATION_TERMINAL_STATE_IMMUTABLE",
+  ]) assert.ok(sql.includes(code), "Missing SQL guard " + code);
+  assert.match(spec, /DB24-15/);
+});
+
+test("DB24 source event, role, payload and enqueue timestamp are immutable", () => {
+  const guard=sql.slice(sql.indexOf("CREATE OR REPLACE FUNCTION db10_general_notice_mutation_guard"));
+  assert.match(guard, /ROW\(NEW\.organization_id, NEW\.college_id, NEW\.source_event_id/);
+  assert.match(guard, /NEW\.recipient_type, NEW\.recipient_user_id/);
+  assert.match(guard, /NEW\.safe_payload_json/);
+  assert.match(guard, /NEW\.undo_group_id, NEW\.hold_for_undo/);
+  assert.match(guard, /NEW\.digest_timezone, NEW\.created_at, NEW\.idempotency_key/);
+  assert.match(guard, /IS DISTINCT FROM[\s\S]*?ROW\(OLD\.organization_id/);
+});
