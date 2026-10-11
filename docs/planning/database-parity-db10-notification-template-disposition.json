@@ -1,0 +1,1126 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-037",
+  "domain": "DB10_NOTIFICATION_TEMPLATE_DUPLICATE_REGISTRY_DISPOSITION",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceLedgerSha": "2d35c90b3860b97c554ff05e0c74f5ee02b9c91e",
+  "status": "ALL_56_SOURCE_DISPOSITIONED_RETIREMENT_PENDING_GLOBAL_NATIVE_LIVE_PROOF",
+  "tables": [
+    "notification_template",
+    "lms_notification_template"
+  ],
+  "tableShape": "IDENTICAL_28_FIELD_FAMILIES",
+  "currentRuntimeDecision": "Do not create a generic vNext notification-template table from historical physical shape. Current pinned runtime uses typed code registry plus provider/DLT configuration. Preserve active semantics in code/config/external provider and require global native/live-schema sweep before final retirement approval.",
+  "evidence": [
+    "Legacy NotificationEventRegistry: explicit in-code configuration; source comment says No DB or CSV.",
+    "Legacy NotificationDispatcherServiceImpl: current dispatcher reads NotificationEventRegistry, ZeptoMailTemplateIdResolver and SmsService, not template tables.",
+    "Legacy ZeptoMailTemplateIdResolver: template IDs resolved from environment/application properties.",
+    "Legacy notification_templates.csv remains repository data but the reviewed current registry explicitly states it is not the runtime source.",
+    "vNext current schema has in_app_notifications/activity_events and no persisted notification-template registry."
+  ],
+  "counts": {
+    "fields": 56,
+    "perTable": 28,
+    "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF": 20,
+    "REDESIGNED_TO_TYPED_CODE_REGISTRY": 10,
+    "REDESIGNED_CHANNEL_SPECIFIC": 8,
+    "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION": 8,
+    "REDESIGNED_TO_SMS_DLT_CONFIGURATION": 8,
+    "REDESIGNED_TO_PROVIDER_CONFIGURATION": 2
+  },
+  "globalProofStillRequired": [
+    "DB00/native-SQL/detached-consumer sweep must find no current producer/reader of either table.",
+    "Read-only live legacy metadata, if obtained, may show rows/tables but existence alone is not active-use proof.",
+    "DB19 final field disposition must approve the redesign/retirement before DONE_VERIFIED."
+  ],
+  "records": [
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-01",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "id",
+      "legacyType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-02",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "created_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-03",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "is_deleted",
+      "legacyType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-04",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "updated_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-05",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "action_url",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-06",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "body",
+      "legacyType": "text",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-07",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "channel",
+      "legacyType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-08",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "created_by",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-09",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "description",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-10",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "dlt_entity_id",
+      "legacyType": "varchar(100)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-11",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "dlt_template_id",
+      "legacyType": "varchar(100)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-12",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "example_data",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-13",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "external_template_id",
+      "legacyType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_PROVIDER_CONFIGURATION",
+      "canonicalTarget": "provider template identifier configuration resolved per typed notification event",
+      "rationale": "Pinned ZeptoMailTemplateIdResolver resolves event template IDs from environment/application configuration.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-14",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "html_body",
+      "legacyType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "external email provider template body or typed in-app content; no generic persisted HTML template",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-15",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "icon",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-16",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "is_active",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-17",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "is_default",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-18",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "is_dlt_compliant",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-19",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "is_sample",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-20",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "language",
+      "legacyType": "varchar(10)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed event/provider locale policy; current reviewed runtime is effectively fixed/default language",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-21",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "merge_variable_mapping",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-22",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "notification_type",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-23",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "sms_variable_format",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-24",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "subject",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-25",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "template_key",
+      "legacyType": "varchar(100)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-26",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "updated_by",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-27",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "variable_schema",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-28",
+      "legacyTable": "lms_notification_template",
+      "legacyColumn": "version",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-01",
+      "legacyTable": "notification_template",
+      "legacyColumn": "id",
+      "legacyType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-02",
+      "legacyTable": "notification_template",
+      "legacyColumn": "created_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-03",
+      "legacyTable": "notification_template",
+      "legacyColumn": "is_deleted",
+      "legacyType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-04",
+      "legacyTable": "notification_template",
+      "legacyColumn": "updated_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-05",
+      "legacyTable": "notification_template",
+      "legacyColumn": "action_url",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-06",
+      "legacyTable": "notification_template",
+      "legacyColumn": "body",
+      "legacyType": "text",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-07",
+      "legacyTable": "notification_template",
+      "legacyColumn": "channel",
+      "legacyType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-08",
+      "legacyTable": "notification_template",
+      "legacyColumn": "created_by",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-09",
+      "legacyTable": "notification_template",
+      "legacyColumn": "description",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-10",
+      "legacyTable": "notification_template",
+      "legacyColumn": "dlt_entity_id",
+      "legacyType": "varchar(100)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-11",
+      "legacyTable": "notification_template",
+      "legacyColumn": "dlt_template_id",
+      "legacyType": "varchar(100)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-12",
+      "legacyTable": "notification_template",
+      "legacyColumn": "example_data",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-13",
+      "legacyTable": "notification_template",
+      "legacyColumn": "external_template_id",
+      "legacyType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_PROVIDER_CONFIGURATION",
+      "canonicalTarget": "provider template identifier configuration resolved per typed notification event",
+      "rationale": "Pinned ZeptoMailTemplateIdResolver resolves event template IDs from environment/application configuration.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-14",
+      "legacyTable": "notification_template",
+      "legacyColumn": "html_body",
+      "legacyType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "external email provider template body or typed in-app content; no generic persisted HTML template",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-15",
+      "legacyTable": "notification_template",
+      "legacyColumn": "icon",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-16",
+      "legacyTable": "notification_template",
+      "legacyColumn": "is_active",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-17",
+      "legacyTable": "notification_template",
+      "legacyColumn": "is_default",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-18",
+      "legacyTable": "notification_template",
+      "legacyColumn": "is_dlt_compliant",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-19",
+      "legacyTable": "notification_template",
+      "legacyColumn": "is_sample",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-20",
+      "legacyTable": "notification_template",
+      "legacyColumn": "language",
+      "legacyType": "varchar(10)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed event/provider locale policy; current reviewed runtime is effectively fixed/default language",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-21",
+      "legacyTable": "notification_template",
+      "legacyColumn": "merge_variable_mapping",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-22",
+      "legacyTable": "notification_template",
+      "legacyColumn": "notification_type",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-23",
+      "legacyTable": "notification_template",
+      "legacyColumn": "sms_variable_format",
+      "legacyType": "varchar(50)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_SMS_DLT_CONFIGURATION",
+      "canonicalTarget": "typed SMS/DLT provider configuration (DB10 runtime config or deployment config per DB-033)",
+      "rationale": "Current Exotel/BulkSMS paths resolve DLT/sender/template configuration outside notification_template tables and fail closed when required IDs are missing.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-24",
+      "legacyTable": "notification_template",
+      "legacyColumn": "subject",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "REDESIGNED_CHANNEL_SPECIFIC",
+      "canonicalTarget": "typed in-app content or external provider-managed email/SMS template content by channel",
+      "rationale": "Current runtime renders in-app text from code and sends email via provider template IDs; SMS content is DLT/provider configured. A generic DB body field is not the current source of truth.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-25",
+      "legacyTable": "notification_template",
+      "legacyColumn": "template_key",
+      "legacyType": "varchar(100)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "disposition": "REDESIGNED_TO_TYPED_CODE_REGISTRY",
+      "canonicalTarget": "typed notification event/channel registry in application code",
+      "rationale": "Current pinned NotificationEventRegistry owns event keys/channels and in-app routing/content selection in code.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-26",
+      "legacyTable": "notification_template",
+      "legacyColumn": "updated_by",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-27",
+      "legacyTable": "notification_template",
+      "legacyColumn": "variable_schema",
+      "legacyType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "disposition": "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION",
+      "canonicalTarget": "typed producer validation/schema/docs; no generic runtime template-row persistence",
+      "rationale": "Current runtime uses typed event variables/validators and provider merge maps; legacy row-level JSON schemas/examples are not current dispatch sources.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION_TEMPLATE-28",
+      "legacyTable": "notification_template",
+      "legacyColumn": "version",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "disposition": "SOURCE_RETIRED_PERSISTENCE_METADATA_PENDING_GLOBAL_PROOF",
+      "canonicalTarget": null,
+      "rationale": "Current pinned runtime has no DB-backed notification template registry or editor; row identity/version/soft-delete/default/sample/audit metadata has no active runtime producer/consumer to preserve.",
+      "runtimeEvidence": [
+        "NotificationEventRegistry: in-code event/channel/in-app content registry; source comment states No DB or CSV",
+        "NotificationDispatcherServiceImpl: renders in-app from NotificationEventRegistry and resolves email template IDs through ZeptoMailTemplateIdResolver",
+        "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
+      ],
+      "exactRuntimeVerified": false,
+      "finalRetirementApproved": false
+    }
+  ]
+}
