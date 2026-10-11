@@ -43,9 +43,13 @@ CREATE TABLE skill_usage (
 -- IMPORTANT: skills.usage_count (SkillRepository) and
 -- skill_usage.usage_count (SkillUsageTracker) are separate active counters.
 -- A free-text skill_usage name need not resolve to a skills row; NO FK.
+-- Legacy SkillUsageTracker.recordUsage uses toLowerCase() WITHOUT trim().
+-- Preserve leading/trailing whitespace distinction for parity (e.g. 'Java' vs ' Java');
+-- do not conflate with searchSkills(), which trims an incoming search QUERY.
+-- Intentional blank-name hardening remains a documented DB22 exception pending approval.
 -- Future writer must use atomic INSERT ... ON CONFLICT DO UPDATE:
 --   INSERT INTO skill_usage(skill_name,usage_count,last_used)
---   VALUES(lower(trim(:name)),1,clock_timestamp())
+--   VALUES(lower(:name),1,clock_timestamp())
 --   ON CONFLICT(skill_name) DO UPDATE SET
 --       usage_count=skill_usage.usage_count+1,last_used=clock_timestamp();
 -- Search filters inactive skills and can return multiple matching aliases.
