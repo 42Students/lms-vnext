@@ -13,13 +13,13 @@
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB064_TRANSFERRED_TO_CHAT05",
-    "updatedOn": "2026-10-11T19:40:03.581Z",
-    "observedMainSha": "15b193b328b4754f044b7e249778fa9591db7a66",
-    "lastWorkerMergedSha": "15b193b328b4754f044b7e249778fa9591db7a66",
+    "checkpointKind": "DB066_SOURCE_STAGING_COMPLETE",
+    "updatedOn": "2026-10-12T02:43:00+05:30",
+    "observedMainSha": "b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6",
+    "lastWorkerMergedSha": "b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-063 complete source-only (4/4 assertions; 20/20 SQL function quoting valid). DB-064 active: fixed-identity mutable TPO preference state plus create/delete-only saved-view snapshots.\nUser-authorized transition DB064 to Chat5 without claiming Chat3 completion. Earlier source handoff preserved."
+    "summary": "DB-066 completed source/staging design: same-job application-role, round-result, learner-request and reschedule-exception parent scope enforced in candidate SQL; request type discriminator added; source verifier and disposable PostgreSQL/race witness authored. Connector source audit 16/16 passed. Migration/PG/runtime execution remains unverified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -32,14 +32,16 @@
   "lastAuthoredTests": [
     "tests/db09-notification-undo-digest-staging.test.mjs (6 node:test static source tests AUTHORED; command not executed)",
     "tests/unit/outbound-global-email-suppression.test.ts (7 Vitest cases AUTHORED NOT EXECUTED)",
-    "tests/db10-global-email-suppression-contract.test.mjs (5 source callbacks AUTHORED; V8 shim 5/5 passed; Node command NOT RUN)"
+    "tests/db10-global-email-suppression-contract.test.mjs (5 source callbacks AUTHORED; V8 shim 5/5 passed; Node command NOT RUN)",
+    "tests/db08-cross-parent-integrity.test.mjs (static + opt-in disposable PostgreSQL negatives/race AUTHORED; PostgreSQL command not executed)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-11 10 read-only GitHub source assertions (not Node runner / PostgreSQL)",
     "2026-10-11 11 read-only GitHub source + ledger assertions (not Node runner / PostgreSQL)",
     "2026-10-11 DB-032: 79/79 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
     "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
-    "2026-10-11 DB-050: 5/5 exact standalone source-guard callbacks executed via V8 readFileSync/assert shim, NOT Node or PG"
+    "2026-10-11 DB-050: 5/5 exact standalone source-guard callbacks executed via V8 readFileSync/assert shim, NOT Node or PG",
+    "2026-10-12 DB-066: 16/16 connector-based read-only source/staging assertions clean (NOT node:test / PostgreSQL)"
   ],
   "blockers": [],
   "handoffs": [
@@ -70,7 +72,7 @@
       "request": "Transferred by explicit user instruction. Original DB-056 and Chat3 contribution credited; Chat5 owns DB064 continuation."
     }
   ],
-  "nextAction": "DB-064 assigned to Chat 5 by user; available for subsequent authorized DATABASE work.",
+  "nextAction": "Chat 3 available. DB-066 is source/staging complete, not verified. Take next non-conflicting DATABASE task; migration registration remains Chat 1-only.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -187,7 +189,12 @@
     "https://github.com/42Students/lms-vnext/commit/f80329431da5321e66441902889295c9b7f4462c",
     "https://github.com/42Students/lms-vnext/commit/771d72b5a7ff29059733128defb00d4a281362c2",
     "https://github.com/42Students/lms-vnext/commit/4231a694d3ef4b6134323362bf3ed370c22df3a2",
-    "https://github.com/42Students/lms-vnext/commit/05aa3fd9619d7ea37fc603665875a18d048c2e1c"
+    "https://github.com/42Students/lms-vnext/commit/05aa3fd9619d7ea37fc603665875a18d048c2e1c",
+    "https://github.com/42Students/lms-vnext/commit/329117aec996e9d4035ac665a365012ec12b6625",
+    "https://github.com/42Students/lms-vnext/commit/a282e35c93f0bdaed0229ca4fb1a7856d71d36e9",
+    "https://github.com/42Students/lms-vnext/commit/37d6550783fd8500cc20a3b7b0c314df2f571b1c",
+    "https://github.com/42Students/lms-vnext/commit/15988bac994e22a93e4523daf4868c8717d1e600",
+    "https://github.com/42Students/lms-vnext/commit/b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -207,7 +214,8 @@
     "DB-061",
     "DB-062",
     "DB-063",
-    "DB-064"
+    "DB-064",
+    "DB-066"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -223,10 +231,11 @@
     "DB-060",
     "DB-061",
     "DB-062",
-    "DB-063"
+    "DB-063",
+    "DB-066"
   ],
-  "lastPickedAt": "2026-10-11T21:40:00+05:30",
-  "lastCompletedAt": "2026-10-11T13:50:00+05:30",
+  "lastPickedAt": "2026-10-12T02:23:00+05:30",
+  "lastCompletedAt": "2026-10-12T02:43:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
   "trackingDefinitions": {
