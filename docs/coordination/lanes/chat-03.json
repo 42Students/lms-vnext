@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-059",
+  "activeTaskId": "DB-060",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB059_SECURE_SHARE_LIFECYCLE_STARTED",
+    "checkpointKind": "DB060_SHARE_EVENT_COMPLETENESS_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "51c0e16674758a783c8f4b1a41d23984c57a9ed3",
-    "lastWorkerMergedSha": "51c0e16674758a783c8f4b1a41d23984c57a9ed3",
+    "observedMainSha": "b50656a46d24c9f1282addf12b1eae7aa6e56031",
+    "lastWorkerMergedSha": "b50656a46d24c9f1282addf12b1eae7aa6e56031",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-057 completed source-only (5/5 connector source assertions). DB-059 active: legacy secure share link fixes disclosure/token/recipient/job/expiry at creation; only email-code rotation and one-way revocation mutate later. Staged vNext currently lacks that immutability."
+    "summary": "DB-059 completed source-only (5/5 connector assertions). DB-060 active: source secure-share lifecycle always records CREATED, and revocation records REVOKED in same transaction; staged DB lacks event completeness."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Stage share-link mutation guard, audit contract and static source regression; preserve email-code rotation/revocation while rejecting disclosure/token/identity rewrites and post-expiry/revocation code rotation.",
+  "nextAction": "Add unique CREATED/REVOKED event scope plus deferred share↔event completeness/state guards; add audit/static regression and execute source assertions.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -196,7 +196,8 @@
     "DB-050",
     "DB-056",
     "DB-057",
-    "DB-059"
+    "DB-059",
+    "DB-060"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -207,9 +208,10 @@
     "DB-047",
     "DB-050",
     "DB-056",
-    "DB-057"
+    "DB-057",
+    "DB-059"
   ],
-  "lastPickedAt": "2026-10-11T20:52:00+05:30",
+  "lastPickedAt": "2026-10-11T21:00:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
