@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-043",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB040_STAGED_DRAFT_PREFLIGHT_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB043_NOTIFICATION_CAMPAIGN_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a59e26496905f0c066f4ce7baf9591402b53de55",
+    "observedMainSha": "5c00d2c3dbada1dbbc83be75d49681e321e798e1",
     "lastWorkerMergedSha": "6c652ef6d03758d2b303c142ee719320a41965fe",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-040 exact-source preflight covers 75 DB10 fields in isolated drafts; fixed test parser and refreshed source/shape audit 342/342. All rows remain UNMAPPED/verified=0 pending migration and runtime proof."
+    "summary": "DB-043 started: reconcile all 21 legacy notification fields across campaign authoring, audience targeting, recipient delivery/read state, safe actions, schedule/delivery status and creator-owned lifecycle."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -87,7 +87,7 @@
     "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates.",
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows."
   ],
-  "nextAction": "Refresh DATABASE queue; claim eligible work or continue non-conflicting DB10 exact field reconciliation while phase gates remain closed.",
+  "nextAction": "Author exact 21-field map, isolated campaign SQL, contract and static guards; keep DB10 general outbox separate and no migration/barrel edits.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -145,7 +145,8 @@
     "DB-033",
     "DB-037",
     "DB-039",
-    "DB-040"
+    "DB-040",
+    "DB-043"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -164,7 +165,7 @@
     "DB-039",
     "DB-040"
   ],
-  "lastPickedAt": "2026-10-11T14:10:30+05:30",
+  "lastPickedAt": "2026-10-11T14:22:00+05:30",
   "lastCompletedAt": "2026-10-11T14:18:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
