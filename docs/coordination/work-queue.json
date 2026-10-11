@@ -361,13 +361,13 @@
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
       "status": "BLOCKED",
-      "latestEvidenceSha": "b63b08ff738dbd0e20bd4d727ad06b37ec22aa1d",
+      "latestEvidenceSha": "4231a694d3ef4b6134323362bf3ed370c22df3a2",
       "verificationEvidence": [],
       "blockers": [
-        "W01/Chat 1 must review/promote DB04 staged schema in dependency order, export it deliberately, register one numbered migration and execute CI-independent PostgreSQL replay/negative/concurrency witnesses.",
-        "Runtime profile CRUD/screening/verification/image producers must be cut over to the exact registered normalized schema and proven against it; authored staging is not runtime parity.",
-        "student_registration retirement needs explicit product approval or proof that no detached external CRM/roster/native-SQL integration exists; DB02 proves no canonical academics dependency.",
-        "approver_id_card retirement needs explicit approval or live/native-SQL absence proof; DB06 + post-V150 migration evidence strongly supports historical legacy-exam status."
+        "W01/Chat 1 must review/promote DB04 staged schema in dependency order, deliberately export it, register one numbered migration and run clean/latest replay.",
+        "Execute the authored DB04 disposable PostgreSQL witness plus remaining privacy/tenant/history/concurrency cases and retain actual output; test existence is not verification.",
+        "Runtime profile CRUD/screening/verification/image producers must be cut over to the exact registered normalized schema and proven against it.",
+        "student_registration and approver_id_card remain source-strong retirement candidates, not approved retirements; detached/live consumer proof or explicit product approval is still required."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -416,7 +416,7 @@
           "reason": "Chat 3 staged normalized education/profile-image Drizzle, hardened private-receipt parent constraints, added W01 integration manifest/static guards, and kept task blocked pending W01 registration, PostgreSQL/runtime proof and explicit historical retirements."
         }
       ],
-      "progressNote": "DB-007 blocker reduction advanced substantially. Historical 33 fields now have strong independent source evidence (DB02 student_registration no-dependency; DB06 legacy assigned_exam family; V151-V194 zero-reference sweep) but 0 approved retirements. Active qualification/student_image parity now has an unregistered normalized Drizzle staging module (education rows, same-owner education-document receipt join, learner image active-state relation), hardened profile_private_document_receipts composite parent keys/object-key/generation/digest checks, a DB04 W01 integration manifest, and static guards. No schema-barrel export, numbered migration, PostgreSQL execution or runtime producer cutover is claimed."
+      "progressNote": "DB-007 is integration-ready at source/staging level, still BLOCKED. 103/103 source candidates reviewed; 33 historical rows have strong retirement-candidate evidence but 0 approved retirements. Active qualification/student_image parity has normalized unregistered Drizzle staging, hardened private-receipt parent keys/object checks, W01 dependency manifest/static guards, and an opt-in disposable PostgreSQL witness covering GPA, pursuing/year constraints, recent uniqueness, same-owner education/image receipts and image active state. PostgreSQL witness is AUTHORED_NOT_EXECUTED; no numbered migration, barrel export or runtime producer cutover is verified."
     },
     {
       "id": "DB-008",
