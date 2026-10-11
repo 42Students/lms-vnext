@@ -93,10 +93,23 @@ test("field source evidence remains traceable to pinned source triage", () => {
     const s = src.get(row.legacyField);
     assert.ok(s);
     assert.equal(s.postV150Active, row.sourceStatus);
-    assert.ok(row.sourcePaths.length > 0, row.legacyField);
+    assert.equal(row.currentSourceEvidenceGap, row.sourcePaths.length === 0, row.legacyField);
   }
 });
-test("all crosswalk policy decisions have source-backed reasoning and a handoff artifact", () => {
+test("three historical-DDL-only fields remain flagged for named producer/consumer proof", () => {
+  assert.equal(file.counts.currentSourceEvidenceGaps, 3);
+  assert.deepEqual(file.currentSourceEvidenceGapFields, [
+    "role.is_deleted",
+    "tenant_domain.is_deleted",
+    "user.password",
+  ]);
+  for (const f of file.currentSourceEvidenceGapFields) {
+    const row = file.rows.find(r => r.legacyField === f);
+    assert.ok(row.currentSourceEvidenceGap);
+    assert.equal(row.runtimeSemanticVerified, false);
+  }
+});
+test("all crosswalk policy decisions have explicit reasoning and a handoff artifact", () => {
   for (const r of file.rows) {
     assert.ok(r.review.explanation.length >= 60, r.legacyField);
     assert.ok(r.review.evidenceArtifact.startsWith("docs/planning/"), r.legacyField);
