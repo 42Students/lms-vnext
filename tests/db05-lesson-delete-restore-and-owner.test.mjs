@@ -66,7 +66,7 @@ test("DB05 owner and soft-delete mappings still unverified", () => {
 });
 
 test("DB05 owner upstream reparent and role security require independent proof", () => {
-  assert.match(owner, /upstream offering/path/department/period/membership/);
+  assert.match(owner, /upstream offering\/path\/department\/period\/membership/);
   assert.match(owner, /row-write trigger/);
   assert.match(owner, /membership_role\.role::text = 'FACULTY'/);
   assert.match(cascade, /two-session delete\/move\/restore races/);
