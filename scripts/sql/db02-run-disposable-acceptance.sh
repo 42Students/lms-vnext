@@ -135,6 +135,7 @@ source_tests=(
   tests/db02-historic-parent-reassignment-contract.test.mjs
   tests/db02-promotion-readiness-contract.test.mjs
   tests/db02-curriculum-type-history-contract.test.mjs
+  tests/db02-disposable-runner-contract.test.mjs
 )
 single_session_sql=(
   scripts/sql/db02-postgres-acceptance-unregistered.sql
