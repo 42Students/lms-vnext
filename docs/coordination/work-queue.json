@@ -1994,25 +1994,35 @@
         "docs/planning/database-parity-db06-history-contract.md",
         "tests/db06-history-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T08:00:53.475Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T08:00:53.475Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Implementation follow-up to completed DB-009 reconciliation. DB-009 explicitly recorded missing immutable grade history and attendance correction history; no existing task owns these persistence objects."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T08:00:53.475Z",
+          "reason": "Chat 1 claims source-only DB06 history staging follow-up after DB-030 runtime block."
         }
       ]
     }
