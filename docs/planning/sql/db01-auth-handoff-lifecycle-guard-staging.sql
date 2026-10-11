@@ -65,6 +65,16 @@ BEGIN
             CONSTRAINT = 'db01_auth_handoff_expired_consume_ck';
   END IF;
 
+  -- consumed_at is proof of an actual completed reservation, not an
+  -- arbitrary future time supplied by the caller. A row CHECK alone permits
+  -- a future consumed_at before expires_at, creating forged audit history.
+  IF NEW.consumed_at IS NOT NULL
+     AND NEW.consumed_at > clock_timestamp() THEN
+    RAISE EXCEPTION 'Auth handoff consumption timestamp cannot be future dated'
+      USING ERRCODE = '23514',
+            CONSTRAINT = 'db01_auth_handoff_future_consume_ck';
+  END IF;
+
   RETURN NEW;
 END;
 $$;
