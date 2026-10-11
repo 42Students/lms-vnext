@@ -162,8 +162,8 @@ export const placementTpoShareLinks = pgTable(
     ),
     check(
       "placement_tpo_share_links_recipient_email_ck",
-      sql`${table.recipientEmail} = lower(${table.recipientEmail})
-        and length(trim(${table.recipientEmail})) > 3`,
+      sql`${table.recipientEmail} = lower(trim(${table.recipientEmail}))
+        and position('@' in ${table.recipientEmail}) > 1`,
     ),
     check(
       "placement_tpo_share_links_columns_ck",
