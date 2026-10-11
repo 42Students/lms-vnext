@@ -73,3 +73,21 @@ test("gates retain upstream-reparent, identity, receipt/attestation race blocker
   assert.match(contract, /Course resource binding/);
   assert.match(contract, /NOT RUN/);
 });
+
+test("private receipt suffix rejects traversal and arbitrary path segments", () => {
+  const regexText = sql.match(/object_key_suffix !~\* '([^']+)'/);
+  assert.ok(regexText, "missing PostgreSQL suffix shape restriction");
+  const keySuffix = new RegExp(regexText[1], "i");
+  assert.match("f47ac10b-58cc-4372-a567-0e02b2c3d479", keySuffix);
+  for (const invalid of [
+    "",
+    "not-a-uuid",
+    "../f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479/extra",
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479?x=1",
+    "https://attacker.example/file",
+  ]) {
+    assert.doesNotMatch(invalid, keySuffix, invalid);
+  }
+  assert.match(contract, /non-UUID suffix/);
+});

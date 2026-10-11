@@ -13,7 +13,7 @@ The staged `course_upload_receipts` table separately references college, owner m
 - An assignment targets a lesson in a learning path in an offering with both `academic_periods.college_id` and the owning course department's `college_id`. Both must match the receipt's college.
 - A course resource targets `lesson_contents` through the same path. A delivery-scoped lesson content/assignment must use a delivery of that exact offering and a section whose academic period belongs to the same college.
 - A consumed assignment receipt must match the actual submission's assignment ID, learner membership, delivery offering, and any assignment-specific delivery.
-- `private-object-storage.ts` builds object keys as `private/<college>/<membership>/<namespace>/<uuid>`. The source namespaces include `assignment-submission` and `course-resource`. The DB should reject cross-owner, cross-college and cross-namespace keys but **cannot** prove the file exists or has been malware-scanned.
+- `private-object-storage.ts` builds object keys as `private/<college>/<membership>/<namespace>/<uuid>`. The source namespaces include `assignment-submission` and `course-resource`. The DB rejects cross-owner, cross-college, cross-namespace, extra path segments, path traversal and a non-UUID suffix; it **cannot** prove the object exists, belongs to a signed grant or has been malware-scanned.
 - `upload_token_hash` is server-generated SHA-256 lowercase hex; legacy/current runtime business storage safety still requires scanner identity, object generation, digest, expiry and revocation checks.
 
 ## Staged guard coverage
@@ -24,7 +24,7 @@ The staged `course_upload_receipts` table separately references college, owner m
 | Assignment or content's offering period and course department match college | Reject mismatch via `23514` | NOT RUN |
 | Optional target delivery is same offering and college section | Reject mismatch via `23514` | NOT RUN |
 | Submission receipt consumption remains bound to one owner, assignment and delivery | Reject mismatch via `23514` | NOT RUN |
-| Object key has correct private owner and purpose namespace | Reject mismatch via `23514` | NOT RUN |
+| Object key has exact `private/<college>/<membership>/<namespace>/<uuid>` shape | Reject wrong prefix, extra segments, traversal and non-UUID suffix via `23514` | NOT RUN |
 | Upload token hash has SHA-256 hex shape | Reject malformed field via `23514` | NOT RUN |
 
 ## Must remain blocked
