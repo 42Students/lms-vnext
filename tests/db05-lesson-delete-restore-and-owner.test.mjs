@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 const read = name => readFileSync(new URL(name, import.meta.url), "utf8");
 const cascade = read("../scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql");
+const versionDraft = read("../scripts/sql/db05-version-progress-attempts.draft.sql");
 const owner = read("../scripts/sql/db05-lesson-content-faculty-owner.draft.sql");
 const schema = read("../src/db/schema/courses.ts");
 const contentWriter = read("../src/modules/courses/lesson-content-service.ts");
@@ -87,4 +88,13 @@ test("DB05 delete versus insert race remains PostgreSQL-unverified", () => {
   assert.match(cascade, /parent deletion sees\/cascades the new child/);
   assert.match(cascade, /insert waits and then rejects/);
   assert.match(cascade, /two-session delete\/move\/restore races/);
+});
+
+test("cascading child tombstones invalidate optimistic version CAS without resurrecting history", () => {
+  assert.match(versionDraft, /ALTER TABLE lesson_contents\s+ADD COLUMN IF NOT EXISTS version bigint NOT NULL DEFAULT 0/);
+  assert.match(cascade, /db05-version-progress-attempts\.draft\.sql MUST first/);
+  assert.match(cascade, /SET legacy_deleted_at = NEW\.legacy_deleted_at,\s+version = c\.version \+ 1/);
+  assert.match(cascade, /WHERE c\.lesson_id = NEW\.id\s+AND c\.legacy_deleted_at IS NULL/);
+  assert.doesNotMatch(cascade, /SET legacy_deleted_at = NULL/);
+  assert.match(cascade, /Parent lesson\s+soft-delete service must increment course_lessons\.version/);
 });
