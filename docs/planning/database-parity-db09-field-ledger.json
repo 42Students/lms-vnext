@@ -7582,22 +7582,22 @@
       ],
       "mappingTarget": {
         "table": "placement_tpo_college_settings",
-        "column": "notify_toggles",
-        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+        "column": "notify_drive_open_email,notify_result_applied,notify_nudges,notify_prep_assigned",
+        "status": "REDESIGNED_BOOLEAN_COLUMNS_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "semanticDefinition": "Active college-owned optional notification switches source-backed by four fixed keys. Normalize to typed TRUE-default booleans and distinguish optional suppressed event dispatch from always-on notices; preserve source-compatible response keys.",
       "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
       "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
       "producerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
       ],
       "consumerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
-      "status": "MAPPED",
+      "constraintAndLifecycleEvidence": "DB-036 compares legacy TpoSettingsHubService.TOGGLE_KEYS and NotificationOutboxService.OPTIONAL_EVENT_SWITCH. Four boolean columns default TRUE; dispatch disables only explicitly FALSE optional event switches, others always-on. Legacy JSON is not the canonical vNext writer. Consumer cutover and negative PostgreSQL witnesses not executed.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -9969,10 +9969,10 @@
       ],
       "mappingTarget": {
         "table": "placement_tpo_user_preferences",
-        "column": "preferences",
-        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+        "column": "morning_digest,recruiter_messages,requests,results_ready,follow_ups",
+        "status": "REDESIGNED_BOOLEAN_COLUMNS_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live per-placement-user notification preferences. vNext adds explicit college scope and normalizes faculty identity to canonical user.",
+      "semanticDefinition": "Active TPO personal notification preference storage, five fixed keys. Normalize to typed boolean columns under college+user, retaining exact default values without inventing a proven dispatcher integration.",
       "tenantKey": "placement_tpo_user_preferences.college_id added explicitly in vNext",
       "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
       "producerPaths": [
@@ -9982,8 +9982,8 @@
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
-      "status": "MAPPED",
+      "constraintAndLifecycleEvidence": "DB-036 compares TpoSettingsHubService.myPrefs/saveMyPrefs. Five fixed booleans preserve source defaults (morningDigest FALSE, recruiterMessages/requests/resultsReady/followUps TRUE), scoped by college_id and user_id. Legacy personal prefs are active persisted UI choices; notification delivery honoring these choices is NOT established from inspected source. No runtime tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -10030,16 +10030,16 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "tpo_college_settings trusted_domains_json + prep_course_ids_json normalized redesign",
-    "result": "Two previously JSON-mapped active fields moved to normalized relations. DB09 remains 279/279 disposition-reviewed with 0 runtime/workflow verified.",
+    "scope": "DB-036 tpo_college_settings notify_toggles_json and tpo_user_prefs prefs_json normalized to nine booleans",
+    "result": "Two source-active JSON object fields redesigned to fixed typed defaults; total 279/279 disposition reviewed, 0 DB/workflow verified. Other table mappings unchanged.",
     "evidence": [
-      "docs/planning/sql/db09-tpo-settings-normalization-candidate.sql",
-      "docs/planning/db09-tpo-settings-normalization-2026-10-11.md",
-      "tests/db09-tpo-settings-normalization.test.mjs"
+      "src/db/schema/tpo-collaboration.ts",
+      "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
+      "tests/db09-notification-preferences-normalization.test.mjs"
     ],
     "sourceConsumers": [
-      "TpoDriveService.isTrustedRecruiter",
-      "TpoStudentsReadService.prepAverages"
+      "TpoSettingsHubService",
+      "NotificationOutboxService.OPTIONAL_EVENT_SWITCH"
     ]
   }
 }
