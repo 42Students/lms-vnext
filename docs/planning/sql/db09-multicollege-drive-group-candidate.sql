@@ -149,7 +149,7 @@ BEGIN
 END $$;
 CREATE TRIGGER db09_drive_group_job_scope_guard
   BEFORE INSERT OR UPDATE OF
-    recruiter_drive_group_id,college_id,company_relationship_id
+    recruiter_drive_group_id,college_id,company_relationship_id,created_by_user_id
   ON placement_jobs
   FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_group_job_scope();
 
