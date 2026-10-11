@@ -215,6 +215,23 @@ BEGIN
   VALUES (cohort_a, period_a_alt, 'Section A Alt', 'DB02-SEC-A-ALT', 60, 0)
   RETURNING id INTO section_a_alt;
 
+  -- Shrinking a cohort window cannot strand an already-materialized later section.
+  failed := false;
+  BEGIN
+    UPDATE cohorts
+       SET expected_end_period_id = period_a_alt
+     WHERE id = cohort_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cohort expected-end shrink excluded existing academic state';
+  END IF;
+
+  -- A history-free cohort may widen its expected window and restore it.
+  UPDATE cohorts SET expected_end_period_id = period_a_outside WHERE id = cohort_a2;
+  UPDATE cohorts SET expected_end_period_id = period_a WHERE id = cohort_a2;
+
   INSERT INTO users(identity_uid, email, display_name)
   VALUES ('db02-fac-a-' || gen_random_uuid()::text,
           'db02-fac-a-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
