@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-048",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB045_SOURCE_RECONCILIATION_COMPLETED",
+    "checkpointKind": "DB048_REMOTE_RESET_CONFIRMATION_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "c2aeeb941d1fb4f3bf499dafc41c5af6b0bb0641",
+    "observedMainSha": "91d94a4fe06a01f43261c2bcdf3a242fa6579f97",
     "lastWorkerMergedSha": "fa63b1b3a37e83f5cddb299bf4af16b16f017c70",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-045 source reconciliation completed: retained explicit-PRESENT stable attendance row + monotonic version + immutable history selected; grade 25/25 and attendance 21/21 staged fields/checks aligned; delivery composite identity and semantic drift gate hardened; 30 PG witnesses documented. Connector source review 15/15 true; API producer cutover and PG verification pending."
+    "summary": "Chat 1 started DB-048 CORE_INFRA: exact target confirmation for destructive non-local database reset."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -49,7 +49,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh global DATABASE queue and claim the next dependency-satisfied nonconflicting task. If none, reconcile already-staged DB06 upload-receipt/grade-audit ledger gaps without duplicating active workers.",
+  "nextAction": "Require ALLOW_DB_RESET=true plus exact DB_RESET_CONFIRM for non-local resetDatabase targets, preserve local and test/E2E paths, add no-network source/process guards and update runbooks.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -84,7 +84,8 @@
     "DB-038",
     "DB-041",
     "DB-044",
-    "DB-045"
+    "DB-045",
+    "DB-048"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -99,7 +100,7 @@
     "DB-044",
     "DB-045"
   ],
-  "lastPickedAt": "2026-10-11T08:54:00.000Z",
+  "lastPickedAt": "2026-10-11T14:08:00.000Z",
   "lastCompletedAt": "2026-10-11T09:13:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
