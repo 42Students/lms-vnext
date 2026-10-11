@@ -81,9 +81,9 @@ The staged Drizzle model requires:
 - declared size is 1..50 MiB;
 - expiry is after creation and at most 15 minutes after creation;
 - scan state is PENDING/CLEAN/REJECTED;
-- CLEAN requires exact lms-vnext-privileged-scanner + attested timestamp;
+- PENDING has no scanner actor/time; terminal CLEAN or REJECTED requires exact lms-vnext-privileged-scanner + attested timestamp;
 - object generation is numeric and attested SHA is lowercase 64-char hex;
-- consumed receipt is CLEAN, not revoked, fully attested, has retention_until and retention >= consumed_at;
+- at consumption time the receipt must be CLEAN, unrevoked and fully attested, with scan_attested_at <= consumed_at <= expires_at and retention_until >= consumed_at; later administrative revocation does not invalidate the historical consumption snapshot;
 - revocation requires boolean + actor + time + reason together;
 - deletion request requires retention and cannot precede retention_until.
 
@@ -126,7 +126,11 @@ Scanner result is one-way. CLEAN/REJECTED cannot later be rewritten to another r
 
 Attestation may be populated once. Once generation/MIME/size/hash/scanner evidence exists, it cannot be changed.
 
-Revocation is irreversible. Retention may be established or extended, never shortened. Deletion request/completion timestamps are write-once.
+Revocation is irreversible and actor/time/reason become immutable once written. An active owner may cancel only an **unconsumed** receipt. A consumed receipt may be revoked only by an active same-college COLLEGE_ADMIN or persisted active SUPER_ADMIN; DB-053 deliberately does not invent FACULTY revocation authority.
+
+Post-consumption revocation is valid: it disables future reads without rewriting the historical consumed/object/file evidence. Therefore the structural consumed-row contract does not require `revoked=false` forever; the transition guard requires unrevoked state only at the moment of consumption.
+
+Retention may be established or extended, never shortened. Deletion request/completion timestamps are write-once, and deletion requires prior revocation in addition to the retention boundary.
 
 Consumption is one-time and cannot be cleared or reassigned.
 
@@ -180,7 +184,8 @@ The staged receipt owns a composite unique identity over:
 - attested generation;
 - actual MIME;
 - actual size;
-- SHA-256.
+- SHA-256;
+- original filename.
 
 assignment_submission_files has a composite FK from its receipt/submission/object metadata to that exact consumed attestation.
 
@@ -191,7 +196,16 @@ This prevents a file evidence row from drifting to:
 - another generation;
 - another MIME/size/hash.
 
-The SQL insert guard additionally pins original_name and requires CLEAN, consumed, non-revoked, retained receipt state.
+The composite identity and SQL insert guard also pin original_name and require CLEAN, consumed, non-revoked, retained receipt state at file insertion.
+
+## Deferred relational completeness
+
+Two DEFERRABLE INITIALLY DEFERRED guards make the multi-file model complete at COMMIT rather than imposing a fragile statement order:
+
+- a FILE `assignment_submissions` row must have at least one immutable `assignment_submission_files` row; a non-FILE submission must not own file rows;
+- every consumed ASSIGNMENT_SUBMISSION receipt must have a matching immutable file row for its consumed submission.
+
+This permits submission → receipt consumption → file insertion in one transaction while rejecting a dangling FILE submission and a consumed-but-unattached receipt.
 
 ## Producer ordering
 
@@ -230,6 +244,8 @@ Before DB06_ASSIGNMENT_FILES_READY may become DB06_VERIFIED, the read path must 
 - outside the approved read-retention policy.
 
 Revocation therefore becomes effective authorization state, not merely an audit column.
+
+A consumed receipt may be revoked after file insertion. The immutable file row remains as evidence, while read authorization must fail from the linked receipt state.
 
 ## Retention
 
@@ -279,9 +295,13 @@ Before registration/runtime enablement, execute at least:
 17. deletion before retention fails;
 18. receipt/file UPDATE/DELETE/TRUNCATE forbidden where immutable;
 19. concurrent second consumer loses CAS;
-20. revoked/deleted receipt cannot issue signed read;
-21. scanner timestamp comes from trusted object metadata;
-22. zero-to-head migration and snapshot drift pass;
-23. readiness flag remains disabled until all gates pass.
+20. unused owner revocation succeeds; unrelated/faculty revoker fails;
+21. consumed receipt revocation requires same-college COLLEGE_ADMIN or active SUPER_ADMIN, freezes actor/time/reason and later blocks signed read;
+22. deletion requires prior revocation;
+23. FILE submission with zero files and consumed receipt with no file row fail at COMMIT; exact multi-file set commits;
+24. revoked/deleted receipt cannot issue signed read;
+25. scanner timestamp comes from trusted object metadata;
+26. zero-to-head migration and snapshot drift pass;
+27. readiness flag remains disabled until all gates pass.
 
 Until those witnesses execute, DB-053 may be source-complete only and must not be DONE_VERIFIED.
