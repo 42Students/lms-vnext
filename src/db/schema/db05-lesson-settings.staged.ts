@@ -33,7 +33,7 @@ export const lessonContentSettingsStaged = pgTable(
     calendarEventId: text("calendar_event_id"),
     calendarTimeZone: text("calendar_time_zone"),
     thumbnailUrl: text("thumbnail_url"),
-    version: bigint("version", { mode: "number" }).notNull().default(0),
+    version: bigint("version", { mode: "bigint" }).notNull().default(0n),
     updatedByUserId: uuid("updated_by_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
