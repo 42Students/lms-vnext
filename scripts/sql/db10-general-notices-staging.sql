@@ -193,8 +193,23 @@ BEGIN
      AND OLD.status <> 'PENDING' AND NEW.status <> OLD.status THEN
     RAISE EXCEPTION 'NOTIFICATION_CANCEL_AFTER_CLAIM' USING ERRCODE='23514';
   END IF;
-  IF OLD.status IN ('SENT','CANCELLED') AND NEW.status <> OLD.status THEN
+  -- Completed receipts and cancellations are immutable, including same-
+  -- status rewrites of sent_at, failure data, lease owners and claim fences.
+  IF OLD.status IN ('SENT','CANCELLED') THEN
     RAISE EXCEPTION 'NOTIFICATION_TERMINAL_STATE_IMMUTABLE' USING ERRCODE='23514';
+  END IF;
+  IF NEW.claim_fence < OLD.claim_fence THEN
+    RAISE EXCEPTION 'NOTIFICATION_CLAIM_FENCE_CANNOT_DECREASE' USING ERRCODE='23514';
+  END IF;
+  -- Taking or renewing a claim requires a strictly newer fence. An expired
+  -- worker cannot reuse a previous fence by rewriting the same CLAIMED row.
+  IF NEW.status = 'CLAIMED'
+     AND (OLD.status <> 'CLAIMED'
+       OR NEW.claimed_by IS DISTINCT FROM OLD.claimed_by
+       OR NEW.claimed_at IS DISTINCT FROM OLD.claimed_at
+       OR NEW.claim_expires_at IS DISTINCT FROM OLD.claim_expires_at)
+     AND NEW.claim_fence <= OLD.claim_fence THEN
+    RAISE EXCEPTION 'NOTIFICATION_CLAIM_FENCE_MUST_ADVANCE' USING ERRCODE='23514';
   END IF;
   RETURN NEW;
 END;
