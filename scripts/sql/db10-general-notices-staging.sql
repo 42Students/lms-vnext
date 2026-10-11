@@ -72,7 +72,7 @@ CREATE TABLE general_notification_outbox (
 CREATE UNIQUE INDEX db10_general_notices_idempotency_uq
   ON general_notification_outbox (idempotency_key);
 CREATE UNIQUE INDEX db10_general_notices_source_recipient_channel_uq
-  ON general_notification_outbox (source_event_id,recipient_user_id,channel);
+  ON general_notification_outbox (source_event_id,recipient_user_id,recipient_type,channel);
 CREATE INDEX db10_general_notices_due_idx
   ON general_notification_outbox (status,send_after);
 CREATE INDEX db10_general_notices_undo_idx
