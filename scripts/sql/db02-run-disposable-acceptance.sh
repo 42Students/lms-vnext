@@ -65,12 +65,18 @@ WHERE NOT tgisinternal
     'db02_schedule_future_hall_lifecycle_guard',
     'db02_historic_offering_parent_guard',
     'db02_learner_program_enrollment_tenant',
-    'db02_section_enrollment_cohort_period'
+    'db02_section_enrollment_cohort_period',
+    'db02_course_pool_reactivation_role_guard',
+    'db02_section_faculty_reactivation_role_guard',
+    'db02_teaching_reactivation_role_guard',
+    'db02_program_enrollment_reactivation_role_guard',
+    'db02_section_enrollment_reactivation_role_guard',
+    'db02_program_exit_close_active_sections'
   );
 SQL
 )"
-if [[ "$TRIGGER_WITNESSES" != "12" ]]; then
-  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 12, found: $TRIGGER_WITNESSES)" >&2
+if [[ "$TRIGGER_WITNESSES" != "18" ]]; then
+  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 18, found: $TRIGGER_WITNESSES)" >&2
   exit 2
 fi
 
@@ -163,6 +169,7 @@ source_tests=(
   tests/db02-promotion-readiness-contract.test.mjs
   tests/db02-curriculum-type-history-contract.test.mjs
   tests/db02-disposable-runner-contract.test.mjs
+  tests/db02-role-reactivation-contract.test.mjs
 )
 single_session_sql=(
   scripts/sql/db02-postgres-acceptance-unregistered.sql
@@ -170,6 +177,7 @@ single_session_sql=(
   scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql
   scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql
   scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql
+  scripts/sql/db02-activation-role-lifecycle-acceptance-unregistered.sql
 )
 two_session_bash=(
   scripts/sql/db02-postgres-concurrency-unregistered.sh
