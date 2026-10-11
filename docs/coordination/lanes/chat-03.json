@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-034",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB032_DB09_FAIL_CLOSE_HARDENING_COMPLETE_SOURCE_ONLY",
+    "checkpointKind": "DB034_TPO_SETTINGS_NORMALIZATION_IN_PROGRESS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "c1fabe75c1a128182bb62d07458778a5fdab4a74",
+    "observedMainSha": "a56bea993dee6e1e45942698cd81b369231cccfd",
     "lastWorkerMergedSha": "b348a8c3ef052b7f7e7c3450d9954a167901db41",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-032 COMPLETED source/staging implementation: adversarial DB09 principal, privacy, tenant, race/concurrency and SQL-registration hardening committed on main. Final connector read-only consistency sweep was 79/79 clean. Node runner and disposable PostgreSQL were not executed; task is not verified and DB-012 remains blocked on W01 + runtime acceptance."
+    "summary": "DB-034 active: normalize source-active trusted company domains and prep-course settings so drive auto-approval/readiness no longer rely on unscoped JSON identifiers. Staging only; no migration registration/runtime verification."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -55,7 +55,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Pick the next eligible global DATABASE task. Do not reopen DB-012/DB-032 unless regression/integration feedback requires it; migration journal/schema-barrel remain Chat 1 owned.",
+  "nextAction": "Stage normalized trusted-domain and prep-course SQL/doc/static guards, update DB09 integration manifest, source-audit invariants, then complete source-only task without claiming PostgreSQL verification.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -147,13 +147,14 @@
     "DB-007",
     "DB-012",
     "DB-027",
-    "DB-032"
+    "DB-032",
+    "DB-034"
   ],
   "completedTaskIds": [
     "DB-027",
     "DB-032"
   ],
-  "lastPickedAt": "2026-10-11T13:32:00+05:30",
+  "lastPickedAt": "2026-10-11T13:50:00+05:30",
   "lastCompletedAt": "2026-10-11T13:45:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
