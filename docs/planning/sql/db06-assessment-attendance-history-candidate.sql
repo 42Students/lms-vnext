@@ -227,14 +227,20 @@ BEGIN
         USING ERRCODE='23514';
     END IF;
 
-    PERFORM 1
-      FROM membership_roles mr
-      WHERE mr.membership_id = NEW.actor_membership_id
-        AND mr.role = 'COLLEGE_ADMIN'
-      FOR SHARE;
-    IF NOT FOUND THEN
-      PERFORM 1
-        FROM membership_roles mr
+    -- The persisted actor_role is an asserted, checked role, not merely
+    -- a descriptive label. A Faculty must not impersonate COLLEGE_ADMIN when
+    -- its membership happens to carry some other grant.
+    IF NEW.actor_role = 'COLLEGE_ADMIN' THEN
+      PERFORM 1 FROM membership_roles mr
+        WHERE mr.membership_id = NEW.actor_membership_id
+          AND mr.role = 'COLLEGE_ADMIN'
+        FOR SHARE;
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'DB06 grade event actor role lacks COLLEGE_ADMIN grant'
+          USING ERRCODE='23514';
+      END IF;
+    ELSIF NEW.actor_role = 'FACULTY' THEN
+      PERFORM 1 FROM membership_roles mr
         JOIN course_teaching_assignments cta
           ON cta.membership_id = mr.membership_id
          AND cta.delivery_id = NEW.delivery_id
@@ -246,6 +252,9 @@ BEGIN
         RAISE EXCEPTION 'DB06 grade event actor lacks grading scope'
           USING ERRCODE='23514';
       END IF;
+    ELSE
+      RAISE EXCEPTION 'DB06 grade event tenant actor role invalid'
+        USING ERRCODE='23514';
     END IF;
   ELSE
     PERFORM 1
