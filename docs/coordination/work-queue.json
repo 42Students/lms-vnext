@@ -1433,6 +1433,52 @@
           "reason": "Chat 5 independent DB-001 peer review confirmed current main still lets requireDatabaseUrl('TEST_DATABASE_URL') fall back to DATABASE_URL while db:test:prepare performs destructive reset. Split from DB-001 verifier harness as a CORE_INFRA fail-closed safety task."
         }
       ]
+    },
+    {
+      "id": "DB-026",
+      "phase": "DATABASE",
+      "title": "Resolve DB03 elective slot-program oracle conflict",
+      "scope": "Reconcile V167's stale cross-program prose with current executable ElectiveService allocation behavior; make vNext elective join/read eligibility follow the current service's slot-program requirement, preserve DB02 semester/year dependency, and replace the contradictory positive cross-program regression.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/modules/groups/elective-eligibility.ts",
+        "src/modules/groups/roster-access.ts",
+        "tests/integration/groups-db03-roster.test.ts",
+        "docs/planning/db03-elective-program-oracle-decision.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T11:00:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T11:00:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh DB03 semantic closure task created after peer review found current main's positive cross-program behavior contradicts pinned executable legacy ElectiveService.classEligibilityError."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T11:00:00+05:30",
+          "reason": "Chat 5 atomically created and reserved the non-conflicting DB03 oracle-conflict closure task; completed DB-006 remains historically intact."
+        }
+      ]
     }
   ],
   "eventModel": {
