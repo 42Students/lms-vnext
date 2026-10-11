@@ -5,13 +5,10 @@
 -- Current vNext has activity_events + in_app_notifications and a DB10 draft
 --   outbound_messages, but no generalized placement event/undo/digest bridge.
 --
--- DDL preconditions to reconcile with Chat 1 / DB10. Composite FK parents
--- need a UNIQUE constraint on the referenced *exact* columns; coordinate
--- with other staging to avoid redundant parent constraints:
-ALTER TABLE colleges
-  ADD CONSTRAINT db09_notification_college_org_uq UNIQUE (id, organization_id);
-ALTER TABLE activity_events
-  ADD CONSTRAINT db09_notification_event_scope_uq UNIQUE (id, organization_id, college_id);
+-- Composite parent keys for colleges(id,organization_id) and
+-- activity_events(id,organization_id,college_id) are centralized in
+-- db09-parent-composite-keys-candidate.sql. This file owns only notification
+-- child state; W01 must deduplicate the shared parent keys before registration.
 
 -- A cancellable source event may fan out to many users and channels. The
 -- deadline is persisted once so an undo never becomes a best-effort

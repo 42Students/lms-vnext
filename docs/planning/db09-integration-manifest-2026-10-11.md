@@ -41,7 +41,19 @@ DB09 integration assumes the canonical parents already exist and are registered:
 
 Where a DB09 composite FK needs a parent composite unique key, W01 must deduplicate against constraints already introduced by DB01/DB08/DB10.
 
+### Canonical parent-key staging
+
+Use exactly one DB09 parent-key source:
+
+- `docs/planning/sql/db09-parent-composite-keys-candidate.sql`
+
+It standardizes ID-first composite UNIQUE keys for colleges, memberships, departments, company relationships, jobs, applications, rounds and activity events. The collaboration, scheduling and notification child drafts no longer declare their own competing parent keys.
+
 ## Recommended registration order
+
+### 0. Shared parent composite keys
+
+Reconcile `db09-parent-composite-keys-candidate.sql` against already registered DB01/DB08/DB10 constraints. Register only missing equivalent keys, once, before DB09 composite child FKs.
 
 ### 1. Policy + disclosure
 
@@ -148,7 +160,7 @@ Before DB-012 can move beyond source/design completion:
 
 1. empty-database registered journal replay;
 2. migration snapshot/schema drift review;
-3. all same-college composite FK negatives;
+3. shared parent composite key catalog contains no duplicate alternate-order DB09 keys, then all same-college composite FK negatives;
 4. lead/company/owner actor forgery rejection;
 5. append-only CRM activity enforcement;
 6. duplicate contact/invite-hash and invitation rotation races;
