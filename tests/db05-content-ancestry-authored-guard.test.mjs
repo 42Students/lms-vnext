@@ -62,7 +62,19 @@ test("manifest requires actual W01/DB02 cross-consumer migration and 16 PG scena
   const gate = readiness.gates.find((item) => item.id === "DB05_AUTHORED_CONTENT_REPARENT_PG_NEGATIVE");
   assert.ok(gate);
   assert.equal(gate.status, "NOT_RUN");
-  for (let i = 1; i <= 16; i++) {
+  for (let i = 1; i <= 18; i++) {
     assert.ok(candidate.includes(`CA-${String(i).padStart(2, "0")}`));
   }
+});
+
+test("generic NULL-delivery content cannot silently shift audience on delivery or section reparent", () => {
+  const service = read("../src/modules/courses/lesson-content-service.ts");
+  assert.match(service, /isNull\(lessonContents\.deliveryId\)/);
+  assert.match(service, /eq\(\s*lessonContents\.deliveryId,\s*deliveryId/);
+  // One authored generic-content branch for each upstream move:
+  assert.equal((candidate.match(/AND content\.delivery_id IS NULL/g) ?? []).length, 2);
+  assert.match(candidate, /WHERE path\.offering_id = OLD\.offering_id\s+AND content\.delivery_id IS NULL/);
+  assert.match(candidate, /WHERE delivery\.section_id = OLD\.id\s+AND content\.delivery_id IS NULL/);
+  assert.match(candidate, /CA-17/);
+  assert.match(candidate, /CA-18/);
 });
