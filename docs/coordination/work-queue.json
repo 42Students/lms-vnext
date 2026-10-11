@@ -361,12 +361,13 @@
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
       "status": "BLOCKED",
-      "latestEvidenceSha": "81cdc697c3aee72e5a6092e80b3fb92890d1a5d8",
+      "latestEvidenceSha": "b63b08ff738dbd0e20bd4d727ad06b37ec22aa1d",
       "verificationEvidence": [],
       "blockers": [
-        "W01/Chat 1 must register approved DB04 schema/staged SQL and execute CI-independent PostgreSQL privacy/tenant/history witnesses; GitHub Actions billing is not a blocker.",
-        "student_registration retirement needs explicit product approval or proof that no detached external CRM/roster/native-SQL integration exists. DB02 now proves no canonical academics dependency.",
-        "approver_id_card retirement needs explicit approval or live/native-SQL absence proof. DB06 + post-V150 migration evidence strongly supports historical legacy-exam status but does not prove live table absence."
+        "W01/Chat 1 must review/promote DB04 staged schema in dependency order, export it deliberately, register one numbered migration and execute CI-independent PostgreSQL replay/negative/concurrency witnesses.",
+        "Runtime profile CRUD/screening/verification/image producers must be cut over to the exact registered normalized schema and proven against it; authored staging is not runtime parity.",
+        "student_registration retirement needs explicit product approval or proof that no detached external CRM/roster/native-SQL integration exists; DB02 proves no canonical academics dependency.",
+        "approver_id_card retirement needs explicit approval or live/native-SQL absence proof; DB06 + post-V150 migration evidence strongly supports historical legacy-exam status."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -408,9 +409,14 @@
           "status": "BLOCKED",
           "at": "2026-10-11",
           "reason": "Chat 3 strengthened the 33 historical-field dispositions using independent DB02/DB06 evidence plus a V151-V194 migration sweep; blockers narrowed to explicit external/live retirement proof and W01/PostgreSQL acceptance."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11",
+          "reason": "Chat 3 staged normalized education/profile-image Drizzle, hardened private-receipt parent constraints, added W01 integration manifest/static guards, and kept task blocked pending W01 registration, PostgreSQL/runtime proof and explicit historical retirements."
         }
       ],
-      "progressNote": "DB-007 active-source design remains blocked on migration/PostgreSQL acceptance, but the 33 historical fields now have strong independent source disposition evidence. student_registration (22): DB02 proves zero pinned BE/FE consumers and no canonical academics dependency; product retirement still needs detached external CRM/roster exclusion or explicit approval. approver_id_card (11): snapshot FK shows legacy assigned_exam parent; DB06 independently classifies assigned_exam/attempted_question/examinee as historical exam/proctoring retirement candidates with no current JPA/UI route; Chat 3 scanned V151-V194 (44 migrations) with zero references. 0 historical retirements approved; 0 DB04 runtime fields verified."
+      "progressNote": "DB-007 blocker reduction advanced substantially. Historical 33 fields now have strong independent source evidence (DB02 student_registration no-dependency; DB06 legacy assigned_exam family; V151-V194 zero-reference sweep) but 0 approved retirements. Active qualification/student_image parity now has an unregistered normalized Drizzle staging module (education rows, same-owner education-document receipt join, learner image active-state relation), hardened profile_private_document_receipts composite parent keys/object-key/generation/digest checks, a DB04 W01 integration manifest, and static guards. No schema-barrel export, numbered migration, PostgreSQL execution or runtime producer cutover is claimed."
     },
     {
       "id": "DB-008",
