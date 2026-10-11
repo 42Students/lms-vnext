@@ -2954,17 +2954,17 @@
         "tests/db01-test-database-guard.test.mjs",
         "docs/database-workflow.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "e66e66d4a4d38d43cdb63d1ee52b10b123776b19",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Shared reset safety now treats localhost/proxy authority as ambiguous: only explicit local test/E2E database names are frictionless; every other local database requires exact DB_RESET_CONFIRM=RESET:<host>:<port>/<database>. Remote DB-048 policy still requires ALLOW_DB_RESET=true plus exact confirmation. Target-redirect query params and mixed-case PostgreSQL system names fail closed. Verifier local example moved to lms_vnext_test_verify. Process/static regressions authored; isolated no-network decision matrix executed 10/10 PASS. Repository tsx tests/PostgreSQL reset not executed here.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:30:00.000Z",
       "startedAt": "2026-10-11T14:31:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T14:14:04.081Z",
+      "completionCommitSha": "e66e66d4a4d38d43cdb63d1ee52b10b123776b19",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2988,6 +2988,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:31:00.000Z",
           "reason": "Hardening localhost/proxy destructive reset semantics; explicitly named test/E2E targets stay frictionless, other local DBs require exact confirmation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:14:04.081Z",
+          "reason": "DB-051 localhost/proxy destructive reset ambiguity closed at source/no-network level; executable repository/PostgreSQL verification remains separate."
         }
       ]
     }
