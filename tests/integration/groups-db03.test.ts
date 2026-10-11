@@ -187,6 +187,64 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(events.rows[0].n).toBe(3);
   });
 
+  it("rejects an admin elective move after the learner transfers to another program", async () => {
+    const { groups, candidate, periodId } = await createElectiveFixture();
+    await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
+
+    const enrollment = await pool.query(
+      "SELECT id FROM learner_program_enrollments WHERE membership_id=$1 AND status='ACTIVE'",
+      [candidate.membershipId],
+    );
+    expect(enrollment.rows).toHaveLength(1);
+    const learnerEnrollmentId = enrollment.rows[0].id as string;
+
+    const otherProgramId=randomUUID(), otherCohortId=randomUUID(), otherSectionId=randomUUID();
+    fixture.programs.push(otherProgramId);
+    fixture.cohorts.push(otherCohortId);
+    fixture.sections.push(otherSectionId);
+    await pool.query(
+      "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+      [otherProgramId,SEED_IDS.departmentA,"DB26 Transfer Program "+otherProgramId,"DB26-"+otherProgramId],
+    );
+    await pool.query(
+      "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+      [otherCohortId,otherProgramId,"DB26 Transfer Cohort "+otherCohortId,"DB26-"+otherCohortId,periodId],
+    );
+    await pool.query(
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+      [otherSectionId,otherCohortId,periodId,"DB26 Transfer Section "+otherSectionId,"DB26-"+otherSectionId],
+    );
+    await pool.query(
+      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
+      [otherProgramId,otherCohortId,learnerEnrollmentId],
+    );
+    await pool.query(
+      "UPDATE section_enrollments SET section_id=$1 WHERE learner_enrollment_id=$2 AND status='ACTIVE'",
+      [otherSectionId,learnerEnrollmentId],
+    );
+
+    await expect(moveElectiveMember(
+      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+    )).rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
+
+    const source = await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[0],candidate.membershipId],
+    );
+    const target = await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[1],candidate.membershipId],
+    );
+    const counts = await pool.query(
+      "SELECT id,active_count FROM lms_groups WHERE id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(source.rows[0]?.state).toBe("ACTIVE");
+    expect(target.rows).toHaveLength(0);
+    expect(counts.rows.find(row=>row.id===groups[0]).active_count).toBe(1);
+    expect(counts.rows.find(row=>row.id===groups[1]).active_count).toBe(0);
+  });
+
   it("allows an admin elective move into a locked removed target and preserves the lock", async () => {
     const { groups, candidate } = await createElectiveFixture();
     await joinGroup(admin,groups[1],candidate.membershipId,"MANUAL");
