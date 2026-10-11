@@ -257,7 +257,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "9e46023437bd1c6cd851c7e62e686833d874566c",
+      "latestEvidenceSha": "c877e6f62514b311cc2388519711ff5e1fb9bbe5",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -292,7 +292,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source and target design disposition is complete 125/125. Canonical staging and the parent/enrollment extension are deconflicted (25/25 + 7/7 paired PL/pgSQL functions; zero trigger-name overlap). Single-session rollback acceptance now covers tenant owners, period/window scope, learner enrollment/history, faculty lifecycle, delivery/schedule scope and rooms; two-session harness covers promotion CAS, both hall booking/archive lock orders, and both section reparent/history lock orders. All SQL remains unregistered/unexecuted: PostgreSQL tests=0, runtime-equivalence verified fields=0. Chat 1 must consolidate/register and run disposable PostgreSQL gates; DB-005 stays IN_PROGRESS."
+      "progressNote": "DB02 source+target design disposition remains 125/125. Latest static readiness: canonical 25/25 PL/pgSQL functions, deconflicted parent/enrollment extension 9/9, zero trigger-name overlap, no heterogeneous NEW/OLD record COALESCE. Acceptance harnesses now cover reversible INACTIVE, zero-credit CORE offerings, exact sectioned current_students, current-period classCount, learner suspension vs role/END withdrawal, tenant/enrollment/history/faculty/schedule/room invariants, promotion CAS, hall races and section reparent/history races. API follow-up matrix committed at docs/planning/db02-api-followup-after-database.md. Registered Drizzle DB02 structures still not found on latest main. PostgreSQL tests=0/runtime verified=0; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
