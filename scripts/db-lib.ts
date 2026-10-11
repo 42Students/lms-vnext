@@ -73,6 +73,26 @@ function resetTarget(databaseUrl: string) {
     throw new Error("Refusing reset: DATABASE_URL must use a PostgreSQL URL");
   }
 
+  if (!parsed.hostname) {
+    throw new Error("Refusing reset: DATABASE_URL must include an explicit host");
+  }
+
+  const targetOverrideParams = [
+    "host",
+    "hostaddr",
+    "port",
+    "database",
+    "dbname",
+  ];
+  const redirectedBy = targetOverrideParams.find((key) =>
+    parsed.searchParams.has(key),
+  );
+  if (redirectedBy) {
+    throw new Error(
+      `Refusing reset: DATABASE_URL query parameter "${redirectedBy}" may redirect the destructive target`,
+    );
+  }
+
   const name = databaseName(databaseUrl);
   if (!name || name.includes("/") || !/^[a-z0-9_]+$/i.test(name)) {
     throw new Error(
