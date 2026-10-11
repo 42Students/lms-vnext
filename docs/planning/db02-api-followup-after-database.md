@@ -48,10 +48,11 @@ API work required:
 - semester/program-term CRUD/list surfaces;
 - term activation/name/total-credit behavior;
 - curriculum add/remove/update/reorder;
-- duplicate course and reorder race error mapping;
+- duplicate-course conflicts remain errors, but duplicate `displayOrder` positions are source-valid; reads must tie-break deterministically (order, then stable row ID) and the API must not assume order uniqueness;
 - program duration shrink conflict mapping;
 - compatibility projections for any retained `new_program_structure` API;
 - curriculum remove must map the database conflict once any offering materializes the term/course pair; do not silently delete historical curriculum identity.
+- do not add a uniqueness contract on `(programTermId, displayOrder)` during API work; legacy single-row reorder can create duplicate positions.
 
 Do not revive JSON `course_ids` storage.
 
