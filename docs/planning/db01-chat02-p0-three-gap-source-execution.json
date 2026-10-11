@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_P0_NAMED_LEGACY_SOURCE_GAP_CLOSURE",
+  "task": "DB-004",
+  "worker": "CHAT_02",
+  "phase": "DATABASE",
+  "sourceEvidenceOnly": true,
+  "legacyBackendCommit": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "method": "Connected GitHub fetch_file on pinned legacy commit and current main file blobs. All 30 source-level assertions ran in functions.exec JavaScript V8 isolate. No Node/test runner/PostgreSQL execution was performed.",
+  "sourceBlobs": {
+    "legacy": {
+      "src/main/java/com/_42students/lms/model/BaseModel.java": "71ce29fa6d6b5082a58c4cfffb01e54de976d30d",
+      "src/main/java/com/_42students/lms/model/Role.java": "6953e76dc222d835e424a9bbaa29713c437cf0d0",
+      "src/main/java/com/_42students/lms/model/User.java": "eba5c9607238c06d9cccae50cdfdac1c56d9f51c",
+      "src/main/java/com/_42students/lms/model/TenantDomain.java": "530ecd12e36f39f13dc08587af85239f807e4cae",
+      "src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java": "45e1c992e53be0c7e0f7cdd8f074ffc7fd2363ed",
+      "src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java": "ea254558e1cde9681e5d16841d406901a9516746",
+      "src/main/java/com/_42students/lms/repository/TenantDomainRepository.java": "0fccbb083c7ce3348a379751adf60fee80b27aef",
+      "src/main/java/com/_42students/lms/controller/TenantAdminController.java": "8273eb87ebef09e4c0585becc1f98f92498f6a01"
+    },
+    "vnext": {
+      "docs/planning/db01-auth-security-p0-field-crosswalk.json": "01d06a799f7bb507a4ca74dd97e4e0b607a4fad3",
+      "tests/db01-auth-security-p0-field-crosswalk.test.mjs": "97ba9c835aec590e8c2799386017fb53bb68ed95",
+      "src/db/schema/users.ts": "e353fa3a1a911d517badc0ca339c8f314ea59058",
+      "src/db/schema/memberships.ts": "2d5caf2676d00982014ca5e785e237e178f1f06f",
+      "src/modules/identity/context-service.ts": "ca4d1a6628ec0caf5b0daf8aa625213ebd3a2a6e",
+      "docs/planning/db01-legacy-identity-auth-source-proof.md": "62378c917b50c9b226f44a664758e70c40c37f84"
+    }
+  },
+  "summary": {
+    "namedSourceGapsAtStart": 3,
+    "namedSourceGapsAfter": 0,
+    "p0FieldCandidates": 38,
+    "sourceChecksExecuted": 30,
+    "sourceChecksPassed": 30,
+    "sourceChecksFailed": 0,
+    "nodeTestsExecuted": 0,
+    "postgresTestsExecuted": 0,
+    "providerTestsExecuted": 0,
+    "vnextRuntimeSemanticFieldsVerified": 0,
+    "approvedRetirements": 0
+  },
+  "checks": [
+    {
+      "id": "pinned source role sha",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "pinned source base sha",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "pinned source user sha",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "pinned source tenant repo sha",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "role inherits base",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "domain inherits base",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "base deleted map",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy authority loops roles",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy authority does not filter deleted role",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy role lookup blind to deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "user password mapped",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "bcrypt password save",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "password read into Spring UserDetails",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy findActiveByHost excludes deleted host",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy findVerifiedActiveByHost excludes deleted host",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy findActiveByCollegeId excludes deleted host",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy findPrimaryHostsByCollegeId excludes deleted host",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy findVerifiedPrimaryHostsByCollegeId excludes deleted host",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy controller reads active domain",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "vNext user schema no password",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "vNext role grant has no softdelete",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "vNext reads current membership roles",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "crosswalk still exactly 38",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "no named P0 source gaps",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "three source sections resolved",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "legacy role exception explicitly recorded",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "no P0 runtime verified",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "no retirement approvals",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "security exception doc source grounded",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "id": "crosswalk test updates new gap state",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_IN_PROCESS_SOURCE_ASSERTION"
+    }
+  ],
+  "legacyException": {
+    "field": "role.is_deleted",
+    "code": "LEGACY_ROLE_SOFT_DELETE_IGNORED_BY_AUTHORITY_BUILDER",
+    "reproducedExploit": false,
+    "evidence": "UserServiceImpl.getAuthority iterates user.roles without a role.isDeleted check; Role extends BaseModel.isDeleted; findByName lookup has no deletion gate.",
+    "decision": "Never clone invalid role authority. vNext must verify live-grant revocation and stale-role denial via independent integration tests; not approved as runtime verified."
+  },
+  "otherDecisions": [
+    {
+      "field": "tenant_domain.is_deleted",
+      "evidence": "TenantDomainRepository active/verified/primary host methods include isDeleted=false",
+      "status": "STAGED_TOMBSTONE_UNREGISTERED"
+    },
+    {
+      "field": "user.password",
+      "evidence": "UserServiceImpl.save bcrypt-encodes password and loadUserByUsername consumes saved hash",
+      "status": "PROVIDER_ONLY_REPLACEMENT_UNAPPROVED"
+    }
+  ]
+}
