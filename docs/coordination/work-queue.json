@@ -2294,14 +2294,14 @@
         "tests/db10-staged-drafts-source-map.test.mjs",
         "docs/planning/database-parity-db10-field-ledger.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11T14:10:30+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T14:11:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2323,6 +2323,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:10:30+05:30",
           "reason": "Chat 5 reserved integration manifest/static preflight/DB10 ledger only; no draft schema or numbered migration path overlap with active workers."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:11:00+05:30",
+          "reason": "Chat 5 started exact 75-field source→draft integration preflight across DB10 announcements, bug tracker and scheduled job leases."
         }
       ]
     }
