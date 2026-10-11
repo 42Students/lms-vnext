@@ -202,6 +202,27 @@ BEGIN
       RAISE EXCEPTION 'DB06 grade event actor membership mismatch'
         USING ERRCODE='23514';
     END IF;
+
+    PERFORM 1
+      FROM membership_roles mr
+      WHERE mr.membership_id = NEW.actor_membership_id
+        AND mr.role = 'COLLEGE_ADMIN'
+      FOR SHARE;
+    IF NOT FOUND THEN
+      PERFORM 1
+        FROM membership_roles mr
+        JOIN course_teaching_assignments cta
+          ON cta.membership_id = mr.membership_id
+         AND cta.delivery_id = NEW.delivery_id
+         AND cta.ended_at IS NULL
+        WHERE mr.membership_id = NEW.actor_membership_id
+          AND mr.role = 'FACULTY'
+        FOR SHARE OF mr, cta;
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'DB06 grade event actor lacks grading scope'
+          USING ERRCODE='23514';
+      END IF;
+    END IF;
   ELSE
     PERFORM 1
       FROM system_roles
