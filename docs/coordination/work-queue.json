@@ -3135,6 +3135,46 @@
           "reason": "Reconciling DB06 staged receipt/file schema with DB-016 safety minimums and assignment/submission ownership semantics."
         }
       ]
+    },
+    {
+      "id": "DB-054",
+      "phase": "DATABASE",
+      "title": "Close P5-R01 placement application access and eligibility race",
+      "scope": "Make learner placement application paid-module/participation/job-eligibility authorization transactionally ordered with concurrent access mutations; turn DB-018 P5-R01 red witness green without changing API/UI contracts.",
+      "priority": 3,
+      "dependsOn": [
+        "DB-018"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "src/modules/placements/application-service.ts",
+        "src/modules/placements/learner-participation-guard.ts",
+        "src/modules/placements/access-service.ts",
+        "src/modules/placements/eligibility-service.ts",
+        "tests/integration/db18-placement-race-gap.test.ts",
+        "docs/planning/db54-placement-application-race-contract.md"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB-018 deterministic P5-R01 red witness proves placement paid-module/participation and job eligibility can become stale between precheck and application insert."
+        }
+      ]
     }
   ],
   "eventModel": {
