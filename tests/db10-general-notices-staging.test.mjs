@@ -152,3 +152,47 @@ test("DB24 source event, role, payload and enqueue timestamp are immutable", () 
   assert.match(guard, /NEW\.digest_timezone, NEW\.created_at, NEW\.idempotency_key/);
   assert.match(guard, /IS DISTINCT FROM[\s\S]*?ROW\(OLD\.organization_id/);
 });
+
+test("DB24 delivery authorization is rechecked after enqueue", () => {
+  assert.match(sql, /CREATE TRIGGER db10_general_notice_delivery_scope_trg/);
+  assert.match(sql,
+    /BEFORE UPDATE OF status,claimed_by,claimed_at,claim_expires_at,claim_fence\s+ON general_notification_outbox/);
+  assert.match(sql, /WHEN \(NEW\.status IN \('CLAIMED','HANDED_OFF','SENT'\)\)/);
+  assert.match(sql, /EXECUTE FUNCTION db10_general_notice_scope_guard\(\)/);
+  const scope = sql.slice(
+    sql.indexOf("CREATE FUNCTION db10_general_notice_scope_guard()"),
+    sql.indexOf("CREATE TRIGGER db10_general_notice_scope_trg"),
+  );
+  assert.match(scope, /FOR SHARE OF m, mr/);
+  assert.match(scope, /m\.status = 'ACTIVE'/);
+  assert.match(scope, /mr\.role::text = NEW\.recipient_type/);
+  assert.match(scope, /e\.college_id = NEW\.college_id/);
+  assert.match(spec, /DB24-16/);
+});
+
+test("DB24 claim fencing increases on every new or renewed lease", () => {
+  const guard=sql.slice(
+    sql.indexOf("CREATE OR REPLACE FUNCTION db10_general_notice_mutation_guard()"),
+    sql.indexOf("CREATE TRIGGER db10_general_notice_mutation_guard_trg"),
+  );
+  assert.match(guard, /NEW\.claim_fence < OLD\.claim_fence/);
+  assert.match(guard, /NOTIFICATION_CLAIM_FENCE_CANNOT_DECREASE/);
+  assert.match(guard, /NEW\.status = 'CLAIMED'/);
+  for(const column of ["claimed_by","claimed_at","claim_expires_at"])
+    assert.ok(guard.includes("NEW."+column+" IS DISTINCT FROM OLD."+column));
+  assert.match(guard, /NEW\.claim_fence <= OLD\.claim_fence/);
+  assert.match(guard, /NOTIFICATION_CLAIM_FENCE_MUST_ADVANCE/);
+  assert.match(spec, /DB24-17/);
+});
+
+test("DB24 terminal receipts cannot be tampered by same-status updates", () => {
+  const guard=sql.slice(
+    sql.indexOf("CREATE OR REPLACE FUNCTION db10_general_notice_mutation_guard()"),
+    sql.indexOf("CREATE TRIGGER db10_general_notice_mutation_guard_trg"),
+  );
+  assert.match(guard,
+    /IF OLD\.status IN \('SENT','CANCELLED'\) THEN[\s\S]*?NOTIFICATION_TERMINAL_STATE_IMMUTABLE/);
+  assert.doesNotMatch(guard,
+    /IF OLD\.status IN \('SENT','CANCELLED'\) AND NEW\.status <> OLD\.status/);
+  assert.match(spec, /DB24-18/);
+});
