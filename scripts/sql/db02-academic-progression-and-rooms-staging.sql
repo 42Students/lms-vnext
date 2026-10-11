@@ -1889,7 +1889,7 @@ BEGIN
      AND (
        learner_status_value IS DISTINCT FROM 'ACTIVE'
        OR target_status IS DISTINCT FROM 'ACTIVE'
-       OR period_status_value IS DISTINCT FROM 'ACTIVE'
+       OR period_status_value = 'CLOSED'
      ) THEN
     RAISE EXCEPTION 'Active section enrollment requires ACTIVE learner program, section and period'
       USING ERRCODE = '23514';
@@ -2487,8 +2487,8 @@ BEGIN
     FROM academic_periods WHERE id = NEW.academic_period_id FOR SHARE;
 
   IF v_section_status IS DISTINCT FROM 'ACTIVE'
-     OR v_period_status IS DISTINCT FROM 'ACTIVE' THEN
-    RAISE EXCEPTION 'Cannot reactivate section enrollment under inactive section/period'
+     OR v_period_status = 'CLOSED' THEN
+    RAISE EXCEPTION 'Cannot reactivate section enrollment under inactive section/closed period'
       USING ERRCODE='23514';
   END IF;
 
