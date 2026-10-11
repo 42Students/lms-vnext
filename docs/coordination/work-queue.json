@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T00:42:19+05:30",
+  "updatedOn": "2026-10-12T00:45:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3808,10 +3808,10 @@
         "tests/db065-database-phase-gate.test.mjs",
         "docs/planning/db065-phase-gate-audit.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "pickedBy": 5,
       "pickedAt": "2026-10-12T00:42:19+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-12T00:45:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -3837,6 +3837,11 @@
           "status": "PICKED",
           "at": "2026-10-12T00:42:19+05:30",
           "reason": "Chat 5 available checkpoint; CAS claim. Independent source tooling only; DB-020 remains dependency locked."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T00:45:00+05:30",
+          "reason": "Independent Node 22 source/test implementation initiated after CAS pick; no schema/CI/API/UI change."
         }
       ]
     }
