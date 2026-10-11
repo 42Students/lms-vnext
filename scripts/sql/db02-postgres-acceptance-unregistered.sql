@@ -260,6 +260,17 @@ BEGIN
   -- -------------------------------------------------------------------------
   -- Stable tenant ownership + cohort/section period scope
   -- -------------------------------------------------------------------------
+  -- Legacy batch INACTIVE is reversible and distinct from ARCHIVED.
+  UPDATE cohorts SET status = 'INACTIVE' WHERE id = cohort_a;
+  IF NOT EXISTS (SELECT 1 FROM cohorts WHERE id = cohort_a AND status = 'INACTIVE') THEN
+    RAISE EXCEPTION 'cohort INACTIVE compatibility state did not persist';
+  END IF;
+
+  UPDATE cohorts SET status = 'ACTIVE' WHERE id = cohort_a;
+  IF NOT EXISTS (SELECT 1 FROM cohorts WHERE id = cohort_a AND status = 'ACTIVE') THEN
+    RAISE EXCEPTION 'cohort INACTIVE -> ACTIVE reactivation did not persist';
+  END IF;
+
   failed := false;
   BEGIN
     UPDATE academic_periods SET college_id = college_b WHERE id = period_a_alt;
