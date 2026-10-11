@@ -7,7 +7,7 @@
 
 The three isolated PostgreSQL test files committed to main exercise constraints already present in
 `src/db/schema/{tenant-domains,users,memberships}.ts`; they neither introduce a
-new Drizzle migration nor alter any production API. They cover **26 authored PostgreSQL cases**.
+new Drizzle migration nor alter any production API. They cover **32 authored PostgreSQL cases**.
 
 - `tests/integration/db01-tenant-identity-invariants.test.ts`: **5 witnesses**:
   1. unverified primary tenant domain rejected by
@@ -48,6 +48,14 @@ new Drizzle migration nor alter any production API. They cover **26 authored Pos
   11. multiple canonical users without email are allowed (positive);
   12. UPDATE cannot promote an unverified tenant domain (23514).
 
+- `tests/integration/db01-concurrent-integrity.test.ts`: **6 parallel-write
+  witnesses**, each using independent pool connections and randomized cleanup:
+  global hostname ownership, active organization name uniqueness, college-code
+  ownership, Identity Platform UID uniqueness, case-folded email uniqueness,
+  and two verified domains racing for a college's primary slot.
+  These are committed-positive/rejected-negative outcomes, not mere serial
+  transaction rollback cases.
+
 - `tests/unit/db01-tenant-domain-authorization.test.ts`: **14 authored unit
   regression cases**, covering suspended/ENDED membership, disabled actors,
   FACULTY/TPO non-admin permissions, foreign-college domain ownership,
@@ -70,7 +78,8 @@ npm run db:test:prepare
 npx vitest run --config vitest.db.config.ts \
   tests/integration/db01-tenant-identity-invariants.test.ts \
   tests/integration/db01-identity-fk-invariants.test.ts \
-  tests/integration/db01-core-structure-invariants.test.ts
+  tests/integration/db01-core-structure-invariants.test.ts \
+  tests/integration/db01-concurrent-integrity.test.ts
 npx vitest run --config vitest.config.ts \
   tests/unit/db01-tenant-domain-authorization.test.ts
 ```
@@ -87,13 +96,14 @@ not own it. All three authored DB integration files require an explicit
 
 ## Outside this bounded batch
 
-These 26 PostgreSQL witnesses and 14 permission unit cases are *not* a replacement for DB01 source-to-target mapping
+These 32 PostgreSQL witnesses and 14 permission unit cases are *not* a replacement for DB01 source-to-target mapping
 of the 312 candidates, managed-identity/provider proof, tenant-domain verified
 recheck and soft-delete lifecycles, cross-college recruiter grant expiry,
 OTP/handoff/session security, tenant branding bootstrap, or migration replay
 of staged DB01 tables. Nothing in this batch can certify the DATABASE phase.
 
-**Evidence status:** 26 PostgreSQL cases authored in three rollback-only files,
+**Evidence status:** 32 PostgreSQL cases authored in four files (26 rollback-only,
+6 committed-winner concurrency tests with explicit cleanup),
 with explicit TEST_DATABASE_URL; 14 permission unit cases authored. GitHub
 Actions is intentionally unused because of billing, not an engineering blocker.
 None of these newly authored tests was run in this worker environment;
