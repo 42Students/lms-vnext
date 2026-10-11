@@ -2,98 +2,134 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-// Static safety net for an UNREGISTERED proposal. These checks are NOT a
-// substitute for a PostgreSQL replay, negative tenant tests, or concurrency.
-const sql = readFileSync(
+// Static safety net for UNREGISTERED DB02 proposals.
+// These checks are NOT PostgreSQL replay/runtime evidence.
+const canonical = readFileSync(
+  new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
+  "utf8",
+);
+const extension = readFileSync(
   new URL("../scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql", import.meta.url),
   "utf8",
 );
 
-test("all parent and enrollment draft PL/pgSQL bodies are paired", () => {
-  const fn = [...sql.matchAll(/\bCREATE FUNCTION db02_[\w]+\s*\(/g)].length;
-  const opens = [...sql.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length;
-  const doubles = [...sql.matchAll(/\$\$/g)].length;
-  assert.ok(fn >= 9);
-  assert.equal(fn, opens);
-  assert.equal(doubles, fn * 2);
-  assert.doesNotMatch(sql, /LANGUAGE plpgsql AS \$(?:\r?\n)/);
+function functionNames(sql) {
+  return [...sql.matchAll(/\bCREATE FUNCTION ([\w]+)\s*\(/g)].map((m) => m[1]);
+}
+
+function triggerNames(sql) {
+  return [...sql.matchAll(/\bCREATE TRIGGER ([\w]+)/g)].map((m) => m[1]);
+}
+
+test("both DB02 drafts have paired PL/pgSQL bodies", () => {
+  for (const [name, sql] of [
+    ["canonical", canonical],
+    ["extension", extension],
+  ]) {
+    const fn = functionNames(sql).length;
+    const opens = [...sql.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length;
+    const doubles = [...sql.matchAll(/\$\$/g)].length;
+    assert.ok(fn > 0, name + " must define functions");
+    assert.equal(opens, fn, name + " opening delimiter count");
+    assert.equal(doubles, fn * 2, name + " total delimiter count");
+    assert.doesNotMatch(sql, /LANGUAGE plpgsql AS \$(?:\r?\n)/);
+  }
 });
 
-test("college ownership is immutable across DB02 root records", () => {
+test("canonical and extension drafts have zero trigger-name overlap", () => {
+  const canonicalTriggers = new Set(triggerNames(canonical));
+  const extensionTriggers = triggerNames(extension);
+  const overlap = extensionTriggers.filter((name) => canonicalTriggers.has(name));
+  assert.deepEqual(overlap, []);
+});
+
+test("canonical DB02 owns primary tenant and period scope", () => {
   for (const trigger of [
     "db02_department_college_immutable",
+    "db02_program_department_move_guard",
+    "db02_course_department_move_guard",
+    "db02_cohort_period_scope_guard",
+    "db02_section_period_scope_guard",
+    "db02_course_offering_period_window_guard",
+    "db02_section_faculty_assignment_scope_guard",
+    "db02_course_teaching_assignment_scope_guard",
+  ]) {
+    assert.match(canonical, new RegExp("CREATE TRIGGER " + trigger));
+    assert.doesNotMatch(extension, new RegExp("CREATE TRIGGER " + trigger));
+  }
+});
+
+test("extension owns only remaining college-root immutability", () => {
+  for (const trigger of [
     "db02_academic_period_college_immutable",
     "db02_membership_college_immutable",
     "db02_lecture_hall_college_immutable",
-  ]) assert.match(sql, new RegExp("CREATE TRIGGER " + trigger));
-  assert.match(sql, /NEW\.college_id IS DISTINCT FROM OLD\.college_id/);
+  ]) {
+    assert.match(extension, new RegExp("CREATE TRIGGER " + trigger));
+  }
+  assert.doesNotMatch(extension, /CREATE TRIGGER db02_department_college_immutable/);
 });
 
-test("program and course department reassignment only stays in one college", () => {
-  assert.match(sql, /db02_program_department_reassignment_scope/);
-  assert.match(sql, /db02_course_department_reassignment_scope/);
-  assert.match(sql, /old_college <> new_college/);
-  assert.match(sql, /NEW\.department_id IS NOT DISTINCT FROM OLD\.department_id/);
+test("cohort and program-term parent identity cannot silently change", () => {
+  assert.match(extension, /db02_cohort_program_immutable/);
+  assert.match(extension, /NEW\.program_id IS DISTINCT FROM OLD\.program_id/);
+  assert.match(extension, /NEW\.start_period_id IS DISTINCT FROM OLD\.start_period_id/);
+  assert.match(extension, /db02_program_term_identity_immutable/);
+  assert.match(extension, /NEW\.term_number IS DISTINCT FROM OLD\.term_number/);
 });
 
-test("cohort, program term, and learner enrollment identity cannot silently change", () => {
-  assert.match(sql, /db02_cohort_program_immutable/);
-  assert.match(sql, /NEW\.start_period_id IS DISTINCT FROM OLD\.start_period_id/);
-  assert.match(sql, /db02_program_term_identity_immutable/);
-  assert.match(sql, /NEW\.term_number IS DISTINCT FROM OLD\.term_number/);
-  assert.match(sql, /db02_academic_enrollment_identity_immutable/);
-  assert.match(sql, /db02_section_enrollment_identity_immutable/);
-});
-
-test("direct SQL cohort and section period relationships enforce college scope", () => {
-  assert.match(sql, /db02_cohort_period_tenant/);
-  assert.match(sql, /start_college IS DISTINCT FROM owner_college/);
-  assert.match(sql, /end_college IS DISTINCT FROM owner_college/);
-  assert.match(sql, /db02_section_period_tenant/);
-  assert.match(sql, /period_college IS DISTINCT FROM owner_college/);
-});
-
-test("direct SQL learner and section enrollment relationships enforce cohort scope", () => {
-  assert.match(sql, /db02_learner_program_enrollment_tenant/);
-  assert.match(sql, /membership_college <> program_college/);
-  assert.match(sql, /cohort_program <> NEW\.program_id/);
-  assert.match(sql, /db02_section_enrollment_cohort_period/);
-  assert.match(sql, /learner_cohort <> target_cohort/);
-  assert.match(sql, /NEW\.academic_period_id <> target_period/);
-});
-
-test("existing section history forbids unsafe structural reparenting", () => {
-  assert.match(sql, /TG_OP = 'UPDATE' THEN/);
+test("section history forbids unsafe structural reparenting", () => {
+  assert.match(extension, /db02_section_history_reparent_guard/);
   for (const table of [
     "section_enrollments",
     "section_faculty_assignments",
     "course_section_deliveries",
     "section_schedule_events",
-  ]) assert.match(sql, new RegExp("EXISTS \\(SELECT 1 FROM " + table));
+  ]) {
+    assert.match(extension, new RegExp("EXISTS \\(SELECT 1 FROM " + table));
+  }
 });
 
-test("faculty section assignments cannot link to another college", () => {
-  assert.match(sql, /db02_section_faculty_assignment_tenant/);
-  assert.match(sql, /section_college <> membership_college/);
+test("learner program enrollment enforces active LEARNER tenant scope", () => {
+  assert.match(extension, /db02_learner_program_enrollment_tenant/);
+  assert.match(extension, /status = 'ACTIVE'/);
+  assert.match(extension, /role = 'LEARNER'/);
+  assert.match(extension, /membership_college <> program_college/);
+  assert.match(extension, /cohort_program <> NEW\.program_id/);
+  assert.match(extension, /FOR SHARE/);
 });
 
-test("history-producing inserts lock section parents against reparent races", () => {
-  assert.match(sql, /CREATE FUNCTION db02_lock_section_history_parent\(\)/);
-  assert.match(sql, /FROM sections WHERE id = NEW\.section_id FOR SHARE/);
+test("section enrollment matches learner cohort and actual section period", () => {
+  assert.match(extension, /db02_section_enrollment_cohort_period/);
+  assert.match(extension, /learner_cohort <> target_cohort/);
+  assert.match(extension, /NEW\.academic_period_id <> target_period/);
+});
+
+test("history-producing section references lock parent row", () => {
+  assert.match(extension, /CREATE FUNCTION db02_lock_section_history_parent\(\)/);
+  assert.match(extension, /FROM sections[\s\S]*FOR SHARE/);
   for (const trigger of [
     "db02_lock_section_for_learner_enrollment",
     "db02_lock_section_for_faculty_assignment",
     "db02_lock_section_for_course_delivery",
     "db02_lock_section_for_schedule_event",
-  ]) assert.match(sql, new RegExp("CREATE TRIGGER " + trigger));
+  ]) {
+    assert.match(extension, new RegExp("CREATE TRIGGER " + trigger));
+  }
 });
 
-test("direct SQL cannot enroll faculty as learners or non-faculty as instructors", () => {
-  assert.match(sql, /DB02 learner enrollment requires active college membership/);
-  assert.match(sql, /membership_id = NEW\.membership_id AND role = 'LEARNER'/);
-  assert.match(sql, /DB02 learner enrollment requires an active LEARNER/);
-  assert.match(sql, /DB02 section faculty assignment requires active membership/);
-  assert.match(sql, /membership_id = NEW\.membership_id AND role = 'FACULTY'/);
-  assert.match(sql, /DB02 section faculty assignment requires FACULTY role/);
-  assert.match(sql, /FOR SHARE/);
+test("enrollment parent identity is immutable once history exists", () => {
+  assert.match(extension, /db02_academic_enrollment_identity_immutable/);
+  assert.match(extension, /db02_section_enrollment_identity_immutable/);
+  assert.match(extension, /learner program enrollment identity is immutable/);
+  assert.match(extension, /section enrollment history identity is immutable/);
+});
+
+test("canonical delivery and faculty chains are database scoped", () => {
+  assert.match(canonical, /db02_course_section_delivery_scope_guard/);
+  assert.match(canonical, /offering and section must share cohort and academic period/);
+  assert.match(canonical, /db02_schedule_event_delivery_scope_guard/);
+  assert.match(canonical, /delivery must belong to the same section/);
+  assert.match(canonical, /Course teaching assignment requires FACULTY role/);
+  assert.match(canonical, /Section faculty assignment requires FACULTY role/);
 });
