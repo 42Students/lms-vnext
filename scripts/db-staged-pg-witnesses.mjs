@@ -12,7 +12,7 @@ export const WITNESSES=Object.freeze([
  ["tests/db04-profile-education-images-pg.test.mjs","DB04_PROFILE_DISPOSABLE"],
 ]);
 const isLocal=h=>["localhost","127.0.0.1","[::1]","::1"].includes(h.toLowerCase());
-const endpoint=u=>u.hostname.toLowerCase()+":"+(u.port||"5432")+u.pathname;
+const endpoint=u=>(isLocal(u.hostname)?"LOCAL_LOOPBACK":u.hostname.toLowerCase())+":"+(u.port||"5432")+u.pathname;
 export function validateTarget(env, optIn=true){
  const errors=[];
  if(!env.TEST_DATABASE_URL)return {safe:false,errors:["TEST_DATABASE_URL required"]};
