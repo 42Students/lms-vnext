@@ -564,9 +564,16 @@ FOR EACH ROW EXECUTE FUNCTION db06_require_assignment_grade_event();
 CREATE FUNCTION db06_attendance_record_version_guard()
 RETURNS trigger LANGUAGE plpgsql AS $db06_attendance_version$
 BEGIN
+  IF NEW.schedule_event_id IS DISTINCT FROM OLD.schedule_event_id
+     OR NEW.membership_id IS DISTINCT FROM OLD.membership_id THEN
+    RAISE EXCEPTION 'DB06 attendance record identity is immutable'
+      USING ERRCODE='23514';
+  END IF;
+
   IF NEW.status IS DISTINCT FROM OLD.status
      OR NEW.note IS DISTINCT FROM OLD.note
-     OR NEW.marked_by_user_id IS DISTINCT FROM OLD.marked_by_user_id THEN
+     OR NEW.marked_by_user_id IS DISTINCT FROM OLD.marked_by_user_id
+     OR NEW.marked_at IS DISTINCT FROM OLD.marked_at THEN
     IF NEW.version <> OLD.version + 1 THEN
       RAISE EXCEPTION 'DB06 attendance correction requires next version'
         USING ERRCODE='23514';
@@ -586,6 +593,11 @@ CREATE FUNCTION db06_require_attendance_event()
 RETURNS trigger LANGUAGE plpgsql AS $db06_require_attendance$
 BEGIN
   IF TG_OP = 'INSERT' THEN
+    IF NEW.version <> 0 THEN
+      RAISE EXCEPTION 'DB06 initial attendance record version must be zero'
+        USING ERRCODE='23514';
+    END IF;
+
     IF NOT EXISTS (
       SELECT 1 FROM attendance_record_events e
       WHERE e.attendance_record_id = NEW.id
@@ -596,6 +608,10 @@ BEGIN
         AND e.new_status = NEW.status
         AND e.previous_note IS NULL
         AND e.new_note IS NOT DISTINCT FROM NEW.note
+        AND e.previous_marked_by_user_id IS NULL
+        AND e.new_marked_by_user_id = NEW.marked_by_user_id
+        AND e.previous_marked_at IS NULL
+        AND e.new_marked_at = NEW.marked_at
         AND e.actor_user_id = NEW.marked_by_user_id
         AND e.record_version_before IS NULL
         AND e.record_version_after = NEW.version
@@ -608,7 +624,8 @@ BEGIN
 
   IF NEW.status IS NOT DISTINCT FROM OLD.status
      AND NEW.note IS NOT DISTINCT FROM OLD.note
-     AND NEW.marked_by_user_id IS NOT DISTINCT FROM OLD.marked_by_user_id THEN
+     AND NEW.marked_by_user_id IS NOT DISTINCT FROM OLD.marked_by_user_id
+     AND NEW.marked_at IS NOT DISTINCT FROM OLD.marked_at THEN
     RETURN NEW;
   END IF;
 
@@ -622,6 +639,10 @@ BEGIN
       AND e.new_status = NEW.status
       AND e.previous_note IS NOT DISTINCT FROM OLD.note
       AND e.new_note IS NOT DISTINCT FROM NEW.note
+      AND e.previous_marked_by_user_id = OLD.marked_by_user_id
+      AND e.new_marked_by_user_id = NEW.marked_by_user_id
+      AND e.previous_marked_at = OLD.marked_at
+      AND e.new_marked_at = NEW.marked_at
       AND e.actor_user_id = NEW.marked_by_user_id
       AND e.record_version_before = OLD.version
       AND e.record_version_after = NEW.version
@@ -646,10 +667,12 @@ FOR EACH ROW EXECUTE FUNCTION db06_require_attendance_event();
 -- 2. publishAssignmentGrade must also insert PUBLISH_GRADE using the publisher,
 --    not the original graded_by_user_id. This is why a row-only auto-audit
 --    trigger is deliberately NOT used.
--- 3. attendance marking/correction must insert MARK/CORRECT event in the same
---    transaction, set marked_by_user_id to the actual current actor and use
---    version CAS. Initial MARK persists version=0; every CORRECT writes
---    version=old+1 and the matching event versions.
+-- 3. attendance marking/correction must persist one stable attendance_records
+--    row for every status (PRESENT included), then insert MARK/CORRECT in the
+--    same transaction. marked_by_user_id/marked_at identify the actual current
+--    actor/action time. Initial MARK uses version=0; every CORRECT uses
+--    expected-version CAS and writes version=old+1 with exact before/after
+--    status, note, marker and mark-time snapshots.
 -- 4. Event tables are append-only; corrections create another event.
 -- 5. attendance_record_events uses RESTRICT to protect history from the current
 --    schedule-event CASCADE chain.
