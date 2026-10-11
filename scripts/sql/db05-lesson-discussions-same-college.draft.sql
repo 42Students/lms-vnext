@@ -30,19 +30,27 @@ DECLARE
   content_delivery_id uuid;
   delivery_offering_id uuid;
   delivery_section_period_college_id uuid;
+  offering_cohort_id uuid;
+  offering_period_id uuid;
+  section_cohort_id uuid;
+  section_period_id uuid;
 BEGIN
   SELECT offering_period.college_id,
          department.college_id,
          offering.id,
          content.delivery_id,
          delivery.offering_id,
-         section_period.college_id
+         section_period.college_id,
+         offering.cohort_id, offering.academic_period_id,
+         section_row.cohort_id, section_row.academic_period_id
     INTO content_period_college_id,
          course_department_college_id,
          content_offering_id,
          content_delivery_id,
          delivery_offering_id,
-         delivery_section_period_college_id
+         delivery_section_period_college_id,
+         offering_cohort_id, offering_period_id,
+         section_cohort_id, section_period_id
   FROM lesson_contents content
   JOIN course_lessons lesson ON lesson.id = content.lesson_id
   JOIN course_learning_paths path ON path.id = lesson.learning_path_id
@@ -68,7 +76,9 @@ BEGIN
      OR (content_delivery_id IS NOT NULL AND
        (delivery_offering_id IS NULL
         OR delivery_offering_id IS DISTINCT FROM content_offering_id
-        OR delivery_section_period_college_id IS DISTINCT FROM content_period_college_id)) THEN
+        OR delivery_section_period_college_id IS DISTINCT FROM content_period_college_id
+        OR section_cohort_id IS DISTINCT FROM offering_cohort_id
+        OR section_period_id IS DISTINCT FROM offering_period_id)) THEN
     RAISE EXCEPTION 'lesson discussion violates course/content/author college boundary'
       USING ERRCODE = '23514';
   END IF;
@@ -98,6 +108,7 @@ COMMIT;
 -- 4. NEW.college_id spoof -> REJECT 23514.
 -- 5. Content optional delivery points to different offering -> REJECT 23514.
 -- 6. Delivery section academic period belongs to another college -> 23514.
+--    Also reject SAME-college but wrong section cohort/academic-period ID.
 -- 7. Wrong-college resolver membership -> REJECT 23514.
 -- 8. Later UPDATE lesson content delivery/course/lesson, offerings, periods,
 --    departments or college memberships can reparent scope *upstream* without
