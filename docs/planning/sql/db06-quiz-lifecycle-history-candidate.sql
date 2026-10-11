@@ -359,6 +359,17 @@ RETURNS trigger LANGUAGE plpgsql AS $db06_quiz_lifecycle$
 DECLARE
   has_questions boolean;
 BEGIN
+  IF TG_OP = 'UPDATE'
+     AND (
+       NEW.lesson_id IS DISTINCT FROM OLD.lesson_id
+       OR NEW.delivery_id IS DISTINCT FROM OLD.delivery_id
+       OR NEW.created_by_user_id IS DISTINCT FROM OLD.created_by_user_id
+       OR NEW.created_at IS DISTINCT FROM OLD.created_at
+     ) THEN
+    RAISE EXCEPTION 'DB06 quiz scope/creator identity is immutable'
+      USING ERRCODE='23514';
+  END IF;
+
   IF TG_OP = 'INSERT' THEN
     IF NEW.status::text <> 'DRAFT'
        OR NEW.results_published <> false
