@@ -1,6 +1,6 @@
 -- DB02 / Chat 4 — rollback-only role-revocation/reactivation acceptance.
 -- UNREGISTERED; use a disposable PostgreSQL database AFTER Chat 1 integrates
--- db02-activation-role-lifecycle-overlay.draft.sql with canonical DB02.
+-- canonical DB02 staging (including role activation guards).
 -- This script has not been executed; no production or shared DB usage.
 BEGIN;
 DO $db02_role_lifecycle$
@@ -13,6 +13,7 @@ DECLARE
   v_pool uuid; v_section_faculty uuid; v_teaching uuid;
   v_program_enroll uuid; v_section_enroll uuid;
   v_rejected boolean;
+  v_error text;
   v_count integer;
 BEGIN
   INSERT INTO organizations(name) VALUES('DB02 role lifecycle org')
@@ -97,21 +98,27 @@ BEGIN
   v_rejected := false;
   BEGIN
     UPDATE faculty_course_associations SET ended_at=NULL WHERE id=v_pool;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate faculty assignment without FACULTY role');
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked FACULTY reopened course pool'; END IF;
 
   v_rejected := false;
   BEGIN
     UPDATE section_faculty_assignments SET ended_at=NULL WHERE id=v_section_faculty;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate faculty assignment without FACULTY role');
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked FACULTY reopened section assignment'; END IF;
 
   v_rejected := false;
   BEGIN
     UPDATE course_teaching_assignments SET ended_at=NULL WHERE id=v_teaching;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate faculty assignment without FACULTY role');
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked FACULTY reopened teaching assignment'; END IF;
 
@@ -127,7 +134,9 @@ BEGIN
   BEGIN
     UPDATE section_faculty_assignments
        SET ended_at=NULL WHERE id=v_section_faculty;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate faculty assignment without ACTIVE membership');
   END;
   IF NOT v_rejected THEN
     RAISE EXCEPTION 'ENDED membership reopened section faculty assignment';
@@ -149,7 +158,9 @@ BEGIN
   BEGIN
     UPDATE learner_program_enrollments SET status='ACTIVE',withdrawn_at=NULL
     WHERE id=v_program_enroll;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate learner program without LEARNER role');
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked LEARNER reopened program'; END IF;
 
@@ -157,7 +168,9 @@ BEGIN
   BEGIN
     UPDATE section_enrollments SET status='ACTIVE',ended_at=NULL
     WHERE id=v_section_enroll;
-  EXCEPTION WHEN check_violation THEN v_rejected := true;
+  EXCEPTION WHEN check_violation THEN
+    GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
+    v_rejected := (v_error = 'Cannot reactivate section without ACTIVE learner program');
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked LEARNER reopened section'; END IF;
 
