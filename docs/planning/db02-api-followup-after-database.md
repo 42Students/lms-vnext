@@ -59,16 +59,19 @@ Do not revive JSON `course_ids` storage.
 Database target:
 
 - `course_offerings.program_term_id NOT NULL`;
-- CORE offering must belong to `program_term_courses`;
-- ELECTIVE remains term-bound without mandatory fixed-curriculum membership;
+- `course_offerings.program_term_course_id` is a concrete `ON DELETE RESTRICT` FK for CORE offerings;
+- CORE requires a non-null curriculum-row FK whose row matches the exact program term, course, and CORE type;
+- ELECTIVE remains term-bound with `program_term_course_id = NULL`, so it is not forced into fixed-curriculum membership;
 - `course_offerings.credits` DB range becomes nullable 0..30.
 
 Current API gaps:
 
-- create-course-offering input has no `programTermId`;
-- offering queries do not return program-term identity;
+- create-course-offering input has no `programTermId` or `programTermCourseId`;
+- CORE offering creation must resolve/pass the exact curriculum-row ID atomically; the server may derive it from term+course but must persist the concrete FK;
+- ELECTIVE creation must keep `programTermCourseId` null and reject clients that claim a fixed curriculum row;
+- offering queries do not return program-term or CORE curriculum-row identity;
 - `src/modules/courses/validation.ts` currently uses `.min(1)` for offering credits; change create/update validation to `.min(0)` after DB registration;
-- offering producer must pass the stable term FK atomically;
+- offering producer must pass the stable term FK and, for CORE, the concrete curriculum-row FK atomically;
 - period/date-parent conflict mapping must be deterministic when a referenced academic period can no longer be moved.
 
 ## 4. Section / legacy class compatibility
