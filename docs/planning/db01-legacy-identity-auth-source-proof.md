@@ -25,6 +25,12 @@
 
 All eight cited Java files were fetched again using the exact pinned commit ref; each matched the previously observed branch blob SHA. The evidence rows are updated in `docs/planning/db01-auth-security-p0-field-crosswalk.json`.
 
+## Additional source-confirmed privilege assignment exception
+
+The same pinned `UserServiceImpl.java` `save(UserDto)` method initializes a new `User` with a `USER` role and subsequently **unconditionally adds the `ADMIN` role** before calling `userDao.save(nUser)`. The old conditional guard around `ADMIN` assignment is commented out. This is a **source-confirmed overprivileged assignment pattern**, not proof of an unauthenticated external exploit: whether an untrusted caller can reach this method and with which authority must be validated separately against the exact legacy `UserController` and `WebSecurityConfig` request chain.
+
+vNext must not clone this role assignment. Only an authorized, tenant-scoped actor can grant `COLLEGE_ADMIN`, and only a properly privileged global actor can grant `SUPER_ADMIN`. Store no legacy ADMIN alias as a global authorization shortcut. Regression acceptance must include forging admin roles in self-registration/onboarding payloads, mutating an expired/ended membership, and attempting cross-college system role escalation. A provider identity token alone never grants a DB role.
+
 ## Adversarial acceptance — required before DB01 semantic closeout
 
 1. **Deleted role:** authenticate a legacy user whose role record is marked deleted, check actual authority behavior in an isolated legacy test, then prove vNext's normalized grant revocation denies stale/cached authorities. The source evidence indicates a probable legacy bypass; do not claim an exploit was executed here.
