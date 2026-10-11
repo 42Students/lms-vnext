@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { afterAll, describe, expect, it } from "vitest";
@@ -23,6 +24,7 @@ const enabled =
   Boolean(url) &&
   (process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
     process.env.DB03_ISOLATED_TEST_DATABASE === "1");
+if (enabled) assertDb018DisposableTarget(process.env);
 const pool = enabled ? new Pool({ connectionString: url, max: 2 }) : null;
 
 type Probe = {
