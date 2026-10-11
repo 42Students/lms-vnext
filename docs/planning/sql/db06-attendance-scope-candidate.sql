@@ -368,6 +368,22 @@ CREATE TRIGGER db06_attendance_record_scope_guard
 BEFORE INSERT OR UPDATE ON attendance_records
 FOR EACH ROW EXECUTE FUNCTION db06_attendance_record_scope_guard();
 
+-- Once DB-035 immutable history is composed, deleting a current row would
+-- either destroy identity/history or fail its RESTRICT event FK. Normalize a
+-- correction-to-present as status='PRESENT' + CORRECT event instead.
+CREATE FUNCTION db06_reject_attendance_record_delete()
+RETURNS trigger
+LANGUAGE plpgsql AS $db06_record_delete$
+BEGIN
+  RAISE EXCEPTION 'DB06 attendance current row is retained; correct status to PRESENT instead of DELETE'
+    USING ERRCODE = '23514';
+END;
+$db06_record_delete$;
+
+CREATE TRIGGER db06_attendance_record_no_delete
+BEFORE DELETE ON attendance_records
+FOR EACH ROW EXECUTE FUNCTION db06_reject_attendance_record_delete();
+
 -- A row means attendance was taken for the session. Faculty/admin services
 -- currently write the row(s) before upserting attendance_sessions in the same
 -- transaction, so make this commit-time rather than immediate.
@@ -440,16 +456,33 @@ CREATE TRIGGER db06_attendance_session_scope_guard
 BEFORE INSERT OR UPDATE ON attendance_sessions
 FOR EACH ROW EXECUTE FUNCTION db06_attendance_session_scope_guard();
 
+CREATE FUNCTION db06_reject_marked_attendance_session_delete()
+RETURNS trigger
+LANGUAGE plpgsql AS $db06_session_delete$
+BEGIN
+  IF OLD.status = 'MARKED' THEN
+    RAISE EXCEPTION 'DB06 marked attendance session cannot be deleted'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN OLD;
+END;
+$db06_session_delete$;
+
+CREATE TRIGGER db06_attendance_session_no_delete
+BEFORE DELETE ON attendance_sessions
+FOR EACH ROW EXECUTE FUNCTION db06_reject_marked_attendance_session_delete();
+
 -- ---------------------------------------------------------------------------
 -- Integration notes
 -- ---------------------------------------------------------------------------
 -- * DB-035 separately stages attendance_records.version + immutable
 --   attendance_record_events. W01 must compose both candidates once, not
 --   duplicate current-row constraints.
--- * Existing vNext writes PRESENT by removing the current exception row.
---   DB-042 does not redesign that representation or block DELETE. DB-035's
---   eventual history producer/correction model must decide the final PRESENT
---   representation transactionally.
+-- * Existing vNext currently writes PRESENT by removing the exception row.
+--   DB-035's immutable history FK already makes that incompatible with final
+--   history. DB-042 therefore stages the explicit final cutover: retain the
+--   current row and UPDATE status='PRESENT' with the DB-035 CORRECT event.
+--   This candidate must not be registered before that narrow producer cutover.
 -- * SUPER_ADMIN organization scoping is a higher-level identity policy; the
 --   database has only system_roles here. API/runtime negative tests must prove
 --   scoped-superadmin restrictions separately.
@@ -469,5 +502,8 @@ FOR EACH ROW EXECUTE FUNCTION db06_attendance_session_scope_guard();
 -- 11. MARKED session cannot return to UNMARKED or move marked_at backward;
 -- 12. attendance row without final MARKED session fails at commit;
 -- 13. duplicate event/member remains blocked by existing unique index;
--- 14. DB-035 history/version triggers compose without duplicate names/order bugs;
--- 15. empty-database registered migration replay + rollback succeeds.
+-- 14. direct DELETE of an attendance current row is rejected; producer uses
+--     status='PRESENT' + DB-035 CORRECT history instead;
+-- 15. MARKED attendance session DELETE is rejected;
+-- 16. DB-035 history/version triggers compose without duplicate names/order bugs;
+-- 17. empty-database registered migration replay + rollback succeeds.
