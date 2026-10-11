@@ -36,7 +36,7 @@ test("global email HMAC is domain-separated from organization-scoped outbox reci
   assert.match(envelope, /export function deriveGlobalEmailSuppressionHash\(/);
   assert.match(envelope, /intent\.channel !== "EMAIL"\) return null/);
   assert.match(envelope, /"global-email-suppression-v1", intent\.recipient/);
-  assert.match(envelope, /const \\{ digestKey \\} = keyMaterial\\(globalEmailHmacKeyBase64\\)/);
+  assert.match(envelope, /const \{ digestKey \} = keyMaterial\(globalEmailHmacKeyBase64\)/);
   assert.match(envelope, /"recipient", JSON\.stringify\(\[\s*intent\.organizationId, intent\.channel, intent\.recipient,/);
   const sealedType = envelope.split("export type SealedOutboundDelivery")[1].split("};")[0];
   assert.doesNotMatch(sealedType, /globalEmailSuppressionHash/,
