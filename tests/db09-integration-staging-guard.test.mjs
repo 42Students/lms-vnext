@@ -376,3 +376,66 @@ test("DB09 recruiter CRM staging enforces joined identity and terminal follow-up
   );
   assert.match(schema, /placement_tpo_followups_done_time_ck/);
 });
+
+
+test("DB09 CRM Drizzle source is single-copy and syntactically intact", () => {
+  const schema = read("src/db/schema/tpo-crm.ts");
+  const count = (needle) => schema.split(needle).length - 1;
+  assert.equal(count("export const placementTpoLeads ="), 1);
+  assert.equal(count("export const placementTpoLeadActivities ="), 1);
+  assert.equal(count("export const placementTpoFollowups ="), 1);
+  assert.equal(count('pgTable(\n  "placement_tpo_leads"'), 1);
+  assert.equal(count('pgTable(\n  "placement_tpo_lead_activities"'), 1);
+  assert.equal(count('pgTable(\n  "placement_tpo_followups"'), 1);
+  assert.equal(count("placement_tpo_leads_invite_hash_ck"), 1);
+  assert.equal(count("placement_tpo_leads_invite_lifecycle_ck"), 1);
+  assert.match(schema, /\^\[a-f0-9\]\{64\}\$/);
+  assert.doesNotMatch(schema, /<<<<<<<|=======|>>>>>>>/);
+});
+
+test("DB09 prep assignment course scope matches organization-level settings", () => {
+  const prep = read("docs/planning/sql/db09-prep-bell-read-state-candidate.sql");
+  const settings = read("docs/planning/sql/db09-tpo-settings-normalization-candidate.sql");
+
+  for (const sql of [prep, settings]) {
+    assert.match(sql, /owner_college\.organization_id = v_(?:assignment|target)_org/);
+    assert.match(sql, /c\.status = 'ACTIVE'/);
+    assert.match(sql, /d\.archived_at IS NULL/);
+    assert.match(sql, /owner_college\.status = 'ACTIVE'/);
+  }
+  assert.doesNotMatch(
+    prep,
+    /c\.id = NEW\.course_id[\s\S]*d\.college_id = NEW\.college_id/,
+    "prep assignment must not be narrower than the legacy organization course selector",
+  );
+});
+
+test("DB09 canonical SQL drafts do not redeclare DDL objects within a file", () => {
+  for (const path of [
+    "docs/planning/sql/db09-policy-visibility-premerge.sql",
+    "docs/planning/sql/db09-tpo-crm-premerge.sql",
+    "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+    "docs/planning/sql/db09-company-export-preference-candidate.sql",
+    "docs/planning/sql/db09-multicollege-drive-group-candidate.sql",
+    "docs/planning/sql/db09-round-scheduling-candidate.sql",
+    "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+    "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+    "docs/planning/sql/db09-tpo-settings-normalization-candidate.sql",
+  ]) {
+    const sql = read(path);
+    const names = [];
+    for (const re of [
+      /CREATE TABLE\s+([A-Za-z0-9_]+)/g,
+      /CREATE FUNCTION\s+([A-Za-z0-9_]+)/g,
+      /CREATE TRIGGER\s+([A-Za-z0-9_]+)/g,
+      /CREATE (?:UNIQUE )?INDEX\s+([A-Za-z0-9_]+)/g,
+    ]) {
+      for (const match of sql.matchAll(re)) names.push(match[1]);
+    }
+    assert.equal(
+      new Set(names).size,
+      names.length,
+      path + " contains a duplicate CREATE object",
+    );
+  }
+});
