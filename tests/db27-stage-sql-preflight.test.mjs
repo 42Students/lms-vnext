@@ -249,3 +249,66 @@ test("duplicate CREATE TABLE in a single draft is rejected", () => {
     [{file:"twice.sql",tables:["repeated"]}]);
   assert.equal(report.hazards,true);
 });
+
+
+test("DB27 orders partition creation and attachment after parent and child", () => {
+  const report=analyze({candidates:[
+    candidate("10-parent.sql","CREATE TABLE parent(id int) PARTITION BY LIST(id);"),
+    candidate("20-child.sql","CREATE TABLE child PARTITION OF parent FOR VALUES IN (1);"),
+    candidate("30-attach.sql","ALTER TABLE ONLY parent ATTACH PARTITION child FOR VALUES IN (2);"),
+  ]});
+  assert.deepEqual(report.required.filter(x=>x.file==="20-child.sql").map(x=>x.parentTable),["parent"]);
+  assert.deepEqual(report.required.filter(x=>x.file==="30-attach.sql").map(x=>x.parentTable).sort(),["child","parent"]);
+  assert.ok(report.proposedSourceOrder.indexOf("10-parent.sql")<report.proposedSourceOrder.indexOf("20-child.sql"));
+  assert.ok(report.proposedSourceOrder.indexOf("20-child.sql")<report.proposedSourceOrder.indexOf("30-attach.sql"));
+});
+test("DB27 inventories INHERITS, ALTER INHERIT and CREATE TABLE LIKE parent dependencies", () => {
+  const report=analyze({candidates:[
+    candidate("01-bases.sql","CREATE TABLE base_a(id int); CREATE TABLE base_b(id int);"),
+    candidate("02-child.sql","CREATE TABLE child (note text) INHERITS (base_a, base_b);"),
+    candidate("03-like.sql","CREATE TABLE copy (LIKE base_a INCLUDING ALL, LIKE base_b INCLUDING DEFAULTS);"),
+    candidate("04-change.sql","ALTER TABLE ONLY child INHERIT base_a;"),
+  ]});
+  for(const [file,expected] of [
+    ["02-child.sql",["base_a","base_b"]],
+    ["03-like.sql",["base_a","base_b"]],
+    ["04-change.sql",["base_a","child"]],
+  ]) assert.deepEqual(report.required.filter(x=>x.file===file).map(x=>x.parentTable).sort(),expected,file);
+});
+test("DB27 does not confuse CHECK and SELECT LIKE with table ancestry", () => {
+  const row=inspect(candidate("not-ancestry.sql",
+    "SELECT label LIKE 'match'; CREATE TABLE child(tag text, flag text, CHECK (tag LIKE flag));"));
+  assert.deepEqual(row.references,[]);
+  assert.deepEqual(row.lexicalErrors,[]);
+});
+test("DB27 fails closed for malformed INHERITS lists and unsupported quoted parents", () => {
+  const report=analyze({candidates:[
+    candidate("missing-close.sql","CREATE TABLE child(id int) INHERITS (parent;"),
+    candidate("trailing-comma.sql","CREATE TABLE child2(id int) INHERITS (parent,);"),
+    candidate("quoted.sql",'CREATE TABLE child3(id int) INHERITS ("two word parent");'),
+  ]});
+  assert.equal(report.lexicalHazards.length,3);
+  assert.ok(report.lexicalHazards.some(x=>x.errors.includes("MALFORMED_INHERITS_CLAUSE")));
+  assert.equal(report.lexicalHazards.filter(x=>x.errors.includes("UNSUPPORTED_INHERITS_PARENT")).length,2);
+  assert.equal(report.safeForAutomaticPromotion,false);
+});
+test("DB27 reports partition detach, NO INHERIT, SET UNLOGGED and DISABLE RULE for review", () => {
+  for(const sql of [
+    "ALTER TABLE parent DETACH PARTITION child;",
+    "ALTER TABLE child NO INHERIT parent;",
+    "ALTER TABLE records SET UNLOGGED;",
+    "ALTER TABLE logs DISABLE RULE security_rule;",
+  ]) assert.equal(inspect(candidate("unsafe.sql",sql)).destructive,true,sql);
+  for(const sql of [
+    "CREATE TRIGGER history BEFORE TRUNCATE ON logs EXECUTE FUNCTION f();",
+    "-- ALTER TABLE parent DETACH PARTITION child;\nCREATE TABLE safe(id int);",
+    "SELECT 'ALTER TABLE logs DISABLE RULE security_rule';",
+  ]) assert.equal(inspect(candidate("safe.sql",sql)).destructive,false,sql);
+});
+test("DB27 flags complex quoted table ancestry instead of accepting missing parents", () => {
+  for(const sql of [
+    'CREATE TABLE c PARTITION OF "odd parent" FOR VALUES IN (1);',
+    'CREATE TABLE c (LIKE "odd parent" INCLUDING ALL);',
+    'ALTER TABLE ONLY "odd parent" ADD COLUMN active bool;',
+  ]) assert.equal(inspect(candidate("quoted.sql",sql)).lexicalErrors.includes("UNSUPPORTED_QUOTED_DDL_IDENTIFIER"),true,sql);
+});
