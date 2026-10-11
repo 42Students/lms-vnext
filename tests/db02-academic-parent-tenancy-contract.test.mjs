@@ -70,10 +70,12 @@ test("extension owns only remaining college-root immutability", () => {
   assert.doesNotMatch(extension, /CREATE TRIGGER db02_department_college_immutable/);
 });
 
-test("cohort and program-term parent identity cannot silently change", () => {
+test("cohort and program-term identity use table-specific immutable guards", () => {
+  assert.match(extension, /CREATE FUNCTION db02_guard_cohort_parent_immutable\(\)/);
   assert.match(extension, /db02_cohort_program_immutable/);
   assert.match(extension, /NEW\.program_id IS DISTINCT FROM OLD\.program_id/);
   assert.match(extension, /NEW\.start_period_id IS DISTINCT FROM OLD\.start_period_id/);
+  assert.match(extension, /CREATE FUNCTION db02_guard_program_term_identity_immutable\(\)/);
   assert.match(extension, /db02_program_term_identity_immutable/);
   assert.match(extension, /NEW\.term_number IS DISTINCT FROM OLD\.term_number/);
 });
@@ -118,8 +120,10 @@ test("history-producing section references lock parent row", () => {
   }
 });
 
-test("enrollment parent identity is immutable once history exists", () => {
+test("enrollment parent identity uses table-specific immutable guards", () => {
+  assert.match(extension, /CREATE FUNCTION db02_guard_learner_program_enrollment_identity_immutable\(\)/);
   assert.match(extension, /db02_academic_enrollment_identity_immutable/);
+  assert.match(extension, /CREATE FUNCTION db02_guard_section_enrollment_identity_immutable\(\)/);
   assert.match(extension, /db02_section_enrollment_identity_immutable/);
   assert.match(extension, /learner program enrollment identity is immutable/);
   assert.match(extension, /section enrollment history identity is immutable/);
@@ -157,4 +161,10 @@ test("canonical DB02 preserves reversible cohort INACTIVE and zero-credit offeri
   assert.match(canonical, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE'/);
   assert.match(canonical, /db02_course_offerings_credits_ck/);
   assert.match(canonical, /credits IS NULL OR credits BETWEEN 0 AND 30/);
+});
+
+
+test("extension avoids heterogeneous trigger record shapes", () => {
+  assert.doesNotMatch(extension, /TG_TABLE_NAME/);
+  assert.doesNotMatch(extension, /RETURN\s+COALESCE\s*\(\s*(?:NEW|OLD)/);
 });
