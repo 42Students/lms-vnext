@@ -2,13 +2,15 @@
  * DB-035 / DB06 SOURCE-ONLY staging.
  *
  * DO NOT export from src/db/schema/index.ts and do not assume these tables
- * exist until Chat 1 migration integration reconciles the prerequisite
- * composite targets and executes PostgreSQL acceptance.
+ * exist until a later migration-integration task promotes the staged contract
+ * and executes PostgreSQL acceptance.
  *
  * Source contracts:
- * - legacy grade_audit_log: immutable before/after grading audit
- * - legacy attend: corrections overwrite/revive current state, so vNext needs
- *   an immutable correction trail beside attendance_records
+ * - legacy grade_audit_log: immutable before/after grading audit, actor + action
+ * - legacy attendance correction: the mutable current row can be updated,
+ *   deleted for PRESENT, or recreated; immutable history must therefore be
+ *   anchored to schedule/delivery/learner identity rather than the current
+ *   attendance_records row.
  */
 import { sql } from "drizzle-orm";
 import {
@@ -28,8 +30,8 @@ import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 import { assignmentSubmissions } from "./assessments";
-import { attendanceRecords } from "./attendance";
 import { sectionScheduleEvents } from "./academics";
+import { courseSectionDeliveries } from "./courses";
 
 export const assignmentGradeEventsStaged = pgTable(
   "assignment_grade_events",
@@ -42,20 +44,36 @@ export const assignmentGradeEventsStaged = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
+
+    // Event actor is separate from before/after grader state. A College Admin
+    // can publish a Faculty grade, so publisher and grader may legitimately differ.
     actorUserId: uuid("actor_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     actorMembershipId: uuid("actor_membership_id")
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    actorRole: varchar("actor_role", { length: 24 }).notNull(),
+
     action: varchar("action", { length: 40 }).notNull(),
     previousPoints: integer("previous_points"),
     newPoints: integer("new_points"),
+    previousFeedback: text("previous_feedback"),
+    newFeedback: text("new_feedback"),
     previousGradingStatus: varchar("previous_grading_status", { length: 24 })
       .notNull(),
     newGradingStatus: varchar("new_grading_status", { length: 24 })
       .notNull(),
     previousGradePublished: boolean("previous_grade_published").notNull(),
     newGradePublished: boolean("new_grade_published").notNull(),
+    previousGradedByUserId: uuid("previous_graded_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    newGradedByUserId: uuid("new_graded_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    previousGradedAt: timestamp("previous_graded_at", { withTimezone: true }),
+    newGradedAt: timestamp("new_graded_at", { withTimezone: true }),
+
+    // assignment_submissions exposes a CAS version. Each history row records
+    // exactly one committed version transition.
     submissionVersionBefore: integer("submission_version_before").notNull(),
     submissionVersionAfter: integer("submission_version_after").notNull(),
     occurredAt: timestamp("occurred_at", { withTimezone: true })
@@ -63,6 +81,7 @@ export const assignmentGradeEventsStaged = pgTable(
       .defaultNow(),
   },
   (table) => [
+    // Promotion prerequisite: the parent receives a matching composite UNIQUE.
     foreignKey({
       name: "assignment_grade_events_submission_identity_fk",
       columns: [
@@ -78,6 +97,11 @@ export const assignmentGradeEventsStaged = pgTable(
         assignmentSubmissions.membershipId,
       ],
     }).onDelete("restrict"),
+
+    uniqueIndex("assignment_grade_events_submission_version_uq").on(
+      table.assignmentSubmissionId,
+      table.submissionVersionAfter,
+    ),
     index("assignment_grade_events_submission_time_idx").on(
       table.assignmentSubmissionId,
       table.occurredAt,
@@ -91,39 +115,32 @@ export const assignmentGradeEventsStaged = pgTable(
       table.occurredAt,
     ),
     check(
+      "assignment_grade_events_actor_role_ck",
+      sql.raw(""actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')"),
+    ),
+    check(
+      "assignment_grade_events_actor_shape_ck",
+      sql.raw("("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)"),
+    ),
+    check(
       "assignment_grade_events_action_ck",
-      sql`${table.action} in ('GRADE','REGRADE','PUBLISH_GRADE')`,
+      sql.raw(""action" in ('GRADE','REGRADE','PUBLISH_GRADE')"),
     ),
     check(
       "assignment_grade_events_status_ck",
-      sql`${table.previousGradingStatus} in ('NOT_GRADED','GRADED')
-        and ${table.newGradingStatus} in ('NOT_GRADED','GRADED')`,
+      sql.raw(""previous_grading_status" in ('NOT_GRADED','GRADED') and "new_grading_status" in ('NOT_GRADED','GRADED')"),
     ),
     check(
       "assignment_grade_events_points_ck",
-      sql`(${table.previousPoints} is null or ${table.previousPoints} >= 0)
-        and (${table.newPoints} is null or ${table.newPoints} >= 0)`,
+      sql.raw("("previous_points" is null or "previous_points" >= 0) and ("new_points" is null or "new_points" >= 0)"),
     ),
     check(
       "assignment_grade_events_version_ck",
-      sql`${table.submissionVersionBefore} >= 0
-        and ${table.submissionVersionAfter} = ${table.submissionVersionBefore} + 1`,
+      sql.raw(""submission_version_before" >= 0 and "submission_version_after" = "submission_version_before" + 1"),
     ),
     check(
       "assignment_grade_events_shape_ck",
-      sql`(
-        ${table.action} in ('GRADE','REGRADE')
-        and ${table.newGradingStatus} = 'GRADED'
-        and ${table.newPoints} is not null
-        and ${table.newGradePublished} = false
-      ) or (
-        ${table.action} = 'PUBLISH_GRADE'
-        and ${table.previousGradingStatus} = 'GRADED'
-        and ${table.newGradingStatus} = 'GRADED'
-        and ${table.previousGradePublished} = false
-        and ${table.newGradePublished} = true
-        and ${table.previousPoints} is not distinct from ${table.newPoints}
-      )`,
+      sql.raw("(("action" = 'GRADE' and "previous_grading_status" = 'NOT_GRADED' and "new_grading_status" = 'GRADED' and "previous_points" is null and "new_points" is not null and "previous_grade_published" = false and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'REGRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "new_points" is not null and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'PUBLISH_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = false and "new_grade_published" = true and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at"))"),
     ),
   ],
 );
@@ -132,96 +149,112 @@ export const attendanceRecordEventsStaged = pgTable(
   "attendance_record_events",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    attendanceRecordId: uuid("attendance_record_id").notNull(),
+
+    // Durable identity. One schedule can be linked to multiple deliveries, so
+    // delivery is recorded explicitly rather than inferred later.
     scheduleEventId: uuid("schedule_event_id")
       .notNull()
       .references(() => sectionScheduleEvents.id, { onDelete: "restrict" }),
+    deliveryId: uuid("delivery_id")
+      .notNull()
+      .references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
     membershipId: uuid("membership_id")
       .notNull()
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
+
     actorUserId: uuid("actor_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     actorMembershipId: uuid("actor_membership_id")
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    actorRole: varchar("actor_role", { length: 24 }).notNull(),
+
     action: varchar("action", { length: 24 }).notNull(),
+    revision: integer("revision").notNull(),
+
+    // Snapshot IDs intentionally have NO FK to attendance_records. PRESENT is
+    // represented by absence-row deletion, and Faculty bulk marking can delete
+    // and recreate an ABSENT row. Immutable history must survive both.
+    previousAttendanceRecordId: uuid("previous_attendance_record_id"),
+    newAttendanceRecordId: uuid("new_attendance_record_id"),
+
     previousStatus: varchar("previous_status", { length: 24 }),
     newStatus: varchar("new_status", { length: 24 }).notNull(),
     previousNote: text("previous_note"),
     newNote: text("new_note"),
-    recordVersionBefore: integer("record_version_before"),
-    recordVersionAfter: integer("record_version_after").notNull(),
+    previousMarkedByUserId: uuid("previous_marked_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    newMarkedByUserId: uuid("new_marked_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    previousMarkedAt: timestamp("previous_marked_at", { withTimezone: true }),
+    newMarkedAt: timestamp("new_marked_at", { withTimezone: true }),
+
     occurredAt: timestamp("occurred_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
   (table) => [
-    foreignKey({
-      name: "attendance_record_events_record_identity_fk",
-      columns: [
-        table.attendanceRecordId,
-        table.scheduleEventId,
-        table.membershipId,
-      ],
-      foreignColumns: [
-        attendanceRecords.id,
-        attendanceRecords.scheduleEventId,
-        attendanceRecords.membershipId,
-      ],
-    }).onDelete("restrict"),
-    uniqueIndex("attendance_record_events_record_version_uq").on(
-      table.attendanceRecordId,
-      table.recordVersionAfter,
-    ),
-    index("attendance_record_events_record_time_idx").on(
-      table.attendanceRecordId,
-      table.occurredAt,
+    uniqueIndex("attendance_record_events_revision_uq").on(
+      table.scheduleEventId,
+      table.deliveryId,
+      table.membershipId,
+      table.revision,
     ),
     index("attendance_record_events_member_time_idx").on(
       table.membershipId,
+      table.occurredAt,
+    ),
+    index("attendance_record_events_session_time_idx").on(
+      table.scheduleEventId,
       table.occurredAt,
     ),
     index("attendance_record_events_college_time_idx").on(
       table.collegeId,
       table.occurredAt,
     ),
+    index("attendance_record_events_actor_time_idx").on(
+      table.actorUserId,
+      table.occurredAt,
+    ),
+    check(
+      "attendance_record_events_actor_role_ck",
+      sql.raw(""actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')"),
+    ),
+    check(
+      "attendance_record_events_actor_shape_ck",
+      sql.raw("("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)"),
+    ),
     check(
       "attendance_record_events_action_ck",
-      sql`${table.action} in ('MARK','CORRECT')`,
+      sql.raw(""action" in ('MARK','CORRECT')"),
+    ),
+    check(
+      "attendance_record_events_revision_ck",
+      sql.raw(""revision" >= 1"),
     ),
     check(
       "attendance_record_events_status_ck",
-      sql`${table.newStatus} in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE')
-        and (
-          ${table.previousStatus} is null
-          or ${table.previousStatus} in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE')
-        )`,
+      sql.raw(""new_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE') and ("previous_status" is null or "previous_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE'))"),
     ),
     check(
       "attendance_record_events_shape_ck",
-      sql`(
-        ${table.action} = 'MARK'
-        and ${table.previousStatus} is null
-        and ${table.recordVersionBefore} is null
-        and ${table.recordVersionAfter} = 0
-      ) or (
-        ${table.action} = 'CORRECT'
-        and ${table.previousStatus} is not null
-        and ${table.recordVersionBefore} is not null
-        and ${table.recordVersionBefore} >= 0
-        and ${table.recordVersionAfter} = ${table.recordVersionBefore} + 1
-      )`,
+      sql.raw("(("action" = 'MARK' and "revision" = 1 and "previous_status" is null and "previous_attendance_record_id" is null) or ("action" = 'CORRECT' and "revision" >= 2 and "previous_status" is not null))"),
+    ),
+    check(
+      "attendance_record_events_present_shape_ck",
+      sql.raw("(("new_status" = 'PRESENT' and "new_attendance_record_id" is null) or ("new_status" <> 'PRESENT' and "new_attendance_record_id" is not null))"),
     ),
   ],
 );
 
-// Promotion prerequisites intentionally live in the staged SQL rather than
-// mutating active tables in this source-only file:
+// Promotion prerequisites intentionally live in staged SQL instead of mutating
+// active tables in this source-only file:
 // - UNIQUE (id, assignment_id, delivery_id, membership_id) on assignment_submissions
-// - version integer NOT NULL DEFAULT 0 on attendance_records with CAS semantics
-// - UNIQUE (id, schedule_event_id, membership_id) on attendance_records
-// - tenant/actor consistency triggers
-// - append-only UPDATE/DELETE/TRUNCATE rejection
+// - grade-event INSERT guard: exact tenant, actor and current-row post-state
+// - attendance-event INSERT guard: schedule/delivery link, learner tenant,
+//   actor role/teaching scope, monotonic revision and current-row post-state
+// - append-only UPDATE/DELETE/TRUNCATE rejection for both history tables
+// - transactional producer cutover in grade/publish + Faculty/Admin attendance
