@@ -34,7 +34,16 @@ function missing(ddlText, guardText, tsText) {
   ];
   for (const [pattern, reason] of requiredSQL) if (!pattern.test(ddlCode)) absent.push(reason);
   const requiredGuard = [
-    [/BEFORE UPDATE ON identity_auth_attempts/i, "trigger bound to updates"],
+    [/BEFORE INSERT OR UPDATE ON identity_auth_attempts/i, "trigger protects challenge creation and updates"],
+    [/IF TG_OP = 'INSERT' THEN/i, "first issuance conditional guard"],
+    [/NEW.verified_at IS NOT NULL/i, "cannot insert verified challenge"],
+    [/NEW.used_at IS NOT NULL/i, "cannot insert consumed challenge"],
+    [/NEW.verification_attempts <> 0/i, "new verification counters start zero"],
+    [/NEW.resend_attempts <> 0/i, "new resend counters start zero"],
+    [/NEW.version <> 1/i, "new challenge starts first version"],
+    [/NEW.created_at > clock_timestamp\(\)/i, "fresh creation time"],
+    [/NEW.expires_at <= clock_timestamp\(\)/i, "future deadline at issuance"],
+    [/db01_auth_attempt_creation_state_ck/i, "new challenge constraint"],
     [/NEW.user_id IS DISTINCT FROM OLD.user_id/i, "user scope immutable"],
     [/NEW.college_id IS DISTINCT FROM OLD.college_id/i, "college scope immutable"],
     [/NEW.membership_id IS DISTINCT FROM OLD.membership_id/i, "membership scope immutable"],
@@ -107,4 +116,19 @@ test("source witness is opt-in, independently disposable and observes a real PG 
 });
 test("SQL staging draft cannot carry destructive data cleanup", () => {
   assert.ok(missing(ddl + "\nDELETE FROM identity_auth_attempts;", guard, drizzle).includes("destructive staging SQL"));
+});
+
+test("DB01 rejects pre-verified or pre-consumed INSERTs at the trigger boundary", () => {
+  assert.match(guard, /IF TG_OP = 'INSERT' THEN[\s\S]*NEW.verified_at IS NOT NULL[\s\S]*NEW.used_at IS NOT NULL/);
+  assert.match(guard, /BEFORE INSERT OR UPDATE ON identity_auth_attempts/);
+  assert.ok(missing(ddl, guard.replace("NEW.used_at IS NOT NULL", "FALSE"), drizzle).includes("cannot insert consumed challenge"));
+});
+test("DB01 rejects pre-exhausted challenges and future-issued clocks", () => {
+  for (const [needle,expected] of [
+    ["NEW.verification_attempts <> 0","new verification counters start zero"],
+    ["NEW.resend_attempts <> 0","new resend counters start zero"],
+    ["NEW.version <> 1","new challenge starts first version"],
+    ["NEW.created_at > clock_timestamp()","fresh creation time"],
+    ["NEW.expires_at <= clock_timestamp()","future deadline at issuance"],
+  ]) assert.ok(missing(ddl, guard.replace(needle,"FALSE"),drizzle).includes(expected),needle);
 });
