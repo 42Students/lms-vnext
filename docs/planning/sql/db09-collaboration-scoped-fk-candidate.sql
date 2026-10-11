@@ -516,14 +516,11 @@ CREATE FUNCTION db09_assert_share_event_state() RETURNS trigger
 LANGUAGE plpgsql AS $$
 DECLARE
   v_created_at timestamptz;
+  v_expires_at timestamptz;
   v_revoked_at timestamptz;
 BEGIN
-  IF NEW.action NOT IN ('CREATED','REVOKED') THEN
-    RETURN NEW;
-  END IF;
-
-  SELECT s.created_at,s.revoked_at
-    INTO v_created_at,v_revoked_at
+  SELECT s.created_at,s.expires_at,s.revoked_at
+    INTO v_created_at,v_expires_at,v_revoked_at
     FROM placement_tpo_share_links s
    WHERE s.id = NEW.share_id;
 
@@ -532,12 +529,12 @@ BEGIN
       USING ERRCODE = '23503';
   END IF;
 
-  IF NEW.action = 'CREATED' THEN
-    IF NEW.created_at < v_created_at THEN
-      RAISE EXCEPTION 'secure share CREATED event predates share creation'
-        USING ERRCODE = '23514';
-    END IF;
-  ELSIF NEW.action = 'REVOKED' THEN
+  IF NEW.created_at < v_created_at THEN
+    RAISE EXCEPTION 'secure share event predates share creation'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.action = 'REVOKED' THEN
     IF v_revoked_at IS NULL THEN
       RAISE EXCEPTION 'secure share REVOKED event requires revoked share state'
         USING ERRCODE = '23514';
@@ -546,11 +543,21 @@ BEGIN
       RAISE EXCEPTION 'secure share REVOKED event predates revocation'
         USING ERRCODE = '23514';
     END IF;
+  ELSIF NEW.action IN (
+    'OPENED','DOWNLOADED_LIST','DOWNLOADED_ZIP','LINK_EMAILED','CODE_EMAILED'
+  ) THEN
+    IF v_revoked_at IS NOT NULL THEN
+      RAISE EXCEPTION 'secure share use/delivery event cannot be appended after revocation'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.created_at >= v_expires_at THEN
+      RAISE EXCEPTION 'secure share use/delivery event cannot be appended after expiry'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
 
   RETURN NEW;
 END $$;
-
 CREATE CONSTRAINT TRIGGER db09_share_event_state_guard
   AFTER INSERT ON placement_tpo_share_events
   DEFERRABLE INITIALLY DEFERRED
