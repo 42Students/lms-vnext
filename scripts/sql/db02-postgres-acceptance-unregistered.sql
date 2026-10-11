@@ -377,13 +377,13 @@ BEGIN
   RETURNING id INTO teaching_a;
 
   INSERT INTO section_faculty_assignments(section_id, membership_id, role)
-  VALUES (section_a, faculty_membership_a, 'PRIMARY')
+  VALUES (section_a, faculty_membership_a, 'ADVISOR')
   RETURNING id INTO section_faculty_a;
 
   failed := false;
   BEGIN
     INSERT INTO section_faculty_assignments(section_id, membership_id, role)
-    VALUES (section_a, faculty_membership_b, 'ASSISTANT');
+    VALUES (section_a, faculty_membership_b, 'COORDINATOR');
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
@@ -479,7 +479,7 @@ BEGIN
   RETURNING id INTO teaching_a;
 
   INSERT INTO section_faculty_assignments(section_id, membership_id, role)
-  VALUES (section_a, faculty_membership_a, 'PRIMARY')
+  VALUES (section_a, faculty_membership_a, 'ADVISOR')
   RETURNING id INTO section_faculty_a;
 
   INSERT INTO section_schedule_events(
