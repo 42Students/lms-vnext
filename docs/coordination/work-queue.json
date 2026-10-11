@@ -1286,25 +1286,35 @@
         "docs/planning/database-parity-db10-general-notices-contract.md",
         "tests/db10-general-notices-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T11:00:00+05:30",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T11:00:00+05:30"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "DB-012 Chat 3 blocker: general legacy notification_outbox 13 fields cannot map to invitation-only DB10 outbound draft. New strictly isolated database staging batch."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T11:00:00+05:30",
+          "reason": "Chat 5 CAS claim; isolated DB10-notices staging, no overlap with other workers."
         }
       ]
     }
