@@ -62,6 +62,40 @@ ON course_lessons
 FOR EACH ROW
 EXECUTE FUNCTION db05_cascade_lesson_soft_delete();
 
+-- Prevent inserting a LIVE child into a soft-deleted parent or moving a
+-- content row into a deleted lesson. Locking the parent FOR SHARE coordinates
+-- with the parent UPDATE row lock: if an insert wins first, the subsequent
+-- parent deletion sees/cascades the new child; if delete wins first, the
+-- insert waits and then rejects. Must be verified with two PostgreSQL sessions.
+CREATE OR REPLACE FUNCTION db05_lesson_content_live_parent_guard()
+RETURNS trigger LANGUAGE plpgsql AS $db05_child_parent$
+DECLARE
+  parent_deleted_at timestamptz;
+BEGIN
+  SELECT lesson.legacy_deleted_at INTO parent_deleted_at
+    FROM course_lessons lesson
+   WHERE lesson.id = NEW.lesson_id
+   FOR SHARE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'lesson content does not have a parent lesson'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF parent_deleted_at IS NOT NULL AND NEW.legacy_deleted_at IS NULL THEN
+    RAISE EXCEPTION 'live lesson content cannot be moved into deleted lesson'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$db05_child_parent$;
+
+CREATE TRIGGER db05_lesson_content_live_parent_before_write
+BEFORE INSERT OR UPDATE OF lesson_id, legacy_deleted_at
+ON lesson_contents
+FOR EACH ROW EXECUTE FUNCTION db05_lesson_content_live_parent_guard();
+
 COMMIT;
 
 -- Source/runtime gates still OPEN (NONE EXECUTED):
@@ -72,9 +106,8 @@ COMMIT;
 --     status confirms asset still exists; deleted video/file not resurrected.
 --  4. Lesson & content learner read scopes enforce legacy_deleted_at IS NULL
 --     as an additional gate to PUBLISHED and both active/enabled fields.
---  5. Lesson update, content create/move, direct SQL writes to a deleted
---     parent must NOT accidentally re-expose child content. Child trigger
---     on parent move/insert or write-scope immutability required.
+--  5. Live child INSERT and move into deleted parent are now blocked via
+--     parent FOR SHARE. This is source-only; two-session race proof NOT RUN.
 --  6. Deleted course/path/lesson ancestor still hides descendant content.
 --  7. Trigger child UPDATE increments history/versions consistently;
 --     concurrent lesson editing and reparenting can never race to leak.
