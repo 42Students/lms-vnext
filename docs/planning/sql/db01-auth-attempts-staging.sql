@@ -45,8 +45,22 @@ CREATE TABLE identity_auth_attempts (
     ),
   CONSTRAINT identity_auth_attempts_timestamp_ck
     CHECK (
-      (verified_at IS NULL OR verified_at >= created_at)
-      AND (used_at IS NULL OR used_at >= created_at)
+      (verified_at IS NULL OR (verified_at >= created_at AND verified_at < expires_at))
+      AND (used_at IS NULL OR (used_at >= created_at AND used_at < expires_at))
+    ),
+  CONSTRAINT identity_auth_attempts_five_minute_expiry_ck
+    CHECK (expires_at <= created_at + interval '5 minutes'),
+  CONSTRAINT identity_auth_attempts_target_role_shape_ck
+    CHECK (char_length(btrim(target_role)) BETWEEN 1 AND 24),
+  CONSTRAINT identity_auth_attempts_consumed_shape_ck
+    CHECK (
+      used_at IS NULL
+      OR (
+        verified_at IS NOT NULL
+        AND verified_at <= used_at
+        AND sms_code_mac IS NULL AND sms_code_expires_at IS NULL
+        AND email_code_mac IS NULL AND email_code_expires_at IS NULL
+      )
     )
 );
 
@@ -85,3 +99,8 @@ CREATE INDEX identity_auth_attempts_expiry_idx
 --    replayed even if old legacy flow accepted a brief duplicate replay.
 -- 6. Preserve email fallback and recruiter email-first distinct delivery
 --    experiences; fake SMS OTP must never validate an email-only challenge.
+
+-- A separate DB01 monotonic-lifecycle trigger proposal is maintained at
+-- docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql.
+-- Register both together ONLY if Chat 1 has approved database-backed OTP.
+-- All shape CHECKs protect direct SQL writes, not provider/session issuance.
