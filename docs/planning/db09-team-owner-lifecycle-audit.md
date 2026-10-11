@@ -91,10 +91,12 @@ Canonical candidate:
 
 Add nullable `owner_membership_id` as a college-membership identity.
 
-It is intentionally nullable at schema-design time. Legacy recruiter requests
-could be ownerless until approval, while current vNext does not persist a
-`REQUEST` status on `placement_jobs`. DATABASE phase should not invent a
-new request lifecycle merely to make the column globally NOT NULL.
+It remains nullable at the column level for historical CLOSED/ARCHIVED rows.
+Legacy recruiter requests could be ownerless until approval, while current vNext
+does not persist a `REQUEST` status on `placement_jobs`. A staged CHECK
+therefore requires a non-null owner specifically for current live
+`DRAFT | PUBLISHED` jobs after conservative backfill; DATABASE phase does not
+invent a new request lifecycle.
 
 Every non-null owner must:
 
@@ -112,8 +114,9 @@ but must **not** gain unrestricted college-wide placement administration.
 
 ### Direct team deletion
 
-A direct delete of `placement_tpo_team_members` is rejected when the member
-still owns:
+A direct delete **or direct identity change** of
+`placement_tpo_team_members.(college_id,membership_id)` is rejected when the
+old member identity still owns:
 
 - any recruiter lead in that college; or
 - any live vNext `DRAFT | PUBLISHED` job in that college.
@@ -177,7 +180,8 @@ state; both cannot commit an orphaning interleaving.
 
 Before migration activation:
 
-1. add `ownerMembershipId` to canonical Drizzle `placementJobs`;
+1. add `ownerMembershipId` to canonical Drizzle `placementJobs`, including
+   the live-owner CHECK;
 2. TPO-created/copied jobs set owner to the acting college membership;
 3. recruiter-request approval sets owner to the approving TPO membership;
 4. job reads that display responsibility use owner, not creator;
