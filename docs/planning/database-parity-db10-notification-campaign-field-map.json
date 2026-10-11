@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "task": "DB-041",
+  "task": "DB-043",
   "legacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "sourceLedgerSha": "5c9a6239abb64057c97818a52056da66709d3711",
   "domain": "DB10_LEGACY_NOTIFICATION_CAMPAIGN_AND_RECIPIENT_PARITY",
