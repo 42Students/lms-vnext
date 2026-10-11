@@ -10,6 +10,10 @@ const contract = readFileSync(
   "docs/planning/database-parity-db06-attendance-scope-contract.md",
   "utf8",
 );
+const history = readFileSync(
+  "docs/planning/sql/db06-assessment-attendance-history-candidate.sql",
+  "utf8",
+);
 
 test("DB042 event-delivery bridge proves section and college alignment", () => {
   assert.match(sql, /CREATE FUNCTION db06_attendance_event_context/);
@@ -121,4 +125,44 @@ test("DB042 proof state remains source-only until PostgreSQL executes", () => {
   assert.match(contract, /not registered, not PostgreSQL verified/i);
   assert.match(contract, /No disposable PostgreSQL/);
   assert.match(contract, /must not become[^\n]*DONE_VERIFIED/);
+});
+
+
+test("DB042 retains current rows and marked-session truth", () => {
+  assert.match(sql, /CREATE TRIGGER db06_attendance_record_no_delete/);
+  assert.match(sql, /correct status to PRESENT instead of DELETE/);
+  assert.match(sql, /CREATE TRIGGER db06_attendance_session_no_delete/);
+  assert.match(sql, /OLD\.status = 'MARKED'/);
+  assert.match(sql, /marked attendance session cannot be deleted/);
+  assert.match(contract, /UPDATE the retained row to `PRESENT`/);
+});
+
+test("DB042 composes with DB035 history instead of bypassing it", () => {
+  assert.match(history, /CREATE TABLE attendance_record_events/);
+  assert.match(
+    history,
+    /attendance_record_events_record_identity_fk[\s\S]*ON DELETE RESTRICT/,
+  );
+  assert.match(history, /new_status IN \('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE'\)/);
+  assert.match(
+    history,
+    /e\.actor_user_id = NEW\.marked_by_user_id/,
+    "history actor must match the current-row marker authorized by DB042",
+  );
+
+  const typedObjects = (source) => {
+    const out = [];
+    for (const [type, re] of [
+      ["FUNCTION", /CREATE FUNCTION\s+([A-Za-z0-9_]+)/g],
+      ["TRIGGER", /CREATE (?:CONSTRAINT )?TRIGGER\s+([A-Za-z0-9_]+)/g],
+      ["TABLE", /CREATE TABLE\s+([A-Za-z0-9_]+)/g],
+      ["INDEX", /CREATE (?:UNIQUE )?INDEX\s+([A-Za-z0-9_]+)/g],
+    ]) {
+      for (const match of source.matchAll(re)) out.push(type + ":" + match[1]);
+    }
+    return out;
+  };
+  const db042 = new Set(typedObjects(sql));
+  const collisions = typedObjects(history).filter((name) => db042.has(name));
+  assert.deepEqual(collisions, []);
 });
