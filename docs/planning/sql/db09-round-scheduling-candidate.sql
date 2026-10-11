@@ -73,6 +73,76 @@ CREATE TABLE placement_round_assignments (
 CREATE INDEX placement_round_assignments_slot_idx
   ON placement_round_assignments(slot_id);
 
+CREATE FUNCTION db09_assert_round_assignment_capacity() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_capacity integer;
+  v_status varchar(16);
+  v_booked integer;
+BEGIN
+  IF NEW.slot_id IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT capacity,status
+    INTO v_capacity,v_status
+    FROM placement_round_slots
+   WHERE id = NEW.slot_id
+     AND round_id = NEW.round_id
+     AND job_id = NEW.job_id
+   FOR UPDATE;
+
+  IF v_capacity IS NULL THEN
+    RAISE EXCEPTION 'round assignment slot does not belong to assignment round/job'
+      USING ERRCODE = '23503';
+  END IF;
+  IF v_status <> 'CONFIRMED' THEN
+    RAISE EXCEPTION 'round assignment requires a confirmed slot'
+      USING ERRCODE = '23514';
+  END IF;
+
+  SELECT count(*)
+    INTO v_booked
+    FROM placement_round_assignments a
+   WHERE a.slot_id = NEW.slot_id
+     AND a.id <> NEW.id;
+
+  IF v_booked >= v_capacity THEN
+    RAISE EXCEPTION 'round slot capacity exceeded'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_round_assignment_capacity_guard
+  BEFORE INSERT OR UPDATE OF slot_id,round_id,job_id
+  ON placement_round_assignments
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_round_assignment_capacity();
+
+CREATE FUNCTION db09_assert_round_slot_mutation() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_booked integer;
+BEGIN
+  SELECT count(*)
+    INTO v_booked
+    FROM placement_round_assignments
+   WHERE slot_id = OLD.id;
+
+  IF NEW.capacity < v_booked THEN
+    RAISE EXCEPTION 'round slot capacity cannot be reduced below booked count'
+      USING ERRCODE = '23514';
+  END IF;
+  IF v_booked > 0 AND NEW.status <> 'CONFIRMED' THEN
+    RAISE EXCEPTION 'booked round slot cannot become unconfirmed'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_round_slot_mutation_guard
+  BEFORE UPDATE OF capacity,status
+  ON placement_round_slots
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_round_slot_mutation();
+
 CREATE TABLE placement_round_reschedule_requests (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   job_id uuid NOT NULL REFERENCES placement_jobs(id) ON DELETE RESTRICT,
@@ -108,14 +178,17 @@ CREATE INDEX placement_round_reschedule_status_idx
 -- 2. assignment of job A + slot of round B rejected (23503)
 -- 3. duplicate round+application rejected (23505)
 -- 4. invalid slot capacity/time range/reviewer status rejected (23514)
--- 5. concurrent assignment beyond capacity: one winner / serializable
---    or parent slot SELECT FOR UPDATE; DB FK/CHECK ALONE does not cap count
+-- 5. concurrent assignment beyond capacity is serialized by locking the slot
+--    row in db09_round_assignment_capacity_guard; over-capacity insert loses
 -- 6. two competing reschedule decisions must version-CAS, append review
 --    history and notify the assigned learner; no phantom slot overwrite
 -- 7. timezone, DST, cancellation, completed rounds and privacy of panels
 --    reproduced from current legacy service+UI only after direct oracle check
 -- 8. this draft must be reconciled with DB08-owned round exceptions; do not
 --    duplicate active status machines without deliberate domain ownership.
+-- 9. booked slots cannot be unconfirmed or shrunk below current bookings.
+-- 10. coordinator row requires ACTIVE LEARNER membership in the same college;
+--     assigning user, when present, must hold ACTIVE same-college membership.
 
 
 -- Date-scoped student coordinator authorization for drive-day attendance.
@@ -140,3 +213,39 @@ CREATE TABLE placement_drive_coordinator_assignments (
 );
 CREATE INDEX placement_drive_coordinators_member_date_idx
   ON placement_drive_coordinator_assignments(learner_membership_id,on_date);
+
+
+CREATE FUNCTION db09_assert_drive_coordinator_principal_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+      JOIN membership_roles r ON r.membership_id = m.id
+     WHERE m.id = NEW.learner_membership_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+       AND r.role = 'LEARNER'
+  ) THEN
+    RAISE EXCEPTION 'drive coordinator must be an active learner in the job college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.created_by_user_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+     WHERE m.user_id = NEW.created_by_user_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'drive coordinator assigning user is not active in job college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_drive_coordinator_principal_scope_guard
+  BEFORE INSERT OR UPDATE OF
+    college_id,job_id,learner_membership_id,created_by_user_id
+  ON placement_drive_coordinator_assignments
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_coordinator_principal_scope();
