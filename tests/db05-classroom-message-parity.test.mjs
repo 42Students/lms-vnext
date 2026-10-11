@@ -11,6 +11,7 @@ const guardSql = read("../scripts/sql/db05-classroom-chat-parity.draft.sql");
 const review = JSON.parse(read("../docs/planning/db05-chat06-source-semantic-review.json"));
 const readiness = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
 const runtimeSchema = read("../src/db/schema/discussions.ts");
+const integrityPreflight = read("../scripts/sql/db05-classroom-message-integrity-preflight.readonly.sql");
 const contract = read("../docs/planning/db05-classroom-message-parity-contract.md");
 
 test("DB05 classroom stream remains separate from content discussions", () => {
@@ -81,4 +82,53 @@ test("classroom sender and deletion fields remain unverified until runtime proof
     assert.equal(row.classification, "UNREGISTERED_DRAFT");
   }
   assert.match(contract, /No live DB introspection/);
+});
+
+test("classroom draft validates program tenant, exact cohort+period and shares DB05 ancestry lock", () => {
+  const required = [
+    "section_program_department.college_id",
+    "INNER JOIN cohorts section_cohort",
+    "INNER JOIN programs section_program",
+    "INNER JOIN departments section_program_department",
+    "course_college_id IS DISTINCT FROM section_program_college_id",
+    "offering_cohort_id IS DISTINCT FROM section_cohort_id",
+    "offering_period_id IS DISTINCT FROM section_period_id",
+    "pg_advisory_xact_lock(605008003::bigint)",
+    "current_setting('transaction_isolation') <> 'read committed'",
+    "25001",
+    "23514",
+  ];
+  for (const phrase of required) {
+    assert.ok(guardSql.includes(phrase), `missing classroom invariant: ${phrase}`);
+  }
+  assert.doesNotMatch(guardSql, /ALTER TABLE course_discussion_messages/);
+});
+
+test("read-only classroom drift probe inventories every missing join and scope mismatch", () => {
+  const codes = [
+    "MISSING_DELIVERY",
+    "MISSING_OFFERING",
+    "MISSING_COURSE",
+    "MISSING_COURSE_DEPARTMENT",
+    "MISSING_OFFERING_PERIOD",
+    "MISSING_SECTION",
+    "MISSING_SECTION_PERIOD",
+    "MISSING_SECTION_COHORT",
+    "MISSING_SECTION_PROGRAM",
+    "MISSING_SECTION_PROGRAM_DEPARTMENT",
+    "MISSING_SENDER_MEMBERSHIP",
+    "COURSE_OFFERING_PERIOD_COLLEGE_MISMATCH",
+    "COURSE_SECTION_PERIOD_COLLEGE_MISMATCH",
+    "COURSE_SECTION_PROGRAM_COLLEGE_MISMATCH",
+    "COURSE_SENDER_COLLEGE_MISMATCH",
+    "OFFERING_SECTION_COHORT_MISMATCH",
+    "OFFERING_SECTION_PERIOD_MISMATCH",
+  ];
+  for (const code of codes) {
+    assert.ok(integrityPreflight.includes("'" + code + "'"), code);
+  }
+  assert.match(integrityPreflight, /LEFT JOIN course_discussion_messages|FROM course_discussion_messages AS message/);
+  assert.match(integrityPreflight, /CROSS JOIN LATERAL unnest/);
+  assert.match(integrityPreflight, /count\(violations.failure_code\)::bigint/);
+  assert.doesNotMatch(integrityPreflight, /\b(?:UPDATE|DELETE|INSERT|ALTER|CREATE|TRUNCATE|DROP)\s+(?:TABLE\s+)?(?:course_discussion_messages|course_offerings|courses|sections|college_memberships)\b/i);
 });
