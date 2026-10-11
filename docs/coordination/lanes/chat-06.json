@@ -141,9 +141,15 @@
       "kind": "ORDER_UPSTREAM_ANCESTOR_TRANSACTION_GUARD",
       "message": "SINGLE manifest canonical witnessed lesson ordering candidate + DEFERRABLE per-delivery/lesson sequence uniqueness; child scope guard and 6 ancestor reparent triggers share 605008003 advisory lock under READ COMMITTED. Staged SQL/docs/Node static test, not registered or runtime verified. W01 must execute wrong-tenant/reparent/race/deadlock/period/department/DELETE negative tests, no API flag flip. 16/16 independent connector source assertions passed; Node/PG NOT RUN.",
       "commitSha": "0b95409dc149996fca949f1964b07a0b18d51e16"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "FACULTY_OWNER_AND_BASE_CONTENT_TENANT_SCOPE",
+      "commitSha": "4529882e6441cdfe5013eede42249579dfdd05eb",
+      "message": "Staged UNREGISTERED faculty_owner_membership_id same-college+active FACULTY assignment guard (separate from created_by_user_id) and direct lesson-content/optional delivery offering-cohort-period-college SQL guard shared 605008003 lock. Legacy class_id create/update null/0/negative rescope semantics source documented; vNext update currently forbids delivery change. Three static Node test files authored NOT executed; 26 connector assertions passed, PG/tenant/concurrency proof NOT RUN. W01 owns fold; preserve 0/92 verified."
     }
   ],
-  "nextAction": "DB-008 remains IN_PROGRESS: W01 integrate seven independent DB05 drafts with canonical order uniqueness + child scope + upstream lock companion exactly once after PostgreSQL replay/race and source semantics. Continue any nonconflicting 25 unresolved course/content field audits; do not certify from authored tests.",
+  "nextAction": "Chat6 continues DATABASE DB-008: W01 must compose current 7 independent DB05 migration drafts + optional faculty owner and base content scope companions once; run clean PostgreSQL schema replay, wrong-college/role/tenant, member role-revocation, class reassignment downstream, concurrent offering/period/section reparent. Do not mark any source field verified or switch phase without executable evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -226,7 +232,14 @@
     "https://github.com/42Students/lms-vnext/commit/0b95409dc149996fca949f1964b07a0b18d51e16",
     "https://github.com/42Students/lms-vnext/commit/34d71cca1af87f65aa003432ecc3d520ef5d8724",
     "https://github.com/42Students/lms-vnext/commit/4acbf95880345f2408e250606f4e0e8289872d59",
-    "https://github.com/42Students/lms-vnext/commit/7cc68a361098b71e10d810c5d8aea974a3f89d06"
+    "https://github.com/42Students/lms-vnext/commit/7cc68a361098b71e10d810c5d8aea974a3f89d06",
+    "https://github.com/42Students/lms-vnext/commit/f5b308f13f7fa2804f87d551f01062687ae0db7c",
+    "https://github.com/42Students/lms-vnext/commit/eab07a1fd6c523eb1e9936f5c4210680b9d053a4",
+    "https://github.com/42Students/lms-vnext/commit/a89e2384e37e4a081f1f19ac487af809f9086ab1",
+    "https://github.com/42Students/lms-vnext/commit/d764684f6102d2a6a33f33954dd3e1afa1fd797f",
+    "https://github.com/42Students/lms-vnext/commit/ce71d5a831ba78c0af7fc4c47f8e1418f6dac851",
+    "https://github.com/42Students/lms-vnext/commit/912dffae2e91ffac79d68e8bb1d4e2c6c6acfcc8",
+    "https://github.com/42Students/lms-vnext/commit/4529882e6441cdfe5013eede42249579dfdd05eb"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
