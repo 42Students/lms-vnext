@@ -31,6 +31,7 @@ DECLARE
   cohort_b uuid;
   term_a1 uuid;
   term_a2 uuid;
+  term_course_core_a uuid;
   course_core_a uuid;
   course_elective_a uuid;
   course_b uuid;
@@ -140,7 +141,8 @@ BEGIN
   VALUES (program_a, 2, 'Term 2', true, 24) RETURNING id INTO term_a2;
 
   INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
-  VALUES (term_a1, course_core_a, 'CORE', 0, 1);
+  VALUES (term_a1, course_core_a, 'CORE', 0, 1)
+  RETURNING id INTO term_course_core_a;
 
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
@@ -439,9 +441,14 @@ BEGIN
   END IF;
 
   -- Zero-credit canonical curriculum must materialize into a valid CORE offering.
-  INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
-                               type, credits, display_order)
-  VALUES (course_core_a, cohort_a, period_a, term_a1, 'CORE', 0, 1);
+  INSERT INTO course_offerings(
+    course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+    type, credits, display_order
+  )
+  VALUES (
+    course_core_a, cohort_a, period_a, term_a1, term_course_core_a,
+    'CORE', 0, 1
+  );
 
   -- Once a CORE offering materializes the curriculum pair, removing or reparenting
   -- that program-term course would rewrite history and must fail.
@@ -450,7 +457,7 @@ BEGIN
     DELETE FROM program_term_courses
      WHERE program_term_id = term_a1
        AND course_id = course_core_a;
-  EXCEPTION WHEN check_violation THEN
+  EXCEPTION WHEN check_violation OR foreign_key_violation THEN
     failed := true;
   END;
   IF NOT failed THEN
@@ -472,9 +479,14 @@ BEGIN
 
   failed := false;
   BEGIN
-    INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
-                                 type, credits, display_order)
-    VALUES (course_elective_a, cohort_a, period_a, term_a1, 'CORE', 3, 2);
+    INSERT INTO course_offerings(
+      course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+      type, credits, display_order
+    )
+    VALUES (
+      course_elective_a, cohort_a, period_a, term_a1, term_course_core_a,
+      'CORE', 3, 2
+    );
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
@@ -487,6 +499,23 @@ BEGIN
                                type, credits, display_order)
   VALUES (course_elective_a, cohort_a, period_a, term_a1, 'ELECTIVE', 3, 2)
   RETURNING id INTO elective_offering_a;
+
+  failed := false;
+  BEGIN
+    INSERT INTO course_offerings(
+      course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+      type, credits, display_order
+    )
+    VALUES (
+      course_elective_a, cohort_a, period_a, term_a1, term_course_core_a,
+      'ELECTIVE', 3, 99
+    );
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'ELECTIVE offering claimed a fixed curriculum row';
+  END IF;
 
   -- Delivery must inherit exactly the offering's cohort/period through its section.
   failed := false;
@@ -538,9 +567,14 @@ BEGIN
 
   failed := false;
   BEGIN
-    INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
-                                 type, credits, display_order)
-    VALUES (course_core_a, cohort_a, period_b, term_a1, 'CORE', 4, 1);
+    INSERT INTO course_offerings(
+      course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+      type, credits, display_order
+    )
+    VALUES (
+      course_core_a, cohort_a, period_b, term_a1, term_course_core_a,
+      'CORE', 4, 1
+    );
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
