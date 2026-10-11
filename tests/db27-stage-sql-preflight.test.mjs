@@ -163,3 +163,11 @@ test("canonical DB04 draft owns education, images and receipt checks once", () =
     "learner_profile_images_receipt_fk",
   ]) assert.ok(canonical.includes(phrase),"Canonical DB04 missing "+phrase);
 });
+
+test("duplicate CREATE TABLE in a single draft is rejected", () => {
+  const report=analyze({candidates:[candidate("twice.sql",
+    "CREATE TABLE repeated (id int); CREATE TABLE repeated(id int);")]});
+  assert.deepEqual(report.repeatedWithinFile,
+    [{file:"twice.sql",tables:["repeated"]}]);
+  assert.equal(report.hazards,true);
+});
