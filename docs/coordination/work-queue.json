@@ -650,13 +650,17 @@
         "docs/planning/db09-chat03-round-scheduling-audit.md",
         "src/modules/placements/tpo-messaging-service.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "b8f8b3b773f2ab4cbf1b7171c82ec25724914e91",
+      "status": "BLOCKED",
+      "latestEvidenceSha": "4f34ec1b561a3e55dfd6d79e42ebccefccef328f",
       "verificationEvidence": [],
       "blockers": [
         "MIGRATION/RUNTIME ONLY: Chat 1/W01 must register approved DB09 staged schemas/SQL in dependency order, replay from zero on CI-independent disposable PostgreSQL, and execute tenant/privacy/concurrency witnesses.",
         "Runtime producer/consumer cutover and API compatibility remain unverified; source/design closure is not runtime parity.",
-        "GitHub Actions billing/availability is non-blocking; use the independent PostgreSQL verification path."
+        "GitHub Actions billing/availability is non-blocking; use the independent PostgreSQL verification path.",
+        "DB10 owner must choose/replay generalized APP+EMAIL+SMS notification event/undo/digest and sealed outbound contract, execute independent PG tenant/race witnesses.",
+        "DB06 owner must decide canonical assessment resource for legacy prep assessment_id; current TPO UI sends courseId only, but backend API accepts both.",
+        "TPO/company product owner must decide export_columns_json owner/audience; current UI remembers share columns in browser localStorage and sends columns on per-link request, not demonstrated global DB preference.",
+        "Chat 1 registration and independently executed disposable PostgreSQL acceptance still pending; GitHub Actions billing intentionally irrelevant."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -733,9 +737,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T11:01:00+05:30",
           "reason": "Chat 3 resumed blocked DB-012 only for independent notification_outbox undo/digest and DB06 prep assessment source-contract design; migration/PG and cross-domain signoff blockers remain."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T11:08:17+05:30",
+          "reason": "Chat 3 cross-domain reinvestigation completed: 13 notification outbox + assessment_id + company export preference source notes, scoped undo/digest SQL drafted and six static tests authored; runtime PostgreSQL and consumer decisions still not verified."
         }
       ],
-      "progressNote": "DB09 canonical field disposition is closed: 279/279 source fields reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level blockers, 0 DB/runtime verified. Chat 3 resolved relationship-scoped company share defaults, normalized legacy notification_outbox into notification intents/cancellation groups + in-app/encrypted external children, and retired dormant prep assessment_id based on current FE/backend evidence. Remaining work is integration/runtime acceptance, not source-field meaning."
+      "progressNote": "DB09 279/279 source dispositions, 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 semantically/DB verified. Chat 3 revisited all 15 blocked fields with current legacy API/UI and outbox producer evidence; staged scoped notification intent/undo/digest SQL and six static test cases. 10 + 11 read-only source assertions passed, Node tests and PostgreSQL NOT EXECUTED. CI billing is not a blocker."
     },
     {
       "id": "DB-013",
