@@ -21,6 +21,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
+import { courseSectionDeliveries } from "./courses";
 import { courseQuizzes } from "./quizzes";
 import { users } from "./users";
 
@@ -38,6 +39,10 @@ export const courseQuizLifecycleEventsStaged = pgTable(
       .references(() => colleges.id, {
         onDelete: "restrict",
       }),
+    deliveryId: uuid("delivery_id").references(
+      () => courseSectionDeliveries.id,
+      { onDelete: "restrict" },
+    ),
     actorUserId: uuid("actor_user_id").references(
       () => users.id,
       { onDelete: "restrict" },
@@ -46,6 +51,9 @@ export const courseQuizLifecycleEventsStaged = pgTable(
       "actor_membership_id",
     ).references(() => collegeMemberships.id, {
       onDelete: "restrict",
+    }),
+    actorRole: varchar("actor_role", {
+      length: 32,
     }),
     action: varchar("action", {
       length: 32,
@@ -121,9 +129,11 @@ export const courseQuizLifecycleEventsStaged = pgTable(
         ${table.action} = 'BASELINE'
         and ${table.actorUserId} is null
         and ${table.actorMembershipId} is null
+        and ${table.actorRole} is null
       ) or (
         ${table.action} <> 'BASELINE'
         and ${table.actorUserId} is not null
+        and ${table.actorRole} in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')
       )`,
     ),
   ],
