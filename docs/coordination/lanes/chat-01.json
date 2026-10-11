@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-025",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB025_DESTRUCTIVE_DB_GUARD_STARTED",
+    "checkpointKind": "DB025_SOURCE_COMPLETED_PG_PENDING",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "6eabcf8cb56df5b455aee6e5b01705e29c38329e",
-    "lastWorkerMergedSha": "eadb9b5ed8120cb4e366452132a805764589b928",
+    "observedMainSha": "be155f23f6e47e836403080cc21e526e21efcc93",
+    "lastWorkerMergedSha": "5088bbb27c2c2058f393dbda3da3f8872f1bb95b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 1 started DB-025 CORE_INFRA hardening: fail-close destructive test database target selection before DB replay and negative integration witnesses."
+    "summary": "DB-025 completed: destructive test prepare now fails closed without explicit TEST_DATABASE_URL and preflights the conservative target guard before any reset. 12/12 no-PG safety assertions passed in isolated Node harness. Full disposable PostgreSQL acceptance remains pending."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -33,12 +33,15 @@
     "tests/db014-tenant-fk-sweep.test.mjs",
     "tests/db04-candidate-sql-integrity.test.mjs",
     "tests/db16-private-storage-safety.test.mjs",
-    "tests/db-independent-verifier.test.mjs"
+    "tests/db-independent-verifier.test.mjs",
+    "tests/db01-test-database-guard.test.mjs"
   ],
-  "lastExecutedPassingTests": [],
+  "lastExecutedPassingTests": [
+    "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
+  ],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Audit scripts/db-lib.ts, scripts/db-test-prepare.ts and destructive DB test entrypoints; make test database selection fail closed against production/non-disposable targets; add static/unit guards without relying on Actions.",
+  "nextAction": "No dependency-satisfied pre-existing READY task. Add/claim a non-duplicating DATABASE source-preparation task for the global staged migration collision/order manifest, leaving DB-002/DB-017 actual replay/registration gated.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -75,17 +78,19 @@
     "DB-010",
     "DB-014",
     "DB-016",
-    "DB-001"
+    "DB-001",
+    "DB-025"
   ],
   "lastPickedAt": "2026-10-11T07:32:00.000Z",
-  "lastCompletedAt": "2026-10-11T05:38:00.000Z",
+  "lastCompletedAt": "2026-10-11T07:37:43.189Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
     "DB-010",
     "DB-014",
     "DB-016",
-    "DB-001"
+    "DB-001",
+    "DB-025"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
