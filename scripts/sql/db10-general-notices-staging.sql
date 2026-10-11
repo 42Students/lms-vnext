@@ -134,6 +134,19 @@ BEFORE INSERT OR UPDATE OF organization_id,college_id,source_event_id,recipient_
 ON general_notification_outbox
 FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard();
 
+-- Revalidate recipient authorization when an old intent becomes actionable.
+-- An authorization witness at enqueue is not a perpetual permission grant:
+-- membership suspension, role revocation or parent reassignment may happen
+-- during an undo hold, queue backoff, or expired claim lease.
+-- This trigger uses the same locked college/event/membership/role witness as
+-- INSERT. It also covers CLAIMED lease renewal with the same status.
+CREATE TRIGGER db10_general_notice_delivery_scope_trg
+BEFORE UPDATE OF status,claimed_by,claimed_at,claim_expires_at,claim_fence
+ON general_notification_outbox
+FOR EACH ROW
+WHEN (NEW.status IN ('CLAIMED','HANDED_OFF','SENT'))
+EXECUTE FUNCTION db10_general_notice_scope_guard();
+
 -- DB24 staging: immutable enqueue identity and database-clock undo deadline.
 -- The initial shape CHECK alone cannot stop a caller from backdating created_at
 -- or mutating the held event after insertion.
