@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-037",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB033_APP_SETTING_DISPOSITION_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB037_NOTIFICATION_TEMPLATE_DISPOSITION_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a34220258aa5b97f26c2472d3c5af5d809c5209a",
+    "observedMainSha": "aff7a9bcac47fa1c5198c2dd31893dfb2f887640",
     "lastWorkerMergedSha": "432dcd558f9147c75914c0de5fc7e1afb8643b46",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-033 dispositioned 25 explicit legacy app_setting keys: DB01 7, DB05 1, DB08 1, DB10 8, module_access_rules 6, source-retired 2. Arbitrary dynamic keys remain typed-registry redesign. 28/28 connector source checks; runtime NOT RUN."
+    "summary": "DB-037 started: disposition 56 legacy notification template fields; current pinned runtime uses in-code event content + provider config, not DB/CSV template registry."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -75,7 +75,7 @@
     "Chat 2 DB01: own host/cookie/OTP/identity limit setting targets from DB-033 registry.",
     "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry."
   ],
-  "nextAction": "Refresh the DATABASE queue and claim the next eligible work; if dependencies stay locked, continue non-conflicting source-backed gap discovery/review.",
+  "nextAction": "Build exact 56-field machine-readable disposition, source contract and static guards. No Drizzle migration/table unless source proves an active persisted template writer/reader.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -119,7 +119,8 @@
     "DB-026",
     "DB-029",
     "DB-031",
-    "DB-033"
+    "DB-033",
+    "DB-037"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -135,7 +136,7 @@
     "DB-031",
     "DB-033"
   ],
-  "lastPickedAt": "2026-10-11T13:24:00+05:30",
+  "lastPickedAt": "2026-10-11T13:42:00+05:30",
   "lastCompletedAt": "2026-10-11T13:31:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
