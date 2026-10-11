@@ -61,27 +61,64 @@ function databaseName(databaseUrl: string) {
   );
 }
 
-export function assertResetAllowed(databaseUrl: string) {
-  const parsed = new URL(databaseUrl);
-  const name = databaseName(databaseUrl);
+function resetTarget(databaseUrl: string) {
+  let parsed: URL;
+  try {
+    parsed = new URL(databaseUrl);
+  } catch {
+    throw new Error("Refusing reset: DATABASE_URL is not a valid PostgreSQL URL");
+  }
 
-  if (["postgres", "template0", "template1"].includes(name)) {
+  if (!["postgres:", "postgresql:"].includes(parsed.protocol)) {
+    throw new Error("Refusing reset: DATABASE_URL must use a PostgreSQL URL");
+  }
+
+  const name = databaseName(databaseUrl);
+  if (!name || name.includes("/") || !/^[a-z0-9_]+$/i.test(name)) {
     throw new Error(
-      `Refusing to reset protected PostgreSQL database: ${name}`,
+      "Refusing reset: DATABASE_URL must specify a simple PostgreSQL database name",
     );
   }
 
-  const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
-  if (
-    localHosts.has(parsed.hostname) ||
-    process.env.ALLOW_DB_RESET === "true"
-  ) {
+  return {
+    host: parsed.hostname.toLowerCase(),
+    port: parsed.port || "5432",
+    name,
+  };
+}
+
+export function assertResetAllowed(databaseUrl: string) {
+  const target = resetTarget(databaseUrl);
+
+  if (["postgres", "template0", "template1"].includes(target.name)) {
+    throw new Error(
+      `Refusing to reset protected PostgreSQL database: ${target.name}`,
+    );
+  }
+
+  const localHosts = new Set([
+    "localhost",
+    "127.0.0.1",
+    "::1",
+    "[::1]",
+  ]);
+  if (localHosts.has(target.host)) {
     return;
   }
 
-  throw new Error(
-    "Refusing to reset a non-local database. Set ALLOW_DB_RESET=true only for a deliberate disposable environment.",
-  );
+  if (process.env.ALLOW_DB_RESET !== "true") {
+    throw new Error(
+      "Refusing to reset a non-local database. Set ALLOW_DB_RESET=true only for a deliberate disposable environment.",
+    );
+  }
+
+  const expectedConfirmation =
+    `RESET:${target.host}:${target.port}/${target.name}`;
+  if (process.env.DB_RESET_CONFIRM !== expectedConfirmation) {
+    throw new Error(
+      `Refusing remote reset without exact DB_RESET_CONFIRM=${expectedConfirmation}`,
+    );
+  }
 }
 
 export async function migrateDatabase(
