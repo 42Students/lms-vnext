@@ -163,3 +163,18 @@ Three new/update source contract test suites were reconciled after deletion of t
 **Consolidation:** Chat 4 folded S13 and S12 promotion-readiness into `scripts/sql/db02-academic-progression-and-rooms-staging.sql` at commit `087013aaa8942532f063716d18286b9241ab3584`, with **51 structurally paired functions and 59 distinct trigger names**. The independent proposal drafts are superseded and must **NOT** be applied after canonical SQL. The updated tests read canonical directly, and disposable acceptance scripts target that canonical stage. Chat 1 alone registers numbered migration/schema-barrel and runs PostgreSQL.
 
 **Status:** source inspection only; **0 PostgreSQL executions/0 runtime-verified DB02 fields**. Must test actual migration, both concurrency orderings, historical read consistency and role privileges before DONE_VERIFIED.
+
+## DB02-S14 · HIGH · Direct status/ended_at reactivation resurrects revoked roles and orphaned sections
+
+**Found:** Original DB02 scope triggers validate ACTIVE college membership and FACULTY/LEARNER role only on INSERT or changes to parent FKs. The role-deletion/membership-ended cleanup mutates only ended_at or status. A later direct SQL write changing those fields back to NULL or ACTIVE bypassed role validation. Directly completing/withdrawing a parent learner program could also leave its section enrollments ACTIVE.
+
+**Canonical correction:** Chat 4 commit ce7479160bee5b40c149640dab93958ca3a60175 added four functions/six triggers:
+- For faculty course pools, section faculty and course-teaching assignments, restoring ended_at=NULL after closure requires current ACTIVE membership + FACULTY role (FOR SHARE row locks). Closures remain legal when the role/membership has already ended.
+- Program enrollment reactivation requires ACTIVE membership + LEARNER role.
+- Section enrollment reactivation locks and requires an ACTIVE parent program enrollment, ACTIVE college membership and LEARNER role.
+- Parent program exit closes still-ACTIVE section enrollments: COMPLETED propagates COMPLETED, WITHDRAWN propagates WITHDRAWN, preserving ended_at.
+- Structural source inspection at integration: 56 paired PL/pgSQL functions / 66 unique triggers. Duplicate standalone overlay removed once canonical committed.
+
+**Authored but UNEXECUTED:** scripts/sql/db02-activation-role-lifecycle-acceptance-unregistered.sql (rollback-only, 6 negative witnesses require exact business error messages using GET STACKED DIAGNOSTICS, positive role-restoration and exit propagation), tests/db02-role-reactivation-contract.test.mjs (8 source tests). Disposable runner now requires 18 trigger witnesses and runs new cases. No Node, PostgreSQL, CI or migration replay execution has occurred; runtime verified DB02 fields remain 0.
+
+**Remaining:** execute PostgreSQL role/membership revocation and reactivation race tests, verify auth-grants boundary, preserve explicit API approval/history of reinstatement, and ensure numbered DB02 migration registration through Chat 1.
