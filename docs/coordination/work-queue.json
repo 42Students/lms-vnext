@@ -251,7 +251,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "8d348b9da606aab3e83d35af6b940939dae235b2",
+      "latestEvidenceSha": "952e197d7f2945facec2cb928f2e951bcb9d9191",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -286,7 +286,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source and target design disposition is complete for 125/125 legacy candidates. Canonical unregistered staging now covers program terms/curriculum, stable offering program-term identity, cohort progression/history + INACTIVE + lifecycle dates, section min/max/description + legacy dates, lecture halls/overlap/hall-archive race, and broad faculty-course pool with ACTIVE FACULTY guard. Current-main static reconciliation found 0 malformed PL/pgSQL delimiters and confirmed actor SET NULL, journal TRUNCATE guard, scoped progression triggers and hall row locking. Registered Drizzle integration, zero-to-current PostgreSQL replay and runtime acceptance remain unexecuted; runtime verified=0 and DB-005 stays IN_PROGRESS."
+      "progressNote": "DB02 125/125 source/target disposition completed (0 runtime verified). Chat 4 additionally staged isolated parent-college, cohort/section/enrollment, LEARNER/FACULTY role and historical reparent locking guards with 10 authored static contract cases; 12/12 tool-executed source checks pass. All SQL unregistered; PostgreSQL replay/concurrency/tenant acceptance not executed. See DB02 updated contract and #24."
     },
     {
       "id": "DB-006",
@@ -650,13 +650,17 @@
         "docs/planning/db09-chat03-round-scheduling-audit.md",
         "src/modules/placements/tpo-messaging-service.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "b8f8b3b773f2ab4cbf1b7171c82ec25724914e91",
+      "status": "BLOCKED",
+      "latestEvidenceSha": "4f34ec1b561a3e55dfd6d79e42ebccefccef328f",
       "verificationEvidence": [],
       "blockers": [
         "MIGRATION/RUNTIME ONLY: Chat 1/W01 must register approved DB09 staged schemas/SQL in dependency order, replay from zero on CI-independent disposable PostgreSQL, and execute tenant/privacy/concurrency witnesses.",
         "Runtime producer/consumer cutover and API compatibility remain unverified; source/design closure is not runtime parity.",
-        "GitHub Actions billing/availability is non-blocking; use the independent PostgreSQL verification path."
+        "GitHub Actions billing/availability is non-blocking; use the independent PostgreSQL verification path.",
+        "DB10 owner must choose/replay generalized APP+EMAIL+SMS notification event/undo/digest and sealed outbound contract, execute independent PG tenant/race witnesses.",
+        "DB06 owner must decide canonical assessment resource for legacy prep assessment_id; current TPO UI sends courseId only, but backend API accepts both.",
+        "TPO/company product owner must decide export_columns_json owner/audience; current UI remembers share columns in browser localStorage and sends columns on per-link request, not demonstrated global DB preference.",
+        "Chat 1 registration and independently executed disposable PostgreSQL acceptance still pending; GitHub Actions billing intentionally irrelevant."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -733,9 +737,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T11:01:00+05:30",
           "reason": "Chat 3 resumed blocked DB-012 only for independent notification_outbox undo/digest and DB06 prep assessment source-contract design; migration/PG and cross-domain signoff blockers remain."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T11:08:17+05:30",
+          "reason": "Chat 3 cross-domain reinvestigation completed: 13 notification outbox + assessment_id + company export preference source notes, scoped undo/digest SQL drafted and six static tests authored; runtime PostgreSQL and consumer decisions still not verified."
         }
       ],
-      "progressNote": "DB09 canonical field disposition is closed: 279/279 source fields reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level blockers, 0 DB/runtime verified. Chat 3 resolved relationship-scoped company share defaults, normalized legacy notification_outbox into notification intents/cancellation groups + in-app/encrypted external children, and retired dormant prep assessment_id based on current FE/backend evidence. Remaining work is integration/runtime acceptance, not source-field meaning."
+      "progressNote": "DB09 279/279 source dispositions, 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 semantically/DB verified. Chat 3 revisited all 15 blocked fields with current legacy API/UI and outbox producer evidence; staged scoped notification intent/undo/digest SQL and six static test cases. 10 + 11 read-only source assertions passed, Node tests and PostgreSQL NOT EXECUTED. CI billing is not a blocker."
     },
     {
       "id": "DB-013",
@@ -1304,7 +1313,7 @@
         "tests/db10-general-notices-staging.test.mjs"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "a33d10c014847f4e75f9601fd2a28c0f69bc8b02",
+      "latestEvidenceSha": "26fb964665b0477c02aeeed34d5beb3d532bbcf3",
       "verificationEvidence": [],
       "blockers": [
         "MIGRATION_UNREGISTERED: DB10 general notices Drizzle/SQL drafts not in journal/schema barrel; only Chat 1 may integrate.",
@@ -1312,7 +1321,7 @@
         "PRODUCER_CONSUMER_OPEN: no runtime APP projection, cancel/claim dispatcher, grouped digest or encrypted external handoff proof.",
         "POSTGRES_ACCEPTANCE_PENDING: 12 specified DB24 negative/race witnesses and six authored Node static tests not executed. GitHub Actions billing is not a prerequisite; use independent runner."
       ],
-      "completionNote": "Bounded source and SQL staging: legacy V161 notification_outbox 13 columns mapped; staged isolated general APP/EMAIL/SMS intent table with same-college membership guard, fail-closed recruiter grant gate, 30-second minimum undo hold, digest local-day, claim fencing, idempotency, APP visibility vs external encrypted handoff. Four artifacts on main; 56 connector in-process source checks passed and six Node static tests authored, NOT_EXECUTED. PostgreSQL replay, producer/consumer, DLT/provider, grant/suppression/revocation races and migration integration pending; GitHub Actions intentionally paused for billing and not a blocker.",
+      "completionNote": "Bounded source and SQL staging: legacy V161 notification_outbox 13 columns mapped; staged isolated general APP/EMAIL/SMS intent table with same-college membership guard, fail-closed recruiter grant gate, 30-second minimum undo hold, digest local-day, claim fencing, idempotency, APP visibility vs external encrypted handoff. Four artifacts on main; 56 connector in-process source checks passed and seven Node static tests authored, NOT_EXECUTED. PostgreSQL replay, producer/consumer, DLT/provider, grant/suppression/revocation races and migration integration pending; GitHub Actions intentionally paused for billing and not a blocker. Post-completion source hardening on newest staged files adds source-event FK/scope, membership-role guard, source-event-aware idempotency, retained claimed_at audit and support-safe failure detail; connector consistency 14/14 PASS, still 0 Node/PG execution. In-process independent execution of all 7 assertion bodies PASS after corrected source-regex guards at 26fb964; still no Node runner or PostgreSQL test execution.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T11:00:00+05:30",
       "startedAt": "2026-10-11T11:01:00+05:30",
@@ -1347,8 +1356,28 @@
           "status": "COMPLETED",
           "at": "2026-10-11T05:35:36.314Z",
           "reason": "Source schema+SQL+mapping+authored guards committed. Runtime acceptance remains pending and no CI billing dependency."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T11:05:00+05:30",
+          "reason": "Post-completion source hardening reconciled newest DB24 schema/SQL/docs/tests; completion remains unverified."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T05:38:22.256Z",
+          "reason": "Completed task retained; updated static in-process assertion evidence to 7/7 passing, no runtime promotion."
         }
-      ]
+      ],
+      "staticSourceEvidence": {
+        "checkedAt": "2026-10-11T05:38:22.255Z",
+        "testSourceCommit": "26fb964665b0477c02aeeed34d5beb3d532bbcf3",
+        "testCases": 7,
+        "passed": 7,
+        "failed": 0,
+        "environment": "in-process V8 harness running committed Node test bodies against current GitHub file bytes; NOT Node runtime and NOT PostgreSQL",
+        "replayableNodeTest": "node --test tests/db10-general-notices-staging.test.mjs",
+        "postgresTestsExecuted": false
+      }
     }
   ],
   "eventModel": {

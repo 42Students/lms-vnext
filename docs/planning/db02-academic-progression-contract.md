@@ -229,3 +229,28 @@ DB-005 remains open until all of these are executed and attached to exact SHAs:
 13. re-check current legacy BE/FE heads before final certification.
 
 No source review, staging SQL or authored test alone counts as PASS.
+
+## Direct SQL tenant stability extension (Chat 4)
+
+**Isolated unregistered draft:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
+**Source contract test file:** `tests/db02-academic-parent-tenancy-contract.test.mjs`  
+**Status:** reviewed at source level; **not registered, executed against PostgreSQL, or runtime-verified**.
+
+The original `0002` academical enrollment tables have independent FKs to membership, program, cohort, section and academic period, but independent UUID references do not by themselves prove these rows share a college, cohort or period.
+
+The additional draft preserves tenant identity and referential semantics:
+
+- college ownership cannot be changed in place for departments, academic periods, memberships or lecture halls;
+- programs and courses can change departments **within** the original college; cross-college department switches are rejected;
+- a cohort's program and starting calendar period, and a program term's program/term ordinal, remain immutable academic identities;
+- a cohort's calendar period and a section's calendar period must belong to their program/cohort college;
+- learner program enrollment must match an **ACTIVE LEARNER membership**, matching college and matching cohort program;
+- section enrollment must use that learner's cohort and the actual section period;
+- section faculty assignment requires an **ACTIVE FACULTY membership** in the section's college;
+- enrollment and section-enrollment identity cannot be retroactively replaced by `UPDATE`: create a historical transition row instead;
+- an empty section may be moved within its college, but one with any learner, faculty, delivery or schedule history needs an explicit controlled-transfer workflow;
+- inserts of section enrollment, faculty assignment, delivery or schedule history take a `FOR SHARE` lock on the section so concurrent structural `NO KEY UPDATE` cannot silently race past the history checks.
+
+**Source parity tension:** legacy `ClassServiceImpl.updateClass` permits batch/program reassignment, whereas `BatchServiceImpl.updateBatch` rejects changing an already-created batch's program. The DB draft protects historical section references, but does not yet implement the equivalent *controlled* legacy class transfer; this remains a required API-wave compatibility item. The draft must be reconciled with DB01/DB03 guards to avoid duplicate or conflicting triggers.
+
+The direct SQL replay gate must cover valid same-college reassignment and invalid cross-college reassignment; concurrent history insert versus section move; active/inactive membership and LEARNER/FACULTY role rejection; and valid cohort/period learner transfers with immutable previous history. **No such PostgreSQL witnesses have been executed here.**

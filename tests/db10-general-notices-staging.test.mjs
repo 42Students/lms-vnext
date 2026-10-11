@@ -20,7 +20,8 @@ test("DB24 reconciles all 13 legacy notification_outbox fields explicitly", () =
     "send_after","status","undo_group_id","claimed_at","sent_at",
     "failure_reason","created_at",
   ]) {
-    assert.ok(spec.includes("\`"+field+"\`"), "Missing legacy field "+field);
+    assert.ok(new RegExp("^\\\\|\\\\s*" + field + "\\\\s*\\\\|", "m").test(spec),
+      "Missing legacy field table row "+field);
   }
   for (const field of [
     "organization_id","college_id","source_event_id","recipient_user_id",
@@ -45,9 +46,12 @@ test("DB24 cannot bypass the 30-second undo hold or cross-college membership che
   assert.match(sql, /NOT hold_for_undo OR/);
   assert.match(sql, /NOTIFICATION_COLLEGE_SCOPE_INVALID/);
   assert.match(sql, /NOTIFICATION_MEMBERSHIP_SCOPE_INVALID/);
+  assert.match(sql, /NOTIFICATION_SOURCE_EVENT_SCOPE_INVALID/);
+  assert.match(sql, /JOIN membership_roles mr ON mr\.membership_id = m\.id/);
+  assert.match(sql, /mr\.role::text = NEW\.recipient_type/);
   assert.match(sql, /NOTIFICATION_RECRUITER_GRANT_GUARD_NOT_REGISTERED/);
   assert.match(sql, /m.user_id = NEW.recipient_user_id/);
-  assert.match(sql, /m.college_id = NEW.college_id AND m.status = 'ACTIVE'/);
+  assert.match(sql, /m.college_id = NEW.college_id\s+AND m.status = 'ACTIVE'/);
   assert.match(sql, /FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard/);
 });
 test("DB24 digest scheduling, claim shape, fence, idempotency are staged", () => {
@@ -55,6 +59,7 @@ test("DB24 digest scheduling, claim shape, fence, idempotency are staged", () =>
     "db10_general_notices_digest_ck","db10_general_notices_claim_ck",
     "db10_general_notices_fence_ck","db10_general_notices_undo_ck",
     "db10_general_notices_sent_ck","db10_general_notices_idempotency_uq",
+    "db10_general_notices_source_recipient_channel_uq",
     "db10_general_notices_due_idx","db10_general_notices_undo_idx",
   ]){
     assert.ok(sql.includes(name),"Missing SQL "+name);
@@ -69,4 +74,16 @@ test("DB24 does not overwrite the recruiter encrypted outbound stage", () => {
   assert.doesNotMatch(schema, /export const db10OutboundMessages/);
   assert.match(spec, /outbound_messages/);
   assert.doesNotMatch(sql, /^\s*(?:TRUNCATE|DROP TABLE|DELETE FROM)\b/im);
+});
+
+
+test("DB24 source event, idempotency and claim audit hardening stay aligned", () => {
+  assert.match(sql, /source_event_id uuid NOT NULL REFERENCES activity_events\(id\) ON DELETE RESTRICT/);
+  assert.match(schema, /sourceEventId: uuid\("source_event_id"\)\.notNull\(\)[\s\S]*activityEvents\.id/);
+  assert.match(spec, /HMAC input MUST include `sourceEventId`/);
+  assert.match(sql, /safe_failure_reason varchar\(500\)/);
+  assert.match(schema, /safeFailureReason: varchar\("safe_failure_reason", \{ length: 500 \}\)/);
+  assert.match(sql, /status <> 'CLAIMED' AND claimed_by IS NULL\s+AND claim_expires_at IS NULL/);
+  assert.doesNotMatch(sql, /status <> 'CLAIMED' AND claimed_by IS NULL\s+AND claimed_at IS NULL/);
+  assert.match(spec, /V193 explicitly rewrites stored `recipient_type='HR'` to `RECRUITER`/);
 });

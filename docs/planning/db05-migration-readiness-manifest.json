@@ -33,7 +33,8 @@
         "COURSE_VISIBILITY_SEMANTIC_DECISION",
         "COURSE_PARENT_GRAPH_GUARD_MERGED_ONCE",
         "COURSE_PARENT_RACE_READ_COMMITTED_NEGATIVE",
-        "COURSE_DEPARTMENT_AND_PERIOD_UPSTREAM_REPARENT_POLICY"
+        "COURSE_DEPARTMENT_AND_PERIOD_UPSTREAM_REPARENT_POLICY",
+        "DEPARTMENT_COLLEGE_MOVE_GUARD_MERGED_ONCE"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
@@ -44,6 +45,15 @@
         "registered": false,
         "postgresExecuted": false,
         "limitations": "Under READ COMMITTED source-only proposal. Does not protect updates to department/academic-period parent rows, or other attached course/content scopes. Requires W01 merge+negative tests."
+      },
+      "companionUpstreamDepartmentDraft": {
+        "path": "scripts/sql/db05-department-college-move.draft.sql",
+        "purpose": "FAIL_CLOSED_DEPARTMENT_COLLEGE_REPARENT_WHEN_ANY_COURSE_EXISTS",
+        "registered": false,
+        "postgresExecuted": false,
+        "sharedAdvisoryLockKey": "605008001",
+        "pairedWith": "scripts/sql/db05-course-parent-graph-guard.draft.sql",
+        "note": "One canonical course parent guard; new narrow upstream departments guard uses identical READ COMMITTED + advisory key. Academic-period/offering/section reparent paths remain unproven. PostgreSQL acceptance NOT RUN."
       }
     },
     {
@@ -230,7 +240,7 @@
       "id": "COURSE_PARENT_UPSTREAM_COLLEGE_MOVE_INTEGRITY",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Child course trigger cannot prevent later direct departments.college_id and academic_periods.college_id mutation; reconcile with DB02/DB05 parent owners."
+      "evidence": "Companion scripts/sql/db05-department-college-move.draft.sql stages same 605008001 advisory lock to reject departments.college_id changes with courses. Academic-period/offering/section/membership moves still open. Neither SQL draft registered or executed on PostgreSQL."
     },
     {
       "id": "LESSON_DISCUSSIONS_SAME_COLLEGE_FULL_PATH_GUARD",
@@ -243,6 +253,12 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Existing discussion child trigger cannot prevent reparenting of lesson/content, course department, offerings, academic periods, delivery or memberships."
+    },
+    {
+      "id": "COURSE_DEPARTMENT_COLLEGE_MOVE_RACE_ACCEPTANCE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Two-connection PostgreSQL race between department ownership reassignment, course INSERT and parent mutation; SQLSTATE 23514/25001/deadlock handling not executed. Companion draft must be merged exactly once."
     }
   ],
   "sourceReview": {

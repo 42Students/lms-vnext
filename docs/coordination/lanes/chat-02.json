@@ -34,14 +34,14 @@
       "pullRequest": 65,
       "branch": "chat-02-db004-tenant-identity-negative-witness",
       "headSha": "da635154585a3453459539be29eba35bbf468c8f",
-      "status": "DRAFT_CI_PRESTEP_FAILURE_UNMERGED",
+      "status": "DRAFT_PG_ACCEPTANCE_PENDING_ACTIONS_BILLING_IGNORED",
       "authoredTest": "tests/integration/db01-tenant-identity-invariants.test.ts",
       "authoredCases": 14,
       "ciRun": 1393,
       "ciRunId": 38085377072,
       "ciConclusion": "failure",
       "executedPassingPostgresCases": 0,
-      "note": "14 source-authored rollback-only witnesses; explicit TEST_DATABASE_URL required. CI #1453 failed before retrievable steps. No database runtime acceptance.",
+      "note": "14 integration cases authored, not run against Postgres. GitHub Actions intentionally disabled for billing, NOT an implementation blocker; require independent disposable PostgreSQL execution.",
       "authoredTests": [
         "tests/integration/db01-tenant-identity-invariants.test.ts",
         "tests/integration/db01-identity-fk-invariants.test.ts"
@@ -110,8 +110,8 @@
     "tenantDomainTombstoneDraft": {
       "pullRequest": 73,
       "branch": "chat-02-db004-tenant-domain-tombstone",
-      "headSha": "19ef2488bbe71fdd36408b5ece202ec3c3f3c1fe",
-      "status": "DRAFT_CI_FAILED_UNREGISTERED",
+      "headSha": "2d97369518561f5cdc798fba833325407d0ee0b4",
+      "status": "DRAFT_UNREGISTERED_NODE_SOURCE_GUARDS_PASSED",
       "source": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 model/TenantDomain.java + BaseModel.java + TenantDomainRepository.java",
       "proposedSql": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
       "contract": "docs/planning/db01-tenant-domain-tombstone-contract.md",
@@ -122,7 +122,15 @@
       "ciRunId": 38085930214,
       "ciConclusion": "failure",
       "runtimeVerified": false,
-      "decisionRequired": "Keep all-time hostname uniqueness; coordinated API/resolver and DB tombstone activation; concurrency tests before promotion"
+      "decisionRequired": "Keep all-time hostname uniqueness; coordinated API/resolver and DB tombstone activation; concurrency tests before promotion",
+      "localSourceEvidence": "docs/planning/db01-tenant-domain-tombstone-local-test-evidence.md",
+      "testPath": "tests/db01-tenant-domain-tombstone-source.test.mjs",
+      "exactTestBlob": "21d8429bca59089a0d4294afd88077de580a2dd0",
+      "localNodeVersion": "v22.16.0",
+      "executedNodeCases": 6,
+      "passedNodeCases": 6,
+      "executedPostgresCases": 0,
+      "note": "Ran isolated local Node (no Actions) against byte-identical Git blob SQL/schema/test fixtures; six static/mutation tests passed, no SQL migration/runtime acceptance."
     },
     "db01PromotionManifest": {
       "state": "SOURCE_VALIDATED_STAGED_ONLY",
@@ -185,19 +193,37 @@
       "migrationsReplayed": false,
       "vnextSemanticFieldsVerified": 0,
       "criticalSharedHelper": "scripts/db-lib.ts still falls back from TEST_DATABASE_URL to DATABASE_URL; W01 exclusive writer, escalated issue #21"
+    },
+    "membershipStateGuardDraft": {
+      "pullRequest": 84,
+      "branch": "chat-02-db004-membership-state-guard",
+      "headSha": "4ed151a3dc6f00c5b1bb8dfcfd204d5be48c0957",
+      "status": "DRAFT_UNREGISTERED_NODE_SOURCE_GUARDS_PASSED",
+      "sql": "docs/planning/sql/db01-membership-suspension-state-staging.sql",
+      "contract": "docs/planning/db01-membership-suspension-contract.md",
+      "nodeTest": "tests/db01-membership-suspension-source.test.mjs",
+      "localExecution": "docs/planning/db01-membership-suspension-local-test-evidence.md",
+      "exactTestBlob": "f14b63e6eeb578dce6c5645346cb6b2d31fe744c",
+      "localNodeVersion": "v22.16.0",
+      "executedNodeCases": 8,
+      "passedNodeCases": 8,
+      "executedPostgresCases": 0,
+      "decisionRequired": "Review current status metadata invariant and ENDED/reenrollment semantics; Chat 1 owns registered migration"
     }
   },
   "qualityGates": {
-    "lint": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
-    "typecheck": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
-    "unit": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
-    "postgresIntegration": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE_PR65_1453",
-    "build": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "lint": "NOT_EXECUTED_INDEPENDENT_RUNNER",
+    "typecheck": "NOT_EXECUTED_INDEPENDENT_RUNNER",
+    "unit": "SOURCE_NODE_14_OF_14_PASSED_OTHER_UNIT_NOT_EXECUTED",
+    "postgresIntegration": "NOT_EXECUTED_NO_DISPOSABLE_POSTGRES_RUNNER",
+    "build": "NOT_EXECUTED_INDEPENDENT_RUNNER",
     "browser": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME",
     "db01TestTargetGuard": "EXECUTED_NODE_8_OF_8",
     "databaseReplay": "NOT_EXECUTED",
-    "realTenantIsolation": "NOT_EXECUTED"
+    "realTenantIsolation": "NOT_EXECUTED",
+    "sourceTombstoneGuard": "PASS_LOCAL_NODE_6_OF_6_EXACT_GIT_BLOBS",
+    "sourceMembershipGuard": "PASS_LOCAL_NODE_8_OF_8_EXACT_GIT_BLOBS"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -210,15 +236,16 @@
     "tests/db01-integration-manifest.test.mjs",
     "tests/db01-snapshot-column-presence.test.mjs",
     "tests/db01-type-nullability-review.test.mjs",
-    "tests/db01-test-database-guard.test.mjs"
+    "tests/db01-test-database-guard.test.mjs",
+    "tests/db01-tenant-domain-tombstone-source.test.mjs",
+    "tests/db01-membership-suspension-source.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
   ],
   "blockers": [
-    "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed.",
-    "DB-004 PR #65 remains draft: 14 authored PostgreSQL witnesses, 0 accepted runtime passes; CI run #1453 failed before retrievable steps.",
-    "Draft PR #73 tombstone contract unregistered; CI #1507 failed; requires Chat 1 migration and later API/resolver atomic delete/filter decisions, 0 PostgreSQL passes."
+    "Separate verification gap (not GitHub Actions): disposable PostgreSQL not available in this runner for DB01 migration replay and 14 authored integration witnesses.",
+    "DB01 staged tombstone, membership-state and auth/session schema need Chat 1 migration/product-policy decisions; none applied or PG verified."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -231,7 +258,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "Coordinate W01-only correction of db-lib TEST_DATABASE_URL fallback; continue registered DB01 staged schema integration and independent disposable PostgreSQL replay. CI billing is not a work blocker; 0 DB01 runtime semantic fields proven.",
+  "nextAction": "Continue DB-004 DATABASE only; ignore GitHub Actions billing. Independently run disposable Postgres migration replay/negative tests when a runner exists, have Chat 1 review staged DB01 schema. Already executed source guard tests: 14/14 Node local PASS against blob-identical GitHub files; never claim these are PostgreSQL proofs or DB01 semantic verified.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -285,7 +312,11 @@
     "https://github.com/42Students/lms-vnext/blob/main/scripts/db01-test-database-guard.mjs",
     "https://github.com/42Students/lms-vnext/blob/main/tests/db01-test-database-guard.test.mjs",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-disposable-postgres-test-preflight.md",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105879822"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105879822",
+    "https://github.com/42Students/lms-vnext/pull/84",
+    "https://github.com/42Students/lms-vnext/commit/2d97369518561f5cdc798fba833325407d0ee0b4",
+    "https://github.com/42Students/lms-vnext/commit/4ed151a3dc6f00c5b1bb8dfcfd204d5be48c0957",
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105903851"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [

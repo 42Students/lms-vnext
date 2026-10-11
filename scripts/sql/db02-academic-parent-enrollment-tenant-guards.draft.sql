@@ -177,7 +177,20 @@ DECLARE
   cohort_program uuid;
 BEGIN
   SELECT college_id INTO membership_college
-    FROM college_memberships WHERE id = NEW.membership_id;
+    FROM college_memberships
+   WHERE id = NEW.membership_id AND status = 'ACTIVE'
+   FOR SHARE;
+  IF membership_college IS NULL THEN
+    RAISE EXCEPTION 'DB02 learner enrollment requires active college membership'
+      USING ERRCODE = '23514';
+  END IF;
+  PERFORM 1 FROM membership_roles
+   WHERE membership_id = NEW.membership_id AND role = 'LEARNER'
+   FOR SHARE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'DB02 learner enrollment requires an active LEARNER'
+      USING ERRCODE = '23514';
+  END IF;
   SELECT d.college_id INTO program_college
     FROM programs p JOIN departments d ON d.id = p.department_id
    WHERE p.id = NEW.program_id;
@@ -305,7 +318,20 @@ BEGIN
     JOIN departments d ON d.id = p.department_id
    WHERE s.id = NEW.section_id;
   SELECT college_id INTO membership_college
-    FROM college_memberships WHERE id = NEW.membership_id;
+    FROM college_memberships
+   WHERE id = NEW.membership_id AND status = 'ACTIVE'
+   FOR SHARE;
+  IF membership_college IS NULL THEN
+    RAISE EXCEPTION 'DB02 section faculty assignment requires active membership'
+      USING ERRCODE = '23514';
+  END IF;
+  PERFORM 1 FROM membership_roles
+   WHERE membership_id = NEW.membership_id AND role = 'FACULTY'
+   FOR SHARE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'DB02 section faculty assignment requires FACULTY role'
+      USING ERRCODE = '23514';
+  END IF;
   IF section_college IS NULL OR membership_college IS NULL
      OR section_college <> membership_college THEN
     RAISE EXCEPTION 'DB02 faculty section assignment must match college'

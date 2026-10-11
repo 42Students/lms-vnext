@@ -62,3 +62,15 @@ A new scheduled event now checks active faculty membership and `membership_roles
 | Create cohort with supplied year vs July default; DB03 elective join | source-parity year/term decision applied | NOT EXECUTED |
 
 **Disposition:** DB-005 stays **IN_PROGRESS**. These are registration blockers or explicit decisions, not evidence that any live database failed. Chat 1 owns numbered migration registration and runnable replay; Chat 4 may amend its source contracts and support independent review without claiming tests passed.
+
+## Follow-up: isolated parent/learner tenant guard proposal
+
+**Draft committed:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
+**Authored source test:** `tests/db02-academic-parent-tenancy-contract.test.mjs` (10 test cases).  
+**Source execution:** 12/12 independent read-only structure checks passed against current draft blob. **No Node project test runner or PostgreSQL session executed.**
+
+This draft proposes a bounded remedy for **DB02-S06** without editing Chat 1's shared migration journal or colliding with simultaneous canonical staging changes. It forbids cross-college parent reparenting, permits same-college program/course department reassignment, enforces cohort/period/learner/faculty tenant relations with role checks, and protects source section-history identities. A generic `FOR SHARE` section parent-lock trigger is attached to learner enrollment, faculty assignment, course delivery and schedule event writes. Those locks are intended to conflict with concurrent `NO KEY UPDATE` section reparenting.
+
+**DB02-S06 disposition: PROPOSED MITIGATION / NOT ACCEPTED.** Chat 1 must reconcile with existing DB01 and DB03 parent triggers, register an approved migration and run disposable PostgreSQL direct-SQL and concurrent writer tests. Broader cross-organization `colleges.organization_id` ownership remains a DB01 responsibility. Membership suspension/role revocation after historical assignments, and the controlled legacy class-with-roster transfer workflow, remain separate behavioral decisions.
+
+Do not count the 10 authored source tests or 12 static source checks as PostgreSQL runtime acceptance. DB-005 and the DATABASE global phase remain IN_PROGRESS.
