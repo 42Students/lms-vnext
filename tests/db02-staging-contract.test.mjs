@@ -155,7 +155,7 @@ test("DB02 user deletion scrubs progression actor references without creating ac
 });
 
 
-test("DB02 concurrency harness preserves all eleven race families", () => {
+test("DB02 concurrency harness preserves all thirteen race families", () => {
   for (const label of [
     "Race 1:",
     "Race 2A:",
@@ -168,6 +168,8 @@ test("DB02 concurrency harness preserves all eleven race families", () => {
     "Race 5B:",
     "Race 6A:",
     "Race 6B:",
+    "Race 7A:",
+    "Race 7B:",
   ]) {
     assert.match(concurrencyShell, new RegExp("# " + label));
   }
@@ -184,6 +186,8 @@ test("DB02 concurrency harness preserves all eleven race families", () => {
     "PASS event race B",
     "PASS curriculum race A",
     "PASS curriculum race B",
+    "PASS period race A",
+    "PASS period race B",
   ]) {
     assert.ok(concurrencyShell.includes(pass), "missing concurrency witness: " + pass);
   }
@@ -204,4 +208,16 @@ test("CORE offering locks curriculum and materialized curriculum cannot be delet
   assert.match(sql, /Program-term course cannot be removed after an offering exists/);
   assert.match(acceptanceSql, /materialized curriculum row was deleted/);
   assert.match(acceptanceSql, /program-term course identity was rewritten/);
+});
+
+
+test("referenced academic period dates are stable and child validators lock periods", () => {
+  assert.match(sql, /CREATE FUNCTION db02_guard_academic_period_date_history\(\)/);
+  assert.match(sql, /CREATE TRIGGER db02_academic_period_date_history_guard/);
+  assert.match(sql, /Academic period dates cannot change after academic state references the period/);
+  assert.match(sql, /WHERE ap\.id = NEW\.start_period_id[\s\S]*FOR SHARE OF ap/);
+  assert.match(sql, /WHERE ap\.id = NEW\.expected_end_period_id[\s\S]*FOR SHARE OF ap/);
+  assert.match(sql, /WHERE ap\.id = NEW\.academic_period_id[\s\S]*FOR SHARE OF ap/);
+  assert.match(sql, /WHERE ap\.id = NEW\.current_period_id[\s\S]*FOR SHARE OF ap/);
+  assert.match(acceptanceSql, /referenced academic period dates were mutable/);
 });
