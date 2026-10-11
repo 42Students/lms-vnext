@@ -268,12 +268,6 @@ CREATE TRIGGER db09_lead_activity_actor_scope_guard
            (invite_sent_at IS NOT NULL AND invite_bounced_at >= invite_sent_at))
       AND (unsubscribed_at IS NULL OR invite_token_hash IS NULL)
     ),
-  CONSTRAINT placement_tpo_leads_not_now_shape_ck
-    CHECK (
-      manual_stage <> 'NOT_NOW'
-      OR not_now_reason IS NOT NULL
-      OR not_now_until IS NOT NULL
-    ),
   CONSTRAINT placement_tpo_leads_college_id_id_uq
     UNIQUE (college_id,id)
 );
