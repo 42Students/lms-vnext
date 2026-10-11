@@ -40,7 +40,8 @@
     "tests/db10-notification-template-disposition.test.mjs: 8 static duplicate-registry/source-disposition guards (authored, Node runtime not executed)",
     "tests/db10-activity-audit-context-staging.test.mjs: 8 static forensic-field/privacy/source guards (authored, Node runtime not executed)",
     "tests/db10-staged-drafts-source-map.test.mjs: 8 static 75-field draft-target/migration-readiness guards (authored; source audit 342/342, Node runtime not executed)",
-    "tests/db10-notification-campaign-staging.test.mjs: 12 Node source assertions authored; not executed"
+    "tests/db10-notification-campaign-staging.test.mjs: 12 Node source assertions authored; not executed",
+    "tests/db10-campaign-publish-guard.test.mjs: 10 authored Node source guards NOT_EXECUTED; DB49-01..16 PostgreSQL witnesses NOT_RUN."
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -83,7 +84,8 @@
     "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry.",
     "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval.",
     "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates.",
-    "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows."
+    "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
+    "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
   "nextAction": "Author and source-test the DB-018 static + disposable PostgreSQL witnesses; avoid schema/journal/shared root packages.",
   "historicalPriorAssignment": {
@@ -125,7 +127,8 @@
     "https://github.com/42Students/lms-vnext/commit/c8688c5265d8461272c38e07e37769afd18c0345",
     "https://github.com/42Students/lms-vnext/commit/cb61a4ee055329d5140bc3ef87ec6744c8c6aeba",
     "https://github.com/42Students/lms-vnext/commit/011f7cf02eae3a539e3cb28e6902d3eeea7acce2",
-    "https://github.com/42Students/lms-vnext/commit/6c652ef6d03758d2b303c142ee719320a41965fe"
+    "https://github.com/42Students/lms-vnext/commit/6c652ef6d03758d2b303c142ee719320a41965fe",
+    "https://github.com/42Students/lms-vnext/commit/9c56dcf67a13419cf651c0845698ca36dee222d1"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -146,7 +149,8 @@
     "DB-040",
     "DB-043",
     "DB-046",
-    "DB-018"
+    "DB-018",
+    "DB-049"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -165,10 +169,11 @@
     "DB-039",
     "DB-040",
     "DB-043",
-    "DB-046"
+    "DB-046",
+    "DB-049"
   ],
   "lastPickedAt": "2026-10-11T19:37:00+05:30",
-  "lastCompletedAt": "2026-10-11T19:34:00+05:30",
+  "lastCompletedAt": "2026-10-11T19:44:18+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
@@ -186,7 +191,8 @@
     "DB-037",
     "DB-039",
     "DB-040",
-    "DB-046"
+    "DB-046",
+    "DB-049"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
