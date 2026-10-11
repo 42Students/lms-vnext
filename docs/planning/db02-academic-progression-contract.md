@@ -260,7 +260,7 @@ This extension deliberately does **not** redefine canonical triggers. It adds on
 - learner section-enrollment cohort/period checks;
 - section parent row locks against history-insert vs structural-move races;
 - immutable learner-program and section-enrollment parent identity;
-- LEARNER-role removal / membership-END lifecycle cleanup that withdraws active academic state, while temporary SUSPENDED membership preserves it.
+- LEARNER-role removal / membership-END lifecycle cleanup that withdraws active academic state, while temporary SUSPENDED membership preserves it; role-delete and membership-END use separate table-specific trigger functions (no heterogeneous `NEW/OLD` composite coercion).
 
 Static deconfliction safety net:
 
@@ -269,7 +269,7 @@ Static deconfliction safety net:
 Direct latest-content reconciliation on 2026-10-11 found:
 
 - canonical PL/pgSQL functions: **25/25 paired**;
-- extension PL/pgSQL functions: **8/8 paired**;
+- extension PL/pgSQL functions: **9/9 paired**;
 - canonical ↔ extension trigger-name overlap: **0**.
 
 Executable but still **unexecuted** PostgreSQL acceptance helpers:
