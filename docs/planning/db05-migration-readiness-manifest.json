@@ -519,6 +519,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Unregistered scripts/sql/db05-tombstone-version-invariant.draft.sql: course, lesson and content tombstone transitions bump version once; staged cascade also bumps each newly deleted child's version. TV-01..TV-14 disposable PostgreSQL delete/restore, stale CAS, atomic child cascade, multi-session race, rollback and isolation checks required. Companion after version and tombstone columns only. No executed PG/Node pass."
+    },
+    {
+      "id": "DB05_OFFERING_DELIVERY_CROSS_COLLEGE_AND_COHORT_TERM_NEGATIVES",
+      "status": "NOT_RUN",
+      "owner": "W01_DB02_DB05",
+      "evidence": "Unregistered same-college course/program/cohort/start-end period/section child guard. Same-college wrong cohort/term and cross-college direct SQL negatives must run on disposable PostgreSQL; ordinary offering/delivery services already validate input but privileged inserts bypass."
+    },
+    {
+      "id": "DB05_OFFERING_DELIVERY_UPSTREAM_GRAPH_RACE",
+      "status": "NOT_RUN",
+      "owner": "W01_DB02_DB05",
+      "evidence": "Child trigger cannot prevent program.department_id, cohort.program_id/start/end period, academic_period.college_id/date, section.cohort/period, course.department, offering parent edits from invalidating historical rows. Shared advisory 605008003 source-only; real two-session race and lock-order proof required."
     }
   ],
   "sourceReview": {
@@ -778,6 +790,26 @@
       "postgresExecuted": false,
       "readyForProduction": false,
       "note": "Do not register independently; W01 must integrate after version/tombstone columns; compare two-session CAS writer vs delete/restore and per-child cascade. Require 14 TV-01..TV-14 PostgreSQL negative cases, exact version bump once, no stale writes. Node test authored not executed; PG NOT_RUN."
+    },
+    {
+      "id": "DB05_OFFERING_DELIVERY_DIRECT_WRITE_SCOPE",
+      "path": "scripts/sql/db05-offering-delivery-scope.draft.sql",
+      "type": "CROSS_DOMAIN_OFFERING_DELIVERY_SCOPE_COMPANION",
+      "baseCandidate": "src/db/schema/courses.ts course_offerings and course_section_deliveries",
+      "purpose": "CROSS_COLLEGE_COURSE_COHORT_PERIOD_AND_SAME_COLLEGE_WRONG_SECTION_COHORT_TERM_REJECTION",
+      "dependencies": [
+        "DB02_COHORT_PROGRAM_DEPARTMENT_ACADEMIC_PERIOD_BASE",
+        "COURSE_OFFERINGS_AND_DELIVERIES_REGISTERED",
+        "MATCH_OFFERING_COURSE_PROGRAM_COHORT_PERIOD_COLLEGE",
+        "MATCH_DELIVERY_EXACT_SECTION_COHORT_PERIOD",
+        "UPSTREAM_ACADEMIC_PERIOD_AND_PROGRAM_REPARENT_GUARD",
+        "PG_TWO_SESSION_OFFERING_DELIVERY_AND_ANCESTOR_RACES"
+      ],
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "advisoryKey": "605008003",
+      "note": "Source-backed API invariant SQL companion ONLY; NOT a new eighth DB05 independent migration. No PostgreSQL/race evidence. W01 owns integration and DB02 overlap resolution."
     }
   ],
   "verifiedSourceReferenceTests": {
