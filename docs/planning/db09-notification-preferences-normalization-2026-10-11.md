@@ -28,9 +28,9 @@ The source `NotificationOutboxService.OPTIONAL_EVENT_SWITCH` **actively consumes
 - `NUDGE` → `nudges`
 - `PREP_ASSIGNED` → `prepAssigned`
 
-When an optional event has **exactly false** for its switch, its optional delivery is suppressed. No settings row means enabled. All other notices remain always-on; changing these columns must **never** suppress mandatory round/offer/deadline/cancellation notices. Legacy SMS-cap semantics are a separate concern and are not widened by this schema refactor.
+When an optional event has **exactly false** for its switch, the legacy dispatcher suppresses only the **non-APP delivery**. The in-app notification is still materialized/sent because `dispatchOne` skips `switchedOff(...)` entirely for channel `APP`. No settings row means enabled. All other notices remain always-on; changing these columns must **never** suppress mandatory round/offer/deadline/cancellation notices. Legacy SMS-cap semantics are a separate concern and are not widened by this schema refactor.
 
-**API wave contract:** expose the historical `notificationToggles` object with exactly the same four camelCase keys, backed by the four boolean columns. Transactionally merge partial updates instead of replacing all values with defaults. The database migration does not implement or verify this producer/consumer cutover.
+**API wave contract:** expose the historical `notificationToggles` object with exactly the same four camelCase keys, backed by the four boolean columns. Transactionally merge partial updates instead of replacing all values with defaults. When a switch is false, preserve the APP notification and suppress only the optional external channel(s), exactly like the frozen dispatcher. The database migration does not implement or verify this producer/consumer cutover.
 
 ### Personal TPO preferences — saved user choices
 
@@ -61,7 +61,7 @@ DB-036 surgically removed the duplicate block and completed the frozen trusted-d
 3. **Database negatives on disposable PostgreSQL:** check each column type is `boolean`, `NOT NULL`, has the exact default, rejects `NULL`, has no legacy JSONB target, and `(college_id, user_id)` prevents duplicate preference rows. Verify missing company settings rows remain logically default-true on API read, even if no settings record exists.
 4. **Tenant and principal witnesses:** a recruiter or unrelated user must not update TPO college switches, and a college A actor must not read or mutate college B personal settings. Direct SQL role permissions or RLS checks must be evaluated separately from service guards.
 5. **Concurrency and partial updates:** submit two racing partial writes and prove one key update does not reset another key; ensure the eventual API transaction uses a correct conflict/version strategy. Do not interpret two independent Boolean defaults as a complete merge implementation.
-6. **Dispatcher and user-choice parity:** test all six optional event→switch cases, mandatory notices unaffected by switches, and exact personal choice read/write roundtrips. Do not assert the personal choices change delivery behavior unless the producer/consumer evidence actually establishes it.
+6. **Dispatcher and user-choice parity:** test all six optional event→switch cases; prove a false switch still leaves the APP notification intact while suppressing the optional external delivery; prove mandatory notices are unaffected by switches; and test exact personal choice read/write roundtrips. Do not assert the personal choices change delivery behavior unless the producer/consumer evidence actually establishes it.
 
 ## Source ledger and proof state
 
