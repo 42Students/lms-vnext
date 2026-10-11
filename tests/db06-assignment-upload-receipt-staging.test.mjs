@@ -174,6 +174,8 @@ test("DB053 file evidence has an exact consumed-attestation composite FK", () =>
     "courseUploadReceipts.attestedGeneration",
     "courseUploadReceipts.actualContentType",
     "courseUploadReceipts.actualSizeBytes",
+    "table.originalName",
+    "courseUploadReceipts.originalName",
   ]) {
     assert.ok(staged.includes(token), token);
   }
@@ -313,4 +315,130 @@ test("DB053 documents DB16 overlap rather than double-promoting its DB06 ALTERs"
     sql,
     /supersedes only the DB06 course_upload_receipts section/i,
   );
+});
+
+
+test("DB053 consumed evidence remains valid after later revocation", () => {
+  const consumedStart = staged.indexOf(
+    'check("course_upload_receipts_consumed_ck"',
+  );
+  const consumedEnd = staged.indexOf(
+    'check("course_upload_receipts_revocation_ck"',
+    consumedStart,
+  );
+  assert.ok(consumedStart >= 0);
+  assert.ok(consumedEnd > consumedStart);
+  const consumed = staged.slice(consumedStart, consumedEnd);
+
+  assert.doesNotMatch(consumed, /revoked} = false/);
+  assert.doesNotMatch(consumed, /revokedAt} is null/);
+  assert.match(
+    consumed,
+    /consumedAt} >= \$\{table\.scanAttestedAt\}/,
+  );
+  assert.match(
+    consumed,
+    /consumedAt} <= \$\{table\.expiresAt\}/,
+  );
+  assert.match(
+    contract,
+    /Post-consumption revocation is valid/,
+  );
+});
+
+test("DB053 terminal scan outcome keeps immutable scanner evidence", () => {
+  assert.match(
+    staged,
+    /scanStatus} = \\'PENDING\\'[\s\S]*scanAttestedBy} is null[\s\S]*scanStatus} in \(\\'CLEAN\\',\\'REJECTED\\'\)[\s\S]*lms-vnext-privileged-scanner/,
+  );
+  assert.match(
+    sql,
+    /upload receipt scan attestation evidence is immutable/,
+  );
+  assert.match(
+    sql,
+    /new upload receipt must start pending and unused/,
+  );
+});
+
+test("DB053 revocation authority is owner-before-consume or persisted admin", () => {
+  assert.match(
+    sql,
+    /NEW\.revoked_by_user_id = owner_user[\s\S]*OLD\.consumed_at IS NULL/,
+  );
+  assert.match(
+    sql,
+    /sr\.role = 'SUPER_ADMIN'/,
+  );
+  assert.match(
+    sql,
+    /mr\.role = 'COLLEGE_ADMIN'/,
+  );
+  assert.match(
+    sql,
+    /revoker lacks owner\/admin authority/,
+  );
+  assert.match(
+    sql,
+    /revocation evidence is immutable/,
+  );
+  assert.match(
+    sql,
+    /deletion requires prior revocation/,
+  );
+  assert.match(
+    contract,
+    /does not invent FACULTY revocation authority/,
+  );
+});
+
+test("DB053 deferred completeness closes dangling FILE and consumed-receipt states", () => {
+  for (const trigger of [
+    "db06_assignment_submission_file_set_required",
+    "db06_consumed_receipt_file_row_required",
+  ]) {
+    assert.match(
+      sql,
+      new RegExp(`CREATE CONSTRAINT TRIGGER ${trigger}`),
+    );
+  }
+  assert.match(
+    sql,
+    /DEFERRABLE INITIALLY DEFERRED/,
+  );
+  assert.match(
+    sql,
+    /FILE submission requires at least one immutable file row/,
+  );
+  assert.match(
+    sql,
+    /consumed assignment receipt requires immutable file row/,
+  );
+  assert.match(
+    contract,
+    /Deferred relational completeness/,
+  );
+});
+
+test("DB053 read revocation remains an explicit runtime activation blocker", () => {
+  assert.match(
+    contract,
+    /createAssignmentFileReadGrant[\s\S]*does not re-check the linked receipt lifecycle/,
+  );
+  assert.match(
+    sql,
+    /createAssignmentFileReadGrant must join the receipt and refuse signed reads/,
+  );
+  assert.match(
+    readiness,
+    /DB06_ASSIGNMENT_FILES_READY === "DB06_VERIFIED"/,
+  );
+
+  const readGrantStart = fileService.indexOf(
+    "export async function createAssignmentFileReadGrant",
+  );
+  assert.ok(readGrantStart >= 0);
+  const readGrant = fileService.slice(readGrantStart);
+  assert.match(readGrant, /assignmentSubmissionFiles/);
+  assert.doesNotMatch(readGrant, /courseUploadReceipts/);
 });
