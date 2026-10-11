@@ -40,12 +40,12 @@ CREATE INDEX identity_auth_handoffs_domain_expiry_idx
 -- and tested after Drizzle migration, NOT currently implemented):
 --
 -- UPDATE identity_auth_handoffs
---    SET consumed_at = NOW()
+--    SET consumed_at = clock_timestamp()
 --  WHERE code_mac = $1
 --    AND target_domain_id = $2
 --    AND target_host = $3
 --    AND consumed_at IS NULL
---    AND expires_at > NOW()
+--    AND expires_at > clock_timestamp()
 -- RETURNING user_id, target_membership_id, target_domain_id, target_host;
 --
 -- The service must lock/reload the ACTIVE user, ACTIVE matching membership,
@@ -61,3 +61,10 @@ CREATE INDEX identity_auth_handoffs_domain_expiry_idx
 -- Keep the raw code out of URL query/referrer/logs and enforce short TTL,
 -- origin/host binding, HTTPS and strict non-cacheable response.
 -- Purge expired/consumed code MAC rows using bounded retention.
+
+-- SECURITY-SAFE ROW TRANSITIONS (STAGED companion):
+-- docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql
+-- prevents direct SQL rearming, code/host/actor retargeting and expiry
+-- extension, and rechecks wall-clock expiry AFTER row-lock acquisition.
+-- A transaction-start NOW() is insufficient near deadline when blocked.
+-- Only Chat 1 may register the table + this trigger together after review.
