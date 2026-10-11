@@ -2068,7 +2068,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_active boolean distinct from content status; independent on create/update; source evidence LessonContentsServiceImpl.setLessonContents",
+          "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonContents.java",
+            "LessonContentsDTO.java",
+            "LessonContentsServiceImpl.setLessonContents",
+            "staged only, PostgreSQL/API NOT RUN"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
@@ -2232,7 +2241,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_enabled boolean distinct from content status; independent on create/update; source evidence LessonContentsServiceImpl.setLessonContents",
+          "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonContents.java",
+            "LessonContentsDTO.java",
+            "LessonContentsServiceImpl.setLessonContents",
+            "staged only, PostgreSQL/API NOT RUN"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
@@ -2304,7 +2322,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_points bigint with source clamp negative -> 0; DB06 assignment.max_points NOT proven equivalent",
+          "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonContents.java",
+            "LessonContentsDTO.java",
+            "LessonContentsServiceImpl.setLessonContents",
+            "staged only, PostgreSQL/API NOT RUN"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
@@ -2354,7 +2381,16 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_deadline_local timestamp WITHOUT timezone with clearDeadline=true distinct from omitted null; DB06 due_at TIMESTAMPTZ NOT proven equivalent",
+          "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonContents.java",
+            "LessonContentsDTO.java",
+            "LessonContentsServiceImpl.setLessonContents",
+            "staged only, PostgreSQL/API NOT RUN"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
