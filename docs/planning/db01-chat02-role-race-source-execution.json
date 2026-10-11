@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_ENDED_MEMBERSHIP_ROLE_MUTATION_TOCTOU_SOURCE_WITNESS",
+  "phase": "DATABASE",
+  "task": "DB-004",
+  "worker": "CHAT_02",
+  "status": "SOURCE_CONFIRMED_UNIMPLEMENTED_UNVERIFIED",
+  "provenance": "Exact main GitHub file blobs fetched through connected GitHub and 20 direct V8 source assertions run within the connector orchestration process.",
+  "files": {
+    "src/modules/people/repository.ts": "a4ef1404f61c7d3c026474e6211c12624c93a003",
+    "src/modules/people/membership-service.ts": "54c16cf7f6e233f6d54181e29c64f5fab299dc63",
+    "src/modules/people/membership-domain.ts": "0fb5b8083796a8b9f7e0fd385f209a21f2fde171",
+    "src/db/schema/memberships.ts": "2d5caf2676d00982014ca5e785e237e178f1f06f",
+    "docs/planning/db01-ended-membership-role-race-contract.md": "6ced26ca0eedd293d39c95f5f5b7832123c025e8",
+    "tests/db01-ended-membership-role-race-source.test.mjs": "fbcd727eeed1d0d051d2dc10899228e87cffb328"
+  },
+  "sourceAssertionResults": {
+    "executed": 20,
+    "passed": 20,
+    "failed": 0,
+    "classification": "CONNECTED_GITHUB_BLOB_SOURCE_ASSERTIONS_NOT_NODE_TESTS"
+  },
+  "authoredNodeTests": {
+    "path": "tests/db01-ended-membership-role-race-source.test.mjs",
+    "cases": 11,
+    "executed": 0,
+    "passed": 0
+  },
+  "postgres": {
+    "executed": 0,
+    "passed": 0,
+    "noneClaimed": true
+  },
+  "finding": "Role mutation service performs mutable-membership status check outside repository transaction; repository locks membership_roles but not parent college_memberships; lifecycle END locks and updates parent. New role grant can be committed after END based on stale pre-transaction authorization.",
+  "legacyRoleException": "Legacy UserServiceImpl authority builder disregards inherited deleted role marker; intentional security exception rather than clone.",
+  "requiredImplementation": "Before any role-grant INSERT, within same DB transaction as grant and event, acquire the membership parent row FOR UPDATE and reject status ENDED; either enforce every write path or add database trigger via Chat 1 sole migration ownership; test both transaction orderings and auth context freshness.",
+  "negativeGuarantees": [
+    "No migration registered",
+    "No production handler changed",
+    "No PostgreSQL race executed",
+    "No database field marked runtime verified",
+    "GitHub Actions billing intentionally ignored, not a task blocker"
+  ]
+}
