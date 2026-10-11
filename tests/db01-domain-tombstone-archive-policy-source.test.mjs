@@ -65,7 +65,7 @@ test("source decision identifies deadlock and requires coordinated service cutov
   assert.match(decision, /permanently nonarchivable/);
   assert.match(decision, /resolveCollegeUsage/);
   assert.match(decision, /deleteDomain/);
-  assert.match(decision, /both.*usage/i);
+  assert.match(decision, /(?:all.*usage|usage.*check)/i);
 });
 test("no destructive changes or live schema registration in alternative", () => {
   assert.doesNotMatch(activeProposal, /\b(?:DROP TABLE|DELETE FROM|TRUNCATE|ALTER TABLE)\b/i);
