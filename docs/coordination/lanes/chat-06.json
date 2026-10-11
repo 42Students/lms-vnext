@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_SOURCE_GUARDS_RECEIPTS_PARENT_CONTENT_ORDER_UNVERIFIED",
+    "checkpointKind": "DB008_AUTHORING_FACETS_LEARNER_VISIBILITY_SCOPED_ORDER_DEDUP_PENDING_PG",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
-    "lastWorkerMergedSha": "1d2349f2272827dbd223e4bf9cc4d4015f324c99",
+    "observedMainSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
+    "lastWorkerMergedSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB008 remains IN_PROGRESS in DATABASE. 92 source columns, zero formal database verified; seven independent SQL drafts unregistered. Source-only companion guards stage parent graph plus upstream department move; learner progress/classroom/discussions; shared DB06/DB16 receipt same-college/owner/target/private path; delivery-specific content ordering offering+cohort+period+college safety. Corrected staged receipt TypeScript import. New source-level checks passed, Node test files authored NOT executed, disposable PostgreSQL negative/race/replay NOT RUN, CI/typecheck/build NOT accepted. 25 source/gate decisions remain, especially per-lesson sequence uniqueness and upstream reparent constraints."
+    "summary": "DB008 remains IN_PROGRESS. Legacy DB05 snapshot 7 tables / 92 source fields, 25 semantic decisions OPEN, 0/92 formally database verified. Seven independent SQL drafts unregistered; DB05 child companions include canonical delivery order UNIQUE(delivery,lesson,sequence) with deferrable constraint (deduped duplicate), legacy lesson-content active/enabled/points bigint/naive deadline authoring, parent, discussion, progress, receipt tenant protections. Learner card allowed_for_display explicit-zero and metadata course-code override source evidence; learner status PUBLISHED versus legacy enabled&&active mismatch truth table authored. 19 read-only connector source structure assertions true, Node/PG/CI/typecheck/build NOT RUN/VERIFIED. Main commits directly; phase DATABASE unchanged."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -43,7 +43,11 @@
     "tests/db05-course-receipt-college-scope.test.mjs: authored, not executed",
     "tests/db05-receipt-readiness-manifest.test.mjs: authored, not executed",
     "tests/db05-content-delivery-order-scope.test.mjs: authored, not executed",
-    "tests/db05-content-order-readiness.test.mjs: authored, not executed"
+    "tests/db05-content-order-readiness.test.mjs: authored, not executed",
+    "tests/db05-lesson-content-authoring-facets.test.mjs: 4 Node tests authored, NOT EXECUTED",
+    "tests/db05-learner-course-card-source-contract.test.mjs: 3 authored, NOT EXECUTED",
+    "tests/db05-learner-content-visibility-matrix.test.mjs: 3 authored, NOT EXECUTED",
+    "tests/db05-content-delivery-order-unique.test.mjs: peer canonical authored, NOT EXECUTED"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -125,9 +129,15 @@
       "kind": "CONTENT_DELIVERY_ORDER_SAME_COLLEGE_TERM_SCOPE",
       "message": "PR #91 staged unregistered content delivery order scope trigger; PR #92 registered as extra companion with blocked same-offering/term/college PG negatives, per-lesson uniqueness, and upstream reparent gates. Need scoped unique sequence per (delivery,lesson) without falsely enforcing unique (delivery,sequence). Source assertions only; PG not run.",
       "commitSha": "1d2349f2272827dbd223e4bf9cc4d4015f324c99"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB008_LESSON_AUTHORING_CARD_VISIBILITY_ORDER_CANONICAL_DEDUP",
+      "commitSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
+      "message": "Canonical uniqueness is scripts/sql/db05-content-delivery-order-unique.draft.sql (DEFERRABLE, witnessed lesson id); duplicate Chat6 file/test deleted. Additional unregistered authoring companion scripts/sql/db05-lesson-content-authoring-facets.draft.sql preserves active/enabled/points Java long/deadline LocalDateTime clear semantics. Source matrix docs/planning/db05-learner-content-visibility-matrix.json, course card code/visibility docs/planning/db05-learner-course-card-source-contract.json. 25 open, 0 verified, no PG executed."
     }
   ],
-  "nextAction": "DB008 continued: analyze 25 unresolved semantic decisions and current source consumers, stage only nonconflicting exact contracts; W01 integrates 7 independent migrations and paired companions only with executed PG race/tenant proof. Preserve phase DATABASE.",
+  "nextAction": "Continue DB008 DATABASE-only source/consumer parity on 25 open decisions; W01 folds seven independent SQL drafts and relevant scoped companions with correct order (unique witness/DEFERRABLE, lesson authoring independent flags and LocalDateTime), executes disposable PostgreSQL constraints/races and hands off API cutover after global DB phase. Do not mark verification complete based on source static tests.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -195,7 +205,18 @@
     "https://github.com/42Students/lms-vnext/pull/87",
     "https://github.com/42Students/lms-vnext/pull/88",
     "https://github.com/42Students/lms-vnext/pull/91",
-    "https://github.com/42Students/lms-vnext/pull/92"
+    "https://github.com/42Students/lms-vnext/pull/92",
+    "https://github.com/42Students/lms-vnext/commit/30276c9c48ccd74e4e664d36117060c8bf66b4ed",
+    "https://github.com/42Students/lms-vnext/commit/4c186c95a173c6f4816f64d75501512051bc6ad8",
+    "https://github.com/42Students/lms-vnext/commit/f479547daf9e419d103bac1d82ec5e50602cc99e",
+    "https://github.com/42Students/lms-vnext/commit/6636f1d24bda7171209720ad6cc5732b7effb0b6",
+    "https://github.com/42Students/lms-vnext/commit/517cf575497004f8fd0ee5992adfa093bdb80ba5",
+    "https://github.com/42Students/lms-vnext/commit/20156ee4ed995bc392ace9ae5909f9819e6560e0",
+    "https://github.com/42Students/lms-vnext/commit/a76992294123077e79bfe8e289f7e9ec504831b7",
+    "https://github.com/42Students/lms-vnext/commit/fb9f8a9c8befae1477c468af9a450d8606d1febe",
+    "https://github.com/42Students/lms-vnext/commit/9e41c32c0965a423f7628739167a700083a84ca8",
+    "https://github.com/42Students/lms-vnext/commit/7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
+    "https://github.com/42Students/lms-vnext/commit/193b8ddead233d63e74997cbb90383bfb6a46041"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
