@@ -1718,7 +1718,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_future_schedule_room_lifecycle();
 -- Once dependent academic/attendance history exists, parent identity cannot be silently
 -- rewritten. SHARE locks serialize history creation against otherwise-valid parent moves.
 CREATE FUNCTION db02_guard_historic_offering_parent()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (NEW.cohort_id, NEW.academic_period_id, NEW.course_id, NEW.program_term_id)
      IS DISTINCT FROM
@@ -1731,7 +1731,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_historic_offering_parent_guard
 BEFORE UPDATE OF cohort_id, academic_period_id, course_id, program_term_id
@@ -1739,7 +1739,7 @@ ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_offering_parent();
 
 CREATE FUNCTION db02_guard_historic_delivery_parent()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (NEW.offering_id, NEW.section_id)
      IS DISTINCT FROM (OLD.offering_id, OLD.section_id)
@@ -1752,7 +1752,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_historic_delivery_parent_guard
 BEFORE UPDATE OF offering_id, section_id
@@ -1760,7 +1760,7 @@ ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_delivery_parent();
 
 CREATE FUNCTION db02_guard_historic_event_section()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.section_id IS DISTINCT FROM OLD.section_id AND (
       EXISTS (SELECT 1 FROM section_schedule_event_courses ec WHERE ec.schedule_event_id = OLD.id)
@@ -1772,7 +1772,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_historic_event_section_guard
 BEFORE UPDATE OF section_id ON section_schedule_events
@@ -1783,7 +1783,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_event_section();
 -- against history insertion. The parent guard then sees committed children
 -- or the child's validation runs against the committed parent.
 CREATE FUNCTION db02_lock_offering_for_delivery()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM course_offerings WHERE id = NEW.offering_id FOR SHARE;
   IF NOT FOUND THEN
@@ -1791,14 +1791,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_delivery_parent_serialization
 BEFORE INSERT OR UPDATE OF offering_id ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_lock_offering_for_delivery();
 
 CREATE FUNCTION db02_lock_delivery_for_teaching()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM course_section_deliveries WHERE id = NEW.delivery_id FOR SHARE;
   IF NOT FOUND THEN
@@ -1806,14 +1806,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_teaching_delivery_serialization
 BEFORE INSERT OR UPDATE OF delivery_id ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_lock_delivery_for_teaching();
 
 CREATE FUNCTION db02_lock_event_delivery_for_course_link()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- Lock rows in fixed order to reduce multi-resource deadlock exposure.
   PERFORM 1 FROM course_section_deliveries WHERE id = NEW.delivery_id FOR SHARE;
@@ -1826,14 +1826,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_event_course_parent_serialization
 BEFORE INSERT OR UPDATE OF schedule_event_id, delivery_id ON section_schedule_event_courses
 FOR EACH ROW EXECUTE FUNCTION db02_lock_event_delivery_for_course_link();
 
 CREATE FUNCTION db02_lock_event_for_attendance_history()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM section_schedule_events WHERE id = NEW.schedule_event_id FOR SHARE;
   IF NOT FOUND THEN
@@ -1841,7 +1841,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_attendance_session_event_serialization
 BEFORE INSERT OR UPDATE OF schedule_event_id ON attendance_sessions
