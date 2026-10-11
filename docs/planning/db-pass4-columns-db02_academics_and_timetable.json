@@ -7789,8 +7789,8 @@
         "status": "STAGED_UNREGISTERED",
         "target": "course_offerings.program_term_id -> program_terms.id",
         "rationale": "Academic period is calendar identity, not program curriculum-term identity. Stable term FK preserves semester history for deliveries, teaching assignments and DB03 eligibility.",
-        "coreRule": "CORE offering must have matching program_term_courses(program_term_id, course_id).",
-        "electiveRule": "ELECTIVE offering remains program-term bound but is not required to be in the fixed curriculum mapping.",
+        "coreRule": "CORE offering persists program_term_course_id -> program_term_courses.id; row must match offering program_term_id, course_id and CORE type. FK uses ON DELETE RESTRICT.",
+        "electiveRule": "ELECTIVE offering remains program-term bound with program_term_course_id NULL and is not required to exist in the fixed curriculum mapping.",
         "runtimePostgresStatus": "NOT_EXECUTED"
       },
       {
@@ -7829,6 +7829,22 @@
         "databaseAcceptanceCommit": "58f6b38f7aeb503d7d390c13ca8677610244bdff",
         "staticContractCommit": "30b303fba663196fbd3c82f6296488e30cc7b3a4",
         "apiHandoff": "docs/planning/db02-api-followup-after-database.md",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "CORE_OFFERING_CONCRETE_CURRICULUM_ROW",
+        "status": "STAGED_UNREGISTERED",
+        "target": "course_offerings.program_term_course_id -> program_term_courses.id ON DELETE RESTRICT",
+        "coreRule": "Required for CORE; referenced row must match exact program term, course and CORE curriculum type.",
+        "electiveRule": "Must be NULL for ELECTIVE so electives remain term-bound without forced fixed-curriculum membership.",
+        "concurrencyRationale": "Native FK deletion semantics plus semantic row validation protect materialized CORE curriculum identity from concurrent removal.",
+        "stagingCommit": "c98f30926f5c02760514d875caa39cf18e86d01e",
+        "typeMatchCommit": "4c7ef73956b84937cd210a2523aa547bade41946",
+        "acceptanceCommits": [
+          "25a883ab527308b3b2e9b6185c76116573402bd2",
+          "9815602567524d353c4a701a75507b3486158e15",
+          "88f51fb3c50f24f19f71bd5840c8d7c08573881f"
+        ],
         "postgresStatus": "NOT_EXECUTED"
       }
     ],
