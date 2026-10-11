@@ -72,6 +72,31 @@ BEGIN
             CONSTRAINT = 'db01_auth_attempt_expiry_monotonic_ck';
   END IF;
 
+  -- Enforce *real* PostgreSQL wall-clock expiry AFTER acquiring the row
+  -- lock. created_at <= verified_at < expires_at is not sufficient: a SQL
+  -- writer could otherwise backdate verified_at/used_at on an already expired
+  -- challenge, or reserve an expired retry/resend slot.
+  IF clock_timestamp() >= OLD.expires_at
+     AND (
+       (OLD.verified_at IS NULL AND NEW.verified_at IS NOT NULL)
+       OR (OLD.used_at IS NULL AND NEW.used_at IS NOT NULL)
+       OR NEW.verification_attempts > OLD.verification_attempts
+       OR NEW.resend_attempts > OLD.resend_attempts
+     ) THEN
+    RAISE EXCEPTION 'Expired auth attempt cannot verify, consume or reserve retries'
+      USING ERRCODE = '23514',
+            CONSTRAINT = 'db01_auth_attempt_expired_mutation_ck';
+  END IF;
+
+  -- Reject client-created future event timestamps (including values inside
+  -- the row's still-future expires_at window).
+  IF (OLD.verified_at IS NULL AND NEW.verified_at > clock_timestamp())
+     OR (OLD.used_at IS NULL AND NEW.used_at > clock_timestamp()) THEN
+    RAISE EXCEPTION 'Auth attempt verification/consume timestamps cannot be future dated'
+      USING ERRCODE = '23514',
+            CONSTRAINT = 'db01_auth_attempt_future_event_ck';
+  END IF;
+
   IF (OLD.verified_at IS NOT NULL
       AND NEW.verified_at IS DISTINCT FROM OLD.verified_at)
      OR (OLD.used_at IS NOT NULL
