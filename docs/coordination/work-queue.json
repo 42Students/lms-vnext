@@ -2862,38 +2862,38 @@
       "blockers": [],
       "completionNote": "DB-049 staged campaign SQL now locks active target USER membership and matching SECTION_COURSE offering+delivery FOR SHARE; status UPDATE to PUBLISHING/PUBLISHED rechecks scoped authorization, while unchanged-target cancellation/failure cleanup remains allowed. 10 authored Node tests and 16 documented negative/race PostgreSQL witnesses. 9/9 connector-side structural checks passed. Node/Postgres runtime NOT_EXECUTED; no registered migration or recipient API cutover.",
       "pickedBy": 5,
-      "pickedAt": "2026-10-11T14:25:00Z",
-      "startedAt": "2026-10-11T14:26:00Z",
+      "pickedAt": "2026-10-11T14:08:38Z",
+      "startedAt": "2026-10-11T14:10:24Z",
       "completedBy": 5,
-      "completedAt": "2026-10-11T14:45:00Z",
+      "completedAt": "2026-10-11T14:14:18Z",
       "completionCommitSha": "be733d715f4096db9d83ff3599cc546fde58e93d",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
         {
           "chatNumber": 5,
-          "pickedAt": "2026-10-11T14:25:00Z"
+          "pickedAt": "2026-10-11T14:08:38Z"
         }
       ],
       "statusHistory": [
         {
           "status": "READY",
-          "at": "2026-10-11T14:25:00Z",
+          "at": "2026-10-11T14:08:38Z",
           "reason": "Audited DB-043: unlocked user-membership and active course-delivery lookups; publication state transitions bypass original trigger."
         },
         {
           "status": "PICKED",
-          "at": "2026-10-11T14:25:00Z",
+          "at": "2026-10-11T14:08:38Z",
           "reason": "Chat 5 isolated DB10 stage; no active worker edits these three paths."
         },
         {
           "status": "IN_PROGRESS",
-          "at": "2026-10-11T14:26:00Z",
+          "at": "2026-10-11T14:10:24Z",
           "reason": "Implemented isolated DB10 campaign target scope guard and concurrency witness tests; no shared integration files."
         },
         {
           "status": "COMPLETED",
-          "at": "2026-10-11T14:45:00Z",
+          "at": "2026-10-11T14:14:18Z",
           "reason": "SQL stage, 10 static Node test cases and 16 acceptance witnesses committed on main. Structural source checks passed; runtime evidence pending. Parallel Chat5 DB-018 checkpoint untouched."
         }
       ]
