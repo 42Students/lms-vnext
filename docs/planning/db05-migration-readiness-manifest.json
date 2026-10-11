@@ -294,7 +294,7 @@
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UPSTREAM_REPARENT_INTEGRITY",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Child-only trigger cannot detect later content/lesson/learning-path/section/cohort/academic-period/course department reparent changes."
+      "evidence": "Unregistered db05-content-order-upstream-reparent.draft.sql stages guards for six ancestry tables; both child and ancestor use advisory lock 605008003 under READ COMMITTED. No PostgreSQL race/negative/period/department/delete proof; W01 owns integration."
     },
     {
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_BACKFILL_AND_PARENT_FK",
@@ -343,6 +343,12 @@
       "status": "NOT_RUN",
       "owner": "DB05_W01_API_PHASE",
       "evidence": "Legacy StudentCourseServiceImpl comment flags byClass detail vs byStudent redaction, actual full controller/FE authorization not yet proven. Do not expose html/introduction to unauthorized learner."
+    },
+    {
+      "id": "COURSE_CONTENT_ORDER_UPSTREAM_LOCKED_ANCESTOR_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Six upstream triggers plus child scope share 605008003 advisory lock, but disposable PostgreSQL same-college, wrong-tenant, reparent, two-session race and deadlock acceptance not executed."
     }
   ],
   "sourceReview": {
@@ -370,7 +376,8 @@
     "tests/db05-draft-contract-integrity.test.mjs",
     "tests/db05-content-delivery-order-unique.test.mjs",
     "tests/db05-lesson-content-authoring-facets.test.mjs",
-    "tests/db05-learner-course-card-source-contract.test.mjs"
+    "tests/db05-learner-course-card-source-contract.test.mjs",
+    "tests/db05-content-order-upstream-reparent.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -422,11 +429,31 @@
         "UPSTREAM_LESSON_COURSE_OFFERING_SECTION_REPARENT_GUARD",
         "CONCURRENT_FULL_ORDER_REWRITE_TESTS",
         "PERSISTED_LESSON_ID_COMPOSITE_FK",
-        "UNIQUE_DELIVERY_LESSON_SEQUENCE_POSTGRES_NEGATIVE"
+        "UNIQUE_DELIVERY_LESSON_SEQUENCE_POSTGRES_NEGATIVE",
+        "ORDER_ANCESTOR_REPARENT_GUARD_REGISTERED",
+        "ORDER_ANCESTOR_REPARENT_READ_COMMITTED_RACE",
+        "ORDER_PARENT_DELETE_CASCADE_POLICY",
+        "ORDER_PERIOD_DEPARTMENT_COLLEGE_MOVE_POLICY"
       ],
       "note": "Not an eighth independent DB05 migration. Unique companion has DEFERRABLE PostgreSQL constraint; needs condeferrable checks. Both companions remain UNREGISTERED and PostgreSQL NOT_EXECUTED.",
       "uniqueLessonCompanion": "scripts/sql/db05-content-delivery-order-unique.draft.sql",
-      "integrationNote": "SINGLE CANONICAL W06 COMPANION: scripts/sql/db05-content-delivery-order-unique.draft.sql (composite (lesson_content_id,lesson_id) FK, witness column, DEFERRABLE INITIALLY IMMEDIATE UNIQUE(delivery_id,lesson_id,sequence)). Writer and staged Drizzle model already set lessonId. Integrate with existing scope companion exactly once. Prior duplicate proposal removed."
+      "integrationNote": "SINGLE CANONICAL W06 COMPANION: scripts/sql/db05-content-delivery-order-unique.draft.sql (composite (lesson_content_id,lesson_id) FK, witness column, DEFERRABLE INITIALLY IMMEDIATE UNIQUE(delivery_id,lesson_id,sequence)). Writer and staged Drizzle model already set lessonId. Integrate with existing scope companion exactly once. Prior duplicate proposal removed.",
+      "upstreamReparentCompanion": {
+        "path": "scripts/sql/db05-content-order-upstream-reparent.draft.sql",
+        "purpose": "BLOCK_SIX_ORDER_ANCESTOR_SCOPE_MUTATIONS_WHEN_OVERRIDES_EXIST",
+        "advisoryLock": "605008003",
+        "pairedChildScope": "scripts/sql/db05-content-delivery-order-scope.draft.sql",
+        "registered": false,
+        "postgresExecuted": false,
+        "readyForProduction": false,
+        "uncovered": [
+          "academic_periods.college_id",
+          "departments.college_id",
+          "DELETE CASCADE graph",
+          "race and deadlock replay"
+        ],
+        "note": "Requires shared child/ancestor advisory lock and READ COMMITTED. Draft unregistered, PG acceptance NOT RUN."
+      }
     },
     {
       "id": "DB05_LESSON_CONTENT_AUTHORING_FACETS",
