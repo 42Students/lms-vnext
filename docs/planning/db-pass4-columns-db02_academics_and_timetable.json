@@ -7896,6 +7896,24 @@
         "concurrencyCommit": "16bf5166433f7a0c3a120148227534831a777897",
         "staticContractCommit": "028924fe581aa82acebc2debc008288fc391c1d7",
         "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "PROMOTION_READINESS_DATABASE_GATE",
+        "status": "STAGED_UNREGISTERED",
+        "rule": "Term advancement requires ACTIVE cohort, configured ACTIVE destination program term, and at least one mapped curriculum row; same-term correction bypasses this readiness gate.",
+        "locking": "Promotion locks destination program_terms row and one curriculum row FOR SHARE so deactivation/last-row deletion serialize.",
+        "acceptance": "scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql",
+        "concurrency": "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "PROGRESSION_BACKED_PROGRAM_TERM_RETENTION",
+        "status": "STAGED_UNREGISTERED_INTENTIONAL_HARDENING",
+        "rule": "Unused program terms remain deletable; hard delete is rejected once current cohort progression or immutable progression events reference that program+term number. Deactivation remains allowed.",
+        "rationale": "Prevents canonical progression/history from pointing at a deleted semester definition after legacy-style curriculum cleanup.",
+        "stagingCommit": "262ab9f703076dace6d113529ecb4c356871d7e4",
+        "acceptanceCommit": "64d6ea12b0070af99396fae7a4e34c01d86225f6",
+        "postgresStatus": "NOT_EXECUTED"
       }
     ],
     "targetDispositionCoverage": {
@@ -7955,7 +7973,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "5fb084496afb09927e259bdd50c633749fcf761f",
+      "observedMainSha": "6e02f1630c528db4750c89980bf8d3dcd4e7ca47",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7966,10 +7984,10 @@
       },
       "canonicalStaging": {
         "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-        "blobSha": "c1f1e9f0e19f82c06f9e63fbfef0471027424586",
-        "plpgsqlFunctions": 49,
-        "triggers": 57,
-        "pairedDollarQuoteOpenings": 49,
+        "blobSha": "f38f840b21b3eefc890fbb68ef88a4e6dd46d13b",
+        "plpgsqlFunctions": 52,
+        "triggers": 60,
+        "pairedDollarQuoteOpenings": 52,
         "malformedSingleDollarBodies": false,
         "duplicateFunctionNames": [],
         "duplicateTriggerNames": [],
@@ -7979,33 +7997,28 @@
           "progression-state and future-room lifecycle",
           "historic offering/delivery/event parent integrity",
           "referenced-period and cohort-window parent stability",
-          "CORE concrete curriculum-row identity and materialized type freeze",
+          "CORE concrete curriculum-row identity and materialized type history",
           "history-safe empty cohort deletion",
           "cohort archive terminal lifecycle",
-          "legacy-compatible non-unique curriculum display ordering"
+          "legacy-compatible non-unique curriculum ordering",
+          "source-parity promotion readiness",
+          "progression-backed program-term retention"
         ]
       },
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "b73bec6826a7b4e53b62e33ae040d0f5a7cf5e4b",
+          "blobSha": "6d53743b68c3e82344a89501a30f87207074bce6",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
-            "tenant owner immutability",
-            "cohort/section/offering/progression period scope",
-            "program terms and curriculum",
-            "delivery/event scope",
-            "learner enrollment tenant/role/history identity",
-            "faculty association/teaching identity lifecycle",
-            "lecture hall overlap/cancellation/archive behavior",
-            "legacy-compatible current_students sectioned learner derivation",
-            "learner suspension vs role-removal/membership-end academic lifecycle",
-            "zero-credit curriculum -> CORE offering database compatibility",
-            "legacy-compatible current-period batch classCount projection",
-            "reversible cohort INACTIVE database state",
-            "sectioned current_students semantics with suspension vs role/end lifecycle",
-            "current-period batch classCount projection",
-            "zero-credit CORE offering database parity"
+            "cross-tenant academic scope",
+            "program terms/curriculum",
+            "progression/history",
+            "cohort delete/archive semantics",
+            "period/window stability",
+            "faculty/room/schedule lifecycle",
+            "CORE curriculum row/type rules",
+            "non-unique curriculum ordering"
           ],
           "executedPostgres": false,
           "addedCoverage": [
@@ -8020,18 +8033,10 @@
         },
         {
           "path": "scripts/sql/db02-postgres-concurrency-unregistered.sh",
-          "blobSha": "f3bf4d6905793895f9085e88793bdb53aa60c381",
-          "type": "TWO_SESSION_PSQL_RACES",
+          "blobSha": "945d1ac4592da8753330c57dffc314ef8ef357e5",
+          "type": "COMBINED_TWO_SESSION_PSQL_RACES",
           "covers": [
-            "promotion CAS",
-            "hall archive/booking both orders",
-            "section reparent/history both orders",
-            "offering reparent/delivery both orders",
-            "event reparent/attendance both orders",
-            "CORE offering/curriculum delete both orders",
-            "academic-period edit/cohort creation both orders",
-            "empty cohort delete/section creation both orders",
-            "CORE offering/curriculum-type rewrite both orders"
+            "17 named race families across CAS, rooms, parent history, curriculum delete/type, period edits and cohort delete"
           ],
           "executedPostgres": false
         },
@@ -8040,9 +8045,9 @@
           "blobSha": "d3734222854e428cbb30476d3d30c3df2d344bae",
           "type": "SPECIALIZED_SINGLE_SESSION_ROLLBACK",
           "covers": [
-            "progression state identity/delete/truncate",
-            "audit actor FK cleanup",
-            "timestamp-only future schedule mutation against archived hall"
+            "progression state identity/direct-delete/truncate",
+            "audit actor cleanup",
+            "future archived-room lifecycle"
           ],
           "executedPostgres": false
         },
@@ -8051,30 +8056,75 @@
           "blobSha": "5b33dfa495967e7d9948534c32fa196b2254dee2",
           "type": "HISTORIC_PARENT_SINGLE_SESSION_ROLLBACK",
           "covers": [
-            "offering parent identity after delivery",
-            "delivery parent identity after teaching/course history",
-            "schedule-event section identity after course/attendance history"
+            "offering/delivery/event parent immutability",
+            "attendance/course history serialization"
+          ],
+          "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql",
+          "blobSha": "11ba2344ff193efc961f6c9bdcaf44ed6d9cefdd",
+          "type": "CURRICULUM_TYPE_SINGLE_SESSION_ROLLBACK",
+          "covers": [
+            "pre-materialization type edits",
+            "post-materialization type freeze",
+            "archived offering retains CORE identity"
+          ],
+          "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql",
+          "blobSha": "a9421d31170bfedc071379fea0de926793965843",
+          "type": "PROMOTION_READINESS_SINGLE_SESSION_ROLLBACK",
+          "covers": [
+            "missing/inactive/empty destination rejection",
+            "inactive cohort rejection",
+            "valid promotion/history",
+            "progression-backed term delete rejection",
+            "unused term deletion"
+          ],
+          "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh",
+          "blobSha": "fb856e1f77b1d89a523682866ac81cca4b210f6e",
+          "type": "FOCUSED_CURRICULUM_TYPE_TWO_SESSION_RACES",
+          "covers": [
+            "type-first vs CORE offering",
+            "CORE offering-first vs type rewrite"
+          ],
+          "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
+          "blobSha": "8f0da3273551b07f8dc35672ed91a288f0a29bbf",
+          "type": "FOCUSED_PROMOTION_READINESS_TWO_SESSION_RACES",
+          "covers": [
+            "term deactivation-first vs promotion",
+            "last curriculum deletion-first vs promotion"
           ],
           "executedPostgres": false
         }
       ],
       "staticChecks": {
-        "canonicalFunctionDelimiterPairs": "49/49",
-        "canonicalTriggerCount": 57,
+        "canonicalFunctionDelimiterPairs": "52/52",
+        "canonicalTriggerCount": 60,
         "duplicateCanonicalFunctions": 0,
         "duplicateCanonicalTriggers": 0,
         "malformedSingleDollarBodies": 0,
-        "singleSessionHarnessEndsWithRollback": true,
-        "concurrencyRaceFamilies": 17,
-        "authoredSourceTestCases": 45,
-        "sourceTestFiles": 4,
+        "rollbackHarnesses": 5,
+        "combinedConcurrencyRaceFamilies": 17,
+        "focusedPromotionRaceFamilies": 2,
+        "focusedTypeRaceFamiliesMirroringCombined": 2,
+        "authoredSourceTestCases": 60,
+        "sourceTestFiles": 6,
         "consolidatedOverlayDraftsRemaining": 0
       },
       "registeredDrizzleDb02Found": false,
       "postgresTestsExecuted": 0,
       "runtimeEquivalenceVerifiedFields": 0,
       "status": "READY_FOR_CHAT1_REGISTRATION_REVIEW_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
-      "warning": "DB02 source/target mapping is 125/125 and canonical unregistered staging is source/static reconciled. Runtime proof remains zero; Chat 1 registration plus disposable PostgreSQL replay/acceptance is mandatory before verification.",
+      "warning": "All counts are source/static authored evidence only. PostgreSQL execution remains 0 and DB-005 is not DONE_VERIFIED until Chat 1 registers reviewed schema/migrations, replays zero-to-current, and executes the acceptance/race suites.",
       "apiFollowupMatrix": {
         "path": "docs/planning/db02-api-followup-after-database.md",
         "commitSha": "c463accc1839f3513c851354261a30393e7a2454",
