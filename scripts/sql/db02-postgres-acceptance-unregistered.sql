@@ -66,6 +66,7 @@ DECLARE
   progression_term integer;
   event_count integer;
   current_student_count integer;
+  current_class_count integer;
   ended_at_seen timestamptz;
   period_start date := current_date - 30;
   period_end date := current_date + 365;
@@ -138,7 +139,7 @@ BEGIN
   VALUES (program_a, 2, 'Term 2', true, 24) RETURNING id INTO term_a2;
 
   INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
-  VALUES (term_a1, course_core_a, 'CORE', 4, 1);
+  VALUES (term_a1, course_core_a, 'CORE', 0, 1);
 
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
@@ -382,6 +383,11 @@ BEGIN
   IF NOT failed THEN
     RAISE EXCEPTION 'cross-college program-term course link was accepted';
   END IF;
+
+  -- Zero-credit canonical curriculum must materialize into a valid CORE offering.
+  INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
+                               type, credits, display_order)
+  VALUES (course_core_a, cohort_a, period_a, term_a1, 'CORE', 0, 1);
 
   failed := false;
   BEGIN
@@ -663,6 +669,23 @@ BEGIN
        AND academic_period_id = period_a_alt
   ) THEN
     RAISE EXCEPTION 'history-free same-college section reparent did not succeed';
+  END IF;
+
+  -- Legacy batch classCount represents the batch's ordinary primary classes. vNext sections
+  -- are period-scoped, so compatibility count must use the canonical current period rather
+  -- than accumulating sections from every period in cohort history.
+  SELECT count(*)
+    INTO current_class_count
+    FROM sections s
+    JOIN cohort_progression_state cps
+      ON cps.cohort_id = s.cohort_id
+     AND cps.current_period_id = s.academic_period_id
+   WHERE s.cohort_id = cohort_a
+     AND s.status = 'ACTIVE';
+
+  IF current_class_count <> 1 THEN
+    RAISE EXCEPTION 'current-period classCount compatibility mismatch: %',
+      current_class_count;
   END IF;
 
   -- Explicit transfer creates new history instead of mutating the prior row.
