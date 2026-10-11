@@ -68,3 +68,85 @@ test("fixture: duplicate CREATE declarations and mismatched tables fail", () => 
   assert.throws(() => compareNamedSurfaces(ts, sql + "\n" + sql, "dupe SQL"), /duplicate tables in staged SQL/);
   assert.throws(() => compareNamedSurfaces(ts.replace("fixture_table", "different_table"), sql, "name"), /tables Drizzle\/SQL drift/);
 });
+
+
+/**
+ * Compare physical column names and primitive SQL types for every table in
+ * the three paired drafts. Name-only checks miss e.g. integer→bigint,
+ * timestamp timezone loss and varchar length drift. This remains a lexical
+ * source check, NOT SQL parsing or PostgreSQL acceptance.
+ */
+export function compareColumnTypes(schema, sql, label) {
+  const tsTables = [...schema.matchAll(/\bpgTable\(\s*["'](\w+)["'],\s*{([\s\S]*?)^\s*},\s*\(t\)\s*=>/gm)];
+  const sqlTables = [...sql.matchAll(/^\s*CREATE\s+TABLE\s+(\w+)\s*\(([\s\S]*?)^\);/gim)];
+  assert.ok(tsTables.length, label + ": no Drizzle column bodies");
+  assert.equal(tsTables.length, sqlTables.length, label + ": table count differs");
+  const draftTypes = (body) => [...body.matchAll(
+    /^\s*\w+:\s*(uuid|bigint|integer|boolean|varchar|timestamp|date|jsonb|text)\(\s*["'](\w+)["']([^\n]*)/gm,
+  )].map((m) => {
+    let type = m[1];
+    if (type === "varchar") {
+      const len = /\blength:\s*(\d+)/.exec(m[3]);
+      assert.ok(len, label + ": missing explicit varchar length for " + m[2]);
+      type = "varchar(" + len[1] + ")";
+    }
+    if (type === "timestamp") {
+      assert.match(m[3], /withTimezone:\s*true/, label + ": timestamp timezone not explicit for " + m[2]);
+      type = "timestamptz";
+    }
+    return [m[2], type];
+  });
+  const stagedTypes = (body) => [...body.matchAll(
+    /^\s*(\w+)\s+(uuid|bigint|integer|boolean|varchar\(\d+\)|timestamp with time zone|timestamptz|date|jsonb|text)(?=\s|,|$)/gim,
+  )].map((m) => [m[1], m[2].toLowerCase().replace("timestamp with time zone", "timestamptz")]);
+  const reported = {};
+  for (const [, table, body] of tsTables) {
+    const sqlBody = sqlTables.find((m) => m[1] === table)?.[2];
+    assert.ok(sqlBody, label + ": missing SQL body for " + table);
+    const draft = draftTypes(body), stage = stagedTypes(sqlBody);
+    assert.ok(draft.length, label + ": no recognized Drizzle columns for " + table);
+    const names = (cols) => cols.map((pair) => pair[0]);
+    assert.deepEqual(dupes(names(draft)), [], label + ": duplicate draft columns in " + table);
+    assert.deepEqual(dupes(names(stage)), [], label + ": duplicate SQL columns in " + table);
+    assert.deepEqual(
+      draft.map(JSON.stringify).toSorted(), stage.map(JSON.stringify).toSorted(),
+      label + ": SQL/Drizzle column name or type drift in " + table,
+    );
+    reported[table] = draft.length;
+  }
+  return reported;
+}
+
+for (const [draft, stage] of pairs) {
+  test("DB10 draft/SQL column type parity: " + draft, () =>
+    compareColumnTypes(readFileSync(draft, "utf8"), readFileSync(stage, "utf8"), draft));
+}
+
+const typedTS = [
+  "const fixture = pgTable('typed_table', {",
+  "  id: uuid('id').primaryKey(),",
+  "  count: bigint('count', { mode: 'bigint' }).notNull(),",
+  "  label: varchar('label', { length: 64 }).notNull(),",
+  "  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),",
+  "}, (t) => []);",
+].join("\n");
+const typedSQL = [
+  "CREATE TABLE typed_table (",
+  "  id uuid NOT NULL,",
+  "  count bigint NOT NULL,",
+  "  label varchar(64) NOT NULL,",
+  "  occurred_at timestamptz NOT NULL",
+  ");",
+].join("\n");
+
+test("fixture: typed columns match across SQL and Drizzle", () => {
+  assert.deepEqual(compareColumnTypes(typedTS, typedSQL, "fixture"), {typed_table: 4});
+});
+test("fixture: narrowing varchar or converting bigint to integer is detected", () => {
+  assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("varchar(64)", "varchar(32)"), "varchar"), /column name or type drift/);
+  assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("count bigint", "count integer"), "bigint"), /column name or type drift/);
+});
+test("fixture: timezone loss or missing columns are detected", () => {
+  assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("occurred_at timestamptz", "occurred_at timestamp"), "time"), /column name or type drift/);
+  assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("label varchar(64) NOT NULL,", ""), "column"), /column name or type drift/);
+});
