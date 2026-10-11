@@ -194,8 +194,8 @@ COMMIT;
 -- CA-15 DB02 academic-period/department and DB06 assignment-only ancestors
 --       remain separately guarded; test consumer-to-producer integration.
 -- CA-16 Clean journal replay, duplicate trigger checks, lock contention,
+--       rollback/SQLSTATE and consumer behavior executed on exact SHA.
 -- CA-17 When delivery moves but its offering contains only generic NULL-
 --       delivery lesson content, reject 23514 (audience would change).
 -- CA-18 When section moves cohort/period but has only generic content via
 --       its existing deliveries, reject 23514 (audience would change).
---       rollback/SQLSTATE and consumer behavior executed on exact SHA.
