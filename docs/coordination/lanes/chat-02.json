@@ -523,6 +523,26 @@
         "0f38b998326f5b6955e2abef05ca7729c7482a74"
       ],
       "finding": "App validation uses stale membership status before transaction. New role grant locks child rows, not parent; END locks parent. Needs same-parent serialization/conditional gate and 2-client proof."
+    },
+    "db01LegacyRegistrationSecuritySource": {
+      "status": "SOURCE_CONFIRMED_PRIVILEGE_ASSIGNMENT_AND_POTENTIAL_PASSWORD_RESPONSE_LEAK_NOT_RUNTIME_REPRODUCED",
+      "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "legacyController": "src/main/java/com/_42students/lms/controller/UserController.java",
+      "legacyService": "src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+      "legacyModel": "src/main/java/com/_42students/lms/model/User.java",
+      "evidence": "docs/planning/db01-chat02-legacy-registration-security-source-evidence.json",
+      "documentation": "docs/planning/db01-legacy-identity-auth-source-proof.md",
+      "inProcessAssertionsExecuted": 14,
+      "inProcessAssertionsPassed": 14,
+      "runtimeHttpResponsesInspected": 0,
+      "actualNodeExecuted": 0,
+      "postgresExecuted": 0,
+      "implementationDecision": "Do not replicate unconditional ADMIN role assignment or return credential-bearing entities; exact legacy endpoint security chain not yet traced.",
+      "commits": [
+        "bfc9fc46335b8dc043ba6873a8ac33679a293dd8",
+        "31f97b8d8ec69edcbbd1db4c28ea2e73d6a71596",
+        "19e8a55f2f0fc705805670c47a1e34f7a441dd79"
+      ]
     }
   },
   "qualityGates": {
@@ -700,7 +720,9 @@
     "https://github.com/42Students/lms-vnext/commit/1c75513654725cfbbed2756d5bf9136e29b84a97",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-p0-three-gap-source-execution.json",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-role-race-source-execution.json",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6109954119"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6109954119",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-legacy-registration-security-source-evidence.json",
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6110029616"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -717,5 +739,5 @@
     "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
     "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
   },
-  "next": "Continue DB-004 DATABASE direct-main: provider-only vs DB-backed auth decision; evaluate P0 role revocation on exact current DB, get sole integrator parent-lock race fix and PostgreSQL acceptance, run independent Node and actual 2-client PG where available. No global phase promotion or false 312-field verification."
+  "next": "DB-004 continues within DATABASE: sole schema integrator resolves staged DB01 auth/tenant lifecycle including parent-lock race, repeat independent Node and real PostgreSQL 2-client verification, resolve provider-vs-DB identity architecture, prove 312 source fields semantically; never clone old ADMIN auto-grant or return User password. No CI billing wait."
 }
