@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-055",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB053_PRIVATE_RECEIPT_SOURCE_COMPLETED",
+    "checkpointKind": "DB055_SEED_TARGET_GUARD_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "7031ccdec311564b5279d03aa23f7dc46db9260a",
+    "observedMainSha": "04e26376665ae444f3ba3bee83d8c4d040e44f1c",
     "lastWorkerMergedSha": "7394e4579c3ba14be9c4bc75743df3d773ffb486",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-053 source-complete: 19/19 legacy receipt fields dispositioned, multi-file exact receipt/file evidence, scanner/revocation/retention/deletion state, strict revoker authority and deferred completeness staged. 73/73 connector source assertions true; no Node/PG/GCS execution claimed."
+    "summary": "Chat 1 started DB-055 CORE_INFRA: fail-close deterministic seed target selection before any database connection."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -52,7 +52,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh shared DATABASE queue and claim next dependency-satisfied nonconflicting task. DB-053 remains COMPLETED awaiting migration/runtime/PostgreSQL/GCS verification.",
+  "nextAction": "Guard seedDatabase itself; allow explicit local test/E2E targets and exact reset-authorized pipelines; require exact direct seed confirmation elsewhere; add no-network regressions/docs.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -91,7 +91,8 @@
     "DB-048",
     "DB-051",
     "DB-052",
-    "DB-053"
+    "DB-053",
+    "DB-055"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -110,7 +111,7 @@
     "DB-052",
     "DB-053"
   ],
-  "lastPickedAt": "2026-10-11T14:27:47.324Z",
+  "lastPickedAt": "2026-10-11T15:38:00.000Z",
   "lastCompletedAt": "2026-10-11T14:20:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
