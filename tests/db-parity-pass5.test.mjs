@@ -63,7 +63,8 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
 
   const count = state =>
     manifest.raceProbes.filter(p => p.state === state).length;
-  assert.equal(count("SOURCE_CONFIRMED_GAP"), 3);\n  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 1);
+  assert.equal(count("SOURCE_CONFIRMED_GAP"), 3);
+  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 1);
   assert.equal(count("SOURCE_PROTECTED_NEEDS_EXECUTION"), 13);
   assert.equal(count("SOURCE_PROTECTED_DRAFT_UNMIGRATED"), 3);
   assert.equal(count("PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP"), 1);
@@ -132,7 +133,9 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.draftUnregisteredExcluded, 3);\n  assert.equal(index.counts.knownRedRaceAuthored, 1);\n  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
+  assert.equal(index.counts.draftUnregisteredExcluded, 3);
+  assert.equal(index.counts.knownRedRaceAuthored, 1);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
 
