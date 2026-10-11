@@ -1298,17 +1298,22 @@
         "docs/planning/database-parity-db10-general-notices-contract.md",
         "tests/db10-general-notices-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a33d10c014847f4e75f9601fd2a28c0f69bc8b02",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "MIGRATION_UNREGISTERED: DB10 general notices Drizzle/SQL drafts not in journal/schema barrel; only Chat 1 may integrate.",
+        "RECRUITER_GRANT_AND_SCOPE: Draft trigger intentionally denies recruiter rows until DB09 recruiter grant integrity guard is integrated.",
+        "PRODUCER_CONSUMER_OPEN: no runtime APP projection, cancel/claim dispatcher, grouped digest or encrypted external handoff proof.",
+        "POSTGRES_ACCEPTANCE_PENDING: 12 specified DB24 negative/race witnesses and six authored Node static tests not executed. GitHub Actions billing is not a prerequisite; use independent runner."
+      ],
+      "completionNote": "Bounded source and SQL staging: legacy V161 notification_outbox 13 columns mapped; staged isolated general APP/EMAIL/SMS intent table with same-college membership guard, fail-closed recruiter grant gate, 30-second minimum undo hold, digest local-day, claim fencing, idempotency, APP visibility vs external encrypted handoff. Four artifacts on main; 56 connector in-process source checks passed and six Node static tests authored, NOT_EXECUTED. PostgreSQL replay, producer/consumer, DLT/provider, grant/suppression/revocation races and migration integration pending; GitHub Actions intentionally paused for billing and not a blocker.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T11:00:00+05:30",
       "startedAt": "2026-10-11T11:01:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T05:35:36.314Z",
+      "completionCommitSha": "a33d10c014847f4e75f9601fd2a28c0f69bc8b02",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1332,6 +1337,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T11:01:00+05:30",
           "reason": "Chat 5 resumed reserved DB-024 and began source-to-vNext notification outbox reconciliation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T05:35:36.314Z",
+          "reason": "Source schema+SQL+mapping+authored guards committed. Runtime acceptance remains pending and no CI billing dependency."
         }
       ]
     }
