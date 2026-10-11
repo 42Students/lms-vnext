@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-042",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB036_NINE_TYPED_NOTIFICATION_PREF_FIELDS_COMPLETED_SOURCE_ONLY",
+    "checkpointKind": "DB042_ATTENDANCE_INTEGRITY_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "519e179696524dc594109bdcd1d216e1ccd8a12a",
-    "lastWorkerMergedSha": "942066d0846c5fd9ef6598e0031cd07ce8bb9065",
+    "observedMainSha": "325c5303efcc6599bdf4ecb49d8644f670b3c541",
+    "lastWorkerMergedSha": "325c5303efcc6599bdf4ecb49d8644f670b3c541",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB036 COMPLETED source and Drizzle staging. Repaired 216-line duplicate/unterminated SQL check in tpo-collaboration, normalized 4 active college notification switches and 5 saved personal preferences to NOT NULL booleans with source defaults. Ledger 279/279: 195 MAPPED + 84 REDESIGNED, 0 verified. Seven focused tests authored; five stale ledger checks and one preexisting collaboration check revised; 13/13 source-test callbacks executed/passed under isolated V8 shims (not Node). TypeScript, PostgreSQL, runtime notification delivery NOT executed."
+    "summary": "DB-042 IN_PROGRESS. Chat 3 is reconciling current-row attendance tenant/roster/marker integrity; no journal registration or PostgreSQL verification claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Fetch latest main/queue; if eligible database task available CAS claim. Otherwise help independent Postgres integration once Chat1 resolves migration availability; don't revisit closed DB09 field mapping or claim Actions billing as blocker. Node db09 static and DB-036 run still needed.",
+  "nextAction": "Map legacy attendance source and current vNext persistence, then stage same-college/roster/marker/start-time invariants plus negative regression definitions without touching drizzle/**.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -161,7 +161,8 @@
     "DB-027",
     "DB-032",
     "DB-034",
-    "DB-036"
+    "DB-036",
+    "DB-042"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -169,7 +170,7 @@
     "DB-034",
     "DB-036"
   ],
-  "lastPickedAt": "2026-10-11T13:50:00+05:30",
+  "lastPickedAt": "2026-10-11T13:12:00+05:30",
   "lastCompletedAt": "2026-10-11T14:05:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
