@@ -7973,7 +7973,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "6e02f1630c528db4750c89980bf8d3dcd4e7ca47",
+      "observedMainSha": "eb19aeee91af258c85579705f02cfc62f724e0cc",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -8116,8 +8116,8 @@
         "combinedConcurrencyRaceFamilies": 17,
         "focusedPromotionRaceFamilies": 2,
         "focusedTypeRaceFamiliesMirroringCombined": 2,
-        "authoredSourceTestCases": 60,
-        "sourceTestFiles": 6,
+        "authoredSourceTestCases": 66,
+        "sourceTestFiles": 7,
         "consolidatedOverlayDraftsRemaining": 0
       },
       "registeredDrizzleDb02Found": false,
@@ -8138,6 +8138,26 @@
           "lecture hall CRUD + schedule lectureHallId",
           "broad faculty-course association APIs and legacy projections",
           "controlled section transfer and learner lifecycle semantics"
+        ]
+      },
+      "disposableRunner": {
+        "path": "scripts/sql/db02-run-disposable-acceptance.sh",
+        "blobSha": "a922fbd8e7b536a371362a1eda2d72fa62be95db",
+        "executed": false,
+        "sourceTestFiles": 7,
+        "rollbackSuites": 5,
+        "concurrencySuites": 3,
+        "registrationPreflight": {
+          "triggerWitnesses": 12,
+          "tableWitnesses": 6,
+          "columnWitnesses": 9,
+          "requiresInactiveEnum": true
+        },
+        "guardrails": [
+          "DB02_DISPOSABLE_ACCEPTANCE=YES",
+          "DB02_EXPECTED_DATABASE exact current_database() match",
+          "repository-root check",
+          "node/psql/bash required"
         ]
       }
     }
