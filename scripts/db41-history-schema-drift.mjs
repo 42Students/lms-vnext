@@ -110,6 +110,50 @@ export function auditDb41(stagedSql,historySql){
     errors.push("Attendance current-row identity immutability guard is missing");
   if(!/actor must equal current marker/i.test(historySql))
     errors.push("Attendance event actor/current-marker equality guard is missing");
+  const attendanceStaged=stagedTable(stagedSql,"attendance_record_events")||"";
+  const attendanceSql=sqlTable(historySql,"attendance_record_events")||"";
+  const attendanceWhole=historySql;
+
+  const forbiddenAttendanceFields=[
+    "revision",
+    "previous_attendance_record_id",
+    "new_attendance_record_id"
+  ];
+  for(const field of forbiddenAttendanceFields){
+    if(new RegExp("\\b"+field+"\\b","i").test(attendanceStaged) ||
+       new RegExp("\\b"+field+"\\b","i").test(attendanceSql)){
+      errors.push("attendance_record_events: obsolete session-revision field reintroduced: "+field);
+    }
+  }
+
+  if(!/delivery_id\s+uuid\s+NOT\s+NULL/i.test(attendanceSql))
+    errors.push("attendance_record_events: delivery_id must be NOT NULL");
+  for(const token of [
+    "attendance_record_events_record_identity_fk",
+    "attendance_record_events_delivery_identity_fk",
+    "attendance_records_event_identity_uq",
+    "section_schedule_event_courses_event_delivery_uq",
+    "ADD COLUMN version integer NOT NULL DEFAULT 0"
+  ]){
+    if(!attendanceWhole.includes(token))
+      errors.push("attendance history prerequisite missing: "+token);
+  }
+  for(const token of [
+    "previous_marked_by_user_id",
+    "new_marked_by_user_id",
+    "previous_marked_at",
+    "new_marked_at"
+  ]){
+    const requireStart=attendanceWhole.indexOf("CREATE FUNCTION db06_require_attendance_event()");
+    const requireBody=requireStart>=0?attendanceWhole.slice(requireStart):"";
+    if(!requireBody.includes(token))
+      errors.push("Attendance completeness trigger ignores marker snapshot: "+token);
+  }
+  const versionStart=attendanceWhole.indexOf("CREATE FUNCTION db06_attendance_record_version_guard()");
+  const versionBody=versionStart>=0?attendanceWhole.slice(versionStart):"";
+  if(!/NEW\.marked_at\s+IS\s+DISTINCT\s+FROM\s+OLD\.marked_at/i.test(versionBody))
+    errors.push("Attendance version guard ignores marked_at changes");
+
   const fieldDifferences=Object.values(tables).reduce((n,t)=>
      n+t.missingSqlColumns.length+t.missingStagedColumns.length,0);
   return {
