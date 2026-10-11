@@ -234,7 +234,11 @@ export const placementTpoCollegeSettings = pgTable(
     emailSignature: text("email_signature"),
     logoObjectPath: text("logo_object_path"),
     prepThresholdPct: integer("prep_threshold_pct").notNull().default(60),
-    notifyToggles: jsonb("notify_toggles"),
+    // DB-036: four fixed legacy notification dispatch switches. All default on.
+    notifyDriveOpenEmail: boolean("notify_drive_open_email").notNull().default(true),
+    notifyResultApplied: boolean("notify_result_applied").notNull().default(true),
+    notifyNudges: boolean("notify_nudges").notNull().default(true),
+    notifyPrepAssigned: boolean("notify_prep_assigned").notNull().default(true),
     jobTypes: jsonb("job_types"),
     outcomeLabels: jsonb("outcome_labels"),
     recruiterAccessMonths: integer("recruiter_access_months")
@@ -261,11 +265,6 @@ export const placementTpoCollegeSettings = pgTable(
     check(
       "placement_tpo_college_settings_outcome_labels_ck",
       sql`${table.outcomeLabels} is null or jsonb_typeof(${table.outcomeLabels}) = 'array'`,
-    ),
-    check(
-      "placement_tpo_college_settings_json_shape_ck",
-      sql`${table.notifyToggles} is null
-        or jsonb_typeof(${table.notifyToggles}) = 'object'`,
     ),
   ],
 );
@@ -355,7 +354,12 @@ export const placementTpoUserPreferences = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
-    preferences: jsonb("preferences"),
+    // DB-036: source-fixed TPO user preferences; default digest off, others on.
+    morningDigest: boolean("morning_digest").notNull().default(false),
+    recruiterMessages: boolean("recruiter_messages").notNull().default(true),
+    requests: boolean("requests").notNull().default(true),
+    resultsReady: boolean("results_ready").notNull().default(true),
+    followUps: boolean("follow_ups").notNull().default(true),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -365,10 +369,6 @@ export const placementTpoUserPreferences = pgTable(
       name: "placement_tpo_user_preferences_pk",
       columns: [table.collegeId, table.userId],
     }),
-    check(
-      "placement_tpo_user_preferences_json_ck",
-      sql`${table.preferences} is null or jsonb_typeof(${table.preferences}) = 'object'`,
-    ),
   ],
 );
 
