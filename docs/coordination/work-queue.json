@@ -1446,7 +1446,9 @@
         "src/modules/groups/elective-eligibility.ts",
         "src/modules/groups/roster-access.ts",
         "tests/integration/groups-db03-roster.test.ts",
-        "docs/planning/db03-elective-program-oracle-decision.md"
+        "docs/planning/db03-elective-program-oracle-decision.md",
+        "src/modules/electives/service.ts",
+        "tests/integration/groups-db03.test.ts"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -1482,6 +1484,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T11:01:00+05:30",
           "reason": "Chat 5 began executable-oracle reconciliation against pinned legacy ElectiveService and current vNext join/read predicates."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Scope expanded non-conflictingly after source recheck confirmed legacy createOffering materializes backed class in slot program while current vNext backed-delivery validation omits cohort-program equality."
         }
       ]
     }
