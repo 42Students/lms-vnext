@@ -1,0 +1,75 @@
+{
+  "taskId": "DB-070",
+  "worker": 2,
+  "date": "2026-10-12",
+  "status": "SOURCE_ONLY_NOT_POSTGRES_VERIFIED",
+  "sourceBlobRefs": [
+    {
+      "path": "src/modules/projects/template-service.ts",
+      "sha": "1cffa4871ae8bb1df43c8d658bfb7781f4cece54"
+    },
+    {
+      "path": "src/db/schema/projects.ts",
+      "sha": "b9579c57e84d3db4f62b577bbf5603d1a8d26cdc"
+    },
+    {
+      "path": "docs/planning/sql/db07-template-version-append-only-staging.sql",
+      "sha": "a4676a6a7f09fb33e532530fc0e565b64f62b2ef"
+    },
+    {
+      "path": "docs/planning/db07-template-version-append-only-contract.md",
+      "sha": "5bbe9f383d045e937cfcf03cefdfdc4eb600fa01"
+    },
+    {
+      "path": "tests/db07-template-version-append-only-source.test.mjs",
+      "sha": "4d657886908195aeb50bf2de133ec0e65edbaac9"
+    },
+    {
+      "path": "tests/integration/db07-template-version-append-only.test.ts",
+      "sha": "df62ccac821c45d351ce4403446cca4693024993"
+    }
+  ],
+  "checksExecutedInGitHubConnectorV8": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "verifiedTopics": [
+      "3 insertion callsites / no direct version UPDATE or DELETE in template service",
+      "parent template lifecycle status/header remains mutable",
+      "separate registered version table has blueprint, version key",
+      "draft-only SQL never changes Drizzle journal",
+      "exact trigger owner table project_template_versions",
+      "UPDATE and DELETE both rejected by 23514",
+      "function / trigger explicitly named",
+      "dollar-quote delimiters balanced",
+      "no destructive DROP/TRUNCATE operations",
+      "append-only except inserting revisions",
+      "14 authored Node source tests",
+      "8 authored opt-in PG integration tests",
+      "PG requires explicit environment and TEST_DATABASE_URL",
+      "PG rejects database without _test suffix",
+      "PG asserts enabled non-internal catalog trigger",
+      "PG starts transactions and rolls back",
+      "PG checks custom error 23514",
+      "documentation preserves same-template assignment update",
+      "documentation requires real zero-to-head replay"
+    ]
+  },
+  "authoredTests": {
+    "nodeSourceCases": 14,
+    "postgresIntegrationCases": 8,
+    "nodeRunnerExecuted": 0,
+    "postgresCasesExecuted": 0
+  },
+  "registeredMigration": false,
+  "actualPostgresConnection": false,
+  "ciUsed": false,
+  "observation": "The current project template service inserts three immutable versions and has no version update/delete path. Staged DB trigger denies direct SQL version updates/deletes but is not active.",
+  "acceptanceMissing": [
+    "Chat 1 registered migration and empty-to-head disposable PostgreSQL replay",
+    "pg_trigger exact enabled catalog check",
+    "8 direct positive/negative PostgreSQL cases",
+    "14 standalone Node source cases",
+    "full typecheck and existing project template lifecycle integration"
+  ]
+}
