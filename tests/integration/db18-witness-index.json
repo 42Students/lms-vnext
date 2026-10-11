@@ -95,6 +95,13 @@
       "file": "tests/integration/courses-c4b-quizzes.test.ts",
       "title": "allows only one concurrent final attempt and enforces database score bounds",
       "state": "AUTHORED_EXISTING_NOT_RUN_IN_DB018"
+    },
+    {
+      "id": "DB18-C03",
+      "raceProbe": "P5-R07",
+      "file": "tests/integration/db18-concurrency-witnesses.test.ts",
+      "title": "allows exactly one concurrent cohort compare-and-set transition",
+      "state": "AUTHORED_DB018_NOT_RUN"
     }
   ],
   "missingConcurrencyWitnesses": [
@@ -118,13 +125,6 @@
       "domain": "PROJECTS",
       "state": "SOURCE_PROTECTED_EXPLICIT_CONCURRENCY_TEST_MISSING",
       "required": "Two simultaneous submissions for one task must yield one task transition/submission and one clean loser with no orphan activity."
-    },
-    {
-      "id": "DB18-M04",
-      "raceProbe": "P5-R07",
-      "domain": "ACADEMICS",
-      "state": "SOURCE_PROTECTED_EXPLICIT_CONCURRENCY_TEST_MISSING",
-      "required": "Two lifecycle transitions from one cohort expected state must produce exactly one winner."
     }
   ],
   "excludedUntilRegistered": [
@@ -143,8 +143,8 @@
   ],
   "counts": {
     "directNegativeAuthored": 8,
-    "existingConcurrencyAuthored": 2,
-    "explicitConcurrencyMissing": 4,
+    "existingConcurrencyAuthored": 3,
+    "explicitConcurrencyMissing": 3,
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
     "runtimePassed": 0
