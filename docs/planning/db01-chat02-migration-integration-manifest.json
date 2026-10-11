@@ -118,12 +118,17 @@
       "stagingSql": "docs/planning/sql/db01-auth-attempts-staging.sql",
       "dependencies": [],
       "status": "STAGED_OPTIONAL_PENDING_PROVIDER_PROOF",
-      "decision": "Prefer managed provider OTP only if exact login user jobs documented; raw 6-digit short OTP must not be stored",
+      "decision": "Provider-only if proven, else minimal keyed-MAC challenge; added 5-minute table TTL, consumed secret clearing and OLD/NEW monotonic retry/expiry/scope guard staged only; never activate before product/provider decision",
       "tests": [
         "10 concurrent attempts <=5 successful reservations",
         "wrong-college and wrong-membership FK denials",
         "replayed or expired OTP rejected",
-        "email-only recruiter challenge never uses dummy SMS OTP"
+        "email-only recruiter challenge never uses dummy SMS OTP",
+        "monotonic retry/resend and version step",
+        "immutable actor/college/membership/role scope",
+        "expired/depleted/used challenge cannot be reopened",
+        "verified MAC cannot rotate; consume clears both code MACs",
+        "four-to-five concurrent reservation with observed PG lock wait"
       ]
     },
     {
@@ -178,6 +183,22 @@
         "member/domain college mismatch FK 23503",
         "verify current persisted actor+domain on consume"
       ]
+    },
+    {
+      "id": "DB01-OTP-MONOTONIC",
+      "feature": "OTP challenge state integrity, bounded lifespan and terminal consumption",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-attempts.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql",
+      "dependencies": [
+        "DB01-OTP-TABLE"
+      ],
+      "status": "STAGED_OPTIONAL_PENDING_PROVIDER_PROOF",
+      "decision": "Only register with the opted-in DB-backed auth table, same numbered migration; consumed rows terminal, counters monotone, scope immutable, five-minute TTL; source/PG gates not acceptance",
+      "sourceTest": "tests/db01-auth-attempt-lifecycle-source.test.mjs",
+      "postgresTest": "tests/db01-auth-attempt-lifecycle-pg.test.mjs",
+      "acceptance": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+      "executedTests": 0
     }
   ],
   "deprecatedAlternatives": [
@@ -202,7 +223,9 @@
     "providerEndToEndVerified": false,
     "CIStatus": "FAILURE_NO_TRUSTWORTHY_STEP_OUTPUT",
     "phaseGateReady": false,
-    "postgresCrossRowArchiveRacesVerified": false
+    "postgresCrossRowArchiveRacesVerified": false,
+    "otpMonotonicStatePgVerified": false,
+    "otpProviderReplacementVerified": false
   },
   "promotionChecklist": [
     "Chat 1 review active legacy source semantic contracts and approve redesign/retirements field by field.",
@@ -212,7 +235,8 @@
     "Verify private storage/branding URL policy, hostname ownership and provider session/OTP acceptance independently.",
     "Run all negative cross-tenant, FK, replay and concurrency tests on disposable Postgres and retain logs.",
     "Record either accepted source parity or explicit justified intentional security exception for each live legacy behavior.",
-    "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone."
+    "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone.",
+    "If and only if DB-backed auth is chosen, apply OTP table five-minute TTL/consumed check and OLD/NEW monotonic trigger together; run separate 5th-retry concurrency and terminal-row negative tests, never silently substitute static proof for PostgreSQL."
   ],
   "crossRowInvariantCandidates": [
     {
