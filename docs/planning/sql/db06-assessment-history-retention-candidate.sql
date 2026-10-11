@@ -256,6 +256,47 @@ FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_option_authoring();
 -- Mirror the active authoring validator at the database boundary. Sequence
 -- uniqueness already exists in the base schema; add case-insensitive option
 -- text uniqueness and deferred correct-option cardinality.
+DO $db06_option_shape_preflight$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_options o
+    GROUP BY o.question_id, lower(o.option_text)
+    HAVING count(*) > 1
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: duplicate option text within question'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_questions q
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS option_count,
+             count(*) FILTER (WHERE o.is_correct) AS correct_count
+      FROM quiz_options o
+      WHERE o.question_id = q.id
+    ) shape ON true
+    WHERE shape.option_count < 2
+       OR shape.option_count > 20
+       OR (
+         q.question_type = 'SINGLE_CHOICE'
+         AND shape.correct_count <> 1
+       )
+       OR (
+         q.question_type = 'MULTIPLE_CHOICE'
+         AND (
+           shape.correct_count < 1
+           OR shape.correct_count >= shape.option_count
+         )
+       )
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: invalid quiz option-set shape'
+      USING ERRCODE='23514';
+  END IF;
+END;
+$db06_option_shape_preflight$;
+
 CREATE UNIQUE INDEX quiz_options_question_lower_text_uq
   ON quiz_options(question_id, lower(option_text));
 
@@ -346,6 +387,12 @@ DECLARE
   selected_incorrect_count integer;
   expected_correct boolean;
 BEGIN
+  IF jsonb_typeof(NEW.selected_option_ids) IS DISTINCT FROM 'array'
+     OR jsonb_typeof(NEW.options_snapshot) IS DISTINCT FROM 'array' THEN
+    RAISE EXCEPTION 'DB06 answer snapshots must use JSON arrays'
+      USING ERRCODE='23514';
+  END IF;
+
   SELECT q.quiz_id, q.question_type::text, q.prompt, q.points
     INTO q_quiz, q_type, q_prompt, q_points
     FROM quiz_questions q
