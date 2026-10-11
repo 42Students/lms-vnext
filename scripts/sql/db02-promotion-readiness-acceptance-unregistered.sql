@@ -14,6 +14,7 @@ DECLARE
   v_period uuid;
   v_cohort uuid;
   v_term2 uuid;
+  v_unused_term uuid;
   v_course uuid;
   v_event_count integer;
   v_term integer;
@@ -143,6 +144,29 @@ BEGIN
 
   IF v_term<>2 OR v_version<>1 OR v_event_count<>1 THEN
     RAISE EXCEPTION 'promotion did not persist canonical state and exact history';
+  END IF;
+
+  -- Legacy cleanup may remove course mappings, but vNext must not then erase the
+  -- semester definition underneath current/immutable progression history.
+  DELETE FROM program_term_courses WHERE program_term_id=v_term2;
+
+  v_rejected := false;
+  BEGIN
+    DELETE FROM program_terms WHERE id=v_term2;
+  EXCEPTION WHEN check_violation THEN
+    v_rejected := true;
+  END;
+  IF NOT v_rejected THEN
+    RAISE EXCEPTION 'program term referenced by progression history was deleted';
+  END IF;
+
+  -- An unused term with no curriculum/progression history remains deletable.
+  INSERT INTO program_terms(program_id,term_number,name,is_active)
+  VALUES(v_program,4,'Unused semester 4',true)
+  RETURNING id INTO v_unused_term;
+  DELETE FROM program_terms WHERE id=v_unused_term;
+  IF EXISTS (SELECT 1 FROM program_terms WHERE id=v_unused_term) THEN
+    RAISE EXCEPTION 'unused program term could not be deleted';
   END IF;
 
   -- Next semester 3 still absent. Previous successful promotion cannot be
