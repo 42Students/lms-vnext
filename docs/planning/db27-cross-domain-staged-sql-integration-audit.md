@@ -11,11 +11,11 @@ DB-012/DB09 was already closed for source/design review at **279/279 historical 
 
 - `scripts/db27-stage-sql-preflight.mjs` — pure source analyzer + checkout CLI:
   `node scripts/db27-stage-sql-preflight.mjs --json` (exit **2** if it finds candidate integration hazards).
-- `tests/db27-stage-sql-preflight.test.mjs` — 13 Node `node:test` definitions:
+- `tests/db27-stage-sql-preflight.test.mjs` — 14 Node `node:test` definitions:
   `node --test tests/db27-stage-sql-preflight.test.mjs`.
 - The CLI inventories `docs/planning/sql/**/*.sql`, `scripts/sql/**/*.sql` (excluding read-only/witness/acceptance artifacts) plus `docs/planning/db04-proposed-migration.sql`; consults only the **actually registered** `drizzle/meta/_journal.json` SQL, with vNext Drizzle `pgTable` declarations as explanatory context.
 - It masks SQL comments, regular string literals and PostgreSQL dollar-quoted bodies before identifying `CREATE TABLE`, `ALTER TABLE`, FK `REFERENCES` and destructive `DROP TABLE`/`TRUNCATE TABLE`/`DELETE FROM` tokens.
-- Reports multiple CREATE targets, attempts to recreate already registered tables, executable code in SUPERSEDED/REFERENCE_ONLY files, unresolved parent tables, dependencies between staged files, cycles and destructive draft SQL. It suggests a **source dependency order**, NOT a runnable or approved migration order.
+- Reports multiple CREATE targets (including repeated statements **within one file**), attempts to recreate already registered tables, executable code in SUPERSEDED/REFERENCE_ONLY files, unresolved parent tables, dependencies between staged files, cycles and destructive draft SQL. It suggests a **source dependency order**, NOT a runnable or approved migration order.
 - **Never sets `safeForAutomaticPromotion=true`**, even when structural warnings are empty. PostgreSQL constraints, original DDL validity, extension availability and concurrency still require actual migration replay.
 
 The source lexer is intentionally a bounded static-analysis tool, **not a complete SQL parser**. It treats PL/pgSQL function bodies as opaque. SQL inside triggers/procedures, statement splitting, PostgreSQL privilege/RLS and dynamic SQL need PostgreSQL tests and domain guards. A `NO_KNOWN_SQL_CREATOR` warning from a partial scan must never be reported as a definitive missing table without reading all registered migrations.
@@ -42,7 +42,7 @@ Two older SQL files contained separately executable **weaker duplicate concepts*
 - `docs/planning/sql/db04-education-media-candidate.sql` added another (id, owning_membership_id) UNIQUE on receipts, introduced competing `profile_education_entries` and `profile_image_entries`, and provided only two-column receipt FKs without explicitly enforcing receipt PURPOSE.
 - `docs/planning/sql/db04-private-receipt-hardening-candidate.sql` added another set of key/hash/generation/MIME checks already present in canonical DB04 (some with different names).
 
-**Implemented safeguard:** both older files now start with `-- SUPERSEDED DB04 CANDIDATE`, contain no executable SQL, and preserve their full previous text as disabled comment lines. Canonical DB04 is unchanged. A dedicated 13th Node regression test guards against reintroducing these conflicting draft CREATE/ALTER operations.
+**Implemented safeguard:** both older files now start with `-- SUPERSEDED DB04 CANDIDATE`, contain no executable SQL, and preserve their full previous text as disabled comment lines. Canonical DB04 is unchanged. Dedicated Node regression tests guard against reintroducing these conflicting draft CREATE/ALTER operations.
 
 No user data is migrated: vNext is greenfield. The canonical DB04 design still requires explicit decisions on per-entry optimistic revision and legacy image-gallery external image ID compatibility. Supersession is a **source integration deduplication**, not a claim that those user-facing behaviors were verified or intentionally retired.
 
@@ -55,3 +55,7 @@ No user data is migrated: vNext is greenfield. The canonical DB04 design still r
 5. Execute an **independent disposable PostgreSQL** migration replay and negative tenant, race, receipt-purpose, disclosure and rollback witnesses. Record the exact SHA, command, PostgreSQL version, exit code and redacted output.
 
 DB-027 can be **implementation-completed** based on committed preflight tooling and tombstones, but is **not database-verified**. Global DATABASE stays active.
+
+## Follow-up: intra-file CREATE duplicate regression
+
+The first version de-duplicated table names *inside each file* before checking duplicates across files. Chat 3 closed that false-negative: `inspect()` now preserves `createDuplicates` and the analyzer emits `repeatedWithinFile` as a promotion hazard. Added regression test #14. Executed the **committed** pure analyzer code again in an isolated V8 evaluator at blob `4d67e0d3ffd67879eed8267681e7eafb6b8a4497`; the duplicate case was detected and parent-before-child ordering remained correct. This check is not Node `node:test` or a database acceptance run.
