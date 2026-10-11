@@ -468,6 +468,90 @@ CREATE TRIGGER db09_share_event_immutable
   BEFORE UPDATE OR DELETE ON placement_tpo_share_events
   FOR EACH ROW EXECUTE FUNCTION db09_reject_share_event_rewrite();
 
+-- One lifecycle event per terminal/source-required transition. The deferred
+-- completeness guards below turn source audit behavior into a database
+-- invariant without constraining the order of link/event writes inside one tx.
+CREATE UNIQUE INDEX db09_share_events_created_uq
+  ON placement_tpo_share_events(share_id)
+  WHERE action = 'CREATED';
+CREATE UNIQUE INDEX db09_share_events_revoked_uq
+  ON placement_tpo_share_events(share_id)
+  WHERE action = 'REVOKED';
+
+CREATE FUNCTION db09_assert_share_link_event_completeness() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM placement_tpo_share_events e
+     WHERE e.share_id = NEW.id
+       AND e.action = 'CREATED'
+  ) THEN
+    RAISE EXCEPTION 'secure share is missing CREATED lifecycle event'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.revoked_at IS NOT NULL
+     AND NOT EXISTS (
+       SELECT 1
+         FROM placement_tpo_share_events e
+        WHERE e.share_id = NEW.id
+          AND e.action = 'REVOKED'
+     ) THEN
+    RAISE EXCEPTION 'revoked secure share is missing REVOKED lifecycle event'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE CONSTRAINT TRIGGER db09_share_link_event_completeness_guard
+  AFTER INSERT OR UPDATE ON placement_tpo_share_links
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_share_link_event_completeness();
+
+CREATE FUNCTION db09_assert_share_event_state() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_created_at timestamptz;
+  v_revoked_at timestamptz;
+BEGIN
+  IF NEW.action NOT IN ('CREATED','REVOKED') THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT s.created_at,s.revoked_at
+    INTO v_created_at,v_revoked_at
+    FROM placement_tpo_share_links s
+   WHERE s.id = NEW.share_id;
+
+  IF v_created_at IS NULL THEN
+    RAISE EXCEPTION 'secure share lifecycle event has no share'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF NEW.action = 'CREATED' THEN
+    IF NEW.created_at < v_created_at THEN
+      RAISE EXCEPTION 'secure share CREATED event predates share creation'
+        USING ERRCODE = '23514';
+    END IF;
+  ELSIF NEW.action = 'REVOKED' THEN
+    IF v_revoked_at IS NULL THEN
+      RAISE EXCEPTION 'secure share REVOKED event requires revoked share state'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.created_at < v_revoked_at THEN
+      RAISE EXCEPTION 'secure share REVOKED event predates revocation'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE CONSTRAINT TRIGGER db09_share_event_state_guard
+  AFTER INSERT ON placement_tpo_share_events
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_share_event_state();
+
 -- Required PostgreSQL negative witnesses:
 --  1. Tenant A message thread with tenant B job => rejected.
 --  2. Tenant A share token with tenant B job => rejected.
@@ -506,3 +590,6 @@ CREATE TRIGGER db09_share_event_immutable
 -- 18. Secure share identity/disclosure/token/base-code/expiry is immutable
 --     after creation. Only email-code rotation while usable and one-way
 --     revocation are valid post-create transitions; neither can be rewound.
+-- 19. Every share transaction commits exactly one CREATED event, and every
+--     revoked share exactly one REVOKED event. Deferred guards preserve the
+--     source write order while preventing lifecycle/audit divergence.
