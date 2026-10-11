@@ -46,7 +46,7 @@ export function compareDefaults(draft,stage,label){
    /^\s*(\w+)\s+(?:uuid|bigint|integer|boolean|varchar\(\d+\)|timestamp with time zone|timestamptz|date|jsonb|text)(?=\s|,|$)([^\n]*)/gim,
   )];
   for(const m of columns){
-   const defaultExpr=/\bDEFAULT\s+(\S+)/i.exec(m[2])?.[1]??null;
+   const defaultExpr=/\bDEFAULT\s+(\S+)/i.exec(m[2])?.[1]?.replace(/,$/, "")??null;
    right.push([table,m[1],normalizeDefault(defaultExpr)]);
   }
  }
@@ -91,6 +91,11 @@ test("fixture: missing default or changed value/case fails",()=>{
   fixtureSql.replace("DEFAULT true","DEFAULT false"),
   fixtureSql.replace("DEFAULT '{}'::jsonb",""),
  ])assert.throws(()=>compareDefaults(fixtureTs,bad,"bad"),/default presence\/value drift/);
+});
+test("fixture: SQL trailing column commas do not alter default values",()=>{
+ const withComma=fixtureSql.replace("count bigint DEFAULT 1,", "count bigint DEFAULT 1,");
+ assert.deepEqual(compareDefaults(fixtureTs,withComma,"trailing commas"),
+  {columns:6,withDefaults:6});
 });
 test("fixture: unsupported default functions fail closed",()=>{
  assert.throws(()=>compareDefaults(fixtureTs,
