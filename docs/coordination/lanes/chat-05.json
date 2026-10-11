@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-029",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB026_ELECTIVE_PROGRAM_ORACLE_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB029_OFFER_LIFECYCLE_STAGING_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "6260e5cb53eb95e60c0d23fef01d6ac96b7f3d4a",
+    "observedMainSha": "27b8fda3bfe6a7b349e55bb4af72a10f69733a05",
     "lastWorkerMergedSha": "3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-026 resolved the V167 prose vs executable ElectiveService conflict in favor of same-program runtime behavior. Main has join/move/read/backed-delivery program guards, negative regressions, canonical decision doc, and stale PR #55 closed. Fresh source matrix 9/9; PostgreSQL verification pending."
+    "summary": "DB-029 created after peer review proved active legacy offer lifecycle states not representable in current vNext DB: SELECTED before release, RELEASED→EXPIRED and ACCEPTED→RELEASED reversal. Staging only; no migration/barrel edits."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -59,7 +59,7 @@
     "DB02/Chat 4: DB026 consumes canonical current term/year once registered; do not create DB03 progression state.",
     "Chat 1 migration integrator: enforce elective slot-program/backed-delivery cohort-program equality in a new forward-only migration and test reverse-parent edits; canonical decision docs/planning/db03-elective-program-oracle-decision.md."
   ],
-  "nextAction": "Refresh shared DATABASE queue and CAS-pick the next eligible task; otherwise perform non-conflicting peer review while dependency-locked. Do not reopen DB-026 except for verification or DB02/migration integration evidence.",
+  "nextAction": "Author isolated DB08 offer lifecycle SQL/doc/static contract. Preserve normalized joining outcome and DB16 private letter model; do not edit drizzle/schema barrel or runtime API in DATABASE phase.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -91,7 +91,8 @@
     "DB-022",
     "DB-023",
     "DB-024",
-    "DB-026"
+    "DB-026",
+    "DB-029"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -104,7 +105,7 @@
     "DB-024",
     "DB-026"
   ],
-  "lastPickedAt": "2026-10-11T11:00:00+05:30",
+  "lastPickedAt": "2026-10-11T13:05:00+05:30",
   "lastCompletedAt": "2026-10-11T13:13:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
