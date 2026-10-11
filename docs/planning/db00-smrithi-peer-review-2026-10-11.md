@@ -42,7 +42,30 @@ However, at the frozen tree:
 
 This is contradictory evidence: configuration still advertises the subsystem, but the frozen source tree does not expose an obvious producer/consumer implementation.
 
-## 3. Why deployed table presence would not prove activity
+## 3. Explicit backend source retirement on 2026-04-23
+
+Git history provides substantially stronger evidence than the frozen-tree absence alone.
+
+At commit `0f930a5185b2bb70c93f50d17a6bb35b4a859693` (2026-04-03), `SmrithiController.java` still exists. In commit `dd8d7abcd726e00aa7c623b93b67b4b09c736dfe` (2026-04-23, "Add feature flags, security & tenant support"), it is gone.
+
+The paginated April 23 diff explicitly removes the live Smrithi implementation, including:
+
+- `SmrithiController`, `SmrithiContextController`, `SmrithiJobController`, `SmrithiMasterDataController`, `SmrithiPublicJobController`;
+- request/response DTOs for Smrithi signup/login/application/master data;
+- `SmrithiApplication`, `SmrithiCollege`, `SmrithiEducationType`, `SmrithiProgram`, `SmrithiSpecialization`;
+- their repositories;
+- `SmrithiApprovalService`, `SmrithiAuthService`, `SmrithiContextService`, `SmrithiEmailVerificationService`, `SmrithiMasterDataService`, `SmrithiStudentApplicationService`;
+- all corresponding service implementations, including approximately 1,188 removed lines from `SmrithiApprovalServiceImpl`;
+- `SmrithiDataInitializer` and the CSV loader/writer/seeder;
+- Smrithi application / education-type / specialization search caches and controllers.
+
+The same commit also changes the access-control documentation from a distinct "Super-admin Smrithi mode" to a generic `/vasan` super-admin model. This is an explicit **source-code retirement event** for the Smrithi application/master-data subsystem.
+
+Crucially, the commit did **not** add a Flyway drop for the seven Smrithi tables, and later V151–V194 still do not touch them. Combined with `ddl-auto=update`, that explains how historical tables/configuration can remain in a deployed schema/property file after the application code is intentionally removed.
+
+This supports a source disposition of **RETIRED_FROM_CURRENT_BACKEND_ON_2026-04-23** for the Smrithi producers/consumers. It still does not prove that no detached external process talks directly to those tables, but the current LMS backend itself no longer does.
+
+## 4. Why deployed table presence would not prove activity
 
 The frozen backend also sets:
 
@@ -61,7 +84,7 @@ Therefore use these evidence labels separately:
 - **safe retirement:** **not approved**;
 - **product disposition:** still required.
 
-## 4. Implication for the seven tables
+## 5. Implication for the seven tables
 
 The current evidence supports changing the open question from:
 
@@ -83,7 +106,7 @@ That decision applies to:
 
 Do not map them into vNext merely because historical tables/config exist, and do not retire them merely because current source producers were not found.
 
-## 5. Remaining proof needed to close DB-003
+## 6. Remaining proof needed to close DB-003
 
 One of these must be recorded explicitly:
 
