@@ -65,3 +65,17 @@ DB-064 may be marked **COMPLETED at source/staging implementation level** once t
 ## Final exact-source verification after rapid-update correction
 
 Re-fetched fresh `main` SQL blob `a16c86896c4481b771d14e8227986af3ddc91352`, test blob `679e7c38dca010009bf4e5e06ef65b005814527c`, and unchanged Drizzle model blob `17284285f360ebac8957fa382f26a7d29d3def60`. Re-executed all 20 tests in the source-bound V8 harness: **20 passed, 0 failed**, no direct PostgreSQL. Tests were authored for the Node runner but have not been executed by `node --test` in the full checkout.
+
+
+## Post-implementation SQL lexical repair — 2026-10-12
+
+**Critical correction to the earlier DB-064 source-only completion evidence:** the two newly staged personal TPO functions originally had malformed `LANGUAGE plpgsql AS $` openers **and** `END $;` terminators. The prior 20/20 source-text callbacks did **not** detect this PostgreSQL SQL lexer failure. That evidence must not be interpreted as compilable migration SQL.
+
+The canonical candidate `docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql` now uses matched `$$` delimiters for both `db09_restrict_tpo_user_preferences_lifecycle` and `db09_restrict_tpo_saved_view_lifecycle`. No runtime schema, registered migration, Chat 1-only file or live database was modified.
+
+Two CI-covered regression checks have been appended to `tests/db-parity-db09-tracker.test.mjs` (already selected by `npm run test:db:parity`), covering positive matched opener/terminator pairs and mutation rejection of the original lone-dollar failure. **2/2 source-level callbacks passed** against the exact committed GitHub SQL and test blobs:
+
+- SQL candidate Git blob: `5a45a9fc2f46e8b610ada65a73fcc90f5c378ff4`
+- Regression Git blob: `6f5edab470ccb6f81ba04db61e4c75ea665c2ee6`
+
+A separate cross-domain regression in `tests/db-parity-contracts.test.mjs` scans the entire staged SQL inventory for the same malformed opener/terminator on future pushes. **This is lexical/source verification only; PostgreSQL execution and DB-064 runtime acceptance remain NOT RUN.** The queue's `COMPLETED` status means staged implementation committed, never `DONE_VERIFIED`.
