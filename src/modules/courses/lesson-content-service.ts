@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
-import { lessonContents } from "@/db/schema";
+import { courseLessons, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   can,
@@ -354,17 +354,35 @@ export async function createLessonContent(
     );
   }
 
-  const [created] = await getDb()
-    .insert(lessonContents)
-    .values(
-      normalizedContentValues(
-        input,
-        context.user.id,
-      ),
-    )
-    .returning();
+  return getDb().transaction(async (tx) => {
+    // Preliminary permission/offering checks can be stale at insert time.
+    // Lesson archive locks this row FOR UPDATE; recheck it under SHARE.
+    const [activeLesson] = await tx
+      .select({ id: courseLessons.id })
+      .from(courseLessons)
+      .where(and(
+        eq(courseLessons.id, input.lessonId),
+        eq(courseLessons.status, "ACTIVE"),
+      ))
+      .for("share")
+      .limit(1);
 
-  return created;
+    if (!activeLesson) {
+      throw new CoursesServiceError("LESSON_NOT_FOUND");
+    }
+
+    const [created] = await tx
+      .insert(lessonContents)
+      .values(
+        normalizedContentValues(
+          input,
+          context.user.id,
+        ),
+      )
+      .returning();
+
+    return created;
+  });
 }
 
 export async function updateLessonContent(
