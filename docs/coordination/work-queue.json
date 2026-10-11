@@ -3808,16 +3808,40 @@
         "tests/db065-database-phase-gate.test.mjs",
         "docs/planning/db065-phase-gate-audit.md"
       ],
-      "status": "COMPLETED",
+      "status": "DONE_VERIFIED",
       "pickedBy": 5,
       "pickedAt": "2026-10-12T00:42:19+05:30",
       "startedAt": "2026-10-12T00:45:00+05:30",
       "completedBy": 5,
       "completedAt": "2026-10-12T00:48:19+05:30",
       "completionCommitSha": "fb5504028847a9b1ca36611fe9ae942c735b351f",
-      "verifiedBy": null,
-      "verifiedAt": null,
-      "verificationEvidence": [],
+      "verifiedBy": 5,
+      "verifiedAt": "2026-10-12T00:48:19+05:30",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_EXECUTED_NODE_VERIFICATION",
+          "kind": "EXECUTED",
+          "runner": "isolated local Node.js v22.16.0",
+          "commands": [
+            "node --check scripts/db065-database-phase-gate.mjs",
+            "node --check tests/db065-database-phase-gate.test.mjs",
+            "node --test tests/db065-database-phase-gate.test.mjs"
+          ],
+          "exitCode": 0,
+          "testSummary": {
+            "total": 30,
+            "passed": 30,
+            "failed": 0,
+            "skipped": 0
+          },
+          "sourceBlobSha": "947ecb6a87f4c7a9c66bbd4ac487c84351e68452",
+          "testBlobSha": "be55547b4a68fbc0c4f8a680bd72eeac09090b62",
+          "evidencePath": "docs/planning/db065-phase-gate-audit.md",
+          "scope": "READ_ONLY_SOURCE_COORDINATION_PRECHECK_NOT_POSTGRES_SCHEMA_ACCEPTANCE",
+          "postgresReplay": "NOT_RUN",
+          "gitHubActions": "NOT_RUN_INTENTIONALLY_BILLING"
+        }
+      ],
       "blockers": [],
       "completionNote": "Read-only 6-lane DATABASE source coordination preflight and 30 independently executed Node tests, including CLI subprocess acceptance, committed directly main. Live connector source scan errors=0 and flagged DB-064 prerequisite DB-056 unverified. Source-only acceptance, not PostgreSQL/schema/phase acceptance.",
       "latestEvidenceSha": "fb5504028847a9b1ca36611fe9ae942c735b351f",
@@ -3847,6 +3871,11 @@
           "status": "COMPLETED",
           "at": "2026-10-12T00:48:19+05:30",
           "reason": "Read-only source/CLI tool, 30 executable regression tests and exact proof doc committed. PostgreSQL unrelated to this narrowly source-only task."
+        },
+        {
+          "status": "DONE_VERIFIED",
+          "at": "2026-10-12T00:48:19+05:30",
+          "reason": "Narrow DB065 read-only executable tool accepted by 30/30 independently executed Node tests against exact committed blobs. Not PostgreSQL, database domain, or global phase certification."
         }
       ]
     }
