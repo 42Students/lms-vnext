@@ -133,3 +133,19 @@ test("canonical delivery and faculty chains are database scoped", () => {
   assert.match(canonical, /Course teaching assignment requires FACULTY role/);
   assert.match(canonical, /Section faculty assignment requires FACULTY role/);
 });
+
+
+test("learner identity lifecycle preserves suspension but closes role/end state", () => {
+  assert.match(extension, /CREATE FUNCTION db02_withdraw_learner_academic_state\(\)/);
+  assert.match(extension, /OLD\.role = 'LEARNER'/);
+  assert.match(extension, /OLD\.status <> 'ENDED' AND NEW\.status = 'ENDED'/);
+  assert.match(extension, /UPDATE section_enrollments se[\s\S]*status = 'WITHDRAWN'/);
+  assert.match(extension, /UPDATE learner_program_enrollments[\s\S]*withdrawn_at = COALESCE/);
+  assert.match(extension, /db02_withdraw_learner_on_role_removal/);
+  assert.match(extension, /db02_withdraw_learner_on_membership_end/);
+  assert.doesNotMatch(
+    extension,
+    /should_withdraw := [^;]*SUSPENDED/,
+    "temporary suspension must not academically withdraw the learner",
+  );
+});

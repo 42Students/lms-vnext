@@ -201,6 +201,60 @@ ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 
 -- ---------------------------------------------------------------------------
+-- 3b) Learner identity lifecycle closes active academic state
+-- ---------------------------------------------------------------------------
+-- Temporary membership suspension is an access-control state, not academic withdrawal.
+-- Legacy batch usage still counts suspended, non-deleted learners attached to primary classes.
+-- Removing LEARNER or ending the college membership is different: active section/program
+-- enrollment must become historical and must not keep contributing to current cohort counts.
+CREATE FUNCTION db02_withdraw_learner_academic_state()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+  target_membership uuid;
+  should_withdraw boolean := false;
+BEGIN
+  IF TG_TABLE_NAME = 'membership_roles' THEN
+    target_membership := OLD.membership_id;
+    should_withdraw := OLD.role = 'LEARNER';
+  ELSIF TG_TABLE_NAME = 'college_memberships' THEN
+    target_membership := NEW.id;
+    should_withdraw := OLD.status <> 'ENDED' AND NEW.status = 'ENDED';
+  END IF;
+
+  IF NOT should_withdraw THEN
+    RETURN COALESCE(NEW, OLD);
+  END IF;
+
+  UPDATE section_enrollments se
+     SET status = 'WITHDRAWN',
+         ended_at = COALESCE(se.ended_at, now()),
+         updated_at = now()
+    FROM learner_program_enrollments lpe
+   WHERE lpe.id = se.learner_enrollment_id
+     AND lpe.membership_id = target_membership
+     AND se.status = 'ACTIVE';
+
+  UPDATE learner_program_enrollments
+     SET status = 'WITHDRAWN',
+         withdrawn_at = COALESCE(withdrawn_at, now()),
+         completed_at = NULL,
+         updated_at = now()
+   WHERE membership_id = target_membership
+     AND status = 'ACTIVE';
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER db02_withdraw_learner_on_role_removal
+AFTER DELETE ON membership_roles
+FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_academic_state();
+
+CREATE TRIGGER db02_withdraw_learner_on_membership_end
+AFTER UPDATE OF status ON college_memberships
+FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_academic_state();
+
+-- ---------------------------------------------------------------------------
 -- 4) Serialize history creation against section structural movement
 -- ---------------------------------------------------------------------------
 -- PostgreSQL FK inserts normally take KEY SHARE, compatible with NO KEY UPDATE.
@@ -287,4 +341,9 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable(
 -- 6. Test invalid direct SQL member/program/cohort and learner/section/period scopes.
 -- 7. Test valid learner enrollment/section transfer by ending prior history and creating a new row.
 -- 8. Test concurrent section move versus learner/faculty/delivery/schedule history insertion.
--- 9. This file is UNREGISTERED. No PostgreSQL/runtime PASS is claimed.
+-- 9. Test LEARNER role removal and membership END withdraw active section/program enrollment,
+--    while SUSPENDED membership preserves academic enrollment/current-student semantics.
+-- 10. Compatibility current_students must count DISTINCT active learner-program enrollments that
+--     have an ACTIVE section_enrollment in an ACTIVE section of that cohort; unsectioned learners
+--     must not inflate the count.
+-- 11. This file is UNREGISTERED. No PostgreSQL/runtime PASS is claimed.
