@@ -23,7 +23,7 @@
 - `repository/TenantDomainRepository.java`: `0fccbb083c7ce3348a379751adf60fee80b27aef`.
 - `controller/TenantAdminController.java`: `8273eb87ebef09e4c0585becc1f98f92498f6a01`.
 
-All seven cited files were fetched again by exact commit ref and matched their previously observed branch blob SHAs (RoleServiceImpl included among listed eight sources). The evidence rows are updated in `docs/planning/db01-auth-security-p0-field-crosswalk.json`.
+All eight cited Java files were fetched again using the exact pinned commit ref; each matched the previously observed branch blob SHA. The evidence rows are updated in `docs/planning/db01-auth-security-p0-field-crosswalk.json`.
 
 ## Adversarial acceptance — required before DB01 semantic closeout
 
