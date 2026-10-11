@@ -59,6 +59,10 @@ PERIOD_RACE_A_ID="$(new_uuid)"
 PERIOD_RACE_B_ID="$(new_uuid)"
 COHORT_RACE_A_ID="$(new_uuid)"
 COHORT_RACE_B_ID="$(new_uuid)"
+COHORT_DELETE_RACE_A_ID="$(new_uuid)"
+COHORT_DELETE_RACE_B_ID="$(new_uuid)"
+SECTION_DELETE_RACE_A_ID="$(new_uuid)"
+SECTION_DELETE_RACE_B_ID="$(new_uuid)"
 
 psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v run_tag="$RUN_TAG" \
@@ -156,7 +160,7 @@ echo "Fixture committed: $RUN_TAG"
 # ---------------------------------------------------------------------------
 PROMOTE_A="$(mktemp)"
 PROMOTE_B="$(mktemp)"
-trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}" "${OFFERING_FIRST:-}" "${CURRICULUM_DELETE_AFTER:-}" "${CURRICULUM_DELETE_FIRST:-}" "${OFFERING_AFTER_DELETE:-}" "${COHORT_FIRST:-}" "${PERIOD_EDIT_AFTER:-}" "${PERIOD_EDIT_FIRST:-}" "${COHORT_AFTER_EDIT:-}"' EXIT
+trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}" "${OFFERING_FIRST:-}" "${CURRICULUM_DELETE_AFTER:-}" "${CURRICULUM_DELETE_FIRST:-}" "${OFFERING_AFTER_DELETE:-}" "${COHORT_FIRST:-}" "${PERIOD_EDIT_AFTER:-}" "${PERIOD_EDIT_FIRST:-}" "${COHORT_AFTER_EDIT:-}" "${COHORT_DELETE_FIRST:-}" "${SECTION_AFTER_DELETE:-}" "${SECTION_FIRST:-}" "${COHORT_DELETE_AFTER:-}"' EXIT
 
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" <<'SQL'
@@ -994,5 +998,135 @@ if [[ "$PERIOD_B_STATE" != "1:1" ]]; then
 fi
 
 echo "PASS period race B: parent edit committed before serialized cohort creation"
+
+# ---------------------------------------------------------------------------
+# Prepare two history-free cohorts for legacy-compatible delete races.
+# ---------------------------------------------------------------------------
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
+  -v run_tag="$RUN_TAG" -v program_id="$PROGRAM_ID" -v period_id="$PERIOD_ID" \
+  -v cohort_a="$COHORT_DELETE_RACE_A_ID" -v cohort_b="$COHORT_DELETE_RACE_B_ID" <<'SQL' >/dev/null
+INSERT INTO cohorts(id, program_id, name, code, start_period_id, expected_end_period_id, status)
+VALUES
+  (
+    :'cohort_a', :'program_id', :'run_tag' || ' delete-race cohort A',
+    :'run_tag' || '-delete-race-a', :'period_id', :'period_id', 'PLANNED'
+  ),
+  (
+    :'cohort_b', :'program_id', :'run_tag' || ' delete-race cohort B',
+    :'run_tag' || '-delete-race-b', :'period_id', :'period_id', 'PLANNED'
+  );
+SQL
+
+# ---------------------------------------------------------------------------
+# Race 8A: empty cohort delete owns the parent first. A concurrent section insert
+# blocks and must fail after the parent+initializer state commit their deletion.
+# ---------------------------------------------------------------------------
+COHORT_DELETE_FIRST="$(mktemp)"
+SECTION_AFTER_DELETE="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_DELETE_RACE_A_ID" <<'SQL'
+BEGIN;
+DELETE FROM cohorts WHERE id = :'cohort_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$COHORT_DELETE_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v section_id="$SECTION_DELETE_RACE_A_ID" -v cohort_id="$COHORT_DELETE_RACE_A_ID" \
+  -v period_id="$PERIOD_ID" -v run_tag="$RUN_TAG" <<'SQL' >"$SECTION_AFTER_DELETE" 2>&1
+INSERT INTO sections(id, cohort_id, academic_period_id, name, code, capacity, minimum_capacity)
+VALUES (
+  :'section_id', :'cohort_id', :'period_id', :'run_tag' || ' late section A',
+  :'run_tag' || '-late-section-a', 30, 0
+);
+SQL
+SECTION_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$SECTION_STATUS" -eq 0 ]]; then
+  echo "Cohort delete-first race failed: section insert unexpectedly survived deleted parent" >&2
+  cat "$SECTION_AFTER_DELETE" >&2
+  exit 1
+fi
+
+DELETE_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v cohort_id="$COHORT_DELETE_RACE_A_ID" -v section_id="$SECTION_DELETE_RACE_A_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM cohorts WHERE id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM cohort_progression_state WHERE cohort_id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM sections WHERE id = :'section_id');
+SQL
+)"
+
+if [[ "$DELETE_A_STATE" != "0:0:0" ]]; then
+  echo "Cohort delete-first final state mismatch: $DELETE_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS cohort delete race A: empty cohort delete beat stale section creation"
+
+# ---------------------------------------------------------------------------
+# Race 8B: section insert owns the parent FK lock first. Cohort delete blocks,
+# then must fail after the child commits, preserving both child and initializer state.
+# ---------------------------------------------------------------------------
+SECTION_FIRST="$(mktemp)"
+COHORT_DELETE_AFTER="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v section_id="$SECTION_DELETE_RACE_B_ID" -v cohort_id="$COHORT_DELETE_RACE_B_ID" \
+    -v period_id="$PERIOD_ID" -v run_tag="$RUN_TAG" <<'SQL'
+BEGIN;
+INSERT INTO sections(id, cohort_id, academic_period_id, name, code, capacity, minimum_capacity)
+VALUES (
+  :'section_id', :'cohort_id', :'period_id', :'run_tag' || ' first section B',
+  :'run_tag' || '-first-section-b', 30, 0
+);
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$SECTION_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_DELETE_RACE_B_ID" <<'SQL' >"$COHORT_DELETE_AFTER" 2>&1
+DELETE FROM cohorts WHERE id = :'cohort_id';
+SQL
+DELETE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$DELETE_STATUS" -eq 0 ]]; then
+  echo "Section-first cohort delete race failed: cohort delete unexpectedly succeeded" >&2
+  cat "$COHORT_DELETE_AFTER" >&2
+  exit 1
+fi
+
+DELETE_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v cohort_id="$COHORT_DELETE_RACE_B_ID" -v section_id="$SECTION_DELETE_RACE_B_ID" <<'SQL'
+SELECT
+  (SELECT count(*) FROM cohorts WHERE id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM cohort_progression_state WHERE cohort_id = :'cohort_id') || ':' ||
+  (SELECT count(*) FROM sections WHERE id = :'section_id');
+SQL
+)"
+
+if [[ "$DELETE_B_STATE" != "1:1:1" ]]; then
+  echo "Section-first cohort delete final state mismatch: $DELETE_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS cohort delete race B: committed section prevented cohort deletion"
 echo "DB02 concurrency acceptance PASS"
 echo "Fixture rows are intentionally left in this disposable database under tag: $RUN_TAG"
