@@ -1,0 +1,247 @@
+{
+  "document": "DB-008 / original 11 source gaps / non-duplicated closure queue",
+  "generatedAt": "2026-10-12",
+  "owner": "CHAT_06",
+  "phase": "DATABASE",
+  "oracle": {
+    "legacyBackend": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontend": "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
+  },
+  "sourceInventory": "docs/planning/db05-chat06-source-semantic-review.json",
+  "globalMigrationReadiness": "docs/planning/db05-migration-readiness-manifest.json",
+  "note": "This accounts for the original 11 missing/unproven rows. Source-staged does NOT mean implemented, registered, executed, workflow-verified or DB-complete. Do not treat all 11 as current missing-field count; 2 remain historical missing, 6 have unregistered direct drafts, 1 progress draft, 2 remodeling proof gaps.",
+  "counts": {
+    "originalMissingListLength": 11,
+    "currentDisposition": {
+      "UNREGISTERED_DRAFT": 6,
+      "MISSING_OR_UNPROVEN": 2,
+      "REMODELED_NEEDS_PROOF": 3
+    },
+    "semanticVerified": 0,
+    "postgresVerified": 0
+  },
+  "fields": [
+    {
+      "source": "classroom_messages.is_deleted",
+      "issue": "HISTORY_RETENTION",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "scripts/sql/db05-classroom-message-history.draft.sql: course_discussion_messages.deleted_at, current vNext hard DELETE must be replaced",
+      "candidateDraft": "scripts/sql/db05-classroom-message-history.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_CLASSROOM_SERVICE_CONFIRMED",
+      "criticalAcceptanceGate": "CLASSROOM_MESSAGE_UPSTREAM_REPARENT_PROOF",
+      "mandatoryAcceptanceScenarios": [
+        "softDeleteKeepsRow",
+        "learnerListHidesDeleted",
+        "pinCannotResurrect",
+        "priorSenderAttribution"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "classroom_messages.sender_name",
+      "issue": "IMMUTABLE_AUTHOR_SNAPSHOT",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "scripts/sql/db05-classroom-message-history.draft.sql: course_discussion_messages.sender_name_snapshot, current vNext dynamic name join not equivalent",
+      "candidateDraft": "scripts/sql/db05-classroom-message-history.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_CLASSROOM_SERVICE_CONFIRMED",
+      "criticalAcceptanceGate": "CLASSROOM_MESSAGE_PROGRAM_COLLEGE_AND_SHARED_ANCESTRY_LOCK",
+      "mandatoryAcceptanceScenarios": [
+        "trustedActorOnly",
+        "renameDoesNotRewrite",
+        "noClientSpoof",
+        "sameCollegeProof"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "course.allowed_for_display",
+      "issue": "INDEPENDENT_LEARNER_CARD_VISIBILITY",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "scripts/sql/db05-course-parent-facets.draft.sql courses.allowed_for_display integer; StudentCourseServiceImpl filters Integer.valueOf(0).equals(course.getAllowedForDisplay()) for semester course-card mappings; NO globally inferred enum, null/nonzero behavior still consumer-specific; see docs/planning/db05-learner-course-card-source-contract.json",
+      "candidateDraft": "scripts/sql/db05-course-parent-facets.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_STUDENT_CARD_EXPLICIT_ZERO_HIDE_CONFIRMED_OTHER_CONSUMERS_UNPROVEN",
+      "criticalAcceptanceGate": "LEARNER_COURSE_CARD_DISPLAY_ZERO_FILTER",
+      "mandatoryAcceptanceScenarios": [
+        "zeroHides",
+        "nullAndNonzeroNotSilentlyFiltered",
+        "crossRoleVisibility",
+        "noStatusAlias"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "course.created_by_org_id",
+      "issue": "TRUSTED_AUTHOR_ORGANIZATION",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "scripts/sql/db05-course-parent-facets.draft.sql: courses.created_by_organization_id, client payload source but must derive/trust organization context",
+      "candidateDraft": "scripts/sql/db05-course-parent-facets.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN",
+      "criticalAcceptanceGate": "COURSE_PARENT_GRAPH_SAME_COLLEGE_AND_MULTI_HOP_CYCLES",
+      "mandatoryAcceptanceScenarios": [
+        "trustedOrganizationId",
+        "wrongOrganizationDenied",
+        "nullableAttribution",
+        "independentFromDepartment"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "course.default_subscription_days",
+      "issue": "HISTORICAL_SCOPE_DECISION",
+      "sourceClassification": "MISSING_OR_UNPROVEN",
+      "proposedTarget": "NO_DIRECT_FIELD: subscription validity policy",
+      "candidateDraft": "scripts/sql/db05-historical-course-columns.compatibility.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
+      "criticalAcceptanceGate": null,
+      "mandatoryAcceptanceScenarios": [
+        "fullSourceSearch",
+        "explicitRetainOrRetire",
+        "nullableIntegerCompatibility",
+        "noFabricatedExpiry"
+      ],
+      "actionableNextStep": "Complete source audit and choose explicit compatibility retention or approved retirement; do not invent active semantics."
+    },
+    {
+      "source": "course.formal_title",
+      "issue": "HISTORICAL_SCOPE_DECISION",
+      "sourceClassification": "MISSING_OR_UNPROVEN",
+      "proposedTarget": "NO_DIRECT_FIELD: title distinction and producer must be inspected",
+      "candidateDraft": "scripts/sql/db05-historical-course-columns.compatibility.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
+      "criticalAcceptanceGate": null,
+      "mandatoryAcceptanceScenarios": [
+        "fullSourceSearch",
+        "explicitRetainOrRetire",
+        "nullableVarchar255Compatibility",
+        "noInventedTitlePrecedence"
+      ],
+      "actionableNextStep": "Complete source audit and choose explicit compatibility retention or approved retirement; do not invent active semantics."
+    },
+    {
+      "source": "course.parent_course_id",
+      "issue": "PARENT_GRAPH_SENTINEL_AND_CYCLES",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "scripts/sql/db05-course-parent-facets.draft.sql: courses.parent_course_id, explicit legacy 0=clear; tenant/cycle checks missing",
+      "candidateDraft": "scripts/sql/db05-course-parent-facets.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED",
+      "criticalAcceptanceGate": "COURSE_PARENT_GRAPH_SAME_COLLEGE_AND_MULTI_HOP_CYCLES",
+      "mandatoryAcceptanceScenarios": [
+        "absentNoOp",
+        "zeroClears",
+        "sameCollege",
+        "multiHopCycleReject",
+        "concurrentReciprocalReject"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "learner_content_progress.is_deleted",
+      "issue": "LATEST_ATTEMPT_TOMBSTONE",
+      "sourceClassification": "UNREGISTERED_DRAFT",
+      "proposedTarget": "SOURCE-BACKED UNREGISTERED_DRAFT: scripts/sql/db05-version-progress-attempts.draft.sql adds learner_content_progress.deleted_at. The legacy BaseModel.isDeleted field is consumed by LearnerContentProgressRepository.countCompletedPerLearner AFTER MAX(attempt), while findTopBy/findByIn do not filter deletion. Not verified; per-reader policy and API writers remain blocked.",
+      "candidateDraft": "scripts/sql/db05-version-progress-attempts.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LIVE_LEGACY_REPOSITORY_QUERY_CONFIRMED_PER_READER_DIVERGENCE",
+      "criticalAcceptanceGate": "PROGRESS_LATEST_ATTEMPT_SOFT_DELETE_CONSUMERS",
+      "mandatoryAcceptanceScenarios": [
+        "latestAttemptFirst",
+        "adminDeletedFilter",
+        "directReaderSemantics",
+        "rewatchHistory",
+        "attemptUniqueness"
+      ],
+      "actionableNextStep": "Integrator Chat 1 to review staged candidate, reconcile app consumers, execute PostgreSQL negative/race gates before registration."
+    },
+    {
+      "source": "lesson_contents.course_name",
+      "issue": "DENORMALIZED_CREATE_SNAPSHOT_VS_READER_REFRESH",
+      "sourceClassification": "REMODELED_NEEDS_PROOF",
+      "proposedTarget": "vNext lesson_contents.lesson_id -> course_lessons -> learning_path/offering -> courses.name; denormalized legacy snapshot semantics after rename not proved",
+      "candidateDraft": null,
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_LESSON_CONTENT_MODEL_DENORMALIZED",
+      "criticalAcceptanceGate": null,
+      "mandatoryAcceptanceScenarios": [
+        "creationSnapshot",
+        "readEndpointProjection",
+        "renameHistoricalBehavior",
+        "noBlindJoinEquivalence"
+      ],
+      "actionableNextStep": "Prove each reader/writer path and normalized data identity, then execute negative PostgreSQL and API tests."
+    },
+    {
+      "source": "lesson_contents.points",
+      "issue": "CONTENT_POINTS_VS_ASSIGNMENT_MAX",
+      "sourceClassification": "REMODELED_NEEDS_PROOF",
+      "proposedTarget": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_points bigint >=0; producer clamps negative, DB06 max_points not equivalent without subtype proof",
+      "candidateDraft": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "criticalAcceptanceGate": "LESSON_CONTENT_POINTS_BIGINT_AND_DEADLINE_NAIVE",
+      "mandatoryAcceptanceScenarios": [
+        "zeroAllowed",
+        "bigintNoImplicitTruncation",
+        "contentToAssignmentIdentity",
+        "negativeClampedAtProducer"
+      ],
+      "actionableNextStep": "Prove each reader/writer path and normalized data identity, then execute negative PostgreSQL and API tests."
+    },
+    {
+      "source": "lesson_contents.deadline",
+      "issue": "NAIVE_CONTENT_DEADLINE_VS_TIMESTAMPTZ",
+      "sourceClassification": "REMODELED_NEEDS_PROOF",
+      "proposedTarget": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_deadline_local timestamp without timezone; update only explicitly clearDeadline=true; DB06 due_at TIMESTAMPTZ not equivalent",
+      "candidateDraft": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql",
+      "migrationRegistered": false,
+      "semanticVerified": false,
+      "postgresVerified": false,
+      "decisionStatus": "OPEN",
+      "requiredSourceEvidence": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "criticalAcceptanceGate": "LESSON_CONTENT_POINTS_BIGINT_AND_DEADLINE_NAIVE",
+      "mandatoryAcceptanceScenarios": [
+        "noImplicitTimezone",
+        "explicitClearDeadline",
+        "createUpdateDifference",
+        "noLiveClassEndsAtAlias"
+      ],
+      "actionableNextStep": "Prove each reader/writer path and normalized data identity, then execute negative PostgreSQL and API tests."
+    }
+  ]
+}
