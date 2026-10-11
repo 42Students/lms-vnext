@@ -110,7 +110,11 @@ function resetTarget(databaseUrl: string) {
 export function assertResetAllowed(databaseUrl: string) {
   const target = resetTarget(databaseUrl);
 
-  if (["postgres", "template0", "template1"].includes(target.name)) {
+  if (
+    ["postgres", "template0", "template1"].includes(
+      target.name.toLowerCase(),
+    )
+  ) {
     throw new Error(
       `Refusing to reset protected PostgreSQL database: ${target.name}`,
     );
