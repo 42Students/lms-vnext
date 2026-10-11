@@ -372,7 +372,7 @@
       "id": "DB05_FACULTY_OWNER_SAME_COLLEGE_AND_ROLE",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Unregistered faculty_owner_membership_id proposal validates course/period/optional delivery and active FACULTY role only upon assignment. PG mismatched college, role, suspended/assignment race proof NOT RUN."
+      "evidence": "Source-only proposal now locks membership and FACULTY role row FOR SHARE on new assignment, plus shared course/content/order graph advisory key 605008003. Two-connection role deletion/suspension, wrong tenant, isolation and deadlock tests NOT RUN; registration blocked."
     },
     {
       "id": "DB05_FACULTY_OWNER_VS_CREATOR_API_PARITY",
@@ -631,7 +631,13 @@
       "registered": false,
       "postgresExecuted": false,
       "readyForProduction": false,
-      "note": "NULL generic owner preserved. Checks trusted active FACULTY on assignment, not role/current-status on historic owner; no API writes or PG proof."
+      "note": "NULL generic owner preserved. Checks trusted active FACULTY on assignment, not role/current-status on historic owner; no API writes or PG proof.",
+      "assignmentTimeLocks": [
+        "college_memberships FOR SHARE",
+        "membership_roles FOR SHARE",
+        "lesson/offering scoped advisory key 605008003"
+      ],
+      "concurrentRoleRevocationStatus": "SOURCE_STAGED_NOT_PG_TESTED"
     },
     {
       "id": "DB05_LESSON_DELETE_RESTORE_TOMBSTONE",
