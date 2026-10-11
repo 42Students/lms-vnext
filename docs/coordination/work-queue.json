@@ -3042,17 +3042,17 @@
         "docs/planning/database-parity-db06-quiz-lifecycle-contract.md",
         "tests/db06-quiz-lifecycle-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "2c91d416d9de87491a190e77bc2d9452b1068d53",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB06 quiz lifecycle/result-publication source staging complete: actor/tenant/audience event model, honest BASELINE backfill, database-managed lifecycle_version, PUBLISH/UNPUBLISH/CLOSE/ARCHIVE state machine, CLOSED/ARCHIVED result-visibility rules, quiz scope/creator identity freeze, persisted SUPER_ADMIN/COLLEGE_ADMIN/delivery-FACULTY actor checks, bidirectional deferred row↔event completeness, append-only lifecycle history, hard-delete prevention, static guard registration and DB06 field-ledger links. Current-main connector reconciliation 19/19 true. No journal registration/API cutover or PostgreSQL execution claimed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:58:00.000Z",
       "startedAt": "2026-10-11T15:00:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T14:26:18.196Z",
+      "completionCommitSha": "2c91d416d9de87491a190e77bc2d9452b1068d53",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3076,6 +3076,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T15:00:00.000Z",
           "reason": "Auditing vNext quiz lifecycle/result visibility mutations and pinned legacy quiz audit semantics; staging immutable history and DB transition rules only."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:26:18.196Z",
+          "reason": "DB-052 source-only lifecycle/history design reconciles cleanly on current main; runtime/migration/API acceptance intentionally pending."
         }
       ]
     }
