@@ -16,20 +16,14 @@ ALTER TABLE placement_company_relationships
     share_column_defaults IS NULL
     OR (
       jsonb_typeof(share_column_defaults) = 'array'
-      AND NOT EXISTS (
-        SELECT 1
-        FROM jsonb_array_elements_text(share_column_defaults) AS x(value)
-        WHERE x.value NOT IN (
-          'name','roll','branch','cgpa','tenth','twelfth','email','phone',
-          'resume','projects','skillMatch','stage'
-        )
-      )
+      AND share_column_defaults <@
+        '["name","roll","branch","cgpa","tenth","twelfth","email","phone","resume","projects","skillMatch","stage"]'::jsonb
     )
   );
 
 -- Acceptance before registration:
 -- 1) same global company can have different defaults in two colleges;
 -- 2) a college cannot mutate another college relationship;
--- 3) duplicate/unknown values are normalized/rejected by the writer;
+-- 3) unknown values are DB-rejected; duplicates are normalized/rejected by the writer;
 -- 4) actual tpo_share_link columns remain immutable per share and do not change
 --    when the relationship default changes later.
