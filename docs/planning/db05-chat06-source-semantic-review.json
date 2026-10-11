@@ -1025,11 +1025,12 @@
       "sourceType": "bit(1)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "lesson_contents.status (partial; publication distinct from enabled)",
+      "targetProposal": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_active boolean; not equivalent to lesson_contents.status and visibility remains open",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
     },
     {
       "source": "lesson_contents.class_id",
@@ -1112,11 +1113,12 @@
       "sourceType": "bit(1)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "lesson_contents.status (partial)",
+      "targetProposal": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_enabled boolean; independently preserve omitted-update flags; not equivalent to status",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
     },
     {
       "source": "lesson_contents.faculty_id",
@@ -1149,14 +1151,14 @@
       "sourceType": "bigint",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "course_assignments.max_points is a DB06 candidate only for ASSIGNMENT content; no lesson_content_id FK/integrated mapping, other types unknown",
+      "targetProposal": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_points bigint >=0; producer clamps negative, DB06 max_points not equivalent without subtype proof",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column points long",
       "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points.",
-      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
     },
     {
       "source": "lesson_contents.sequence",
@@ -1176,14 +1178,14 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "course_assignments.due_at is a DB06 candidate only for ASSIGNMENT; legacy lesson_contents.deadline is independent persisted field, no exact mapping",
+      "targetProposal": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql legacy_deadline_local timestamp without timezone; update only explicitly clearDeadline=true; DB06 due_at TIMESTAMPTZ not equivalent",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column deadline LocalDateTime",
       "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy.",
-      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
     },
     {
       "source": "lesson_contents.version",
@@ -1276,5 +1278,23 @@
     },
     "status": "SOURCE_ONLY_NOT_VERIFIED",
     "remaining": "Calendar timezone, resource privacy, HTML sanitization, class schedule and DB06 assignment resources/submission policies."
+  },
+  "lessonContentAuthoringFacetFollowUp": {
+    "companion": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql",
+    "source": [
+      "LessonContents.java",
+      "LessonContentsDTO.java",
+      "LessonContentsServiceImpl.java"
+    ],
+    "fields": [
+      "lesson_contents.active",
+      "lesson_contents.enabled",
+      "lesson_contents.points",
+      "lesson_contents.deadline"
+    ],
+    "decision": "Source active producer confirmed; field mappings unresolved because current status/DB06 assignment models differ. Preserve source values separately pending tenant/service acceptance.",
+    "postgres": "NOT_RUN",
+    "api": "NOT_VERIFIED",
+    "integrator": 1
   }
 }
