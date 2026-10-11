@@ -2763,28 +2763,32 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "outbound_messages.id / in_app_notifications.id",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.id",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2799,28 +2803,32 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "source event + template key/fanout policy",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.event_key / activity_events.event_type",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2835,28 +2843,32 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "canonical target user/channel fanout",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.audience_type",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2873,28 +2885,32 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "recipient hash or in_app user_id",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.recipient_user_id",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2909,28 +2925,32 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "outbound_messages.channel OR in_app notification",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.channel",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2947,28 +2967,32 @@
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "encrypted request material / event metadata",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "safe activity/app metadata + encrypted outbound_messages material",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2985,28 +3009,32 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "outbound_messages.not_before",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.not_before",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3021,28 +3049,32 @@
       "sourceDefault": "'PENDING'",
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "outbound delivery state + in-app existence/read state",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.status + child delivery lifecycle",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3057,28 +3089,32 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "MISSING cancellation group",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.cancellation_group_id",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3095,28 +3131,32 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "claim lease fields",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "outbound_messages claim lease fields for external delivery",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3133,28 +3173,32 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "provider_accepted_at/delivered_at",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.sent_at / child delivery timestamps",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3169,28 +3213,32 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "last_safe_failure_code",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.safe_failure_code",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3207,28 +3255,32 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "outbound_messages + in_app_notifications"
+        "notification_delivery_intents",
+        "notification_cancellation_groups",
+        "in_app_notifications",
+        "outbound_messages"
       ],
       "mappingTarget": {
-        "table": "outbound_messages + in_app_notifications",
-        "column": "created_at",
-        "status": "DB10_EQUIVALENCE_BLOCKED"
+        "table": "notification_delivery_intents + normalized child delivery tables",
+        "column": "notification_delivery_intents.created_at",
+        "status": "STAGED_REDESIGN_UNVERIFIED"
       },
-      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
-      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy placement outbox is normalized into a tenant-scoped delivery intent plus cancellation group; APP materializes to in_app_notifications, external channels to encrypted outbound_messages. Undo/digest/general event semantics are preserved without copying raw contact or secret merge payload into the generic intent.",
+      "tenantKey": "notification_delivery_intents.organization_id + college_id; cancellation groups are composite-scoped",
+      "actorPermission": "Recipient identity is canonical user UUID plus audience type; enqueue/materialization must re-check tenant/role policy. Final recruiter code is RECRUITER.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
         "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/db09-notification-outbox-compatibility-contract.md",
+        "docs/planning/sql/db09-notification-intents-candidate.sql",
         "src/db/schema/activity.ts",
-        "docs/planning/database-parity-db10-field-ledger.json"
+        "src/db/schema/db10-outbound-messages.draft.ts"
       ],
-      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Staged redesign authored: explicit APP/external split, not_before scheduling, cancellation group, idempotency key, safe failure code and child materialization identity. Registered migration, sender wiring, claim races and PostgreSQL witnesses remain unexecuted.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -9972,9 +10024,11 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "industry_company.export_columns_json owner decision",
-    "result": "Resolved product ownership blocker by staging tenant-safe relationship-level share_column_defaults. DB/runtime verification remains 0.",
-    "stagedEvidence": "docs/planning/sql/db09-company-export-preference-candidate.sql",
-    "commit": "0d06087d09c256fdbb05a84d2501f450252a9b53"
+    "scope": "notification_outbox 13-field DB09/DB10 compatibility redesign",
+    "result": "Moved all 13 legacy notification_outbox fields from BLOCKED to REDESIGNED via staged notification intent/cancellation contract. Runtime/DB verification remains 0.",
+    "evidence": [
+      "docs/planning/db09-notification-outbox-compatibility-contract.md",
+      "docs/planning/sql/db09-notification-intents-candidate.sql"
+    ]
   }
 }
