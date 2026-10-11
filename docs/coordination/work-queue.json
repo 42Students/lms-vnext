@@ -1645,17 +1645,17 @@
         "docs/planning/database-parity-db08-offer-lifecycle.md",
         "tests/db08-offer-lifecycle-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "5e05ec07b1d42a6099d4fba5045bd0877f121d32",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Staged DB08 offer lifecycle persistence for source-active SELECTED before release, RELEASED→canonical ISSUED, EXPIRED, ACCEPTED→ISSUED reversal, verification provenance and USER/SYSTEM status-history actors. Kept joining outcome normalized and private letter under DB16; PENDING_VERIFICATION/REVOKED remain unverified declared states with no current producer found. Added 15 PostgreSQL/workflow acceptance witnesses and 8 static Node test definitions. Fresh connector source audit passed 35/35; Node/PostgreSQL NOT RUN. No numbered migration or schema barrel edit.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:05:00+05:30",
       "startedAt": "2026-10-11T13:05:30+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T13:09:00+05:30",
+      "completionCommitSha": "5e05ec07b1d42a6099d4fba5045bd0877f121d32",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1679,6 +1679,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:05:30+05:30",
           "reason": "Chat 5 started source-to-vNext offer lifecycle persistence staging after confirming active legacy selection/release/expiry/reversal producers."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:09:00+05:30",
+          "reason": "DB-029 isolated SQL/doc/test staging committed; source matrix 35/35; runtime/migration verification remains downstream."
         }
       ]
     },
