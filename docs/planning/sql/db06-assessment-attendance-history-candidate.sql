@@ -15,6 +15,33 @@
 --   assignment_grade_events: GRADE, REGRADE, PUBLISH_GRADE
 --   attendance_record_events: MARK, CORRECT
 
+-- Fail closed on historical state that cannot be reconstructed truthfully.
+-- The current LMS has no production data to migrate, so promotion should see
+-- zero attendance rows and no already-graded assignment state. If that ceases
+-- to be true, stop and design an explicit audited backfill rather than inventing
+-- actors/timestamps/revisions.
+DO $db06_history_preflight$
+BEGIN
+  IF EXISTS (SELECT 1 FROM attendance_records LIMIT 1) THEN
+    RAISE EXCEPTION 'DB06 history preflight: existing attendance rows require explicit audited backfill'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM assignment_submissions s
+    WHERE s.grading_status <> 'NOT_GRADED'
+       OR s.points_awarded IS NOT NULL
+       OR s.grade_published = true
+       OR s.graded_by_user_id IS NOT NULL
+       OR s.graded_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'DB06 history preflight: existing graded submissions require explicit audit backfill'
+      USING ERRCODE='23514';
+  END IF;
+END;
+$db06_history_preflight$;
+
 -- Exact child identity targets for composite event FKs.
 CREATE UNIQUE INDEX assignment_submissions_event_identity_uq
   ON assignment_submissions(id, assignment_id, delivery_id, membership_id);
