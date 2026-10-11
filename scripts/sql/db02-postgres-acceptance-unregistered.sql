@@ -164,6 +164,12 @@ BEGIN
     RAISE EXCEPTION 'duplicate curriculum display_order was unexpectedly rejected';
   END IF;
 
+  -- Shared DB02 acceptance later performs real 1->2 promotions. Satisfy the separate
+  -- promotion-readiness contract here so those assertions exercise progression/history
+  -- semantics rather than failing because semester 2 is empty.
+  INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
+  VALUES (term_a2, course_core_a, 'CORE', 0, 1);
+
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
   VALUES (program_a, 'DB02 Cohort A', 'DB02-CA', period_a, period_a, 'ACTIVE',
