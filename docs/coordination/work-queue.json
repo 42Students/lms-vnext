@@ -3154,25 +3154,40 @@
         "tests/integration/db18-placement-race-gap.test.ts",
         "docs/planning/db54-placement-application-race-contract.md"
       ],
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
-      "startedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T14:16:30Z",
+      "startedAt": "2026-10-11T14:16:30Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T14:16:30Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "DB-018 deterministic P5-R01 red witness proves placement paid-module/participation and job eligibility can become stale between precheck and application insert."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:16:30Z",
+          "reason": "Chat 5 claimed isolated P5-R01 placement transaction race fix after completing DB-018 witness suite."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:16:30Z",
+          "reason": "Starting source-safe transactional revalidation and deterministic race regression; no migration journal/API/UI changes."
         }
       ]
     }
