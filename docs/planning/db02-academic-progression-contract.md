@@ -325,3 +325,14 @@ No source review, target design, staging SQL, static regex test, authored harnes
 The canonical stage now refuses silent academic-parent rewrites once historical learner/faculty/delivery/schedule/attendance facts exist. Empty sections may still move within the canonical same-college/period-window rules; any historical transfer must become an explicit audited API workflow rather than rewriting old academic history. Offering, delivery and schedule-event history are similarly protected, with parent SHARE locks intended to serialize concurrent history creation against parent reparenting.
 
 No PostgreSQL witness has been executed from Chat 4; CI availability is not used as a completion gate.
+
+## Source-backed promotion readiness gate (2026-10-11, Chat 4)
+
+**Legacy oracle:** `42Students/lms@prod-2026` `BatchServiceImpl.validatePromotion` (blob `9727013167f5c4ffd4eafa8064d45786b14c3dde`). Promotion is permitted only if (1) source cohort is `ACTIVE`, (2) target term is exactly current+1 within program duration, (3) target `program_terms` is configured/active, and (4) at least one `program_term_courses` row exists in that target term. Legacy preview reports staffing readiness, but does not require staffing to permit promotion.
+
+The canonical DB02 term/version guard does not yet enforce (1), (3), or (4). **Staged source-scoped proposal:** `scripts/sql/db02-promotion-readiness-guard.draft.sql` with target-term and mapped-course `FOR SHARE` locks. These locks serialize changes to the target term/course with promotion; they do not guarantee the term will stay active forever after the promotion commits, consistent with later authorized admin edits. The rule does **not** apply to initial term-1 cohort creation or a same-term academic-year/period correction.
+
+**Proof to execute after Chat 1 registration:** `scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql` and `scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh`. Authored static tests: `tests/db02-promotion-readiness-contract.test.mjs`. No PostgreSQL, Node runner or CI execution is claimed.
+
+**Dependent API contracts:** all application promotions must use a versioned CAS predicate, return a stale-conflict response to the loser and deactivate outgoing teaching assignments transactionally. DB03 elective checks must use the canonical cohort current term/year and target program, never an independent academic-period-number heuristic.
+
