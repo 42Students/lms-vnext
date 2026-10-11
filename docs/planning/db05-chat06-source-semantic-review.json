@@ -797,11 +797,12 @@
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "course_lessons.status (partial; restore/delete semantics unresolved)",
+      "targetProposal": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql: course_lessons.legacy_deleted_at; transactional child tombstones, lesson-only restore",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_LESSON_DELETE_RESTORE_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson.updated_at",
@@ -821,11 +822,12 @@
       "sourceType": "bit(1)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "course_lessons.status (partial)",
+      "targetProposal": "scripts/sql/db05-lesson-active-enabled.draft.sql: course_lessons.legacy_active independent of status",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson.course_id",
@@ -845,11 +847,12 @@
       "sourceType": "bit(1)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "course_lessons.status (partial)",
+      "targetProposal": "scripts/sql/db05-lesson-active-enabled.draft.sql: course_lessons.legacy_enabled independent of status",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson.lesson_name",
@@ -1002,11 +1005,12 @@
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "lesson_contents.status (partial; soft delete/restore unresolved)",
+      "targetProposal": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql: lesson_contents.legacy_deleted_at; preserve independent content deletions",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTENT_DELETE_AND_LESSON_CASCADE_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson_contents.updated_at",
@@ -1128,11 +1132,12 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "lesson_contents.created_by_user_id is NOT equivalent to faculty owner",
+      "targetProposal": "scripts/sql/db05-lesson-content-owner-membership.draft.sql: lesson_contents.owner_membership_id; nullable owner separate from createdByUserId, same-college guard, role service proof missing",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_FACULTY_OWNER_TEACHING_SCOPE_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson_contents.lesson_id",
@@ -1309,5 +1314,27 @@
     "verified": false,
     "postgres": "NOT_RUN",
     "api": "NOT_RUN"
+  },
+  "lessonContentDeletionOwnershipFollowUp": {
+    "evidenceContract": "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+    "sqlCompanions": [
+      "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql",
+      "scripts/sql/db05-lesson-content-owner-membership.draft.sql",
+      "scripts/sql/db05-lesson-active-enabled.draft.sql"
+    ],
+    "sourceFiles": [
+      "LessonServiceImpl.java",
+      "LessonContentsServiceImpl.java",
+      "Lesson.java",
+      "LessonContents.java",
+      "BaseModel.java"
+    ],
+    "facts": [
+      "Lesson delete atomically marks child content deleted; restore only lesson, never children",
+      "Independent content deletion disables active and enabled and may destroy private asset",
+      "Content faculty owner is not identical to creator; admin exceptions and faculty course teaching assignment checked",
+      "Lesson active enabled independently default true on source create and only changed when supplied on source update"
+    ],
+    "verification": "SOURCE_ONLY; PG/API/browser/CI not run; no migration journal registration"
   }
 }
