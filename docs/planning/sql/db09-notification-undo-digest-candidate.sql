@@ -86,8 +86,10 @@ CREATE TABLE placement_notification_intents (
     CHECK (length(trim(event_key)) > 0),
   CONSTRAINT db09_notify_digest_channel_ck
     CHECK (digest_day IS NULL OR channel = 'EMAIL'),
-  CONSTRAINT db09_notify_digest_no_undo_leak_ck
-    CHECK (digest_day IS NULL OR send_after::date >= digest_day),
+  -- Digest's local calendar day is a *business* timezone decision.
+  -- Do not cast timestamptz to date in a DB CHECK: it depends on session TZ.
+  CONSTRAINT db09_notify_digest_future_ck
+    CHECK (digest_day IS NULL OR send_after >= created_at),
   CONSTRAINT db09_notify_claim_state_ck
     CHECK (
       (status = 'CLAIMED' AND claimed_at IS NOT NULL
