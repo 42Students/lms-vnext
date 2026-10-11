@@ -325,6 +325,24 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Unregistered lesson_contents legacy shadow flags/points/deadline, need current tenant course/lesson/offering hierarchy reparent and optimistic CAS acceptance."
+    },
+    {
+      "id": "LEARNER_COURSE_CARD_DISPLAY_ZERO_FILTER",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy StudentCourseServiceImpl hides semester course card only when allowed_for_display == 0; NULL/nonzero not excluded by this source line. VNext learner course service reads courses.status/code and lacks proven equivalent; see docs/planning/db05-learner-course-card-source-contract.json."
+    },
+    {
+      "id": "LEARNER_COURSE_CARD_CODE_PRECEDENCE",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy metadata.courseCode nonblank overrides course.shortTitle; vNext learner course list uses courses.code, not guaranteed equivalent. Source-only test authored, not executed."
+    },
+    {
+      "id": "LEARNER_COURSE_CARD_HTML_PRIVATE_FIELDS",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy StudentCourseServiceImpl comment flags byClass detail vs byStudent redaction, actual full controller/FE authorization not yet proven. Do not expose html/introduction to unauthorized learner."
     }
   ],
   "sourceReview": {
@@ -351,7 +369,8 @@
     "tests/db05-source-semantic-review.test.mjs",
     "tests/db05-draft-contract-integrity.test.mjs",
     "tests/db05-content-delivery-order-unique.test.mjs",
-    "tests/db05-lesson-content-authoring-facets.test.mjs"
+    "tests/db05-lesson-content-authoring-facets.test.mjs",
+    "tests/db05-learner-course-card-source-contract.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -364,7 +383,8 @@
     "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof.",
     "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof.",
     "Delivery-specific lesson-content ordering: scope trigger staged only; per-lesson+delivery sequence uniqueness and upstream offering/term/college changes unresolved, PG race/negative tests not run.",
-    "Independent legacy lesson-content active/enabled flags, Java long points and explicit-cleared LocalDateTime deadline need W01/DB06/API decision; shadow draft not registered."
+    "Independent legacy lesson-content active/enabled flags, Java long points and explicit-cleared LocalDateTime deadline need W01/DB06/API decision; shadow draft not registered.",
+    "Legacy student card allowed_for_display == 0 hides course; metadata.courseCode nonblank overrides shortTitle. VNext courses.status/code not equivalent without producer+consumer acceptance."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
