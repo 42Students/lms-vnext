@@ -71,7 +71,7 @@ test("faculty assignment requires active FACULTY membership without wiping old o
   assert.match(sql, /NEW\.faculty_owner_membership_id[\s\S]*IS DISTINCT FROM OLD\.faculty_owner_membership_id/);
   assert.match(sql, /IF newly_assigned AND/);
   assert.match(contract, /Historical owner/);
-  assert.match(contract, /role loss after ownership/);
+  assert.match(contract, /later loses role\/is suspended/);
 });
 
 test("later API must combine faculty owner with teaching assignment access", () => {
