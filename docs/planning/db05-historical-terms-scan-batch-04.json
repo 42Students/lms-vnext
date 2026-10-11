@@ -1,0 +1,114 @@
+{
+  "task": "DB-008",
+  "ref": "prod-2026",
+  "bounded": true,
+  "terms": [
+    "default_subscription_days",
+    "defaultSubscriptionDays",
+    "formal_title",
+    "formalTitle"
+  ],
+  "backendCandidateCount": 207,
+  "frontendCandidateCount": 175,
+  "batch": "BE24-31_FE18-23",
+  "files": [
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/SemesterController.java",
+      "sha": "256dc573866076731700b7650cb2b1220144b407",
+      "bytes": 39597,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/StudentCourseController.java",
+      "sha": "267e0f1e75e7b18178dbdf5362e6c259a801d22c",
+      "bytes": 6650,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+      "sha": "c723d0fa430f9bdb8808a5645bd14b3bd8a9e8aa",
+      "bytes": 7438,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerEligibilityController.java",
+      "sha": "2df8c748b2879fe240fc28bbce54863da9369b08",
+      "bytes": 6866,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerOfferController.java",
+      "sha": "87df67abecd39dc99346e9ed9cb87b889823c820",
+      "bytes": 1875,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java",
+      "sha": "c8d465e972845b7f6f7a77aa7cc764c9ce7f88fe",
+      "bytes": 1238,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java",
+      "sha": "456351718ec8c0780b2ae2678e7be7bd70ae66d8",
+      "bytes": 1744,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java",
+      "sha": "6c2cb58565174a353093f5e11224060677aa9e09",
+      "bytes": 2418,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/tpoBatchesPages.test.jsx",
+      "sha": "f31cc124c30c7a0a31e043057a557661f3b4f743",
+      "bytes": 12764,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/tpoDriveFormBatchesAndJobType.test.jsx",
+      "sha": "149479550500d46eaecd2388a3bb84066af16893",
+      "bytes": 2586,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/tpoStudentsAudit.test.jsx",
+      "sha": "ef8f148443eeb4dedc3a7c9c718a2cc547ac0446",
+      "bytes": 6874,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/tpoStudentsNotificationsAuditErrorStates.test.jsx",
+      "sha": "97a1c08066ec5860cf93332ff6601bfbedace3d8",
+      "bytes": 2637,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/__tests__/getClassCountByProgram.test.js",
+      "sha": "9f8b0d0ad385cc525966e579c3844a80478be428",
+      "bytes": 1316,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/adminServices/departmentService.js",
+      "sha": "5c85495cb5823e0b4059c11c502143b47fec6a13",
+      "bytes": 4984,
+      "matches": []
+    }
+  ]
+}
