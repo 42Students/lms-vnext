@@ -18,9 +18,10 @@ stored-code family still using the pre-rename `HR` label:
 - the same service writes
   `source: recruiterCanStage ? "HR" : "TPO"`.
 
-No other `HR` literal was found across the 54 current
-`src/db/schema/*.ts` files or the other 53 placement module files inspected in
-this pass.
+The sweep covered **54 current `src/db/schema/*.ts` files and 54 current
+`src/modules/placements/*.ts` files**. No other `HR` literal was found
+outside the one round-result schema CHECK plus the two result-service
+producer/consumer references.
 
 The frozen production database contract is already past that naming state:
 V193 rewrites both `round_result.source` and
