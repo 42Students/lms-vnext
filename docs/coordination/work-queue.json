@@ -3083,6 +3083,43 @@
           "reason": "DB-052 source-only lifecycle/history design reconciles cleanly on current main; runtime/migration/API acceptance intentionally pending."
         }
       ]
+    },
+    {
+      "id": "DB-053",
+      "phase": "DATABASE",
+      "title": "Harden DB06 private assignment upload receipt lifecycle",
+      "scope": "Source-only DB06 follow-up to DB-016: align staged course_upload_receipts and assignment_submission_files with scan attester/time, auditable revocation, retention/deletion lifecycle, consumed identity immutability, exact assignment/submission owner binding and private-object attestation. Keep runtime fail-closed and do not register migration/API cutover.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/course-upload-receipts-staged.ts",
+        "docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql",
+        "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md",
+        "tests/db06-assignment-upload-receipt-staging.test.mjs",
+        "docs/planning/database-parity-db06-field-reconciliation.json"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB-016 identified DB06 course_upload_receipts as staged but missing scan attester/time, revocation actor/reason, retention/deletion state and consumed-object immutability; DB-009 still has assignment receipt/file fields unresolved."
+        }
+      ]
     }
   ],
   "eventModel": {
