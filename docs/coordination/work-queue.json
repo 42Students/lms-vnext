@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T07:49:00.000Z",
+  "updatedOn": "2026-10-11T13:32:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1793,6 +1793,57 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:15:30+05:30",
           "reason": "Chat 5 started source-to-vNext generic SMS provider-attempt ledger staging after confirming both active providers and super-admin support consumer."
+        }
+      ]
+    },
+    {
+      "id": "DB-032",
+      "phase": "DATABASE",
+      "title": "Adversarial DB09 staged principal and race hardening",
+      "scope": "Harden blocked DB09 staging before W01 registration: direct-SQL recruiter/TPO principal scope, share disclosure constraints, multi-college drive-group identity, scheduling slot-capacity concurrency, prep/bell tenant scope, notification undo/claim races, SQL syntax/static registration guards and integration handoff. No drizzle journal or schema-barrel edits.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/sql/db09-parent-composite-keys-candidate.sql",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql",
+        "docs/planning/sql/db09-round-scheduling-candidate.sql",
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+        "src/db/schema/tpo-collaboration.ts",
+        "tests/db09-integration-staging-guard.test.mjs",
+        "docs/planning/db09-integration-manifest-2026-10-11.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": "0bb1cd6188e6d7fbb777ce8366bbb33de7753ab6",
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T13:32:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T13:32:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T13:32:00+05:30",
+          "reason": "Fresh DB09 integration-readiness gap: direct-SQL principal/race invariants remained app-only after source/design closure."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:32:00+05:30",
+          "reason": "Chat 3 reserved isolated DB09 staging/test/manifest hardening; no journal or schema-barrel edits."
         }
       ]
     }
