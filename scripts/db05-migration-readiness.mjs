@@ -40,6 +40,16 @@ function requireSubordinateDb05Proof(owner, key, entry, expectedPath = null) {
     block("Missing subordinate path: " + owner + "." + key);
     return;
   }
+  // All subordinate guard candidates must remain repo-local SQL files, never
+  // arbitrary absolute paths or path traversal into an unrelated directory.
+  if (!/^scripts\\/sql\\/[a-z0-9-]+\\.draft\\.sql$/.test(path)) {
+    block("Invalid subordinate SQL path: " + owner + "." + key + " -> " + path);
+    return;
+  }
+  if (seen.has(path)) {
+    block("Repeated subordinate SQL reference: " + owner + "." + key + " -> " + path);
+  }
+  seen.add(path);
   if (!existsSync(resolve(root, path))) {
     block("Missing subordinate SQL: " + owner + "." + key + " -> " + path);
   }
