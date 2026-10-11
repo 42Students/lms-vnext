@@ -17,11 +17,11 @@ test("DB05 staged order candidate witnesses the owning lesson, not a global sequ
   assert.match(draft, /ADD COLUMN lesson_id uuid/);
   assert.match(draft, /SET lesson_id = content\.lesson_id/);
   assert.match(draft, /ALTER COLUMN lesson_id SET NOT NULL/);
-  assert.match(draft, /UNIQUE \(id, lesson_id\)/);
+  assert.match(draft, /ON lesson_contents \(id, lesson_id\)/);
   assert.match(draft, /FOREIGN KEY \(lesson_content_id, lesson_id\)/);
   assert.match(draft, /REFERENCES lesson_contents \(id, lesson_id\)/);
   assert.match(draft, /ON UPDATE RESTRICT/);
-  assert.match(draft, /UNIQUE \(delivery_id, lesson_id, sequence\)/);
+  assert.match(draft, /ON lesson_content_delivery_sequences \(delivery_id, lesson_id, sequence\)/);
   assert.match(draft, /CREATE UNIQUE INDEX db05_delivery_order_lesson_sequence_uq/);
   assert.doesNotMatch(draft, /UNIQUE\s*\(\s*delivery_id\s*,\s*sequence\s*\)/);
 });
@@ -37,10 +37,10 @@ test("DB05 delivery reorder writer includes witnessed lesson ID in inserted rows
 });
 
 test("DB05 new uniqueness companion does not silently replace tenant guard", () => {
-  assert.match(draft, /UNREGISTERED companion/);
+  assert.match(draft, /UNREGISTERED, NOT EXECUTED/);
   assert.match(draft, /W01 folds exactly once/);
   assert.doesNotMatch(draft, /CREATE TABLE\s+lesson_content_delivery_sequences/i);
-  assert.doesNotMatch(draft, /CREATE TRIGGER/i);
+  assert.match(draft, /CREATE TRIGGER db05_delivery_order_lesson_before_write/);
   assert.match(other, /db05_content_delivery_order_scope_guard/);
   for (const term of [
     "content_offering_id",
