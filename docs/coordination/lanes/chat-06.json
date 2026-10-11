@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_COURSE_LESSON_SOFT_DELETE_OWNER_DEDUP_SOURCE_GATES_NOT_PG_VERIFIED",
+    "checkpointKind": "DB008_RECEIPT_SQL_SYNTAX_FIXED_COHORT_PERIOD_SCOPE_GUARDS_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
-    "lastWorkerMergedSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
+    "observedMainSha": "be382487960ce25c5b667df8058688a2bc33b92d",
+    "lastWorkerMergedSha": "a9e08e1104eaf954b5bd128cf6e1a575535f3a4f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB008 IN_PROGRESS in DATABASE. 92 legacy source fields reviewed, 25 top-level semantic decisions remain OPEN, 0 formally database-verified. Seven DB05 independent migration drafts UNREGISTERED, eight cross-domain companions including course live-child delete guard, atomic lesson delete+nonresurrecting restore (live child parent FOR SHARE), independent lesson active/enabled, canonical faculty owner ACTIVE FACULTY role and same-college guard. Deleted duplicate weaker owner SQL, reconciled to faculty_owner_membership_id. Readiness script checks all companions and subordinate order witness, 53 gates none PASS. Source tests authored, NOT executed. PostgreSQL replay/race, Node unit, lint/typecheck/build/CI not accepted."
+    "summary": "DB008 remains IN_PROGRESS. This batch fixed invalid duplicate executable SQL after COMMIT in private receipt companion and strengthened cohort+academic-period matching in receipt create/consume, classroom messages, lesson discussions, learner progress; all 4 companions UNREGISTERED. Scanned 22 DB05 SQL drafts for transaction/dollar quote/tail anomalies, then ran 17 connected source assertions (all true); authored two node:test files and 22-case PG negative matrix, Node suite/PG not executed. Existing 7 primary DB05 drafts not registered; 0/92 formally DB-verified, 25 unresolved semantics. GitHub Actions billing intentionally disabled and is NOT a coding blocker; real PostgreSQL acceptance remains outstanding."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -52,7 +52,9 @@
     "tests/db05-lesson-active-enabled.test.mjs (3 authored, NOT executed)",
     "tests/db05-course-soft-delete-guard.test.mjs (5 authored, NOT executed)",
     "tests/db05-draft-contract-integrity.test.mjs (11 authored at last source scan, NOT executed)",
-    "tests/db05-lesson-faculty-owner-guard.test.mjs (canonical peer tests authored, not executed)"
+    "tests/db05-lesson-faculty-owner-guard.test.mjs (canonical peer tests authored, not executed)",
+    "tests/db05-sql-draft-structure.test.mjs: 3 Node tests authored, NOT executed",
+    "tests/db05-delivery-cohort-period-integrity.test.mjs: 6 Node tests authored, NOT executed"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -164,9 +166,15 @@
       "kind": "DB05_FAIL_CLOSED_SUBORDINATE_GATES",
       "commitSha": "7e5b431336b163268246e507aa22fdbe8c4ec780",
       "message": "Readiness checker now requires individually marked registered, postgresExecuted and readyForProduction PASS on artifact nested companionIntegrity/UpstreamDepartment/SameCollege, content order uniqueLessonProof and upstreamReparentCompanion; duplicate/path-traversal SQL references rejected. 7 primary drafts remain UNREGISTERED; 0/92 DB verified. 5 Node tests authored NOT RUN; Node 22 path-regex syntax plus six local path cases passed. W01 must provide exact DB evidence; GitHub CI billing not a blocker."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_COHORT_PERIOD_RECEIPT_SCOPE_AND_DRAFT_SYNTAX_20261011",
+      "commitSha": "a9e08e1104eaf954b5bd128cf6e1a575535f3a4f",
+      "message": "Eight direct-to-main commits: repair malformed receipt SQL tail; check same-college cohort/term identity in receipt create+consume and three other DB05 companion guards; add two static Node suites and 22-case unexecuted PG acceptance matrix. 17 remote-source assertions passed, 22 source SQL draft transaction/tail checks passed; Node/PG not executed, 0 DB field verifications. W01 owns single registration and must protect upstream reparenting."
     }
   ],
-  "nextAction": "DATABASE DB-008 still IN_PROGRESS: W01 integrate exact seven primary DB05 migrations with source-backed subordinate faculty-owner, lesson content tenant scope, order uniqueness, ancestry and other companions only after executable PG clean replay + negative tenant/race/deadlock proof. Subordinate readiness checker fails closed. Continue remaining source decisions; do not promote 0/92 verified or flip phase.",
+  "nextAction": "Continue DB008 source-contract closure and coordinate with Chat1: register only after same-college + cohort + exact academic period guard integration, upstream reparent race policy, typed source/DB06 cross-contract and 22-case disposable PostgreSQL acceptance. Verify actual Node tests on independent local runner. Global phase remains DATABASE.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -279,7 +287,15 @@
     "https://github.com/42Students/lms-vnext/commit/fcf3755423a025318c7329c1bee1ab626e49811f",
     "https://github.com/42Students/lms-vnext/commit/a8a86795a1e49b512289ab137dcd73ec1d0ab2ff",
     "https://github.com/42Students/lms-vnext/commit/500a11e7f991dd1956d512eb560252cd7fe02b3d",
-    "https://github.com/42Students/lms-vnext/commit/7e5b431336b163268246e507aa22fdbe8c4ec780"
+    "https://github.com/42Students/lms-vnext/commit/7e5b431336b163268246e507aa22fdbe8c4ec780",
+    "https://github.com/42Students/lms-vnext/commit/a6c10c20342778f99de5cabf98ae6bae7b526711",
+    "https://github.com/42Students/lms-vnext/commit/cd3fbbc327ba1d82d9c0d0d94f32486bc450ce91",
+    "https://github.com/42Students/lms-vnext/commit/40357ade7381920095ad793a22dd4c3e788407f1",
+    "https://github.com/42Students/lms-vnext/commit/449dca3eb469b1fdd6875ac66c18aa4705a6f8cc",
+    "https://github.com/42Students/lms-vnext/commit/da6ed8eefe5483f02ab003d791f7a0f3e40e771c",
+    "https://github.com/42Students/lms-vnext/commit/36d2ceb430e8bbff8e2f3aff8cac6f947c1ada0c",
+    "https://github.com/42Students/lms-vnext/commit/7dd5284f6cbc429dc00ffe6942a0f9cdb16bd7d6",
+    "https://github.com/42Students/lms-vnext/commit/a9e08e1104eaf954b5bd128cf6e1a575535f3a4f"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
