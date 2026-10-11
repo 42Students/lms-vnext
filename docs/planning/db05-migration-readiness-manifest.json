@@ -379,6 +379,60 @@
       "status": "BLOCKED",
       "owner": "DATABASE_TO_API_HANDOFF",
       "evidence": "Legacy faculty_id authorizes owner-specific update/delete; vNext created_by_user_id is creator only. Need trusted admin assignment, faculty teacher scope and owner edit/delete tests before activation."
+    },
+    {
+      "id": "LESSON_SOFT_DELETE_CASCADE_ATOMIC",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Lesson source transaction deletes child tombstones; candidate SQL AFTER UPDATE cascade authored, disposable PG parent/child partial failure & rollback NOT_RUN."
+    },
+    {
+      "id": "LESSON_RESTORE_DOES_NOT_RESURRECT_CONTENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Legacy restoreLesson returns parent only, doesn't restore children; already-deleted content and backed R2 objects never silently resurrect. Candidate source companion only."
+    },
+    {
+      "id": "LESSON_DELETED_PARENT_CHILD_INSERT_LOCK_RACE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Candidate child BEFORE INSERT/UPDATE uses FOR SHARE and fail-closed 23514; concurrent lesson deletion vs content creation/move PostgreSQL race NOT_RUN."
+    },
+    {
+      "id": "LESSON_CONTENT_OWNER_SAME_COLLEGE_GUARD",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Candidate child trigger validates owner membership, course department, offering academic period, section delivery cohort/period and college. Actual PG wrong-college negatives NOT_RUN."
+    },
+    {
+      "id": "LESSON_CONTENT_OWNER_VS_CREATOR_AND_FACULTY_ROLE",
+      "status": "BLOCKED",
+      "owner": "DATABASE_ENGINEERING_TO_API_PHASE_HANDOFF",
+      "evidence": "Legacy facultyId ownership not equivalent to created_by_user_id; generic content requires actual teaching scope, owner mismatch admin-only. Source truth needs trusted API identity and role cutover."
+    },
+    {
+      "id": "LESSON_CONTENT_OWNER_UPSTREAM_REPARENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Child owner scope trigger alone does not guard upstream department/section/period/course/lesson/membership move and race; requires accepted immutability or upstream guards."
+    },
+    {
+      "id": "LESSON_ACTIVE_ENABLED_OMITTED_UPDATE_PARITY",
+      "status": "BLOCKED",
+      "owner": "DATABASE_ENGINEERING_TO_API_PHASE_HANDOFF",
+      "evidence": "Legacy independent course lesson active/enabled flags true by default on create and unchanged when omitted on update, independently of status/tombstone."
+    },
+    {
+      "id": "LESSON_CONTENT_PRIVATE_DELETION_RETENTION",
+      "status": "BLOCKED",
+      "owner": "DB05_DB16_W01",
+      "evidence": "Legacy content deletion may permanently delete private R2 file; audit/submission/progress must survive without playback or unsafe restore. Tenant/private receipt integration pending."
+    },
+    {
+      "id": "LESSON_SEQUENCE_LONG_VS_VNEXT_INT_RANGE",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy lesson.sequence is Java long, vNext course_lessons.sequence integer; positive range and JS/Drizzle types not yet reconciled, avoid silent truncation."
     }
   ],
   "sourceReview": {
@@ -410,7 +464,9 @@
     "tests/db05-content-order-upstream-reparent.test.mjs",
     "tests/db05-learner-content-visibility-matrix.test.mjs",
     "tests/db05-lesson-faculty-owner-guard.test.mjs",
-    "tests/db05-lesson-content-tenant-scope.test.mjs"
+    "tests/db05-lesson-content-tenant-scope.test.mjs",
+    "tests/db05-lesson-delete-restore-and-owner.test.mjs",
+    "tests/db05-lesson-active-enabled.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -426,7 +482,9 @@
     "Independent legacy lesson-content active/enabled flags, Java long points and explicit-cleared LocalDateTime deadline need W01/DB06/API decision; shadow draft not registered.",
     "Legacy student card allowed_for_display == 0 hides course; metadata.courseCode nonblank overrides shortTitle. VNext courses.status/code not equivalent without producer+consumer acceptance.",
     "Lesson content basic optional delivery FK still allows wrong offering/cohort/period/college via direct SQL; companion staged, W01 integration and disposable PostgreSQL negatives pending.",
-    "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending."
+    "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending.",
+    "Legacy delete lesson cascades content tombstones atomically; restore parent only. SQL draft is unregistered and current vNext reads do NOT filter these tombstones; stop release until atomic API/DB cutover and 2-session PG tests.",
+    "Legacy content owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -540,6 +598,56 @@
       "postgresExecuted": false,
       "readyForProduction": false,
       "note": "NULL generic owner preserved. Checks trusted active FACULTY on assignment, not role/current-status on historic owner; no API writes or PG proof."
+    },
+    {
+      "id": "DB05_LESSON_DELETE_RESTORE_TOMBSTONE",
+      "path": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql",
+      "baseCandidate": "src/db/schema/courses.ts course_lessons and lesson_contents",
+      "dependencies": [
+        "PARENT_AND_CHILD_SOFT_DELETE_FLAGS_CUTOVER",
+        "LESSON_DELETE_CASCADE_ATOMIC_COMMIT",
+        "RESTORE_ONLY_PARENT_NEVER_AUTO_RESTORE_CHILD",
+        "LIVE_CHILD_DELETED_PARENT_LOCK_NEGATIVE",
+        "PRIVATE_R2_ASSET_NONRESURRECTION",
+        "PG_DELETE_RESTORE_MOVE_RACE"
+      ],
+      "note": "Non-numbered SQL companion, NEVER auto-restore child. Reader/writer cutover required before registering.",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_OWNER_MEMBERSHIP",
+      "path": "scripts/sql/db05-lesson-content-owner-membership.draft.sql",
+      "baseCandidate": "src/db/schema/courses.ts lesson_contents; college_memberships",
+      "dependencies": [
+        "AUTHOR_ID_NOT_OWNER_MEMBER_ID",
+        "SAME_COLLEGE_OWNER_OFFORDING_DEPARTMENT_SCOPE",
+        "GENERIC_CONTENT_FACULTY_ASSIGNMENT_GUARD",
+        "ADMIN_EXCEPTION_TEACHING_SCOPE",
+        "UPSTREAM_REPARENT_AND_MEMBERSHIP_MOVE",
+        "PG_OWNER_NEGATIVE_AND_RACE"
+      ],
+      "note": "Nullable content owner membership distinct from creator; child row tenant trigger alone not proof of upstream integrity.",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "DB05_LESSON_ACTIVE_ENABLED_FLAGS",
+      "path": "scripts/sql/db05-lesson-active-enabled.draft.sql",
+      "baseCandidate": "src/db/schema/courses.ts course_lessons",
+      "dependencies": [
+        "ACTIVE_ENABLED_CREATE_DEFAULT_TRUE",
+        "OMITTED_FIELDS_PRESERVED",
+        "PUBLISHED_STATUS_AND_TOMBSTONE_INTERSECTION",
+        "LONG_SEQUENCE_WIDTH_DECISION",
+        "PG_WRITER_CAS_AND_LEARNER_VISIBILITY_TESTS"
+      ],
+      "note": "Independent legacy flags; status remains a separate access gate. Not an eighth DB05 numbered migration.",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false
     }
   ]
 }
