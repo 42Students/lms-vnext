@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-019",
+  "disposition": "INDEPENDENT_SOURCE_INVENTORY_CHECK_ONLY_NOT_TASK_CLOSURE",
+  "mainHeadWhenObserved": "76a71f6c8a16d53f78ecfc720d0e0c0802e6c119",
+  "sourceBaseline": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "tableFloor": 199,
+    "fieldFloor": 2829
+  },
+  "exactGuardBlobs": {
+    "script": "ddc76a13a4245b6a9111ac67237ba621b780b2ef",
+    "test": "9bae04db3107d9fe85acb01af118d9a7b71fac70"
+  },
+  "ledgerBlobs": [
+    {
+      "path": "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+      "sha": "e6cbb7107b314fa37395660571a15fe507c2aaae",
+      "fields": 732,
+      "tables": 39
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+      "sha": "52f91b969deea6bb6cb9a9f5553688f6805fa26c",
+      "fields": 312,
+      "tables": 22
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db02_academics_and_timetable.json",
+      "sha": "890c93f6d912a379a942a0e3245a8acdf23b3050",
+      "fields": 125,
+      "tables": 13
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db03_groups_and_electives.json",
+      "sha": "a6813c384304a2620f8845e006c7cc3ab9a0b786",
+      "fields": 79,
+      "tables": 6
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+      "sha": "1e9bee03186004fa82180fb007bf7b41c59a21a8",
+      "fields": 103,
+      "tables": 7
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+      "sha": "0c2dfd7e0a6f8ca1fbb6dd61664c6699d819ec54",
+      "fields": 92,
+      "tables": 7
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+      "sha": "093276dbf0fcea2f3056932716c30765bb3e2f55",
+      "fields": 248,
+      "tables": 21
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db07_projects.json",
+      "sha": "96cd8d19a3bb2dffe004908366a7a009ebb93997",
+      "fields": 358,
+      "tables": 16
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+      "sha": "6e1eae59804059dcc768b3091cfb5694c5765f51",
+      "fields": 280,
+      "tables": 18
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+      "sha": "245486ff96fe3c7e0225c51904fe93afef64910a",
+      "fields": 279,
+      "tables": 31
+    },
+    {
+      "path": "docs/planning/db-pass4-columns-db10_shared_operations.json",
+      "sha": "ac083eea7a961f2fa17aa5c69144a92e75b9194a",
+      "fields": 221,
+      "tables": 19
+    }
+  ],
+  "sourceAudit": {
+    "verification": "SOURCE_LEDGER_INTEGRITY_ONLY_NOT_POSTGRES_ACCEPTANCE",
+    "integrity": "PASS",
+    "counts": {
+      "domains": 11,
+      "tables": 199,
+      "fields": 2829,
+      "uniqueTables": 199,
+      "uniqueFields": 2829,
+      "sourceReviewed": 580,
+      "proposedMappings": 118,
+      "runtimeMappings": 0,
+      "historicRetirementPending": 631,
+      "rowsMissingSourceEvidence": 0,
+      "legacyOracleShas": [
+        "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+      ]
+    },
+    "statusCounts": {
+      "CLASSIFY_HISTORIC_RETIREMENT": 631,
+      "UNVERIFIED_FIELD_SEMANTICS": 1618,
+      "SOURCE_REVIEWED_MAPPING_PROPOSED": 79,
+      "SOURCE_REVIEWED_DOMAIN_CANDIDATES_IDENTIFIED": 280,
+      "SOURCE_REVIEWED_FAMILY_DISPOSITION_EXACT_MAPPING_PENDING": 221
+    },
+    "errors": [],
+    "perDomain": [
+      {
+        "domain": "DB00_HISTORICAL_AND_ENGINE",
+        "tables": 39,
+        "fields": 732,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 631
+      },
+      {
+        "domain": "DB01_IDENTITY_AND_TENANCY",
+        "tables": 22,
+        "fields": 312,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+        "tables": 13,
+        "fields": 125,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB03_GROUPS_AND_ELECTIVES",
+        "tables": 6,
+        "fields": 79,
+        "sourceReviewed": 79,
+        "proposedMappings": 79,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB04_PROFILES_AND_VERIFICATION",
+        "tables": 7,
+        "fields": 103,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB05_COURSES_AND_CONTENT",
+        "tables": 7,
+        "fields": 92,
+        "sourceReviewed": 0,
+        "proposedMappings": 39,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+        "tables": 21,
+        "fields": 248,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB07_PROJECTS",
+        "tables": 16,
+        "fields": 358,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+        "tables": 18,
+        "fields": 280,
+        "sourceReviewed": 280,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+        "tables": 31,
+        "fields": 279,
+        "sourceReviewed": 0,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      },
+      {
+        "domain": "DB10_SHARED_OPERATIONS",
+        "tables": 19,
+        "fields": 221,
+        "sourceReviewed": 221,
+        "proposedMappings": 0,
+        "retirementCandidatesPending": 0
+      }
+    ]
+  },
+  "independentExecution": {
+    "tool": "Node.js",
+    "nodeVersion": "v22.16.0",
+    "command": "node --test tests/db19-field-disposition-audit.test.mjs",
+    "assertionsPassed": 20,
+    "assertionsFailed": 0,
+    "sourceAndTestExactGitBlobMatch": true,
+    "sourceOnlyJavascriptAudit": "11 real ledgers executed in connector V8 against exact script blob",
+    "postgresql": "NOT_RUN",
+    "actions": "INTENTIONALLY_UNUSED_BILLING"
+  },
+  "outstandingGates": [
+    "DB-003/004/005/007/008/012 and DB-064 unresolved and DB-019 depends on other domain reconciliations",
+    "631 historical retirement candidate field rows not approved as retired",
+    "1618 field rows have UNVERIFIED_FIELD_SEMANTICS",
+    "580 SOURCE_REVIEWED_* rows are not verified persisted runtime semantics",
+    "0 verifiedMapping rows, 0 executable PG migration replay or negative acceptance"
+  ],
+  "taskStatus": "READY_DEPENDENCIES_NOT_SATISFIED",
+  "databasePhase": "ACTIVE"
+}
