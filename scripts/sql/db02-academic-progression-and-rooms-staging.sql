@@ -1642,6 +1642,42 @@ CREATE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();
 
+-- An unused program term may be deleted, preserving legacy admin cleanup. Once canonical
+-- cohort progression currently occupies or has historically traversed the term number for
+-- this program, hard deletion would erase the reusable semester definition beneath history.
+-- Deactivation remains separately editable; this guard is delete-only.
+CREATE FUNCTION db02_guard_program_term_delete_history()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF EXISTS (
+       SELECT 1
+         FROM cohort_progression_state cps
+         JOIN cohorts c ON c.id = cps.cohort_id
+        WHERE c.program_id = OLD.program_id
+          AND cps.current_term_number = OLD.term_number
+     )
+     OR EXISTS (
+       SELECT 1
+         FROM cohort_progression_events cpe
+         JOIN cohorts c ON c.id = cpe.cohort_id
+        WHERE c.program_id = OLD.program_id
+          AND (
+            cpe.from_term_number = OLD.term_number
+            OR cpe.to_term_number = OLD.term_number
+          )
+     ) THEN
+    RAISE EXCEPTION 'Program term cannot be deleted after cohort progression references it'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN OLD;
+END;
+$$;
+
+CREATE TRIGGER db02_program_term_delete_history_guard
+BEFORE DELETE ON program_terms
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_delete_history();
+
 -- Empty sections may still be reparented within the canonical same-college/window rules.
 -- Once any learner/faculty/delivery/schedule history exists, structural movement requires an
 -- explicit controlled-transfer workflow so prior history is not silently reinterpreted.
