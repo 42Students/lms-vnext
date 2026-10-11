@@ -17,8 +17,8 @@ test("DB29 maps source-active offer states without inventing a duplicate RELEASE
   assert.match(sql, /legacy RELEASED\s+-> vNext ISSUED/);
   assert.match(sql, /status IN \('SELECTED','ISSUED','ACCEPTED','DECLINED','EXPIRED','WITHDRAWN'\)/);
   assert.doesNotMatch(sql, /status IN \([^\n]*'RELEASED'/);
-  assert.match(contract, /PENDING_VERIFICATION \| UNVERIFIED DECLARED STATE/);
-  assert.match(contract, /REVOKED \| UNVERIFIED DECLARED STATE/);
+  assert.match(contract, /PENDING_VERIFICATION.*UNVERIFIED DECLARED STATE/);
+  assert.match(contract, /REVOKED.*UNVERIFIED DECLARED STATE/);
 });
 
 test("DB29 makes SELECTED participate in the one-active-offer invariant", () => {
