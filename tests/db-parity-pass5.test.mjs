@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 const load = f => JSON.parse(fs.readFileSync(f, "utf8"));
 const manifest = load("docs/planning/database-parity-pass5-probe-manifest.json");
-const snapshot = load("drizzle/meta/0036_snapshot.json");
+const journal = load("drizzle/meta/_journal.json");
+const latestSnapshotNumber = journal.entries.at(-1)?.tag?.slice(0, 4);
+assert.match(latestSnapshotNumber, /^\d{4}$/);
+const snapshot = load(`drizzle/meta/${latestSnapshotNumber}_snapshot.json`);
 const sql = fs.readFileSync("scripts/sql/vnext-pass5-relational-witness.sql", "utf8");
 
 test("21 Pass 5 witnesses have grounded SQL table and column references", () => {
@@ -42,7 +45,7 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
     "SOURCE_POLICY_UNDECIDED",
   ]);
   for (const p of manifest.raceProbes) {
-    assert.match(p.id, /^P5-R\\d{2}$/);
+    assert.match(p.id, /^P5-R\d{2}$/);
     assert.ok(allowed.has(p.state), p.id + ": unexpected state " + p.state);
     assert.equal(p.executionEvidence, "NOT_RUN");
     assert.ok(
@@ -76,4 +79,41 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
     manifest.raceAudit.blockingGaps,
     ["P5-R01", "P5-R02", "P5-R09", "P5-R10", "P5-R11", "P5-R21", "P5-R22"],
   );
+});
+
+test("DB018 witness runner is integrated safely but does not claim database acceptance", () => {
+  const runtime = fs.readFileSync(
+    "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+    "utf8",
+  );
+  const config = fs.readFileSync("vitest.db.config.ts", "utf8");
+  const verifier = fs.readFileSync("scripts/db-independent-verify.mjs", "utf8");
+  assert.match(config, /tests\\/integration\\/\\*\\*\\/\\*\\.test\\.ts/);
+  assert.match(runtime, /TEST_DATABASE_URL/);
+  assert.doesNotMatch(runtime, /process\\.env\\.DATABASE_URL/);
+  assert.match(runtime, /DB018_ISOLATED_TEST_DATABASE/);
+  assert.match(runtime, /DB03_ISOLATED_TEST_DATABASE/);
+  assert.match(verifier, /DB03_ISOLATED_TEST_DATABASE: "1"/);
+  assert.match(runtime, /BEGIN READ ONLY/);
+  assert.match(runtime, /ROLLBACK/);
+  assert.match(runtime, /joinedSamplesNonEmpty/);
+  assert.match(runtime, /nonEmpty\\.length\\)\\.toBeGreaterThan\\(0\\)/);
+  assert.match(runtime, /expect\\(n, \`\\$\\{probe\\.id\\} has relational mismatch rows\`\\)\\.toBe\\(0\\)/);
+  assert.match(runtime, /"23503"/);
+  assert.match(runtime, /"23505"/);
+  assert.match(runtime, /"23514"/);
+  assert.match(runtime, /describe\\.skipIf\\(!enabled\\)/);
+  assert.equal(manifest.raceAudit.runtimeVerified, 0);
+});
+
+test("DB018 runtime witness has current-journal schema grounding", () => {
+  for (const probe of manifest.probes) {
+    assert.match(probe.from, /JOIN/);
+    assert.match(probe.where, /<>/);
+    for (const ref of probe.references) {
+      const [alias, column] = ref.split(".");
+      assert.ok(snapshot.tables[`public.${probe.tableAliases[alias]}`]?.columns[column],
+        `${probe.id}: missing current-journal snapshot column ${ref}`);
+    }
+  }
 });
