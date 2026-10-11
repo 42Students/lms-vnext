@@ -147,9 +147,9 @@ BEGIN
 
   IF configured IS NULL THEN
     IF TG_OP = 'DELETE' THEN
-    RETURN OLD;
-  END IF;
-  RETURN NEW;
+      RETURN OLD;
+    END IF;
+    RETURN NEW;
   END IF;
 
   SELECT COALESCE(sum(qq.points), 0) INTO authored
