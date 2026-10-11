@@ -124,11 +124,17 @@ assert.match(finalize, /'PANELIST'/);
 assert.match(finalize, /'DRIVE_DAY'/);
 assert.match(finalize, /'IMPORT'/);
 
-const strictCheck = finalize.slice(
-  finalize.lastIndexOf("ADD CONSTRAINT placement_round_results_source_ck"),
+const strictStart = finalize.lastIndexOf(
+  "ADD CONSTRAINT placement_round_results_source_ck",
 );
+const strictEnd = finalize.indexOf(
+  "DO $db072_finalize_postcheck$",
+  strictStart,
+);
+assert.ok(strictStart >= 0 && strictEnd > strictStart);
+const strictCheck = finalize.slice(strictStart, strictEnd);
 assert.doesNotMatch(
-  strictCheck.split("-- W01 integration notes:")[0],
+  strictCheck,
   /'HR'/,
   "strict final CHECK must not retain HR",
 );
