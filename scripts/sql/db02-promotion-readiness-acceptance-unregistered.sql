@@ -1,6 +1,6 @@
 -- DB02 / DB-005 promotion readiness acceptance — UNREGISTERED, UNEXECUTED.
 -- ONLY on disposable PostgreSQL AFTER numbered DB02 integration (canonical + proposed
--- db02-promotion-readiness-guard.draft.sql); rolls back all fixture data.
+-- db02-academic-progression-and-rooms-staging.sql); rolls back all fixture data.
 -- Expected: one NOTICE "DB02 promotion readiness PASS" after 4 denied transitions,
 -- an approved promotion and matching history, and one rejected further advance.
 BEGIN;
