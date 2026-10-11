@@ -108,6 +108,19 @@ test("legacy user handle is not automatically a provider UID", () => {
   assert.equal(user?.proposedDisposition, "NORMALIZED_TARGET_CONSUMER_PROOF");
   assert.match(user?.reviewNote ?? "", /not automatically equivalent/);
 });
+test("all unresolved decisions are listed explicitly with security exceptions", () => {
+  const open = rows.filter((row) =>
+    row.proposedDisposition === "OPEN_REDESIGN_OR_RETIREMENT_PROOF");
+  assert.equal(open.length, 19);
+  assert.deepEqual(mapping.summary.openDecisionSourceRows,
+    open.map((row) => row.sourceField));
+  assert.deepEqual(mapping.summary.openHighSecurityDecisionRows,
+    open.filter((row) => row.priority === "P0_SECURITY_OR_AUTH_LIFECYCLE")
+      .map((row) => row.sourceField));
+  assert.ok(mapping.summary.openHighSecurityDecisionRows.includes(
+    "user.password"));
+});
+
 test("no mapping silently declares PostgreSQL or provider verification", () => {
   assert.equal(mapping.summary.postgresVerified, 0);
   assert.equal(mapping.summary.providerConfirmed, 0);
