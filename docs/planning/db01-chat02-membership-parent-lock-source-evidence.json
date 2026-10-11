@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_ROLE_PARENT_ROW_LOCK_SOURCE_RECONCILIATION",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "state": "PRODUCTION_REPOSITORY_PATCHED_SOURCE_CONFIRMED_RUNTIME_POSTGRES_UNVERIFIED",
+  "verificationMethod": "Fetched exact post-patch GitHub blob content for src/modules/people/repository.ts, source regression suite and real-repository PG suite, then ran 22 JavaScript source checks within connected Github V8 orchestration. This was not Node test runner, TypeScript compiler or database execution.",
+  "sources": [
+    {
+      "path": "src/modules/people/repository.ts",
+      "gitBlob": "cee5f42453cfb0ff0c5a2d4ce6e5a57cf5da59c2"
+    },
+    {
+      "path": "tests/db01-ended-membership-role-race-source.test.mjs",
+      "gitBlob": "134b2021204b0a26274dbdb073dc00b5972ffb5f"
+    },
+    {
+      "path": "tests/integration/db01-membership-role-parent-lock.test.ts",
+      "gitBlob": "dc2d57706aae7f6ecb203c99fdf941c58c42510a"
+    },
+    {
+      "path": "docs/planning/db01-ended-membership-role-race-contract.md",
+      "gitBlob": "8d9e3a416ac8b31c960ed76ccc1781f82bd2e66c"
+    }
+  ],
+  "summary": {
+    "sourceChecksExecuted": 22,
+    "sourceChecksPassed": 22,
+    "sourceChecksFailed": 0,
+    "authoredNodeSourceCases": 18,
+    "authoredRealRepositoryPgCases": 8,
+    "executedNodeTests": 0,
+    "executedPostgresqlTests": 0,
+    "executedTypecheck": 0,
+    "registeredMigrationsThisBatch": 0,
+    "vnextRuntimeSemanticsAccepted": 0
+  },
+  "codeFixes": [
+    {
+      "area": "addMembershipRole",
+      "invariant": "in SQL transaction, lock current college_memberships row; require current parent user/college match preflight and status != ENDED before insert/audit"
+    },
+    {
+      "area": "removeMembershipRole",
+      "invariant": "same parent owner/college/status guard; serialize concurrent removals before last-role validation"
+    },
+    {
+      "area": "persistPersonMembership",
+      "invariant": "re-read and lock parent membership; require status ACTIVE and canonical user+college match before inserting onboarding grants"
+    }
+  ],
+  "acceptanceRequirements": [
+    "Run node --test tests/db01-ended-membership-role-race-source.test.mjs against exact main snapshot",
+    "Run npx vitest run --config vitest.db.config.ts tests/integration/db01-membership-role-parent-lock.test.ts with DATABASE_URL exactly equal to an intentionally disposable TEST_DATABASE_URL and seeded current migration",
+    "Run npm run typecheck and relevant people membership regression suites",
+    "Independent PostgreSQL END-before-grant, grant-before-END, two concurrent removals, stale onboarding and cross-college ownership proof",
+    "Ensure direct privileged SQL inserts follow identical parent-row lock or separately approved database guard; app-level fix is not a universal database constraint",
+    "Do not mark DB-004 or global DATABASE DONE_VERIFIED based only on 22 in-process static source checks"
+  ],
+  "actionsCommits": [
+    "2194420972bd8fd7562ed6923a0c6720948e7c2d",
+    "e7bab10c76be3fd83a1c2e72ed9deef620c19b0c",
+    "1c1951bfe9886d2759065b15a4635cf65b627091",
+    "b3041c17e83a36580f39b16f78545995305f579b",
+    "d223c7414bcceeaa36ccb15f7c1696cf257c4833",
+    "9a28402590d513f0f56044ecb77175739d37b553"
+  ]
+}
