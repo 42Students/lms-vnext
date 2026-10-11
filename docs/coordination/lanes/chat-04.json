@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_TARGET_RECONCILED_PARENT_TENANT_GUARDS_STAGED",
+    "checkpointKind": "DB005_DESIGN_COMPLETE_DECONFLICTED_ACCEPTANCE_HARNESSES_READY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "c777122ccc6abf2fddae98b918d22ef38ebff77c",
-    "lastWorkerMergedSha": "952e197d7f2945facec2cb928f2e951bcb9d9191",
+    "observedMainSha": "cf7cf01345331655083e4b58b273a4b67b78e798",
+    "lastWorkerMergedSha": "9e46023437bd1c6cd851c7e62e686833d874566c",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 125/125 legacy fields source/target design-classified (0 runtime verified); isolated unregistered parent/enrollment tenant SQL draft protects college ownership, program/course within-college reassignment, cohort/section/learner/faculty scopes, immutable history and FOR SHARE section reparent serialization. 10 authored source regression tests, 12/12 read-only source checks. No PostgreSQL replay or Node test suite run."
+    "summary": "DB02 source+target design disposition is 125/125. Canonical staging and parent/enrollment extension are deconflicted (25/25 and 7/7 PL/pgSQL function pairing, zero trigger overlap). Single-session rollback and two-session race acceptance harnesses now cover the remaining tenant/enrollment/history/faculty/schedule invariants. No registered Drizzle DB02 structures or executed PostgreSQL/runtime witnesses are claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -72,7 +72,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Continue active DB-005 source-driven DB02 reconciliation. Review parent/link drift and controlled class transfer policies with Chat 1; coordinate registered Drizzle integration. Run isolated disposable PostgreSQL zero-to-current, direct SQL tenant, role, overlap and concurrent reparent/promotion acceptance before status COMPLETED/DONE_VERIFIED.",
+  "nextAction": "Chat 1 must consolidate canonical DB02 plus the deconflicted parent/enrollment extension into registered Drizzle/schema-barrel migrations, perform zero-to-current disposable PostgreSQL replay, then execute scripts/sql/db02-postgres-acceptance-unregistered.sql and scripts/sql/db02-postgres-concurrency-unregistered.sh. Chat 4 should keep DB-005 IN_PROGRESS and re-reconcile exact source/main SHAs after integration; runtime verified remains 0 until those witnesses exist.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -116,7 +116,12 @@
     "https://github.com/42Students/lms-vnext/commit/b0e1c2a0fbf061e8a822a95aadde6c2ad712e64a",
     "https://github.com/42Students/lms-vnext/commit/75b37a705e3c41682b32511c97aeca19e4fd86ce",
     "https://github.com/42Students/lms-vnext/commit/4ea0d5a054582eadd5c4a663466321028849f33a",
-    "https://github.com/42Students/lms-vnext/commit/952e197d7f2945facec2cb928f2e951bcb9d9191"
+    "https://github.com/42Students/lms-vnext/commit/952e197d7f2945facec2cb928f2e951bcb9d9191",
+    "https://github.com/42Students/lms-vnext/commit/d988e746231faaa2c229f00d273547742aa61dc6",
+    "https://github.com/42Students/lms-vnext/commit/690bc2f1f991f59659f423f18a810f1c3aea1019",
+    "https://github.com/42Students/lms-vnext/commit/dcc5cbeb8b98cd11c07e9f41d4afdfcd9c5c567c",
+    "https://github.com/42Students/lms-vnext/commit/e91bb7c2f65a66dbdae81da09e7e46ad24fb83b3",
+    "https://github.com/42Students/lms-vnext/commit/9e46023437bd1c6cd851c7e62e686833d874566c"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
