@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T02:46:00+05:30",
+  "updatedOn": "2026-10-12",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4056,17 +4056,31 @@
         "tests/db07-template-version-parent-integrity-source.test.mjs",
         "tests/integration/db07-template-version-parent-integrity.test.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_EXECUTED_IN_PROCESS",
+          "mode": "EXACT_GITHUB_BLOB_V8",
+          "testCases": 30,
+          "passed": 30,
+          "failed": 0,
+          "nodeRunner": "NOT_RUN",
+          "postgres": "NOT_RUN",
+          "evidenceFile": "docs/planning/db07-chat02-template-version-source-evidence.json",
+          "evidenceCommitSha": "5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e"
+        }
+      ],
+      "blockers": [
+        "Accepted disposable PostgreSQL replay and 8 direct SQL witness passes pending Chat 1 migration integration; this is verification debt, not CI billing blocker."
+      ],
+      "completionNote": "Source/staging DB07 template-version ownership hardening COMMITTED: 1 staged SQL with composite target + two composite FKs, fail-close mismatch preflight, 1 decision contract, 16 authored Node test cases and 8 opt-in rollback-only PostgreSQL cases. 30/30 exact-GitHub-source V8 checks executed and passed; Node runner 0 executed, PG runtime 0 executed, no migration registered, no DONE_VERIFIED.",
       "pickedBy": 2,
       "pickedAt": "2026-10-11T20:56:38.125Z",
       "startedAt": "2026-10-11T20:56:54.840Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-11T21:03:50.287Z",
+      "completionCommitSha": "5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4090,6 +4104,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T20:56:54.840Z",
           "reason": "Chat 2 begins staged SQL, DB witness, and independent Node source guard for unscoped template-version FK."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:03:50.287Z",
+          "reason": "Staged DB068 source implementation committed and exact-blob source checks 30/30 pass; test runner/PG gate unexecuted, no migration activation."
         }
       ]
     },
