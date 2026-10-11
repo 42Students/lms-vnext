@@ -4298,14 +4298,14 @@
         "tests/db07-template-version-pointer-source.test.mjs",
         "tests/integration/db07-template-version-pointer-fks.test.ts"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 2,
       "pickedAt": "2026-10-11T21:12:15.225Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T21:12:25.798Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -4327,6 +4327,11 @@
           "status": "PICKED",
           "at": "2026-10-11T21:12:15.225Z",
           "reason": "Chat 2 claims independent deferred template version-pointer DB integrity gap after DB070 source completion."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T21:12:25.798Z",
+          "reason": "Staging deferred template current/published version pointer FKs with source and PG negative witnesses."
         }
       ]
     }
