@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_SOURCE_LEVEL_ACCEPTANCE_EVIDENCE_NOT_RUNTIME",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "commitObserved": "34d71cca1af87f65aa003432ecc3d520ef5d8724",
+  "date": "2026-10-11",
+  "whatWasExecuted": "In-process source assertions through GitHub connector, NOT Node/Vitest/PostgreSQL",
+  "sourceCases": {
+    "postgresTestFiles": 3,
+    "postgresAuthoredCases": 26,
+    "permissionTestFiles": 1,
+    "unitAuthoredCases": 14,
+    "sameTestURLGuarantee": true,
+    "transactionRollbackSourceGuard": true,
+    "sourceChecksRun": 13,
+    "sourceChecksPassed": 13
+  },
+  "fileBlobs": [
+    {
+      "path": "tests/integration/db01-tenant-identity-invariants.test.ts",
+      "blobSha": "72e6ac3ce942916f0ebf3ffc7e4546e986834817",
+      "expectedCases": 5,
+      "authoredCases": 5
+    },
+    {
+      "path": "tests/integration/db01-identity-fk-invariants.test.ts",
+      "blobSha": "5cf0f4480cc87682865bbedbdd7ad365240bfe6d",
+      "expectedCases": 9,
+      "authoredCases": 9
+    },
+    {
+      "path": "tests/integration/db01-core-structure-invariants.test.ts",
+      "blobSha": "0ce1ecad69c33b1e76e11e28f9be3d9f7beb511c",
+      "expectedCases": 12,
+      "authoredCases": 12
+    },
+    {
+      "path": "tests/unit/db01-tenant-domain-authorization.test.ts",
+      "blobSha": "4fb9c22058d0208c032ba8e2d66b4bb8eacf40ef",
+      "expectedCases": 14,
+      "authoredCases": 14
+    }
+  ],
+  "verification": {
+    "nodeTestRunnerExecuted": false,
+    "vitestRunnerExecuted": false,
+    "actualPostgresDatabaseReached": false,
+    "postgresCasesExecuted": 0,
+    "unitCasesExecuted": 0,
+    "migrationsReplayed": false,
+    "semanticFieldsDoneVerified": 0,
+    "globalPhaseTransitionAllowed": false
+  },
+  "constraints": [
+    "GitHub Actions not used due to billing; independent verification is preferred",
+    "CI billing is NOT a blocker for continued source work",
+    "Disposable PostgreSQL and installed dependencies absent in current execution environment",
+    "Chat 1 retains sole numbered migration/schema barrel ownership",
+    "Do not convert source checks or authored tests into DONE_VERIFIED"
+  ]
+}
