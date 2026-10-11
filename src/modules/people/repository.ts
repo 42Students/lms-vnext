@@ -363,13 +363,22 @@ export const drizzlePeopleRepository:
         // onboarding grants with transitionMembershipLifecycle on its parent
         // row; checking a stale status before the INSERT is not sufficient.
         const [lockedMembership] = await tx
-          .select({ status: collegeMemberships.status })
+          .select({
+            status: collegeMemberships.status,
+            userId: collegeMemberships.userId,
+            collegeId: collegeMemberships.collegeId,
+          })
           .from(collegeMemberships)
           .where(eq(collegeMemberships.id, membership.id))
           .for("update")
           .limit(1);
 
-        if (!lockedMembership || lockedMembership.status !== "ACTIVE") {
+        if (
+          !lockedMembership ||
+          lockedMembership.status !== "ACTIVE" ||
+          lockedMembership.userId !== user.id ||
+          lockedMembership.collegeId !== input.collegeId
+        ) {
           throw new PeopleServiceError("MEMBERSHIP_NOT_ACTIVE");
         }
 
@@ -532,13 +541,23 @@ export const drizzlePeopleRepository:
       // Serialize role grants with SUSPEND/END and other mutations before
       // inspecting child role rows. A service-level precheck can be stale.
       const [parent] = await tx
-        .select({ status: collegeMemberships.status })
+        .select({
+          status: collegeMemberships.status,
+          userId: collegeMemberships.userId,
+          collegeId: collegeMemberships.collegeId,
+        })
         .from(collegeMemberships)
         .where(eq(collegeMemberships.id, membershipId))
         .for("update")
         .limit(1);
 
-      if (!parent) {
+      if (
+        !parent ||
+        parent.userId !== mutation.person.user.id ||
+        parent.collegeId !== mutation.person.membership.collegeId
+      ) {
+        // The preflight authorization snapshot may now describe a different
+        // owner or college. Never mutate a role under stale tenant scope.
         throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
       }
       if (parent.status === "ENDED") {
@@ -644,13 +663,23 @@ export const drizzlePeopleRepository:
       // Lock the same parent used by transitionMembershipLifecycle and grant
       // mutations. Serializing removals also preserves the last-role rule.
       const [parent] = await tx
-        .select({ status: collegeMemberships.status })
+        .select({
+          status: collegeMemberships.status,
+          userId: collegeMemberships.userId,
+          collegeId: collegeMemberships.collegeId,
+        })
         .from(collegeMemberships)
         .where(eq(collegeMemberships.id, membershipId))
         .for("update")
         .limit(1);
 
-      if (!parent) {
+      if (
+        !parent ||
+        parent.userId !== mutation.person.user.id ||
+        parent.collegeId !== mutation.person.membership.collegeId
+      ) {
+        // The preflight authorization snapshot may now describe a different
+        // owner or college. Never mutate a role under stale tenant scope.
         throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
       }
       if (parent.status === "ENDED") {
