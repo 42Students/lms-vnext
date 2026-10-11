@@ -69,7 +69,7 @@ test("all candidate SQL and acceptance gates are real repository paths/IDs", () 
   }
 });
 
-test("all 11 rows carry executable consumer-level acceptance cases, not generic parity labels", () => {
+test("all 11 rows document concrete consumer-level acceptance scenarios for later execution", () => {
   const scenarios = matrix.fields.flatMap((item) =>
     item.mandatoryAcceptanceScenarios.map((scenario) => item.source + ":" + scenario),
   );
