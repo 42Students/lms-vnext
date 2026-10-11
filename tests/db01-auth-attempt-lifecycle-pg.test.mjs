@@ -93,11 +93,12 @@ if (!optIn) {
         ["created_at, expires_at",
          "clock_timestamp() - interval '3 minutes', clock_timestamp() - interval '1 minute'"],
       ]) {
+        const overridesExpiry = additionalColumns.includes("expires_at");
         await expect23514(
           update(`INSERT INTO identity_auth_attempts
-            (id,user_id,college_id,membership_id,target_role,contact_fingerprint,${additionalColumns},expires_at)
+            (id,user_id,college_id,membership_id,target_role,contact_fingerprint,${additionalColumns}${overridesExpiry ? "" : ",expires_at"})
            SELECT $1,user_id,college_id,membership_id,target_role,contact_fingerprint,
-                  ${projection},expires_at FROM identity_auth_attempts WHERE id=$2`,
+                  ${projection}${overridesExpiry ? "" : ",expires_at"} FROM identity_auth_attempts WHERE id=$2`,
             [randomUUID(), id]),
           "db01_auth_attempt_creation_state_ck",
         );
