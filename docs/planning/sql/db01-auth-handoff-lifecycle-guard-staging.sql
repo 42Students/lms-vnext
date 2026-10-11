@@ -8,8 +8,22 @@
 -- trigger enforces the immutable envelope and monotone one-time consume state.
 
 CREATE OR REPLACE FUNCTION db01_auth_handoff_lifecycle_guard()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
+  -- A newly issued high-entropy handoff must never arrive pre-consumed.
+  -- Direct SQL insertion of a spent proof would bypass the UPDATE-only
+  -- one-time-consumption guard even with a valid timestamp CHECK.
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.consumed_at IS NOT NULL
+       OR NEW.created_at > clock_timestamp()
+       OR NEW.expires_at <= clock_timestamp() THEN
+      RAISE EXCEPTION 'Auth handoff creation must start unused and unexpired'
+        USING ERRCODE = '23514',
+              CONSTRAINT = 'db01_auth_handoff_creation_state_ck';
+    END IF;
+    RETURN NEW;
+  END IF;
+
   -- The one-time proof is always bound to its original principal, college,
   -- membership, target domain, hostname and opaque keyed-code fingerprint.
   IF NEW.id IS DISTINCT FROM OLD.id
@@ -56,7 +70,7 @@ END;
 $$;
 
 CREATE TRIGGER db01_auth_handoff_lifecycle_trg
-BEFORE UPDATE ON identity_auth_handoffs
+BEFORE INSERT OR UPDATE ON identity_auth_handoffs
 FOR EACH ROW
 EXECUTE FUNCTION db01_auth_handoff_lifecycle_guard();
 
