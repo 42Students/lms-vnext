@@ -1,0 +1,114 @@
+{
+  "task": "DB-008",
+  "ref": "prod-2026",
+  "bounded": true,
+  "terms": [
+    "default_subscription_days",
+    "defaultSubscriptionDays",
+    "formal_title",
+    "formalTitle"
+  ],
+  "backendCandidateCount": 207,
+  "frontendCandidateCount": 175,
+  "batch": "BE32-39_FE24-29",
+  "files": [
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java",
+      "sha": "817aa2937e76c900260750027cb5e3466eadc028",
+      "bytes": 2844,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerScheduleController.java",
+      "sha": "29f4b0b74ac07b9bdd9fcafa4403fbb915bfff59",
+      "bytes": 1405,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoBatchesController.java",
+      "sha": "d502bfd7c9b5f641849986e2e6cd54d9ed61ff83",
+      "bytes": 6521,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoStudentController.java",
+      "sha": "1a2de29a9c2fdc1ec218907d59f0c50b9bd70e15",
+      "bytes": 3731,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoStudentsHubController.java",
+      "sha": "7b96d68c5326a8492e91930e469ec26a6a443619",
+      "bytes": 12507,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/dto/projects/AdminProjectLearnerAssignDTO.java",
+      "sha": "f50cdf12fb282e578c61ce7d8c4417ff78ecc477",
+      "bytes": 671,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/dto/request/BatchPromotionDTO.java",
+      "sha": "9c767c80f267481eb65df81f28118ee9f21bf930",
+      "bytes": 648,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/dto/request/BatchRequestDTO.java",
+      "sha": "426ea02285d3a99ab64c31f5edddbdb956ab1a3c",
+      "bytes": 919,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/BatchesService.js",
+      "sha": "40436af84d56c1ce1dc087cddce627ad3dbd78d7",
+      "bytes": 1907,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/CourseSearchService.js",
+      "sha": "ce5dad4b1838a6419435a57d448c3640342b3a6e",
+      "bytes": 3250,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/courseServices.js",
+      "sha": "31e2c1662d86f06c126b4d4859c007be59cf92bf",
+      "bytes": 14656,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/LearnerSearchService.js",
+      "sha": "82214d6954d34befa09f8b55c5588f6b4914d73a",
+      "bytes": 4138,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/SemesterService.js",
+      "sha": "e726ce9ffab678cd2333856f203541f1b4145793",
+      "bytes": 2549,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/api/Services/StudentGroupService.js",
+      "sha": "a827e64c0b7517ab81d911970938a2ba47c93ed9",
+      "bytes": 3733,
+      "matches": []
+    }
+  ]
+}
