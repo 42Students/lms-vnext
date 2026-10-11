@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T13:32:00+05:30",
+  "updatedOn": "2026-10-11T13:33:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1815,14 +1815,14 @@
         "tests/db09-integration-staging-guard.test.mjs",
         "docs/planning/db09-integration-manifest-2026-10-11.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": "0bb1cd6188e6d7fbb777ce8366bbb33de7753ab6",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:32:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T13:33:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1844,6 +1844,11 @@
           "status": "PICKED",
           "at": "2026-10-11T13:32:00+05:30",
           "reason": "Chat 3 reserved isolated DB09 staging/test/manifest hardening; no journal or schema-barrel edits."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T13:33:00+05:30",
+          "reason": "Chat 3 began adversarial DB09 staging hardening and static registration guards on main."
         }
       ]
     }
