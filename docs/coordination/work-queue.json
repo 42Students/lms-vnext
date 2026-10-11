@@ -1095,7 +1095,8 @@
         "DB-002",
         "DB-017",
         "DB-018",
-        "DB-019"
+        "DB-019",
+        "DB-025"
       ],
       "restriction": "ANY",
       "paths": [
@@ -1384,6 +1385,41 @@
         "replayableNodeTest": "node --test tests/db10-general-notices-staging.test.mjs",
         "postgresTestsExecuted": false
       }
+    },
+    {
+      "id": "DB-025",
+      "phase": "DATABASE",
+      "title": "Fail-close destructive test database target selection",
+      "scope": "Remove TEST_DATABASE_URL→DATABASE_URL fallback for destructive test/reset paths; require explicit disposable test target, preserve independent verifier compatibility, and add regression evidence that db:test:prepare cannot reset the application DATABASE_URL by omission.",
+      "priority": 1,
+      "dependsOn": [],
+      "restriction": "CORE_INFRA",
+      "paths": [
+        "scripts/db-lib.ts",
+        "scripts/db-test-prepare.ts",
+        "tests/db01-test-database-guard.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": "3cdd218eecac83c85d46dcf25d92bec416ee2b26",
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Chat 5 independent DB-001 peer review confirmed current main still lets requireDatabaseUrl('TEST_DATABASE_URL') fall back to DATABASE_URL while db:test:prepare performs destructive reset. Split from DB-001 verifier harness as a CORE_INFRA fail-closed safety task."
+        }
+      ]
     }
   ],
   "eventModel": {
