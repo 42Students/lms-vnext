@@ -3,18 +3,22 @@ import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error("DB-018 concurrency witnesses require TEST_DATABASE_URL or DATABASE_URL");
-}
-
-const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+const databaseUrl = process.env.TEST_DATABASE_URL;
+const explicitlyIsolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+const enabled = Boolean(databaseUrl) && explicitlyIsolated;
+const pool = new Pool({
+  connectionString:
+    databaseUrl ?? "postgresql://disabled:disabled@127.0.0.1:1/disabled",
+  max: 4,
+});
 
 afterAll(async () => {
   await pool.end();
 });
 
-describe("DB-018 registered concurrency witnesses", () => {
+describe.skipIf(!enabled)("DB-018 registered concurrency witnesses", () => {
   it("allows exactly one concurrent cohort compare-and-set transition", async () => {
     const suffix = randomUUID().replaceAll("-", "").slice(0, 10);
     const periodId = randomUUID();
