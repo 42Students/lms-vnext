@@ -125,7 +125,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.draftUnregisteredExcluded, 3);\n  assert.equal(index.counts.knownRedRaceAuthored, 2);
+  assert.equal(index.counts.draftUnregisteredExcluded, 3);\n  assert.equal(index.counts.knownRedRaceAuthored, 1);\n  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
 
@@ -156,15 +156,19 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   );
   for (const witness of index.knownRedRaceWitnesses) {
     assert.equal(witness.execution, "NOT_RUN");
-    assert.match(witness.state, /EXPECTED_FAIL_UNTIL_FIXED$/);
-    assert.ok(fs.existsSync(witness.file), witness.id + ": red race test file missing");
+    assert.ok(
+      /EXPECTED_FAIL_UNTIL_FIXED$/.test(witness.state) ||
+        witness.state === "FIX_AUTHORED_RUNTIME_NOT_RUN",
+      witness.id + ": unexpected race state " + witness.state,
+    );
+    assert.ok(fs.existsSync(witness.file), witness.id + ": race test file missing");
     const source = fs.readFileSync(witness.file, "utf8");
-    assert.ok(source.includes(witness.title), witness.id + ": red race title missing");
+    assert.ok(source.includes(witness.title), witness.id + ": race title missing");
   }
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
 });
 
-test("DB18 stale-check races stay red until transaction revalidation is implemented", () => {
+test("DB18 stale-check source state tracks fixed placement and red academics", () => {
   const placementSource = fs.readFileSync(
     "src/modules/placements/application-service.ts",
     "utf8",
@@ -177,8 +181,9 @@ test("DB18 stale-check races stay red until transaction revalidation is implemen
   assert.ok(applyBody.indexOf("await requireLearnerPlacementAccess(context);") < placementTx);
   assert.ok(applyBody.indexOf("await evaluatePlacementEligibility(") < placementTx);
   const placementTxBody = applyBody.slice(placementTx);
-  assert.equal(placementTxBody.includes("requireLearnerPlacementAccess("), false);
-  assert.equal(placementTxBody.includes("evaluatePlacementEligibility("), false);
+  assert.ok(placementTxBody.includes("lockLearnerApplicationGateInputs("));
+  assert.ok(placementTxBody.includes("evaluatePlacementEligibility("));
+  assert.ok(placementTxBody.includes("liveEligibility"));
 
   const academicSource = fs.readFileSync(
     "src/modules/academics/enrollment-service.ts",
@@ -199,6 +204,14 @@ test("DB18 stale-check races stay red until transaction revalidation is implemen
     index.knownRedRaceWitnesses.map((w) => w.raceProbe),
     ["P5-R01", "P5-R02"],
   );
+  assert.equal(
+    index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R01")?.state,
+    "FIX_AUTHORED_RUNTIME_NOT_RUN",
+  );
+  assert.equal(
+    index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R02")?.state,
+    "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+  );
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
 
@@ -208,7 +221,8 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.equal(index.counts.observationalReadOnlyAuthored, 21);
   assert.equal(index.counts.directNegativeTotalAuthored, 13);
   assert.equal(index.counts.positiveConcurrencyAuthored, 4);
-  assert.equal(index.counts.knownRedRaceAuthored, 2);
+  assert.equal(index.counts.knownRedRaceAuthored, 1);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
