@@ -2,7 +2,7 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, foreignKey, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { courseAssignments, assignmentSubmissions } from "./assessments";
-import { lessonContents } from "./courses";
+import { courseSectionDeliveries, lessonContents } from "./courses";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
@@ -15,6 +15,7 @@ export const courseUploadReceipts = pgTable(
     ownerMembershipId: uuid("owner_membership_id").notNull().references(() => collegeMemberships.id, { onDelete: "restrict" }),
     purpose: text("purpose").notNull(),
     assignmentId: uuid("assignment_id").references(() => courseAssignments.id, { onDelete: "restrict" }),
+    deliveryId: uuid("delivery_id").references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
     lessonContentId: uuid("lesson_content_id").references(() => lessonContents.id, { onDelete: "restrict" }),
     objectKey: text("object_key").notNull(),
     uploadTokenHash: text("upload_token_hash").notNull(),
@@ -44,7 +45,7 @@ export const courseUploadReceipts = pgTable(
   },
   (table) => [
     uniqueIndex("course_upload_receipts_object_key_uq").on(table.objectKey),
-    uniqueIndex("course_upload_receipts_submission_uq").on(table.consumedBySubmissionId).where(sql`${table.consumedBySubmissionId} is not null`),
+    index("course_upload_receipts_submission_idx").on(table.consumedBySubmissionId),
     uniqueIndex("course_upload_receipts_consumed_attestation_uq").on(
       table.id,
       table.consumedBySubmissionId,
@@ -58,7 +59,7 @@ export const courseUploadReceipts = pgTable(
     index("course_upload_receipts_owner_expiry_idx").on(table.ownerMembershipId, table.expiresAt),
     index("course_upload_receipts_retention_idx").on(table.retentionUntil),
     check("course_upload_receipts_purpose_ck", sql`${table.purpose} in (\'ASSIGNMENT_SUBMISSION\', \'COURSE_RESOURCE\')`),
-    check("course_upload_receipts_target_ck", sql`(${table.purpose} = \'ASSIGNMENT_SUBMISSION\' and ${table.assignmentId} is not null and ${table.lessonContentId} is null) or (${table.purpose} = \'COURSE_RESOURCE\' and ${table.lessonContentId} is not null and ${table.assignmentId} is null)`),
+    check("course_upload_receipts_target_ck", sql`(${table.purpose} = \'ASSIGNMENT_SUBMISSION\' and ${table.assignmentId} is not null and ${table.deliveryId} is not null and ${table.lessonContentId} is null) or (${table.purpose} = \'COURSE_RESOURCE\' and ${table.lessonContentId} is not null and ${table.assignmentId} is null)`),
     check("course_upload_receipts_object_scope_ck", sql`(${table.purpose} = \'ASSIGNMENT_SUBMISSION\' and ${table.objectKey} like (\'private/\' || ${table.collegeId}::text || \'/\' || ${table.ownerMembershipId}::text || \'/assignment-submission/%\')) or (${table.purpose} = \'COURSE_RESOURCE\' and ${table.objectKey} like (\'private/\' || ${table.collegeId}::text || \'/\' || ${table.ownerMembershipId}::text || \'/course-resource/%\'))`),
     check("course_upload_receipts_token_hash_ck", sql`${table.uploadTokenHash} ~ \'^[0-9a-f]{64}$\'`),
     check("course_upload_receipts_declared_size_ck", sql`${table.declaredSizeBytes} > 0 and ${table.declaredSizeBytes} <= 52428800`),
@@ -76,8 +77,11 @@ export const courseUploadReceipts = pgTable(
 export const assignmentSubmissionFiles = pgTable(
   "assignment_submission_files",
   {
-    assignmentSubmissionId: uuid("assignment_submission_id").primaryKey().references(() => assignmentSubmissions.id, { onDelete: "restrict" }),
+    id: uuid("id").defaultRandom().primaryKey(),
+    assignmentSubmissionId: uuid("assignment_submission_id").notNull().references(() => assignmentSubmissions.id, { onDelete: "restrict" }),
     uploadReceiptId: uuid("upload_receipt_id").notNull().references(() => courseUploadReceipts.id, { onDelete: "restrict" }),
+    sequence: integer("sequence").notNull(),
+    title: text("title"),
     objectKey: text("object_key").notNull(),
     objectGeneration: text("object_generation").notNull(),
     originalName: text("original_name").notNull(),
@@ -89,6 +93,8 @@ export const assignmentSubmissionFiles = pgTable(
   (table) => [
     uniqueIndex("assignment_submission_files_receipt_uq").on(table.uploadReceiptId),
     uniqueIndex("assignment_submission_files_object_key_uq").on(table.objectKey),
+    uniqueIndex("assignment_submission_files_submission_sequence_uq").on(table.assignmentSubmissionId, table.sequence),
+    index("assignment_submission_files_submission_idx").on(table.assignmentSubmissionId),
     foreignKey({
       name: "assignment_submission_files_consumed_attestation_fk",
       columns: [
@@ -112,6 +118,7 @@ export const assignmentSubmissionFiles = pgTable(
         courseUploadReceipts.originalName,
       ],
     }).onDelete("restrict"),
+    check("assignment_submission_files_sequence_ck", sql`${table.sequence} >= 0`),
     check("assignment_submission_files_size_ck", sql`${table.sizeBytes} > 0 and ${table.sizeBytes} <= 52428800`),
     check("assignment_submission_files_sha_ck", sql`${table.sha256Hex} ~ \'^[0-9a-f]{64}$\'`),
   ],
