@@ -1,6 +1,6 @@
 -- DB02 history-parent acceptance. UNEXECUTED and UNREGISTERED.
--- Run only on a disposable PostgreSQL database AFTER Chat 1 integrates the
--- canonical DB02, parent/enrollment, and history-reassignment guard drafts.
+-- Run only on a disposable PostgreSQL database AFTER Chat 1 registers the
+-- reviewed single consolidated canonical DB02 stage.
 -- All fixture rows are rolled back even on successful acceptance.
 BEGIN;
 DO $db02_history_accept$
