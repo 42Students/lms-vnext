@@ -80,9 +80,17 @@ check("delegated coordinator ownership is operation-specific", () => {
   assert.match(candidate, /db09_has_active_tpo_actor\(p_actor_user_id,p_college_id\)/);
 });
 
-check("direct team removal refuses owned leads and live jobs", () => {
+check("lead and drive owner writes require active placement-owner scope", () => {
+  assert.match(candidate, /db069_job_owner_scope/);
+  assert.match(candidate, /db069_lead_owner_scope/);
+  assert.match(candidate, /db069_has_active_drive_owner/);
+});
+
+check("direct team identity removal/change refuses owned leads and live jobs", () => {
   assert.match(candidate, /db069_team_member_owned_leads/);
   assert.match(candidate, /db069_team_member_owned_drives/);
+  assert.match(candidate, /db069_team_member_identity_guard/);
+  assert.match(candidate, /UPDATE OF college_id,membership_id OR DELETE/);
   assert.match(candidate, /j\.status IN \('DRAFT','PUBLISHED'\)/);
 });
 
