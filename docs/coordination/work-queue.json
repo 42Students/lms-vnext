@@ -2280,6 +2280,51 @@
           "reason": "DB-039 SQL/doc/test/ledger source stage complete; migration/API/privacy/runtime proof remains downstream."
         }
       ]
+    },
+    {
+      "id": "DB-040",
+      "phase": "DATABASE",
+      "title": "Preflight DB10 staged announcements bug tracker and job leases",
+      "scope": "Convert the 75 source-reviewed fields across announcements, five bug-tracker tables and scheduled_job_lock into exact source→draft integration evidence. Validate every proposed target exists in isolated draft schemas, record deliberate safety additions/redesigns and migration order, reconcile DB10 ledger source disposition, and keep all fields UNMAPPED/unverified until Chat 1 registers migrations and PostgreSQL witnesses run.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-db10-staged-drafts-integration.md",
+        "tests/db10-staged-drafts-source-map.test.mjs",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T14:10:30+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T14:10:30+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB10 already has isolated draft schemas/services/tests for 75 fields across announcements, bug tracker and scheduled job locking, but the shared ledger still has only proposal-level UNMAPPED rows and no consolidated migration-readiness preflight."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:10:30+05:30",
+          "reason": "Chat 5 reserved integration manifest/static preflight/DB10 ledger only; no draft schema or numbered migration path overlap with active workers."
+        }
+      ]
     }
   ],
   "eventModel": {
