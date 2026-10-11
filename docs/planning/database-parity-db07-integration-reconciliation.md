@@ -5,7 +5,7 @@
 **Legacy backend oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
 **Legacy frontend oracle:** `42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`
 
-This document reconciles the existing W03 DB07 source-only SQL proposals before any registered Drizzle migration is created. It is not runtime certification. DB-001 still blocks disposable PostgreSQL replay, and the broad shared-schema claim means these drafts remain promotion inputs rather than live schema.
+This document reconciles the existing W03 DB07 source-only SQL proposals before any registered Drizzle migration is created. It is not runtime certification. The independent PostgreSQL verification harness is authored but no DB07 replay/negative PostgreSQL result is on record. These drafts remain promotion inputs, not live schema.
 
 ## Promotion ownership
 
@@ -42,9 +42,44 @@ Legacy `completeSprint` leaves DONE tasks attached to the completed sprint, but 
 - Delivery `REQUEST_CHANGES / ACCEPT / LOCK / REOPEN` semantics are not yet fully normalized onto vNext's versioned `project_submissions` and one-review-per-submission model.
 - Workspace slug reuse after recoverable deletion needs explicit source/product evidence before replacing the current all-row unique constraint with a partial unique index.
 - Cross-tenant actor/member/project integrity still needs direct negative PostgreSQL evidence.
-- The 358-field DB07 ledger remains source-derived; field rows are not runtime verified until DB-001 is cleared and replay/negative tests execute.
+- The 358-field DB07 ledger remains source-derived; field rows are not runtime verified until a disposable PostgreSQL replay and negative tests execute.
 - History/event tables still need transactionally wired producer APIs and authorization/redaction review before they can be considered parity-complete.
 
 ## Promotion gate
 
 Before any DB07 draft becomes a numbered migration, the migration integrator must combine these ownership rules into one non-duplicative schema change, reconcile Drizzle schema and snapshot, run zero-to-head replay, execute same-project/tenant negative tests, and then update the DB07 field ledger with actual verification evidence. Until then DB-010 may be source-complete, but it cannot be `DONE_VERIFIED`.
+
+## DB07 history/comment retention hardening (2026-10-12)
+
+Source-level hardening was committed directly on `main` without editing
+`drizzle/**`, the shared schema barrel, or another chat's active DB09 work.
+
+- SQL staging commit [753387fe](https://github.com/42Students/lms-vnext/commit/753387fe6c10fdc9ced04fb6109deb670c85d09f):
+  append-only meeting/resource/delivery histories reject `UPDATE`, `DELETE`,
+  **and `TRUNCATE`**. PostgreSQL does not run row-level DELETE triggers for
+  `TRUNCATE`; three new statement triggers close that loss path.
+- The same draft rejects hard `DELETE` and `TRUNCATE` on `project_task_comments`
+  because legacy `is_deleted` is represented as recoverable `deleted_at`.
+  Updates may still edit text/progress/deletion state, but cannot reparent
+  `id`, `project_id`, `project_task_id`, author identity or creation time.
+- Staged Drizzle declaration [97feffdd](https://github.com/42Students/lms-vnext/commit/97feffddd8e51079da2ae22eaff64df21facfb8e)
+  mirrors `updated_at >= created_at` and `deleted_at >= created_at`.
+  Trigger enforcement itself belongs to the SQL promotion, not Drizzle checks.
+- Standalone Node source guards:
+  [4edbcf75](https://github.com/42Students/lms-vnext/commit/4edbcf759917a3917fdbced627abb39d895cb2e5),
+  `node --test tests/db07-project-history-retention.test.mjs`;
+  includes three negative mutant tests and a read-only staging assertion.
+- PostgreSQL acceptance witness:
+  [b88c282d](https://github.com/42Students/lms-vnext/commit/b88c282df85bc1aeba4b116140e8e864a67a078b),
+  `docs/planning/sql/db07-w03-history-retention-acceptance-unregistered.sql`.
+  It checks nine enabled, correctly attached triggers and directly attempts
+  four `TRUNCATE` calls inside a rollback-only transaction; rejection must be
+  SQLSTATE `23514`. **Run only against a disposable database after promotion.**
+
+**Evidence boundaries:** Nine in-process source assertions against the fetched
+`main` blobs passed; the authored Node test file, a clean Drizzle migration
+replay and the PostgreSQL witness have **not been executed** in this work
+session. These changes do not close DB-010's runtime requirement, certify its
+358 source fields, or authorize moving out of DATABASE. Chat 1's next DB07
+migration integration must include the retention triggers and chronology checks
+with the four missing tables rather than adopting an older draft version.
