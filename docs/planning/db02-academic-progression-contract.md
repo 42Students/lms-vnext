@@ -66,6 +66,21 @@ Legacy class CRUD still persists:
 
 DB02 maps `upper_limit -> sections.capacity` and stages `sections.minimum_capacity` plus `sections.description`. The old class `start_date/end_date` fields are compatibility metadata for older callers and are not a second source of academic scheduling truth. Because the current backend still accepts and preserves explicit values, DB02 stages nullable `sections.start_date/end_date` solely for compatibility round-trip; academic periods and schedule events remain authoritative for teaching-calendar behavior.
 
+### History-safe legacy batch delete compatibility
+
+The active legacy batch delete path hard-deletes a batch when it has no linked classes; the current vNext native lifecycle separately supports cohort archive. DB02 therefore keeps these semantics distinct.
+
+Canonical database rule:
+
+- `cohort_progression_state.cohort_id` uses `ON DELETE CASCADE` because the automatically-created version-0 initializer row is lifecycle-owned by a cohort and is not, by itself, academic history;
+- direct `DELETE` or `TRUNCATE` of `cohort_progression_state` remains forbidden;
+- `cohort_progression_events.cohort_id` remains `ON DELETE RESTRICT`, so any real promotion/correction history preserves the cohort;
+- existing section, learner-program-enrollment, offering and other child FKs remain restrictive;
+- therefore only a truly child-free, history-free cohort can hard-delete, matching the useful part of legacy batch-delete behavior without permitting historical erasure;
+- native vNext archive remains a separate history-preserving operation and must not be silently treated as the legacy delete endpoint.
+
+The rollback harness covers successful empty-cohort deletion plus rejection after progression history. The two-session race harness covers both delete-first and section-first orders so parent deletion cannot race a new class/section into an orphan.
+
 ## 2. Program-specific semester / curriculum identity
 
 Legacy `SemesterServiceImpl`, `SemesterRepository` and `SemesterCourseRepository` prove these active persisted semantics:
