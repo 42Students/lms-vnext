@@ -37,11 +37,17 @@ const targetFile = new Map([
 ]);
 
 function tableChunk(source, table) {
-  const marker = 'pgTable("' + table + '"';
-  const start = source.indexOf(marker);
-  assert.ok(start >= 0, "Draft table missing: " + table);
-  const next = source.indexOf("export const ", start + marker.length);
-  return source.slice(start, next >= 0 ? next : undefined);
+  // Draft formatting is intentionally not normalized: some pgTable calls keep
+  // the table name on the same line, others place it on the next line.
+  // Anchor on the quoted SQL table name inside the current export instead of
+  // assuming one whitespace layout.
+  const marker = '"' + table + '"';
+  const tableName = source.indexOf(marker);
+  assert.ok(tableName >= 0, "Draft table missing: " + table);
+  const exportStart = source.lastIndexOf("export const ", tableName);
+  assert.ok(exportStart >= 0, "Draft export missing for table: " + table);
+  const next = source.indexOf("export const ", tableName + marker.length);
+  return source.slice(exportStart, next >= 0 ? next : undefined);
 }
 
 function targetRefs(proposedTarget) {
