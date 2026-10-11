@@ -1,7 +1,7 @@
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
+  cohorts, collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers,
   lmsGroups, membershipRoles, sections, users,
 } from "@/db/schema";
@@ -35,14 +35,15 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     isNull(electiveOfferings.deletedAt),
     eq(courseOfferings.courseId, electiveOfferings.courseId),
     eq(courseOfferings.status, "ACTIVE"),
+    eq(cohorts.programId, electiveSlots.programId),
     eq(courses.status, "ACTIVE"),
     eq(departments.collegeId, collegeId),
     isNull(courseSectionDeliveries.endedAt),
     eq(sections.status, "ACTIVE"),
     eq(sections.cohortId, courseOfferings.cohortId),
     eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
-    // Access requires an ACTIVE same-college PRIMARY program/section, but
-    // need NOT belong to the slot's program: cross-program electives are valid.
+    // Runtime legacy eligibility is program-scoped: an ACTIVE group membership
+    // is not sufficient after a learner moves to another program.
     sql<boolean>`exists (
       select 1 from learner_program_enrollments lpe
       join section_enrollments se on se.learner_enrollment_id = lpe.id
@@ -56,6 +57,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
         and (${electiveSlots.academicPeriodId} is null
              or se.academic_period_id = ${electiveSlots.academicPeriodId})
         and pd.college_id = ${collegeId}
+        and lpe.program_id = ${electiveSlots.programId}
     )`,
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
@@ -70,6 +72,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
     .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
