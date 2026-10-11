@@ -1670,7 +1670,7 @@
   "db053PrivateUploadReconciliation": {
     "observedOn": "2026-10-11",
     "task": "DB-053",
-    "status": "SOURCE_STAGED_RUNTIME_UNVERIFIED",
+    "status": "SOURCE_HARDENED_RUNTIME_UNVERIFIED",
     "legacyReceiptFields": 19,
     "legacyReceiptFieldsDispositioned": 19,
     "privateAssetFields": [
@@ -1682,10 +1682,31 @@
       "course_upload_receipts",
       "assignment_submission_files"
     ],
-    "multiFileParity": "STAGED_ORDERED_MANY_ROW_FILES",
-    "exactDeliveryBinding": "STAGED",
+    "multiFileParity": "STAGED_ORDERED_MANY_ROW_FILES_WITH_DEFERRED_COMPLETENESS",
+    "exactDeliveryBinding": "STAGED_RECEIPT_AND_CONSUMPTION",
     "scannerTimestamp": "PRODUCER_CUTOVER_REQUIRED_TRUSTED_METADATA",
     "readRevocationCheck": "PRODUCER_CUTOVER_REQUIRED",
-    "runtimeVerified": false
+    "runtimeVerified": false,
+    "sourceArtifacts": [
+      "src/db/schema/course-upload-receipts-staged.ts",
+      "docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql",
+      "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md",
+      "tests/db06-assignment-upload-receipt-staging.test.mjs"
+    ],
+    "exactFileSnapshot": "RECEIPT_SUBMISSION_KEY_GENERATION_MIME_SIZE_SHA_ORIGINAL_NAME",
+    "scannerTerminalEvidence": "PENDING_ACTORLESS_CLEAN_OR_REJECTED_PRIVILEGED_SCANNER_TIME",
+    "postConsumptionRevocation": "STAGED_ADMIN_REVOCATION_PRESERVES_CONSUMED_EVIDENCE",
+    "revokerAuthorization": "OWNER_ONLY_PRECONSUMPTION_OR_SAME_COLLEGE_COLLEGE_ADMIN_OR_ACTIVE_SUPER_ADMIN",
+    "deletionPolicy": "PRIOR_REVOCATION_PLUS_RETENTION_BOUNDARY",
+    "fileCompleteness": "DEFERRABLE_FILE_SUBMISSION_AND_CONSUMED_RECEIPT_BIDIRECTIONAL",
+    "runtimeGate": "DB06_ASSIGNMENT_FILES_READY=DB06_VERIFIED",
+    "runtimeBlockers": [
+      "TRUSTED_SCAN_ATTESTED_AT_NOT_RETURNED_BY_PRIVATE_STORAGE",
+      "CURRENT_FILE_PRODUCER_ORDER_NOT_CUT_OVER",
+      "CURRENT_READ_GRANT_DOES_NOT_JOIN_RECEIPT_LIFECYCLE",
+      "MULTI_FILE_API_PRODUCER_NOT_CUT_OVER",
+      "NUMBERED_MIGRATION_NOT_REGISTERED",
+      "POSTGRES_AND_GCS_WITNESSES_NOT_EXECUTED"
+    ]
   }
 }
