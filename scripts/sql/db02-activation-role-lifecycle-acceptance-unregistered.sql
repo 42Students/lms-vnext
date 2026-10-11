@@ -129,8 +129,9 @@ BEGIN
        SET ended_at=NULL WHERE id=v_section_faculty;
   EXCEPTION WHEN check_violation THEN v_rejected := true;
   END;
-  -- Membership end itself closed all rows; the already-closed NULL assignment
-  -- cannot reopen. Verify membership-end closure separately in any case.
+  IF NOT v_rejected THEN
+    RAISE EXCEPTION 'ENDED membership reopened section faculty assignment';
+  END IF;
   IF EXISTS(SELECT 1 FROM section_faculty_assignments
              WHERE id=v_section_faculty AND ended_at IS NULL) THEN
     RAISE EXCEPTION 'ENDED membership retained active faculty assignment';
@@ -146,7 +147,7 @@ BEGIN
 
   v_rejected := false;
   BEGIN
-    UPDATE learner_program_enrollments SET status='ACTIVE'
+    UPDATE learner_program_enrollments SET status='ACTIVE',withdrawn_at=NULL
     WHERE id=v_program_enroll;
   EXCEPTION WHEN check_violation THEN v_rejected := true;
   END;
