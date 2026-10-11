@@ -197,6 +197,7 @@ test('DB19 CLI rejects 2828-field inventory even if all internal counters agree'
   } finally { fs.rmSync(root,{recursive:true,force:true}); }
 });
 
+
 test('DB19 source inventory projects approved DB00 backup dispositions without runtime verification', () => {
   const input = ledger('db00_historical_and_engine','backup', [field('backup','id',{reviewStatus:'CLASSIFY_HISTORIC_RETIREMENT'})]);
   input.ledger.domain='DB00_HISTORICAL_AND_ENGINE';input.ledger.sourceSha='f'.repeat(40);
