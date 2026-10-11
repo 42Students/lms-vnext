@@ -74,7 +74,7 @@ CREATE INDEX placement_round_assignments_slot_idx
   ON placement_round_assignments(slot_id);
 
 CREATE FUNCTION db09_assert_round_assignment_capacity() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_capacity integer;
   v_status varchar(16);
@@ -112,14 +112,14 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_round_assignment_capacity_guard
   BEFORE INSERT OR UPDATE OF slot_id,round_id,job_id
   ON placement_round_assignments
   FOR EACH ROW EXECUTE FUNCTION db09_assert_round_assignment_capacity();
 
 CREATE FUNCTION db09_assert_round_slot_mutation() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_booked integer;
 BEGIN
@@ -137,7 +137,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_round_slot_mutation_guard
   BEFORE UPDATE OF capacity,status
   ON placement_round_slots
@@ -216,7 +216,7 @@ CREATE INDEX placement_drive_coordinators_member_date_idx
 
 
 CREATE FUNCTION db09_assert_drive_coordinator_principal_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -243,7 +243,7 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_drive_coordinator_principal_scope_guard
   BEFORE INSERT OR UPDATE OF
     college_id,job_id,learner_membership_id,created_by_user_id
