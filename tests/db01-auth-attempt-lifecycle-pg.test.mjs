@@ -105,6 +105,16 @@ if (!optIn) {
           "db01_auth_attempt_expired_mutation_ck",
         );
       }
+      // Source-level edge: a live challenge must not be verified using a
+      // forged historical verified_at while simultaneously shortening its
+      // new expires_at to an already-past instant.
+      const backdated = await createAttempt();
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await expect23514(
+        update("UPDATE identity_auth_attempts SET expires_at=created_at+interval '100 milliseconds',verified_at=created_at+interval '50 milliseconds',version=version+1 WHERE id=$1", [backdated]),
+        "db01_auth_attempt_expired_mutation_ck",
+      );
+
       const futureProof = await createAttempt();
       await expect23514(
         update("UPDATE identity_auth_attempts SET verified_at=clock_timestamp()+interval '2 seconds',version=version+1 WHERE id=$1", [futureProof]),
