@@ -155,7 +155,10 @@ test("DB035 tenant actor checks require matching membership or persisted superad
     "tenant grade event requires actor membership",
     "attendance event schedule/learner tenant mismatch",
     "attendance event actor membership mismatch",
-    "tenant attendance event requires actor membership",
+    "attendance actor without membership must be SUPER_ADMIN",
+    "attendance SUPER_ADMIN role is missing",
+    "attendance event actor must equal current marker",
+    "attendance event does not match current row post-state",
   ]) {
     assert.ok(sql.includes(message), message);
   }
@@ -168,7 +171,7 @@ test("DB035 tenant actor checks require matching membership or persisted superad
   );
   assert.match(
     sql,
-    /mr\.role = 'FACULTY'[\s\S]*cta\.delivery_id = NEW\.delivery_id[\s\S]*cta\.ended_at IS NULL/,
+    /mr\.role = 'FACULTY'[\s\S]*cta\.delivery_id = linked_delivery[\s\S]*cta\.ended_at IS NULL/,
   );
 });
 
@@ -184,4 +187,33 @@ test("DB035 contract retains exact legacy action provenance without copying it a
     contract,
     /source action names remain documented provenance/i,
   );
+});
+
+
+test("DB035 canonical attendance events use stable record versions and optional delivery snapshots", () => {
+  const stagedStart = schema.indexOf(
+    "export const attendanceRecordEventsStaged",
+  );
+  const staged = schema.slice(stagedStart);
+  for (const token of [
+    'attendanceRecordId: uuid("attendance_record_id").notNull()',
+    'recordVersionBefore: integer("record_version_before")',
+    'recordVersionAfter: integer("record_version_after").notNull()',
+    'actorRole: varchar("actor_role"',
+    'previousMarkedByUserId: uuid("previous_marked_by_user_id")',
+    'newMarkedByUserId: uuid("new_marked_by_user_id")',
+    'previousMarkedAt: timestamp("previous_marked_at"',
+    'newMarkedAt: timestamp("new_marked_at"',
+  ]) {
+    assert.ok(staged.includes(token), token);
+  }
+  assert.doesNotMatch(
+    staged,
+    /\brevision\b|previousAttendanceRecordId|newAttendanceRecordId/,
+  );
+  assert.match(
+    sql,
+    /NEW\.delivery_id IS DISTINCT FROM linked_delivery/,
+  );
+  assert.match(sql, /DO \$db06_history_preflight\$/);
 });
