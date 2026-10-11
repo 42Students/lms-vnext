@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_TOMBSTONE_VERSION_CAS_GENERIC_CONTENT_ANCESTRY_SOURCE_GATES_OPEN",
-    "updatedOn": "2026-10-11",
+    "checkpointKind": "DB008_HIERARCHY_ARCHIVE_LOCKS_COMMITTED_SOURCE_ASSERTIONS_ONLY",
+    "updatedOn": "2026-10-12",
     "observedMainSha": "4e5d5c65f9461c961897874658a469b459c800ce",
-    "lastWorkerMergedSha": "4e5d5c65f9461c961897874658a469b459c800ce",
+    "lastWorkerMergedSha": "fb16b2b5665219c2afa49c06dfc4effdc225bcc9",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat6 direct-main iteration corrected faculty owner delivery exact cohort/period, made lesson deletion child cascade version-aware, staged UNREGISTERED three-table tombstone version guard, staged conservative authored-content ancestry guard for five upstream tables including generic NULL-delivery reader scope, plus tests and two fail-closed manifest gates. On exact fetched GitHub blobs, 61 test assertion callbacks passed in JavaScript V8 with Node imports/filesystem mocked; this is NOT node --test nor PostgreSQL acceptance. 24 SQL drafts structurally scanned; 7 DB05 principal drafts and 11 companions unregistered; 0/92 DB verified and 24 remodeled/missing mappings open. DB008 IN_PROGRESS; global DATABASE active."
+    "summary": "Maintained previously staged DB05, and this iteration commits three live transactional parent FOR UPDATE archive/end fixes to main, non-numbered 6-trigger parent/child lifecycle companion, read-only 3-count hierarchy drift preflight and 12 authored Node test definitions. 15 read-only GitHub source assertions passed; independent Node unit/typecheck/build and two-session PostgreSQL HL01..20 not executed. Seven main DB05 drafts and companions still unregistered. Formal verified 0/92, global DATABASE active, DB008 IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -199,9 +199,15 @@
       "kind": "20261011_DB05_OFFERING_DELIVERY_INSERT_ONLY_LIFECYCLE_26_OF_26_EXACT_BLOB",
       "commitSha": "d6bd0af17496362e0244c8ed6f9ca3d2cd05572f",
       "message": "Preserving prior peer checkpoint. SQL companion scripts/sql/db05-offering-delivery-scope.draft.sql is UNREGISTERED and now checks INSERT-only source lifecycle state for offering/delivery; source model Node v22.16.0 26/26 PASS on exact GitHub blob b2ef07b1535082cbbf0b01391e15e8476eb372e5. Evidence docs/coordination/evidence/chat-06-db008-offering-delivery-source-model-v2-26-2026-10-11.md. Previous 8/8 progress reference PASS; 34/34 pure tests only, no database acceptance. 15 GitHub source assertions true. Staged types, PG catalog probe and seeded-row readonly preflight authored and NOT RUN. Manifest 7 primary drafts, 64 PG/source gates 0 PASS, DB05 formal verified 0/92, DATABASE phase, DB008 IN_PROGRESS. Source historical preservation/lifecycle not complete; W01 sole migration integrator."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_ARCHIVE_ACTIVE_CHILD_TXN_AND_20_CASE_PG_WITNESS",
+      "commitSha": "fb16b2b5665219c2afa49c06dfc4effdc225bcc9",
+      "message": "Chat6 direct main source fixes: archiveCourse dabe1e4, archiveOffering d50ae54, endDelivery 7fa2b3c all take parent FOR UPDATE and do child precondition+UPDATE in same transaction. SQL 5ead8a2, read-only drift 27a319f; 12 regression Node tests authored NOT_EXECUTED, 20 PostgreSQL HL two-session cases NOT_RUN. 15 exact connected GitHub source structure assertions PASS, no DB evidence. W01 only can register 6-trigger companion. Keep DB008 IN_PROGRESS."
     }
   ],
-  "nextAction": "Coordinate W01/DB02/DB06 integration ordering and execute disposable PostgreSQL TV-01..14 / CA-01..18, including generic NULL-delivery content audience, two-session stale CAS, upstream change race/deadlock, tenant/role/assignment/receipt. Run actual native node --test and lint/typecheck/build on reconciled main. Check READ COMMITTED lock contention. Do not mark gates PASS or register migration without runtime evidence.",
+  "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -337,7 +343,17 @@
     "https://github.com/42Students/lms-vnext/commit/6d9c938f70d0354c5c0962cc778ec7edd5ace250",
     "https://github.com/42Students/lms-vnext/commit/6a11cd5aa8252c144efe26c9f93f60f82871ff59",
     "https://github.com/42Students/lms-vnext/commit/2a49056f13196a5361321bae22c8d667c1b005f5",
-    "https://github.com/42Students/lms-vnext/commit/d9361e74c7b3a6c0879d596edd4f9b0a0ed5222e"
+    "https://github.com/42Students/lms-vnext/commit/d9361e74c7b3a6c0879d596edd4f9b0a0ed5222e",
+    "https://github.com/42Students/lms-vnext/commit/dabe1e4b4d64ca49e356cc3b1afb2dac454a1554",
+    "https://github.com/42Students/lms-vnext/commit/d50ae54317a4c5103ca5bdcd3aeb5224d2d0cbe4",
+    "https://github.com/42Students/lms-vnext/commit/7fa2b3cc8a2dd115258c84cc4cb2eb29bd308169",
+    "https://github.com/42Students/lms-vnext/commit/5ead8a2d98b573c085d860df26bdf9a215eaa4be",
+    "https://github.com/42Students/lms-vnext/commit/9b43308c0bd8626e55a38ba5ca015abb8d0b3125",
+    "https://github.com/42Students/lms-vnext/commit/27a319f8e836f48a4d040d1db22ef1a98ec070f2",
+    "https://github.com/42Students/lms-vnext/commit/429636bd7c3703796339b8f76a3fd33607a789c2",
+    "https://github.com/42Students/lms-vnext/commit/c27a797f931187b31c45f5fa24c4d0971868add1",
+    "https://github.com/42Students/lms-vnext/commit/2db1f93cf41e44c3cbadcb5746ad866ec8898fa3",
+    "https://github.com/42Students/lms-vnext/commit/fb16b2b5665219c2afa49c06dfc4effdc225bcc9"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
