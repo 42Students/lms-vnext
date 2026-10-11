@@ -35,6 +35,17 @@ Use one persisted, college-safe source of truth for each cohort:
 
 A college academic period is a **calendar object**. A program term is a **curriculum identity**. Do not use a period UUID as a substitute for a program-specific semester number.
 
+### Versioned correction vs promotion
+
+Legacy forbids direct semester correction, but normal batch update can edit `academicYear` without advancing the semester. The canonical state machine therefore has two versioned event kinds:
+
+- **PROMOTION** — `current_term_number = old + 1`, `version = old + 1`; year/period may advance with the term.
+- **CORRECTION** — term remains unchanged, `version = old + 1`, and at least academic-year start or current-period identity changes.
+
+A version-only no-op is invalid. Backward/jump semester changes remain invalid. Both event kinds are database-journaled and immutable. Changing only the event actor or state actor metadata cannot bypass the versioned transition rules.
+
+A same-term academic-year correction may be applied even when the already-referenced current period has since been CLOSED; changing/advancing the current period **to** a closed period is still rejected.
+
 The progression journal is database-owned audit history. Application roles must not directly insert, update, delete **or truncate** event rows. Identity cleanup may null an event's actor FK without altering any other event field; that FK cleanup must not trigger the promotion state machine or create a synthetic progression event.
 
 ### Cohort lifecycle dates remain distinct from calendar periods
@@ -239,7 +250,7 @@ It currently stages:
 - stable tenant ownership for departments plus same-college program/course department movement;
 - cohort/section/offering/progression academic-period tenant + cohort-window guards;
 - reversible legacy `INACTIVE` cohort state, cohort lifecycle dates, and section description/minimum-capacity/compatibility dates;
-- cohort progression state + database-owned immutable history;
+- cohort progression state + database-owned immutable PROMOTION/CORRECTION history;
 - delivery↔section and schedule-event↔delivery scope integrity;
 - lecture halls, hall tenant scope, overlap exclusion constraints and hall archive-vs-booking locking;
 - active FACULTY tenant guards for section and course teaching assignments;
@@ -294,7 +305,7 @@ Design classification is complete, but DB-005 remains open until the registered 
 9. program-term uniqueness, term bounds, curriculum/offering **0..30** credits, 1-based curriculum ordering and CORE-vs-ELECTIVE offering rules pass; API offering validation must also accept 0 before end-to-end parity is claimed;
 10. batch response compatibility proves current-period-only `classCount`, and learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert; exact `current_students` compatibility must exclude unsectioned learners, preserve temporarily suspended academic membership, and drop LEARNER-role-removed / ENDED-membership state;
 11. faculty-course pool, section faculty and course teaching assignment tests prove ACTIVE FACULTY role, tenant scope, historical deactivation and de-role/suspension cleanup;
-12. term jump/backward promotion fails; progression history rejects direct INSERT/UPDATE/DELETE/TRUNCATE while actor-FK cleanup does not create fake promotion history;
+12. term jump/backward semester change fails; same-term year/period correction requires version+1 and a real metadata change, journals CORRECTION, term+1 journals PROMOTION, and progression history rejects direct INSERT/UPDATE/DELETE/TRUNCATE while actor-FK cleanup does not create fake events;
 13. same faculty/section/hall overlap fails, adjacent `[start,end)` succeeds, cancellation releases resources and attendance/history remains;
 14. compatibility API acceptance explicitly approves projection or retirement for `new_program_structure` and other retirement-proposed legacy storage.
 
