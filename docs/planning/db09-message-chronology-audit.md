@@ -25,6 +25,7 @@ Before DB-061 the staged DB09 SQL did not enforce several source invariants:
 - INSERT guard requires `read_at IS NULL`.
 - Message creation/read timestamps may not be more than five minutes ahead of DB statement time. The tolerance avoids false rejects while the current producer still supplies application-clock timestamps.
 - Published message identity/body/creation time are immutable and DELETE is rejected.
+- Thread identity is also immutable: college, recruiter, optional job binding and creation time cannot be reassigned around an existing conversation; thread DELETE is rejected. Only the derived last-message projection may move.
 - A first read must be at/after message creation; once set it cannot be changed or cleared.
 - Deferred constraint triggers on both message INSERT and thread INSERT/UPDATE require:
   `thread.last_message_at IS NOT DISTINCT FROM MAX(message.created_at)`.
@@ -37,6 +38,7 @@ The deferred check preserves the existing application write order within one tra
 - new message with non-null read_at fails;
 - future-dated creation beyond tolerance fails;
 - message DELETE/content/identity rewrite fails;
+- thread DELETE or college/recruiter/job/created-at rewrite fails;
 - valid first read succeeds;
 - pre-creation/far-future read fails;
 - read rewind/rewrite fails;
