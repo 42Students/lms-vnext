@@ -69,6 +69,11 @@ Source-level hardening was committed directly on `main` without editing
   [4edbcf75](https://github.com/42Students/lms-vnext/commit/4edbcf759917a3917fdbced627abb39d895cb2e5),
   `node --test tests/db07-project-history-retention.test.mjs`;
   includes three negative mutant tests and a read-only staging assertion.
+- Standard Vitest regression guard:
+  [8e0d3cc1](https://github.com/42Students/lms-vnext/commit/8e0d3cc12c4ed48743d939373a6b5dac71a3eb17),
+  `tests/unit/w03-db07-history-retention.test.ts`. This runs under normal
+  `npm test` discovery when a checkout/test runner is available; no passing
+  Vitest invocation is claimed in this session.
 - Additional four-table SQL/Drizzle field and composite-FK parity guards:
   [3d94f650](https://github.com/42Students/lms-vnext/commit/3d94f65095cd91a069770dd1093b81f2965a3114),
   `node --test tests/db07-history-schema-parity.test.mjs`;
