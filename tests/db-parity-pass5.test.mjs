@@ -255,7 +255,8 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
   assert.match(coverage, /Direct negative SQL boundary tests \| 13 \| 0/);
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
-  assert.match(coverage, /Known-defect red concurrency witnesses \| 2 \| 0/);
+  assert.match(coverage, /Known-defect red concurrency witnesses \\| 1 \\| 0/);
+  assert.match(coverage, /Fix-authored race regression pending runtime \\| 1 \\| 0/);
   assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
 });
 
