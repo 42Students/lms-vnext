@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_NO_ELIGIBLE_DATABASE_TASK",
+  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
   "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB050_GLOBAL_EMAIL_SUPPRESSION_STAGED_SOURCE_ONLY",
+    "checkpointKind": "DB007_PG_WITNESS_AUTHORED_NOT_EXECUTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "5aed311981438c713a92355b70457379f93fb9f2",
-    "lastWorkerMergedSha": "f80329431da5321e66441902889295c9b7f4462c",
+    "observedMainSha": "05aa3fd9619d7ea37fc603665875a18d048c2e1c",
+    "lastWorkerMergedSha": "05aa3fd9619d7ea37fc603665875a18d048c2e1c",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-050 COMPLETED implementation on main: legacy global email suppression honored across org-scoped HMAC identities, separate stable HMAC secret, staged Drizzle table and SQL, 7 Vitest tests authored, 5 standalone source tests authored; exact test callbacks 5/5 passed via V8 read/assert shim. No Node/Vitest/PG execution, no migration registration, no sender activation. Global DATABASE phase remains active."
+    "summary": "DB-007 source/staging closure materially advanced. 103/103 candidates reviewed; 33 historical fields have strong retirement-candidate evidence, 0 approved retirements. Normalized education/profile-image Drizzle staging, hardened receipt parent keys, W01 manifest/static guards and opt-in disposable PostgreSQL witness are on main. PG witness is authored but unexecuted; no migration/barrel/runtime verification."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -69,7 +69,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "No dependency-satisfied eligible pre-seeded task currently; in next continuation refresh queue. DB-050 needs Chat 1 migration integration and independent PG/dispatcher suppression race witnesses, not DONE_VERIFIED. Consider independent peer review if queue stays blocked.",
+  "nextAction": "No unrestricted dependency-safe DATABASE task is free. Keep DB-007 blocked until W01 registers the approved shape, execute tests/db04-profile-education-images-pg.test.mjs only on disposable PostgreSQL, then prove runtime producer cutover and explicit historical retirements. DB-012 remains blocked on analogous W01/PG/runtime acceptance.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -183,7 +183,10 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db10-global-email-suppression-parity.md",
     "https://github.com/42Students/lms-vnext/blob/main/tests/db10-global-email-suppression-contract.test.mjs",
     "https://github.com/42Students/lms-vnext/blob/main/tests/unit/outbound-global-email-suppression.test.ts",
-    "https://github.com/42Students/lms-vnext/commit/f80329431da5321e66441902889295c9b7f4462c"
+    "https://github.com/42Students/lms-vnext/commit/f80329431da5321e66441902889295c9b7f4462c",
+    "https://github.com/42Students/lms-vnext/commit/771d72b5a7ff29059733128defb00d4a281362c2",
+    "https://github.com/42Students/lms-vnext/commit/4231a694d3ef4b6134323362bf3ed370c22df3a2",
+    "https://github.com/42Students/lms-vnext/commit/05aa3fd9619d7ea37fc603665875a18d048c2e1c"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
