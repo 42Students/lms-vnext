@@ -84,12 +84,13 @@ Staged table: `attendance_record_events`.
 
 Each event snapshots:
 
-- exact attendance record + schedule event + learner membership identity;
+- exact stable attendance record + schedule event + learner membership identity;
+- optional canonical delivery (null for course-less schedule events);
 - college scope;
-- actor user/membership;
+- actor user/membership/role;
 - `MARK` or `CORRECT`;
-- previous/new status;
-- previous/new note;
+- previous/new status and note;
+- previous/new marker user and mark time;
 - attendance record optimistic version before/after;
 - immutable event time.
 
@@ -101,20 +102,30 @@ Current `attendance_records` has no optimistic version. The SQL candidate stages
 
 Semantics:
 
+- vNext keeps an explicit current row for every status, including `PRESENT`; it does not delete the row to represent presence;
 - initial MARK is record version 0 and event `record_version_before = NULL, record_version_after = 0`;
 - every CORRECT must write `version = old + 1`;
-- an update that changes status/note/marker without incrementing exactly once is rejected;
+- an update that changes status/note/marker/mark-time without incrementing exactly once is rejected;
 - a version-only update without a real correction is rejected;
 - event `(attendance_record_id, record_version_after)` is unique.
 
 The eventual producer API should expose/require an expected version so concurrent faculty corrections cannot silently last-write-win.
+
+### Attendance delivery and actor scope
+
+A schedule event may be course-linked or course-less. The event's `delivery_id` is therefore nullable:
+
+- if `section_schedule_event_courses` has a linked delivery, the history event must persist exactly that delivery and it must belong to the schedule section;
+- if there is no course link, event `delivery_id` must be null.
+
+Tenant actors must use an ACTIVE membership in the schedule college. COLLEGE_ADMIN requires the persisted admin role; FACULTY requires an active teaching assignment on the linked delivery or, for course-less schedules, an active section faculty assignment. Membership-less actors must be persisted SUPER_ADMINs. The event actor must equal the current row's marker user.
 
 ### Audit completeness
 
 A deferred constraint trigger requires, at commit:
 
 - INSERT attendance record → matching `MARK` event;
-- meaningful UPDATE → matching `CORRECT` event with exact old/new status, note, actor and versions.
+- meaningful UPDATE → matching `CORRECT` event with exact old/new status, note, marker, mark time and versions.
 
 This is deliberately a **require-event** design instead of an auto-event trigger. It keeps RequestContext membership/authorization attribution explicit and forces all trusted writers to use one auditable transaction.
 
@@ -123,6 +134,10 @@ This is deliberately a **require-event** design instead of an auto-event trigger
 Current `attendance_records.schedule_event_id` is `ON DELETE CASCADE`. The staged history table references `section_schedule_events` with `ON DELETE RESTRICT` and references the current record with `RESTRICT`.
 
 Once an attendance event exists, a hard schedule-event delete can no longer erase the audit trail through cascade. This directly addresses the DB-014 retention risk. A future approved retention/purge workflow must be explicit rather than accidental.
+
+### Fail-closed existing-history preflight
+
+The staged SQL refuses promotion if the database already contains attendance rows or already-graded assignment submissions. Those states cannot be given truthful historical actors/timestamps retroactively without an explicit audited backfill. The current rollout has no production data to migrate; if that changes, migration integration must stop and design a real backfill rather than inventing events.
 
 ## Append-only enforcement
 
@@ -172,6 +187,9 @@ At minimum execute:
 - correction without event fails at COMMIT;
 - stale concurrent correction loses CAS / cannot commit an orphaned event;
 - wrong schedule/learner/college event fails;
+- forged/mismatched attendance actor role fails;
+- schedule-linked event with wrong delivery fails, while a course-less event requires null delivery;
+- event actor that differs from the persisted current-row marker fails;
 - attendance event UPDATE/DELETE/TRUNCATE fail;
 - schedule-event hard delete with attendance history is RESTRICTED.
 
