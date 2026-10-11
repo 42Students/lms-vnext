@@ -2092,6 +2092,51 @@
           "reason": "Chat 3 reserved isolated schema/ledger/doc/test/manifest normalization paths."
         }
       ]
+    },
+    {
+      "id": "DB-037",
+      "phase": "DATABASE",
+      "title": "Disposition duplicate legacy notification template registries",
+      "scope": "Resolve all 56 DB10 notification_template/lms_notification_template fields against current pinned runtime behavior. Prove current dispatcher uses typed in-code event content plus provider/DLT configuration, map active semantics to code/config/external provider, mark historical duplicate persistence as source-retired pending global native/live-schema proof, and prevent vNext from inventing an unused template table.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-db10-notification-template-disposition.json",
+        "docs/planning/database-parity-db10-notification-template-contract.md",
+        "tests/db10-notification-template-disposition.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T13:42:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T13:42:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB10 census leaves 56 fields across notification_template and lms_notification_template UNMAPPED, while pinned current NotificationEventRegistry explicitly states notification configuration is in-code with no DB/CSV runtime dependency."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:42:00+05:30",
+          "reason": "Chat 5 reserved isolated notification-template disposition/docs/test paths; no migration/schema-barrel or Chat 3 DB09 paths overlap."
+        }
+      ]
     }
   ],
   "eventModel": {
