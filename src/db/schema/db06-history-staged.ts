@@ -30,6 +30,7 @@ import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 import { assignmentSubmissions } from "./assessments";
+import { attendanceRecords } from "./attendance";
 import { sectionScheduleEvents } from "./academics";
 import { courseSectionDeliveries } from "./courses";
 
@@ -150,13 +151,18 @@ export const attendanceRecordEventsStaged = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
 
-    // Durable identity. One schedule can be linked to multiple deliveries, so
-    // delivery is recorded explicitly rather than inferred later.
+    // Canonical DB-045 identity: vNext persists every attendance state,
+    // including PRESENT, in one stable current row. History therefore follows
+    // that row and its optimistic version instead of legacy delete/recreate
+    // absence semantics.
+    attendanceRecordId: uuid("attendance_record_id").notNull(),
     scheduleEventId: uuid("schedule_event_id")
       .notNull()
       .references(() => sectionScheduleEvents.id, { onDelete: "restrict" }),
+    // Nullable for source-compatible course-less schedule events. If a
+    // schedule is course-linked, the event scope guard requires this to equal
+    // the canonical section_schedule_event_courses delivery.
     deliveryId: uuid("delivery_id")
-      .notNull()
       .references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
     membershipId: uuid("membership_id")
       .notNull()
@@ -173,14 +179,6 @@ export const attendanceRecordEventsStaged = pgTable(
     actorRole: varchar("actor_role", { length: 24 }).notNull(),
 
     action: varchar("action", { length: 24 }).notNull(),
-    revision: integer("revision").notNull(),
-
-    // Snapshot IDs intentionally have NO FK to attendance_records. PRESENT is
-    // represented by absence-row deletion, and Faculty bulk marking can delete
-    // and recreate an ABSENT row. Immutable history must survive both.
-    previousAttendanceRecordId: uuid("previous_attendance_record_id"),
-    newAttendanceRecordId: uuid("new_attendance_record_id"),
-
     previousStatus: varchar("previous_status", { length: 24 }),
     newStatus: varchar("new_status", { length: 24 }).notNull(),
     previousNote: text("previous_note"),
@@ -188,20 +186,36 @@ export const attendanceRecordEventsStaged = pgTable(
     previousMarkedByUserId: uuid("previous_marked_by_user_id")
       .references(() => users.id, { onDelete: "restrict" }),
     newMarkedByUserId: uuid("new_marked_by_user_id")
+      .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     previousMarkedAt: timestamp("previous_marked_at", { withTimezone: true }),
-    newMarkedAt: timestamp("new_marked_at", { withTimezone: true }),
+    newMarkedAt: timestamp("new_marked_at", { withTimezone: true }).notNull(),
 
+    recordVersionBefore: integer("record_version_before"),
+    recordVersionAfter: integer("record_version_after").notNull(),
     occurredAt: timestamp("occurred_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
   (table) => [
-    uniqueIndex("attendance_record_events_revision_uq").on(
-      table.scheduleEventId,
-      table.deliveryId,
-      table.membershipId,
-      table.revision,
+    // Promotion prerequisite: attendance_records receives the matching
+    // composite UNIQUE plus version column in the synchronized migration.
+    foreignKey({
+      name: "attendance_record_events_record_identity_fk",
+      columns: [
+        table.attendanceRecordId,
+        table.scheduleEventId,
+        table.membershipId,
+      ],
+      foreignColumns: [
+        attendanceRecords.id,
+        attendanceRecords.scheduleEventId,
+        attendanceRecords.membershipId,
+      ],
+    }).onDelete("restrict"),
+    uniqueIndex("attendance_record_events_record_version_uq").on(
+      table.attendanceRecordId,
+      table.recordVersionAfter,
     ),
     index("attendance_record_events_member_time_idx").on(
       table.membershipId,
@@ -232,20 +246,16 @@ export const attendanceRecordEventsStaged = pgTable(
       sql.raw(`"action" in ('MARK','CORRECT')`),
     ),
     check(
-      "attendance_record_events_revision_ck",
-      sql.raw(`"revision" >= 1`),
-    ),
-    check(
       "attendance_record_events_status_ck",
       sql.raw(`"new_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE') and ("previous_status" is null or "previous_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE'))`),
     ),
     check(
-      "attendance_record_events_shape_ck",
-      sql.raw(`(("action" = 'MARK' and "revision" = 1 and "previous_status" is null and "previous_attendance_record_id" is null) or ("action" = 'CORRECT' and "revision" >= 2 and "previous_status" is not null))`),
+      "attendance_record_events_version_ck",
+      sql.raw(`("record_version_before" is null and "record_version_after" = 0) or ("record_version_before" >= 0 and "record_version_after" = "record_version_before" + 1)`),
     ),
     check(
-      "attendance_record_events_present_shape_ck",
-      sql.raw(`(("new_status" = 'PRESENT' and "new_attendance_record_id" is null) or ("new_status" <> 'PRESENT' and "new_attendance_record_id" is not null))`),
+      "attendance_record_events_shape_ck",
+      sql.raw(`(("action" = 'MARK' and "previous_status" is null and "previous_note" is null and "previous_marked_by_user_id" is null and "previous_marked_at" is null and "record_version_before" is null and "record_version_after" = 0) or ("action" = 'CORRECT' and "previous_status" is not null and "previous_marked_by_user_id" is not null and "previous_marked_at" is not null and "record_version_before" is not null and "record_version_after" = "record_version_before" + 1)) and "new_marked_by_user_id" is not null and "new_marked_at" is not null`),
     ),
   ],
 );
@@ -254,7 +264,8 @@ export const attendanceRecordEventsStaged = pgTable(
 // active tables in this source-only file:
 // - UNIQUE (id, assignment_id, delivery_id, membership_id) on assignment_submissions
 // - grade-event INSERT guard: exact tenant, actor and current-row post-state
-// - attendance-event INSERT guard: schedule/delivery link, learner tenant,
-//   actor role/teaching scope, monotonic revision and current-row post-state
+// - attendance-event INSERT guard: stable current-row identity, schedule/delivery
+//   link, learner tenant, actor role/teaching scope, optimistic version and
+//   exact before/after current-row state
 // - append-only UPDATE/DELETE/TRUNCATE rejection for both history tables
 // - transactional producer cutover in grade/publish + Faculty/Admin attendance
