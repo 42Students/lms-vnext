@@ -11,7 +11,7 @@ npm ci
 npm run db:verify:independent
 ```
 
-By default the verifier starts a disposable `postgres:17-alpine` container on a random localhost port, creates a unique database, runs the database gates, records evidence, and removes the container.
+By default the verifier starts a disposable `postgres:17-alpine` container on a random localhost port, creates a unique `lms_vnext_test_<pid>` database, runs the database gates, records evidence, and removes the container.
 
 Requirements for the default mode:
 
@@ -33,7 +33,12 @@ DATABASE_URL='postgresql://user:password@127.0.0.1:5432/lms_vnext_verify' \
 npm run db:verify:independent
 ```
 
-For a deliberately disposable **non-local** database, the existing reset safety requires `ALLOW_DB_RESET=true`. Never set that flag for shared, staging, production, or any database that contains data that must survive.
+For a deliberately disposable **non-local** database, both reset gates must be satisfied:
+
+- set `DB01_REMOTE_TEST_DATABASE_CONFIRM=RESET:<host>/<database>` for the exact disposable target;
+- set `ALLOW_DB_RESET=true` so the lower-level reset helper permits a non-local host.
+
+The database name must still satisfy the explicit test-target naming policy. Never set either override for shared, staging, production, or any database that contains data that must survive. The destructive prepare subprocess receives `TEST_DATABASE_URL` only; `DATABASE_URL` is intentionally removed for that step so an application target can never substitute for the disposable target.
 
 ## Gates executed
 
