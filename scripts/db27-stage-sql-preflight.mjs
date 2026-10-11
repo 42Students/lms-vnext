@@ -43,8 +43,15 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
         identifier+=sql[j++];
       }
       const raw=sql.slice(i,j);
+      const simpleIdentifier=/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier);
       if(!closed)lexicalErrors.push("UNCLOSED_QUOTED_IDENTIFIER");
-      out+=closed&&/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)
+      // The table/FK regex handles ordinary quoted names only. A valid but
+      // complex quoted relation must be manually dispositioned, not skipped
+      // as if its CREATE, ALTER or REFERENCES never existed.
+      if(closed&&!simpleIdentifier&&
+         /\b(?:CREATE\s+(?:UNLOGGED\s+)?TABLE|ALTER\s+TABLE|REFERENCES|DROP\s+TABLE|TRUNCATE\s+TABLE)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(?:public\.)?$/i.test(out))
+        lexicalErrors.push("UNSUPPORTED_QUOTED_DDL_IDENTIFIER");
+      out+=closed&&simpleIdentifier
         ?raw:raw.replace(/[^\n]/g," ");
       i=j;continue;
     }
