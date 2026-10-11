@@ -1979,6 +1979,42 @@
         }
       ],
       "progressNote": "Source consumers confirmed: trusted domains actively auto-approve recruiter drive requests after verification; prep course IDs actively drive learner readiness averages. DB-034 upgraded from JSON hardening to canonical normalized tables + two DB09 ledger redesign rows."
+    },
+    {
+      "id": "DB-035",
+      "phase": "DATABASE",
+      "title": "Stage DB06 immutable grading and attendance correction history",
+      "scope": "Implement the persistence-design follow-up from DB-009: source-backed append-only assignment grade events and attendance correction events with actor/tenant attribution, before/after state, exact parent integrity, immutability and migration-order handoff. Source-only staging; no journal registration or API cutover.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/db06-history-staged.ts",
+        "docs/planning/sql/db06-assessment-attendance-history-candidate.sql",
+        "docs/planning/database-parity-db06-history-contract.md",
+        "tests/db06-history-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Implementation follow-up to completed DB-009 reconciliation. DB-009 explicitly recorded missing immutable grade history and attendance correction history; no existing task owns these persistence objects."
+        }
+      ]
     }
   ],
   "eventModel": {
