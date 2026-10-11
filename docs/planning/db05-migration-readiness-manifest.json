@@ -608,6 +608,25 @@
       "status": "BLOCKED",
       "owner": "DB05_API_PHASE_SOURCE_DECISION",
       "evidence": "Historical parent_discussion_id, resolved_by and attachment fields are not established active by current legacy DiscussionController. Do not expose reply/moderation API without producer/consumer proof. Persisted defensive constraints remain proposed only."
+    },
+    {
+      "id": "DB05_AUTHORING_PUBLISH_PARENT_LOCKS_TWO_SESSION",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_W06",
+      "evidence": "Live service pair-locks added for offering->learning path, learning path->lesson, lesson->content and delivery->content. Path/content publication predicate CAS hardening committed. Seven Node static regression definitions authored, not executed. LC-01..12 PostgreSQL race and tenant negative cases not run. Ref docs/planning/db05-hierarchy-active-child-archive-race-contract.md.",
+      "appCodeCommits": [
+        "3ccb4d89f3d28e641363cc510968a06e2956c6a9",
+        "e8f35c41a4070089a3b3cacec5fcba20514f056f",
+        "a521cbdee68b923ad6f75e5dde91fa52191084b3",
+        "00f4a2283cf1c8fe6b2e151beb828a495c8c1eac",
+        "52c9fea17068e1f12b1e58fda92b1ab957f872ed",
+        "85132267d53953f7fbb3dd45a14cc2989d8d6bb9",
+        "cadfd9888db079276098cd7b3b35e06f7a44894d"
+      ],
+      "testFile": "tests/db05-authoring-parent-locks.test.mjs",
+      "witnesses": 12,
+      "pgExecuted": false,
+      "nodeExecuted": false
     }
   ],
   "sourceReview": {
@@ -676,7 +695,8 @@
     "DB05_TOMBSTONE_OPTIMISTIC_VERSION: Guard staged to close stale CAS hole for course/lesson/content deletion/restore and cascade. W01 must register after version columns and prove TV-01..TV-14 concurrent PostgreSQL; 0 live DB acceptance, API version writers not yet switched.",
     "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback.",
     "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope.",
-    "Paired app row locks committed across all 6 course/offering/delivery/teacher paths, but native Node/TS compilation and 20 two-session PostgreSQL HL tests NOT EXECUTED; direct SQL activation, upstream reparent and non-READ-COMMITTED lock order need W01 acceptance."
+    "Paired app row locks committed across all 6 course/offering/delivery/teacher paths, but native Node/TS compilation and 20 two-session PostgreSQL HL tests NOT EXECUTED; direct SQL activation, upstream reparent and non-READ-COMMITTED lock order need W01 acceptance.",
+    "LC-01..12 learning-path/lesson/content/delivery authoring archive and publish CAS two-session PostgreSQL tests NOT EXECUTED. Direct SQL ancestor reparent and historical tombstone guards remain unregistered. Native Node/typecheck/build not observed."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
