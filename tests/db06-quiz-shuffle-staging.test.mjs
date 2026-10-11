@@ -17,6 +17,10 @@ const ledger = JSON.parse(
   ),
 );
 const schema = fs.readFileSync("src/db/schema/quizzes.ts", "utf8");
+const retention = fs.readFileSync(
+  "docs/planning/sql/db06-assessment-history-retention-candidate.sql",
+  "utf8",
+);
 const journal = JSON.parse(
   fs.readFileSync("drizzle/meta/_journal.json", "utf8"),
 );
@@ -29,6 +33,15 @@ test("DB041 remains source-only until migration integration", () => {
   );
   assert.doesNotMatch(schema, /shuffleQuestions|shuffle_questions/);
   assert.doesNotMatch(schema, /shuffleOptions|shuffle_options/);
+});
+
+test("DB041 stages only the two presentation columns and performs no data rewrite", () => {
+  assert.equal(
+    (sql.match(/ADD COLUMN shuffle_/g) ?? []).length,
+    2,
+  );
+  assert.doesNotMatch(sql, /DROP\s+COLUMN/i);
+  assert.doesNotMatch(sql, /UPDATE\s+course_quizzes/i);
 });
 
 test("DB041 stages exact false-default non-null shuffle columns", () => {
@@ -88,4 +101,25 @@ test("DB041 promotion matrix preserves DB038 independence", () => {
     );
   }
   assert.match(contract, /DB-038 assessment-history guards/);
+});
+
+test("DB041 shuffle metadata is orthogonal to DB038 immutable scoring history", () => {
+  const start = retention.indexOf(
+    "CREATE FUNCTION db06_guard_quiz_history_definition",
+  );
+  const end = retention.indexOf(
+    "CREATE TRIGGER db06_quiz_history_definition_guard",
+    start,
+  );
+  assert.ok(start >= 0);
+  assert.ok(end > start);
+  const definitionGuard = retention.slice(start, end);
+  assert.doesNotMatch(
+    definitionGuard,
+    /shuffle_questions|shuffle_options/,
+  );
+  assert.match(
+    contract,
+    /presentation metadata independent of submitted answer identity/,
+  );
 });
