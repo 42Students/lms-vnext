@@ -744,6 +744,24 @@ CREATE TRIGGER db02_faculty_course_associations_membership_inactive
 AFTER UPDATE OF status ON college_memberships
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_membership_inactive();
 
+CREATE FUNCTION db02_end_faculty_course_associations_on_course_archive()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
+    UPDATE faculty_course_associations
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE course_id = NEW.id
+       AND ended_at IS NULL;
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_faculty_course_associations_course_archive
+AFTER UPDATE OF status ON courses
+FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_archive();
+
 -- ---------------------------------------------------------------------------
 -- Registration / acceptance notes
 -- ---------------------------------------------------------------------------
@@ -763,7 +781,8 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_membership
 -- 7. Verify a broad faculty-course association can exist before delivery, requires an ACTIVE
 --    FACULTY membership, rejects cross-college links, deactivates historically and cannot
 --    duplicate an active pair; removing FACULTY or suspending/ending the membership must close
---    active associations in the same transaction and must not auto-reactivate them later.
+--    active associations in the same transaction and must not auto-reactivate them later;
+--    archiving the course must likewise close its active association pool.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
 --    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
