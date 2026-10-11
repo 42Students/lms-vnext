@@ -33,6 +33,9 @@ DEPT_ID="$(new_uuid)"
 PROGRAM_ID="$(new_uuid)"
 PERIOD_ID="$(new_uuid)"
 ALT_PERIOD_ID="$(new_uuid)"
+PROMOTION_TERM2_ID="$(new_uuid)"
+PROMOTION_COURSE_ID="$(new_uuid)"
+PROMOTION_MAP_ID="$(new_uuid)"
 COHORT_ID="$(new_uuid)"
 SECTION_ID="$(new_uuid)"
 RACE_SECTION_A_ID="$(new_uuid)"
@@ -78,6 +81,9 @@ psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v program_id="$PROGRAM_ID" \
   -v period_id="$PERIOD_ID" \
   -v alt_period_id="$ALT_PERIOD_ID" \
+  -v promotion_term2_id="$PROMOTION_TERM2_ID" \
+  -v promotion_course_id="$PROMOTION_COURSE_ID" \
+  -v promotion_map_id="$PROMOTION_MAP_ID" \
   -v cohort_id="$COHORT_ID" \
   -v section_id="$SECTION_ID" \
   -v race_section_a_id="$RACE_SECTION_A_ID" \
@@ -96,6 +102,24 @@ VALUES (:'dept_id', :'college_id', :'run_tag' || ' dept');
 
 INSERT INTO programs(id, department_id, name, code, duration_terms)
 VALUES (:'program_id', :'dept_id', :'run_tag' || ' program', :'run_tag' || '-program', 4);
+
+-- Race 1 is a pure compare-and-set contention test. Satisfy the separate promotion
+-- readiness contract up front so a loser can only lose on version=0, not because term 2
+-- is missing/inactive/empty.
+INSERT INTO program_terms(id, program_id, term_number, name, is_active)
+VALUES (:'promotion_term2_id', :'program_id', 2, :'run_tag' || ' promotion term 2', true);
+
+INSERT INTO courses(id, department_id, name, code)
+VALUES (
+  :'promotion_course_id', :'dept_id',
+  :'run_tag' || ' promotion course', :'run_tag' || '-promotion-course'
+);
+
+INSERT INTO program_term_courses(
+  id, program_term_id, course_id, type, credits, display_order
+) VALUES (
+  :'promotion_map_id', :'promotion_term2_id', :'promotion_course_id', 'CORE', 0, 1
+);
 
 INSERT INTO academic_periods(id, college_id, name, code, start_date, end_date, status)
 VALUES (
