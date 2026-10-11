@@ -25,6 +25,47 @@ CREATE TABLE placement_recruiter_drive_groups (
 CREATE INDEX placement_recruiter_drive_groups_recruiter_time_idx
   ON placement_recruiter_drive_groups(recruiter_user_id, created_at);
 
+CREATE FUNCTION db09_assert_drive_group_owner_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_profile_company uuid;
+BEGIN
+  IF TG_OP = 'UPDATE'
+     AND (
+       NEW.recruiter_user_id IS DISTINCT FROM OLD.recruiter_user_id
+       OR NEW.company_id IS DISTINCT FROM OLD.company_id
+     ) THEN
+    RAISE EXCEPTION 'recruiter drive group owner/company is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+
+  SELECT p.company_id
+    INTO v_profile_company
+    FROM placement_recruiter_profiles p
+    JOIN placement_companies co ON co.id = p.company_id
+    JOIN users u ON u.id = p.user_id
+   WHERE p.user_id = NEW.recruiter_user_id
+     AND p.status = 'ACTIVE'
+     AND co.status = 'ACTIVE'
+     AND u.platform_status = 'ACTIVE';
+
+  IF v_profile_company IS NULL OR v_profile_company <> NEW.company_id THEN
+    RAISE EXCEPTION 'drive group recruiter/company is not an active canonical pairing'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.created_by_user_id IS NOT NULL
+     AND NEW.created_by_user_id <> NEW.recruiter_user_id THEN
+    RAISE EXCEPTION 'drive group creator must be the recruiter owner'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_drive_group_owner_scope_guard
+  BEFORE INSERT OR UPDATE OF recruiter_user_id,company_id,created_by_user_id
+  ON placement_recruiter_drive_groups
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_group_owner_scope();
+
 ALTER TABLE placement_jobs
   ADD COLUMN recruiter_drive_group_id uuid
   REFERENCES placement_recruiter_drive_groups(id) ON DELETE RESTRICT;
@@ -75,11 +116,24 @@ BEGIN
       FROM placement_recruiter_college_grants g
       JOIN placement_company_relationships r
         ON r.id = g.company_relationship_id
+      JOIN placement_recruiter_profiles p
+        ON p.user_id = g.recruiter_user_id
+      JOIN placement_companies co
+        ON co.id = p.company_id
+      JOIN users u
+        ON u.id = p.user_id
+      JOIN colleges c
+        ON c.id = r.college_id
      WHERE g.recruiter_user_id = v_group_recruiter
        AND g.status = 'ACTIVE'
+       AND p.status = 'ACTIVE'
+       AND co.status = 'ACTIVE'
+       AND u.platform_status = 'ACTIVE'
+       AND c.status = 'ACTIVE'
        AND r.id = NEW.company_relationship_id
        AND r.college_id = NEW.college_id
        AND r.company_id = v_group_company
+       AND p.company_id = v_group_company
        AND r.status = 'ACTIVE'
   ) THEN
     RAISE EXCEPTION 'drive group recruiter lacks active grant for child job college'
@@ -116,3 +170,8 @@ CREATE TRIGGER db09_drive_group_job_scope_guard
 --     company or lacks an ACTIVE grant for the group recruiter is rejected.
 -- (9) concurrent attempts to attach two child jobs for the same group+college
 --     yield one winner via placement_jobs_recruiter_group_college_uq.
+
+-- (10) group owner/company cannot be changed after creation; when creator
+--      provenance is stored it must equal the recruiter owner.
+-- (11) adding a child job after recruiter/user/company/college archival is
+--      rejected even if a stale grant row still says ACTIVE.
