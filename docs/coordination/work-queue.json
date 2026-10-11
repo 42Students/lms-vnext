@@ -209,10 +209,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "665ededf1cb34e6254c7135c4fadf7e1db3a4c05",
+      "latestEvidenceSha": "ff461cb7ff41b7043c4c742038cb5a1289612f32",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB-004 IN_PROGRESS: identity/tenancy DB source triage 312/312; 38 P0 decisions source-only; provider/PG semantics not verified. Direct-main role parent lock race mitigation landed with 16 authored Node guards + 6 true PG app repository tests, unexecuted. Other DB01 staged identity/domain tables remain unregistered; Chat 1 sole migration owner; global DATABASE phase still active.",
+      "completionNote": "DB-004 IN_PROGRESS: DB01 312 source candidates dispositioned only, no accepted runtime semantics. Direct-main locking and canonical ownership guard for membership role mutation landed; 18 authored Node and 8 authored PG cases, none executed. Staged DB01 auth/tenant changes remain unregistered; Chat 1 migration owner. DATABASE phase active.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 DB-004 direct-main corrective iteration: src/modules/people/repository.ts now locks college_memberships parent FOR UPDATE in grant, revoke, and onboarding; rejects ENDED/absent target inside same transaction (code commit 2194420). Updated 16 authored Node source guards and 6 real repo Vitest/PostgreSQL cases including stale END, last-role concurrent removal, rollback of stale onboarding. Ran 24/24 V8 GitHub exact-file source assertions; actual Node, TS typecheck, PG 2-client and provider tests NOT executed in this batch. CI Actions intentionally unused (billing) and not a blocker. 312/312 source dispositions remain; 0 runtime-semantic fields verified."
+      "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified."
     },
     {
       "id": "DB-005",
