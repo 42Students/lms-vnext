@@ -213,11 +213,15 @@ test("DB09 multi-college drive groups bind recruiter company and child college",
     /CREATE UNIQUE INDEX placement_jobs_recruiter_group_college_uq[\s\S]*WHERE recruiter_drive_group_id IS NOT NULL/,
   );
   assert.match(sql, /CREATE TRIGGER db09_drive_group_job_scope_guard/);
-  assert.match(
-    sql,
-    /r\.company_id = v_group_company[\s\S]*r\.college_id = NEW\.college_id[\s\S]*g\.status = 'ACTIVE'/,
-    "a grouped child job needs an active recruiter grant to the same company relationship and college",
-  );
+  const guard = sql.slice(sql.indexOf("CREATE FUNCTION db09_assert_drive_group_job_scope"));
+  for (const proof of [
+    /FROM placement_recruiter_college_grants g/,
+    /g\.recruiter_user_id = v_group_recruiter/,
+    /g\.status = 'ACTIVE'/,
+    /r\.college_id = NEW\.college_id/,
+    /r\.company_id = v_group_company/,
+    /r\.status = 'ACTIVE'/,
+  ]) assert.match(guard, proof, "missing recruiter/college/company grant predicate");
 });
 
 
@@ -461,6 +465,7 @@ test("DB09 drive groups enforce active owner lifecycle and immutable provenance"
   assert.doesNotMatch(sql, /LANGUAGE plpgsql AS \$(?!\$)/);
   assert.doesNotMatch(sql, /^END \$;$/m);
   assert.match(sql, /NEW\.created_by_user_id IS DISTINCT FROM v_group_recruiter/);
+  assert.match(sql, /UPDATE OF[\s\S]*created_by_user_id[\s\S]*ON placement_jobs/);
   assert.match(sql, /grouped job creator must be the group recruiter/);
   assert.match(
     sql,
