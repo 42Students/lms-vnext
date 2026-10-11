@@ -36,7 +36,12 @@ $db06_quiz_lifecycle_preflight$;
 ALTER TABLE course_quizzes
   ADD COLUMN lifecycle_version integer NOT NULL DEFAULT 0,
   ADD CONSTRAINT course_quizzes_lifecycle_version_ck
-    CHECK (lifecycle_version >= 0);
+    CHECK (lifecycle_version >= 0),
+  ADD CONSTRAINT course_quizzes_results_state_ck
+    CHECK (
+      results_published = false
+      OR status::text IN ('CLOSED','ARCHIVED')
+    );
 
 CREATE TABLE course_quiz_lifecycle_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -401,10 +406,12 @@ BEGIN
       USING ERRCODE='23514';
   END IF;
 
-  IF NEW.lifecycle_version <> OLD.lifecycle_version + 1 THEN
-    RAISE EXCEPTION 'DB06 quiz lifecycle mutation requires next version'
+  IF NEW.lifecycle_version IS DISTINCT FROM OLD.lifecycle_version THEN
+    RAISE EXCEPTION 'DB06 lifecycle_version is database-managed'
       USING ERRCODE='23514';
   END IF;
+
+  NEW.lifecycle_version := OLD.lifecycle_version + 1;
 
   IF NEW.status IS DISTINCT FROM OLD.status THEN
     IF NEW.results_published IS DISTINCT FROM OLD.results_published THEN
@@ -615,13 +622,18 @@ CREATE TRIGGER db06_course_quizzes_no_truncate
 BEFORE TRUNCATE ON course_quizzes
 FOR EACH STATEMENT EXECUTE FUNCTION db06_reject_quiz_lifecycle_history_mutation();
 
+-- Compatibility decision:
+-- Legacy prod actively exposes QUIZ_UNPUBLISH and audits it. Current vNext
+-- omits that API action, so persistence preserves PUBLISHED -> DRAFT while the
+-- API surface remains a separate parity cutover.
+--
 -- Producer cutover requirements:
 -- 1. createCourseQuiz inserts CREATE event with version 0 in the same tx.
--- 2. transitionCourseQuiz locks current row, writes exactly one state transition
---    and event, incrementing lifecycle_version once.
+-- 2. transitionCourseQuiz locks current row and writes exactly one state
+--    transition + matching event; the database increments lifecycle_version.
 -- 3. Add UNPUBLISH to the API transition enum to preserve active legacy parity.
 -- 4. setCourseQuizResults writes RESULTS_PUBLISH/RESULTS_UNPUBLISH event using
---    live RequestContext actor and increments lifecycle_version once.
+--    the live RequestContext actor; the database increments lifecycle_version.
 -- 5. Actor role snapshot is SUPER_ADMIN, COLLEGE_ADMIN or delivery-assigned
 --    FACULTY, matching the current coarse authorization path.
 -- 6. Do not infer historical actors for existing rows; BASELINE is actorless.
@@ -636,7 +648,7 @@ FOR EACH STATEMENT EXECUTE FUNCTION db06_reject_quiz_lifecycle_history_mutation(
 -- F status + results change in one UPDATE fails.
 -- G RESULTS_PUBLISH allowed only CLOSED false->true with event.
 -- H RESULTS_UNPUBLISH allowed CLOSED/ARCHIVED true->false with event.
--- I lifecycle version skip/reuse and metadata-only version mutation fail.
+-- I caller-supplied lifecycle version changes and metadata-only version mutation fail; lifecycle mutations increment exactly once in the database.
 -- J generic quiz FACULTY event fails; COLLEGE_ADMIN succeeds.
 -- K delivery quiz assigned FACULTY succeeds; unassigned/cross-college fails.
 -- L persisted SUPER_ADMIN succeeds without membership; forged role fails.
