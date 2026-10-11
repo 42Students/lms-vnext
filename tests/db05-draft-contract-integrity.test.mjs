@@ -83,9 +83,9 @@ test("DB05 proposed mappings are not incorrectly promoted to verified", () => {
   assert.ok(review.fields.every(f => f.semanticVerification === "NOT_VERIFIED" && f.runtimeDatabaseVerification === "NOT_RUN"));
   assert.deepEqual(review.counts.byClass, {
     SOURCE_CANDIDATE: 30,
-    UNREGISTERED_DRAFT: 37,
+    UNREGISTERED_DRAFT: 38,
     REMODELED_NEEDS_PROOF: 22,
-    MISSING_OR_UNPROVEN: 3,
+    MISSING_OR_UNPROVEN: 2,
   });
 });
 
@@ -115,15 +115,15 @@ const unresolved = json("docs/planning/db05-unresolved-semantic-decisions.json")
 
 test("DB05 unresolved decisions track exactly the remodeled and unproven source fields", () => {
   const expected = review.fields
-    .filter(f => f.classification === "REMODELED_NEEDS_PROOF" || f.classification === "MISSING_OR_UNPROVEN")
+    .filter(f => f.classification === "REMODELED_NEEDS_PROOF" || f.classification === "MISSING_OR_UNPROVEN" || f.source === "learner_content_progress.is_deleted")
     .map(f => f.source).sort();
   assert.deepEqual(unresolved.items.map(i => i.source).sort(), expected);
   assert.equal(unresolved.totalOutstanding, expected.length);
-  assert.equal(unresolved.missingOrUnproven, 3);
+  assert.equal(unresolved.missingOrUnproven, 2);
   assert.equal(unresolved.remodeledNeedProof, 22);
   assert.equal(unresolved.formalDbVerified, 0);
   assert.ok(unresolved.items.every(i => i.disposition === "OPEN" && !i.verified && !i.postgresExecuted));
-  for (const field of ["course.default_subscription_days", "course.formal_title", "learner_content_progress.is_deleted"]) {
+  for (const field of ["course.default_subscription_days", "course.formal_title"]) {
     assert.ok(unresolved.items.some(item => item.source === field && item.classification === "MISSING_OR_UNPROVEN"));
   }
 });
@@ -181,4 +181,20 @@ test("DB05 readiness gate checks every companion and the witnessed lesson order 
   assert.ok(readiness.crossDomainCompanions.every(c => !c.registered && !c.postgresExecuted && !c.readyForProduction));
   assert.equal(readiness.crossDomainCompanions.filter(c => c.id === "DB05_LESSON_CONTENT_FACULTY_OWNER").length, 1);
   assert.equal(readiness.crossDomainCompanions.filter(c => c.id === "DB05_LESSON_CONTENT_OWNER_MEMBERSHIP").length, 0);
+});
+
+test("DB05 progress tombstone classified as source-backed staged, not missing or verified", () => {
+  const row = review.fields.find(f => f.source === "learner_content_progress.is_deleted");
+  assert.equal(row?.classification, "UNREGISTERED_DRAFT");
+  assert.match(row.targetProposal, /deleted_at/);
+  assert.match(row.sourceContractStatus, /LIVE_LEGACY_REPOSITORY_QUERY_CONFIRMED/);
+  assert.equal(row.semanticVerification, "NOT_VERIFIED");
+  assert.equal(row.runtimeDatabaseVerification, "NOT_RUN");
+  const decision = unresolved.items.find(d => d.source === row.source);
+  assert.equal(decision?.classification, "UNREGISTERED_DRAFT");
+  assert.equal(decision.disposition, "OPEN");
+  assert.equal(unresolved.stagedButUnverifiedOpen, 1);
+  assert.equal(readiness.sourceReview.classifications.draft, 38);
+  assert.equal(readiness.sourceReview.classifications.missingOrUnproven, 2);
+  assert.equal(readiness.sourceReview.outstandingSemanticDecisions, 25);
 });
