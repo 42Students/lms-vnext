@@ -196,3 +196,35 @@ test('DB19 CLI rejects 2828-field inventory even if all internal counters agree'
     assert.equal(report.counts.fields,2828);
   } finally { fs.rmSync(root,{recursive:true,force:true}); }
 });
+
+test('DB19 source inventory projects approved DB00 backup dispositions without runtime verification', () => {
+  const input = ledger('db00_historical_and_engine','backup', [field('backup','id',{reviewStatus:'CLASSIFY_HISTORIC_RETIREMENT'})]);
+  input.ledger.domain='DB00_HISTORICAL_AND_ENGINE';input.ledger.sourceSha='f'.repeat(40);
+  input.ledger.tables[0].sourceTableClass='HISTORICAL_BACKUP_VALIDATE_RETIREMENT';
+  const review={domain:'DB00_HISTORICAL_AND_ENGINE',legacyOracleSha:'f'.repeat(40),
+    counts:{candidateTables:1,candidateFields:1,tableDispositionsClosed:1,fieldCandidatesDispositionedByTableDecision:1,pendingProductDecisionTables:0,pendingProductDecisionFields:0},
+    tables:[{table:'backup',sourceClass:'HISTORICAL_BACKUP_VALIDATE_RETIREMENT',sourceFieldCount:1,disposition:'RETIRE_GREENFIELD_BACKUP'}]};
+  const result=auditLedgers([input], {requireAllDomains:false,enforceFloor:false,db00Disposition:review});
+  assert.equal(result.sourceInventoryIntegrity,'PASS');
+  assert.equal(result.counts.backupFieldsSourceDisposed,1);
+  assert.equal(result.counts.smrithiFieldsPendingProductDecision,0);
+  assert.equal(result.counts.runtimeMappings,0);
+  assert.equal(result.databaseParityVerified,false);
+});
+test('DB19 rejects a falsified DB00 source disposition rather than reclassifying Smrithi', () => {
+  const input = ledger('db00_historical_and_engine','smrithi_application');
+  input.ledger.domain='DB00_HISTORICAL_AND_ENGINE';input.ledger.sourceSha='f'.repeat(40);
+  input.ledger.tables[0].sourceTableClass='LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION';
+  const review={domain:'DB00_HISTORICAL_AND_ENGINE',legacyOracleSha:'f'.repeat(40),
+    counts:{candidateTables:1,candidateFields:1,tableDispositionsClosed:1,fieldCandidatesDispositionedByTableDecision:1,pendingProductDecisionTables:0,pendingProductDecisionFields:0},
+    tables:[{table:'smrithi_application',sourceClass:'LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION',sourceFieldCount:1,disposition:'RETIRE_GREENFIELD_BACKUP'}]};
+  const result=auditLedgers([input], {requireAllDomains:false,enforceFloor:false,db00Disposition:review});
+  assert.equal(result.sourceInventoryIntegrity,'FAIL');
+  assert.ok(result.errors.some(e=>e.code==='DB00_DISPOSITION_DISPOSITION_MISMATCH'));
+  assert.equal(result.counts.smrithiFieldsPendingProductDecision,null);
+});
+test('DB19 without owner disposition does not invent approval', () => {
+  const result=run(ledger('db01_identity_and_tenancy','users'));
+  assert.equal(result.db00DispositionOverlay,null);
+  assert.equal(result.counts.smrithiFieldsPendingProductDecision,null);
+});
