@@ -3099,25 +3099,35 @@
         "tests/db06-assignment-upload-receipt-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T14:27:47.324Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T14:27:47.324Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "DB-016 identified DB06 course_upload_receipts as staged but missing scan attester/time, revocation actor/reason, retention/deletion state and consumed-object immutability; DB-009 still has assignment receipt/file fields unresolved."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:27:47.324Z",
+          "reason": "Chat 1 claims DB06 private assignment upload receipt hardening; source-only, no migration registration."
         }
       ]
     }
