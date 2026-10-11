@@ -26,7 +26,7 @@ test("runner is opt-in and verifies exact disposable database identity", () => {
   assert.match(runner, /DB02_EXPECTED_DATABASE/);
   assert.match(runner, /SELECT current_database\(\)/);
   assert.match(runner, /DB name mismatch/);
-  assert.match(runner, /Do not run against production\/shared DB/);
+  assert.match(runner, /MUST NOT be run against production\/shared DB/);
 });
 
 test("runner fails closed when canonical trigger witnesses are incomplete", () => {
@@ -53,7 +53,7 @@ test("runner fails closed when canonical trigger witnesses are incomplete", () =
     assert.ok(runner.includes(trigger), "missing runner trigger witness: " + trigger);
   }
   assert.match(runner, /TRIGGER_WITNESSES/);
-  assert.match(runner, /!= "18"/);
+  assert.match(runner, /!= "22"/);
 });
 
 test("runner verifies core DB02 tables, columns and INACTIVE enum registration", () => {
