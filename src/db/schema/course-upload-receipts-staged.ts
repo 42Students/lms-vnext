@@ -1,7 +1,8 @@
 /** W02 DB05/DB06 staged only; W01 owns migration registration/index export. */
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
-import { courseAssignments, assignmentSubmissions, lessonContents } from "./assessments";
+import { courseAssignments, assignmentSubmissions } from "./assessments";
+import { lessonContents } from "./courses";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
