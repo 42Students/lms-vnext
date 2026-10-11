@@ -474,6 +474,55 @@
       "registeredMigration": false,
       "providerAcceptance": false,
       "remaining": "Chat 1 approval/integration; empty/latest migration replay; real SQL negative/expiry race; current domain+user+member+org verification at atomic consume; provider handoff"
+    },
+    "db01P0LegacyNamedEvidence": {
+      "status": "THREE_NAMED_SOURCE_GAPS_CLOSED_LEGACY_ONLY_RUNTIME_UNVERIFIED",
+      "fields": [
+        "role.is_deleted",
+        "tenant_domain.is_deleted",
+        "user.password"
+      ],
+      "fieldCount": 3,
+      "priorNamedEvidenceGaps": 3,
+      "remainingNamedEvidenceGaps": 0,
+      "crosswalk": "docs/planning/db01-auth-security-p0-field-crosswalk.json",
+      "legacyEvidence": "docs/planning/db01-legacy-identity-auth-source-proof.md",
+      "sourceChecks": "docs/planning/db01-chat02-p0-three-gap-source-execution.json",
+      "connectorSourceAssertionsExecuted": 30,
+      "connectorSourceAssertionsPassed": 30,
+      "nodeTestsExecutedForThisBatch": 0,
+      "postgresTestsExecuted": 0,
+      "runtimeVerifiedFields": 0,
+      "mainCommits": [
+        "26800e56aa630401a9aad8227ca8bb66999b79a8",
+        "d60ef7d29566666da593e7ba5cb45cf7023de323",
+        "9487b47330781a9b9910fd805bf733f953542624",
+        "38924bdcf44bacc81b82ccc58fb07425b9cbc0b9",
+        "b751a4a91da4e661fd14b67b92041c01ad86b5fc"
+      ],
+      "legacySecurityException": "LEGACY_ROLE_SOFT_DELETE_IGNORED_BY_AUTHORITY_BUILDER",
+      "notes": "Named Java model plus active reader/writer paths located and pinned at legacy backend SHA. VNext does not store legacy user password or soft-deleted Role. This is not provider/permission runtime acceptance."
+    },
+    "db01EndedMembershipRoleRace": {
+      "status": "SOURCE_CONFIRMED_IMPLEMENTATION_PENDING",
+      "sourceRepo": "src/modules/people/repository.ts",
+      "sourceService": "src/modules/people/membership-service.ts",
+      "sourceDomain": "src/modules/people/membership-domain.ts",
+      "contract": "docs/planning/db01-ended-membership-role-race-contract.md",
+      "driftTest": "tests/db01-ended-membership-role-race-source.test.mjs",
+      "connectorSourceEvidence": "docs/planning/db01-chat02-role-race-source-execution.json",
+      "authoredNodeTests": 11,
+      "nodeTestsExecuted": 0,
+      "connectorAssertionsExecuted": 20,
+      "connectorAssertionsPassed": 20,
+      "postgresTestsExecuted": 0,
+      "registeredMigration": false,
+      "mainCommits": [
+        "1c75513654725cfbbed2756d5bf9136e29b84a97",
+        "c303a7717e0623e318a32e06fb481af566bc68eb",
+        "0f38b998326f5b6955e2abef05ca7729c7482a74"
+      ],
+      "finding": "App validation uses stale membership status before transaction. New role grant locks child rows, not parent; END locks parent. Needs same-parent serialization/conditional gate and 2-client proof."
     }
   },
   "qualityGates": {
@@ -531,7 +580,8 @@
     "tests/integration/db01-tenant-routing-lifecycle.test.ts",
     "tests/db01-no-target-disposition-queue.test.mjs",
     "tests/db01-identity-security-settings-contract.test.mjs",
-    "tests/db01-auth-78-source-crosswalk.test.mjs"
+    "tests/db01-auth-78-source-crosswalk.test.mjs",
+    "tests/db01-ended-membership-role-race-source.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)",
@@ -539,7 +589,8 @@
   ],
   "blockers": [
     "Separate verification gap (not GitHub Actions): disposable PostgreSQL not available in this runner for DB01 migration replay and 14 authored integration witnesses.",
-    "DB01 staged tombstone, membership-state and auth/session schema need Chat 1 migration/product-policy decisions; none applied or PG verified."
+    "DB01 staged tombstone, membership-state and auth/session schema need Chat 1 migration/product-policy decisions; none applied or PG verified.",
+    "DB01 ended-membership role grant parent-row race still implementation pending; source-only 20/20, no executed 2-client PostgreSQL acceptance."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -644,7 +695,12 @@
     "https://github.com/42Students/lms-vnext/commit/f72ec43356a4119c77134e4d3f34541a81272b39",
     "https://github.com/42Students/lms-vnext/commit/af25ee0b3f20a0732606eed5340d9271d90fa40e",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107272754",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-otp-p0-source-static-evidence.json"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-otp-p0-source-static-evidence.json",
+    "https://github.com/42Students/lms-vnext/commit/26800e56aa630401a9aad8227ca8bb66999b79a8",
+    "https://github.com/42Students/lms-vnext/commit/1c75513654725cfbbed2756d5bf9136e29b84a97",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-p0-three-gap-source-execution.json",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-role-race-source-execution.json",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6109954119"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -660,5 +716,6 @@
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
     "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
     "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
-  }
+  },
+  "next": "Continue DB-004 DATABASE direct-main: provider-only vs DB-backed auth decision; evaluate P0 role revocation on exact current DB, get sole integrator parent-lock race fix and PostgreSQL acceptance, run independent Node and actual 2-client PG where available. No global phase promotion or false 312-field verification."
 }
