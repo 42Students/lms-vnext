@@ -10,7 +10,7 @@ const SKIP = /(?:readonly|witness|acceptance)/i;
 
 // Hide comments and SQL literals, including nested PostgreSQL comments,
 // E'...' escaped strings, dollar-quoted bodies and opaque quoted identifiers.
-export function stripSqlLiterals(sql) {
+export function stripSqlLiterals(sql, lexicalErrors = []) {
   let out = "", i=0, mode="code", tag="", blockDepth=0, escapedString=false;
   while (i<sql.length) {
     const a=sql[i], b=sql[i+1];
@@ -43,6 +43,7 @@ export function stripSqlLiterals(sql) {
         identifier+=sql[j++];
       }
       const raw=sql.slice(i,j);
+      if(!closed)lexicalErrors.push("UNCLOSED_QUOTED_IDENTIFIER");
       out+=closed&&/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)
         ?raw:raw.replace(/[^\n]/g," ");
       i=j;continue;
@@ -53,6 +54,11 @@ export function stripSqlLiterals(sql) {
     }
     out+=a;i++;
   }
+  // An EOF inside SQL syntax is a failure of preflight evidence, not proof
+  // that no tables, references or hazards exist later in the staged draft.
+  if(mode==="block")lexicalErrors.push("UNCLOSED_BLOCK_COMMENT");
+  if(mode==="string")lexicalErrors.push("UNCLOSED_STRING_LITERAL");
+  if(mode==="dollar")lexicalErrors.push("UNCLOSED_DOLLAR_QUOTE:"+tag);
   return out;
 }
 const creations=/\bCREATE\s+(?:UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
@@ -66,10 +72,11 @@ export function classify(sql) {
   return "STAGED";
 }
 export function inspect(item){
-  const body=stripSqlLiterals(item.sql);
+  const lexicalErrors=[];
+  const body=stripSqlLiterals(item.sql,lexicalErrors);
   const allCreates=[...body.matchAll(creations)].map(m=>m[1].replaceAll('"',"").toLowerCase());
   const createDuplicates=[...new Set(allCreates.filter((t,i)=>allCreates.indexOf(t)!==i))];
-  return {path:item.path,state:classify(item.sql),
+  return {path:item.path,state:classify(item.sql),lexicalErrors,
     create:[...new Set(allCreates)],createDuplicates,
     alter:take(body,alters),references:take(body,refs),
     destructive:/\b(?:DROP\s+TABLE|TRUNCATE\s+TABLE|DELETE\s+FROM)\b/i.test(body)};
@@ -86,6 +93,8 @@ export function analyze({candidates,registered=[],declared=[]}) {
   const duplicates=[...creators].filter(([,p])=>p.length>1).map(([table,files])=>({table,files}));
   const repeatedWithinFile=active.filter(f=>f.createDuplicates.length).map(f=>
     ({file:f.path,tables:f.createDuplicates}));
+  const lexicalHazards=files.filter(f=>f.lexicalErrors.length).map(f=>
+    ({file:f.path,errors:f.lexicalErrors}));
   const registeredOverlap=[...creators.keys()].filter(k=>known.has(k)).sort();
   const ignoredExecutable=ignored.filter(x=>x.create.length||x.alter.length||x.destructive).map(x=>x.path);
   const unresolved=[],required=[],dependencies=new Map(active.map(f=>[f.path,new Set()]));
@@ -108,7 +117,8 @@ export function analyze({candidates,registered=[],declared=[]}) {
   const cycles=[...dependencies].filter(([p])=>!visited.has(p)).map(([p,deps])=>({file:p,
     unmet:[...deps].filter(d=>!visited.has(d))}));
   const destructive=active.filter(x=>x.destructive).map(x=>x.path);
-  const hazards=!!(duplicates.length||repeatedWithinFile.length||registeredOverlap.length||ignoredExecutable.length||
+  const hazards=!!(duplicates.length||repeatedWithinFile.length||lexicalHazards.length||
+    registeredOverlap.length||ignoredExecutable.length||
     unresolved.length||cycles.length||destructive.length);
   return {
     verification:"SOURCE_ONLY_NO_MIGRATION_OR_POSTGRES_EXECUTED",
@@ -116,7 +126,7 @@ export function analyze({candidates,registered=[],declared=[]}) {
     hazards,counts:{scanned:files.length,active:active.length,ignored:ignored.length,
       createdTableNames:creators.size,unresolvedParents:unresolved.length,
       stagedDependencies:required.length},
-    duplicates,repeatedWithinFile,registeredOverlap,ignoredExecutable,unresolved,required,cycles,
+    duplicates,repeatedWithinFile,lexicalHazards,registeredOverlap,ignoredExecutable,unresolved,required,cycles,
     destructive,proposedSourceOrder:ordered,
   };
 }
