@@ -106,3 +106,37 @@ test("DB37 enumerates all 18 acceptance requirements as not run", () => {
   }
   assert.match(contract, /Acceptance requirements — NOT RUN/);
 });
+
+test("DB37 never treats a source-mapped template field as runtime verified", () => {
+  assert.equal(disposition.counts.vnextWorkflowVerifiedFields, 0);
+  assert.equal(disposition.counts.formallyApprovedRetiredFields, 0);
+  for (const row of disposition.records) {
+    const expected = row.disposition.startsWith("SOURCE_RETIRED")
+      ? "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
+      : "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN";
+    assert.equal(row.targetImplementationStatus, expected, row.legacyId);
+  }
+  assert.equal(disposition.targetEvidenceBoundary.targetParity,
+    "NOT_VNEXT_RUNTIME_VERIFIED");
+});
+
+test("DB37 preserves identical source states in the 221-field DB10 ledger", () => {
+  const db10 = JSON.parse(readFileSync(
+    "docs/planning/database-parity-db10-field-ledger.json", "utf8",
+  ));
+  const lookup = new Map(db10.records.map(row => [
+    row.legacyTable + "." + row.legacyColumn, row,
+  ]));
+  assert.equal(db10.counts.notificationTemplateSourceDispositioned, 56);
+  assert.equal(db10.counts.notificationTemplateVnextRuntimeVerified, 0);
+  assert.equal(db10.counts.notificationTemplateSourceTargetsNotRuntimeProven, 36);
+  assert.equal(db10.counts.notificationTemplateSourceRetirementCandidates, 20);
+  for (const expected of disposition.records) {
+    const row = lookup.get(expected.legacyTable + "." + expected.legacyColumn);
+    assert.ok(row, expected.legacyId);
+    assert.equal(row.sourceDisposition, expected.disposition);
+    assert.equal(row.targetImplementationStatus, expected.targetImplementationStatus);
+    assert.equal(row.status, "UNMAPPED");
+    assert.equal(row.verifiedLegacySha, null);
+  }
+});
