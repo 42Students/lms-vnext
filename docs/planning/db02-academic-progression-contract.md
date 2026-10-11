@@ -1,6 +1,6 @@
 # DB02 academic progression and timetable persistence contract
 
-**Task:** DB-005 · **Worker:** Chat 4 · **Phase:** DATABASE · **Status:** SOURCE-BACKED DESIGN, NOT RUNTIME VERIFIED  
+**Task:** DB-005 · **Worker:** Chat 4 · **Phase:** DATABASE · **Status:** 125/125 SOURCE + TARGET DESIGN DISPOSITIONS COMPLETE; NOT RUNTIME VERIFIED  
 **Legacy backend oracle:** `42Students/lms@prod-2026` pinned at `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
 **Legacy frontend oracle:** `42Students/lms2-fe@prod-2026` pinned at `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`  
 **vNext snapshot reviewed:** `drizzle/meta/0040_snapshot.json`
@@ -183,74 +183,105 @@ The following legacy values may be redesigned as calculated values **only with e
 
 Calculated redesign does not mean “unmapped.” The producer, filter semantics, tenant scope and race behavior must still be recorded in the DB02 row-level audit.
 
-## 7. Parallel legacy structures still requiring disposition
+## 7. Parallel legacy structures — target design disposition complete
 
-The second source sweep found legacy persistence that must **not** be retired merely because newer tables exist:
+The source sweep and target-design pass now cover **125/125 DB02 legacy candidates**. This closes design disposition, not runtime equivalence.
 
-- `new_program_structure` is still read by `NewProgramServiceImpl.fetchProgramDetails`, including name, start/end dates, status and ordered/listed course IDs. Its exact producer path and relationship to the newer `semester` / `semester_course` model still require classification.
-- `faculty_course_mapping` is still queried for active faculty→course/class mappings, class instructor lookup and faculty metrics.
-- `faculty_course_associations` is still queried for active faculty↔course relationships and supports deactivation.
-- `faculty_teaching_assignment` is independently active and carries class, batch, semester, academic-year, role and start/end lifecycle. It cannot be collapsed into the two older mapping tables without a deliberate compatibility decision.
+Key resolved decisions:
 
-These may ultimately be normalized into `course_teaching_assignments`, deliveries and program-term curriculum, but the active repository/read contracts must first be mapped to equivalent vNext producers/consumers. Until then their DB02 status is **ACTIVE/READ-PATH CONFIRMED, PRODUCER OR RETIREMENT DISPOSITION OPEN**.
+- the older `program` and `program_structure` DDL-only tables are **retirement proposed, not final**; the current `/api/v1/program/create` endpoint delegates to `NewProgramService/new_program`;
+- `new_program_structure` is a backend compatibility store with no current production-FE surface. If the compatibility API survives, name/program/status/course-list fields project from `program_terms/program_term_courses`; start/end-date semantics remain API-retirement/open because they have no safe canonical equivalent;
+- `semester/semester_course` normalize to `program_terms/program_term_courses`;
+- `batch` normalizes to `cohorts + cohort_progression_state/history`, with current-student count derived from canonical enrollment;
+- ordinary classes normalize to sections; GROUP_BACKED elective roster semantics normalize through the elective delivery/group kernel rather than duplicate section discriminator fields;
+- legacy `faculty_course_associations` remains a distinct broad pre-delivery faculty↔course pool;
+- legacy `faculty_course_mapping` and richer `faculty_teaching_assignment` project through delivery-bound `course_teaching_assignments`, with stable semester identity inherited from `course_offerings.program_term_id`;
+- schedule course identity projects through `section_schedule_event_courses -> course_section_deliveries -> course_offerings`;
+- attendance-marked lifecycle projects to `attendance_sessions.status/marked_at`, not a duplicate schedule column.
+
+The row-level mapping is authoritative in `docs/planning/db-pass4-columns-db02_academics_and_timetable.json`. Every target disposition remains **design-only / unregistered / not PostgreSQL verified** until the integration gate below executes.
 
 ## 8. Staged database proposal
 
-`scripts/sql/db02-academic-progression-and-rooms-staging.sql` contains an **unregistered** PostgreSQL proposal for:
+Canonical unregistered proposal:
+
+`scripts/sql/db02-academic-progression-and-rooms-staging.sql`
+
+It currently stages:
 
 - program terms and ordered curriculum mappings;
-- stable program-term identity on every course offering, with CORE curriculum enforcement;
-- reversible legacy `INACTIVE` cohort state, cohort lifecycle dates, and section description/minimum-capacity parity;
-- cohort progression state + immutable history;
-- lecture halls and schedule hall linkage;
+- stable `course_offerings.program_term_id`, with CORE curriculum enforcement and term-bound ELECTIVE support;
+- stable tenant ownership for departments plus same-college program/course department movement;
+- cohort/section/offering/progression academic-period tenant + cohort-window guards;
+- reversible legacy `INACTIVE` cohort state, cohort lifecycle dates, and section description/minimum-capacity/compatibility dates;
+- cohort progression state + database-owned immutable history;
+- delivery↔section and schedule-event↔delivery scope integrity;
+- lecture halls, hall tenant scope, overlap exclusion constraints and hall archive-vs-booking locking;
+- active FACULTY tenant guards for section and course teaching assignments;
 - broad faculty-course association pool independent of deliveries;
-- tenant consistency guards;
-- progression monotonic/version checks;
-- schedule overlap constraints.
+- identity lifecycle cleanup that closes active faculty-course/teaching/section assignments and unassigns only future scheduled events while retaining past attribution;
+- tenant consistency, promotion monotonic/version and program-duration shrink guards.
 
-**Chat 1 remains the only worker allowed to register numbered Drizzle migrations or the shared schema barrel.** The staging SQL must be reviewed against current main before registration.
+Deconflicted incremental extension:
+
+`scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`
+
+This extension deliberately does **not** redefine canonical triggers. It adds only:
+
+- academic-period, membership and lecture-hall college-owner immutability;
+- cohort program/start-period and program-term identity immutability;
+- section historical reparent protection;
+- active LEARNER program-enrollment tenant/program/cohort checks;
+- learner section-enrollment cohort/period checks;
+- section parent row locks against history-insert vs structural-move races;
+- immutable learner-program and section-enrollment parent identity.
+
+Static deconfliction safety net:
+
+`tests/db02-academic-parent-tenancy-contract.test.mjs`
+
+Direct latest-content reconciliation on 2026-10-11 found:
+
+- canonical PL/pgSQL functions: **25/25 paired**;
+- extension PL/pgSQL functions: **7/7 paired**;
+- canonical ↔ extension trigger-name overlap: **0**.
+
+Executable but still **unexecuted** PostgreSQL acceptance helpers:
+
+- `scripts/sql/db02-postgres-acceptance-unregistered.sql` — transactional single-session negative/positive invariants with rollback;
+- `scripts/sql/db02-postgres-concurrency-unregistered.sh` — two-session promotion CAS and hall archive-vs-booking races on a disposable DB.
+
+**Chat 1 remains the only worker allowed to register numbered Drizzle migrations or the shared schema barrel.** Both SQL drafts must be consolidated before registration; no staging file or authored harness counts as a PostgreSQL PASS.
 
 ## 9. Acceptance required before DB-005 can be DONE_VERIFIED
 
-DB-005 remains open until all of these are executed and attached to exact SHAs:
+Design classification is complete, but DB-005 remains open until the registered implementation is proven on exact SHAs:
 
-1. classify all 125 source candidates as mapped, calculated, redesigned or retired using producer/consumer evidence;
-2. register reviewed schema through Chat 1;
-3. zero-to-current migration replay on disposable PostgreSQL;
-4. negative tests for cross-college program/period/hall/faculty-course links;
-5. cohort lifecycle date round-trip/order tests plus class description/minimum/maximum validation;
-6. offering-term tests proving program mismatch rejection, CORE curriculum membership enforcement and term-bound ELECTIVE support;
-7. broad faculty-course association tests proving pre-delivery association, active-pair uniqueness and historical deactivation;
-8. concurrent cohort promotion test proving one winner for the same expected version;
-9. term jump/backward rejection plus immutable-journal tests for direct INSERT/UPDATE/DELETE/TRUNCATE and actor-FK cleanup without fake promotion history;
-10. program-term uniqueness and ordered curriculum tests;
-11. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance, including a concurrent hall-archive vs future-booking race with exactly one valid winner;
-12. schedule cancellation/soft-history behavior with attendance retained;
-13. re-check current legacy BE/FE heads before final certification.
+1. re-check current legacy BE/FE oracle heads and confirm the 125/125 target map has no new producer/consumer drift;
+2. Chat 1 consolidates canonical DB02 + the deconflicted parent/enrollment extension into reviewed Drizzle schema/migrations with **no duplicate guards**;
+3. zero-to-current migration replay succeeds on disposable PostgreSQL;
+4. run `scripts/sql/db02-postgres-acceptance-unregistered.sql` and attach its exact DB/schema SHA evidence;
+5. run `scripts/sql/db02-postgres-concurrency-unregistered.sh` and attach exact outputs proving one promotion CAS winner and both hall lock-order race outcomes;
+6. negative tests prove department/period/membership/hall ownership cannot cross colleges and program/course department movement stays within one college;
+7. cohort/section/offering/progression periods remain in the owning college and cohort window; closed/out-of-window targets fail;
+8. cohort lifecycle date round-trip/order plus section description/min/max/compatibility-date behavior matches source contract;
+9. program-term uniqueness, term bounds, curriculum 0..30 credits, 1-based ordering and CORE-vs-ELECTIVE offering rules pass;
+10. learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert;
+11. faculty-course pool, section faculty and course teaching assignment tests prove ACTIVE FACULTY role, tenant scope, historical deactivation and de-role/suspension cleanup;
+12. term jump/backward promotion fails; progression history rejects direct INSERT/UPDATE/DELETE/TRUNCATE while actor-FK cleanup does not create fake promotion history;
+13. same faculty/section/hall overlap fails, adjacent `[start,end)` succeeds, cancellation releases resources and attendance/history remains;
+14. compatibility API acceptance explicitly approves projection or retirement for `new_program_structure` and other retirement-proposed legacy storage.
 
-No source review, staging SQL or authored test alone counts as PASS.
+No source review, target design, staging SQL, static regex test, authored harness, CI absence or billing issue counts as runtime verification. **Current PostgreSQL/runtime verified fields remain 0.**
 
 ## Direct SQL tenant stability extension (Chat 4)
 
-**Isolated unregistered draft:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
-**Source contract test file:** `tests/db02-academic-parent-tenancy-contract.test.mjs`  
-**Status:** reviewed at source level; **not registered, executed against PostgreSQL, or runtime-verified**.
+**Incremental unregistered draft:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
+**Static safety net:** `tests/db02-academic-parent-tenancy-contract.test.mjs`  
+**Status:** deconflicted against canonical DB02; source/static reviewed; **not registered or PostgreSQL runtime verified**.
 
-The original `0002` academical enrollment tables have independent FKs to membership, program, cohort, section and academic period, but independent UUID references do not by themselves prove these rows share a college, cohort or period.
+The extension now contains only invariants not owned by the canonical progression/room draft. Its static contract explicitly fails if the two drafts ever reuse a trigger name. The integration goal is one consolidated Chat-1-owned migration, not two independently registered layers.
 
-The additional draft preserves tenant identity and referential semantics:
+A remaining product/API compatibility item is controlled **section transfer**: legacy class update can reassign batch/program, while the DB extension refuses silent reparent once learner/faculty/delivery/schedule history exists. Empty sections may still move within canonical same-college/period-window rules. Any historical transfer must become an explicit audited workflow during the API phase rather than rewriting old academic history.
 
-- college ownership cannot be changed in place for departments, academic periods, memberships or lecture halls;
-- programs and courses can change departments **within** the original college; cross-college department switches are rejected;
-- a cohort's program and starting calendar period, and a program term's program/term ordinal, remain immutable academic identities;
-- a cohort's calendar period and a section's calendar period must belong to their program/cohort college;
-- learner program enrollment must match an **ACTIVE LEARNER membership**, matching college and matching cohort program;
-- section enrollment must use that learner's cohort and the actual section period;
-- section faculty assignment requires an **ACTIVE FACULTY membership** in the section's college;
-- enrollment and section-enrollment identity cannot be retroactively replaced by `UPDATE`: create a historical transition row instead;
-- an empty section may be moved within its college, but one with any learner, faculty, delivery or schedule history needs an explicit controlled-transfer workflow;
-- inserts of section enrollment, faculty assignment, delivery or schedule history take a `FOR SHARE` lock on the section so concurrent structural `NO KEY UPDATE` cannot silently race past the history checks.
-
-**Source parity tension:** legacy `ClassServiceImpl.updateClass` permits batch/program reassignment, whereas `BatchServiceImpl.updateBatch` rejects changing an already-created batch's program. The DB draft protects historical section references, but does not yet implement the equivalent *controlled* legacy class transfer; this remains a required API-wave compatibility item. The draft must be reconciled with DB01/DB03 guards to avoid duplicate or conflicting triggers.
-
-The direct SQL replay gate must cover valid same-college reassignment and invalid cross-college reassignment; concurrent history insert versus section move; active/inactive membership and LEARNER/FACULTY role rejection; and valid cohort/period learner transfers with immutable previous history. **No such PostgreSQL witnesses have been executed here.**
+No PostgreSQL witness has been executed from Chat 4; CI availability is not used as a completion gate.
