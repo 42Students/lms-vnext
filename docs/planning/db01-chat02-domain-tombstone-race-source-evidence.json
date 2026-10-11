@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_DOMAIN_TOMBSTONE_STATE_SOURCE_ONLY_EVIDENCE",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "observedDate": "2026-10-11",
+  "evidenceClass": "CONNECTED_GITHUB_CONTENT_IN_PROCESS_JS_STATIC_PREDICATES_NOT_NODE_TEST_OR_POSTGRES_EXECUTION",
+  "sourceBlobs": [
+    {
+      "path": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
+      "sha": "7c35723cecbe8851a52298dbdf8729fde9a30a58"
+    },
+    {
+      "path": "docs/planning/sql/db01-domain-tombstone-state-guard-staging.sql",
+      "sha": "41dd70170287ecace62f35c05c8d780e3b33301f"
+    },
+    {
+      "path": "tests/db01-domain-tombstone-state-source.test.mjs",
+      "sha": "8dad07cd40d93859643bbecc2fd375ea4019a2f1"
+    },
+    {
+      "path": "tests/db01-domain-tombstone-state-pg.test.mjs",
+      "sha": "83777a8189e11850081aae44ac7d1b774c14feaf"
+    },
+    {
+      "path": "src/db/schema/tenant-domains.ts",
+      "sha": "a60513d017138c9d5e2abdc0ab426eb7143cc8cf"
+    },
+    {
+      "path": "src/modules/tenant-domains/repository.ts",
+      "sha": "eea7ffa995a0c910d09366f7d3f778c77a801263"
+    },
+    {
+      "path": "docs/planning/db01-chat02-migration-integration-manifest.json",
+      "sha": "8caed4bee495834b581b62ffbec93bf6abc0690d"
+    },
+    {
+      "path": "docs/planning/db01-tenant-domain-tombstone-contract.md",
+      "sha": "32c5d629a2d0b16405b607c40322e7f51c091402"
+    }
+  ],
+  "summary": {
+    "sourceAssertionsExecuted": 43,
+    "sourceAssertionsPassed": 43,
+    "sourceAssertionsFailed": 0,
+    "authoredNodeSourceTestCases": 15,
+    "authoredDisposablePostgresSuites": 1,
+    "executedNodeSourceTests": 0,
+    "executedPostgresSuites": 0,
+    "registeredMigrations": 0,
+    "tenantDomainRuntimeVerified": false
+  },
+  "invariants": [
+    "immutable tenant college ownership",
+    "tombstone cannot be undone or modified by stale verifier",
+    "hard SQL DELETE blocked",
+    "tombstone atomically clears is_primary and verification_token, preserves historic evidence",
+    "hostname change requires fresh token and invalidates previous DNS verification",
+    "deleted host keeps existing global case-insensitive uniqueness",
+    "two interleavings of delete versus DNS verification authored on two real PG clients, not yet executed"
+  ],
+  "explicitIntegrationDependencies": [
+    "Only Chat 1 promotes parent tombstone columns before/with trigger",
+    "Current vNext repository.deleteDomain performs hard DELETE, must be replaced in same activation batch",
+    "All host lookups, DNS verification, set-primary and tenant bootstrap must filter deleted_at IS NULL",
+    "Use real PostgreSQL two-client mutation and clean/latest migration replay; service/tenant authorization separately",
+    "No HTTP, browser, managed provider, PostgreSQL or Node test evidence from this iteration"
+  ],
+  "interpretingCounts": "43/43 source-text predicates passing is NOT actual Node tests passing, PostgreSQL acceptance, or completion of DB01 source→runtime parity."
+}
