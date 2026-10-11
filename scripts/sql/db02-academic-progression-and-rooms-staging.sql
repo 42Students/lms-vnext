@@ -466,6 +466,7 @@ BEGIN
      WHERE ptc.id = NEW.program_term_course_id
        AND ptc.program_term_id = NEW.program_term_id
        AND ptc.course_id = NEW.course_id
+       AND ptc.type = 'CORE'
      FOR SHARE;
 
     IF NOT FOUND THEN
