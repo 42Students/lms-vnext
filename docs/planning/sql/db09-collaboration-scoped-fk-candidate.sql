@@ -349,6 +349,45 @@ CREATE TRIGGER db09_recruiter_private_note_scope_guard
   ON placement_recruiter_applicant_notes
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_private_note_scope();
 
+CREATE FUNCTION db09_restrict_recruiter_private_note_lifecycle() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NEW.created_at > statement_timestamp() + interval '5 minutes'
+     OR NEW.updated_at > statement_timestamp() + interval '5 minutes' THEN
+    RAISE EXCEPTION 'recruiter private note timestamp is unreasonably future dated'
+      USING ERRCODE = '23514';
+  END IF;
+  IF NEW.updated_at < NEW.created_at THEN
+    RAISE EXCEPTION 'recruiter private note updated_at cannot predate created_at'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
+    IF NEW.id IS DISTINCT FROM OLD.id
+       OR NEW.recruiter_user_id IS DISTINCT FROM OLD.recruiter_user_id
+       OR NEW.college_id IS DISTINCT FROM OLD.college_id
+       OR NEW.job_id IS DISTINCT FROM OLD.job_id
+       OR NEW.application_id IS DISTINCT FROM OLD.application_id
+       OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
+      RAISE EXCEPTION 'recruiter private note identity is immutable'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.updated_at < OLD.updated_at THEN
+      RAISE EXCEPTION 'recruiter private note updated_at cannot move backward'
+        USING ERRCODE = '23514';
+    END IF;
+    IF (NEW.rating IS DISTINCT FROM OLD.rating OR NEW.note IS DISTINCT FROM OLD.note)
+       AND NEW.updated_at <= OLD.updated_at THEN
+      RAISE EXCEPTION 'recruiter private note content change must advance updated_at'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_recruiter_private_note_lifecycle_guard
+  BEFORE INSERT OR UPDATE ON placement_recruiter_applicant_notes
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_recruiter_private_note_lifecycle();
 CREATE FUNCTION db09_assert_recruiter_read_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
