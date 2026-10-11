@@ -12,7 +12,7 @@
 | Read-only relational mismatch probes | 21 | 0 | Existing-row observation only; zero mismatches do not prove prevention |
 | Direct negative SQL boundary tests | 13 | 0 | Real FK/check/trigger/unique violations against registered schema |
 | Positive concurrency witnesses | 4 | 0 | Races whose current source has a locking/CAS strategy |
-| Known-defect red concurrency witnesses | 2 | 0 | P5-R01 and P5-R02; expected to fail until domain fixes land |
+| Known-defect red concurrency witnesses | 1 | 0 | P5-R02 remains expected-fail until the academics fix lands |\n| Fix-authored race regression pending runtime | 1 | 0 | P5-R01 placement fix is authored in DB-054; PostgreSQL execution still required |
 | Draft/unregistered race families excluded | 3 | 0 | Lease, outbound and log-alert candidates are not registered runtime schema |
 
 Machine-readable denominator: `tests/integration/db18-witness-index.json`.
@@ -49,11 +49,11 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 - **P5-R07:** concurrent cohort `PLANNED → ACTIVE` compare-and-set — `db18-concurrency-witnesses.test.ts`.
 - **P5-R06:** concurrent project task submission critical section — `db18-concurrency-witnesses.test.ts`.
 
-### Known red defects — test exists, implementation still wrong
+### Race defects and fix state
 
-**P5-R01 — placement application stale access snapshot**
+**P5-R01 — placement application stale access snapshot — FIX AUTHORED, RUNTIME PENDING**
 
-`tests/integration/db18-placement-race-gap.test.ts` creates an isolated tenant, learner, enrollment, paid Placements rule, eligibility decision and published job. It locks the access-rule and learner-membership rows, lets the existing prechecks observe allowed state, then revokes paid module access while the submission waits. Correct code must reject and leave zero applications. The current source still evaluates paid/inherited participation and job eligibility before the application transaction, so this witness is intentionally red until the writer revalidates/orders access inside the transaction.
+`tests/integration/db18-placement-race-gap.test.ts` creates an isolated tenant, learner, enrollment, paid Placements rule, eligibility decision and published job. It locks the access-rule and learner-membership rows, lets the fail-fast prechecks observe allowed state, then revokes paid module access while the submission waits. DB-054 now locks the live application gate inputs inside the application transaction, re-evaluates learner access/job eligibility after those locks, persists only that live result, serializes policy/override writers on the job row, and serializes academic-evidence writers on the membership row. The regression must reject and leave zero applications. It is authored but not runtime-verified.
 
 **P5-R02 — learner enrollment stale cohort state**
 
