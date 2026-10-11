@@ -117,6 +117,12 @@ A normalized design should provide:
 
 Delivery tables may continue to materialize offerings for a particular cohort/period, but DB03 and promotion logic must read the canonical program-term identity rather than infer term number from a period code.
 
+### Progression-backed program terms cannot be hard-deleted
+
+An unused program term may be removed, matching legacy cleanup. Once a cohort currently occupies or has historically traversed that term number for the same program, deleting the program-term definition would make canonical progression/history refer to a semester that no longer exists.
+
+DB02 therefore blocks program-term hard delete when either canonical current progression or immutable progression events reference its term number. `is_active` remains editable; this is a history-preservation rule, not a blanket freeze on semester configuration.
+
 ### Curriculum display-order compatibility
 
 Legacy `semester_course` has a unique constraint on `(semester_id, course_id)`, not on `course_order`. The active service validates only `courseOrder >= 1`, supports single-row order updates, and reads `ORDER BY courseOrder ASC, id ASC`. Therefore duplicate positions are valid source state.
