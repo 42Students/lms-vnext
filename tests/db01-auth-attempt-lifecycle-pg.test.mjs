@@ -98,7 +98,7 @@ if (!optIn) {
       assert.ok(rows[0].verified_at && rows[0].used_at);
       assert.equal(rows[0].sms_code_mac, null);
       assert.equal(rows[0].verification_attempts, 1);
-      await expect23514(update("UPDATE identity_auth_attempts SET used_at=NULL,version=version+1 WHERE id=$1", [id]), "identity_auth_attempts_consumed_shape_ck");
+      await expect23514(update("UPDATE identity_auth_attempts SET used_at=NULL,version=version+1 WHERE id=$1", [id]), "db01_auth_attempt_terminal_monotonic_ck");
       await expect23514(update("UPDATE identity_auth_attempts SET verification_attempts=0,version=version+1 WHERE id=$1", [id]), "db01_auth_attempt_counters_monotonic_ck");
 
       const emailOnly = await createAttempt({ sms: false, email: true });
@@ -112,14 +112,10 @@ if (!optIn) {
       await expect23514(update("UPDATE identity_auth_attempts SET resend_attempts=1,version=version+1 WHERE id=$1", [emailOnly]), "db01_auth_attempt_consumed_immutable_ck");
 
       const raceId = await createAttempt();
-      await update("UPDATE identity_auth_attempts SET verification_attempts=4,version=5 WHERE id=$1", [raceId])
-        .catch(async () => {
-          // Whole-row monotonic guard enforces increment-by-one; populate via
-          // four valid reservations instead of a direct 0->4 jump.
-          for (let i = 0; i < 4; i++) {
-            await update("UPDATE identity_auth_attempts SET verification_attempts=verification_attempts+1,version=version+1 WHERE id=$1", [raceId]);
-          }
-        });
+      // Reach the penultimate slot using four legal one-step reservations.
+      for (let i = 0; i < 4; i++) {
+        await update("UPDATE identity_auth_attempts SET verification_attempts=verification_attempts+1,version=version+1 WHERE id=$1", [raceId]);
+      }
       await actorA.query("BEGIN");
       const reservation = "UPDATE identity_auth_attempts SET verification_attempts=verification_attempts+1,version=version+1 WHERE id=$1 AND used_at IS NULL AND expires_at > now() AND verification_attempts < 5 RETURNING verification_attempts";
       const first = await actorA.query(reservation, [raceId]);
