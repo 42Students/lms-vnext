@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11",
+  "updatedOn": "2026-10-11T08:52:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2543,17 +2543,17 @@
         "tests/db06-assignment-attempt-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f492552c21138e7c2099c248ca5cf649517edffd",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Pinned current-prod source resolves assignment re-attempt ambiguity: V28 enforces one row per student+assignment; live AssignmentServiceImpl rejects duplicates and maps unique-key races; attempt_number/semester_number are dormant compatibility intent, not active submission behavior. vNext existing assignment+membership uniqueness is correct. Ledger retires attempt_number as derived metadata and keeps semester scope relational via delivery→offering→academic_period. No-op retirement candidate, contract and static guard wired; connector source consistency 13/13 true. No Node/PostgreSQL execution or journal/API/UI change claimed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:47:00.000Z",
       "startedAt": "2026-10-11T08:47:30.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T08:52:00.000Z",
+      "completionCommitSha": "f492552c21138e7c2099c248ca5cf649517edffd",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2577,6 +2577,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:47:30.000Z",
           "reason": "Auditing pinned assignment submit/count semantics and current vNext uniqueness to resolve re-attempt persistence without guessing."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T08:52:00.000Z",
+          "reason": "DB-044 source census proves current one-submission behavior; dormant attempt metadata retired without schema expansion."
         }
       ]
     },
