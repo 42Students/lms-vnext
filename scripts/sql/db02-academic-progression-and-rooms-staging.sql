@@ -218,6 +218,83 @@ ALTER TABLE sections
     CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
 
 -- ---------------------------------------------------------------------------
+-- 1d) Delivery/event chain scope integrity
+-- ---------------------------------------------------------------------------
+-- Teaching assignments and schedules inherit cohort/period/term identity through delivery.
+-- Protect that chain at the database boundary instead of relying only on service validation.
+CREATE FUNCTION db02_guard_course_section_delivery_scope()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  offering_cohort uuid;
+  offering_period uuid;
+  section_cohort uuid;
+  section_period uuid;
+BEGIN
+  SELECT co.cohort_id, co.academic_period_id
+    INTO offering_cohort, offering_period
+    FROM course_offerings co
+   WHERE co.id = NEW.offering_id;
+
+  SELECT s.cohort_id, s.academic_period_id
+    INTO section_cohort, section_period
+    FROM sections s
+   WHERE s.id = NEW.section_id;
+
+  IF offering_cohort IS NULL OR section_cohort IS NULL THEN
+    RAISE EXCEPTION 'Unknown offering or section'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF offering_cohort <> section_cohort OR offering_period <> section_period THEN
+    RAISE EXCEPTION 'Course delivery offering and section must share cohort and academic period'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_course_section_delivery_scope_guard
+BEFORE INSERT OR UPDATE OF offering_id, section_id
+ON course_section_deliveries
+FOR EACH ROW EXECUTE FUNCTION db02_guard_course_section_delivery_scope();
+
+CREATE FUNCTION db02_guard_schedule_event_delivery_scope()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  event_section uuid;
+  delivery_section uuid;
+BEGIN
+  SELECT e.section_id
+    INTO event_section
+    FROM section_schedule_events e
+   WHERE e.id = NEW.schedule_event_id;
+
+  SELECT d.section_id
+    INTO delivery_section
+    FROM course_section_deliveries d
+   WHERE d.id = NEW.delivery_id;
+
+  IF event_section IS NULL OR delivery_section IS NULL THEN
+    RAISE EXCEPTION 'Unknown schedule event or course delivery'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF event_section <> delivery_section THEN
+    RAISE EXCEPTION 'Schedule event course delivery must belong to the same section'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_schedule_event_delivery_scope_guard
+BEFORE INSERT OR UPDATE OF schedule_event_id, delivery_id
+ON section_schedule_event_courses
+FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_event_delivery_scope();
+
+-- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
 CREATE TABLE cohort_progression_state (
@@ -777,7 +854,9 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_arc
 --    class min/max/description plus compatibility start/end round-trip with min >= 0,
 --    max 1..500, min <= max, and ordered dates.
 -- 6. Verify every offering has stable program-term identity; CORE course/term mismatches fail
---    while term-bound ELECTIVE offerings remain supported.
+--    while term-bound ELECTIVE offerings remain supported; direct SQL must reject delivery links
+--    whose offering and section disagree on cohort/period and event-course links whose delivery
+--    belongs to a different section.
 -- 7. Verify a broad faculty-course association can exist before delivery, requires an ACTIVE
 --    FACULTY membership, rejects cross-college links, deactivates historically and cannot
 --    duplicate an active pair; removing FACULTY or suspending/ending the membership must close
