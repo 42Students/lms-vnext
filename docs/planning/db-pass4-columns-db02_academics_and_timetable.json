@@ -7606,7 +7606,9 @@
       "Legacy batch and class lifecycle dates are independently authored compatibility state; staging preserves nullable cohort/section dates while academic periods and schedule events remain calendar authority.",
       "new_program_structure is a backend compatibility store with no current production-FE consumer. No duplicate canonical table is proposed; API parity must either project canonical terms/curriculum or explicitly retire that compatibility API.",
       "Chat 1 must consolidate the canonical DB02 staging and deconflicted parent/enrollment extension into one registered Drizzle migration set; current runtime/PostgreSQL verification remains zero.",
-      "Execute both DB02 PostgreSQL acceptance harnesses after registration, including promotion CAS, hall booking/archive races, and section reparent/history insertion lock-order races."
+      "Execute both DB02 PostgreSQL acceptance harnesses after registration, including promotion CAS, hall booking/archive races, and section reparent/history insertion lock-order races.",
+      "API phase follow-up: course offering create/update validation currently rejects 0 credits (min 1), while DB02 legacy curriculum parity requires 0..30; do not mark end-to-end parity until validator is aligned.",
+      "Batch response classCount compatibility must read active sections in cohort_progression_state.current_period_id rather than all period-scoped sections ever created for the cohort."
     ],
     "followUpEvidenceRequired": [
       "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
@@ -7798,6 +7800,24 @@
         "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
         "acceptanceCommit": "957a17f7b77f18c3be89d7bd2e63eaec6da2ece7",
         "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "BATCH_CLASS_COUNT_CURRENT_PERIOD",
+        "status": "DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "target": "COUNT active sections where sections.cohort_id = cohort and sections.academic_period_id = cohort_progression_state.current_period_id",
+        "rationale": "Legacy batch classCount counts non-deleted classes linked to the batch. GROUP_BACKED elective classes have batch_id=null. Because vNext primary sections are period-scoped, counting all cohort sections would accumulate historical periods; compatibility count uses canonical current period.",
+        "acceptanceCommit": "0f7a7ef7115bedd2d68f8fc1bc94d9247202bf4e",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "ZERO_CREDIT_CURRICULUM_OFFERING_ALIGNMENT",
+        "status": "DB_STAGED_API_FOLLOWUP_REQUIRED",
+        "databaseTarget": "course_offerings.credits accepts NULL or 0..30, matching legacy semester_course credits and program_term_courses",
+        "stagedConstraint": "db02_course_offerings_credits_ck",
+        "apiGap": "src/modules/courses/validation.ts currently validates offering credits min(1); API phase must change create/update validator to min(0) before runtime parity can pass.",
+        "stagingCommit": "5cff3087f7ed724a06cfcd590893610ae5cd89b0",
+        "acceptanceCommit": "0f7a7ef7115bedd2d68f8fc1bc94d9247202bf4e",
+        "postgresStatus": "NOT_EXECUTED"
       }
     ],
     "targetDispositionCoverage": {
@@ -7857,7 +7877,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "e3f04beef4b3457d02ce10bb6dfff8afaedd318d",
+      "observedMainSha": "8197cf95d37a640b9684c47de9dbaef8199cba58",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7868,22 +7888,22 @@
       },
       "canonicalStaging": {
         "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-        "blobSha": "46705335848b18eb41f6e40353f04eff67efb3ce",
+        "blobSha": "fc8b1ba56981c3670386a16462f7ce5fd2baea6f",
         "plpgsqlFunctions": 25,
         "pairedDollarQuoteOpenings": 25,
         "malformedSingleDollarBodies": false
       },
       "parentEnrollmentExtension": {
         "path": "scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
-        "blobSha": "4c05a2c5301da5983f9c15de750ba91b6cfde294",
+        "blobSha": "87a7d23dda879b5c8a7637a4e27bbe4440bfa302",
         "plpgsqlFunctions": 8,
-        "pairedDollarQuoteOpenings": 7,
+        "pairedDollarQuoteOpenings": 8,
         "triggerNameOverlapWithCanonical": []
       },
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "93a3ed4c89ec1c059a286cde0fb76ab100165b07",
+          "blobSha": "74c1294f07750bdce79e02595f69d9984527d41a",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
             "tenant owner immutability",
@@ -7894,7 +7914,9 @@
             "faculty association/teaching identity lifecycle",
             "lecture hall overlap/cancellation/archive behavior",
             "legacy-compatible current_students sectioned learner derivation",
-            "learner suspension vs role-removal/membership-end academic lifecycle"
+            "learner suspension vs role-removal/membership-end academic lifecycle",
+            "zero-credit curriculum -> CORE offering database compatibility",
+            "legacy-compatible current-period batch classCount projection"
           ],
           "executedPostgres": false
         },
