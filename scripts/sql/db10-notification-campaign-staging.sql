@@ -57,7 +57,7 @@ CREATE TABLE notification_campaigns (
   CONSTRAINT db43_campaign_action_ck CHECK (
     action_href IS NULL OR
     (action_href LIKE '/%' AND action_href NOT LIKE '//%'
-      AND action_href NOT LIKE '%\\%' AND length(action_href) <= 1000)
+      AND position(chr(92) in action_href) = 0 AND length(action_href) <= 1000)
   ),
   CONSTRAINT db43_campaign_state_ck CHECK (
     status IN ('DRAFT','SCHEDULED','PUBLISHING','PUBLISHED','FAILED','CANCELLED')
