@@ -55,3 +55,31 @@ test("claim token protects state handoff and APP publication has separate termin
   assert.match(ddl, /DELIVERED/);
   assert.match(ddl, /UNIQUE \(source_event_id, recipient_user_id, channel\)/);
 });
+
+test("all 13 legacy outbox fields retain explicit unverified cross-domain evidence", () => {
+  const ledger = JSON.parse(readFileSync(
+    "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+    "utf8",
+  ));
+  const rows = ledger.tables.flatMap((table) => table.rows);
+  assert.equal(rows.length, 279);
+  const notification = rows.filter((row) => row.legacyTable === "notification_outbox");
+  assert.equal(notification.length, 13);
+  for (const row of notification) {
+    assert.equal(row.reviewStatus, "UNVERIFIED_FIELD_SEMANTICS");
+    assert.equal(row.crossDomainEvidence?.status, "STAGED_ONLY_NOT_PG_VERIFIED");
+    assert.equal(row.crossDomainEvidence?.runtimeTested, false);
+    assert.ok(row.crossDomainEvidence?.observedGap);
+  }
+  for (const [table, field] of [
+    ["prep_assignment", "assessment_id"],
+    ["industry_company", "export_columns_json"],
+  ]) {
+    const row = rows.find((r) => r.legacyTable === table && r.legacyColumn === field);
+    assert.ok(row, "Missing unresolved source field " + table + "." + field);
+    assert.equal(row.reviewStatus, "UNVERIFIED_FIELD_SEMANTICS");
+    assert.equal(row.crossDomainEvidence?.runtimeTested, false);
+  }
+  assert.equal(ledger.sourceReviewSummary.crossDomainNoSqlOrPgExecution, true);
+  assert.equal(ledger.sourceReviewSummary.unresolvedCrossDomainSourceRevisitedFields, 15);
+});
