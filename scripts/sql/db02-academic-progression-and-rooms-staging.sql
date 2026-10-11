@@ -393,7 +393,13 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_period_scope();
 -- curriculum term identity required by promotion, teaching history and elective eligibility.
 ALTER TABLE course_offerings
   ADD COLUMN program_term_id uuid NOT NULL
-  REFERENCES program_terms(id) ON DELETE RESTRICT;
+    REFERENCES program_terms(id) ON DELETE RESTRICT,
+  ADD COLUMN program_term_course_id uuid
+    REFERENCES program_term_courses(id) ON DELETE RESTRICT,
+  ADD CONSTRAINT course_offerings_curriculum_ref_ck CHECK (
+    (type = 'CORE' AND program_term_course_id IS NOT NULL)
+    OR (type = 'ELECTIVE' AND program_term_course_id IS NULL)
+  );
 
 CREATE INDEX course_offerings_program_term_idx
   ON course_offerings(program_term_id, status);
@@ -446,20 +452,29 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  -- CORE delivery must be backed by canonical curriculum. Lock the exact curriculum row
-  -- so a concurrent semester-course removal cannot commit after this validation.
-  -- ELECTIVE delivery is term-bound but may sit outside the fixed curriculum list.
+  -- CORE delivery carries a concrete curriculum-row FK. This gives native PostgreSQL
+  -- delete concurrency protection in addition to this semantic term/course validation.
+  -- ELECTIVE delivery is term-bound but deliberately has no fixed curriculum-row FK.
   IF NEW.type = 'CORE' THEN
+    IF NEW.program_term_course_id IS NULL THEN
+      RAISE EXCEPTION 'Core course offering requires a program-term curriculum row'
+        USING ERRCODE = '23514';
+    END IF;
+
     PERFORM 1
       FROM program_term_courses ptc
-     WHERE ptc.program_term_id = NEW.program_term_id
+     WHERE ptc.id = NEW.program_term_course_id
+       AND ptc.program_term_id = NEW.program_term_id
        AND ptc.course_id = NEW.course_id
      FOR SHARE;
 
     IF NOT FOUND THEN
-      RAISE EXCEPTION 'Core course offering must belong to the selected program-term curriculum'
+      RAISE EXCEPTION 'Core course offering curriculum row must match selected term and course'
         USING ERRCODE = '23514';
     END IF;
+  ELSIF NEW.program_term_course_id IS NOT NULL THEN
+    RAISE EXCEPTION 'Elective course offering must not claim a fixed curriculum row'
+      USING ERRCODE = '23514';
   END IF;
 
   RETURN NEW;
@@ -467,7 +482,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_course_offering_program_term_guard
-BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, program_term_id
+BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, program_term_id, program_term_course_id
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
 
@@ -1839,9 +1854,22 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_future_schedule_room_lifecycle();
 CREATE FUNCTION db02_guard_historic_offering_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF (NEW.cohort_id, NEW.academic_period_id, NEW.course_id, NEW.program_term_id)
-     IS DISTINCT FROM
-     (OLD.cohort_id, OLD.academic_period_id, OLD.course_id, OLD.program_term_id)
+  IF (
+       NEW.cohort_id,
+       NEW.academic_period_id,
+       NEW.course_id,
+       NEW.program_term_id,
+       NEW.type,
+       NEW.program_term_course_id
+     )
+     IS DISTINCT FROM (
+       OLD.cohort_id,
+       OLD.academic_period_id,
+       OLD.course_id,
+       OLD.program_term_id,
+       OLD.type,
+       OLD.program_term_course_id
+     )
      AND EXISTS (
        SELECT 1 FROM course_section_deliveries d WHERE d.offering_id = OLD.id
      ) THEN
@@ -1853,7 +1881,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_historic_offering_parent_guard
-BEFORE UPDATE OF cohort_id, academic_period_id, course_id, program_term_id
+BEFORE UPDATE OF cohort_id, academic_period_id, course_id, program_term_id, type, program_term_course_id
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_offering_parent();
 
