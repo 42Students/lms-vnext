@@ -168,3 +168,15 @@ test("extension avoids heterogeneous trigger record shapes", () => {
   assert.doesNotMatch(extension, /TG_TABLE_NAME/);
   assert.doesNotMatch(extension, /RETURN\s+COALESCE\s*\(\s*(?:NEW|OLD)/);
 });
+
+
+test("canonical progression journals correction versus promotion explicitly", () => {
+  assert.match(canonical, /event_kind varchar\(16\) NOT NULL/);
+  assert.match(canonical, /event_kind IN \('PROMOTION','CORRECTION'\)/);
+  assert.match(canonical, /event_kind = 'PROMOTION' AND to_term_number = from_term_number \+ 1/);
+  assert.match(canonical, /event_kind = 'CORRECTION' AND to_term_number = from_term_number/);
+  assert.match(canonical, /Cohort correction must change academic year or period/);
+  assert.match(canonical, /direct semester correction is forbidden/);
+  assert.match(canonical, /THEN 'CORRECTION'/);
+  assert.match(canonical, /ELSE 'PROMOTION'/);
+});
