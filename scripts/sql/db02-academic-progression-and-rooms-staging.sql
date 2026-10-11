@@ -1314,7 +1314,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_arc
 -- 5a) Remaining tenant-owner roots are immutable
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_remaining_college_owner_immutable()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.college_id IS DISTINCT FROM OLD.college_id THEN
     RAISE EXCEPTION 'DB02 tenant owner college cannot change in place'
@@ -1322,7 +1322,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_academic_period_college_immutable
 BEFORE UPDATE OF college_id ON academic_periods
@@ -1343,7 +1343,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 -- vNext also treats the start period as creation identity. A controlled transfer must
 -- create explicit history instead of rewriting the parent keys in place.
 CREATE FUNCTION db02_guard_cohort_parent_immutable()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_id IS DISTINCT FROM OLD.program_id
      OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id THEN
@@ -1353,14 +1353,14 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_cohort_program_immutable
 BEFORE UPDATE OF program_id, start_period_id ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_parent_immutable();
 
 CREATE FUNCTION db02_guard_program_term_identity_immutable()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_id IS DISTINCT FROM OLD.program_id
      OR NEW.term_number IS DISTINCT FROM OLD.term_number THEN
@@ -1370,7 +1370,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
@@ -1380,7 +1380,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();
 -- Once any learner/faculty/delivery/schedule history exists, structural movement requires an
 -- explicit controlled-transfer workflow so prior history is not silently reinterpreted.
 CREATE FUNCTION db02_guard_section_history_reparent()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (
     NEW.cohort_id IS DISTINCT FROM OLD.cohort_id
@@ -1397,7 +1397,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_history_reparent_guard
 BEFORE UPDATE OF cohort_id, academic_period_id ON sections
@@ -1407,7 +1407,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_history_reparent();
 -- 5c) Learner program/section enrollment scope
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_learner_program_enrollment_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
   program_college uuid;
@@ -1457,7 +1457,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_learner_program_enrollment_tenant
 BEFORE INSERT OR UPDATE OF membership_id, program_id, cohort_id
@@ -1465,7 +1465,7 @@ ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_tenant();
 
 CREATE FUNCTION db02_guard_section_enrollment_cohort_period()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   learner_cohort uuid;
   target_cohort uuid;
@@ -1492,7 +1492,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_enrollment_cohort_period
 BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
@@ -1507,7 +1507,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 -- Removing LEARNER or ending the college membership is different: active section/program
 -- enrollment must become historical and must not keep contributing to current cohort counts.
 CREATE FUNCTION db02_withdraw_learner_on_role_delete()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.role <> 'LEARNER' THEN
     RETURN OLD;
@@ -1532,14 +1532,14 @@ BEGIN
 
   RETURN OLD;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_withdraw_learner_on_role_removal
 AFTER DELETE ON membership_roles
 FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_role_delete();
 
 CREATE FUNCTION db02_withdraw_learner_on_membership_end()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ENDED' OR NEW.status <> 'ENDED' THEN
     RETURN NEW;
@@ -1564,7 +1564,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_withdraw_learner_on_membership_end
 AFTER UPDATE OF status ON college_memberships
@@ -1577,7 +1577,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_membership_end();
 -- Promote history-producing references to SHARE so they serialize with section reparenting
 -- before the history guard decides whether a move remains legal.
 CREATE FUNCTION db02_lock_section_history_parent()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1
     FROM sections
@@ -1591,7 +1591,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_lock_section_for_learner_enrollment
 BEFORE INSERT OR UPDATE OF section_id ON section_enrollments
@@ -1613,7 +1613,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 -- 5f) Enrollment identity is historical, not mutable parentage
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_learner_program_enrollment_identity_immutable()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.membership_id IS DISTINCT FROM OLD.membership_id
      OR NEW.program_id IS DISTINCT FROM OLD.program_id
@@ -1624,7 +1624,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_academic_enrollment_identity_immutable
 BEFORE UPDATE OF membership_id, program_id, cohort_id
@@ -1632,7 +1632,7 @@ ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_identity_immutable();
 
 CREATE FUNCTION db02_guard_section_enrollment_identity_immutable()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.learner_enrollment_id IS DISTINCT FROM OLD.learner_enrollment_id
      OR NEW.section_id IS DISTINCT FROM OLD.section_id
@@ -1643,7 +1643,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_enrollment_identity_immutable
 BEFORE UPDATE OF learner_enrollment_id, section_id, academic_period_id
@@ -1658,7 +1658,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_identity_immutable()
 -- A direct cohort_id change would attach progress to the wrong cohort while leaving
 -- immutable event history on the old identity; DELETE/TRUNCATE would silently lose it.
 CREATE FUNCTION db02_guard_progression_state_identity()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'DELETE' OR TG_OP = 'TRUNCATE' THEN
     RAISE EXCEPTION 'Canonical cohort progression state is not deletable'
@@ -1670,7 +1670,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_progression_state_identity_guard
 BEFORE UPDATE OF cohort_id OR DELETE ON cohort_progression_state
@@ -1685,7 +1685,7 @@ FOR EACH STATEMENT EXECUTE FUNCTION db02_guard_progression_state_identity();
 -- guard runs on section/actor/hall/status changes, not bare starts_at/ends_at.
 -- FOR SHARE on the hall row serializes against an archive UPDATE.
 CREATE FUNCTION db02_guard_future_schedule_room_lifecycle()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   current_hall_status varchar(32);
 BEGIN
@@ -1704,7 +1704,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_schedule_future_hall_lifecycle_guard
 BEFORE INSERT OR UPDATE OF starts_at, ends_at, status, lecture_hall_id
