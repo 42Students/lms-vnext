@@ -277,3 +277,47 @@ test("DB09 notification staging enforces recipient scope and undo-claim race", (
   assert.match(sql, /claim_lease_expires_at > claimed_at/);
   assert.match(sql, /channel = 'APP' AND status NOT IN \('PROVIDER_ACCEPTED','DELIVERED'\)/);
 });
+
+
+test("DB09 staged PLpgSQL uses valid dollar-quote delimiters", () => {
+  for (const path of [
+    "docs/planning/sql/db09-tpo-crm-premerge.sql",
+    "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+    "docs/planning/sql/db09-round-scheduling-candidate.sql",
+    "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+    "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+    "docs/planning/sql/db09-multicollege-drive-group-candidate.sql",
+  ]) {
+    const sql = read(path);
+    assert.doesNotMatch(
+      sql,
+      /LANGUAGE\s+(?:sql|plpgsql)(?:\s+STABLE)?\s+AS \$\n/,
+      path + " contains an invalid single-dollar function opener",
+    );
+    assert.doesNotMatch(
+      sql,
+      /^END \$;$/m,
+      path + " contains an invalid single-dollar function terminator",
+    );
+  }
+});
+
+test("DB09 share disclosure and collaboration JSON are DB constrained", () => {
+  const schema = read("src/db/schema/tpo-collaboration.ts");
+  assert.match(schema, /placement_tpo_share_links_recipient_email_ck/);
+  assert.match(schema, /placement_tpo_share_links_columns_ck/);
+  for (const col of [
+    "name","roll","branch","cgpa","tenth","twelfth","email","phone",
+    "resume","projects","skillMatch","stage",
+  ]) {
+    assert.match(schema, new RegExp('"' + col + '"'));
+  }
+  for (const stage of [
+    "APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED",
+  ]) {
+    assert.match(schema, new RegExp("'" + stage + "'"));
+  }
+  assert.match(schema, /placement_tpo_share_links_revocation_ck/);
+  assert.match(schema, /placement_tpo_college_settings_json_shape_ck/);
+  assert.match(schema, /placement_tpo_user_preferences_json_ck/);
+});
