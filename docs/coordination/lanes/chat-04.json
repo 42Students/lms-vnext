@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_DESIGN_COMPLETE_RUNTIME_SAFETY_AND_API_SEAM_AUDITED",
+    "checkpointKind": "DB005_CONSOLIDATED_45_FUNCTIONS_53_TRIGGERS_HISTORY_GATES_AUTHORED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "19fc69d96f3d94fa6052623f432a0118cbe99e80",
-    "lastWorkerMergedSha": "c877e6f62514b311cc2388519711ff5e1fb9bbe5",
+    "lastWorkerMergedSha": "09009a5390c3457211f9f7b304aba498513e5471",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 design is 125/125 source + 125/125 target. Canonical staging is 25/25 PL/pgSQL functions; deconflicted extension is 9/9 with zero trigger overlap and no heterogeneous record return coercion. Acceptance adds exact current_students/classCount parity, reversible INACTIVE, zero-credit DB parity, learner identity lifecycle, tenant/history/faculty/schedule invariants and five two-session race families. API-after-DATABASE handoff matrix is committed. No DB02 registration or PostgreSQL execution is claimed."
+    "summary": "DB02 125/125 source+design classified. Canonical unregistered staging now structurally has 45 paired PostgreSQL trigger functions and 53 unique triggers after concurrent consolidation. New history parent-reassignment, schedule timestamp-to-archived-hall, cohort identity and actor-lifecycle acceptance cases are authored; four static DB02 test suites total 40 cases. No Node/PG/CI execution and no numbered Drizzle migration integration, so DB-005 remains IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -28,7 +28,11 @@
   },
   "lastAuthoredTests": [
     "tests/db02-staging-contract.test.mjs",
-    "tests/db02-academic-parent-tenancy-contract.test.mjs"
+    "tests/db02-academic-parent-tenancy-contract.test.mjs",
+    "tests/db02-schedule-progression-integrity-overlay.test.mjs",
+    "tests/db02-historic-parent-reassignment-contract.test.mjs",
+    "scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql",
+    "scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -72,7 +76,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Continue adversarial DB02 staging review while Chat 1 has not registered it. When Chat 1 integrates, immediately rebase/reconcile both drafts against registered schema, run zero-to-current disposable PostgreSQL replay and both acceptance harnesses, then re-check pinned legacy heads before any COMPLETED/DONE_VERIFIED transition. API follow-up matrix is informational until global phase advances.",
+  "nextAction": "Chat 1 must integrate canonical DB02 into numbered Drizzle migration; execute zero-to-current disposable PostgreSQL replay, DB02 single-session + both new rollback-only acceptance scripts and two-session race harness; reconcile all failure evidence. Do not count static matching or 40 authored tests as executed/verified.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -128,7 +132,11 @@
     "https://github.com/42Students/lms-vnext/commit/0f7a7ef7115bedd2d68f8fc1bc94d9247202bf4e",
     "https://github.com/42Students/lms-vnext/commit/ec2c10f738f764d6e6b7cef74b07ed1d2c3b6be3",
     "https://github.com/42Students/lms-vnext/commit/c463accc1839f3513c851354261a30393e7a2454",
-    "https://github.com/42Students/lms-vnext/commit/c877e6f62514b311cc2388519711ff5e1fb9bbe5"
+    "https://github.com/42Students/lms-vnext/commit/c877e6f62514b311cc2388519711ff5e1fb9bbe5",
+    "https://github.com/42Students/lms-vnext/commit/09009a5390c3457211f9f7b304aba498513e5471",
+    "https://github.com/42Students/lms-vnext/commit/f874cdd1e55ff26db224349a35970d4c377d1477",
+    "https://github.com/42Students/lms-vnext/commit/1fcc1c6f015ca71bcb3547b2a3940f6f31fbaa65",
+    "https://github.com/42Students/lms-vnext/commit/c33e71a9bb72fa8faecc1cdc8f75d7b4126cf79f"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
