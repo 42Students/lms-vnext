@@ -18,6 +18,10 @@
 -- Exact child identity targets for composite event FKs.
 CREATE UNIQUE INDEX assignment_submissions_event_identity_uq
   ON assignment_submissions(id, assignment_id, delivery_id, membership_id);
+ALTER TABLE attendance_records
+  ADD COLUMN version integer NOT NULL DEFAULT 0,
+  ADD CONSTRAINT attendance_records_version_ck CHECK (version >= 0);
+
 CREATE UNIQUE INDEX attendance_records_event_identity_uq
   ON attendance_records(id, schedule_event_id, membership_id);
 
@@ -106,6 +110,8 @@ CREATE TABLE attendance_record_events (
   new_status varchar(24) NOT NULL,
   previous_note text,
   new_note text,
+  record_version_before integer,
+  record_version_after integer NOT NULL,
   occurred_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT attendance_record_events_record_identity_fk
     FOREIGN KEY (attendance_record_id, schedule_event_id, membership_id)
@@ -123,11 +129,24 @@ CREATE TABLE attendance_record_events (
     ),
   CONSTRAINT attendance_record_events_shape_ck
     CHECK (
-      (action = 'MARK' AND previous_status IS NULL)
+      (
+        action = 'MARK'
+        AND previous_status IS NULL
+        AND record_version_before IS NULL
+        AND record_version_after = 0
+      )
       OR
-      (action = 'CORRECT' AND previous_status IS NOT NULL)
+      (
+        action = 'CORRECT'
+        AND previous_status IS NOT NULL
+        AND record_version_before IS NOT NULL
+        AND record_version_before >= 0
+        AND record_version_after = record_version_before + 1
+      )
     )
 );
+CREATE UNIQUE INDEX attendance_record_events_record_version_uq
+  ON attendance_record_events(attendance_record_id, record_version_after);
 CREATE INDEX attendance_record_events_record_time_idx
   ON attendance_record_events(attendance_record_id, occurred_at);
 CREATE INDEX attendance_record_events_member_time_idx
@@ -334,10 +353,30 @@ END;
 $db06_require_grade$;
 
 CREATE CONSTRAINT TRIGGER db06_assignment_grade_event_required
-AFTER UPDATE OF points_awarded, grading_status, grade_published
-ON assignment_submissions
+AFTER UPDATE ON assignment_submissions
 DEFERRABLE INITIALLY DEFERRED
 FOR EACH ROW EXECUTE FUNCTION db06_require_assignment_grade_event();
+
+CREATE FUNCTION db06_attendance_record_version_guard()
+RETURNS trigger LANGUAGE plpgsql AS $db06_attendance_version$
+BEGIN
+  IF NEW.status IS DISTINCT FROM OLD.status
+     OR NEW.note IS DISTINCT FROM OLD.note
+     OR NEW.marked_by_user_id IS DISTINCT FROM OLD.marked_by_user_id THEN
+    IF NEW.version <> OLD.version + 1 THEN
+      RAISE EXCEPTION 'DB06 attendance correction requires next version'
+        USING ERRCODE='23514';
+    END IF;
+  ELSIF NEW.version IS DISTINCT FROM OLD.version THEN
+    RAISE EXCEPTION 'DB06 attendance version cannot change without correction'
+      USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END;
+$db06_attendance_version$;
+CREATE TRIGGER db06_attendance_record_version_guard
+BEFORE UPDATE ON attendance_records
+FOR EACH ROW EXECUTE FUNCTION db06_attendance_record_version_guard();
 
 CREATE FUNCTION db06_require_attendance_event()
 RETURNS trigger LANGUAGE plpgsql AS $db06_require_attendance$
@@ -354,6 +393,8 @@ BEGIN
         AND e.previous_note IS NULL
         AND e.new_note IS NOT DISTINCT FROM NEW.note
         AND e.actor_user_id = NEW.marked_by_user_id
+        AND e.record_version_before IS NULL
+        AND e.record_version_after = NEW.version
     ) THEN
       RAISE EXCEPTION 'DB06 attendance mark missing immutable audit event'
         USING ERRCODE='23514';
@@ -378,6 +419,8 @@ BEGIN
       AND e.previous_note IS NOT DISTINCT FROM OLD.note
       AND e.new_note IS NOT DISTINCT FROM NEW.note
       AND e.actor_user_id = NEW.marked_by_user_id
+      AND e.record_version_before = OLD.version
+      AND e.record_version_after = NEW.version
   ) THEN
     RAISE EXCEPTION 'DB06 attendance correction missing immutable audit event'
       USING ERRCODE='23514';
@@ -387,8 +430,7 @@ END;
 $db06_require_attendance$;
 
 CREATE CONSTRAINT TRIGGER db06_attendance_event_required
-AFTER INSERT OR UPDATE OF status, note, marked_by_user_id
-ON attendance_records
+AFTER INSERT OR UPDATE ON attendance_records
 DEFERRABLE INITIALLY DEFERRED
 FOR EACH ROW EXECUTE FUNCTION db06_require_attendance_event();
 
@@ -401,7 +443,9 @@ FOR EACH ROW EXECUTE FUNCTION db06_require_attendance_event();
 --    not the original graded_by_user_id. This is why a row-only auto-audit
 --    trigger is deliberately NOT used.
 -- 3. attendance marking/correction must insert MARK/CORRECT event in the same
---    transaction and set marked_by_user_id to the actual current actor.
+--    transaction, set marked_by_user_id to the actual current actor and use
+--    version CAS. Initial MARK persists version=0; every CORRECT writes
+--    version=old+1 and the matching event versions.
 -- 4. Event tables are append-only; corrections create another event.
 -- 5. attendance_record_events uses RESTRICT to protect history from the current
 --    schedule-event CASCADE chain.
