@@ -20,7 +20,12 @@
     "notificationTemplateSourceRetirementCandidates": 20,
     "adminAuditSourceDispositioned": 13,
     "adminAuditStagedGapFields": 3,
-    "adminAuditRuntimeVerified": 0
+    "adminAuditRuntimeVerified": 0,
+    "stagedDraftSourceMapped": 75,
+    "announcementsDraftSourceMapped": 13,
+    "bugTrackerDraftSourceMapped": 58,
+    "scheduledJobLockDraftSourceMapped": 4,
+    "stagedDraftRuntimeVerified": 0
   },
   "records": [
     {
@@ -771,14 +776,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-02",
@@ -821,14 +836,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-03",
@@ -869,14 +894,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.deleted_at + announcements.deleted_by_user_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-04",
@@ -917,14 +952,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.message",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-05",
@@ -965,14 +1010,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.receiver_type",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-06",
@@ -1013,14 +1068,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.receiver_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-07",
@@ -1063,14 +1128,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.sender_user_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-08",
@@ -1111,14 +1186,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.sender_type",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-09",
@@ -1159,14 +1244,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.title",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-10",
@@ -1209,14 +1304,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.updated_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-11",
@@ -1259,14 +1364,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.scheduled_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-12",
@@ -1309,14 +1424,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.expires_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-13",
@@ -1357,14 +1482,24 @@
         "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled.",
+      "familyReviewEvidence": "Normalized announcements draft exists but is not exported or migration-journalled. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "announcements.is_pinned",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-announcements.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-announcements.draft.ts"
     },
     {
       "id": "DB10-APP_SETTING-01",
@@ -1724,14 +1859,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-02",
@@ -1766,14 +1911,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.public_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-03",
@@ -1810,14 +1965,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.reporter_access_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-04",
@@ -1852,14 +2017,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.reporter_name",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-05",
@@ -1894,14 +2069,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.account_role",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-06",
@@ -1936,14 +2121,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.environment",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-07",
@@ -1978,14 +2173,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.page",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-08",
@@ -2020,14 +2225,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.screen",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-09",
@@ -2062,14 +2277,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.section",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-10",
@@ -2104,14 +2329,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.issue_type",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-11",
@@ -2146,14 +2381,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.description",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-12",
@@ -2188,14 +2433,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.severity",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-13",
@@ -2230,14 +2485,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.evidence_link",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-14",
@@ -2272,14 +2537,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.status",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-15",
@@ -2316,14 +2591,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-16",
@@ -2360,14 +2645,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.updated_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-17",
@@ -2402,14 +2697,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.version",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-18",
@@ -2444,14 +2749,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.resolution",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-19",
@@ -2486,14 +2801,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.affected_layer",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-20",
@@ -2528,14 +2853,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.root_cause",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-21",
@@ -2570,14 +2905,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.fix_notes",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-22",
@@ -2612,14 +2957,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.frontend_commit_sha",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-23",
@@ -2654,14 +3009,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.backend_commit_sha",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-24",
@@ -2696,14 +3061,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.regression_test_status",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-25",
@@ -2738,14 +3113,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.production_verified",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-26",
@@ -2780,14 +3165,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.retest_status",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-27",
@@ -2824,14 +3219,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.retested_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-28",
@@ -2866,14 +3271,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.source_url",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-29",
@@ -2908,14 +3323,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.source_path",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-30",
@@ -2950,14 +3375,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.browser",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT-31",
@@ -2992,14 +3427,24 @@
         "model/BugReport.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open.",
+      "familyReviewEvidence": "Private/versioned bug-report draft exists; DB/auth/storage/concurrency verification is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_reports.viewport",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-01",
@@ -3035,14 +3480,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-02",
@@ -3078,14 +3533,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.bug_report_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-03",
@@ -3119,14 +3584,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.activity_type",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-04",
@@ -3160,14 +3635,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.actor_name",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-05",
@@ -3201,14 +3686,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.from_value",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-06",
@@ -3242,14 +3737,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.to_value",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-07",
@@ -3283,14 +3788,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.note",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-08",
@@ -3326,14 +3841,24 @@
         "model/BugReportActivity.java"
       ],
       "familyDisposition": "SOURCE_AUTHORED_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open.",
+      "familyReviewEvidence": "Immutable tracker activity draft exists; transaction/retention enforcement is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_activities.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-01",
@@ -3369,14 +3894,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-02",
@@ -3412,14 +3947,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.bug_report_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-03",
@@ -3453,14 +3998,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.storage_key",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-04",
@@ -3494,14 +4049,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.original_filename",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-05",
@@ -3535,14 +4100,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.content_type",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-06",
@@ -3576,14 +4151,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.size_bytes",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-07",
@@ -3619,14 +4204,24 @@
         "model/BugReportAttachment.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open.",
+      "familyReviewEvidence": "Private object metadata/signing replaces legacy public-object behavior; migration/storage proof is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_report_attachments.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-01",
@@ -3660,14 +4255,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-02",
@@ -3699,14 +4304,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.display_name",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-03",
@@ -3740,14 +4355,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.token_hash",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-04",
@@ -3779,14 +4404,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.access_role",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-05",
@@ -3818,14 +4453,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.active",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-06",
@@ -3859,14 +4504,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-07",
@@ -3900,14 +4555,24 @@
         "model/BugTrackerAccess.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied.",
+      "familyReviewEvidence": "Generated hashed tracker credentials are a security redesign; legacy seeded hashes must not be copied. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_access.updated_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-01",
@@ -3941,14 +4606,24 @@
         "repository/BugTrackerAccessRepository.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open.",
+      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_sessions.id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-02",
@@ -3982,14 +4657,24 @@
         "repository/BugTrackerAccessRepository.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open.",
+      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_sessions.access_id",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-03",
@@ -4023,14 +4708,24 @@
         "repository/BugTrackerAccessRepository.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open.",
+      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_sessions.token_hash",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-04",
@@ -4064,14 +4759,24 @@
         "repository/BugTrackerAccessRepository.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open.",
+      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_sessions.expires_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-05",
@@ -4105,14 +4810,24 @@
         "repository/BugTrackerAccessRepository.java"
       ],
       "familyDisposition": "SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open.",
+      "familyReviewEvidence": "Hashed expiry/revocation session draft exists; reporter-session runtime wiring is open. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "bug_tracker_sessions.created_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-bug-tracker.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-bug-tracker.draft.ts"
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-01",
@@ -8180,14 +8895,24 @@
         "42Students/lms-vnext:src/modules/operations/postgres-scheduled-job-lease-store.ts"
       ],
       "familyDisposition": "SAFETY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified.",
+      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "scheduled_job_leases.job_name",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-scheduled-job-leases.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-scheduled-job-leases.draft.ts"
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-02",
@@ -8228,14 +8953,24 @@
         "42Students/lms-vnext:src/modules/operations/postgres-scheduled-job-lease-store.ts"
       ],
       "familyDisposition": "SAFETY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified.",
+      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "scheduled_job_leases.locked_until",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-scheduled-job-leases.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-scheduled-job-leases.draft.ts"
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-03",
@@ -8274,14 +9009,24 @@
         "42Students/lms-vnext:src/modules/operations/postgres-scheduled-job-lease-store.ts"
       ],
       "familyDisposition": "SAFETY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified.",
+      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "scheduled_job_leases.locked_by",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-scheduled-job-leases.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-scheduled-job-leases.draft.ts"
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-04",
@@ -8322,14 +9067,24 @@
         "42Students/lms-vnext:src/modules/operations/postgres-scheduled-job-lease-store.ts"
       ],
       "familyDisposition": "SAFETY_REDESIGN_DRAFT_NOT_MIGRATED",
-      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified.",
+      "familyReviewEvidence": "Fenced DB-clock lease draft deliberately improves legacy fail-open/no-fence behavior; it is not migrated or runtime verified. DB-040 confirms every proposed target column is physically present in the isolated draft source; draft is not exported/migrated and row remains UNMAPPED until registered migration + PostgreSQL/runtime evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-040",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+        "note": "Proposed target exists in isolated draft; no implementation/runtime claim."
+      },
+      "sourceDisposition": "SOURCE_TARGET_PRESENT_IN_ISOLATED_DRAFT_NOT_REGISTERED",
+      "sourceDispositionTarget": "scheduled_job_leases.updated_at",
+      "sourceDispositionState": "SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED",
+      "sourceDispositionEvidence": [
+        "DB-040 static source→draft preflight",
+        "src/db/schema/db10-scheduled-job-leases.draft.ts",
+        "docs/planning/database-parity-db10-staged-drafts-integration.md"
+      ],
+      "draftTargetValidated": true,
+      "draftSchemaFile": "src/db/schema/db10-scheduled-job-leases.draft.ts"
     },
     {
       "id": "DB10-SKILL_SYNONYMS-01",
@@ -9153,10 +9908,23 @@
       "runtimeVerifiedFields": 0,
       "stagingSql": "scripts/sql/db10-activity-audit-context-staging.sql",
       "interpretation": "All 13 active admin-audit fields have explicit source dispositions. Three missing forensic semantics are staged, not registered. No field advances beyond UNMAPPED until migration, trusted API capture and privacy/retention witnesses pass."
+    },
+    "db040": {
+      "taskId": "DB-040",
+      "chatNumber": 5,
+      "reviewedOn": "2026-10-11",
+      "sourceMappedFields": 75,
+      "announcements": 13,
+      "bugTracker": 58,
+      "scheduledJobLock": 4,
+      "runtimeVerifiedFields": 0,
+      "manifest": "docs/planning/database-parity-db10-staged-drafts-integration.md",
+      "test": "tests/db10-staged-drafts-source-map.test.mjs",
+      "interpretation": "Every existing proposed target is present in isolated draft source. All 75 rows remain UNMAPPED because drafts are not registered/migrated/replayed."
     }
   },
   "blockingFindings": [
-    "Unmigrated DB10 drafts: announcements, bug tracker, scheduled job leases and outbound messages/suppressions.",
+    "DB-040 source-target preflight now covers 75 fields across announcements, bug tracker and scheduled job leases; these drafts plus outbound messages/suppressions remain unregistered and require migration/replay/runtime evidence.",
     "DB-037 source-dispositioned all 56 duplicate notification-template fields to current code/provider/DLT owners or retired row metadata; final retirement still requires DB00 native/detached/live consumer proof and DB19 approval.",
     "No vNext log-alert signature/account/state persistence.",
     "No vNext skills/synonyms/usage persistence.",
