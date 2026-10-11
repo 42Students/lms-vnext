@@ -152,12 +152,13 @@ CREATE TRIGGER db069_job_owner_scope_guard
   ON placement_jobs
   FOR EACH ROW EXECUTE FUNCTION db069_assert_job_owner_scope();
 
--- Recruiter-lead ownership has its own source semantics and existing DB09
--- validation. This trigger adds only the same serialization key so team-member
--- removal cannot race a lead-owner assignment and leave the source member
--- owning a lead after deletion.
+-- Recruiter-lead source bulk assignment historically accepted any faculty in
+-- the college, while team removal required ownership to move to the placement
+-- team/TPO. That mismatch permits a removed coordinator to regain a lead.
+-- vNext intentionally hardens lead ownership to the same active placement-owner
+-- scope as drives, in addition to sharing the serialization key.
 CREATE FUNCTION db069_lock_lead_owner_change() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_old_college uuid;
   v_old_owner uuid;
@@ -191,8 +192,15 @@ BEGIN
       PERFORM db069_lock_owner_identity(v_new_college,v_new_owner);
     END IF;
   END IF;
+  IF v_new_owner IS NOT NULL
+     AND NOT db069_has_active_drive_owner(v_new_owner,v_new_college) THEN
+    RAISE EXCEPTION 'recruiter lead owner lacks active placement-owner scope'
+      USING ERRCODE='23514',
+            CONSTRAINT='db069_lead_owner_scope';
+  END IF;
+
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db069_lead_owner_serialization_guard
   BEFORE INSERT OR UPDATE OF college_id,owner_membership_id
   ON placement_tpo_leads
@@ -202,7 +210,7 @@ CREATE TRIGGER db069_lead_owner_serialization_guard
 -- TpoTeamService.removeMember(null): a member cannot disappear while they own
 -- any recruiter lead or a live DRAFT/PUBLISHED drive.
 CREATE FUNCTION db069_guard_team_member_identity_change() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM db069_lock_owner_identity(OLD.college_id,OLD.membership_id);
 
@@ -229,8 +237,11 @@ BEGIN
             CONSTRAINT='db069_team_member_owned_drives';
   END IF;
 
-  RETURN CASE WHEN TG_OP='DELETE' THEN OLD ELSE NEW END;
-END $;
+  IF TG_OP='DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
+END $$;
 CREATE TRIGGER db069_team_member_identity_guard
   BEFORE UPDATE OF college_id,membership_id OR DELETE
   ON placement_tpo_team_members
@@ -365,5 +376,8 @@ END $$;
 -- 5) Existing greenfield rows may be backfilled from created_by_user_id only
 --    when an unambiguous same-college active membership exists. Do not infer
 --    a delegated owner from creator identity where evidence is ambiguous.
--- 6) Run the authored direct-SQL and two-client race witnesses on disposable
+-- 6) Recruiter-lead owner changes use the same placement-owner scope. This is
+--    an intentional vNext hardening over the legacy bulk action that accepted
+--    any same-college faculty, closing post-removal owner resurrection.
+-- 7) Run the authored direct-SQL and two-client race witnesses on disposable
 --    PostgreSQL after migration registration. This file itself is not proof.
