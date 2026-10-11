@@ -465,6 +465,12 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Course child guard does not intercept course_offerings/course_learning_paths reassignment or period/department moves; phantom/live descendant integrity not proven."
+    },
+    {
+      "id": "DB05_DELIVERY_COHORT_PERIOD_MATCH_PG_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "DB05 classroom chat, lesson discussion, learner progress, and private receipt create+consume companions now check course_offerings.cohort_id/academic_period_id EXACTLY against sections.cohort_id/academic_period_id in addition to college/offering. 22-case acceptance matrix: docs/planning/db05-delivery-cohort-period-negative-matrix.md. Must execute same-college wrong-cohort/wrong-term negatives, two-session ancestor reparent races, and clean Postgres replay; source assertions do not count as database proof."
     }
   ],
   "sourceReview": {
@@ -528,7 +534,8 @@
     "Legacy delete lesson cascades content tombstones atomically; restore parent only. SQL draft is unregistered and current vNext reads do NOT filter these tombstones; stop release until atomic API/DB cutover and 2-session PG tests.",
     "Legacy content faculty owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
     "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending.",
-    "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending."
+    "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending.",
+    "DB05 cohort+academic period scope guards source-staged only; CP-01..CP-22 PostgreSQL wrong-cohort/term and upstream reparent acceptance NOT_RUN."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
