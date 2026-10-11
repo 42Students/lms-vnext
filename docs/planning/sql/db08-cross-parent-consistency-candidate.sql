@@ -60,8 +60,8 @@ ALTER TABLE placement_job_role_options
 ALTER TABLE placement_offers
   ADD CONSTRAINT db066_offer_id_application_uq UNIQUE (id, application_id);
 ALTER TABLE placement_learner_requests
-  ADD CONSTRAINT db066_request_id_application_round_uq
-  UNIQUE (id, application_id, round_id);
+  ADD CONSTRAINT db066_request_id_application_round_type_uq
+  UNIQUE (id, application_id, round_id, request_type);
 
 -- Protect *every* application insert/update, including admin imports and
 -- non-self-submit routes that do not hit db08_self_application_gate.
@@ -107,11 +107,27 @@ ALTER TABLE placement_learner_requests
     REFERENCES placement_offers(id, application_id)
     ON UPDATE RESTRICT ON DELETE RESTRICT;
 
--- Reschedule exception: enforce same job and exact (request,application,round).
-ALTER TABLE placement_application_round_exceptions ADD COLUMN job_id uuid;
-UPDATE placement_application_round_exceptions exception SET job_id = a.job_id
- FROM placement_applications a WHERE exception.application_id = a.id;
-ALTER TABLE placement_application_round_exceptions ALTER COLUMN job_id SET NOT NULL;
+-- Reschedule exception: enforce same job and exact
+-- (request,application,round,request_type). Keeping request_type in the child
+-- prevents a later direct-SQL parent mutation from turning the linked
+-- ROUND_RESCHEDULE into a withdrawal/offer-extension request while retaining
+-- the same UUIDs.
+ALTER TABLE placement_application_round_exceptions
+  ADD COLUMN job_id uuid,
+  ADD COLUMN request_type varchar(40);
+UPDATE placement_application_round_exceptions exception
+   SET job_id = a.job_id,
+       request_type = req.request_type
+  FROM placement_applications a,
+       placement_learner_requests req
+ WHERE exception.application_id = a.id
+   AND exception.request_id = req.id;
+ALTER TABLE placement_application_round_exceptions
+  ALTER COLUMN job_id SET NOT NULL,
+  ALTER COLUMN request_type SET NOT NULL;
+ALTER TABLE placement_application_round_exceptions
+  ADD CONSTRAINT db066_exception_request_type_ck
+    CHECK (request_type = 'ROUND_RESCHEDULE');
 ALTER TABLE placement_application_round_exceptions
   ADD CONSTRAINT db066_exception_application_job_fk
     FOREIGN KEY (application_id, job_id)
@@ -122,8 +138,8 @@ ALTER TABLE placement_application_round_exceptions
     REFERENCES placement_job_rounds(id, job_id)
     ON UPDATE RESTRICT ON DELETE RESTRICT,
   ADD CONSTRAINT db066_exception_request_scope_fk
-    FOREIGN KEY (request_id, application_id, round_id)
-    REFERENCES placement_learner_requests(id, application_id, round_id)
+    FOREIGN KEY (request_id, application_id, round_id, request_type)
+    REFERENCES placement_learner_requests(id, application_id, round_id, request_type)
     ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 -- W01 NOTES:
@@ -137,3 +153,6 @@ ALTER TABLE placement_application_round_exceptions
 -- 4) During live backfill lock writers or use a reviewed online migration.
 -- 5) Run disposable PostgreSQL negative witnesses, including two sessions
 --    and UPDATE/parent-reassignment races; source-file asserts are NOT PG proof.
+-- 6) An exception's request_type is deliberately duplicated as an integrity
+--    discriminator. The API must not treat it as independently writable;
+--    it is populated from the linked request and fixed to ROUND_RESCHEDULE.
