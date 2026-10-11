@@ -13,13 +13,13 @@
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB047_COMPANY_SHARE_DEFAULTS_COMPLETED_SOURCE_ONLY",
+    "checkpointKind": "DB007_HISTORICAL_RETIREMENT_EVIDENCE_STRENGTHENED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "ed535e3b1f02f6a2700d05c810ed146dd9df7948",
-    "lastWorkerMergedSha": "f1e8b53baf5278754bd9caeb7f86af8d0a0045fc",
+    "observedMainSha": "4eb6437b3b5e13ff13c779918938e91c00d7bb5b",
+    "lastWorkerMergedSha": "4eb6437b3b5e13ff13c779918938e91c00d7bb5b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-047 COMPLETED source/staging. Canonical placement company relationship schema now owns tenant-safe share_column_defaults/check; obsolete DB09 ALTER draft converted to source-reference only. 8/8 V8-shim callbacks and 29/29 source assertions passed; PostgreSQL/runtime remains unverified."
+    "summary": "No free unrestricted DATABASE lease was available, so Chat 3 reduced its own DB-007 blockers. 33/33 historical fields now have strong independent source evidence: DB02 says student_registration has no academics dependency; DB06 says assigned_exam/examinee family is historical; V151-V194 migration sweep contains zero references. Retirements remain unapproved and DB/runtime verification remains zero."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Refresh global DATABASE queue; pick next eligible task or identify a fresh non-overlapping DB gap. Do not mark DB-047 DONE_VERIFIED until registered migration/PostgreSQL/runtime witnesses execute.",
+  "nextAction": "Continue Chat 3-owned blocker reduction while no free DATABASE task exists. Re-check whether DB04 active qualification/profile-image staging has since been integrated; otherwise wait only on W01/PostgreSQL and explicit retirement decisions. Do not steal DB-018.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -155,7 +155,12 @@
     "https://github.com/42Students/lms-vnext/commit/3180f169960d2b90af69f46cda45df22df26f7e3",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/chat03-main-merge-reconciliation-2026-10-11.md",
     "https://github.com/42Students/lms-vnext/commit/aa83c3f050a62db887fad6dd8d23c64d792be41e",
-    "https://github.com/42Students/lms-vnext/commit/a7eb6f584250ebf66fa063d48bd32bfbcc32101b"
+    "https://github.com/42Students/lms-vnext/commit/a7eb6f584250ebf66fa063d48bd32bfbcc32101b",
+    "https://github.com/42Students/lms-vnext/commit/d9a7038e280f88be1b59cb5bf68075238062e533",
+    "https://github.com/42Students/lms-vnext/commit/3fa9ecf90c56b75bd793f47e85b2bdeb82c17a6b",
+    "https://github.com/42Students/lms-vnext/commit/81cdc697c3aee72e5a6092e80b3fb92890d1a5d8",
+    "https://github.com/42Students/lms-vnext/commit/4eb6437b3b5e13ff13c779918938e91c00d7bb5b",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-historical-disposition-evidence-2026-10-11.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
