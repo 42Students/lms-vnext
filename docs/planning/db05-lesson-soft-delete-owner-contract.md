@@ -54,3 +54,13 @@ vNext `lesson_contents.created_by_user_id` is an audit identity; it does not mod
 **Current:** No numbered migration registered; no PostgreSQL tests/Node suite/CI/typecheck/build accepted for these proposals. `tests/db05-lesson-delete-restore-and-owner.test.mjs` contains seven **authored** static guards, not executed regression proof. `docs/planning/db05-migration-readiness-manifest.json` retains explicit blocked gates. Source fields `lesson.is_deleted`, `lesson_contents.is_deleted` and `lesson_contents.faculty_id` remain formally unverified until runtime acceptance.
 
 **Do not mark DONE_VERIFIED** or promote global phase based on an SQL draft, source-only tests, or the age of an issue.
+
+## Course-level nondeleted-descendant guard (source extension)
+
+Legacy `CourseServiceImpl.deleteCourse` refuses a course deletion if either `LessonContentsRepository.countByCourseId` or `LessonRepository.countActiveByCourseId` is positive. **Both repository queries exclude `is_deleted=true` rows**. That distinction matters: a course whose lesson rows have already been soft-deleted must be deletable without destroying past learner progress or forcing hard deletion of its historical children. Restoration in `CourseServiceImpl.restoreCourse` verifies the requested authorized college and clears **only the course tombstone**; it does not re-enable lessons, restore individually deleted contents, or recreate an R2 object.
+
+**Companion:** `scripts/sql/db05-course-soft-delete-guard.draft.sql` adds `courses.legacy_deleted_at` distinct from `courses.status` and rejects course tombstone writes while a live lesson or content exists beneath any course offering/learning path. It also locks the ancestor course `FOR SHARE` when creating or moving a lesson so an in-flight course tombstone cannot miss a concurrently inserted live lesson.
+
+These are source-backed proposals rather than registered/enabled features. Existing offering/path reparent operations can bypass the child insertion lock; W01 must coordinate their transitions and write tests for a new lesson while a course delete commits, restore across colleges, existing archived offerings, and orphan-free historical audit records. `tests/db05-course-soft-delete-guard.test.mjs` contains five *authored but unexecuted* static cases.
+
+**No nested restore:** Course restore changes course tombstone only. Lesson restore changes lesson tombstone only. An individual content restore is independent and must prove its private storage object still exists, with no automatic in-place reclamation of a deleted receipt. This source lifecycle is more granular than a single `ACTIVE/ARCHIVED` enum on each row.
