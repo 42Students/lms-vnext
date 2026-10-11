@@ -71,9 +71,10 @@ and the event carries a composite FK to it. A scope trigger derives the submissi
 - event college = submission college;
 - learner membership college = submission college;
 - tenant actor membership, when supplied, is ACTIVE, belongs to the same college and belongs to `actor_user_id`;
+- that tenant actor is either a COLLEGE_ADMIN or a FACULTY member with an active teaching assignment on the event delivery;
 - actor without a membership must be an actual persisted SUPER_ADMIN.
 
-This is identity consistency, not authorization replacement. The service still owns whether that actor may grade that delivery.
+This mirrors the current coarse database-checkable grading boundary. The service still owns the full permission policy and request authorization; the event guard prevents a same-college but unauthorized membership from legitimizing a direct SQL grade mutation.
 
 ## Attendance correction events
 
@@ -157,6 +158,7 @@ At minimum execute:
 - valid PUBLISH_GRADE captures the publisher, not the original grader;
 - cross-college learner/event scope fails;
 - mismatched actor membership/user fails;
+- same-college learner/non-teaching faculty grade actor fails;
 - tenant actor without membership fails unless persisted SUPER_ADMIN;
 - event wrong submission identity fails;
 - event UPDATE/DELETE/TRUNCATE fail;
