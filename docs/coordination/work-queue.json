@@ -1692,10 +1692,10 @@
         "docs/planning/sql/db06-assessment-parent-scope-candidate.sql",
         "tests/db028-assessment-parent-scope.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T07:42:10.439Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T07:42:23.717Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1717,6 +1717,11 @@
           "status": "PICKED",
           "at": "2026-10-11T07:42:10.439Z",
           "reason": "Chat 1 CAS claim after DB-028 completion; DB06 assessment relational integrity promotion."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T07:42:23.717Z",
+          "reason": "Reviewing DB06 staged assessment parent-scope guard, current registered schema and migration head before promotion."
         }
       ],
       "latestEvidenceSha": "7d61e776a608b9b9ddf12dda95193ffbd65273f0",
