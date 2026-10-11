@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-063",
+  "activeTaskId": "DB-064",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB063_STUDENT_NOTE_HISTORY_STARTED",
+    "checkpointKind": "DB064_TPO_USER_STATE_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "61057fd254b983d9b29c3c8614b581eaf58da8fd",
-    "lastWorkerMergedSha": "61057fd254b983d9b29c3c8614b581eaf58da8fd",
+    "observedMainSha": "15b193b328b4754f044b7e249778fa9591db7a66",
+    "lastWorkerMergedSha": "15b193b328b4754f044b7e249778fa9591db7a66",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-062 complete source-only (6/6 assertions; 19/19 function quoting valid). DB-063 active: legacy TPO student notes are insert/list history only; harden staged DB against rewrite/delete and future-dated creation."
+    "summary": "DB-063 complete source-only (4/4 assertions; 20/20 SQL function quoting valid). DB-064 active: fixed-identity mutable TPO preference state plus create/delete-only saved-view snapshots."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Add append-only student-note trigger, audit/static regression, execute exact committed source assertions.",
+  "nextAction": "Stage preference identity/timestamp guard and saved-view insert/delete-only guard; add audit/static regressions and execute committed source assertions.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -200,7 +200,8 @@
     "DB-060",
     "DB-061",
     "DB-062",
-    "DB-063"
+    "DB-063",
+    "DB-064"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -215,9 +216,10 @@
     "DB-059",
     "DB-060",
     "DB-061",
-    "DB-062"
+    "DB-062",
+    "DB-063"
   ],
-  "lastPickedAt": "2026-10-11T21:31:00+05:30",
+  "lastPickedAt": "2026-10-11T21:40:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
