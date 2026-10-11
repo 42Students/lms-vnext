@@ -76,7 +76,7 @@ afterEach(async()=>{if(enabled)await cleanup()});
 afterAll(async()=>{await pool?.end();await closeDatabaseConnection()});
 
 describe.skipIf(!enabled)("DB06 assessment parent-scope PostgreSQL acceptance",()=>{
- it("PG01/02 deny cross-offering fixed quiz and assignment definitions",async()=>{await expect(quiz(p(),A.lesson,B.delivery)).rejects.toMatchObject({code:"23514"});await expect(assignment(p(),A.lesson,B.delivery)).rejects.toMatchObject({code:"23514"})});
+ it("PG01 and PG02 deny cross-offering fixed quiz and assignment definitions",async()=>{await expect(quiz(p(),A.lesson,B.delivery)).rejects.toMatchObject({code:"23514"});await expect(assignment(p(),A.lesson,B.delivery)).rejects.toMatchObject({code:"23514"})});
  it("PG03 denies attempt through delivery from another offering",async()=>{const q=await quiz(p(),A.lesson);await expect(attempt(p(),q,B.delivery)).rejects.toMatchObject({code:"23514"})});
  it("PG04 denies a fixed-delivery quiz in another section delivery",async()=>{const q=await quiz(p(),A.lesson,A.delivery);await expect(attempt(p(),q,A.delivery2)).rejects.toMatchObject({code:"23514"})});
  it("PG05 denies an active learner membership from another college",async()=>{const x=await learner(p(),SEED_IDS.collegeB),q=await quiz(p(),A.lesson);await expect(attempt(p(),q,A.delivery,x.membership)).rejects.toMatchObject({code:"23514"})});
