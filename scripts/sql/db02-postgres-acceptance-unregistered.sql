@@ -24,6 +24,7 @@ DECLARE
   program_b uuid;
   period_a uuid;
   period_b uuid;
+  period_a_outside uuid;
   cohort_a uuid;
   cohort_b uuid;
   term_a1 uuid;
@@ -96,6 +97,11 @@ BEGIN
   VALUES (college_b, 'DB02 Acceptance Period B', 'DB02-B-' || substr(gen_random_uuid()::text,1,8),
           period_start, period_end, 'ACTIVE')
   RETURNING id INTO period_b;
+
+  INSERT INTO academic_periods(college_id, name, code, start_date, end_date, status)
+  VALUES (college_a, 'DB02 Outside Period A', 'DB02-A-OUT-' || substr(gen_random_uuid()::text,1,8),
+          period_end + 1, period_end + 90, 'ACTIVE')
+  RETURNING id INTO period_a_outside;
 
   INSERT INTO courses(department_id, name, code)
   VALUES (dept_a, 'DB02 Core A', 'DB02-CORE-A') RETURNING id INTO course_core_a;
@@ -173,6 +179,69 @@ BEGIN
   RETURNING id INTO hall_a;
 
   -- -------------------------------------------------------------------------
+  -- Stable tenant ownership + cohort/section period scope
+  -- -------------------------------------------------------------------------
+  failed := false;
+  BEGIN
+    UPDATE departments SET college_id = college_b WHERE id = dept_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'department cross-college move was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE programs SET department_id = dept_b WHERE id = program_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'program cross-college department move was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE courses SET department_id = dept_b WHERE id = course_core_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'course cross-college department move was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    INSERT INTO cohorts(
+      program_id, name, code, start_period_id, expected_end_period_id, status,
+      start_date, end_date
+    ) VALUES (
+      program_a, 'Bad cross-college cohort', 'DB02-BAD-C', period_b, period_b, 'ACTIVE',
+      period_start, period_end
+    );
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-college cohort period was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    INSERT INTO sections(
+      cohort_id, academic_period_id, name, code, capacity, minimum_capacity
+    ) VALUES (
+      cohort_a, period_b, 'Bad cross-college section', 'DB02-BAD-S', 30, 0
+    );
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-college section period was accepted';
+  END IF;
+
+  -- -------------------------------------------------------------------------
   -- Program term / curriculum invariants
   -- -------------------------------------------------------------------------
   failed := false;
@@ -248,6 +317,18 @@ BEGIN
   END;
   IF NOT failed THEN
     RAISE EXCEPTION 'cross-college offering period was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
+                                 type, credits, display_order)
+    VALUES (course_elective_a, cohort_a, period_a_outside, term_a1, 'ELECTIVE', 3, 3);
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'same-college offering outside cohort period window was accepted';
   END IF;
 
   -- Duration cannot shrink below configured terms.
@@ -340,6 +421,20 @@ BEGIN
   END;
   IF NOT failed THEN
     RAISE EXCEPTION 'cross-college progression period was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE cohort_progression_state
+       SET current_term_number = 3,
+           current_period_id = period_a_outside,
+           version = 2
+     WHERE cohort_id = cohort_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'progression outside cohort period window was accepted';
   END IF;
 
   failed := false;
