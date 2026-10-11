@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:14:32.383Z",
+  "updatedOn": "2026-10-12",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4303,17 +4303,31 @@
         "tests/db07-template-version-pointer-source.test.mjs",
         "tests/integration/db07-template-version-pointer-fks.test.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "feccac8f4c7e14f863b5b8c7e92f292be1919b6b",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_EXECUTED_IN_PROCESS",
+          "mode": "EXACT_GITHUB_BLOB_V8",
+          "testCases": 29,
+          "passed": 29,
+          "failed": 0,
+          "nodeRunnerExecuted": 0,
+          "postgresExecuted": 0,
+          "evidence": "docs/planning/db07-chat02-template-pointer-source-evidence.json",
+          "sourceCommitSha": "feccac8f4c7e14f863b5b8c7e92f292be1919b6b"
+        }
+      ],
+      "blockers": [
+        "Chat1 migration registration/replay and real deferred FK PostgreSQL cases pending; not a GitHub Actions billing blocker."
+      ],
+      "completionNote": "DB071 source/staging completed: deferred current_version and published_version composite parent FKs on project_templates, fail-close orphan-pointer preflight, 15 authored Node source tests + 7 opt-in PostgreSQL witnesses. Exact GitHub source checks 29/29 executed/pass in-process; zero Node/PG test runner execution; no numbered migration and no DONE_VERIFIED.",
       "pickedBy": 2,
       "pickedAt": "2026-10-11T21:12:15.225Z",
       "startedAt": "2026-10-11T21:12:25.798Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-11T21:15:23.621Z",
+      "completionCommitSha": "feccac8f4c7e14f863b5b8c7e92f292be1919b6b",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4337,6 +4351,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T21:12:25.798Z",
           "reason": "Staging deferred template current/published version pointer FKs with source and PG negative witnesses."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:15:23.621Z",
+          "reason": "Parent-first valid transaction ordering preserved through DEFERRABLE INITIALLY DEFERRED; 29/29 exact-source checks PASS, SQL execution pending."
         }
       ]
     }
