@@ -30,10 +30,11 @@ function missing(source) {
     out.push("wall clock recheck");
   }
   if (!/BEFORE INSERT OR UPDATE ON identity_auth_handoffs/.test(source)) out.push("insert+update trigger");
-  if (!/IF TG_OP = 'INSERT' THEN/.test(source)) out.push("fresh handoff insertion branch");
-  if (!/NEW.consumed_at IS NOT NULL/.test(source)) out.push("no pre-consumed insertion");
-  if (!/NEW.created_at > clock_timestamp\(\)/.test(source)) out.push("no future handoff issue");
-  if (!/NEW.expires_at <= clock_timestamp\(\)/.test(source)) out.push("no expired handoff issue");
+  const insertBody = source.match(/IF TG_OP = 'INSERT' THEN([\s\S]*?)RETURN NEW;\s*END IF;/)?.[1] || "";
+  if (!insertBody) out.push("fresh handoff insertion branch");
+  if (!/NEW.consumed_at IS NOT NULL/.test(insertBody)) out.push("no pre-consumed insertion");
+  if (!/NEW.created_at > clock_timestamp\(\)/.test(insertBody)) out.push("no future handoff issue");
+  if (!/NEW.expires_at <= clock_timestamp\(\)/.test(insertBody)) out.push("no expired handoff issue");
   if (!/db01_auth_handoff_creation_state_ck/.test(source)) out.push("creation diagnostic");
   return out;
 }
