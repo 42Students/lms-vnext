@@ -137,23 +137,50 @@ test("DB41 canonical attendance model uses stable record versions, not delete-re
 });
 
 
-test("DB45 semantic preflight requires exact optional schedule-delivery linkage",()=>{
+test("DB45 semantic preflight requires non-null composite schedule-delivery identity",()=>{
+  const nullable=sql.replace(
+    "delivery_id uuid NOT NULL\n    REFERENCES course_section_deliveries",
+    "delivery_id uuid\n    REFERENCES course_section_deliveries",
+  );
+  assert.match(
+    auditDb41(staged,nullable).errors.join("\n"),
+    /delivery_id must be NOT NULL/,
+  );
+
+  const noNullGuard=sql.replace(
+    "IF linked_delivery IS NULL THEN",
+    "IF false THEN",
+  );
+  assert.match(
+    auditDb41(staged,noNullGuard).errors.join("\n"),
+    /without a delivery link/,
+  );
+
   const noCanonicalLink=sql.replace(
     "IF NEW.delivery_id IS DISTINCT FROM linked_delivery THEN",
     "IF false THEN",
   );
   assert.match(
     auditDb41(staged,noCanonicalLink).errors.join("\n"),
-    /optional canonical schedule delivery link/,
+    /required canonical schedule delivery link/,
   );
 
-  const noResolution=sql.replace(
-    "FROM section_schedule_event_courses ec",
-    "FROM renamed_schedule_event_courses ec",
+  const noDeliveryFk=sql.replace(
+    "attendance_record_events_delivery_identity_fk",
+    "removed_delivery_identity_fk",
   );
   assert.match(
-    auditDb41(staged,noResolution).errors.join("\n"),
-    /does not resolve the canonical schedule delivery link/,
+    auditDb41(staged,noDeliveryFk).errors.join("\n"),
+    /attendance_record_events_delivery_identity_fk/,
+  );
+
+  const noBridgeUnique=sql.replace(
+    "section_schedule_event_courses_event_delivery_uq",
+    "removed_event_delivery_uq",
+  );
+  assert.match(
+    auditDb41(staged,noBridgeUnique).errors.join("\n"),
+    /section_schedule_event_courses_event_delivery_uq/,
   );
 });
 
