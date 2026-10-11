@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T05:38:00.000Z",
+  "updatedOn": "2026-10-11T11:15:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -651,16 +651,12 @@
         "src/modules/placements/tpo-messaging-service.ts"
       ],
       "status": "BLOCKED",
-      "latestEvidenceSha": "4f34ec1b561a3e55dfd6d79e42ebccefccef328f",
+      "latestEvidenceSha": "7f7e8aa99dc04a76fd7cb73e76d6c63e2dca105b",
       "verificationEvidence": [],
       "blockers": [
-        "MIGRATION/RUNTIME ONLY: Chat 1/W01 must register approved DB09 staged schemas/SQL in dependency order, replay from zero on CI-independent disposable PostgreSQL, and execute tenant/privacy/concurrency witnesses.",
-        "Runtime producer/consumer cutover and API compatibility remain unverified; source/design closure is not runtime parity.",
-        "GitHub Actions billing/availability is non-blocking; use the independent PostgreSQL verification path.",
-        "DB10 owner must choose/replay generalized APP+EMAIL+SMS notification event/undo/digest and sealed outbound contract, execute independent PG tenant/race witnesses.",
-        "DB06 owner must decide canonical assessment resource for legacy prep assessment_id; current TPO UI sends courseId only, but backend API accepts both.",
-        "TPO/company product owner must decide export_columns_json owner/audience; current UI remembers share columns in browser localStorage and sends columns on per-link request, not demonstrated global DB preference.",
-        "Chat 1 registration and independently executed disposable PostgreSQL acceptance still pending; GitHub Actions billing intentionally irrelevant."
+        "W01/Chat 1 must register the approved DB09 schema/staged SQL in dependency order and reconcile parent composite constraints with DB01/DB08/DB10.",
+        "CI-independent disposable PostgreSQL replay plus tenant/privacy/concurrency acceptance witnesses have not executed; GitHub Actions billing/availability is not a blocker.",
+        "Runtime producer/consumer cutover and API compatibility against the exact registered schema remain unverified."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -742,9 +738,14 @@
           "status": "BLOCKED",
           "at": "2026-10-11T11:08:17+05:30",
           "reason": "Chat 3 cross-domain reinvestigation completed: 13 notification outbox + assessment_id + company export preference source notes, scoped undo/digest SQL drafted and six static tests authored; runtime PostgreSQL and consumer decisions still not verified."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T11:15:00+05:30",
+          "reason": "Field-level source/design closure complete (279/279; 199 mapped, 80 redesigned, 0 field blockers). PR #85 canonicalized DB09 staging. Task now waits only for W01 registration + independent PostgreSQL/runtime acceptance."
         }
       ],
-      "progressNote": "DB09 279/279 source dispositions, 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 semantically/DB verified. Chat 3 revisited all 15 blocked fields with current legacy API/UI and outbox producer evidence; staged scoped notification intent/undo/digest SQL and six static test cases. 10 + 11 read-only source assertions passed, Node tests and PostgreSQL NOT EXECUTED. CI billing is not a blocker."
+      "progressNote": "Canonical DB09 source/design disposition is closed on main: 279/279 reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level BLOCKED, 0 runtime/PostgreSQL verified. PR #85 merged the integration-readiness cleanup: repaired malformed/duplicated CRM premerge SQL, collapsed superseded duplicate CRM/scheduling/notification drafts, promoted one canonical scheduling candidate, and added the W01 integration manifest/static guard. Remaining blockers are migration registration, CI-independent PostgreSQL replay/negative/concurrency witnesses, and runtime producer/consumer/API compatibility only."
     },
     {
       "id": "DB-013",
