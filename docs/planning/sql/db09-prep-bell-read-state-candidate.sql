@@ -6,6 +6,8 @@
 
 -- Learner preparation assignments are independently persisted; they are NOT
 -- interchangeable with a notification or a course enrollment.
+-- db09_has_active_tpo_actor is defined by the collaboration supplemental
+-- candidate and must be registered earlier per the DB09 integration manifest.
 CREATE TABLE placement_prep_assignments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
@@ -30,9 +32,11 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1
       FROM college_memberships m
+      JOIN membership_roles r ON r.membership_id = m.id
      WHERE m.id = NEW.learner_membership_id
        AND m.college_id = NEW.college_id
        AND m.status = 'ACTIVE'
+       AND r.role = 'LEARNER'
   ) THEN
     RAISE EXCEPTION 'prep learner membership is not active in assignment college'
       USING ERRCODE = '23514';
@@ -50,14 +54,12 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  IF NEW.assigned_by_user_id IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-      FROM college_memberships m
-     WHERE m.user_id = NEW.assigned_by_user_id
-       AND m.college_id = NEW.college_id
-       AND m.status = 'ACTIVE'
-  ) THEN
-    RAISE EXCEPTION 'prep assigning user is not active in assignment college'
+  IF NEW.assigned_by_user_id IS NOT NULL
+     AND NOT db09_has_active_tpo_actor(
+       NEW.assigned_by_user_id,
+       NEW.college_id
+     ) THEN
+    RAISE EXCEPTION 'prep assigning user lacks active TPO scope in assignment college'
       USING ERRCODE = '23514';
   END IF;
 
@@ -122,14 +124,11 @@ CREATE INDEX placement_tpo_bell_reads_reader_time_idx
 CREATE FUNCTION db09_assert_bell_reader_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-      FROM college_memberships m
-     WHERE m.user_id = NEW.reader_user_id
-       AND m.college_id = NEW.college_id
-       AND m.status = 'ACTIVE'
+  IF NOT db09_has_active_tpo_actor(
+    NEW.reader_user_id,
+    NEW.college_id
   ) THEN
-    RAISE EXCEPTION 'TPO bell reader is not active in bell college'
+    RAISE EXCEPTION 'TPO bell reader lacks active TPO scope in bell college'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
@@ -167,8 +166,9 @@ CREATE TRIGGER db09_bell_receipt_immutable
 --    deadline and dedupe, and cannot create an orphaned generic assessment ref.
 -- 3. Same bell: reader A marked read, reader B still unread, even when
 --    A and B belong to the same placement team; wrong-college bell rejected.
--- 4. Reader must hold an ACTIVE college membership; user FK alone is NOT
---    authorization. Recruiter notification read-through remains a separate
+-- 4. Reader must hold active TPO actor scope; an ordinary active learner
+--    membership cannot mark TPO bell rows read. Recruiter notification
+--    read-through remains a separate
 --    DB09 relation and must not be mixed into the TPO bell receipt table.
 -- 5. Historical legacy shared `tpo_bell.read_at` fallback only applies if
 --    actual history is migrated. New greenfield records use per-person state.
