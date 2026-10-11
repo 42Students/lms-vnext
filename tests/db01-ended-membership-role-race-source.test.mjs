@@ -145,6 +145,16 @@ test("role schema remains normalized and unchanged by this fix", () => {
   assert.doesNotMatch(roleSchema, /deletedAt|revokedAt|deleted_at|revoked_at/);
 });
 
+
+test("real-repository PG test runner has a dedicated disposable target guard", () => {
+  const pg = read("tests/integration/db01-membership-role-parent-lock.test.ts");
+  assert.match(pg, /process\.env\.TEST_DATABASE_URL/);
+  assert.match(pg, /process\.env\.DATABASE_URL !== testUrl/);
+  assert.match(pg, /testDatabaseName\.test\(database\)/);
+  assert.match(pg, /DB01_REMOTE_TEST_DATABASE_CONFIRM/);
+  assert.match(pg, /RESET:/);
+});
+
 test("acceptance contract still requires actual two-transaction PostgreSQL evidence", () => {
   assert.ok(contract.includes("END wins lock"));
   assert.ok(contract.includes("Grant wins lock"));
