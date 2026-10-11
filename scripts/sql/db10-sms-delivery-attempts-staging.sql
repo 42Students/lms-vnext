@@ -107,15 +107,18 @@ CREATE INDEX db31_sms_attempt_source_event_idx
 CREATE OR REPLACE FUNCTION db31_guard_sms_attempt_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF NEW.college_id IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM colleges c
-    WHERE c.id = NEW.college_id
-      AND c.organization_id = NEW.organization_id
-  ) THEN
-    RAISE EXCEPTION 'sms delivery attempt tenant scope mismatch'
-      USING ERRCODE = '23514',
-            CONSTRAINT = 'db31_sms_attempt_tenant_scope';
+  IF NEW.college_id IS NOT NULL THEN
+    -- A parent SHARE lock serializes this append-only attribution with any
+    -- concurrent college organization reassignment until INSERT commits.
+    PERFORM 1 FROM colleges c
+      WHERE c.id = NEW.college_id
+        AND c.organization_id = NEW.organization_id
+      FOR SHARE;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'sms delivery attempt tenant scope mismatch'
+        USING ERRCODE = '23514',
+              CONSTRAINT = 'db31_sms_attempt_tenant_scope';
+    END IF;
   END IF;
   RETURN NEW;
 END;
