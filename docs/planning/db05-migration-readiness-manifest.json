@@ -307,6 +307,24 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Two lessons same delivery each sequence=0 valid; duplicate positions same lesson must reject 23505. Source tests authored, actual PostgreSQL NOT_RUN."
+    },
+    {
+      "id": "LESSON_CONTENT_FLAGS_INDEPENDENT_CREATE_UPDATE",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy active/enabled independently true on create and unchanged if DTO absent; vNext status not equivalent. Unregistered shadow fields only; current consumers not cut over."
+    },
+    {
+      "id": "LESSON_CONTENT_POINTS_BIGINT_AND_DEADLINE_NAIVE",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_DB06",
+      "evidence": "Legacy source points Java long clamp >=0 and deadline LocalDateTime explicit clearDeadline=true; DB06 max_points/due_at different types and semantics. PostgreSQL/API negative and timezone tests not run."
+    },
+    {
+      "id": "LESSON_CONTENT_AUTHORING_FACETS_TENANT_REPARENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered lesson_contents legacy shadow flags/points/deadline, need current tenant course/lesson/offering hierarchy reparent and optimistic CAS acceptance."
     }
   ],
   "sourceReview": {
@@ -332,7 +350,8 @@
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
     "tests/db05-draft-contract-integrity.test.mjs",
-    "tests/db05-content-delivery-order-unique.test.mjs"
+    "tests/db05-content-delivery-order-unique.test.mjs",
+    "tests/db05-lesson-content-authoring-facets.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -344,7 +363,8 @@
     "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded.",
     "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof.",
     "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof.",
-    "Delivery-specific lesson-content ordering: scope trigger staged only; per-lesson+delivery sequence uniqueness and upstream offering/term/college changes unresolved, PG race/negative tests not run."
+    "Delivery-specific lesson-content ordering: scope trigger staged only; per-lesson+delivery sequence uniqueness and upstream offering/term/college changes unresolved, PG race/negative tests not run.",
+    "Independent legacy lesson-content active/enabled flags, Java long points and explicit-cleared LocalDateTime deadline need W01/DB06/API decision; shadow draft not registered."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -387,6 +407,23 @@
       "note": "Not an eighth independent DB05 migration. Unique companion has DEFERRABLE PostgreSQL constraint; needs condeferrable checks. Both companions remain UNREGISTERED and PostgreSQL NOT_EXECUTED.",
       "uniqueLessonCompanion": "scripts/sql/db05-content-delivery-order-unique.draft.sql",
       "integrationNote": "SINGLE CANONICAL W06 COMPANION: scripts/sql/db05-content-delivery-order-unique.draft.sql (composite (lesson_content_id,lesson_id) FK, witness column, DEFERRABLE INITIALLY IMMEDIATE UNIQUE(delivery_id,lesson_id,sequence)). Writer and staged Drizzle model already set lessonId. Integrate with existing scope companion exactly once. Prior duplicate proposal removed."
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_AUTHORING_FACETS",
+      "path": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql",
+      "baseCandidate": "src/db/schema/courses.ts lesson_contents",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "dependencies": [
+        "CONTENT_ACTIVE_ENABLED_WRITE_READ_SEMANTICS",
+        "CONTENT_POINTS_BIGINT_NEGATIVE_POLICY",
+        "CONTENT_DEADLINE_NAIVE_TIME_EXPLICIT_CLEAR_SEMANTICS",
+        "DB06_ASSIGNMENT_SEMANTIC_NON_EQUIVALENCE",
+        "VERSION_CAS_AND_SCOPED_WRITES",
+        "REAL_POSTGRES_SQLSTATE_AND_API_TESTS"
+      ],
+      "note": "NOT an eighth independent DB05 migration: merge source-only shadow columns into W01 DB05 content evolution. Legacy active/enabled, points and LocalDateTime deadline are NOT equivalent to vNext status or DB06 assignments."
     }
   ]
 }
