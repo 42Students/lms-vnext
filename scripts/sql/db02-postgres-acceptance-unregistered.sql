@@ -42,6 +42,8 @@ DECLARE
   faculty_membership_b uuid;
   hall_a uuid;
   assoc_a uuid;
+  teaching_a uuid;
+  section_faculty_a uuid;
   event_a uuid;
   event_b uuid;
   progression_version bigint;
@@ -369,6 +371,25 @@ BEGIN
   VALUES (faculty_membership_a, course_core_a)
   RETURNING id INTO assoc_a;
 
+  INSERT INTO course_teaching_assignments(delivery_id, membership_id, role)
+  VALUES (delivery_a, faculty_membership_a, 'PRIMARY')
+  RETURNING id INTO teaching_a;
+
+  INSERT INTO section_faculty_assignments(section_id, membership_id, role)
+  VALUES (section_a, faculty_membership_a, 'PRIMARY')
+  RETURNING id INTO section_faculty_a;
+
+  failed := false;
+  BEGIN
+    INSERT INTO course_teaching_assignments(delivery_id, membership_id, role)
+    VALUES (delivery_a, faculty_membership_b, 'CO_TEACHER');
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-college course teaching assignment was accepted';
+  END IF;
+
   failed := false;
   BEGIN
     INSERT INTO faculty_course_associations(membership_id, course_id)
@@ -401,6 +422,20 @@ BEGIN
 
   IF ended_at_seen IS NULL THEN
     RAISE EXCEPTION 'FACULTY role removal did not close active association';
+  END IF;
+
+  SELECT ended_at INTO ended_at_seen
+    FROM course_teaching_assignments
+   WHERE id = teaching_a;
+  IF ended_at_seen IS NULL THEN
+    RAISE EXCEPTION 'FACULTY role removal did not close active course teaching assignment';
+  END IF;
+
+  SELECT ended_at INTO ended_at_seen
+    FROM section_faculty_assignments
+   WHERE id = section_faculty_a;
+  IF ended_at_seen IS NULL THEN
+    RAISE EXCEPTION 'FACULTY role removal did not close active section faculty assignment';
   END IF;
 
   INSERT INTO membership_roles(membership_id, role)
