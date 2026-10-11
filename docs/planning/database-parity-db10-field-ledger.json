@@ -25,7 +25,11 @@
     "announcementsDraftSourceMapped": 13,
     "bugTrackerDraftSourceMapped": 58,
     "scheduledJobLockDraftSourceMapped": 4,
-    "stagedDraftRuntimeVerified": 0
+    "stagedDraftRuntimeVerified": 0,
+    "sourceDispositionedFields": 221,
+    "sourceDispositionMissing": 0,
+    "sourceDispositionRuntimeVerified": 0,
+    "db046ClosureOverlayFields": 77
   },
   "records": [
     {
@@ -1527,16 +1531,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned typed setting identity",
+      "sourceDispositionRationale": "Generic row identity is not a business concept once settings are split into typed domain-owned targets.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-02",
@@ -1564,16 +1577,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned setting/config audit metadata",
+      "sourceDispositionRationale": "Creation audit belongs to the owning typed setting/config surface when persisted; do not recreate a universal K/V row solely for timestamps.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-03",
@@ -1601,16 +1623,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.updated_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned setting/config audit metadata",
+      "sourceDispositionRationale": "Update audit belongs to the owning typed setting/config surface when persisted.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-04",
@@ -1636,16 +1667,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.is_deleted",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed unset/delete fallback semantics",
+      "sourceDispositionRationale": "Legacy soft delete means remove override and fall back to default; typed targets must preserve unset semantics without generic tombstone rows.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-05",
@@ -1671,16 +1711,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.scope_type",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "registered setting definition allowedScopes + domain authorization",
+      "sourceDispositionRationale": "Allowed scope is part of each typed setting definition, not arbitrary persisted text.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-06",
@@ -1708,16 +1757,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.scope_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "domain-owned UUID scope reference where applicable",
+      "sourceDispositionRationale": "Legacy integer scope ID must resolve to the owning domain's canonical UUID scope; GLOBAL remains no scope ID.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-07",
@@ -1743,16 +1801,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.setting_key",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed registered setting key",
+      "sourceDispositionRationale": "Only explicitly registered keys are supported; unknown arbitrary writes must fail closed in vNext.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-08",
@@ -1778,16 +1845,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.setting_value",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TYPED_REGISTRY_REDESIGN_NO_GENERIC_ROW",
+      "sourceDispositionTarget": "typed domain-owned value/config",
+      "sourceDispositionRationale": "String TEXT value is replaced by domain-specific typed validation/ranges/secrecy and defaults.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-APP_SETTING-09",
@@ -1813,16 +1889,25 @@
       "familyDisposition": "SPLIT_REDESIGN_REQUIRED",
       "familyReviewEvidence": "Optional-module state can normalize into module_access_rules; global runtime/host/cookie/OTP/ops settings require a separate config-store/environment decision.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:app_setting.scope_id_key",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_RETIRED_MYSQL_STORAGE_HELPER",
+      "sourceDispositionTarget": "none",
+      "sourceDispositionRationale": "V138 generated IFNULL(scope_id,-1) only to make MySQL GLOBAL uniqueness work; it has no independent product semantics in PostgreSQL.",
+      "sourceDispositionEvidence": [
+        "DB-033 app-setting key disposition",
+        "Pinned AppSettingsService + TenantAdminController",
+        "V138__app_setting_global_uniqueness.sql"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-BUG_REPORT-01",
@@ -6069,16 +6154,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.id",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-02",
@@ -6102,16 +6196,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.environment",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.environment",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-03",
@@ -6137,16 +6240,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.signature_hash",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.signature_hash",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-04",
@@ -6170,16 +6282,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.sample_message",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.sample_message",
+      "sourceDispositionRationale": "Bounded sample is retained only after upstream PII/secret redaction and scoped retention/access policy.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-05",
@@ -6205,16 +6326,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.first_seen_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.first_seen_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-06",
@@ -6240,16 +6370,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.last_seen_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.last_seen_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-07",
@@ -6273,16 +6412,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.occurrence_count",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRECISION_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.occurrence_count",
+      "sourceDispositionRationale": "Legacy BIGINT remains PostgreSQL bigint and Drizzle bigint mode; never coerce beyond JavaScript safe integer.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-08",
@@ -6306,16 +6454,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.muted",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.muted",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-09",
@@ -6339,16 +6496,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.fix_status",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fix_status",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-10",
@@ -6372,16 +6538,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.fixed_in_commit",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fixed_in_commit",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-11",
@@ -6407,16 +6582,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.fixed_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.fixed_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-12",
@@ -6440,16 +6624,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.status_note",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.status_note",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-13",
@@ -6473,16 +6666,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.muted_reason",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.muted_reason",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-14",
@@ -6506,16 +6708,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.issue_public_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.issue_public_id",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-15",
@@ -6539,16 +6750,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.last_seen_commit",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.last_seen_commit",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-16",
@@ -6574,16 +6794,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.regressed_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.regressed_at",
+      "sourceDispositionRationale": "Direct durable triage concept preserved in DB-023 isolated log-alert draft with UUID/timezone-safe PostgreSQL representation.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE-17",
@@ -6607,16 +6836,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for error fingerprint triage, mute/fix/regression and release evidence.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature.sample_path",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signatures.sample_path",
+      "sourceDispositionRationale": "Bounded sample is retained only after upstream PII/secret redaction and scoped retention/access policy.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-01",
@@ -6643,16 +6881,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for per-account signature blast-radius history.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature_account.signature_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.signature_id",
+      "sourceDispositionRationale": "Source blast-radius relationship/timestamp preserved in DB-023 isolated draft; raw identity is not copied.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-02",
@@ -6678,16 +6925,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for per-account signature blast-radius history.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature_account.account_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_IDENTITY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.account_key_hash",
+      "sourceDispositionRationale": "Legacy numeric role-scoped account marker is not a vNext users FK; DB-023 replaces it with keyed HMAC of server-verified typed identity.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_SIGNATURE_ACCOUNT-03",
@@ -6713,16 +6969,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for per-account signature blast-radius history.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_signature_account.first_seen_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_signature_accounts.first_seen_at",
+      "sourceDispositionRationale": "Source blast-radius relationship/timestamp preserved in DB-023 isolated draft; raw identity is not copied.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_STATE-01",
@@ -6748,16 +7013,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for durable poll cursor/admin last-viewed state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_state.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.id",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_STATE-02",
@@ -6781,16 +7055,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for durable poll cursor/admin last-viewed state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_state.state_key",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.state_key",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_STATE-03",
@@ -6816,16 +7099,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for durable poll cursor/admin last-viewed state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_state.poll_cursor_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.poll_cursor_at",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-LOG_ALERT_STATE-04",
@@ -6851,16 +7143,25 @@
       "familyDisposition": "ACTIVE_LEGACY_OPERATIONAL_GAP",
       "familyReviewEvidence": "No vNext persistence for durable poll cursor/admin last-viewed state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:log_alert_state.admin_last_viewed_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "log_alert_states.admin_last_viewed_at",
+      "sourceDispositionRationale": "Durable log poll/admin cursor state maps directly to DB-023 isolated draft with UUID/timestamptz redesign.",
+      "sourceDispositionEvidence": [
+        "DB-023 log-alert source contract",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "src/db/schema/db10-log-alerts.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-01",
@@ -6889,16 +7190,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.id",
+      "sourceDispositionRationale": "Greenfield UUID campaign identity; direct user delivery remains in_app_notifications.id.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-02",
@@ -6927,16 +7241,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.created_at",
+      "sourceDispositionRationale": "Creation precedes scheduled publication; recipient created_at is actual delivery receipt time.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-03",
@@ -6963,16 +7290,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.is_deleted",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.archived_at",
+      "sourceDispositionRationale": "Soft delete hides future/not-published campaigns; already published per-user history requires explicit privacy/retention policy.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-04",
@@ -7001,16 +7341,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.updated_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.updated_at",
+      "sourceDispositionRationale": "Preserve persisted admin edit/update timestamp.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-05",
@@ -7039,16 +7392,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.class_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_section_id",
+      "sourceDispositionRationale": "Legacy classId=0 course-wide must translate to typed COURSE scope, not UUID zero or null.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-06",
@@ -7077,16 +7443,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.course_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_course_id",
+      "sourceDispositionRationale": "Preserve course-scoped targeting through tenant-validated course reference, not legacy int.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-07",
@@ -7115,16 +7494,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.learner_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.target_user_id",
+      "sourceDispositionRationale": "Legacy optional learnerId was also overloaded as faculty/mentor recipient; canonical users UUID and scoped receipt.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-08",
@@ -7151,16 +7543,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.is_read",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REGISTERED_RECIPIENT_MODEL_PRODUCER_PENDING",
+      "sourceDispositionTarget": "in_app_notifications.read_at",
+      "sourceDispositionRationale": "Read timestamp per recipient avoids legacy class-broadcast shared boolean bug.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-09",
@@ -7187,16 +7592,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.message",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.body; in_app_notifications.body",
+      "sourceDispositionRationale": "Author body once, fan out sanitized content; legacy HTML requires explicit policy rather than raw HTML projection.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-10",
@@ -7223,16 +7641,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.title",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.title; in_app_notifications.title",
+      "sourceDispositionRationale": "Persist original author title and copied per-user receipt at release.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-11",
@@ -7259,16 +7690,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.context_label",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.context_label",
+      "sourceDispositionRationale": "Human-readable course/company label, not a permission authority.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-12",
@@ -7295,16 +7739,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.notification_type",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.notification_type; activity_events.module",
+      "sourceDispositionRationale": "Legacy GENERAL default plus JOB/COURSE/SYSTEM producer classifications become a typed campaign enum and activity taxonomy.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-13",
@@ -7333,16 +7790,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.application_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed subject reference + safe internal actionHref",
+      "sourceDispositionRationale": "Revalidate application ownership; do not store unsafe legacy integer or action query payload.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-14",
@@ -7371,16 +7841,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.job_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed subject reference + safe internal actionHref",
+      "sourceDispositionRationale": "Normalize placement job UUID and tenant/scope/authorization.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-15",
@@ -7407,16 +7890,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.assessment_url",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SECURITY_REDESIGN_PROOF_PENDING",
+      "sourceDispositionTarget": "safe internal assessment redirect only",
+      "sourceDispositionRationale": "Legacy URL allowed any http(s) external address; no unchecked browser-controlled URL or bearer link persistence.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-16",
@@ -7445,16 +7941,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.interview_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceDispositionTarget": "typed interview subject + safe internal actionHref",
+      "sourceDispositionRationale": "Scope interview to same college/user and type-safe internal route.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-17",
@@ -7483,16 +7992,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.creator_faculty_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.creator_membership_id",
+      "sourceDispositionRationale": "Server-verified college membership, never trusted client faculty integer.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-18",
@@ -7521,16 +8043,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.scheduled_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.scheduled_at",
+      "sourceDispositionRationale": "Timestamptz with explicit timezone policy; a future schedule is invisible until publish.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-19",
@@ -7557,16 +8092,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.delivery_status",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.status",
+      "sourceDispositionRationale": "SCHEDULED/FAILED/PUBLISHED are campaign states; PUBLISHED requires committed recipient receipts, not provider acceptance.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-20",
@@ -7593,16 +8141,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.delivery_error",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.last_failure_code",
+      "sourceDispositionRationale": "Safe bounded machine code, never raw provider/exception response or PII.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION-21",
@@ -7631,16 +8192,29 @@
       "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
       "familyReviewEvidence": "Registered activity/in-app tables cover recipient/read/content/event linkage; scheduled release/delivery status and legacy deep-link fields require explicit normalized disposition.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:notification.delivered_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "notification_campaigns.published_at",
+      "sourceDispositionRationale": "Actual successful fan-out publish time, not schedule, not misleading transport provider acceptance.",
+      "sourceDispositionEvidence": [
+        "DB-043 notification campaign field map",
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-NOTIFICATION_TEMPLATE-01",
@@ -9110,16 +9684,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill synonym persistence despite active legacy synonym search.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_synonyms.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.id",
+      "sourceDispositionRationale": "Skill synonym identity/reference preserved in DB-022 isolated draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILL_SYNONYMS-02",
@@ -9143,16 +9726,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill synonym persistence despite active legacy synonym search.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_synonyms.synonym",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.synonym",
+      "sourceDispositionRationale": "Persist alternate search term without global uniqueness; one term may match multiple skills in active legacy behavior.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILL_SYNONYMS-03",
@@ -9178,16 +9770,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill synonym persistence despite active legacy synonym search.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_synonyms.skill_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_synonyms.skill_id",
+      "sourceDispositionRationale": "Skill synonym identity/reference preserved in DB-022 isolated draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILL_USAGE-01",
@@ -9211,16 +9812,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext persisted skill popularity/last-used state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_usage.skill_name",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.skill_name",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILL_USAGE-02",
@@ -9244,16 +9854,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext persisted skill popularity/last-used state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_usage.usage_count",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.usage_count",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILL_USAGE-03",
@@ -9279,16 +9898,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext persisted skill popularity/last-used state.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skill_usage.last_used",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skill_usage.last_used",
+      "sourceDispositionRationale": "Independent free-text name-keyed usage tracker remains separate from skills.usage_count and has no mandatory skill FK.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-01",
@@ -9314,16 +9942,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.id",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-02",
@@ -9347,16 +9984,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.category",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.category",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-03",
@@ -9382,16 +10028,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.created_at",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-04",
@@ -9415,16 +10070,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.display_name",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.display_name",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-05",
@@ -9448,16 +10112,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.is_active",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.is_active",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-06",
@@ -9481,16 +10154,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.name",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.name",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-07",
@@ -9514,16 +10196,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.search_priority",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.search_priority",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-08",
@@ -9549,16 +10240,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.updated_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.updated_at",
+      "sourceDispositionRationale": "Active searchable catalog field preserved in DB-022 isolated skills draft.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SKILLS-09",
@@ -9582,16 +10282,25 @@
       "familyDisposition": "ACTIVE_PRODUCT_GAP",
       "familyReviewEvidence": "No vNext skill taxonomy/category/search-priority persistence despite active legacy search/profile consumers.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:skills.usage_count",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "skills.usage_count",
+      "sourceDispositionRationale": "Legacy catalog popularity counter remains independent from skill_usage usage counter; do not merge ranking semantics.",
+      "sourceDispositionEvidence": [
+        "DB-022 skills source contract",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "src/db/schema/db10-skills-catalog.draft.ts"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-01",
@@ -9619,16 +10328,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.id",
+      "sourceDispositionRationale": "Greenfield UUID provider-attempt identity.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-02",
@@ -9654,16 +10372,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.purpose",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.purpose",
+      "sourceDispositionRationale": "Support-visible business purpose remains queryable and is not enum-locked in the database.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-03",
@@ -9689,16 +10416,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.recipient_suffix",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_PRESERVING_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.recipient_suffix",
+      "sourceDispositionRationale": "Preserve only the last 1–4 digits; never persist full phone/body/OTP.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-04",
@@ -9724,16 +10460,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.status",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SEMANTIC_RENAME_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.outcome",
+      "sourceDispositionRationale": "Legacy SENT truthfully means provider acceptance, so canonical outcome is PROVIDER_ACCEPTED; FAILED remains FAILED.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-05",
@@ -9759,16 +10504,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.provider_message_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.provider_message_id",
+      "sourceDispositionRationale": "Opaque provider trace identifier retained for accepted attempts.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-06",
@@ -9794,16 +10548,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.error_summary",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.safe_failure_code + sms_delivery_attempts.safe_failure_summary",
+      "sourceDispositionRationale": "Persist only fixed/sanitized failure detail, never raw provider response/request secrets.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-07",
@@ -9831,16 +10594,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.college_id",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "TENANT_SCOPE_REDESIGN_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.college_id + sms_delivery_attempts.organization_id",
+      "sourceDispositionRationale": "Optional college scope is upgraded to an organization/college pair with DB tenant guard; pre-login OTP may keep both null.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-SMS_DELIVERY_LOG-08",
@@ -9868,16 +10640,25 @@
       "familyDisposition": "PARTIAL_SECURITY_REDESIGN_DRAFT_NOT_MIGRATED",
       "familyReviewEvidence": "Draft encrypted outbound model can retain provider lifecycle without full PII but currently covers recruiter invitations only, not all legacy SMS purposes.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-046",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
+        "state": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source/design disposition applied from completed family contract; status remains UNMAPPED and runtime verification remains zero."
       },
       "sourceReview": [
         "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:sms_delivery_log.created_at",
         "42Students/lms-vnext:docs/planning/db-pass4-columns-db10_shared_operations.json"
-      ]
+      ],
+      "sourceDisposition": "SOURCE_MAPPED_STAGED_UNREGISTERED",
+      "sourceDispositionTarget": "sms_delivery_attempts.created_at",
+      "sourceDispositionRationale": "Attempt creation time preserved as timestamptz.",
+      "sourceDispositionEvidence": [
+        "DB-031 SMS provider-attempt source contract",
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "Pinned BulkSmsAppsServiceImpl + ExotelSmsServiceImpl + AdminSmsLogController"
+      ],
+      "sourceDispositionState": "SOURCE_DISPOSITIONED_RUNTIME_PROOF_PENDING"
     }
   ],
   "globalQueueReview": {
@@ -9921,6 +10702,17 @@
       "manifest": "docs/planning/database-parity-db10-staged-drafts-integration.md",
       "test": "tests/db10-staged-drafts-source-map.test.mjs",
       "interpretation": "Every existing proposed target is present in isolated draft source. All 75 rows remain UNMAPPED because drafts are not registered/migrated/replayed."
+    },
+    "db046": {
+      "taskId": "DB-046",
+      "chatNumber": 5,
+      "reviewedOn": "2026-10-11",
+      "closureOverlay": "docs/planning/database-parity-db10-source-disposition-closure.json",
+      "sourceDispositionedFields": 221,
+      "newlyTargetedOverlayFields": 77,
+      "runtimeVerifiedFields": 0,
+      "unmappedFields": 221,
+      "interpretation": "All DB10 source fields now have an explicit source/design disposition. This is denominator closure only; no field advances from UNMAPPED or gains runtime evidence."
     }
   },
   "blockingFindings": [
@@ -9932,6 +10724,7 @@
     "Registered in-app notifications do not yet cover the full legacy scheduled/delivery lifecycle.",
     "Draft outbound transport is recruiter-invitation-only and does not yet cover all legacy SMS/template/digest/undo/provider semantics.",
     "Disposable PostgreSQL/runtime verification is unavailable; no field is advanced beyond UNMAPPED by this source review.",
-    "DB-039 source-mapped all 13 admin_audit_log fields: 10 existing/normalized targets and 3 staged forensic additions (role snapshot, request IP, User-Agent); migration/API/privacy/runtime verification remains pending."
+    "DB-039 source-mapped all 13 admin_audit_log fields: 10 existing/normalized targets and 3 staged forensic additions (role snapshot, request IP, User-Agent); migration/API/privacy/runtime verification remains pending.",
+    "DB-046 closes the DB10 source-disposition denominator at 221/221 fields. All 221 remain UNMAPPED and runtime verified=0; migration, producer/consumer and PostgreSQL acceptance remain mandatory."
   ]
 }
