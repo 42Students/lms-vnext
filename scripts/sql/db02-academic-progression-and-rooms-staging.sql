@@ -657,7 +657,7 @@ ALTER TABLE sections
 -- Teaching assignments and schedules inherit cohort/period/term identity through delivery.
 -- Protect that chain at the database boundary instead of relying only on service validation.
 CREATE FUNCTION db02_guard_course_section_delivery_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   offering_cohort uuid;
   offering_period uuid;
@@ -702,7 +702,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_section_delivery_scope_guard
 BEFORE INSERT OR UPDATE OF offering_id, section_id, ended_at
@@ -1173,7 +1173,7 @@ CREATE INDEX section_schedule_events_hall_time_idx
   WHERE lecture_hall_id IS NOT NULL AND status = 'SCHEDULED';
 
 CREATE FUNCTION db02_guard_schedule_hall_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   section_college uuid;
   section_status_value section_status;
@@ -1238,7 +1238,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_schedule_hall_tenant_guard
 BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status, starts_at, ends_at
@@ -1298,7 +1298,7 @@ ALTER TABLE section_schedule_events
 -- 3a) Section faculty assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_section_faculty_assignment_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   section_college uuid;
   section_status_value section_status;
@@ -1351,7 +1351,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_faculty_assignment_scope_guard
 BEFORE INSERT OR UPDATE OF section_id, membership_id, ended_at
@@ -1362,7 +1362,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_scope();
 -- 3b) Course teaching assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_course_teaching_assignment_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   delivery_college uuid;
   delivery_ended_at timestamptz;
@@ -1425,7 +1425,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_teaching_assignment_scope_guard
 BEFORE INSERT OR UPDATE OF delivery_id, membership_id, ended_at
@@ -1458,7 +1458,7 @@ CREATE INDEX faculty_course_associations_course_active_idx
   WHERE ended_at IS NULL;
 
 CREATE FUNCTION db02_guard_faculty_course_association_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
   membership_status_value membership_status;
@@ -1509,7 +1509,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_faculty_course_association_scope_guard
 BEFORE INSERT OR UPDATE OF membership_id, course_id
@@ -1778,7 +1778,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_history_reparent();
 -- 5c) Learner program/section enrollment scope
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_learner_program_enrollment_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
   program_college uuid;
@@ -1841,7 +1841,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_learner_program_enrollment_tenant
 BEFORE INSERT OR UPDATE OF membership_id, program_id, cohort_id
@@ -1849,7 +1849,7 @@ ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_tenant();
 
 CREATE FUNCTION db02_guard_section_enrollment_cohort_period()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   learner_cohort uuid;
   learner_status_value learner_program_enrollment_status;
@@ -1897,7 +1897,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_enrollment_cohort_period
 BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
@@ -2292,7 +2292,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 -- dependencies after waiting; if the parent commits first, the child rechecks parent status.
 
 CREATE FUNCTION db02_guard_course_archive_dependencies()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE'
      AND NEW.status <> 'ACTIVE'
@@ -2307,14 +2307,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_archive_dependency_guard
 BEFORE UPDATE OF status ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_archive_dependencies();
 
 CREATE FUNCTION db02_guard_course_offering_archive_dependencies()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE'
      AND NEW.status <> 'ACTIVE'
@@ -2329,14 +2329,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_offering_archive_dependency_guard
 BEFORE UPDATE OF status ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_archive_dependencies();
 
 CREATE FUNCTION db02_guard_delivery_end_dependencies()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.ended_at IS NULL
      AND NEW.ended_at IS NOT NULL
@@ -2351,14 +2351,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_delivery_end_dependency_guard
 BEFORE UPDATE OF ended_at ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_delivery_end_dependencies();
 
 CREATE FUNCTION db02_guard_section_archive_dependencies()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status <> 'ACTIVE' OR NEW.status <> 'ARCHIVED' THEN
     RETURN NEW;
@@ -2407,7 +2407,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_archive_dependency_guard
 BEFORE UPDATE OF status ON sections
@@ -2459,7 +2459,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_archive_dependencies();
 -- Closing historical faculty/learner rows remains valid during de-role/end;
 -- reopening cannot bypass initial membership/role checks by editing status/ended_at.
 CREATE FUNCTION db02_guard_faculty_assignment_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_status membership_status;
 BEGIN
@@ -2517,7 +2517,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_pool_reactivation_role_guard
 BEFORE UPDATE OF ended_at ON faculty_course_associations
@@ -2532,7 +2532,7 @@ BEFORE UPDATE OF ended_at ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_assignment_reactivation();
 
 CREATE FUNCTION db02_guard_learner_program_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_status membership_status;
   v_program_status program_status;
@@ -2569,14 +2569,14 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_reactivation();
 
 CREATE FUNCTION db02_guard_learner_section_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_status learner_program_enrollment_status;
   v_membership uuid;
@@ -2623,7 +2623,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_section_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON section_enrollments
