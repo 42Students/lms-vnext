@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_EIGHT_SOURCE_BATCHES_WITH_CLASSROOM_PROGRESS_TENANT_COMPANIONS_UNVERIFIED",
+    "checkpointKind": "DB008_TENANT_SCOPE_PARENT_GRAPH_AND_DISCUSSION_COMPANIONS_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "74189a0daf480629be093ee18806705120bafd13",
-    "lastWorkerMergedSha": "7d913c9e90d0a73caac889b5c4086893131d018b",
+    "observedMainSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
+    "lastWorkerMergedSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 6 merged eight source contract/guard batches PR #63 #67 #69 #70 #72 #74 #75 #78. Active DB008 still IN_PROGRESS, DATABASE phase. DB05 92 historical fields, 0 formally verified. Seven independent SQL drafts unregistered. Two companion-only same-college tenant guards staged for classroom messages and learner progress, neither registered nor executed. New source-based progress tombstone/attempt semantics (MAX attempt before admin soft-delete filter), critical upstream reparent and optional delivery scopes blocked. Node tests authored, not executed; no PG replay, CI green, lint/typecheck/build/browser accepted."
+    "summary": "DB-008 active DATABASE: 92 historical DB05 source columns reviewed, 0 semantically DB-verified. 7 independent SQL drafts UNREGISTERED plus 4 companion-only integrity proposals (classroom chat, learner progress, course parent graph, per-lesson discussions). Parent proposal guards same-college, indirect cycles, old children/offerings on direct course department move under READ COMMITTED; lesson discussion proposal validates course dept/period, optional delivery/section, author/resolver colleges. 7 new Node test definitions authored, not run; 19/19 connector source/structural assertions true (not DB). Upstream department/academic period mutation and real PG races NOT verified; CI intentionally unused, not a task blocker."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -34,7 +34,9 @@
     "tests/db05-classroom-message-parity.test.mjs: authored, not executed",
     "tests/db05-deadline-points-contract.test.mjs: authored, not executed",
     "tests/db05-progress-deletion-attempt.test.mjs: authored, not executed",
-    "tests/db05-progress-deletion-attempt.test.mjs: progress tenant companion checks added, authored only; Node not executed"
+    "tests/db05-progress-deletion-attempt.test.mjs: progress tenant companion checks added, authored only; Node not executed",
+    "tests/db05-course-parent-graph-guard.test.mjs (4 authored tests, NOT executed)",
+    "tests/db05-lesson-discussion-college-scope.test.mjs (3 authored tests, NOT executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -92,9 +94,15 @@
       "kind": "PROGRESS_COMPANION_SAME_COLLEGE_INTEGRITY_W01_HANDOFF",
       "message": "PR #78 stages scripts/sql/db05-progress-same-college.draft.sql checking learner membership, lesson content offering/course departments and optional class delivery/section period same-college. Guard on child INSERT/UPDATE only; upstream reparent safety is NOT proved. Incorporate exactly once with version/progress migration after executed PG negative/race tests.",
       "commitSha": "7d913c9e90d0a73caac889b5c4086893131d018b"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "COURSE_PARENT_AND_LESSON_DISCUSSION_FULL_SCOPE_COMPANIONS",
+      "message": "Two additional unregistered companion SQL proposals: scripts/sql/db05-course-parent-graph-guard.draft.sql (same-college, recursive cycle, direct course dept child/offering safety, read-committed advisory lock; upstream parent moves unguarded) and scripts/sql/db05-lesson-discussions-same-college.draft.sql (replaces discussion guard function to cover owning course college, offering period, optional delivery, author/resolver). W01 integrate once after PG negatives/races; DB02 workers own upstream departmental transitions.",
+      "commitSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc"
     }
   ],
-  "nextAction": "Source-verify remaining DB05 historical 3 and 25 top-level semantic decisions; W01 must register seven independent drafts PLUS classroom/progress tenant companions exactly once after app consumer cutover, negative PG including upstream reparent/races. Global DATABASE remains active.",
+  "nextAction": "Continue DB008 25 unresolved source semantics and audit W01 integration readiness; coordinate DB02 department reassignment and academic periods as upstream tenant/parent integrity; run real disposable PG parent/lesson tenant negative+race gates when independent runner exists, never interpret source checks as DB-verification.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -149,7 +157,13 @@
     "https://github.com/42Students/lms-vnext/pull/75",
     "https://github.com/42Students/lms-vnext/commit/c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41",
     "https://github.com/42Students/lms-vnext/pull/78",
-    "https://github.com/42Students/lms-vnext/commit/7d913c9e90d0a73caac889b5c4086893131d018b"
+    "https://github.com/42Students/lms-vnext/commit/7d913c9e90d0a73caac889b5c4086893131d018b",
+    "https://github.com/42Students/lms-vnext/commit/15f212f225258f950a0763129cea78937d1a22c0",
+    "https://github.com/42Students/lms-vnext/commit/53790a5a9e8ebdad75117ad445b5cc05a6389d48",
+    "https://github.com/42Students/lms-vnext/commit/57dcfc9fdc62b6880d7995fe039721c0d6a64a71",
+    "https://github.com/42Students/lms-vnext/commit/66b18a797baabe0d17d37a0a2e7852ebba03a1a9",
+    "https://github.com/42Students/lms-vnext/commit/2ce353f9fbba797433c740d001f64c5c023cbd35",
+    "https://github.com/42Students/lms-vnext/commit/cd1081a9fccaa0064d8fb23dc0e7913af97319bc"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
