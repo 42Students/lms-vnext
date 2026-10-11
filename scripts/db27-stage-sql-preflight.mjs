@@ -8,27 +8,45 @@ const FOLDERS = ["docs/planning/sql", "scripts/sql"];
 const EXTRA = ["docs/planning/db04-proposed-migration.sql"];
 const SKIP = /(?:readonly|witness|acceptance)/i;
 
-// Hide comments and SQL literals, including dollar-quoted function bodies.
+// Hide comments and SQL literals, including nested PostgreSQL comments,
+// E'...' escaped strings, dollar-quoted bodies and opaque quoted identifiers.
 export function stripSqlLiterals(sql) {
-  let out = "", i=0, mode="code", tag="";
+  let out = "", i=0, mode="code", tag="", blockDepth=0, escapedString=false;
   while (i<sql.length) {
     const a=sql[i], b=sql[i+1];
     if (mode==="line") { out+=a==="\n"?"\n":" "; if(a==="\n")mode="code";i++;continue; }
     if (mode==="block") {
-      if(a==="*"&&b==="/"){out+="  ";i+=2;mode="code";}
-      else {out+=a==="\n"?"\n":" ";i++;} continue;
+      if(a==="/"&&b==="*"){out+="  ";i+=2;blockDepth++;continue;}
+      if(a==="*"&&b==="/"){out+="  ";i+=2;if(--blockDepth===0)mode="code";continue;}
+      out+=a==="\n"?"\n":" ";i++;continue;
     }
     if (mode==="string") {
-      if(a==="'"&&b==="'"){out+="  ";i+=2;}
-      else {out+=a==="\n"?"\n":" ";i++;if(a==="'")mode="code";}continue;
+      if(escapedString&&a==="\\"&&i+1<sql.length){out+="  ";i+=2;continue;}
+      if(a==="'"&&b==="'"){out+="  ";i+=2;continue;}
+      out+=a==="\n"?"\n":" ";i++;if(a==="'")mode="code";continue;
     }
     if (mode==="dollar") {
       if(sql.startsWith(tag,i)){out+=" ".repeat(tag.length);i+=tag.length;mode="code";}
       else{out+=a==="\n"?"\n":" ";i++;}continue;
     }
     if(a==="-"&&b==="-"){out+="  ";i+=2;mode="line";continue;}
-    if(a==="/"&&b==="*"){out+="  ";i+=2;mode="block";continue;}
-    if(a==="'"){out+=" ";i++;mode="string";continue;}
+    if(a==="/"&&b==="*"){out+="  ";i+=2;blockDepth=1;mode="block";continue;}
+    if((a==="E"||a==="e")&&b==="'"&&(i===0||!/[\w$]/.test(sql[i-1]))){
+      out+="  ";i+=2;escapedString=true;mode="string";continue;
+    }
+    if(a==="'"){out+=" ";i++;escapedString=false;mode="string";continue;}
+    if(a==='"'){
+      let j=i+1, identifier="", closed=false;
+      while(j<sql.length){
+        if(sql[j]==='"'&&sql[j+1]==='"'){identifier+='"';j+=2;continue;}
+        if(sql[j]==='"'){j++;closed=true;break;}
+        identifier+=sql[j++];
+      }
+      const raw=sql.slice(i,j);
+      out+=closed&&/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)
+        ?raw:raw.replace(/[^\n]/g," ");
+      i=j;continue;
+    }
     if(a==="$"){
       const m=/^\$[A-Za-z0-9_]*\$/.exec(sql.slice(i));
       if(m){tag=m[0];out+=" ".repeat(tag.length);i+=tag.length;mode="dollar";continue;}
