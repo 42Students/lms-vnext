@@ -119,6 +119,102 @@
     "Choose explicit preservation or removal with dated API/database decision, never assume retired",
     "If retained, write validated nullable typed columns with scoped producer/reader and negative PostgreSQL tests",
     "If retired, document zero business consumer in current product and no data migration requirement; keep legacy snapshot evidence",
-    "Review license/subscription duration separately from vNext delivery validity; no accidental expiry enforcement"
-  ]
+    "Review license/subscription duration separately from vNext delivery validity; no accidental expiry enforcement",
+    "Repeat full-repo grep across legacy FE/BE source and structured SQL when a local clone/independent runner is available. GitHub private code search returned no useful indexed matches; do not claim exhaustive search."
+  ],
+  "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "inspectedRelevantCurrentLegacyFrontendFiles": [
+    {
+      "path": "src/api/Services/courseServices.js",
+      "blobSha": "31e2c1662d86f06c126b4d4859c007be59cf92bf",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/api/Services/CourseSearchService.js",
+      "blobSha": "ce5dad4b1838a6419435a57d448c3640342b3a6e",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/admin/courses/CoursesGrid.js",
+      "blobSha": "799b559494bafb10c0ed54d6b1b1b95cef26ad4b",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/admin/courses/AdminCourseHome.jsx",
+      "blobSha": "fe9c6262dcce78d9ac08462704855a7a813c86c3",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+      "blobSha": "491ad78ebb976f15dd1172f416810c86696d1ac0",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/admin/CourseTakeawaysEditor.jsx",
+      "blobSha": "33b3e095f3dd39c89967b905a2128953af061a02",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/Course/CoursesContent.jsx",
+      "blobSha": "9c675806af4cd65bc73091363872e6555844bb46",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+      "blobSha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/Home.js",
+      "blobSha": "98af225d10a4ea1cfcacadb6b85b3064e7e7a1bf",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/data/courseList.js",
+      "blobSha": "99c12158d061a9d3d267de4d7cf884049847b149",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/hooks/useCourses.js",
+      "blobSha": "685e0f2fb86b70e26a76e3ea25d4463731396cae",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/Course/Home/InThisCourseSection.jsx",
+      "blobSha": "b0e57e054be639bad0a0b9c08b0a80cad045b59e",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/components/Course/Home/index.js",
+      "blobSha": "d3e33755ec832c8f675ebbdeec623968c22e6946",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/__tests__/CoursesContent.test.jsx",
+      "blobSha": "729821974c02567a8e47fe3909793501708e5594",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/__tests__/learnerCourseDetail.test.js",
+      "blobSha": "e4f51da5ab8ae4c12b3aef1b84ba36f0e8ed10f6",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    }
+  ],
+  "boundedInspectedFilesTotal": 28,
+  "scopeNote": "13 source Java course surfaces and 15 source React/JS course surfaces on pinned old production branches. Exact field names/camel variants absent in these 28 inspected files only; not whole-repo proof."
 }
