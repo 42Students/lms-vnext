@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:20:00.000Z",
+  "updatedOn": "2026-10-11T15:38:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3198,6 +3198,52 @@
           "status": "COMPLETED",
           "at": "2026-10-11T14:24:00Z",
           "reason": "Placement application stale access/eligibility snapshot race implementation and deterministic regression committed; runtime PostgreSQL proof remains pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-055",
+      "phase": "DATABASE",
+      "title": "Fail-close deterministic database seed target selection",
+      "scope": "Protect db:seed and seedDatabase from mutating valuable targets. Explicit local test/E2E seeds remain frictionless; reset-authorized pipelines reuse exact DB_RESET_CONFIRM; other local direct seeds require exact DB_SEED_CONFIRM and remote direct seeds require ALLOW_DB_SEED plus exact target confirmation. Fail before network access; add no-network regressions and workflow docs.",
+      "priority": 1,
+      "dependsOn": [],
+      "restriction": "CORE_INFRA",
+      "paths": [
+        "scripts/db-lib.ts",
+        "scripts/db-seed.ts",
+        "tests/db01-test-database-guard.test.mjs",
+        "docs/database-workflow.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T15:38:00.000Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T15:38:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T15:38:00.000Z",
+          "reason": "No dependency-satisfied queued task remained; core mutation audit found db:seed/seedDatabase can upsert deterministic fixture identities including SUPER_ADMIN into arbitrary DATABASE_URL."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T15:38:00.000Z",
+          "reason": "Chat 1 CORE_INFRA claim; fail-close deterministic seed target selection without breaking confirmed reset/test/E2E pipelines."
         }
       ]
     }
