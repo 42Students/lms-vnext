@@ -354,3 +354,72 @@ test("DB48 reset URL cannot redirect a locally approved authority through query 
   assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
+
+
+test("DB48 default PostgreSQL port is part of the exact confirmation token", () => {
+  const helperStart = dbLibSource.indexOf(
+    "export function assertResetAllowed",
+  );
+  const helperEnd = dbLibSource.indexOf(
+    "export async function migrateDatabase",
+    helperStart,
+  );
+  const helper = dbLibSource.slice(helperStart, helperEnd);
+
+  assert.match(
+    dbLibSource,
+    /port:\s*parsed\.port \|\| ["']5432["']/,
+  );
+  assert.match(
+    helper,
+    /RESET:\$\{target\.host\}:\$\{target\.port\}\/\$\{target\.name\}/,
+  );
+  assert.match(
+    helper,
+    /process\.env\.DB_RESET_CONFIRM !== expectedConfirmation/,
+  );
+});
+
+test("DB48 independent verifier preserves remote reset confirmation gates for destructive prepare", () => {
+  const destructiveStart = independentVerifierSource.indexOf(
+    "const destructiveEnv = { ...env };",
+  );
+  const prepareStep = independentVerifierSource.indexOf(
+    '"db:test:prepare"',
+    destructiveStart,
+  );
+  assert.ok(destructiveStart >= 0);
+  assert.ok(prepareStep > destructiveStart);
+
+  const setup = independentVerifierSource.slice(
+    Math.max(0, destructiveStart - 500),
+    prepareStep + 220,
+  );
+  assert.doesNotMatch(
+    setup,
+    /delete destructiveEnv\.(ALLOW_DB_RESET|DB_RESET_CONFIRM|DB01_REMOTE_TEST_DATABASE_CONFIRM)/,
+  );
+  assert.match(
+    setup,
+    /delete destructiveEnv\.DATABASE_URL/,
+  );
+});
+
+test("DB48 browser E2E reset inherits exact remote confirmation instead of synthesizing one", () => {
+  assert.match(
+    dbE2EPrepareSource,
+    /const guardEnv = \{\s*\.\.\.process\.env,/,
+  );
+  assert.doesNotMatch(
+    dbE2EPrepareSource,
+    /DB_RESET_CONFIRM\s*=/,
+  );
+  assert.doesNotMatch(
+    dbE2EPrepareSource,
+    /ALLOW_DB_RESET\s*=/,
+  );
+  assert.match(
+    dbE2EPrepareSource,
+    /await dbLib\.resetDatabase\(databaseUrl\)/,
+  );
+});
