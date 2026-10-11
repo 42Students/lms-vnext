@@ -258,7 +258,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "b450f37043b996890ce94cb1f1e725d717388116",
+      "latestEvidenceSha": "087013aaa8942532f063716d18286b9241ab3584",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -293,7 +293,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 legacy source+proposed target design 125/125 classified; runtime fields verified 0. Canonical DB02 remains UNREGISTERED (latest source inspection 48 PL/pgSQL functions/56 unique triggers). Chat4 separately authored source-backed active cohort+target active semester+nonempty curriculum promotion guard, 6 new static tests, rollback-only PG scenario suite and two-session races (semester deactivation / last mapped course deletion), plus docs/handoffs. Static 12/12 checks true; Node/PG/CI tests executed this batch 0. No migration replay or term CAS runtime proof. DB-005 IN_PROGRESS; no DONE_VERIFIED."
+      "progressNote": "DB02 source/target design 125/125 classified, runtime 0/125. Canonical DB02 staging unregistered, now 51 paired PL/pgSQL functions/59 unique triggers. Chat4 consolidated ACTIVE cohort + ACTIVE nonempty destination semester promotion readiness and historic CORE curriculum type mutation protections directly into canonical SQL. Removed duplicate standalone drafts; updated 2 Node contract suites + 4 disposal-only PG acceptance/concurrency scripts; 6 new CORE history source tests authored. STATIC assertions only; PostgreSQL/Node/CI not executed. Chat1 registration/zero-to-current replay and races required; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
