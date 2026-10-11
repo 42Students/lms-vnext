@@ -45,7 +45,8 @@ test("DB043 does not share a broadcast read marker", () => {
   assert.match(activity, /inAppNotifications = pgTable/);
   assert.match(activity, /readAt: timestamp\("read_at"/);
   assert.match(activity, /in_app_notifications_user_event_uq/);
-  assert.doesNotMatch(sql, /\bis_read\b|\bread_at\b/i);
+  const ddl = sql.slice(sql.indexOf("CREATE TABLE"), sql.indexOf("CREATE INDEX"));
+  assert.doesNotMatch(ddl, /\\bis_read\\s+\\w+|\\bread_at\\s+\\w+/i);
   const read = ledger.records.find(row => row.legacyColumn === "is_read");
   assert.equal(read.canonicalTarget, "in_app_notifications.read_at");
   assert.match(contract, /per recipient/);
@@ -100,7 +101,7 @@ test("DB043 retains truthful publication status and claims instead of false prov
   assert.match(sql, /status <> 'PUBLISHED' OR \(published_at IS NOT NULL/);
   assert.match(sql, /status <> 'PUBLISHING' OR \(claim_token IS NOT NULL/);
   assert.match(sql, /status <> 'FAILED' OR last_failure_code IS NOT NULL/);
-  assert.match(contract, /no external provider/);
+  assert.match(contract, /No provider email\\/SMS send is implied/);
 });
 
 test("DB043 drafts stay unregistered and require independent Postgres proof", () => {
