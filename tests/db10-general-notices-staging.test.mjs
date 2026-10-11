@@ -20,7 +20,8 @@ test("DB24 reconciles all 13 legacy notification_outbox fields explicitly", () =
     "send_after","status","undo_group_id","claimed_at","sent_at",
     "failure_reason","created_at",
   ]) {
-    assert.ok(spec.includes("\`"+field+"\`"), "Missing legacy field "+field);
+    assert.ok(new RegExp("^\\\\|\\\\s*" + field + "\\\\s*\\\\|", "m").test(spec),
+      "Missing legacy field table row "+field);
   }
   for (const field of [
     "organization_id","college_id","source_event_id","recipient_user_id",
@@ -50,7 +51,7 @@ test("DB24 cannot bypass the 30-second undo hold or cross-college membership che
   assert.match(sql, /mr\.role::text = NEW\.recipient_type/);
   assert.match(sql, /NOTIFICATION_RECRUITER_GRANT_GUARD_NOT_REGISTERED/);
   assert.match(sql, /m.user_id = NEW.recipient_user_id/);
-  assert.match(sql, /m.college_id = NEW.college_id AND m.status = 'ACTIVE'/);
+  assert.match(sql, /m.college_id = NEW.college_id\\s+AND m.status = 'ACTIVE'/);
   assert.match(sql, /FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard/);
 });
 test("DB24 digest scheduling, claim shape, fence, idempotency are staged", () => {
