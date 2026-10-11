@@ -44,24 +44,12 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 -- Legacy BatchService rejects moving an existing batch/cohort to another program.
 -- vNext also treats the start period as creation identity. A controlled transfer must
 -- create explicit history instead of rewriting the parent keys in place.
-CREATE FUNCTION db02_guard_immutable_academic_parent()
+CREATE FUNCTION db02_guard_cohort_parent_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF TG_TABLE_NAME = 'cohorts'
-     AND (
-       NEW.program_id IS DISTINCT FROM OLD.program_id
-       OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id
-     ) THEN
+  IF NEW.program_id IS DISTINCT FROM OLD.program_id
+     OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id THEN
     RAISE EXCEPTION 'DB02 cohort program/start period are immutable; use a controlled transfer'
-      USING ERRCODE = '23514';
-  END IF;
-
-  IF TG_TABLE_NAME = 'program_terms'
-     AND (
-       NEW.program_id IS DISTINCT FROM OLD.program_id
-       OR NEW.term_number IS DISTINCT FROM OLD.term_number
-     ) THEN
-    RAISE EXCEPTION 'DB02 program term identity is immutable'
       USING ERRCODE = '23514';
   END IF;
 
@@ -71,11 +59,24 @@ $$;
 
 CREATE TRIGGER db02_cohort_program_immutable
 BEFORE UPDATE OF program_id, start_period_id ON cohorts
-FOR EACH ROW EXECUTE FUNCTION db02_guard_immutable_academic_parent();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_parent_immutable();
+
+CREATE FUNCTION db02_guard_program_term_identity_immutable()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.program_id IS DISTINCT FROM OLD.program_id
+     OR NEW.term_number IS DISTINCT FROM OLD.term_number THEN
+    RAISE EXCEPTION 'DB02 program term identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
 
 CREATE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
-FOR EACH ROW EXECUTE FUNCTION db02_guard_immutable_academic_parent();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();
 
 -- Empty sections may still be reparented within the canonical same-college/window rules.
 -- Once any learner/faculty/delivery/schedule history exists, structural movement requires an
@@ -313,23 +314,14 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 -- ---------------------------------------------------------------------------
 -- 5) Enrollment identity is historical, not mutable parentage
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_academic_enrollment_identity_immutable()
+CREATE FUNCTION db02_guard_learner_program_enrollment_identity_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF TG_TABLE_NAME = 'learner_program_enrollments' THEN
-    IF NEW.membership_id IS DISTINCT FROM OLD.membership_id
-       OR NEW.program_id IS DISTINCT FROM OLD.program_id
-       OR NEW.cohort_id IS DISTINCT FROM OLD.cohort_id THEN
-      RAISE EXCEPTION 'DB02 learner program enrollment identity is immutable'
-        USING ERRCODE = '23514';
-    END IF;
-  ELSIF TG_TABLE_NAME = 'section_enrollments' THEN
-    IF NEW.learner_enrollment_id IS DISTINCT FROM OLD.learner_enrollment_id
-       OR NEW.section_id IS DISTINCT FROM OLD.section_id
-       OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id THEN
-      RAISE EXCEPTION 'DB02 section enrollment history identity is immutable'
-        USING ERRCODE = '23514';
-    END IF;
+  IF NEW.membership_id IS DISTINCT FROM OLD.membership_id
+     OR NEW.program_id IS DISTINCT FROM OLD.program_id
+     OR NEW.cohort_id IS DISTINCT FROM OLD.cohort_id THEN
+    RAISE EXCEPTION 'DB02 learner program enrollment identity is immutable'
+      USING ERRCODE = '23514';
   END IF;
 
   RETURN NEW;
@@ -339,12 +331,26 @@ $$;
 CREATE TRIGGER db02_academic_enrollment_identity_immutable
 BEFORE UPDATE OF membership_id, program_id, cohort_id
 ON learner_program_enrollments
-FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_identity_immutable();
+
+CREATE FUNCTION db02_guard_section_enrollment_identity_immutable()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.learner_enrollment_id IS DISTINCT FROM OLD.learner_enrollment_id
+     OR NEW.section_id IS DISTINCT FROM OLD.section_id
+     OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id THEN
+    RAISE EXCEPTION 'DB02 section enrollment history identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
 
 CREATE TRIGGER db02_section_enrollment_identity_immutable
 BEFORE UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
-FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_identity_immutable();
 
 -- ---------------------------------------------------------------------------
 -- Chat 1 integration gates
