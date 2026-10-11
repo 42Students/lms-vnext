@@ -96,10 +96,13 @@ test("saved view UPDATE unconditionally rejects all changes",()=>{
 test("saved view DELETE remains legal (create/delete-only source lifecycle)",()=>{
   assert.doesNotMatch(trigger("db09_tpo_saved_views_lifecycle_guard"),/DELETE/);
 });
-test("new trigger names and function definitions are not duplicated",()=>{
-  for(const k of ["db09_tpo_user_preferences_lifecycle_guard","db09_tpo_saved_views_lifecycle_guard",
-    "db09_restrict_tpo_user_preferences_lifecycle","db09_restrict_tpo_saved_view_lifecycle"])
-    assert.equal((sql.match(new RegExp(k+"\\b","g"))||[]).length,2,k);
+test("new trigger names are unique and each function has exactly one call site",()=>{
+  for(const k of ["db09_tpo_user_preferences_lifecycle_guard","db09_tpo_saved_views_lifecycle_guard"])
+    assert.equal((sql.match(new RegExp("CREATE TRIGGER "+k+"\\b","g"))||[]).length,1,k);
+  for(const k of ["db09_restrict_tpo_user_preferences_lifecycle","db09_restrict_tpo_saved_view_lifecycle"]) {
+    assert.equal((sql.match(new RegExp("CREATE FUNCTION "+k+"\\b","g"))||[]).length,1,k);
+    assert.equal((sql.match(new RegExp("EXECUTE FUNCTION "+k+"\\(","g"))||[]).length,1,k);
+  }
 });
 test("staged SQL does not destructively drop the two source tables",()=>{
   assert.doesNotMatch(sql,/DROP\s+TABLE\s+placement_tpo_(?:user_preferences|saved_views)/i);
