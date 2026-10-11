@@ -25,12 +25,17 @@ DECLARE
   period_a uuid;
   period_b uuid;
   cohort_a uuid;
+  cohort_b uuid;
   term_a1 uuid;
   term_a2 uuid;
   course_core_a uuid;
   course_elective_a uuid;
   course_b uuid;
   section_a uuid;
+  section_b uuid;
+  elective_offering_a uuid;
+  delivery_a uuid;
+  event_section_b uuid;
   user_faculty_a uuid;
   faculty_membership_a uuid;
   user_faculty_b uuid;
@@ -110,6 +115,12 @@ BEGIN
           period_start, period_end)
   RETURNING id INTO cohort_a;
 
+  INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
+                      start_date, end_date)
+  VALUES (program_b, 'DB02 Cohort B', 'DB02-CB', period_b, period_b, 'ACTIVE',
+          period_start, period_end)
+  RETURNING id INTO cohort_b;
+
   SELECT current_term_number, version
     INTO progression_term, progression_version
     FROM cohort_progression_state
@@ -125,6 +136,12 @@ BEGIN
   VALUES (cohort_a, period_a, 'Section A', 'DB02-SEC-A', 60, 10,
           'DB02 acceptance section', period_start, period_end)
   RETURNING id INTO section_a;
+
+  INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity,
+                       minimum_capacity, description, start_date, end_date)
+  VALUES (cohort_b, period_b, 'Section B', 'DB02-SEC-B', 60, 0,
+          'DB02 cross-tenant section', period_start, period_end)
+  RETURNING id INTO section_b;
 
   INSERT INTO users(identity_uid, email, display_name)
   VALUES ('db02-fac-a-' || gen_random_uuid()::text,
@@ -181,7 +198,42 @@ BEGIN
   -- ELECTIVE is term-bound but need not be in fixed curriculum.
   INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
                                type, credits, display_order)
-  VALUES (course_elective_a, cohort_a, period_a, term_a1, 'ELECTIVE', 3, 2);
+  VALUES (course_elective_a, cohort_a, period_a, term_a1, 'ELECTIVE', 3, 2)
+  RETURNING id INTO elective_offering_a;
+
+  -- Delivery must inherit exactly the offering's cohort/period through its section.
+  failed := false;
+  BEGIN
+    INSERT INTO course_section_deliveries(offering_id, section_id)
+    VALUES (elective_offering_a, section_b);
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-cohort/period course delivery was accepted';
+  END IF;
+
+  INSERT INTO course_section_deliveries(offering_id, section_id)
+  VALUES (elective_offering_a, section_a)
+  RETURNING id INTO delivery_a;
+
+  INSERT INTO section_schedule_events(section_id, title, starts_at, ends_at)
+  VALUES (
+    section_b, 'DB02 Section B event',
+    date_trunc('day', now()) + interval '9 days 09 hours',
+    date_trunc('day', now()) + interval '9 days 10 hours'
+  ) RETURNING id INTO event_section_b;
+
+  failed := false;
+  BEGIN
+    INSERT INTO section_schedule_event_courses(schedule_event_id, delivery_id)
+    VALUES (event_section_b, delivery_a);
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'schedule event accepted delivery from another section';
+  END IF;
 
   failed := false;
   BEGIN
