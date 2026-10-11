@@ -288,6 +288,13 @@
       "when": 1791591000000,
       "tag": "0040_db03_history_actor_types",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1791594600000,
+      "tag": "0041_db06_assessment_parent_scope",
+      "breakpoints": true
     }
   ]
 }
