@@ -504,7 +504,7 @@
       "notes": "Named Java model plus active reader/writer paths located and pinned at legacy backend SHA. VNext does not store legacy user password or soft-deleted Role. This is not provider/permission runtime acceptance."
     },
     "db01EndedMembershipRoleRace": {
-      "status": "DIRECT_MAIN_CODE_PATCHED_PG_ACCEPTANCE_PENDING",
+      "status": "DIRECT_MAIN_TRANSACTION_LOCK_AND_SCOPE_PATCHED_PENDING_NODE_PG_TS_EXECUTION",
       "sourceRepo": "src/modules/people/repository.ts",
       "sourceService": "src/modules/people/membership-service.ts",
       "sourceDomain": "src/modules/people/membership-domain.ts",
@@ -524,25 +524,32 @@
       ],
       "finding": "App validation uses stale membership status before transaction. New role grant locks child rows, not parent; END locks parent. Needs same-parent serialization/conditional gate and 2-client proof.",
       "fixSource": "src/modules/people/repository.ts",
-      "codeFixSha": "2194420972bd8fd7562ed6923a0c6720948e7c2d",
+      "codeFixSha": "e7bab10c76be3fd83a1c2e72ed9deef620c19b0c",
       "sourceTest": "tests/db01-ended-membership-role-race-source.test.mjs",
       "sourceTestCommit": "1c1951bfe9886d2759065b15a4635cf65b627091",
-      "sourceCasesAuthored": 16,
+      "sourceCasesAuthored": 18,
       "realRepoPgTest": "tests/integration/db01-membership-role-parent-lock.test.ts",
       "realRepoPgTestSha": "d223c7414bcceeaa36ccb15f7c1696cf257c4833",
-      "realRepoPostgresCasesAuthored": 6,
+      "realRepoPostgresCasesAuthored": 8,
       "roleWritersMitigated": [
         "addMembershipRole",
         "removeMembershipRole",
         "persistPersonMembership"
       ],
       "parentLockProtocol": "Lock college_memberships parent with FOR UPDATE; recheck ENDED for grants/removals and ACTIVE for onboarding, before role mutation",
-      "sourceProof": "GITHUB_BLOB_JS_SOURCE_ASSERTIONS_PASS_24_OF_24",
+      "sourceProof": "GITHUB_BLOB_V8_ASSERTIONS_22_OF_22_PASS",
       "runtimeNodeCasesExecuted": 0,
       "runtimePostgresCasesExecuted": 0,
       "postgresVerified": false,
       "migrationRequiredForAppLock": false,
-      "stillRequires": "Real PostgreSQL 2-connection race, acceptance tests, full typecheck; other direct SQL writers cannot bypass app-only parent lock; consider DB guard if policy requires."
+      "stillRequires": "Real PostgreSQL 2-connection race, acceptance tests, full typecheck; other direct SQL writers cannot bypass app-only parent lock; consider DB guard if policy requires.",
+      "sourceTestSha": "b3041c17e83a36580f39b16f78545995305f579b",
+      "postgresSuiteSha": "9a28402590d513f0f56044ecb77175739d37b553",
+      "sourceEvidence": "docs/planning/db01-chat02-membership-parent-lock-source-evidence.json",
+      "tsTypecheckExecuted": false,
+      "postgreSqlVerified": false,
+      "handoffToChat1": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364",
+      "notes": "Parent membership locked before grant/remove and onboard; rechecks status, userId, collegeId to prevent stale-scope grant. App-only fix. Direct-SQL DB trigger / migration remains optional W01 policy decision."
     },
     "db01LegacyRegistrationSecuritySource": {
       "status": "SOURCE_CONFIRMED_PRIVILEGE_ASSIGNMENT_AND_POTENTIAL_PASSWORD_RESPONSE_LEAK_NOT_RUNTIME_REPRODUCED",
@@ -654,7 +661,7 @@
   "blockers": [
     "Separate verification gap (not GitHub Actions): disposable PostgreSQL not available in this runner for DB01 migration replay and 14 authored integration witnesses.",
     "DB01 staged tombstone, membership-state and auth/session schema need Chat 1 migration/product-policy decisions; none applied or PG verified.",
-    "DB01 role mutation parent-lock patch landed but 6 real repository PostgreSQL cases and TS compile require independent execution; no Actions dependency."
+    "DB01 code-fixed parent lock and owner scope must be executed under actual PG and typechecked: 8 real-repository PG cases and 18 authored Node cases, 0 runner passes claimed."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -769,7 +776,10 @@
     "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6110029616",
     "https://github.com/42Students/lms-vnext/commit/2194420972bd8fd7562ed6923a0c6720948e7c2d",
     "https://github.com/42Students/lms-vnext/blob/main/tests/integration/db01-membership-role-parent-lock.test.ts",
-    "https://github.com/42Students/lms-vnext/commit/31f4a141bb5ef66a39b26f7c58063aac9f73a4bc"
+    "https://github.com/42Students/lms-vnext/commit/31f4a141bb5ef66a39b26f7c58063aac9f73a4bc",
+    "https://github.com/42Students/lms-vnext/commit/e7bab10c76be3fd83a1c2e72ed9deef620c19b0c",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-membership-parent-lock-source-evidence.json",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -786,5 +796,5 @@
     "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
     "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
   },
-  "next": "DB-004 direct-main work: role parent lock fix now source-patched; execute 16 Node + 6 real PostgreSQL tests, typecheck, and independent tenant/auth lifecycle acceptance. Chat 1 retains migration ownership for staged domain models. 0 fields runtime verified in this batch."
+  "next": "DB-004: continue source-backed DB01 tables and lifecycle. Parent-lock+scope code fix direct main is committed, independent Node 18, PG 8 and TS acceptance pending. Chat 1 sole migration integrator. Global DATABASE active; no false runtime field parity."
 }
