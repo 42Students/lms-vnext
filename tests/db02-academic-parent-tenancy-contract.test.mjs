@@ -77,19 +77,26 @@ test("section history forbids unsafe structural reparenting and serializes new h
   }
 });
 
-test("learner program enrollment enforces active LEARNER tenant scope", () => {
+test("learner program enrollment enforces tenant, role, and active parent lifecycle", () => {
   assert.match(canonical, /db02_learner_program_enrollment_tenant/);
-  assert.match(canonical, /status = 'ACTIVE'/);
   assert.match(canonical, /role = 'LEARNER'/);
   assert.match(canonical, /membership_college <> program_college/);
   assert.match(canonical, /cohort_program <> NEW\.program_id/);
-  assert.match(canonical, /FOR SHARE/);
+  assert.match(canonical, /program_status_value IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(canonical, /cohort_status_value NOT IN \('PLANNED','ACTIVE'\)/);
+  assert.match(canonical, /FOR SHARE OF p/);
+  assert.match(canonical, /FROM cohorts[\s\S]*FOR SHARE/);
 });
 
-test("section enrollment matches learner cohort and actual section period", () => {
+test("section enrollment matches cohort/period and requires active parents", () => {
   assert.match(canonical, /db02_section_enrollment_cohort_period/);
   assert.match(canonical, /learner_cohort <> target_cohort/);
   assert.match(canonical, /NEW\.academic_period_id <> target_period/);
+  assert.match(canonical, /learner_status_value IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(canonical, /target_status IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(canonical, /period_status_value IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(canonical, /FROM learner_program_enrollments[\s\S]*FOR SHARE/);
+  assert.match(canonical, /FROM sections[\s\S]*FOR SHARE/);
 });
 
 test("learner and section enrollment parent identity is immutable", () => {
@@ -112,13 +119,19 @@ test("learner identity lifecycle preserves suspension but closes role/end state"
   );
 });
 
-test("delivery and faculty chains remain database scoped", () => {
+test("delivery and faculty chains remain scoped and cannot reactivate under inactive parents", () => {
   assert.match(canonical, /db02_course_section_delivery_scope_guard/);
   assert.match(canonical, /offering and section must share cohort and academic period/);
+  assert.match(canonical, /Active course delivery requires ACTIVE offering, course and section/);
+  assert.match(canonical, /BEFORE INSERT OR UPDATE OF offering_id, section_id, ended_at/);
   assert.match(canonical, /db02_schedule_event_delivery_scope_guard/);
   assert.match(canonical, /delivery must belong to the same section/);
-  assert.match(canonical, /Course teaching assignment requires FACULTY role/);
-  assert.match(canonical, /Section faculty assignment requires FACULTY role/);
+  assert.match(canonical, /Active teaching assignment requires active delivery chain and membership/);
+  assert.match(canonical, /Active section faculty assignment requires ACTIVE section and membership/);
+  assert.match(canonical, /Active faculty-course association requires ACTIVE membership and course/);
+  assert.match(canonical, /Cannot reactivate faculty-course association for archived course/);
+  assert.match(canonical, /Cannot reactivate faculty assignment for archived section/);
+  assert.match(canonical, /Cannot reactivate teaching assignment without active delivery chain/);
 });
 
 test("historic parent identity freezes after dependent history exists", () => {
@@ -145,8 +158,22 @@ test("historic parent insertion locks close reparent races", () => {
   assert.match(canonical, /FROM section_schedule_events WHERE id = NEW\.schedule_event_id FOR SHARE/);
 });
 
-test("canonical DB02 preserves reversible cohort INACTIVE and zero-credit offerings", () => {
-  assert.match(canonical, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE'/);
+test("canonical DB02 preserves reversible cohort INACTIVE transaction-safely and zero-credit offerings", () => {
+  assert.doesNotMatch(canonical, /ALTER TYPE cohort_status ADD VALUE/);
+  assert.match(canonical, /ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02/);
+  assert.match(canonical, /CREATE TYPE cohort_status AS ENUM/);
+  assert.match(canonical, /'INACTIVE'/);
+  assert.match(canonical, /DROP TYPE cohort_status_pre_db02/);
   assert.match(canonical, /db02_course_offerings_credits_ck/);
   assert.match(canonical, /credits IS NULL OR credits BETWEEN 0 AND 30/);
+});
+
+test("scheduled events and learner reactivation re-check active parent lifecycle", () => {
+  assert.match(canonical, /Scheduled event requires an ACTIVE section/);
+  assert.match(
+    canonical,
+    /BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status, starts_at, ends_at/,
+  );
+  assert.match(canonical, /Cannot reactivate learner program under inactive program\/cohort/);
+  assert.match(canonical, /Cannot reactivate section enrollment under inactive section\/period/);
 });
