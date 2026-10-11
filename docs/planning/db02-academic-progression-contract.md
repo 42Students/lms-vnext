@@ -66,6 +66,18 @@ Legacy class CRUD still persists:
 
 DB02 maps `upper_limit -> sections.capacity` and stages `sections.minimum_capacity` plus `sections.description`. The old class `start_date/end_date` fields are compatibility metadata for older callers and are not a second source of academic scheduling truth. Because the current backend still accepts and preserves explicit values, DB02 stages nullable `sections.start_date/end_date` solely for compatibility round-trip; academic periods and schedule events remain authoritative for teaching-calendar behavior.
 
+### Cohort archive is not legacy INACTIVE
+
+Legacy batch status exposes reversible `ACTIVE / INACTIVE / COMPLETED`; vNext additionally has `PLANNED / ARCHIVED`. DB02 keeps those meanings separate instead of mapping INACTIVE to ARCHIVED.
+
+Database state-machine boundary:
+
+- direct create in `ARCHIVED` is rejected;
+- `ACTIVE <-> INACTIVE` remains valid compatibility behavior;
+- archive is accepted only from `PLANNED` or `COMPLETED`, matching the native cohort service;
+- once `ARCHIVED`, status is terminal at the database boundary;
+- archive does not stand in for legacy hard delete.
+
 ### History-safe legacy batch delete compatibility
 
 The active legacy batch delete path hard-deletes a batch when it has no linked classes; the current vNext native lifecycle separately supports cohort archive. DB02 therefore keeps these semantics distinct.
@@ -116,6 +128,12 @@ DB02 preserves that behavior:
 - duplicate positions are accepted;
 - application reads/reorder projections must use a deterministic tie-break (display order, then stable row ID);
 - an API-phase bulk reorder may improve UX, but it must not retroactively make source-valid duplicate order impossible unless product explicitly approves that behavior change.
+
+### Materialized curriculum type is historical identity
+
+Before materialization, a curriculum row may change between CORE and ELECTIVE just as the legacy semester-course mapping may edit its mandatory flag. Once a CORE offering references that exact `program_term_courses.id`, changing the row's type would contradict persisted delivery history.
+
+DB02 therefore permits credits/display-order edits, but rejects a type change on a curriculum row referenced by an offering. CORE-offering validation takes `FOR SHARE` on the curriculum row, so materialization and type rewrite serialize in either concurrency order.
 
 ### Stable term identity on course offerings
 
