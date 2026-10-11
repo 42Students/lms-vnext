@@ -68,6 +68,9 @@ test("faculty assignment requires active FACULTY membership without wiping old o
   assert.match(sql, /owner_status IS DISTINCT FROM 'ACTIVE'/);
   assert.match(sql, /membership_roles membership_role/);
   assert.match(sql, /membership_role\.role::text = 'FACULTY'/);
+  assert.match(sql, /faculty_role_row_id IS NULL/);
+  assert.match(sql, /FROM college_memberships membership[\\s\\S]*?FOR SHARE/);
+  assert.match(sql, /FROM membership_roles membership_role[\\s\\S]*?FOR SHARE/);
   assert.match(sql, /NEW\.faculty_owner_membership_id[\s\S]*IS DISTINCT FROM OLD\.faculty_owner_membership_id/);
   assert.match(sql, /IF newly_assigned AND/);
   assert.match(contract, /Historical owner/);
