@@ -28,6 +28,21 @@ test("lexer excludes comments, SQL literals and dollar-quoted function bodies", 
   assert.doesNotMatch(stripSqlLiterals(sql), /fake_line|fake_block|fake_string|fake_plpgsql/);
 });
 
+test("DB27 lexes nested PostgreSQL block comments without phantom tables", () => {
+  const sql = "/* outer /* inner */ CREATE TABLE phantom(id int); */ CREATE TABLE actual(id int);";
+  assert.deepEqual(inspect(candidate("nested.sql", sql)).create, ["actual"]);
+});
+
+test("DB27 lexes E-prefixed backslash strings without phantom DDL", () => {
+  const sql = String.raw`SELECT E'ignore \' CREATE TABLE phantom(id int)'; CREATE TABLE actual(id int);`;
+  assert.deepEqual(inspect(candidate("escaped.sql", sql)).create, ["actual"]);
+});
+
+test("DB27 hides quoted pseudo-DDL without losing normal quoted table names", () => {
+  const sql = 'SELECT "CREATE TABLE phantom" FROM users; CREATE TABLE "actual"(id int);';
+  assert.deepEqual(inspect(candidate("quoted.sql", sql)).create, ["actual"]);
+});
+
 test("source-only and superseded SQL cannot silently become active drafts", () => {
   assert.equal(classify("-- SUPERSEDED DB09\nCREATE TABLE old (id int);"),"SUPERSEDED");
   assert.equal(classify("-- DB09 SOURCE REFERENCE ONLY\n-- NO DDL\n"),"REFERENCE_ONLY");
