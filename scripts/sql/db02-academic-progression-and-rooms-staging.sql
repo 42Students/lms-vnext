@@ -563,7 +563,26 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
 -- ---------------------------------------------------------------------------
 -- Legacy batch status is ACTIVE | INACTIVE | COMPLETED and INACTIVE is editable/reversible.
 -- ARCHIVED is a separate vNext terminal/storage concern and cannot substitute for INACTIVE.
-ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE';
+--
+-- drizzle-orm's PostgreSQL migrator wraps every pending migration in one transaction.
+-- PostgreSQL does not permit a value introduced by ALTER TYPE ... ADD VALUE to be used
+-- until that transaction commits. cohort_status is isolated to cohorts.status in the
+-- current snapshot, so recreate the enum transactionally and preserve existing values.
+ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT;
+ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02;
+CREATE TYPE cohort_status AS ENUM (
+  'PLANNED',
+  'ACTIVE',
+  'INACTIVE',
+  'COMPLETED',
+  'ARCHIVED'
+);
+ALTER TABLE cohorts
+  ALTER COLUMN status TYPE cohort_status
+  USING status::text::cohort_status;
+ALTER TABLE cohorts
+  ALTER COLUMN status SET DEFAULT 'PLANNED'::cohort_status;
+DROP TYPE cohort_status_pre_db02;
 
 -- Preserve the editable legacy ACTIVE/INACTIVE/COMPLETED states while protecting vNext's
 -- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
