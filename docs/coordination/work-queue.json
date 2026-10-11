@@ -1707,7 +1707,7 @@
         "docs/planning/sql/db06-assessment-parent-scope-candidate.sql",
         "tests/db028-assessment-parent-scope.test.mjs"
       ],
-      "status": "IN_PROGRESS",
+      "status": "BLOCKED",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T07:42:10.439Z",
       "startedAt": "2026-10-11T07:42:23.717Z",
@@ -1737,12 +1737,18 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T07:42:23.717Z",
           "reason": "Reviewing DB06 staged assessment parent-scope guard, current registered schema and migration head before promotion."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T07:58:09.728Z",
+          "reason": "Source promotion is registered as 0041 with full acceptance suite, but required real PostgreSQL PG01–PG16 execution cannot run in the current connector-only runtime. Do not count authored tests as completion."
         }
       ],
-      "latestEvidenceSha": "7d61e776a608b9b9ddf12dda95193ffbd65273f0",
+      "latestEvidenceSha": "3c88d2d99a34061b82766a0e6dba920d06d7f8f5",
       "verificationEvidence": [],
       "blockers": [
-        "Staged draft unregistered; Chat 1 owns numbered Drizzle migration. Must resolve parent-reparent/cross-writer concurrency and run 16 real PostgreSQL witnesses before completion/verification."
+        "0041 implementation and PG01–PG16 acceptance suite are committed, but this chat runtime has no repository checkout/disposable PostgreSQL and shell network access cannot fetch the private repo. 0 PostgreSQL witnesses are claimed executed. This is NOT a GitHub Actions billing blocker; resume with any approved executable checkout + disposable PostgreSQL.",
+        "When DB02/DB05 staged parent-integrity migrations are promoted, reconcile overlapping delivery/offering/section parent guards and preserve DB06 lock ordering before final phase certification."
       ],
       "completionNote": null
     },
