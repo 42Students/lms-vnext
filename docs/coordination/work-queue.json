@@ -2148,6 +2148,41 @@
           "reason": "Chat 5 started exact 56-field template-registry disposition against current pinned runtime consumers."
         }
       ]
+    },
+    {
+      "id": "DB-038",
+      "phase": "DATABASE",
+      "title": "Stage DB06 submitted assessment immutability and retention",
+      "scope": "Source-only follow-up to DB-009/DB-030: preserve submitted quiz attempts/answer snapshots and learner assignment payload as immutable retained history; freeze quiz/question/option definition fields once attempts exist; block hard-delete/truncate of submitted assessment history. No journal registration or API cutover.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db06-assessment-history-retention-candidate.sql",
+        "docs/planning/database-parity-db06-assessment-retention-contract.md",
+        "tests/db06-assessment-retention-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh implementation follow-up: DB-009 left quiz attempt/answer is_deleted retention unresolved; 0042 freezes attribution only and does not freeze score/snapshots or prevent hard deletion."
+        }
+      ]
     }
   ],
   "eventModel": {
