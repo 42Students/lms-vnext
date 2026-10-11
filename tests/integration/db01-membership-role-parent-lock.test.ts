@@ -153,6 +153,7 @@ describe("DB01 parent-lock role mutation against membership END", () => {
     await withFixture(async (f) => {
       const endWriter: PoolClient = await pool.connect();
       let transactionOpen = false;
+      let inFlightGrant: Promise<{ accepted: true } | { accepted: false; error: unknown }> | null = null;
       try {
         await endWriter.query("BEGIN");
         transactionOpen = true;
@@ -162,7 +163,7 @@ describe("DB01 parent-lock role mutation against membership END", () => {
         );
 
         let settled = false;
-        const grant = drizzlePeopleRepository
+        inFlightGrant = drizzlePeopleRepository
           .addMembershipRole(f.membershipId, "MENTOR", mutationFor(f))
           .then(
             () => ({ accepted: true as const }),
@@ -177,7 +178,7 @@ describe("DB01 parent-lock role mutation against membership END", () => {
 
         await endWriter.query("COMMIT");
         transactionOpen = false;
-        const outcome = await grant;
+        const outcome = await inFlightGrant;
         expect(outcome.accepted).toBe(false);
         if (!outcome.accepted) {
           expect(outcome.error).toMatchObject({ code: "MEMBERSHIP_ENDED" });
@@ -188,6 +189,11 @@ describe("DB01 parent-lock role mutation against membership END", () => {
           await endWriter.query("ROLLBACK");
         }
         endWriter.release();
+        // Settle the repository transaction even when an earlier assertion
+        // fails, before fixture teardown can delete this membership.
+        if (inFlightGrant) {
+          await inFlightGrant;
+        }
       }
     });
   });
