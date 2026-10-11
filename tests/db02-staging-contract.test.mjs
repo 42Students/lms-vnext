@@ -155,7 +155,7 @@ test("DB02 user deletion scrubs progression actor references without creating ac
 });
 
 
-test("DB02 concurrency harness preserves all thirteen race families", () => {
+test("DB02 concurrency harness preserves all fifteen race families", () => {
   for (const label of [
     "Race 1:",
     "Race 2A:",
@@ -170,6 +170,8 @@ test("DB02 concurrency harness preserves all thirteen race families", () => {
     "Race 6B:",
     "Race 7A:",
     "Race 7B:",
+    "Race 8A:",
+    "Race 8B:",
   ]) {
     assert.match(concurrencyShell, new RegExp("# " + label));
   }
@@ -188,6 +190,8 @@ test("DB02 concurrency harness preserves all thirteen race families", () => {
     "PASS curriculum race B",
     "PASS period race A",
     "PASS period race B",
+    "PASS cohort delete race A",
+    "PASS cohort delete race B",
   ]) {
     assert.ok(concurrencyShell.includes(pass), "missing concurrency witness: " + pass);
   }
@@ -247,4 +251,27 @@ test("cohort expected-end edits cannot exclude materialized academic state", () 
   assert.match(guard, /FROM cohort_progression_state cps[\s\S]*ap\.end_date > expected_end_day/);
   assert.match(sql, /WHERE c\.id = NEW\.cohort_id[\s\S]*FOR SHARE OF c/);
   assert.match(acceptanceSql, /cohort expected-end shrink excluded existing academic state/);
+});
+
+
+test("history-free cohort hard delete cascades only initializer state", () => {
+  assert.match(
+    sql,
+    /cohort_id uuid PRIMARY KEY REFERENCES cohorts\(id\) ON DELETE CASCADE/,
+  );
+  assert.match(
+    sql,
+    /cohort_id uuid NOT NULL REFERENCES cohorts\(id\) ON DELETE RESTRICT/,
+  );
+  const guardStart = sql.indexOf("CREATE FUNCTION db02_guard_progression_state_identity()");
+  const guardEnd = sql.indexOf("CREATE TRIGGER db02_progression_state_identity_guard", guardStart);
+  assert.ok(guardStart !== -1 && guardEnd > guardStart);
+  const guard = sql.slice(guardStart, guardEnd);
+  assert.match(guard, /TG_OP = 'DELETE'/);
+  assert.match(guard, /pg_trigger_depth\(\) >= 2/);
+  assert.match(guard, /not directly deletable/);
+  assert.match(acceptanceSql, /history-free cohort delete did not cascade initializer state/);
+  assert.match(acceptanceSql, /cohort with progression history was deleted/);
+  assert.match(concurrencyShell, /PASS cohort delete race A/);
+  assert.match(concurrencyShell, /PASS cohort delete race B/);
 });
