@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12",
+  "updatedOn": "2026-10-12T02:51:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4162,17 +4162,27 @@
         "scripts/verify-db09-team-owner-source.mjs",
         "tests/db09-team-owner-lifecycle.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "656b71e4ab0d2362302061925e0a93da2b7734e6",
+      "verificationEvidence": [
+        "CONNECTOR_SOURCE_STAGING_ASSERTIONS_32_OF_32_2026-10-12",
+        "docs/planning/sql/db09-team-owner-lifecycle-candidate.sql@52b0351069b6a0f65e398c998a9017171ca81128",
+        "docs/planning/db09-team-owner-lifecycle-audit.md@11af01b7f526a08d3b70b2834f11f7b299bd4e6a",
+        "scripts/verify-db09-team-owner-source.mjs@1f31a6283ef13cbbd24313582d1c31164478b5a6",
+        "tests/db09-team-owner-lifecycle.test.mjs@656b71e4ab0d2362302061925e0a93da2b7734e6"
+      ],
+      "blockers": [
+        "Chat 1/W01 must add ownerMembershipId and live-owner constraints to canonical Drizzle, order DB09 collaboration/team dependencies, register one migration, replay from zero, and avoid duplicate composite parent keys.",
+        "API/runtime cutover must set owner membership on TPO-created/copied/approved jobs and use the atomic reassign/remove transaction; creator identity must remain unchanged.",
+        "Authored Node/PostgreSQL witnesses have not been executed in this chat. 32/32 connector assertions are source/staging evidence only."
+      ],
+      "completionNote": "Closed DB-069 source/staging contract. Added mutable placement_jobs.owner_membership_id distinct from creator provenance; same-college active placement-owner scope; conservative live-job owner backfill + preflight + DRAFT/PUBLISHED owner CHECK; delegated FACULTY_COORDINATOR ownership without global TPO elevation; hardened recruiter-lead owner scope; direct team identity/delete orphan guards; atomic lead+all-job reassignment before team removal; full-identity advisory lock serialization; closed-job republish revalidation. Authored disposable PG tests cover direct SQL and three race shapes. Connector read-only audit 32/32 passed. No registered migration or PostgreSQL execution claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-12T02:46:00+05:30",
       "startedAt": "2026-10-12T02:46:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-12T02:51:00+05:30",
+      "completionCommitSha": "656b71e4ab0d2362302061925e0a93da2b7734e6",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4196,6 +4206,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T02:46:00+05:30",
           "reason": "Frozen Job/TpoDriveService/TpoDriveExtrasService/TpoTeamService and TpoRecruiterLeadsHubService prove mutable owner assignment/reassignment and remove-member orphan prevention."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T02:51:00+05:30",
+          "reason": "Chat 3 completed source/staging ownership lifecycle, SQL parse-shape audit and authored direct-SQL/race witnesses; migration/PG/runtime verification intentionally remains downstream."
         }
       ]
     },
