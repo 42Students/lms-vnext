@@ -556,8 +556,11 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  IF OLD.updated_at > statement_timestamp()
-     OR NEW.updated_at > statement_timestamp() THEN
+  -- A prior DB-owned monotonic microsecond tick can be slightly ahead of
+  -- this statement clock. Reject only a *newly supplied* future timestamp;
+  -- preserving OLD.updated_at on the incoming row is not timestamp forgery.
+  IF NEW.updated_at IS DISTINCT FROM OLD.updated_at
+     AND NEW.updated_at > statement_timestamp() THEN
     RAISE EXCEPTION 'TPO preference timestamp must not be future dated'
       USING ERRCODE = '23514';
   END IF;
