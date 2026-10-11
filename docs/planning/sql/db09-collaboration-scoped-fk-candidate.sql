@@ -522,7 +522,7 @@ BEGIN
   RETURN NEW;
 END $$;
 CREATE TRIGGER db09_tpo_user_preferences_scope_guard
-  BEFORE INSERT OR UPDATE OF college_id,user_id
+  BEFORE INSERT OR UPDATE
   ON placement_tpo_user_preferences
   FOR EACH ROW EXECUTE FUNCTION db09_assert_tpo_user_state_scope();
 CREATE TRIGGER db09_tpo_saved_views_scope_guard
