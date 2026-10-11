@@ -578,6 +578,18 @@ BEGIN
     'CORE', 0, 1
   );
 
+  failed := false;
+  BEGIN
+    UPDATE program_term_courses
+       SET type = 'ELECTIVE'
+     WHERE id = term_course_core_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'materialized CORE curriculum row changed type';
+  END IF;
+
   -- Once a CORE offering materializes the curriculum pair, removing or reparenting
   -- that program-term course would rewrite history and must fail.
   failed := false;
