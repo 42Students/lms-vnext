@@ -153,7 +153,7 @@ CREATE TABLE attendance_record_events (
   attendance_record_id uuid NOT NULL,
   schedule_event_id uuid NOT NULL
     REFERENCES section_schedule_events(id) ON DELETE RESTRICT,
-  delivery_id uuid
+  delivery_id uuid NOT NULL
     REFERENCES course_section_deliveries(id) ON DELETE RESTRICT,
   membership_id uuid NOT NULL
     REFERENCES college_memberships(id) ON DELETE RESTRICT,
