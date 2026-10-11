@@ -30,6 +30,15 @@ DECLARE
   target_section_period_id uuid;
   target_section_college_id uuid;
 BEGIN
+  -- Paired with db05-content-order-upstream-reparent.draft.sql. Both child
+  -- writers and ancestor mutations must serialize before reading scope.
+  -- READ COMMITTED is required until actual PG race acceptance is recorded.
+  IF current_setting('transaction_isolation') <> 'read committed' THEN
+    RAISE EXCEPTION 'content delivery order write requires read committed isolation pending proof'
+      USING ERRCODE = '25001';
+  END IF;
+  PERFORM pg_advisory_xact_lock(605008003::bigint);
+
   SELECT offering.id, content.delivery_id, content.status::text,
          offering.cohort_id, offering.academic_period_id,
          period.college_id, department.college_id
