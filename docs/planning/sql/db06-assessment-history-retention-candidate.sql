@@ -79,6 +79,99 @@ CREATE TRIGGER db06_quiz_history_definition_guard
 BEFORE UPDATE OF max_attempts, total_points ON course_quizzes
 FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_history_definition();
 
+-- Serialize direct SQL attempts with the same advisory-lock namespace used by
+-- submitCourseQuiz. This makes maxAttempts and sequential numbering a DB invariant.
+CREATE FUNCTION db06_guard_quiz_attempt_sequence()
+RETURNS trigger LANGUAGE plpgsql AS $db06_attempt_sequence$
+DECLARE
+  used integer;
+  allowed integer;
+BEGIN
+  PERFORM pg_advisory_xact_lock(
+    hashtext(NEW.quiz_id::text || ':' || NEW.membership_id::text),
+    6206001
+  );
+
+  SELECT q.max_attempts INTO allowed
+  FROM course_quizzes q
+  WHERE q.id = NEW.quiz_id
+  FOR SHARE;
+
+  IF allowed IS NULL THEN
+    RAISE EXCEPTION 'DB06 quiz attempt parent is missing'
+      USING ERRCODE='23503';
+  END IF;
+
+  SELECT count(*) INTO used
+  FROM quiz_attempts a
+  WHERE a.quiz_id = NEW.quiz_id
+    AND a.membership_id = NEW.membership_id;
+
+  IF used >= allowed THEN
+    RAISE EXCEPTION 'DB06 quiz max attempts reached'
+      USING ERRCODE='23514';
+  END IF;
+  IF NEW.attempt_number <> used + 1 THEN
+    RAISE EXCEPTION 'DB06 quiz attempt number must be sequential'
+      USING ERRCODE='23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$db06_attempt_sequence$;
+
+CREATE TRIGGER db06_quiz_attempt_sequence_guard
+BEFORE INSERT ON quiz_attempts
+FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_attempt_sequence();
+
+-- Keep the stored denominator equal to the authored question-point sum.
+-- Deferred checks allow create/update code to write quiz/questions in either
+-- order inside one transaction.
+CREATE FUNCTION db06_require_quiz_total_points()
+RETURNS trigger LANGUAGE plpgsql AS $db06_quiz_total$
+DECLARE
+  target_quiz uuid;
+  configured integer;
+  authored integer;
+BEGIN
+  target_quiz := CASE
+    WHEN TG_TABLE_NAME = 'course_quizzes' THEN
+      CASE WHEN TG_OP = 'DELETE' THEN OLD.id ELSE NEW.id END
+    ELSE
+      CASE WHEN TG_OP = 'DELETE' THEN OLD.quiz_id ELSE NEW.quiz_id END
+  END;
+
+  SELECT q.total_points INTO configured
+  FROM course_quizzes q
+  WHERE q.id = target_quiz;
+
+  IF configured IS NULL THEN
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+  END IF;
+
+  SELECT COALESCE(sum(qq.points), 0) INTO authored
+  FROM quiz_questions qq
+  WHERE qq.quiz_id = target_quiz;
+
+  IF authored <= 0 OR configured <> authored THEN
+    RAISE EXCEPTION 'DB06 quiz total points do not match authored questions'
+      USING ERRCODE='23514';
+  END IF;
+
+  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$db06_quiz_total$;
+
+CREATE CONSTRAINT TRIGGER db06_quiz_total_points_from_quiz
+AFTER INSERT OR UPDATE ON course_quizzes
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION db06_require_quiz_total_points();
+
+CREATE CONSTRAINT TRIGGER db06_quiz_total_points_from_questions
+AFTER INSERT OR UPDATE OR DELETE ON quiz_questions
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION db06_require_quiz_total_points();
+
 CREATE FUNCTION db06_guard_quiz_question_authoring()
 RETURNS trigger LANGUAGE plpgsql AS $db06_question_authoring$
 DECLARE
@@ -101,15 +194,8 @@ BEGIN
   END IF;
 
   IF TG_OP = 'UPDATE' AND NEW.quiz_id IS DISTINCT FROM OLD.quiz_id THEN
-    PERFORM 1 FROM course_quizzes q
-      WHERE q.id = OLD.quiz_id
-        AND q.status = 'DRAFT'
-        AND NOT EXISTS (SELECT 1 FROM quiz_attempts a WHERE a.quiz_id = OLD.quiz_id)
-      FOR UPDATE;
-    IF NOT FOUND THEN
-      RAISE EXCEPTION 'DB06 source quiz is not mutable for question reparent'
-        USING ERRCODE='23514';
-    END IF;
+    RAISE EXCEPTION 'DB06 quiz question parent is immutable'
+      USING ERRCODE='23514';
   END IF;
   RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
@@ -144,18 +230,8 @@ BEGIN
   END IF;
 
   IF TG_OP = 'UPDATE' AND NEW.question_id IS DISTINCT FROM OLD.question_id THEN
-    PERFORM 1
-      FROM quiz_questions qq
-      JOIN course_quizzes q ON q.id = qq.quiz_id
-      WHERE qq.id = OLD.question_id
-        AND q.status = 'DRAFT'
-        AND NOT EXISTS (SELECT 1 FROM quiz_attempts a WHERE a.quiz_id = q.id)
-      FOR SHARE OF qq
-      FOR UPDATE OF q;
-    IF NOT FOUND THEN
-      RAISE EXCEPTION 'DB06 source quiz is not mutable for option reparent'
-        USING ERRCODE='23514';
-    END IF;
+    RAISE EXCEPTION 'DB06 quiz option parent is immutable'
+      USING ERRCODE='23514';
   END IF;
   RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
@@ -417,3 +493,8 @@ $db06_retention_preflight$;
 -- J attempt without exactly one answer per question fails at COMMIT.
 -- K attempt score/max_score must equal answer sums/current quiz total_points.
 -- L preflight refuses existing inconsistent attempt/answer history.
+
+-- Additional acceptance:
+-- M direct SQL attempt_number gaps or max-attempt overflow fail.
+-- N service/direct attempt races share advisory lock namespace 6206001.
+-- O quiz total_points must equal sum(question.points) at COMMIT.
