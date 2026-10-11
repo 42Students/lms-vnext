@@ -49,6 +49,11 @@ test("DB04 staged declarations exist but are not silently promoted", () => {
     /db04-profile-education-images\.staged/,
     "W01 must explicitly promote DB04 staged education/image schema",
   );
+  assert.doesNotMatch(
+    barrel,
+    /profile-verification/,
+    "W01 must promote DB04 verification/receipt parents in the same reviewed integration batch",
+  );
 });
 
 test("DB04 receipt composite parents required by child FKs are staged", () => {
