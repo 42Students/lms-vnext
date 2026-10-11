@@ -2232,17 +2232,17 @@
         "tests/db10-activity-audit-context-staging.test.mjs",
         "docs/planning/database-parity-db10-field-ledger.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "c8688c5265d8461272c38e07e37769afd18c0345",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Source-mapped all 13 active legacy admin_audit_log fields: 10 existing/normalized vNext targets and 3 staged additive forensic fields (actor role snapshot, request IP, User-Agent). Actor mobile remains normalized identity data. Added SQL/doc/static guards and reconciled shared DB10 ledger. Fresh connector structural audit passed 40/40; Node/PostgreSQL/API capture/retention verification remain downstream.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:55:00+05:30",
       "startedAt": "2026-10-11T13:55:30+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T14:04:00+05:30",
+      "completionCommitSha": "c8688c5265d8461272c38e07e37769afd18c0345",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2266,6 +2266,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:55:30+05:30",
           "reason": "Chat 5 began staged admin-audit actor/request-context fidelity after source confirmation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:04:00+05:30",
+          "reason": "DB-039 SQL/doc/test/ledger source stage complete; migration/API/privacy/runtime proof remains downstream."
         }
       ]
     }
