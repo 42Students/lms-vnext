@@ -76,3 +76,14 @@ test("faculty section assignments cannot link to another college", () => {
   assert.match(sql, /db02_section_faculty_assignment_tenant/);
   assert.match(sql, /section_college <> membership_college/);
 });
+
+test("history-producing inserts lock section parents against reparent races", () => {
+  assert.match(sql, /CREATE FUNCTION db02_lock_section_history_parent\(\)/);
+  assert.match(sql, /FROM sections WHERE id = NEW\.section_id FOR SHARE/);
+  for (const trigger of [
+    "db02_lock_section_for_learner_enrollment",
+    "db02_lock_section_for_faculty_assignment",
+    "db02_lock_section_for_course_delivery",
+    "db02_lock_section_for_schedule_event",
+  ]) assert.match(sql, new RegExp("CREATE TRIGGER " + trigger));
+});
