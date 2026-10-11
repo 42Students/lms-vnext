@@ -169,7 +169,9 @@ BEGIN
   IF OLD.hold_for_undo AND NEW.send_after < OLD.send_after THEN
     RAISE EXCEPTION 'NOTIFICATION_UNDO_DEADLINE_CANNOT_DECREASE' USING ERRCODE='23514';
   END IF;
-  IF OLD.status = 'PENDING'
+  -- Deny every transition into a deliverable state before due, including
+  -- FAILED->CLAIMED retries; a PENDING-only guard is bypassable via FAILED.
+  IF NEW.status IS DISTINCT FROM OLD.status
      AND NEW.status IN ('CLAIMED','HANDED_OFF','SENT')
      AND NEW.send_after > statement_timestamp() THEN
     RAISE EXCEPTION 'NOTIFICATION_NOT_DUE' USING ERRCODE='23514';
