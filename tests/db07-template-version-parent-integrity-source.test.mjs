@@ -10,6 +10,7 @@ const instance = read("src/modules/projects/instance-service.ts");
 const core = read("docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql");
 const sql = read("docs/planning/sql/db07-template-version-parent-integrity-staging.sql");
 const contract = read("docs/planning/db07-template-version-integrity-contract.md");
+const pgTest = read("tests/integration/db07-template-version-parent-integrity.test.ts");
 
 function tableBlock(name) {
   const at = schema.indexOf(`export const ${name} =`);
@@ -85,4 +86,35 @@ test("DB068 contract explicitly retains unverified acceptance", () => {
   assert.match(contract, /23503/);
   assert.match(contract, /DB07_TEMPLATE_SCOPE_ENFORCED=1/);
   assert.match(contract, /No numbered Drizzle migration/);
+});
+
+test("DB068 acceptance never runs as a falsely green unpromoted DB suite", () => {
+  assert.match(pgTest, /DB07_TEMPLATE_SCOPE_ENFORCED === "1"/);
+  assert.match(pgTest, /describe\.skipIf\(!enabled\)/);
+  assert.match(pgTest, /pg_get_constraintdef/);
+  assert.match(pgTest, /convalidated/);
+  assert.match(pgTest, /expect\(result\.rows\)\.toHaveLength\(2\)/);
+});
+
+test("DB068 negative SQL suite requires explicit disposable _test URL", () => {
+  assert.match(pgTest, /process\.env\.TEST_DATABASE_URL/);
+  assert.match(pgTest, /endsWith\("_test"\)/);
+  assert.doesNotMatch(pgTest, /\?\?\s*process\.env\.DATABASE_URL/);
+});
+
+test("DB068 acceptance is rollback-only and has both expected SQLSTATEs", () => {
+  assert.match(pgTest, /await client\.query\("BEGIN"\)/);
+  assert.match(pgTest, /await client\.query\("ROLLBACK"\)/);
+  assert.doesNotMatch(pgTest, /\bDROP SCHEMA\b|\bTRUNCATE TABLE\b/i);
+  assert.match(pgTest, /23503/);
+  assert.equal((pgTest.match(/\bit\("/g) ?? []).length, 8);
+});
+
+test("DB068 acceptance covers full template/version mismatch on writes and updates", () => {
+  assert.match(pgTest, /rejects a college assignment using a different template/);
+  assert.match(pgTest, /rejects an update moving an assignment/);
+  assert.match(pgTest, /rejects a project instance using a different template/);
+  assert.match(pgTest, /rejects mutating a project instance/);
+  assert.match(pgTest, /newer same-template version/);
+  assert.match(pgTest, /assignment to remain active after materialization/);
 });
