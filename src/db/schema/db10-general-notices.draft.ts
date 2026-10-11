@@ -19,6 +19,7 @@ import { colleges } from "./colleges";
 import { organizations } from "./organizations";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
+import { activityEvents } from "./activity";
 
 export const db10GeneralNotices = pgTable(
   "general_notification_outbox",
@@ -29,7 +30,8 @@ export const db10GeneralNotices = pgTable(
     collegeId: uuid("college_id").notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     /** Producer-issued stable logical event; not a foreign ID from the legacy DB. */
-    sourceEventId: uuid("source_event_id").notNull(),
+    sourceEventId: uuid("source_event_id").notNull()
+      .references(() => activityEvents.id, { onDelete: "restrict" }),
     event: varchar("event", { length: 50 }).notNull(),
     /** Legacy LEARNER / FACULTY / RECRUITER is a role, not a user PK type. */
     recipientType: varchar("recipient_type", { length: 16 }).notNull(),
@@ -56,6 +58,8 @@ export const db10GeneralNotices = pgTable(
     claimFence: integer("claim_fence").notNull().default(0),
     sentAt: timestamp("sent_at", { withTimezone: true }),
     failureCode: varchar("failure_code", { length: 60 }),
+    /** Support-safe explanation; never raw provider body, tokens or contact PII. */
+    safeFailureReason: varchar("safe_failure_reason", { length: 500 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     /** HMAC over tenant + sourceEventId + event + role + recipient + channel; not raw PII. */
