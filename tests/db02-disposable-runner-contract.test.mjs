@@ -11,6 +11,7 @@ const concurrencyScripts = [
   "db02-postgres-concurrency-unregistered.sh",
   "db02-promotion-readiness-concurrency-unregistered.sh",
   "db02-curriculum-type-history-concurrency-unregistered.sh",
+  "db02-role-reactivation-concurrency-unregistered.sh",
 ].map((name) => ({
   name,
   source: readFileSync(
@@ -100,6 +101,7 @@ test("runner inventory includes combined and focused concurrency suites", () => 
     "db02-postgres-concurrency-unregistered.sh",
     "db02-promotion-readiness-concurrency-unregistered.sh",
     "db02-curriculum-type-history-concurrency-unregistered.sh",
+  "db02-role-reactivation-concurrency-unregistered.sh",
   ]) {
     assert.ok(runner.includes(path), "missing concurrency suite: " + path);
   }
