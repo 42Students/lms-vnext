@@ -50,3 +50,18 @@ test("chronology projection checks are deferred from both sides", () => {
     /db09_message_thread_projection_from_thread_guard[\s\S]*AFTER INSERT OR UPDATE ON placement_tpo_message_threads[\s\S]*DEFERRABLE INITIALLY DEFERRED/,
   );
 });
+
+
+test("message thread identity is immutable and history is append only", () => {
+  const b = body("db09_restrict_message_thread_update");
+  assert.match(b, /TG_OP = 'DELETE'/);
+  assert.match(b, /message thread history is append-only/);
+  for (const field of ["id", "college_id", "recruiter_user_id", "job_id", "created_at"]) {
+    assert.match(b, new RegExp(`NEW\\.${field} IS DISTINCT FROM OLD\\.${field}`));
+  }
+  assert.match(b, /message thread identity is immutable/);
+  assert.match(
+    sql,
+    /CREATE TRIGGER db09_message_thread_update_guard\s+BEFORE UPDATE OR DELETE ON placement_tpo_message_threads/,
+  );
+});
