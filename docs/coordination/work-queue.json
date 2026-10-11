@@ -1994,14 +1994,14 @@
         "docs/planning/database-parity-db06-history-contract.md",
         "tests/db06-history-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:00:53.475Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T08:01:43.463Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2023,6 +2023,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:00:53.475Z",
           "reason": "Chat 1 claims source-only DB06 history staging follow-up after DB-030 runtime block."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T08:01:43.463Z",
+          "reason": "Staging append-only assignment grade and attendance correction event tables from DB-009 source semantics; no journal/schema-barrel registration."
         }
       ]
     }
