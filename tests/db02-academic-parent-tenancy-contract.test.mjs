@@ -94,7 +94,7 @@ test("section enrollment matches cohort/period and requires active parents", () 
   assert.match(canonical, /NEW\.academic_period_id <> target_period/);
   assert.match(canonical, /learner_status_value IS DISTINCT FROM 'ACTIVE'/);
   assert.match(canonical, /target_status IS DISTINCT FROM 'ACTIVE'/);
-  assert.match(canonical, /period_status_value IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(canonical, /period_status_value = 'CLOSED'/);
   assert.match(canonical, /FROM learner_program_enrollments[\s\S]*FOR SHARE/);
   assert.match(canonical, /FROM sections[\s\S]*FOR SHARE/);
 });
@@ -175,5 +175,5 @@ test("scheduled events and learner reactivation re-check active parent lifecycle
     /BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status, starts_at, ends_at/,
   );
   assert.match(canonical, /Cannot reactivate learner program under inactive program\/cohort/);
-  assert.match(canonical, /Cannot reactivate section enrollment under inactive section\/period/);
+  assert.match(canonical, /Cannot reactivate section enrollment under inactive section\/closed period/);
 });
