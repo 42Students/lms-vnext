@@ -41,6 +41,9 @@ test("the original field-map ledger is intentionally NOT mutated by this overlay
 test("wrong pinned source blob fails closed",()=>{
   assertError(verify(primary,triage,"0".repeat(40)),"PINNED_INVENTORY_BLOB_DRIFT");
 });
+test("omitting a source blob SHA fails closed instead of disabling provenance",()=>{
+  assertError(reconcileDb01Triage(primary,triage),"PINNED_INVENTORY_BLOB_DRIFT");
+});
 test("wrong oracle SHA fails closed",()=>{
   const t=clone(triage);t.sourceInventory.legacyBackendSha="f".repeat(40);
   assertError(verify(primary,t),"LEGACY_ORACLE_DRIFT");
