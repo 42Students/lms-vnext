@@ -6,15 +6,15 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "PICKED",
+  "activeTaskId": "DB-065",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB058_TEST_TARGET_GUARD_COMMITTED_NOT_EXECUTED",
-    "updatedOn": "2026-10-11",
-    "observedMainSha": "78e2c9bd1b429864f4414643c66028132bc4271c",
+    "checkpointKind": "DB065_PHASE_GATE_PREFLIGHT_PICKED",
+    "updatedOn": "2026-10-12T00:42:19+05:30",
+    "observedMainSha": "7874ae446a3e7a80effc5648b6461580c646ae90",
     "lastWorkerMergedSha": "a17c5cbcde72a3d19fc62b156fad8dd171f5b07d",
-    "summary": "DB-058 source-complete: all five DB18 suites now preflight reusable disposable target guard. 15 Node safety regression cases authored; 13/13 connector source assertions passed. No Node/Vitest/PG test runs, verified count unchanged."
+    "summary": "Independent read-only DATABASE shared coordination integrity checker reserved. No migration, schema barrel, CI or live DB changes."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -90,7 +90,7 @@
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
     "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
-  "nextAction": "Refresh global DATABASE queue and pick next truly available non-overlapping database integrity gap. Independently execute DB058 tests when a runnable repo checkout is available; do not equate source check with DB-verified.",
+  "nextAction": "Implement and independently execute 28 Node regressions for DB-065 read-only cross-worker phase gate, then mark source-complete with evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -155,7 +155,8 @@
     "DB-018",
     "DB-049",
     "DB-054",
-    "DB-058"
+    "DB-058",
+    "DB-065"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -180,7 +181,7 @@
     "DB-054",
     "DB-058"
   ],
-  "lastPickedAt": "2026-10-11T15:12:23.108Z",
+  "lastPickedAt": "2026-10-12T00:42:19+05:30",
   "lastCompletedAt": "2026-10-11T15:18:26.270Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
