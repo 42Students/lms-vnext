@@ -70,10 +70,17 @@ for (const field of matrix.fields) {
     errors.push("Missing manifest gate: " + source + " -> " + field.criticalAcceptanceGate);
   }
   const decision = decisionById.get(source);
-  if (!decision || decision.disposition !== "OPEN") {
-    // A later verified/retired disposition must update this ledger and its
-    // evidence on the same SHA; a stale checked status may not silently pass.
-    errors.push("Missing/open status changed without original gap handoff: " + source);
+  const needsUnresolvedDecision =
+    classification === "MISSING_OR_UNPROVEN" ||
+    classification === "REMODELED_NEEDS_PROOF" ||
+    source === "learner_content_progress.is_deleted";
+  if (needsUnresolvedDecision && !decision) {
+    errors.push("Missing mandatory semantic-decision row: " + source);
+  }
+  if (decision && field.decisionStatus === "OPEN" && decision.disposition !== "OPEN") {
+    // A later approved verification/retirement must update this tracker and
+    // provide its evidence on the same exact revision, never silently pass.
+    errors.push("Decision changed without original-gap handoff: " + source);
   }
   const workflowVerified = current.semanticVerification === "WORKFLOW_VERIFIED";
   const postgresPassed = current.runtimeDatabaseVerification === "PASS";
