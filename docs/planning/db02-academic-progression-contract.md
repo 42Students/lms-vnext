@@ -381,3 +381,14 @@ The canonical DB02 term/version guard does not yet enforce (1), (3), or (4). **S
 
 **Dependent API contracts:** all application promotions must use a versioned CAS predicate, return a stale-conflict response to the loser and deactivate outgoing teaching assignments transactionally. DB03 elective checks must use the canonical cohort current term/year and target program, never an independent academic-period-number heuristic.
 
+
+## DB02 canonical consolidation and curriculum history preservation (2026-10-11, Chat 4)
+
+The source-backed promotion-readiness and materialized-CORE-curriculum checks are **now part of the single canonical UNREGISTERED** `scripts/sql/db02-academic-progression-and-rooms-staging.sql` (commit `087013aaa8942532f063716d18286b9241ab3584`). The former `db02-promotion-readiness-guard.draft.sql` and `db02-curriculum-type-history-guard.draft.sql` files were intentionally deleted after consolidation. **Do not apply these obsolete draft filenames and do not duplicate their functions/triggers in a numbered migration.**
+
+- Promotion readiness: existing `ACTIVE` cohort, next program-specific `program_terms` row must be active, and at least one curriculum mapping must exist. `FOR SHARE` locks serialize races with target semester deactivation or last course deletion. Service-level version/CAS remains mandatory; staffing is not an unconditional DB promotion requirement.
+- Historical CORE offering identity: `program_term_courses.type` may change only while no CORE offering already materializes that fixed curriculum row. Unused curriculum metadata can still be edited; `credits` and `display_order` remain editable after materialization.
+- Disposable PostgreSQL witnesses authored: `scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql`, `scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh`, `scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql`, and `scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh`.
+- Source tests: `tests/db02-promotion-readiness-contract.test.mjs` and `tests/db02-curriculum-type-history-contract.test.mjs`, both reading only canonical DB02 SQL.
+
+**Runtime gate unchanged:** Chat 1 must register the canonical DB02 migration and run clean PostgreSQL replay, all DB02 acceptance/concurrency cases and role/tenant checks. Until then DB-005 remains `IN_PROGRESS`, runtime verified `0`.
