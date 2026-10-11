@@ -422,7 +422,7 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "656ed80173eacf744f9ab66d125733c7e44c7177",
+      "latestEvidenceSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
       "verificationEvidence": [],
       "blockers": [
         "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering. Classroom same-college guard is companion-only, NOT separately registered; canonical history draft owns columns/index.",
@@ -435,7 +435,9 @@
         "LESSON_DISCUSSION_TENANT_PG_PENDING: Replacement guard joins owning course college, offering period, optional delivery/section period and author/resolver colleges; upstream reparent/race tests remain open.",
         "COURSE_PARENT_DEPARTMENT_UPSTREAM: Canonical db05-course-parent-graph-guard plus same-lock db05-department-college-move companion are UNREGISTERED, not PG race tested; academic period/offering/section reparent still unproven.",
         "COURSE_PRIVATE_RECEIPT_SCOPE: Shared DB05/DB06/DB16 private course receipt guard UNREGISTERED; consumption/file link, scanner/generation, cross-college and upstream reparent PostgreSQL acceptance OPEN.",
-        "CONTENT_DELIVERY_ORDER_INVARIANTS: Staged DB05 content order same-offering/cohort/period/college guard unregistered; direct SQL duplicate sequence per lesson/delivery and upstream reparent/race acceptance NOT RUN."
+        "CONTENT_DELIVERY_ORDER_INVARIANTS: Staged DB05 content order same-offering/cohort/period/college guard unregistered; direct SQL duplicate sequence per lesson/delivery and upstream reparent/race acceptance NOT RUN.",
+        "DB05_SOURCE_PARITY_OPEN: Seven isolated SQL drafts plus companions are unregistered; 25 source semantic decisions remain, 0/92 database verified. Lesson authoring flags/points/deadline, course card allowed_for_display=0, metadata code precedence, lesson ordering per-delivery/per-lesson unique guard require consumer cutover.",
+        "DB05_POSTGRES_GATE_NOT_EXECUTED: Other workers staged canonical deferrable scoped order companion; Node tests authored, no actual PostgreSQL replay, race/tenant/metadata negative or accepted CI/run. Do not enable until independent PostgreSQL proof."
       ],
       "completionNote": null,
       "pickedBy": 6,
@@ -479,7 +481,8 @@
         "CHAT06_PARENT_AND_LESSON_DISCUSSION_SCOPE_COMPANIONS: Staged db05-course-parent-graph-guard.draft.sql (same-college and recursive cycle + child/offering department-move guard) and db05-lesson-discussions-same-college.draft.sql (course department/period/optional delivery/author-resolver tenant scope); companion-only, unregistered, no duplicate migrations. New 7 Node test definitions authored NOT RUN, read-only structural source checks 19/19 true, PG negative/races NOT RUN. W01 must integrate guard once and validate upstream department/period reparent. Evidence cd1081a9fccaa0064d8fb23dc0e7913af97319bc.",
         "CHAT06_PRIVATE_RECEIPT_AND_PARENT_GATES_20261011: PR #82 a12ef3b deduplicated parent SQL candidate; PR #83 72fbfce recorded canonical parent + department upstream companion; PR #86 4011dce fixed staged receipt import; PR #87 9cd0bcc staged unregistered cross-college receipt guard; PR #88 a862d47 recorded separate DB06/DB16 companion, with static tests authored and GitHub-source assertions passed. PostgreSQL, node:test suite, tsc/build/CI NOT accepted; still 0 formally verified DB05 fields. W01 sole migration integrator.",
         "CHAT06_CONTENT_DELIVERY_ORDER_SCOPE_20261011: PR #91 e5033dcd staged unregistered ordering scope guard checking same offering, scoped delivery, course/period/section college, cohort and term, archived content; PR #92 1d2349f2 tracked as companion. Per-lesson/delivery sequence uniqueness and upstream reparent remain blocked; 16+9 GitHub source assertions pass, authored Node tests NOT executed, no PG/CI acceptance. DB008 stays IN_PROGRESS.",
-        "CHAT06_PRIVATE_RECEIPT_OBJECT_KEY_EXACT_SHAPE: PR #94 merged 656ed80173eacf744f9ab66d125733c7e44c7177; staged UNREGISTERED receipt college guard now validates exact private/<college>/<membership>/<namespace>/<uuid> shape (not prefix alone). Static source assertions passed, Node/PG/CI NOT executed. DB008 remains IN_PROGRESS."
+        "CHAT06_PRIVATE_RECEIPT_OBJECT_KEY_EXACT_SHAPE: PR #94 merged 656ed80173eacf744f9ab66d125733c7e44c7177; staged UNREGISTERED receipt college guard now validates exact private/<college>/<membership>/<namespace>/<uuid> shape (not prefix alone). Static source assertions passed, Node/PG/CI NOT executed. DB008 remains IN_PROGRESS.",
+        "Chat 6 SOURCE ADDITIONS: canonical lesson order uniqueness deduped; legacy lesson authoring active/enabled, points bigint, clear-deadline naive timestamp draft; legacy learner card explicit-zero visibility and metadata course-code precedence; learner visibility truth table. Latest commit 7b9ce1776f2e686bae9413537cf9f2b6716d38ed. 19 connector structural checks true; tests NOT executed."
       ]
     },
     {
