@@ -221,3 +221,17 @@ test("referenced academic period dates are stable and child validators lock peri
   assert.match(sql, /WHERE ap\.id = NEW\.current_period_id[\s\S]*FOR SHARE OF ap/);
   assert.match(acceptanceSql, /referenced academic period dates were mutable/);
 });
+
+
+test("cohort expected-end edits cannot exclude materialized academic state", () => {
+  const guardStart = sql.indexOf("CREATE FUNCTION db02_guard_cohort_period_scope()");
+  const guardEnd = sql.indexOf("CREATE TRIGGER db02_cohort_period_scope_guard", guardStart);
+  assert.ok(guardStart !== -1 && guardEnd > guardStart);
+  const guard = sql.slice(guardStart, guardEnd);
+  assert.match(guard, /NEW\.expected_end_period_id IS DISTINCT FROM OLD\.expected_end_period_id/);
+  assert.match(guard, /FROM sections s[\s\S]*ap\.end_date > expected_end_day/);
+  assert.match(guard, /FROM course_offerings co[\s\S]*ap\.end_date > expected_end_day/);
+  assert.match(guard, /FROM cohort_progression_state cps[\s\S]*ap\.end_date > expected_end_day/);
+  assert.match(sql, /WHERE c\.id = NEW\.cohort_id[\s\S]*FOR SHARE OF c/);
+  assert.match(acceptanceSql, /cohort expected-end shrink excluded existing academic state/);
+});
