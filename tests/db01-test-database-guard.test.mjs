@@ -328,3 +328,29 @@ test("DB48 remote db:reset rejects wrong target confirmation before network acce
   assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
+
+
+test("DB48 reset URL cannot redirect a locally approved authority through query parameters", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB48 process regression");
+
+  const secret = "redirectSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-reset.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          `postgresql://admin:${secret}@127.0.0.1:5432/lms_vnext_test?host=pg.internal`,
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /query parameter "host" may redirect the destructive target/);
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
