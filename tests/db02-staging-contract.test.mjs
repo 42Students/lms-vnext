@@ -155,7 +155,7 @@ test("DB02 user deletion scrubs progression actor references without creating ac
 });
 
 
-test("DB02 concurrency harness preserves all nine race families", () => {
+test("DB02 concurrency harness preserves all eleven race families", () => {
   for (const label of [
     "Race 1:",
     "Race 2A:",
@@ -166,6 +166,8 @@ test("DB02 concurrency harness preserves all nine race families", () => {
     "Race 4B:",
     "Race 5A:",
     "Race 5B:",
+    "Race 6A:",
+    "Race 6B:",
   ]) {
     assert.match(concurrencyShell, new RegExp("# " + label));
   }
@@ -180,10 +182,26 @@ test("DB02 concurrency harness preserves all nine race families", () => {
     "PASS offering race B",
     "PASS event race A",
     "PASS event race B",
+    "PASS curriculum race A",
+    "PASS curriculum race B",
   ]) {
     assert.ok(concurrencyShell.includes(pass), "missing concurrency witness: " + pass);
   }
 
   assert.match(concurrencyShell, /set -euo pipefail/);
   assert.match(concurrencyShell, /DB02 concurrency acceptance PASS/);
+});
+
+
+test("CORE offering locks curriculum and materialized curriculum cannot be deleted", () => {
+  const offeringGuardStart = sql.indexOf("CREATE FUNCTION db02_guard_course_offering_program_term_scope()");
+  const offeringGuardEnd = sql.indexOf("CREATE TRIGGER db02_course_offering_program_term_guard", offeringGuardStart);
+  assert.ok(offeringGuardStart !== -1 && offeringGuardEnd > offeringGuardStart);
+  const offeringGuard = sql.slice(offeringGuardStart, offeringGuardEnd);
+  assert.match(offeringGuard, /FROM program_term_courses ptc[\s\S]*FOR SHARE/);
+  assert.match(sql, /CREATE TRIGGER db02_program_term_course_identity_guard/);
+  assert.match(sql, /CREATE TRIGGER db02_program_term_course_delete_guard/);
+  assert.match(sql, /Program-term course cannot be removed after an offering exists/);
+  assert.match(acceptanceSql, /materialized curriculum row was deleted/);
+  assert.match(acceptanceSql, /program-term course identity was rewritten/);
 });
