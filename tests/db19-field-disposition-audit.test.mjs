@@ -114,3 +114,35 @@ test('missing field source provenance is a structural error, not just a warning 
   assert.equal(result.counts.rowsMissingSourceEvidence, 1);
   assert.ok(result.errors.some(x => x.code === 'FIELD_WITHOUT_SOURCE_EVIDENCE'));
 });
+test('full-domain audit rejects mixed frozen legacy oracle SHAs', () => {
+  const entries = DOMAIN_SUFFIXES.map((suffix,i) => {
+    const entry = ledger(suffix, 'table_' + i);
+    entry.ledger.domain = suffix.toUpperCase();
+    entry.ledger.sourceSha = i === 0 ? 'a'.repeat(40) : 'b'.repeat(40);
+    return entry;
+  });
+  const result = auditLedgers(entries, { enforceFloor: false });
+  assert.ok(result.errors.some(x => x.code === 'MIXED_LEGACY_ORACLE_SHAS'));
+});
+test('full-domain audit rejects mismatched filename/domain identity', () => {
+  const entries = DOMAIN_SUFFIXES.map((suffix,i) => {
+    const entry = ledger(suffix,'table_'+i);
+    entry.ledger.domain = suffix.toUpperCase();
+    entry.ledger.sourceSha = 'c'.repeat(40);
+    return entry;
+  });
+  entries[0].ledger.domain = 'DB00_WRONG_DOMAIN';
+  const result = auditLedgers(entries, { enforceFloor: false });
+  assert.ok(result.errors.some(x => x.code === 'DOMAIN_FILENAME_MISMATCH'));
+});
+test('full-domain audit rejects unpinned source oracles', () => {
+  const entries = DOMAIN_SUFFIXES.map((suffix,i) => {
+    const entry = ledger(suffix,'table_'+i);
+    entry.ledger.domain = suffix.toUpperCase();
+    entry.ledger.sourceSha = 'c'.repeat(40);
+    return entry;
+  });
+  entries[3].ledger.sourceSha = 'moving-main';
+  const result = auditLedgers(entries, { enforceFloor: false });
+  assert.ok(result.errors.some(x => x.code === 'INVALID_SOURCE_ORACLE_SHA'));
+});
