@@ -170,6 +170,27 @@ CREATE TRIGGER db09_message_thread_principal_scope_guard
   ON placement_tpo_message_threads
   FOR EACH ROW EXECUTE FUNCTION db09_assert_message_thread_principal_scope();
 
+CREATE FUNCTION db09_restrict_message_thread_update() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    RAISE EXCEPTION 'message thread history is append-only'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NEW.id IS DISTINCT FROM OLD.id
+     OR NEW.college_id IS DISTINCT FROM OLD.college_id
+     OR NEW.recruiter_user_id IS DISTINCT FROM OLD.recruiter_user_id
+     OR NEW.job_id IS DISTINCT FROM OLD.job_id
+     OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
+    RAISE EXCEPTION 'message thread identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_message_thread_update_guard
+  BEFORE UPDATE OR DELETE ON placement_tpo_message_threads
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_message_thread_update();
 CREATE FUNCTION db09_assert_message_sender_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 DECLARE
