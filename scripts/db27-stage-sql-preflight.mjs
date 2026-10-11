@@ -99,7 +99,8 @@ function relationDependencies(body, lexicalErrors) {
   };
   if (create) {
    add('\\bPARTITION\\s+OF\\s+');
-   add('\\bLIKE\\s+');
+   // CREATE TABLE LIKE entries start a table element; CHECK col LIKE other_col is not a relation.
+   add('(?:\\(\\s*|,\\s*)LIKE\\s+');
    if (/\bINHERITS\b/i.test(statement)) {
     const clause = /\bINHERITS\s*\(([^)]*)\)/i.exec(statement);
     if (!clause) lexicalErrors.push("MALFORMED_INHERITS_CLAUSE");
