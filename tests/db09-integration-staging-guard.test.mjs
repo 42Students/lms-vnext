@@ -250,3 +250,30 @@ test("DB09 scheduling serializes slot capacity and coordinator scope", () => {
     /m\.user_id = NEW\.created_by_user_id[\s\S]*m\.college_id = NEW\.college_id[\s\S]*m\.status = 'ACTIVE'/,
   );
 });
+
+
+test("DB09 notification staging enforces recipient scope and undo-claim race", () => {
+  const sql = read("docs/planning/sql/db09-notification-undo-digest-candidate.sql");
+  assert.match(sql, /CREATE TRIGGER db09_notification_recipient_scope_guard/);
+  assert.match(
+    sql,
+    /r\.role = 'LEARNER'/,
+    "learner notifications must target an active learner membership",
+  );
+  assert.match(
+    sql,
+    /r\.role IN \('FACULTY','COLLEGE_ADMIN','MENTOR','TPO'\)/,
+    "faculty-channel recipients must have an active college staff role",
+  );
+  assert.match(sql, /db09_has_active_recruiter_grant/);
+  assert.match(sql, /CREATE TRIGGER db09_notification_undo_timing_guard/);
+  assert.match(sql, /NEW\.send_after < v_deadline/);
+  assert.match(sql, /CREATE FUNCTION db09_cancel_notification_undo_group/);
+  assert.match(sql, /status <> 'PENDING'/);
+  assert.match(sql, /CREATE FUNCTION db09_claim_notification_intents/);
+  assert.match(sql, /FOR UPDATE SKIP LOCKED/);
+  assert.match(sql, /g\.cancelled_at IS NULL/);
+  assert.match(sql, /g\.undo_deadline <= clock_timestamp\(\)/);
+  assert.match(sql, /claim_lease_expires_at > claimed_at/);
+  assert.match(sql, /channel = 'APP' AND status NOT IN \('PROVIDER_ACCEPTED','DELIVERED'\)/);
+});
