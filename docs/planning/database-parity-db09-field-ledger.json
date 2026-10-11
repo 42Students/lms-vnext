@@ -9972,7 +9972,7 @@
         "column": "morning_digest,recruiter_messages,requests,results_ready,follow_ups",
         "status": "REDESIGNED_BOOLEAN_COLUMNS_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Active TPO personal notification preference storage, five fixed keys. Normalize to typed boolean columns under college+user, retaining exact default values without inventing a proven dispatcher integration.",
+      "semanticDefinition": "Active persisted TPO personal-preference API state with five fixed boolean keys. Normalize to typed college+user columns and preserve exact defaults. Frozen backend GET/PUT routes and frontend service calls exist; current frozen TPO page consumption and dispatcher enforcement are not proven and must not be inferred.",
       "tenantKey": "placement_tpo_user_preferences.college_id added explicitly in vNext",
       "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
       "producerPaths": [
@@ -9980,9 +9980,11 @@
       ],
       "consumerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java",
+        "lms2-fe/src/api/Services/TpoHubService.js",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "DB-036 compares TpoSettingsHubService.myPrefs/saveMyPrefs. Five fixed booleans preserve source defaults (morningDigest FALSE, recruiterMessages/requests/resultsReady/followUps TRUE), scoped by college_id and user_id. Legacy personal prefs are active persisted UI choices; notification delivery honoring these choices is NOT established from inspected source. No runtime tests.",
+      "constraintAndLifecycleEvidence": "DB-036 compares TpoSettingsHubService.myPrefs/saveMyPrefs plus live TpoHubController GET/PUT /my-preferences and frozen frontend service methods. Five fixed booleans preserve source defaults (morningDigest FALSE; recruiterMessages/requests/resultsReady/followUps TRUE), scoped by college_id and user_id. Direct inspection of frozen TPO settings/notifications/profile pages did not prove a rendered consumer, and notification delivery honoring these personal values is NOT established. No runtime tests.",
       "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
@@ -10030,8 +10032,8 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "DB-036 tpo_college_settings notify_toggles_json and tpo_user_prefs prefs_json normalized to nine booleans",
-    "result": "Two source-active JSON object fields redesigned to fixed typed defaults; total 279/279 disposition reviewed, 0 DB/workflow verified. Other table mappings unchanged.",
+    "scope": "DB-036 notification toggle + personal preference evidence correction",
+    "result": "279/279 dispositions retained: 195 MAPPED, 84 REDESIGNED, 0 DB/workflow verified. College toggles have active UI + outbound-email consumer evidence; personal preferences have live backend/API persistence and frontend service calls, but current rendered UI consumption and dispatcher enforcement remain unproven.",
     "evidence": [
       "src/db/schema/tpo-collaboration.ts",
       "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
@@ -10039,7 +10041,9 @@
     ],
     "sourceConsumers": [
       "TpoSettingsHubService",
-      "NotificationOutboxService.OPTIONAL_EVENT_SWITCH"
+      "TpoHubController",
+      "NotificationOutboxService.OPTIONAL_EVENT_SWITCH",
+      "lms2-fe TpoHubService"
     ]
   }
 }
