@@ -7889,7 +7889,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "d66228e5f81f2c32c6d717a4b913b1507a773aa1",
+      "observedMainSha": "68f0ba3d352e2639c92eae93fde49b2568d3826d",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7900,24 +7900,24 @@
       },
       "canonicalStaging": {
         "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-        "blobSha": "fc8b1ba56981c3670386a16462f7ce5fd2baea6f",
-        "plpgsqlFunctions": 25,
-        "pairedDollarQuoteOpenings": 25,
-        "malformedSingleDollarBodies": false
-      },
-      "parentEnrollmentExtension": {
-        "path": "scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
-        "blobSha": "898b100931144eeae40e88b360745c9244d72e10",
-        "plpgsqlFunctions": 11,
-        "pairedDollarQuoteOpenings": 11,
-        "triggerNameOverlapWithCanonical": [],
-        "heterogeneousRecordCoalesce": false,
-        "tgTableBranching": false
+        "blobSha": "6345292ed22f8c88dce3d95612ba2a0847ca1959",
+        "plpgsqlFunctions": 45,
+        "triggers": 53,
+        "pairedDollarQuoteOpenings": 45,
+        "malformedSingleDollarBodies": false,
+        "duplicateFunctionNames": [],
+        "duplicateTriggerNames": [],
+        "consolidatedLayers": [
+          "academic progression/curriculum/rooms/faculty",
+          "parent/enrollment/history integrity",
+          "progression-state and future-room lifecycle",
+          "historic offering/delivery/event parent integrity"
+        ]
       },
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "d019f302b0db19ec04aa2435db54d2427ffe78d5",
+          "blobSha": "eb4ec20a4362ee6a743c73565d5a0e9bfd5af5b2",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
             "tenant owner immutability",
@@ -7936,7 +7936,13 @@
             "current-period batch classCount projection",
             "zero-credit CORE offering database parity"
           ],
-          "executedPostgres": false
+          "executedPostgres": false,
+          "addedCoverage": [
+            "historic offering identity after delivery",
+            "historic delivery identity after teaching/event history",
+            "historic schedule section identity after attendance history",
+            "progression actor deletion without fake event"
+          ]
         },
         {
           "path": "scripts/sql/db02-postgres-concurrency-unregistered.sh",
@@ -7950,22 +7956,35 @@
             "section reparent wins before serialized history insert"
           ],
           "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql",
+          "blobSha": "825bb76275c8d9e0cc0c6d9c6ea6915a1824c0e7",
+          "type": "SPECIALIZED_SINGLE_SESSION_ROLLBACK",
+          "covers": [
+            "progression state identity/delete/truncate",
+            "audit actor FK cleanup",
+            "timestamp-only future schedule mutation against archived hall"
+          ],
+          "executedPostgres": false
         }
       ],
       "staticChecks": {
-        "canonicalFunctionDelimiterPairs": "25/25",
-        "extensionFunctionDelimiterPairs": "11/11",
-        "canonicalExtensionTriggerOverlap": 0,
+        "canonicalFunctionDelimiterPairs": "45/45",
+        "canonicalTriggerCount": 53,
+        "duplicateCanonicalFunctions": 0,
+        "duplicateCanonicalTriggers": 0,
+        "malformedSingleDollarBodies": 0,
         "singleSessionHarnessEndsWithRollback": true,
         "concurrencyRaceFamilies": 5,
-        "heterogeneousTriggerRecordCoalesce": 0,
-        "heterogeneousTriggerTableBranching": 0
+        "historicParentSingleSessionWitnesses": 3,
+        "consolidatedOverlayDraftsRemaining": 0
       },
       "registeredDrizzleDb02Found": false,
       "postgresTestsExecuted": 0,
       "runtimeEquivalenceVerifiedFields": 0,
-      "status": "READY_FOR_CHAT1_CONSOLIDATION_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
-      "warning": "Static/source/design evidence is not PASS. Chat 1 must consolidate/register schema and migrations, replay zero-to-current, then execute both PostgreSQL harnesses on an exact disposable-DB SHA.",
+      "status": "READY_FOR_CHAT1_REGISTRATION_REVIEW_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
+      "warning": "Source classification and target mapping are 125/125, and all DB02 staging layers are consolidated into one canonical unregistered SQL file. This is not a database PASS: Chat 1 must register reviewed Drizzle/migrations, replay zero-to-current, then execute the single-session, specialized and concurrency PostgreSQL harnesses.",
       "apiFollowupMatrix": {
         "path": "docs/planning/db02-api-followup-after-database.md",
         "commitSha": "c463accc1839f3513c851354261a30393e7a2454",
