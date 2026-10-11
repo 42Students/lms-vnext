@@ -29,6 +29,7 @@ DECLARE
   cohort_a uuid;
   cohort_a2 uuid;
   cohort_b uuid;
+  cohort_archive_test uuid;
   cohort_delete_empty uuid;
   cohort_delete_history uuid;
   term_a1 uuid;
@@ -392,6 +393,55 @@ BEGIN
   UPDATE cohorts SET status = 'ACTIVE' WHERE id = cohort_a;
   IF NOT EXISTS (SELECT 1 FROM cohorts WHERE id = cohort_a AND status = 'ACTIVE') THEN
     RAISE EXCEPTION 'cohort INACTIVE -> ACTIVE reactivation did not persist';
+  END IF;
+
+  failed := false;
+  BEGIN
+    INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status)
+    VALUES (
+      program_a, 'DB02 Bad Archived Create', 'DB02-BAD-ARCHIVE-CREATE',
+      period_a, period_a, 'ARCHIVED'
+    );
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cohort was created directly in ARCHIVED state';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE cohorts SET status = 'ARCHIVED' WHERE id = cohort_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'ACTIVE cohort bypassed archive lifecycle';
+  END IF;
+
+  INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status)
+  VALUES (
+    program_a, 'DB02 Archive Lifecycle Cohort', 'DB02-ARCHIVE-LIFE',
+    period_a, period_a, 'PLANNED'
+  )
+  RETURNING id INTO cohort_archive_test;
+
+  UPDATE cohorts SET status = 'ARCHIVED' WHERE id = cohort_archive_test;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM cohorts WHERE id = cohort_archive_test AND status = 'ARCHIVED'
+  ) THEN
+    RAISE EXCEPTION 'PLANNED cohort did not archive';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE cohorts SET status = 'ACTIVE' WHERE id = cohort_archive_test;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'ARCHIVED cohort was resurrected';
   END IF;
 
   failed := false;
