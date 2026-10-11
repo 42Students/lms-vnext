@@ -471,6 +471,12 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "DB05 classroom chat, lesson discussion, learner progress, and private receipt create+consume companions now check course_offerings.cohort_id/academic_period_id EXACTLY against sections.cohort_id/academic_period_id in addition to college/offering. 22-case acceptance matrix: docs/planning/db05-delivery-cohort-period-negative-matrix.md. Must execute same-college wrong-cohort/wrong-term negatives, two-session ancestor reparent races, and clean Postgres replay; source assertions do not count as database proof."
+    },
+    {
+      "id": "HISTORICAL_COURSE_COLUMNS_RETAIN_OR_RETIRE",
+      "status": "BLOCKED",
+      "owner": "W01_DB05_PRODUCT_SOURCE_DECISION",
+      "evidence": "Two historical snapshot-only course columns require explicit typed-retain or retirement sign-off. 28 pinned legacy Java/FE paths scanned with zero matches, not global source proof. Optional compatibility SQL UNREGISTERED; no PG/schema/consumer acceptance."
     }
   ],
   "sourceReview": {
@@ -729,5 +735,23 @@
     "appliesTo": "PURE_REFERENCE_MODEL_ONLY",
     "countsForPgGate": false,
     "countsForApplicationIntegration": false
+  },
+  "historicalCourseColumnDecision": {
+    "status": "OPEN_RETAIN_OR_RETIRE",
+    "evidence": "docs/planning/db05-historical-course-columns-source-evidence.json",
+    "candidatePath": "scripts/sql/db05-historical-course-columns.compatibility.draft.sql",
+    "companionOf": "scripts/sql/db05-course-identity.draft.sql",
+    "registered": false,
+    "postgresExecuted": false,
+    "originalSourceFields": [
+      "course.default_subscription_days",
+      "course.formal_title"
+    ],
+    "scopedSourceFilesReviewed": 28,
+    "caution": "Conditional only. NOT an eighth independent DB05 migration. Current Java/React source negative result bounded; do not invent subscription or title product semantics.",
+    "options": [
+      "RETAIN_NULLABLE_TYPED_IN_W01_MIGRATION_AFTER_SOURCE_DECISION",
+      "DOCUMENTED_RETIREMENT_AFTER_FULL_CONSUMER_AUDIT"
+    ]
   }
 }
