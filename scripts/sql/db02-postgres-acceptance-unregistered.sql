@@ -41,6 +41,7 @@ DECLARE
   elective_offering_a uuid;
   delivery_a uuid;
   event_section_b uuid;
+  user_progression_actor uuid;
   user_faculty_a uuid;
   faculty_membership_a uuid;
   user_faculty_b uuid;
@@ -764,12 +765,20 @@ BEGIN
     RAISE EXCEPTION 'membership END did not withdraw unsectioned active program enrollment';
   END IF;
 
+  INSERT INTO users(identity_uid, email, display_name)
+  VALUES (
+    'db02-progress-actor-' || gen_random_uuid()::text,
+    'db02-progress-actor-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
+    'DB02 Progression Actor'
+  ) RETURNING id INTO user_progression_actor;
+
   -- -------------------------------------------------------------------------
   -- Cohort progression: versioned CORRECTION vs PROMOTION + immutable history
   -- -------------------------------------------------------------------------
   -- Legacy batch academic_year can be edited without a semester promotion.
   UPDATE cohort_progression_state
      SET current_academic_year_start = 2025,
+         updated_by_user_id = user_progression_actor,
          version = 1
    WHERE cohort_id = cohort_a
      AND version = 0;
@@ -845,6 +854,44 @@ BEGIN
 
   IF event_count <> 2 THEN
     RAISE EXCEPTION 'expected correction + promotion events, found %', event_count;
+  END IF;
+
+  -- User deletion must scrub actor references only. It must not be interpreted as a
+  -- progression correction, increment version, or manufacture another journal event.
+  DELETE FROM users WHERE id = user_progression_actor;
+
+  SELECT current_term_number, version
+    INTO progression_term, progression_version
+    FROM cohort_progression_state
+   WHERE cohort_id = cohort_a;
+
+  IF progression_term <> 2 OR progression_version <> 2 THEN
+    RAISE EXCEPTION 'actor deletion mutated progression state: term %, version %',
+      progression_term, progression_version;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM cohort_progression_state
+     WHERE cohort_id = cohort_a
+       AND updated_by_user_id IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'actor deletion did not null progression-state updated_by_user_id';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM cohort_progression_events
+     WHERE cohort_id = cohort_a
+       AND actor_user_id IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'actor deletion did not null progression-event actor_user_id';
+  END IF;
+
+  SELECT count(*) INTO event_count
+    FROM cohort_progression_events
+   WHERE cohort_id = cohort_a;
+
+  IF event_count <> 2 THEN
+    RAISE EXCEPTION 'actor deletion manufactured progression history: % events', event_count;
   END IF;
 
   failed := false;
