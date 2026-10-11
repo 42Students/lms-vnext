@@ -251,7 +251,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "8d348b9da606aab3e83d35af6b940939dae235b2",
+      "latestEvidenceSha": "952e197d7f2945facec2cb928f2e951bcb9d9191",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -286,7 +286,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source and target design disposition is complete for 125/125 legacy candidates. Canonical unregistered staging now covers program terms/curriculum, stable offering program-term identity, cohort progression/history + INACTIVE + lifecycle dates, section min/max/description + legacy dates, lecture halls/overlap/hall-archive race, and broad faculty-course pool with ACTIVE FACULTY guard. Current-main static reconciliation found 0 malformed PL/pgSQL delimiters and confirmed actor SET NULL, journal TRUNCATE guard, scoped progression triggers and hall row locking. Registered Drizzle integration, zero-to-current PostgreSQL replay and runtime acceptance remain unexecuted; runtime verified=0 and DB-005 stays IN_PROGRESS."
+      "progressNote": "DB02 125/125 source/target disposition completed (0 runtime verified). Chat 4 additionally staged isolated parent-college, cohort/section/enrollment, LEARNER/FACULTY role and historical reparent locking guards with 10 authored static contract cases; 12/12 tool-executed source checks pass. All SQL unregistered; PostgreSQL replay/concurrency/tenant acceptance not executed. See DB02 updated contract and #24."
     },
     {
       "id": "DB-006",
