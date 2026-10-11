@@ -2162,14 +2162,14 @@
         "docs/planning/database-parity-db06-assessment-retention-contract.md",
         "tests/db06-assessment-retention-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:25:15.235Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T08:25:34.894Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2191,6 +2191,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:25:15.235Z",
           "reason": "Chat 1 claims DB06 source-only assessment retention staging after DB-035 completion."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T08:25:34.894Z",
+          "reason": "Staging immutable assessment history and definition-freeze guards outside registered migration journal."
         }
       ]
     }
