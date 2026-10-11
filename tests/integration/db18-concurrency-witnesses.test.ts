@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { afterAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
@@ -8,6 +9,7 @@ const explicitlyIsolated =
   process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
   process.env.DB03_ISOLATED_TEST_DATABASE === "1";
 const enabled = Boolean(databaseUrl) && explicitlyIsolated;
+if (enabled) assertDb018DisposableTarget(process.env);
 const pool = new Pool({
   connectionString:
     databaseUrl ?? "postgresql://disabled:disabled@127.0.0.1:1/disabled",
