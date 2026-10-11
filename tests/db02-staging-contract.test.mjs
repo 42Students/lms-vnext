@@ -307,19 +307,27 @@ test("cohort archive lifecycle stays separate from reversible legacy statuses", 
 
 
 test("materialized CORE curriculum row cannot change type", () => {
-  const start = sql.indexOf("CREATE FUNCTION db02_guard_program_term_course_identity()");
-  const end = sql.indexOf("CREATE TRIGGER db02_program_term_course_identity_guard", start);
+  const start = sql.indexOf("CREATE FUNCTION db02_guard_program_term_course_type_history()");
+  const end = sql.indexOf(
+    "CREATE TRIGGER db02_program_term_course_type_history_guard",
+    start,
+  );
   assert.ok(start !== -1 && end > start);
   const guard = sql.slice(start, end);
   assert.match(guard, /NEW\.type IS DISTINCT FROM OLD\.type/);
   assert.match(guard, /co\.program_term_course_id = OLD\.id/);
+  assert.match(guard, /co\.type = 'CORE'/);
   assert.match(
     guard,
-    /Program-term course type cannot change after an offering materializes it/,
+    /Mapped curriculum cannot change type after CORE offering materialization/,
   );
   assert.match(
     sql,
-    /BEFORE UPDATE OF program_term_id, course_id, type ON program_term_courses/,
+    /BEFORE UPDATE OF type ON program_term_courses/,
+  );
+  assert.doesNotMatch(
+    sql,
+    /db02_program_term_course_identity_guard\s+BEFORE UPDATE OF program_term_id, course_id, type/,
   );
   assert.match(acceptanceSql, /materialized CORE curriculum row changed type/);
   assert.match(concurrencyShell, /PASS curriculum type race A/);
