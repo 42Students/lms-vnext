@@ -1,4 +1,4 @@
-# DB-041 — legacy notification broadcast, scheduled release and recipient receipts
+# DB-043 — legacy notification broadcast, scheduled release and recipient receipts
 
 **Worker:** Chat 5 · **Global phase:** DATABASE · **Branch:** `main` · **Status:** SOURCE_REVIEWED / STAGED_UNREGISTERED / RUNTIME_NOT_VERIFIED  
 **Legacy oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
@@ -70,26 +70,26 @@ Legacy `LocalDateTime` has no attached zone. VNext should accept IANA timezone, 
 
 | ID | Required executable witness |
 | --- | --- |
-| DB41-01 | Fresh migration registration after Chat 1 collision/ordering review, journal snapshot/typecheck parity |
-| DB41-02 | Correct `USER`, `SECTION`, `COURSE`, `SECTION_COURSE` audience shape; invalid mixed targets rejected |
-| DB41-03 | Direct SQL same-college vs foreign college course, section, user, creator and event FK negative cases |
-| DB41-04 | `SECTION_COURSE` rejects a course without an active section delivery |
-| DB41-05 | Legacy class=0, course positive is course audience; no fake UUID zero |
-| DB41-06 | SCHEDULED campaign does not appear in `in_app_notifications` until publisher commit |
-| DB41-07 | Two workers racing release publish each user/event at most once; no double SSE |
-| DB41-08 | Publisher failure midway rolls back all recipient fanout and publication status |
-| DB41-09 | Recipient enrollment/college grant revoked after schedule and before publish is skipped |
-| DB41-10 | Concurrent archived/deleted course or section cannot leak a released notice |
-| DB41-11 | Per-user `read_at` changes cannot affect another recipient in the same campaign |
-| DB41-12 | Repeated release after crash yields idempotent existing receipts, no silent false FAILED/PUBLISHED |
-| DB41-13 | `DRAFT`, `SCHEDULED`, `PUBLISHING`, `PUBLISHED`, `FAILED`, `CANCELLED` transitions and claims are version/fence-safe |
-| DB41-14 | Delete/archive before due cancels release; already published receipts follow explicit retention policy |
-| DB41-15 | Client-forged creator, recipient, organization or college is rejected despite valid parent IDs |
-| DB41-16 | External assessment URLs, path traversal and secret-bearing hrefs cannot be published as unreviewed client action links |
-| DB41-17 | No provider email/SMS send is implied by campaign `PUBLISHED`; DB24/outbound layers remain separate |
-| DB41-18 | Timezone and DST schedules preserve intended local-time release |
-| DB41-19 | Admin tenant history and per-user inbox match legacy capabilities while preserving data isolation |
-| DB41-20 | All 21 fields receive DB19 final accepted disposition after integration, without claiming authored-but-unexecuted test results |
+| DB43-01 | Fresh migration registration after Chat 1 collision/ordering review, journal snapshot/typecheck parity |
+| DB43-02 | Correct `USER`, `SECTION`, `COURSE`, `SECTION_COURSE` audience shape; invalid mixed targets rejected |
+| DB43-03 | Direct SQL same-college vs foreign college course, section, user, creator and event FK negative cases |
+| DB43-04 | `SECTION_COURSE` rejects a course without an active section delivery |
+| DB43-05 | Legacy class=0, course positive is course audience; no fake UUID zero |
+| DB43-06 | SCHEDULED campaign does not appear in `in_app_notifications` until publisher commit |
+| DB43-07 | Two workers racing release publish each user/event at most once; no double SSE |
+| DB43-08 | Publisher failure midway rolls back all recipient fanout and publication status |
+| DB43-09 | Recipient enrollment/college grant revoked after schedule and before publish is skipped |
+| DB43-10 | Concurrent archived/deleted course or section cannot leak a released notice |
+| DB43-11 | Per-user `read_at` changes cannot affect another recipient in the same campaign |
+| DB43-12 | Repeated release after crash yields idempotent existing receipts, no silent false FAILED/PUBLISHED |
+| DB43-13 | `DRAFT`, `SCHEDULED`, `PUBLISHING`, `PUBLISHED`, `FAILED`, `CANCELLED` transitions and claims are version/fence-safe |
+| DB43-14 | Delete/archive before due cancels release; already published receipts follow explicit retention policy |
+| DB43-15 | Client-forged creator, recipient, organization or college is rejected despite valid parent IDs |
+| DB43-16 | External assessment URLs, path traversal and secret-bearing hrefs cannot be published as unreviewed client action links |
+| DB43-17 | No provider email/SMS send is implied by campaign `PUBLISHED`; DB24/outbound layers remain separate |
+| DB43-18 | Timezone and DST schedules preserve intended local-time release |
+| DB43-19 | Admin tenant history and per-user inbox match legacy capabilities while preserving data isolation |
+| DB43-20 | All 21 fields receive DB19 final accepted disposition after integration, without claiming authored-but-unexecuted test results |
 
 **Chat 1:** the only registered Drizzle migration/journal/schema barrel owner. Review actual schema column types, parent scope races, delivery coupling, batch fanout concurrency and DB10 collision before registration. **Chat 5:** isolated stage and static guards only. **Chat 4/6:** course/section scheduling and classroom visibility consumers have dependencies; treat this as DB contract, not an API/UI phase advance.
 
