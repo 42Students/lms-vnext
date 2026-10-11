@@ -152,6 +152,8 @@ export const attendanceRecordEventsStaged = pgTable(
     newStatus: varchar("new_status", { length: 24 }).notNull(),
     previousNote: text("previous_note"),
     newNote: text("new_note"),
+    recordVersionBefore: integer("record_version_before"),
+    recordVersionAfter: integer("record_version_after").notNull(),
     occurredAt: timestamp("occurred_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -170,6 +172,10 @@ export const attendanceRecordEventsStaged = pgTable(
         attendanceRecords.membershipId,
       ],
     }).onDelete("restrict"),
+    uniqueIndex("attendance_record_events_record_version_uq").on(
+      table.attendanceRecordId,
+      table.recordVersionAfter,
+    ),
     index("attendance_record_events_record_time_idx").on(
       table.attendanceRecordId,
       table.occurredAt,
@@ -196,8 +202,18 @@ export const attendanceRecordEventsStaged = pgTable(
     ),
     check(
       "attendance_record_events_shape_ck",
-      sql`(${table.action} = 'MARK' and ${table.previousStatus} is null)
-        or (${table.action} = 'CORRECT' and ${table.previousStatus} is not null)`,
+      sql`(
+        ${table.action} = 'MARK'
+        and ${table.previousStatus} is null
+        and ${table.recordVersionBefore} is null
+        and ${table.recordVersionAfter} = 0
+      ) or (
+        ${table.action} = 'CORRECT'
+        and ${table.previousStatus} is not null
+        and ${table.recordVersionBefore} is not null
+        and ${table.recordVersionBefore} >= 0
+        and ${table.recordVersionAfter} = ${table.recordVersionBefore} + 1
+      )`,
     ),
   ],
 );
@@ -205,6 +221,7 @@ export const attendanceRecordEventsStaged = pgTable(
 // Promotion prerequisites intentionally live in the staged SQL rather than
 // mutating active tables in this source-only file:
 // - UNIQUE (id, assignment_id, delivery_id, membership_id) on assignment_submissions
+// - version integer NOT NULL DEFAULT 0 on attendance_records with CAS semantics
 // - UNIQUE (id, schedule_event_id, membership_id) on attendance_records
 // - tenant/actor consistency triggers
 // - append-only UPDATE/DELETE/TRUNCATE rejection
