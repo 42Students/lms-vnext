@@ -23,9 +23,13 @@ DECLARE
   target_period_college_id uuid;
   target_department_college_id uuid;
   target_offering_id uuid;
+  target_cohort_id uuid;
+  target_academic_period_id uuid;
   content_delivery_id uuid;
   delivery_offering_id uuid;
   delivery_section_college_id uuid;
+  delivery_section_cohort_id uuid;
+  delivery_section_period_id uuid;
   submission_assignment_id uuid;
   submission_membership_id uuid;
   submission_delivery_id uuid;
@@ -51,9 +55,11 @@ BEGIN
     required_namespace := 'assignment-submission';
 
     SELECT period.college_id, department.college_id,
-           offering.id, assignment.delivery_id
+           offering.id, offering.cohort_id, offering.academic_period_id,
+           assignment.delivery_id
       INTO target_period_college_id, target_department_college_id,
-           target_offering_id, content_delivery_id
+           target_offering_id, target_cohort_id, target_academic_period_id,
+           content_delivery_id
       FROM course_assignments assignment
       INNER JOIN course_lessons lesson ON lesson.id = assignment.lesson_id
       INNER JOIN course_learning_paths path ON path.id = lesson.learning_path_id
@@ -71,9 +77,11 @@ BEGIN
     required_namespace := 'course-resource';
 
     SELECT period.college_id, department.college_id,
-           offering.id, content.delivery_id
+           offering.id, offering.cohort_id, offering.academic_period_id,
+           content.delivery_id
       INTO target_period_college_id, target_department_college_id,
-           target_offering_id, content_delivery_id
+           target_offering_id, target_cohort_id, target_academic_period_id,
+           content_delivery_id
       FROM lesson_contents content
       INNER JOIN course_lessons lesson ON lesson.id = content.lesson_id
       INNER JOIN course_learning_paths path ON path.id = lesson.learning_path_id
@@ -90,6 +98,8 @@ BEGIN
   IF target_period_college_id IS NULL
      OR target_department_college_id IS NULL
      OR target_offering_id IS NULL
+     OR target_cohort_id IS NULL
+     OR target_academic_period_id IS NULL
      OR target_period_college_id IS DISTINCT FROM NEW.college_id
      OR target_department_college_id IS DISTINCT FROM NEW.college_id THEN
     RAISE EXCEPTION 'course upload receipt target violates college boundary'
@@ -99,8 +109,10 @@ BEGIN
   -- An optional assignment/content delivery cannot secretly point to another
   -- offering or another college's section/academic period.
   IF content_delivery_id IS NOT NULL THEN
-    SELECT delivery.offering_id, section_period.college_id
-      INTO delivery_offering_id, delivery_section_college_id
+    SELECT delivery.offering_id, section_period.college_id,
+           section_row.cohort_id, section_row.academic_period_id
+      INTO delivery_offering_id, delivery_section_college_id,
+           delivery_section_cohort_id, delivery_section_period_id
       FROM course_section_deliveries delivery
       INNER JOIN sections section_row ON section_row.id = delivery.section_id
       INNER JOIN academic_periods section_period
@@ -109,7 +121,9 @@ BEGIN
 
     IF delivery_offering_id IS NULL OR delivery_section_college_id IS NULL
        OR delivery_offering_id IS DISTINCT FROM target_offering_id
-       OR delivery_section_college_id IS DISTINCT FROM NEW.college_id THEN
+       OR delivery_section_college_id IS DISTINCT FROM NEW.college_id
+       OR delivery_section_cohort_id IS DISTINCT FROM target_cohort_id
+       OR delivery_section_period_id IS DISTINCT FROM target_academic_period_id THEN
       RAISE EXCEPTION 'course receipt target delivery belongs to another scope'
         USING ERRCODE = '23514';
     END IF;
@@ -137,8 +151,10 @@ BEGIN
 
     -- An assignment can be generic or delivery-scoped; every submission has
     -- its own delivery and must resolve to the SAME owning course offering.
-    SELECT delivery.offering_id, section_period.college_id
-      INTO delivery_offering_id, delivery_section_college_id
+    SELECT delivery.offering_id, section_period.college_id,
+           section_row.cohort_id, section_row.academic_period_id
+      INTO delivery_offering_id, delivery_section_college_id,
+           delivery_section_cohort_id, delivery_section_period_id
       FROM course_section_deliveries delivery
       INNER JOIN sections section_row ON section_row.id = delivery.section_id
       INNER JOIN academic_periods section_period
@@ -148,6 +164,8 @@ BEGIN
     IF delivery_offering_id IS NULL
        OR delivery_offering_id IS DISTINCT FROM target_offering_id
        OR delivery_section_college_id IS DISTINCT FROM NEW.college_id
+       OR delivery_section_cohort_id IS DISTINCT FROM target_cohort_id
+       OR delivery_section_period_id IS DISTINCT FROM target_academic_period_id
        OR (content_delivery_id IS NOT NULL
            AND submission_delivery_id IS DISTINCT FROM content_delivery_id) THEN
       RAISE EXCEPTION 'receipt consumed for submission from another delivery'
@@ -200,6 +218,8 @@ COMMIT;
 -- 1. Same-college ASSIGNMENT_SUBMISSION and COURSE_RESOURCE receipt accepted.
 -- 2. Wrong-college membership, assignment offering-period, course department,
 --    content lesson, assignment/content delivery and section period rejected.
+--    Same-college but wrong section cohort or academic period MUST also fail
+--    for BOTH targeted receipt and consumed submission delivery.
 -- 3. Wrong namespace/path, arbitrary object key, malformed sha256 hash rejected.
 -- 4. Cross-learner, cross-assignment and cross-delivery consumption rejected.
 -- 5. Private object generation/sha/malware attestation still checked by API.
