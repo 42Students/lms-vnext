@@ -48,7 +48,7 @@ CREATE TABLE notification_campaigns (
     OR (audience_scope = 'SECTION_COURSE' AND target_section_id IS NOT NULL
         AND target_course_id IS NOT NULL AND target_user_id IS NULL)
   ),
-  CONSTRAINT db43_campaign_type_ck CHECK (notification_type IN ('JOB','COURSE','SYSTEM')),
+  CONSTRAINT db43_campaign_type_ck CHECK (notification_type IN ('GENERAL','JOB','COURSE','SYSTEM')),
   CONSTRAINT db43_campaign_content_ck CHECK (
     length(btrim(title)) BETWEEN 1 AND 240
     AND length(btrim(body)) BETWEEN 1 AND 50000
