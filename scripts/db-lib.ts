@@ -17,14 +17,9 @@ const migrationsFolder = path.resolve(process.cwd(), "drizzle");
 export function requireDatabaseUrl(
   variableName: "DATABASE_URL" | "TEST_DATABASE_URL" = "DATABASE_URL",
 ) {
-  const direct = process.env[variableName];
-  const fallback =
-    variableName === "TEST_DATABASE_URL"
-      ? process.env.DATABASE_URL
-      : undefined;
-  const value = direct ?? fallback;
+  const value = process.env[variableName];
 
-  if (!value) {
+  if (!value?.trim()) {
     throw new Error(
       `${variableName} is required for this database command`,
     );
