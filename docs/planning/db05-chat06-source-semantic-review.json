@@ -1049,7 +1049,10 @@
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "legacyProducerConsumerEvidence": "LessonContentsServiceImpl.java create setLessonContents lines ~487-495: classId >0 persists, <=0 becomes NULL; updateLessonContent ~949-969: null/0 do not change, positive moves after class existence/current-course-audience check, negative explicitly clears.",
+      "vnextNormalizationGap": "Current updateLessonContentInputSchema has no deliveryId/lessonId; create validates target offering, but vNext cannot reassign/clear delivery via content update. DB05 delivery FK candidate is not same as legacy class_id without offering/cohort/period.",
+      "sourceProducerConfidence": "LEGACY_CREATE_AND_UPDATE_SOURCE_REVIEWED_RUNTIME_UNPROVEN"
     },
     {
       "source": "lesson_contents.content_data",
@@ -1098,7 +1101,10 @@
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "legacyProducerConsumerEvidence": "LessonContentsServiceImpl.setLessonContents ~449-452 stores resolved Course ID, resolver prioritizes courseSlug over request courseId ~497-504; update class movement uses saved/lesson-derived course scope.",
+      "vnextNormalizationGap": "vNext course inferred through lesson -> learningPath -> offering -> course. Legacy stored course_id may be denormalized; source create/writer/read mismatches not verified, avoid duplicate direct parent that can drift.",
+      "sourceProducerConfidence": "LEGACY_CREATE_AND_UPDATE_SOURCE_REVIEWED_RUNTIME_UNPROVEN"
     },
     {
       "source": "lesson_contents.course_name",
@@ -1369,5 +1375,15 @@
     ],
     "verified": false,
     "postgres": "NOT_RUN"
+  },
+  "latestChat6LessonRescopeReview": {
+    "reviewedOn": "2026-10-11",
+    "reviewedFields": [
+      "lesson_contents.class_id",
+      "lesson_contents.course_id"
+    ],
+    "sourceBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "contract": "docs/planning/db05-lesson-content-rescope-contract.md",
+    "verification": "SOURCE_ONLY_NO_API_OR_PG_PROOF"
   }
 }
