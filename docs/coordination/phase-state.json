@@ -55,7 +55,7 @@
       "state": "LOCKED",
       "scope": "Full system integration, infrastructure, security, adversarial audit and production launch",
       "requiredGates": [
-        "Full CI and migration/test suite green on target release commit",
+        "All required lint/typecheck/build, migration, integration, negative and release tests executed and passing on the target commit in any approved test environment; GitHub Actions CI is optional and intentionally paused for billing",
         "Live Identity Platform/Cloud SQL/GCS/outbound/provider integration and smoke validated",
         "Security/adversarial/load/restore/rollback acceptance passed",
         "Production launch and post-launch verification accepted"
@@ -72,5 +72,16 @@
     "warning": "Source candidates not necessarily active; 0 verified does not mean 0 implemented."
   },
   "transitionRule": "A future active chat may promote DATABASE→API→UI→RELEASE only after independently verifying ALL phase gate requirements with exact commit/test evidence, all required queue items DONE_VERIFIED or approved retirement, and no blocking dependencies. CAS-update phase-state and activate eligible next-phase queue items. No worker changes phase alone.",
-  "compatibility": "This document supersedes old domain-ownership assignments in docs/planning/six-chat-closure-plan.md and issue #21–#26 bodies; those are historical records."
+  "compatibility": "This document supersedes old domain-ownership assignments in docs/planning/six-chat-closure-plan.md and issue #21–#26 bodies; those are historical records.",
+  "ciExecutionPolicy": {
+    "effectiveDate": "2026-10-11",
+    "userDecision": "GitHub Actions is intentionally stopped due to billing; never treat its absence or pre-step failure as a blocker or mandatory prerequisite for development, source-completion or release acceptance.",
+    "acceptedAlternatives": [
+      "local_or_ephemeral_node_test_execution",
+      "isolated_disposable_postgresql_runner",
+      "approved_non_actions_build_and_test_executor"
+    ],
+    "requiredEvidence": "Actual executed commands, successful exit/result and relevant logs tied to the exact source SHA; no invented passing evidence or phase advancement.",
+    "releaseInterpretation": "Tests and database replay remain compulsory where required. The CI provider is optional; absence of GitHub Actions is not an acceptance failure."
+  }
 }
