@@ -3,20 +3,35 @@ import {
   asc,
   desc,
   eq,
+  inArray,
+  isNull,
+  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
+  cohorts,
   collegeMemberships,
+  departments,
+  learnerProgramEnrollments,
+  membershipRoles,
+  moduleAccessRules,
   placementApplications,
   placementApplicationStatusHistory,
   placementApplicationScreenings,
+  placementCandidateAcademicEvidence,
   placementCompanyRelationships,
   placementCompanies,
   placementDriveDayCoordinatorAssignments,
+  placementEligibilityDecisions,
+  placementEligibilityOverrides,
   placementJobs,
+  placementJobEligibilityPolicies,
   placementJobRoleOptions,
+  programs,
+  sectionEnrollments,
+  sections,
   users,
 } from "@/db/schema";
 import {
@@ -64,6 +79,228 @@ function requireLearnerMembership(
     throw new AuthorizationError("placements.read");
   }
   return context.membership;
+}
+
+type Client = ReturnType<typeof getDb>;
+type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
+
+/**
+ * Freeze every currently persisted input which can make learner self-apply
+ * more restrictive while the application transaction is in flight.
+ *
+ * Lock order is deliberate: caller already holds placement_jobs FOR UPDATE,
+ * then we lock the learner membership and its academic/access inputs. Job
+ * eligibility writers use the same job row; academic-evidence writers use the
+ * same membership row. Existing module/participation rows are locked FOR SHARE
+ * so an UPDATE/revoke that started first wins and is observed by the live
+ * recheck, while a later writer waits until the application commits.
+ *
+ * This does not replace the live authorization recheck below. Locks establish
+ * ordering; requireLearnerPlacementAccess/evaluatePlacementEligibility decide.
+ */
+async function lockLearnerApplicationGateInputs(
+  tx: Tx,
+  context: RequestContext,
+  jobId: string,
+  membershipId: string,
+) {
+  const membership = context.membership;
+  if (!membership || membership.id !== membershipId) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const [persistedMembership] = await tx
+    .select({
+      id: collegeMemberships.id,
+      userId: collegeMemberships.userId,
+      collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+    })
+    .from(collegeMemberships)
+    .where(eq(collegeMemberships.id, membershipId))
+    .for("share")
+    .limit(1);
+
+  if (
+    !persistedMembership ||
+    persistedMembership.status !== "ACTIVE" ||
+    persistedMembership.userId !== context.user.id ||
+    persistedMembership.collegeId !== membership.collegeId
+  ) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const [learnerRole] = await tx
+    .select({ id: membershipRoles.id })
+    .from(membershipRoles)
+    .where(
+      and(
+        eq(membershipRoles.membershipId, membershipId),
+        eq(membershipRoles.role, "LEARNER"),
+      ),
+    )
+    .for("share")
+    .limit(1);
+  if (!learnerRole) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const enrollments = await tx
+    .select({
+      id: learnerProgramEnrollments.id,
+      cohortId: learnerProgramEnrollments.cohortId,
+      programId: learnerProgramEnrollments.programId,
+    })
+    .from(learnerProgramEnrollments)
+    .where(
+      and(
+        eq(learnerProgramEnrollments.membershipId, membershipId),
+        eq(learnerProgramEnrollments.status, "ACTIVE"),
+      ),
+    )
+    .for("share");
+
+  if (enrollments.length !== 1) {
+    throw new AuthorizationError("placements.read");
+  }
+  const enrollment = enrollments[0]!;
+
+  const [cohort] = await tx
+    .select({
+      id: cohorts.id,
+      programId: cohorts.programId,
+    })
+    .from(cohorts)
+    .where(eq(cohorts.id, enrollment.cohortId))
+    .for("share")
+    .limit(1);
+  if (!cohort || cohort.programId !== enrollment.programId) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const [program] = await tx
+    .select({
+      id: programs.id,
+      departmentId: programs.departmentId,
+    })
+    .from(programs)
+    .where(eq(programs.id, enrollment.programId))
+    .for("share")
+    .limit(1);
+  if (!program) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const [department] = await tx
+    .select({ collegeId: departments.collegeId })
+    .from(departments)
+    .where(eq(departments.id, program.departmentId))
+    .for("share")
+    .limit(1);
+  if (!department || department.collegeId !== membership.collegeId) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const activeSectionEnrollments = await tx
+    .select({ sectionId: sectionEnrollments.sectionId })
+    .from(sectionEnrollments)
+    .where(
+      and(
+        eq(sectionEnrollments.learnerEnrollmentId, enrollment.id),
+        eq(sectionEnrollments.status, "ACTIVE"),
+      ),
+    )
+    .for("share");
+
+  if (activeSectionEnrollments.length > 1) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  let sectionId: string | null = null;
+  if (activeSectionEnrollments[0]) {
+    sectionId = activeSectionEnrollments[0].sectionId;
+    const [section] = await tx
+      .select({
+        cohortId: sections.cohortId,
+        status: sections.status,
+      })
+      .from(sections)
+      .where(eq(sections.id, sectionId))
+      .for("share")
+      .limit(1);
+    if (
+      !section ||
+      section.status !== "ACTIVE" ||
+      section.cohortId !== enrollment.cohortId
+    ) {
+      throw new AuthorizationError("placements.read");
+    }
+  }
+
+  const moduleScopes = or(
+    and(
+      eq(moduleAccessRules.scopeType, "COLLEGE"),
+      eq(moduleAccessRules.scopeId, membership.collegeId),
+    ),
+    and(
+      eq(moduleAccessRules.scopeType, "ORGANIZATION"),
+      eq(moduleAccessRules.scopeId, membership.organizationId),
+    ),
+    and(
+      eq(moduleAccessRules.scopeType, "GLOBAL"),
+      isNull(moduleAccessRules.scopeId),
+    ),
+  );
+  await tx
+    .select({ id: moduleAccessRules.id })
+    .from(moduleAccessRules)
+    .where(
+      and(
+        eq(moduleAccessRules.module, "placements"),
+        moduleScopes,
+      ),
+    )
+    .for("share");
+
+  const participationScopeIds = [
+    membershipId,
+    enrollment.cohortId,
+    ...(sectionId ? [sectionId] : []),
+  ];
+  await tx
+    .select({ id: placementEligibilityDecisions.id })
+    .from(placementEligibilityDecisions)
+    .where(
+      and(
+        eq(placementEligibilityDecisions.collegeId, membership.collegeId),
+        inArray(placementEligibilityDecisions.scopeId, participationScopeIds),
+      ),
+    )
+    .for("share");
+
+  await tx
+    .select({ id: placementEligibilityOverrides.id })
+    .from(placementEligibilityOverrides)
+    .where(
+      and(
+        eq(placementEligibilityOverrides.jobId, jobId),
+        eq(placementEligibilityOverrides.membershipId, membershipId),
+        isNull(placementEligibilityOverrides.revokedAt),
+      ),
+    )
+    .for("share");
+
+  await tx
+    .select({ jobId: placementJobEligibilityPolicies.jobId })
+    .from(placementJobEligibilityPolicies)
+    .where(eq(placementJobEligibilityPolicies.jobId, jobId))
+    .for("share");
+
+  await tx
+    .select({ membershipId: placementCandidateAcademicEvidence.membershipId })
+    .from(placementCandidateAcademicEvidence)
+    .where(eq(placementCandidateAcademicEvidence.membershipId, membershipId))
+    .for("share");
 }
 
 async function resolveApplicationRoleOption(
@@ -398,6 +635,27 @@ export async function applyToPlacementJob(
       )) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
       }
+
+      await lockLearnerApplicationGateInputs(
+        tx,
+        context,
+        job.id,
+        membership.id,
+      );
+      // Re-run both the paid/inherited placement gate and the job-specific
+      // policy after the ordering locks above. The pre-transaction checks are
+      // fail-fast only; this live result is the one persisted with application.
+      const liveEligibility = await evaluatePlacementEligibility(
+        context,
+        job.id,
+      );
+      if (liveEligibility.status === "INELIGIBLE") {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      if (liveEligibility.status === "NEEDS_DATA") {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_NEEDS_DATA");
+      }
+
       // The manager's coordinator assignment writer takes the same job-row
       // lock. A learner cannot become both applicant and coordinator for one
       // drive, including different assignment dates.
@@ -436,8 +694,8 @@ export async function applyToPlacementJob(
           roleOptionId: roleOption.id,
           membershipId: membership.id,
           channel,
-          eligibilityStatus: eligibility.status,
-          eligibilitySnapshot: eligibility,
+          eligibilityStatus: liveEligibility.status,
+          eligibilitySnapshot: liveEligibility,
           submittedByUserId: context.user.id,
           submittedAt: now,
         })
