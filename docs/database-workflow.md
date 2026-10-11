@@ -36,7 +36,25 @@ npm run db:reset
 - `db:seed`: idempotently apply deterministic development seed records
 - `db:reset`: drop disposable schemas, re-run migrations, and reseed
 
-Reset refuses PostgreSQL system databases and refuses non-local hosts unless `ALLOW_DB_RESET=true` is explicitly supplied. Never use that override casually.
+Reset refuses PostgreSQL system databases. Localhost resets remain explicit developer operations. A non-local reset requires **both**:
+
+- `ALLOW_DB_RESET=true`;
+- `DB_RESET_CONFIRM=RESET:<host>:<port>/<database>` matching the parsed target exactly (default PostgreSQL port is `5432`).
+
+The confirmation string contains no username/password. Never set either override for staging, production, shared databases, or data that must survive.
+
+### Remote disposable reset example
+
+For a deliberately disposable remote database such as `pg.test.internal:5432/lms_vnext_test`:
+
+```bash
+DATABASE_URL='postgresql://user:password@pg.test.internal:5432/lms_vnext_test' \
+ALLOW_DB_RESET=true \
+DB_RESET_CONFIRM='RESET:pg.test.internal:5432/lms_vnext_test' \
+npm run db:reset
+```
+
+The target confirmation is deliberately separate from the URL so accidentally exporting a valuable `DATABASE_URL` is not enough to authorize schema destruction.
 
 ## Test database
 
