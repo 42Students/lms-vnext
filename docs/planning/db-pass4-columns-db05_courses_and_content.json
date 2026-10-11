@@ -2321,8 +2321,8 @@
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
-          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-owner-membership.draft.sql -> lesson_contents.owner_membership_id nullable, not created_by_user_id; source edit/delete checks owner/admin and teaching scope.",
-          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql -> lesson_contents.faculty_owner_membership_id nullable owner; current creator ID NOT equal. Canonical row guard same-college, ACTIVE FACULTY on new owner, history retained on role loss; API teaching scope/open PG tests.",
+          "db008SourceDisposition": "LEGACY_FACULTY_OWNER_SEMANTICS_SOURCE_CONFIRMED_CANONICAL_GUARD_UNREGISTERED",
           "db008Evidence": [
             "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
