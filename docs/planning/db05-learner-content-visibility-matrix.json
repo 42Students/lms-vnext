@@ -1,0 +1,78 @@
+{
+  "task": "DB-008",
+  "phase": "DATABASE",
+  "source": "LessonContentsServiceImpl.isEnabledAndActiveForLearner + setLessonContents (BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5)",
+  "vnextSource": [
+    "src/modules/courses/lesson-content-service.ts",
+    "src/modules/courses/learner-course-service.ts"
+  ],
+  "status": "SOURCE_PARITY_DECISION_PENDING",
+  "legacyRule": "Both active and enabled required for learner visibility; an omitted update field retains current value; create defaults to true.",
+  "vnextRule": "Current learner content reads filter status === PUBLISHED and learning path publication. Legacy flags are not stored in lesson_contents current Drizzle schema.",
+  "proposedCompanion": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql",
+  "table": [
+    {
+      "lessonContentStatus": "PUBLISHED",
+      "legacyActive": true,
+      "legacyEnabled": true,
+      "sourceLegacyVisible": true,
+      "vnextPublishedOnlyVisible": true,
+      "parityRisk": false
+    },
+    {
+      "lessonContentStatus": "PUBLISHED",
+      "legacyActive": false,
+      "legacyEnabled": true,
+      "sourceLegacyVisible": false,
+      "vnextPublishedOnlyVisible": true,
+      "parityRisk": true
+    },
+    {
+      "lessonContentStatus": "PUBLISHED",
+      "legacyActive": true,
+      "legacyEnabled": false,
+      "sourceLegacyVisible": false,
+      "vnextPublishedOnlyVisible": true,
+      "parityRisk": true
+    },
+    {
+      "lessonContentStatus": "PUBLISHED",
+      "legacyActive": false,
+      "legacyEnabled": false,
+      "sourceLegacyVisible": false,
+      "vnextPublishedOnlyVisible": true,
+      "parityRisk": true
+    },
+    {
+      "lessonContentStatus": "DRAFT",
+      "legacyActive": true,
+      "legacyEnabled": true,
+      "sourceLegacyVisible": true,
+      "vnextPublishedOnlyVisible": false,
+      "parityRisk": true,
+      "comment": "Legacy active+enabled rule did not include vNext publish lifecycle. Retaining vNext DRAFT protections requires explicit policy; do not expose drafts to achieve naive legacy equivalence."
+    },
+    {
+      "lessonContentStatus": "ARCHIVED",
+      "legacyActive": true,
+      "legacyEnabled": true,
+      "sourceLegacyVisible": true,
+      "vnextPublishedOnlyVisible": false,
+      "parityRisk": true,
+      "comment": "vNext archive controls retained; legacy flags alone do not map cleanly to this lifecycle."
+    }
+  ],
+  "securityDecision": "Do not remove PUBLISHED requirement: adopt intersection of explicit learner access, PUBLISHED lifecycle and independently authored active/enabled flags after product/API review. Deny rather than expose otherwise.",
+  "acceptance": [
+    "Learner PUBLISHED active=false excluded",
+    "Learner PUBLISHED enabled=false excluded",
+    "Learner PUBLISHED both=true accepted after tenant/delivery ACL",
+    "Unauthorized learner cannot enumerate shared or class content in wrong offering",
+    "Update omitting active/enabled preserves flags",
+    "Publication and archive transitions maintain intended vNext lifecycle",
+    "No DB/API/CI/Pg execution proof yet"
+  ],
+  "verified": false,
+  "postgres": "NOT_RUN",
+  "tests": "AUTHORED_NOT_EXECUTED"
+}
