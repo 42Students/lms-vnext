@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:31:00.000Z",
+  "updatedOn": "2026-10-11T14:58:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3020,25 +3020,35 @@
         "docs/planning/database-parity-db06-quiz-lifecycle-contract.md",
         "tests/db06-quiz-lifecycle-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T14:58:00.000Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T14:58:00.000Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Fresh DB06 persistence gap: course_quizzes.status/results_published are active lifecycle fields, current service mutates them, legacy emits quiz audit actions, but vNext has no immutable lifecycle actor/history table or DB state-machine enforcement."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:58:00.000Z",
+          "reason": "Chat 1 CAS claim; DB06 quiz lifecycle/result-publication audit history staging."
         }
       ]
     }
