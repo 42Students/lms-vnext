@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:01:00+05:30",
+  "updatedOn": "2026-10-11",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3407,17 +3407,17 @@
         "tests/db058-witness-target-safety.test.mjs",
         "docs/planning/db058-disposable-witness-target-safety.md"
       ],
-      "status": "PICKED",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a17c5cbcde72a3d19fc62b156fad8dd171f5b07d",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Source implementation committed: reusable DB018 target guard calls canonical DB01 disposable DB validator; forbids unsafe named/remote/app-alias targets; protects all 5 DB18 SQL/integration suites before Pool; service-backed tests pin app/test DSNs; 15 Node regression cases authored, 13/13 connector source assertions passed. Node/Vitest/PostgreSQL execution NOT_RUN. Independent verifier's deliberate disposable test-DB alias preserved. See docs/planning/db058-disposable-witness-target-safety.md.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T15:12:09.007Z",
-      "startedAt": null,
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "startedAt": "2026-10-11",
+      "completedBy": 5,
+      "completedAt": "2026-10-11T15:18:05.946Z",
+      "completionCommitSha": "a17c5cbcde72a3d19fc62b156fad8dd171f5b07d",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3436,6 +3436,11 @@
           "status": "PICKED",
           "at": "2026-10-11T15:12:09.007Z",
           "reason": "Chat 5 reserved independent DB witness safety fix; no active domain overlap."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T15:18:05.946Z",
+          "reason": "Source/test/docs committed; no DB/PostgreSQL runtime evidence, not DONE_VERIFIED."
         }
       ]
     },
