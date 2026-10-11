@@ -122,8 +122,20 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_end_date/);
 });
 
-test("DB02 preserves reversible legacy INACTIVE cohort state and independent batch dates", () => {
-  assert.match(sql, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE'/);
+test("DB02 preserves reversible INACTIVE state with transaction-safe enum replacement", () => {
+  assert.doesNotMatch(sql, /ALTER TYPE cohort_status ADD VALUE/);
+  assert.match(sql, /ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT/);
+  assert.match(sql, /ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02/);
+  assert.match(
+    sql,
+    /CREATE TYPE cohort_status AS ENUM \([\s\S]*'PLANNED'[\s\S]*'ACTIVE'[\s\S]*'INACTIVE'[\s\S]*'COMPLETED'[\s\S]*'ARCHIVED'[\s\S]*\)/,
+  );
+  assert.match(
+    sql,
+    /ALTER COLUMN status TYPE cohort_status\s+USING status::text::cohort_status/,
+  );
+  assert.match(sql, /ALTER COLUMN status SET DEFAULT 'PLANNED'::cohort_status/);
+  assert.match(sql, /DROP TYPE cohort_status_pre_db02/);
   assert.match(sql, /ALTER TABLE cohorts\s+ADD COLUMN start_date date,\s+ADD COLUMN end_date date/);
   assert.match(sql, /cohorts_lifecycle_date_order_ck/);
 });
