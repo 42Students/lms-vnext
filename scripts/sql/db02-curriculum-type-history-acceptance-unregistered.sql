@@ -114,7 +114,7 @@ BEGIN
   END IF;
 
   -- Even an inactive/cancelled offering must retain its historical CORE identity.
-  UPDATE course_offerings SET status='INACTIVE' WHERE id=v_offering;
+  UPDATE course_offerings SET status='ARCHIVED' WHERE id=v_offering;
 
   v_rejected := false;
   BEGIN
