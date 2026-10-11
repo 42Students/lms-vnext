@@ -705,6 +705,45 @@ BEFORE INSERT OR UPDATE OF membership_id, course_id
 ON faculty_course_associations
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 
+-- Keep association lifecycle valid when identity state changes after association creation.
+-- The insert/update guard alone is insufficient: admins can later remove FACULTY or suspend/end
+-- the membership. These AFTER triggers close active associations in the same transaction.
+CREATE FUNCTION db02_end_faculty_course_associations_on_role_removal()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.role = 'FACULTY' THEN
+    UPDATE faculty_course_associations
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = OLD.membership_id
+       AND ended_at IS NULL;
+  END IF;
+  RETURN OLD;
+END;
+$;
+
+CREATE TRIGGER db02_faculty_course_associations_role_removal
+AFTER DELETE ON membership_roles
+FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_role_removal();
+
+CREATE FUNCTION db02_end_faculty_course_associations_on_membership_inactive()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
+    UPDATE faculty_course_associations
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = NEW.id
+       AND ended_at IS NULL;
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_faculty_course_associations_membership_inactive
+AFTER UPDATE OF status ON college_memberships
+FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_membership_inactive();
+
 -- ---------------------------------------------------------------------------
 -- Registration / acceptance notes
 -- ---------------------------------------------------------------------------
@@ -723,7 +762,8 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 --    while term-bound ELECTIVE offerings remain supported.
 -- 7. Verify a broad faculty-course association can exist before delivery, requires an ACTIVE
 --    FACULTY membership, rejects cross-college links, deactivates historically and cannot
---    duplicate an active pair.
+--    duplicate an active pair; removing FACULTY or suspending/ending the membership must close
+--    active associations in the same transaction and must not auto-reactivate them later.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
 --    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
