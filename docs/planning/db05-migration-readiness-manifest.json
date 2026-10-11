@@ -439,6 +439,30 @@
       "status": "BLOCKED",
       "owner": "DATABASE_TO_API_HANDOFF",
       "evidence": "Legacy classId 0=null/omitted semantics differ between create/update; negative value clears during update; vNext updateLessonContentInputSchema has no delivery change. Contract docs/planning/db05-lesson-content-rescope-contract.md; no validated update/clear API and PG downstream reference acceptance."
+    },
+    {
+      "id": "COURSE_SOFT_DELETE_LIVE_CHILD_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered db05-course-soft-delete-guard.draft.sql checks both lesson and content tombstones through offering/path ancestry; nondeleted row blocks, already-deleted children do not. PostgreSQL SQLSTATE/rollback NOT_RUN."
+    },
+    {
+      "id": "COURSE_SOFT_DELETE_CONCURRENT_NEW_LESSON",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Draft course_lessons BEFORE INSERT/learning_path_id move locks ancestor course FOR SHARE; course tombstone row-lock competition under two connections unexecuted."
+    },
+    {
+      "id": "COURSE_RESTORE_SAME_COLLEGE_NO_CHILD_RESURRECTION",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy CourseServiceImpl.restoreCourse only undoes course is_deleted after college equality check, never children; vNext API status/tenant scopes not yet adapted."
+    },
+    {
+      "id": "COURSE_SOFT_DELETE_UPSTREAM_OFFERING_REPARENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Course child guard does not intercept course_offerings/course_learning_paths reassignment or period/department moves; phantom/live descendant integrity not proven."
     }
   ],
   "sourceReview": {
@@ -473,7 +497,8 @@
     "tests/db05-lesson-content-tenant-scope.test.mjs",
     "tests/db05-lesson-delete-restore-and-owner.test.mjs",
     "tests/db05-lesson-active-enabled.test.mjs",
-    "tests/db05-lesson-content-rescope-source.test.mjs"
+    "tests/db05-lesson-content-rescope-source.test.mjs",
+    "tests/db05-course-soft-delete-guard.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -492,7 +517,8 @@
     "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending.",
     "Legacy delete lesson cascades content tombstones atomically; restore parent only. SQL draft is unregistered and current vNext reads do NOT filter these tombstones; stop release until atomic API/DB cutover and 2-session PG tests.",
     "Legacy content owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
-    "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending."
+    "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending.",
+    "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -656,6 +682,23 @@
       "registered": false,
       "postgresExecuted": false,
       "readyForProduction": false
+    },
+    {
+      "id": "DB05_COURSE_SOFT_DELETE_LIVE_CHILD_GUARD",
+      "path": "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+      "baseCandidate": "src/db/schema/courses.ts course tombstone; course_offerings -> course_learning_paths -> course_lessons -> lesson_contents",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "dependencies": [
+        "COURSE_TOMBSTONE_SEPARATE_FROM_ARCHIVED",
+        "NONDELETED_LESSON_AND_CONTENT_DELETE_NEGATIVE",
+        "CONCURRENT_LESSON_INSERT_PARENT_SHARE_LOCK",
+        "COURSE_RESTORE_SAME_COLLEGE_ONLY",
+        "UPSTREAM_OFFERING_PATH_REPARENT_MUTABILITY",
+        "DISPOSABLE_POSTGRES_TWO_SESSION_RACE"
+      ],
+      "note": "Not independent eighth DB05 numbered migration. Legacy source refuses delete with any live lesson/content but ignores already deleted child rows. Restore only course, never descendants."
     }
   ]
 }
