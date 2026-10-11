@@ -135,3 +135,64 @@ test("DB41 canonical attendance model uses stable record versions, not delete-re
     /\brevision\b|previous_attendance_record_id|new_attendance_record_id/,
   );
 });
+
+
+test("DB45 semantic preflight rejects nullable or detached attendance delivery identity",()=>{
+  const nullable=sql.replace(
+    "delivery_id uuid NOT NULL\n    REFERENCES course_section_deliveries",
+    "delivery_id uuid\n    REFERENCES course_section_deliveries",
+  );
+  assert.match(
+    auditDb41(staged,nullable).errors.join("\n"),
+    /delivery_id must be NOT NULL/,
+  );
+
+  const detached=sql.replace(
+    "attendance_record_events_delivery_identity_fk",
+    "removed_delivery_identity_fk",
+  );
+  assert.match(
+    auditDb41(staged,detached).errors.join("\n"),
+    /attendance_record_events_delivery_identity_fk/,
+  );
+});
+
+test("DB45 semantic preflight rejects obsolete delete-recreate attendance identity",()=>{
+  const modified=staged.replace(
+    'recordVersionBefore: integer("record_version_before"),',
+    'revision: integer("revision"),\n    recordVersionBefore: integer("record_version_before"),',
+  );
+  assert.match(
+    auditDb41(modified,sql).errors.join("\n"),
+    /obsolete session-revision field reintroduced: revision/,
+  );
+});
+
+test("DB45 semantic preflight requires marker snapshots and marked_at versioning",()=>{
+  const noMarkedAtVersion=sql.replace(
+    "     OR NEW.marked_at IS DISTINCT FROM OLD.marked_at THEN",
+    " THEN",
+  );
+  assert.match(
+    auditDb41(staged,noMarkedAtVersion).errors.join("\n"),
+    /version guard ignores marked_at/,
+  );
+
+  const noPreviousMarker=sql.replace(
+    "      AND e.previous_marked_by_user_id = OLD.marked_by_user_id",
+    "      AND true /* removed previous marker witness */",
+  );
+  assert.match(
+    auditDb41(staged,noPreviousMarker).errors.join("\n"),
+    /ignores marker snapshot: previous_marked_by_user_id/,
+  );
+});
+
+test("DB45 current source has no semantic preflight errors",()=>{
+  const r=original();
+  assert.deepEqual(r.errors,[]);
+  assert.equal(r.status,"STRUCTURALLY_ALIGNED_UNVERIFIED");
+  assert.equal(r.fieldDifferences,0);
+  assert.equal(r.readyForPromotion,false);
+  assert.equal(r.verifiedPostgreSQL,false);
+});
