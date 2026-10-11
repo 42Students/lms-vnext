@@ -27,6 +27,13 @@ test("DB41 repaired staged TypeScript has no malformed sql.raw literals",()=>{
   assert.doesNotMatch(staged,/sql\.raw\(""/);
 });
 
+test("DB45 staged history imports attendanceRecords exactly once",()=>{
+  assert.equal(
+    (staged.match(/import \{ attendanceRecords \} from "\.\/attendance";/g)||[]).length,
+    1,
+  );
+});
+
 test("DB41 both event ledgers persist actor role with aligned CHECK names",()=>{
   const r=original();
   assert.ok(!r.errors.some(error=>/does not persist actor_role/.test(error)));
