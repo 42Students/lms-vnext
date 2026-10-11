@@ -38,6 +38,8 @@ However, the pinned current submit implementation does not read or write either 
 
 Therefore the entity comments and V57 migration intent do **not** override the later/current enforced one-submission behavior.
 
+The V57 migration comment says new submissions would be stamped, but the pinned production `AssignmentServiceImpl.submit()` and `setStudentAssignmentFromLessonContent()` do not set `semesterNumber`; the source-of-truth runtime writer therefore never completed that proposed cutover.
+
 ## vNext normalization
 
 Current vNext already has:
@@ -58,7 +60,7 @@ With only one active submission row per assignment+membership, copying a scalar 
 
 ## Ledger disposition
 
-- `student_assignment.attempt_number` → **DERIVED_CONSTANT_NOT_PERSISTED**. Under the current active contract every accepted assignment submission is effectively attempt 1.
+- `student_assignment.attempt_number` → **DERIVED_METADATA_NOT_PERSISTED**. Under the current active contract every accepted assignment submission is effectively attempt 1.
 - `student_assignment.semester_number` → **NORMALIZED_RELATION_OR_DERIVED** using the submission delivery/offering academic period; no attempt-reset behavior survives in current prod.
 
 Neither field is runtime-verified until global DB acceptance executes, but neither requires a new target column.
