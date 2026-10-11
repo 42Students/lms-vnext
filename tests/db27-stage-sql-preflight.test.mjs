@@ -43,6 +43,48 @@ test("DB27 hides quoted pseudo-DDL without losing normal quoted table names", ()
   assert.deepEqual(inspect(candidate("quoted.sql", sql)).create, ["actual"]);
 });
 
+
+test("unclosed staged SQL delimiters are promotion hazards, never clean preflight", () => {
+  const drafts=[
+    candidate("open-block.sql","CREATE TABLE first_table (id int); /* unclosed comment"),
+    candidate("open-string.sql","SELECT 'unterminated CREATE TABLE phantom(id int)"),
+    candidate("open-dollar.sql","CREATE FUNCTION x() RETURNS void AS $body$ BEGIN CREATE TABLE phantom(id int);"),
+    candidate("open-identifier.sql",'CREATE TABLE "unfinished identifier (id int)'),
+  ];
+  const report=analyze({candidates:drafts});
+  assert.deepEqual(report.lexicalHazards,[
+    {file:"open-block.sql",errors:["UNCLOSED_BLOCK_COMMENT"]},
+    {file:"open-dollar.sql",errors:["UNCLOSED_DOLLAR_QUOTE:$body$"]},
+    {file:"open-identifier.sql",errors:["UNCLOSED_QUOTED_IDENTIFIER"]},
+    {file:"open-string.sql",errors:["UNCLOSED_STRING_LITERAL"]},
+  ]);
+  assert.equal(report.hazards,true);
+  assert.equal(report.safeForAutomaticPromotion,false);
+});
+
+test("EOF after ordinary line comment is valid but unterminated dollar tag is not", () => {
+  const ok=inspect(candidate("comment.sql","CREATE TABLE safe(id int); -- trailing comment"));
+  assert.deepEqual(ok.lexicalErrors,[]);
+  const bad=inspect(candidate("body.sql","DO $audit$ BEGIN RAISE NOTICE 'hi'; END;"));
+  assert.deepEqual(bad.lexicalErrors,["UNCLOSED_DOLLAR_QUOTE:$audit$"]);
+  const ignored=analyze({candidates:[
+    candidate("superseded.sql","-- SUPERSEDED\n/* invalid legacy draft"),
+  ]});
+  assert.equal(ignored.hazards,true,"ignored drafts with malformed SQL still need disposition");
+  assert.deepEqual(ignored.lexicalHazards,
+    [{file:"superseded.sql",errors:["UNCLOSED_BLOCK_COMMENT"]}]);
+});
+
+test("stripSqlLiterals preserves its text API and optionally reports syntax gaps", () => {
+  const errs=[];
+  const cleaned=stripSqlLiterals("SELECT E'unclosed",errs);
+  assert.equal(typeof cleaned,"string");
+  assert.deepEqual(errs,["UNCLOSED_STRING_LITERAL"]);
+  const valid=[];
+  stripSqlLiterals("SELECT $$text with CREATE TABLE fake$$; CREATE TABLE real(id int);",valid);
+  assert.deepEqual(valid,[]);
+});
+
 test("source-only and superseded SQL cannot silently become active drafts", () => {
   assert.equal(classify("-- SUPERSEDED DB09\nCREATE TABLE old (id int);"),"SUPERSEDED");
   assert.equal(classify("-- DB09 SOURCE REFERENCE ONLY\n-- NO DDL\n"),"REFERENCE_ONLY");
