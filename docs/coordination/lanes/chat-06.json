@@ -158,9 +158,15 @@
       "kind": "DB008_SOFT_DELETE_OWNER_CANONICAL_AND_COMPANION_READINESS",
       "commitSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
       "message": "W01: source-backed unregistered scripts/sql/db05-course-soft-delete-guard.draft.sql + db05-lesson-content-soft-delete-cascade.draft.sql + db05-lesson-active-enabled.draft.sql; canonical faculty owner is db05-lesson-content-faculty-owner.draft.sql, weaker competing owner draft DELETED. docs/planning/db05-lesson-soft-delete-owner-contract.md for restore/role/tenant constraints. Readiness checker now checks every unregistered crossDomainCompanion; 53 gates NOT PASS; PG acceptance NOT RUN."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_FAIL_CLOSED_SUBORDINATE_GATES",
+      "commitSha": "7e5b431336b163268246e507aa22fdbe8c4ec780",
+      "message": "Readiness checker now requires individually marked registered, postgresExecuted and readyForProduction PASS on artifact nested companionIntegrity/UpstreamDepartment/SameCollege, content order uniqueLessonProof and upstreamReparentCompanion; duplicate/path-traversal SQL references rejected. 7 primary drafts remain UNREGISTERED; 0/92 DB verified. 5 Node tests authored NOT RUN; Node 22 path-regex syntax plus six local path cases passed. W01 must provide exact DB evidence; GitHub CI billing not a blocker."
     }
   ],
-  "nextAction": "Continue DATABASE-only DB-008 source/consumer reconciliation and scoped constraints; W01 owns migration journal and must integrate canonical owner and course/lesson delete/restore companions exactly once with clean disposable PostgreSQL 23505/23514, tenant, role, CAS and two-session race evidence. No global phase promotion without actual verification.",
+  "nextAction": "DATABASE DB-008 still IN_PROGRESS: W01 integrate exact seven primary DB05 migrations with source-backed subordinate faculty-owner, lesson content tenant scope, order uniqueness, ancestry and other companions only after executable PG clean replay + negative tenant/race/deadlock proof. Subordinate readiness checker fails closed. Continue remaining source decisions; do not promote 0/92 verified or flip phase.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -268,7 +274,12 @@
     "https://github.com/42Students/lms-vnext/commit/62875ae8cba87a89d1639c9bd5d4c15cd02f59a0",
     "https://github.com/42Students/lms-vnext/commit/7e2ea56572fdf519912760e31514bf714fb2f8f7",
     "https://github.com/42Students/lms-vnext/commit/bc7697ff2258959860eac418fed885fd6ba7ab97",
-    "https://github.com/42Students/lms-vnext/commit/c74e4cbfef19e11790b49c7a9982bf8a5a729037"
+    "https://github.com/42Students/lms-vnext/commit/c74e4cbfef19e11790b49c7a9982bf8a5a729037",
+    "https://github.com/42Students/lms-vnext/commit/4cce9392758fd1db1c866a93fdea2cc803e5a05b",
+    "https://github.com/42Students/lms-vnext/commit/fcf3755423a025318c7329c1bee1ab626e49811f",
+    "https://github.com/42Students/lms-vnext/commit/a8a86795a1e49b512289ab137dcd73ec1d0ab2ff",
+    "https://github.com/42Students/lms-vnext/commit/500a11e7f991dd1956d512eb560252cd7fe02b3d",
+    "https://github.com/42Students/lms-vnext/commit/7e5b431336b163268246e507aa22fdbe8c4ec780"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
