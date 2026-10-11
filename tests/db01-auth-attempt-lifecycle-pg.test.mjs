@@ -83,6 +83,25 @@ if (!optIn) {
       await expect23514(createAttempt({role: "   "}), "identity_auth_attempts_target_role_shape_ck");
 
       const id = await createAttempt();
+      // A new challenge cannot be pre-verified/consumed, pre-exhausted,
+      // future-created or issued already expired via direct SQL.
+      for (const [additionalColumns, projection] of [
+        ["verified_at, used_at", "clock_timestamp(), clock_timestamp()"],
+        ["verification_attempts, resend_attempts", "3, 1"],
+        ["version", "2"],
+        ["created_at", "clock_timestamp() + interval '60 seconds'"],
+        ["created_at, expires_at",
+         "clock_timestamp() - interval '3 minutes', clock_timestamp() - interval '1 minute'"],
+      ]) {
+        await expect23514(
+          update(`INSERT INTO identity_auth_attempts
+            (id,user_id,college_id,membership_id,target_role,contact_fingerprint,${additionalColumns},expires_at)
+           SELECT $1,user_id,college_id,membership_id,target_role,contact_fingerprint,
+                  ${projection},expires_at FROM identity_auth_attempts WHERE id=$2`,
+            [randomUUID(), id]),
+          "db01_auth_attempt_creation_state_ck",
+        );
+      }
       await expect23514(update("UPDATE identity_auth_attempts SET user_id=$1,version=version+1 WHERE id=$2", [randomUUID(), id]), "db01_auth_attempt_scope_immutable_ck");
       await expect23514(update("UPDATE identity_auth_attempts SET expires_at=expires_at+interval '1 minute',version=version+1 WHERE id=$1", [id]), "db01_auth_attempt_expiry_monotonic_ck");
       await expect23514(update("UPDATE identity_auth_attempts SET verification_attempts=2,version=version+1 WHERE id=$1", [id]), "db01_auth_attempt_counters_monotonic_ck");
