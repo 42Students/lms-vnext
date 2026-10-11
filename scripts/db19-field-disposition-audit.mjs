@@ -26,6 +26,7 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
   let totalTables = 0, totalFields = 0, proposedMappings = 0;
   let runtimeMappings = 0, sourceReviewed = 0, historicRetirementPending = 0;
   let noSourceEvidence = 0;
+  const sourceShas = new Set();
 
   if (!Array.isArray(inputs)) throw new TypeError('inputs must be an array of ledger entries');
   const paths = new Set();
@@ -44,6 +45,13 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     }
     if (domainNames.has(ledger.domain)) errors.push({ code: 'DUPLICATE_DOMAIN', domain: ledger.domain });
     domainNames.add(ledger.domain);
+    if (requireAllDomains) {
+      const expected = filename.replace(LEDGER_PREFIX, '').replace(/\.json$/, '').toUpperCase();
+      if (ledger.domain !== expected) errors.push({ code: 'DOMAIN_FILENAME_MISMATCH', path: filename, domain: ledger.domain, expected });
+      if (!/^[a-f0-9]{40}$/i.test(ledger.sourceSha || ''))
+        errors.push({ code: 'INVALID_SOURCE_ORACLE_SHA', path: filename, sourceSha: ledger.sourceSha ?? null });
+      else sourceShas.add(ledger.sourceSha);
+    }
     if (!Array.isArray(ledger.tables)) {
       errors.push({ code: 'MISSING_TABLE_LIST', path: filename });
       continue;
@@ -84,11 +92,19 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
         if (status === 'CLASSIFY_HISTORIC_RETIREMENT') {
           record.retirementCandidatesPending++; historicRetirementPending++;
         }
-        if (!row.sourceEvidence) noSourceEvidence++;
+        if (!row.sourceEvidence) { noSourceEvidence++;
+          errors.push({ code: 'FIELD_WITHOUT_SOURCE_EVIDENCE', key });
+        }
         if (row.verifiedMapping !== null && row.verifiedMapping !== undefined) {
-          record.runtimeMappings++; runtimeMappings++;
-          if (!row.validationEvidence || /source[- ]only|not (?:runtime|postgres)|pending/i.test(row.validationEvidence))
+          const evidence = row.databaseAcceptanceEvidence;
+          const hasProof = evidence && evidence.kind === 'DISPOSABLE_POSTGRES' &&
+            /^[a-f0-9]{40}$/i.test(evidence.sourceCommitSha || '') &&
+            evidence.exitCode === 0 && evidence.result === 'PASS' &&
+            !missing(evidence.command) && !missing(evidence.postgresVersion);
+          if (missing(row.verifiedMapping) || !hasProof || !row.validationEvidence ||
+              /source[- ]only|not (?:runtime|postgres)|pending/i.test(row.validationEvidence))
             errors.push({ code: 'UNSUPPORTED_VERIFIED_MAPPING', key });
+          else { record.runtimeMappings++; runtimeMappings++; }
         }
         if (/(?:DONE_VERIFIED|WORKFLOW_VERIFIED|DB_TESTED)/.test(status) &&
             (row.verifiedMapping == null || !row.validationEvidence))
@@ -104,6 +120,8 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     const filename = LEDGER_PREFIX + suffix + '.json';
     if (!paths.has(filename)) errors.push({ code: 'MISSING_DOMAIN_LEDGER', path: filename });
   }
+  if (requireAllDomains && sourceShas.size > 1)
+    errors.push({ code: 'MIXED_LEGACY_ORACLE_SHAS', sourceShas: [...sourceShas].sort() });
   if (enforceFloor && (totalTables < HISTORICAL_FLOOR.tables || totalFields < HISTORICAL_FLOOR.fields))
     errors.push({ code: 'HISTORICAL_INVENTORY_REGRESSION', floor: HISTORICAL_FLOOR,
       actual: { tables: totalTables, fields: totalFields } });
@@ -114,7 +132,7 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     counts: { domains: perDomain.length, tables: totalTables, fields: totalFields,
       uniqueTables: tableOwners.size, uniqueFields: fieldOwners.size,
       sourceReviewed, proposedMappings, runtimeMappings, historicRetirementPending,
-      rowsMissingSourceEvidence: noSourceEvidence },
+      rowsMissingSourceEvidence: noSourceEvidence, legacyOracleShas: [...sourceShas].sort() },
     statusCounts, perDomain, errors,
   };
 }
