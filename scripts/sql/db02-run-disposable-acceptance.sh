@@ -183,6 +183,7 @@ two_session_bash=(
   scripts/sql/db02-postgres-concurrency-unregistered.sh
   scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh
   scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh
+  scripts/sql/db02-role-reactivation-concurrency-unregistered.sh
 )
 
 for path in "${source_tests[@]}" "${single_session_sql[@]}" "${two_session_bash[@]}"; do
