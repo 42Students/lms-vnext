@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:54:30.000Z",
+  "updatedOn": "2026-10-11T09:13:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2605,13 +2605,13 @@
         "scripts/db41-history-schema-drift.mjs",
         "tests/db41-history-schema-drift.test.mjs"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:54:00.000Z",
       "startedAt": "2026-10-11T08:54:30.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T09:13:00.000Z",
+      "completionCommitSha": "fa63b1b3a37e83f5cddb299bf4af16b16f017c70",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2635,15 +2635,20 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:54:30.000Z",
           "reason": "Comparing staged Drizzle and SQL attendance-history models against current attendance producer semantics and frozen legacy evidence."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T09:13:00.000Z",
+          "reason": "Attendance design fork resolved; Drizzle/SQL source contracts and semantic preflight aligned. Producer cutover and PostgreSQL acceptance remain separate verification gates."
         }
       ],
-      "latestEvidenceSha": "7b1a9ba387c2b51ba833b92709e9d54f2a0a631c",
+      "latestEvidenceSha": "fa63b1b3a37e83f5cddb299bf4af16b16f017c70",
       "verificationEvidence": [],
       "blockers": [
-        "ATTENDANCE_DESIGN_DECISION: staged Drizzle history revision and SQL record-version/FK models differ by twelve columns; choose one before registering migration.",
-        "PRODUCER_AND_RUNTIME_PROOF: grade/publish/attendance writers do not yet atomically emit event rows; no disposable PostgreSQL acceptance witnesses executed."
+        "PRODUCER_CUTOVER_PENDING_API_PHASE: current grade/publish and faculty/admin attendance services do not yet atomically emit immutable history events; the exact cutover contract is documented for the global API phase.",
+        "PG_VERIFICATION_PENDING: DB-045 history migration/replay, direct-SQL negative writes and concurrency races require an approved executable checkout + disposable PostgreSQL before DONE_VERIFIED."
       ],
-      "completionNote": null
+      "completionNote": "DB-045 DATABASE source reconciliation complete. Canonical attendance history is retained explicit-PRESENT current row + monotonic version + immutable MARK/CORRECT events. Staged Drizzle/SQL align at 25/25 grade fields + 21/21 attendance fields with aligned CHECKs; attendance history now has non-null delivery snapshot, stable current-row and schedule-delivery composite FKs, actor-role/scope guards, exact marker/time snapshots, version completeness and append-only retention. Grade producer/publisher actor semantics and exact transactional API cutover are documented. 30 PostgreSQL acceptance witnesses authored. Connector current-main source review 15/15 true. No Node test execution or PostgreSQL replay/negative/race proof claimed."
     },
     {
       "id": "DB-046",
