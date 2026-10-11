@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T02:51:00+05:30",
+  "updatedOn": "2026-10-12",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4281,6 +4281,52 @@
           "status": "COMPLETED",
           "at": "2026-10-11T21:10:09.740Z",
           "reason": "Source-backed append-only template revisions staged; 26/26 V8 source checks PASS. No migration registered/PG run."
+        }
+      ]
+    },
+    {
+      "id": "DB-071",
+      "phase": "DATABASE",
+      "title": "Enforce deferred DB07 current/published template revision pointers",
+      "scope": "Stage DEFERRABLE INITIALLY DEFERRED composite FKs from project_templates (id,current_version) and nullable (id,published_version) to project_template_versions(template_id,version). Current CHECK range constraints allow missing revisions; creation/revision updates template header before inserting revision inside transaction, so immediate FK would regress. Add fail-closed preflight and opt-in PG witnesses, no registered migrations.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db07-template-version-pointer-fks-staging.sql",
+        "docs/planning/db07-template-version-pointer-contract.md",
+        "tests/db07-template-version-pointer-source.test.mjs",
+        "tests/integration/db07-template-version-pointer-fks.test.ts"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 2,
+      "pickedAt": "2026-10-11T21:12:15.225Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 2,
+          "pickedAt": "2026-10-11T21:12:15.225Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T21:12:15.225Z",
+          "reason": "Active create/revise/duplicate service writes template header before version snapshot within same transaction; published_version also needs referential proof, registered schema has only >=1/range checks."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T21:12:15.225Z",
+          "reason": "Chat 2 claims independent deferred template version-pointer DB integrity gap after DB070 source completion."
         }
       ]
     }
