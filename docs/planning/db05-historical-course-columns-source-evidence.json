@@ -1,0 +1,124 @@
+{
+  "taskId": "DB-008",
+  "phase": "DATABASE",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "status": "BOUNDED_NEGATIVE_SOURCE_EVIDENCE_NOT_EXHAUSTIVE_CODEBASE_SEARCH",
+  "snapshotSource": {
+    "path": "src/test/resources/db/mysql-schema-snapshot.sql",
+    "blobSha": "d89d2ec8ace596f318f6b1f631b8dd389e973c14",
+    "snippets": [
+      "`default_subscription_days` int DEFAULT NULL",
+      "`formal_title` varchar(255) DEFAULT NULL"
+    ]
+  },
+  "unmappedHistoricalColumns": [
+    {
+      "field": "course.default_subscription_days",
+      "snapshotType": "INT NULL",
+      "currentJpaMapped": false,
+      "currentCourseDtoInput": false,
+      "inspectedRelevantCodeHits": 0,
+      "candidateDecision": "RETAIN_OPTIONAL_COMPATIBILITY_COLUMN_OR_EXPLICITLY_RETIRE_AFTER_SERVICE/EXPORT/PROVISIONING_AUDIT",
+      "runtimeConsumerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "field": "course.formal_title",
+      "snapshotType": "VARCHAR(255) NULL",
+      "currentJpaMapped": false,
+      "currentCourseDtoInput": false,
+      "inspectedRelevantCodeHits": 0,
+      "candidateDecision": "RETAIN_OPTIONAL_DISPLAY_ALIAS_OR_EXPLICITLY_RETIRE_AFTER_READ/EXPORT/AUDIENCE_AUDIT",
+      "runtimeConsumerVerified": false,
+      "retirementApproved": false
+    }
+  ],
+  "inspectedRelevantCurrentLegacyFiles": [
+    {
+      "path": "src/main/java/com/_42students/lms/model/Course.java",
+      "blobSha": "2fcc9c296a13e53e9dede507f4024d8d8fb944c1",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/dto/request/CourseDTO.java",
+      "blobSha": "ffffb1aa0b8e434f5820c35b98a0168d5b4e9b36",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/dto/response/PublicCourseDTO.java",
+      "blobSha": "1389d6be745df854b06568b69457381bd81780c0",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/service/impl/CourseServiceImpl.java",
+      "blobSha": "dd970a4765a8192f20dacc57f8993cf609be430a",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/service/impl/StudentCourseServiceImpl.java",
+      "blobSha": "002e6d0b131d8c2daa3b24a044399b182379f6dc",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/repository/CourseRepository.java",
+      "blobSha": "f2e48b527793e74b6f1b3533702077a28c02b9d9",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/CourseController.java",
+      "blobSha": "3b2d41ac4deda07e753566efcf27e6b90d0ffa32",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/StudentCourseController.java",
+      "blobSha": "267e0f1e75e7b18178dbdf5362e6c259a801d22c",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java",
+      "blobSha": "bf69d7c1ba592b9e85e60ee20b1fd0cf441fdd6f",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/courses/CourseSearchDTO.java",
+      "blobSha": "db3766adbca522dc5ccbcc0c7db2fb7d4f04873d",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/dto/response/StudentCoursesResponseDTO.java",
+      "blobSha": "6db35c2cd1414d1f5f01e75f4ba381231c4b6cfb",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/dto/response/CourseInfoDTO.java",
+      "blobSha": "578261492cf82730579ceb0108e2e93121b8dea1",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+      "blobSha": "d85dc4f7857f784af31029161133b8460d8bf4c4",
+      "formalTitleHits": 0,
+      "defaultSubscriptionDaysHits": 0
+    }
+  ],
+  "noClaim": "This is a bounded negative result only, not proof these fields are unused in all native SQL, historical services, exports or other clients. No vNext migration should silently invent semantics.",
+  "acceptance": [
+    "Search any remaining active SQL/native query/report/export/partner/FE consumer and course provisioning config for BOTH names",
+    "Choose explicit preservation or removal with dated API/database decision, never assume retired",
+    "If retained, write validated nullable typed columns with scoped producer/reader and negative PostgreSQL tests",
+    "If retired, document zero business consumer in current product and no data migration requirement; keep legacy snapshot evidence",
+    "Review license/subscription duration separately from vNext delivery validity; no accidental expiry enforcement"
+  ]
+}
