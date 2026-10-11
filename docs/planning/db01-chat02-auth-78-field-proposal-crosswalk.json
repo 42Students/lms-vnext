@@ -28,14 +28,44 @@
     },
     "providerVerified": 0,
     "postgresVerified": 0,
-    "productionMigrationsApplied": 0
+    "productionMigrationsApplied": 0,
+    "openDecisionSourceRows": [
+      "auth_handoff_token.updated_at",
+      "auth_handoff_token.access_token",
+      "auth_handoff_token.refresh_token",
+      "college.college_chair_id",
+      "college.college_vice_chair_id",
+      "faculty_acct_verification.updated_at",
+      "faculty_acct_verification.blocked_till_ts",
+      "learner_acct_verification.updated_at",
+      "learner_acct_verification.blocked_till_ts",
+      "mobile_login_attempt.updated_at",
+      "refresh_token_blocklist.user_type",
+      "role.id",
+      "role.is_deleted",
+      "role.updated_at",
+      "role.description",
+      "user.business_title",
+      "user.password",
+      "user.user_name",
+      "user_session.user_type"
+    ],
+    "openHighSecurityDecisionRows": [
+      "auth_handoff_token.access_token",
+      "auth_handoff_token.refresh_token",
+      "faculty_acct_verification.blocked_till_ts",
+      "learner_acct_verification.blocked_till_ts",
+      "role.is_deleted",
+      "user.password"
+    ]
   },
   "caveats": [
     "All 78 DB01-owned NO_TARGET_PROPOSED active/lifecycle fields now have an explicit candidate target or an intentional unresolved redesign slot; none has registered/verified behavior.",
     "A candidate target may deliberately consolidate several legacy fields or replace insecure raw credentials with keyed MAC/provider behavior; never treat field name equivalence as production parity.",
     "Staged tables require sole integrator Chat 1 and approved current provider/identity workflows. Current globally active wave is DATABASE; do not change API/UI prematurely.",
     "User password, refresh/access tokens and low-entropy OTP must not be copied as raw columns. Reconstruct user jobs from supported provider identity and scoped DB metadata.",
-    "Thirty-party DB04/DB09 handoffs remain in the parent 173-field decision queue; this 78-row document covers DB01 only."
+    "Cross-domain DB04/DB09 handoffs remain in the parent 173-field decision queue; this 78-row document covers DB01 only.",
+    "Exactly 19 source fields remain intentional open decisions, including legacy ADMIN role metadata, user login handles, historical audit timestamps, per-account blocked_till_ts, and credential retirement. These are NOT silently retired."
   ],
   "rows": [
     {
