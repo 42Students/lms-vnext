@@ -154,3 +154,30 @@ test("DB09 prep FK depends on centralized parent key", () => {
     /FOREIGN KEY \(learner_membership_id, college_id\)[\s\S]*REFERENCES college_memberships\(id, college_id\)/,
   );
 });
+
+
+test("DB09 drive groups bind recruiter, company, grant and child college", () => {
+  const parents = read("docs/planning/sql/db09-parent-composite-keys-candidate.sql");
+  const sql = read("docs/planning/sql/db09-multicollege-drive-group-candidate.sql");
+
+  assert.match(
+    parents,
+    /UNIQUE \(user_id, company_id\)/,
+    "recruiter profile needs a composite recruiter/company identity key",
+  );
+  assert.match(
+    sql,
+    /FOREIGN KEY \(recruiter_user_id, company_id\)[\s\S]*REFERENCES placement_recruiter_profiles\(user_id, company_id\)/,
+  );
+  assert.match(sql, /created_by_user_id = recruiter_user_id/);
+  assert.match(sql, /rp\.status = 'ACTIVE'/);
+  assert.match(sql, /company\.status = 'ACTIVE'/);
+  assert.match(sql, /grant\.status = 'ACTIVE'/);
+  assert.match(sql, /rel\.college_id = NEW\.college_id/);
+  assert.match(sql, /rel\.company_id = group_company/);
+  assert.match(sql, /NEW\.created_by_user_id IS DISTINCT FROM group_recruiter/);
+  assert.match(
+    sql,
+    /CREATE UNIQUE INDEX placement_jobs_recruiter_group_college_uq/,
+  );
+});
