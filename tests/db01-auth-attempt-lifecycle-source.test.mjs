@@ -45,7 +45,7 @@ function missing(ddlText, guardText, tsText) {
     [/NEW.resend_attempts < OLD.resend_attempts/i, "resend cannot decrease"],
     [/NEW.version <> OLD.version \+ 1/i, "version exactly one step"],
     [/NEW.expires_at > OLD.expires_at/i, "expiry cannot extend"],
-    [/clock_timestamp\(\) >= OLD.expires_at/i, "live database clock expiry"],
+    [/clock_timestamp\(\) >= LEAST\(OLD.expires_at, NEW.expires_at\)/i, "live database clock expiry"],
     [/OLD.verified_at IS NULL AND NEW.verified_at IS NOT NULL/i, "deny expired verification"],
     [/OLD.used_at IS NULL AND NEW.used_at IS NOT NULL/i, "deny expired consumption"],
     [/NEW.verification_attempts > OLD.verification_attempts/i, "deny expired retry budget"],
@@ -152,10 +152,10 @@ test("DB01 rejects pre-exhausted challenges and future-issued clocks", () => {
 });
 
 test("DB01 expired challenge cannot be retroactively verified or consumed", () => {
-  assert.match(guard, /clock_timestamp\(\) >= OLD.expires_at/);
+  assert.match(guard, /clock_timestamp\(\) >= LEAST\(OLD.expires_at, NEW.expires_at\)/);
   assert.match(guard, /OLD.verified_at IS NULL AND NEW.verified_at IS NOT NULL/);
   assert.match(guard, /OLD.used_at IS NULL AND NEW.used_at IS NOT NULL/);
-  assert.ok(missing(ddl, guard.replace("clock_timestamp() >= OLD.expires_at", "FALSE"), drizzle).includes("live database clock expiry"));
+  assert.ok(missing(ddl, guard.replace("clock_timestamp() >= LEAST(OLD.expires_at, NEW.expires_at)", "FALSE"), drizzle).includes("live database clock expiry"));
   assert.ok(missing(ddl, guard.replace("OLD.verified_at IS NULL AND NEW.verified_at IS NOT NULL", "FALSE"), drizzle).includes("deny expired verification"));
   assert.ok(missing(ddl, guard.replace("OLD.used_at IS NULL AND NEW.used_at IS NOT NULL", "FALSE"), drizzle).includes("deny expired consumption"));
 });
@@ -165,6 +165,11 @@ test("DB01 expired challenge cannot reserve additional verification or resend sl
   assert.match(clause[1],/NEW.verification_attempts > OLD.verification_attempts/);
   assert.match(clause[1],/NEW.resend_attempts > OLD.resend_attempts/);
   assert.match(clause[1],/db01_auth_attempt_expired_mutation_ck/);
+});
+test("DB01 same-write shortening of expiry cannot launder a backdated proof", () => {
+  assert.match(guard,/clock_timestamp\(\) >= LEAST\(OLD.expires_at, NEW.expires_at\)/);
+  const mutant=guard.replace("LEAST(OLD.expires_at, NEW.expires_at)", "OLD.expires_at");
+  assert.ok(missing(ddl,mutant,drizzle).includes("live database clock expiry"));
 });
 test("DB01 future-dated verification and consumption are rejected against wall clock", () => {
   assert.match(guard,/OLD.verified_at IS NULL AND NEW.verified_at > clock_timestamp\(\)/);
