@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:15:00+05:30",
+  "updatedOn": "2026-10-11T21:20:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3584,17 +3584,17 @@
         "docs/planning/db09-message-chronology-audit.md",
         "tests/db09-message-chronology.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "306ab4459a45942ceb5dd22f254f65b489c58ecd",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-061 source/staging implementation complete. Messages are born unread, creation/read timestamps are bounded, message and thread identity/history are immutable, read state is one-way, and deferred triggers require thread.last_message_at to equal MAX(message.created_at) at commit. 9/9 exact committed connector V8 source assertions pass; all 18 staged SQL functions have valid $$ quoting. Node/PostgreSQL/migration/runtime execution not claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T21:14:00+05:30",
       "startedAt": "2026-10-11T21:15:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T21:20:00+05:30",
+      "completionCommitSha": "306ab4459a45942ceb5dd22f254f65b489c58ecd",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3618,6 +3618,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T21:15:00+05:30",
           "reason": "Chat 3 begins staged message timestamp/read-state and thread-last-message projection guards."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:20:00+05:30",
+          "reason": "Message chronology/thread projection/immutability guards committed; 9/9 source assertions pass and 18/18 function quoting valid; PostgreSQL pending."
         }
       ]
     }
