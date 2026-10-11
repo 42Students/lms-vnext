@@ -26,6 +26,31 @@ CREATE TABLE placement_recruiter_drive_groups (
 CREATE INDEX placement_recruiter_drive_groups_recruiter_time_idx
   ON placement_recruiter_drive_groups(recruiter_user_id, created_at);
 
+-- New groups can only be created/retargeted while the recruiter profile and
+-- canonical company are active. Archiving later does not delete history.
+CREATE FUNCTION db09_assert_drive_group_owner_active() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM placement_recruiter_profiles rp
+      JOIN placement_companies company ON company.id = rp.company_id
+     WHERE rp.user_id = NEW.recruiter_user_id
+       AND rp.company_id = NEW.company_id
+       AND rp.status = 'ACTIVE'
+       AND company.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'drive group recruiter/company is not active'
+      USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END $;
+
+CREATE TRIGGER db09_drive_group_owner_active_guard
+  BEFORE INSERT OR UPDATE OF recruiter_user_id,company_id
+  ON placement_recruiter_drive_groups
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_group_owner_active();
+
 ALTER TABLE placement_jobs
   ADD COLUMN recruiter_drive_group_id uuid
   REFERENCES placement_recruiter_drive_groups(id) ON DELETE RESTRICT;
@@ -90,8 +115,9 @@ CREATE TRIGGER db09_drive_group_job_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_group_job_scope();
 
 -- Proof requirements prior to adoption:
--- (1) same recruiter and normalized global company for all jobs sharing a
---     group, with each attachment requiring a LIVE college grant at write time;
+-- (1) group creation rejects archived recruiter/company; same recruiter and
+--     normalized global company for all child jobs, with each attachment
+--     requiring a LIVE college grant at write time;
 -- (2) per-college job status, decisions, dates, permissions and publishing
 --     are independent; group does not authorize cross-college reads;
 -- (3) one child job per group+college is enforced. Legacy source describes
