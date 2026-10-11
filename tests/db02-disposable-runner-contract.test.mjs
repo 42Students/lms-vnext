@@ -7,6 +7,18 @@ const runner = readFileSync(
   "utf8",
 );
 
+const concurrencyScripts = [
+  "db02-postgres-concurrency-unregistered.sh",
+  "db02-promotion-readiness-concurrency-unregistered.sh",
+  "db02-curriculum-type-history-concurrency-unregistered.sh",
+].map((name) => ({
+  name,
+  source: readFileSync(
+    new URL(`../scripts/sql/${name}`, import.meta.url),
+    "utf8",
+  ),
+}));
+
 test("runner is opt-in and verifies exact disposable database identity", () => {
   assert.match(runner, /DB02_DISPOSABLE_ACCEPTANCE:-/);
   assert.match(runner, /DB02_EXPECTED_DATABASE/);
@@ -91,4 +103,14 @@ test("runner executes source tests, rollback SQL, then race suites with fail-fas
   assert.match(runner, /psql "\$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "\$path"/);
   assert.match(runner, /bash "\$path"/);
   assert.match(runner, /DB02 disposable acceptance all checks completed with exit code 0/);
+});
+
+test("direct concurrency scripts fail closed to the explicitly named disposable database", () => {
+  for (const { name, source } of concurrencyScripts) {
+    assert.match(source, /DB02_DISPOSABLE_ACCEPTANCE:-/, name);
+    assert.match(source, /DB02_EXPECTED_DATABASE/, name);
+    assert.match(source, /SELECT current_database\(\)/, name);
+    assert.match(source, /DB name mismatch/, name);
+    assert.match(source, /Refusing to run: explicitly set DB02_DISPOSABLE_ACCEPTANCE=YES/, name);
+  }
 });
