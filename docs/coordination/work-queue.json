@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:47:30.000Z",
+  "updatedOn": "2026-10-11",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2579,6 +2579,46 @@
           "reason": "Auditing pinned assignment submit/count semantics and current vNext uniqueness to resolve re-attempt persistence without guessing."
         }
       ]
+    },
+    {
+      "id": "DB-045",
+      "phase": "DATABASE",
+      "title": "Reconcile DB06 attendance event-history identity and atomic producer cutover",
+      "scope": "Select source-backed attendance event identity and PRESENT/correction persistence semantics; align Drizzle and SQL; verify grade producer and publisher identity; design atomic mark/correct and grade audit writers; coordinate Chat 1 numbered migration; execute negative tenant/actor/retention/race witnesses. Grade event SQL now aligns 25/25 with staged Drizzle and feedback-only audit is guarded; attendance still has 12 field mismatches.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db06-history-audit-grade-parity-and-attendance-decision-2026-10-11.md",
+        "src/db/schema/db06-history-staged.ts",
+        "docs/planning/sql/db06-assessment-attendance-history-candidate.sql",
+        "scripts/db41-history-schema-drift.mjs",
+        "tests/db41-history-schema-drift.test.mjs"
+      ],
+      "status": "READY",
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Independent contributor repaired historical DB35 source syntax and grade actor/feedback snapshot SQL; attendance semantics and executable proof remain; no worker has claimed this new follow-on."
+        }
+      ],
+      "latestEvidenceSha": "7b1a9ba387c2b51ba833b92709e9d54f2a0a631c",
+      "verificationEvidence": [],
+      "blockers": [
+        "ATTENDANCE_DESIGN_DECISION: staged Drizzle history revision and SQL record-version/FK models differ by twelve columns; choose one before registering migration.",
+        "PRODUCER_AND_RUNTIME_PROOF: grade/publish/attendance writers do not yet atomically emit event rows; no disposable PostgreSQL acceptance witnesses executed."
+      ],
+      "completionNote": null
     }
   ],
   "eventModel": {
