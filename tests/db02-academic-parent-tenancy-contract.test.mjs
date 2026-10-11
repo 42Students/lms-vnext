@@ -136,16 +136,18 @@ test("canonical delivery and faculty chains are database scoped", () => {
 
 
 test("learner identity lifecycle preserves suspension but closes role/end state", () => {
-  assert.match(extension, /CREATE FUNCTION db02_withdraw_learner_academic_state\(\)/);
-  assert.match(extension, /OLD\.role = 'LEARNER'/);
-  assert.match(extension, /OLD\.status <> 'ENDED' AND NEW\.status = 'ENDED'/);
+  assert.match(extension, /CREATE FUNCTION db02_withdraw_learner_on_role_delete\(\)/);
+  assert.match(extension, /CREATE FUNCTION db02_withdraw_learner_on_membership_end\(\)/);
+  assert.match(extension, /OLD\.role <> 'LEARNER'/);
+  assert.match(extension, /OLD\.status = 'ENDED' OR NEW\.status <> 'ENDED'/);
   assert.match(extension, /UPDATE section_enrollments se[\s\S]*status = 'WITHDRAWN'/);
   assert.match(extension, /UPDATE learner_program_enrollments[\s\S]*withdrawn_at = COALESCE/);
   assert.match(extension, /db02_withdraw_learner_on_role_removal/);
   assert.match(extension, /db02_withdraw_learner_on_membership_end/);
+  assert.doesNotMatch(extension, /RETURN\s+COALESCE\s*\(\s*(?:NEW|OLD)/);
   assert.doesNotMatch(
     extension,
-    /should_withdraw := [^;]*SUSPENDED/,
+    /NEW\.status = 'SUSPENDED'[\s\S]{0,300}status = 'WITHDRAWN'/,
     "temporary suspension must not academically withdraw the learner",
   );
 });
