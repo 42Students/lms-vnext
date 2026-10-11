@@ -590,12 +590,19 @@ DECLARE
   max_terms integer;
   cohort_college uuid;
   period_college uuid;
+  cohort_start_day date;
+  cohort_end_day date;
+  period_start_day date;
+  period_end_day date;
+  period_status academic_period_status;
 BEGIN
-  SELECT p.duration_terms, d.college_id
-    INTO max_terms, cohort_college
+  SELECT p.duration_terms, d.college_id, start_ap.start_date, end_ap.end_date
+    INTO max_terms, cohort_college, cohort_start_day, cohort_end_day
     FROM cohorts c
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
+    JOIN academic_periods start_ap ON start_ap.id = c.start_period_id
+    LEFT JOIN academic_periods end_ap ON end_ap.id = c.expected_end_period_id
    WHERE c.id = NEW.cohort_id
    FOR UPDATE OF c
    FOR SHARE OF p;
@@ -610,7 +617,8 @@ BEGIN
   END IF;
 
   IF NEW.current_period_id IS NOT NULL THEN
-    SELECT college_id INTO period_college
+    SELECT college_id, start_date, end_date, status
+      INTO period_college, period_start_day, period_end_day, period_status
       FROM academic_periods
      WHERE id = NEW.current_period_id;
     IF period_college IS NULL THEN
@@ -618,6 +626,15 @@ BEGIN
     END IF;
     IF period_college <> cohort_college THEN
       RAISE EXCEPTION 'Cohort and academic period must belong to the same college'
+        USING ERRCODE='23514';
+    END IF;
+    IF period_status = 'CLOSED' THEN
+      RAISE EXCEPTION 'Cohort progression cannot target a closed academic period'
+        USING ERRCODE='23514';
+    END IF;
+    IF period_start_day < cohort_start_day
+       OR (cohort_end_day IS NOT NULL AND period_end_day > cohort_end_day) THEN
+      RAISE EXCEPTION 'Cohort progression period must stay inside the cohort period window'
         USING ERRCODE='23514';
     END IF;
   END IF;
