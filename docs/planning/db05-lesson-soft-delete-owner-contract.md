@@ -30,9 +30,9 @@ Legacy `LessonContentsServiceImpl.deleteLessonContent` sets `isDeleted=true`, `e
 
 Legacy `LessonContents.facultyId` is nullable and a **mutable ownership/permission field**, not just an audit author. `LessonContentsServiceImpl` on faculty creation stamps the principal's faculty ID. Update/delete require either the matching owner or authorized admin, including faculty-type ADMIN. Generic owner-null content still requires valid teaching-assignment scope. Users cannot escape this requirement by supplying a different class/course in the edit payload.
 
-vNext `lesson_contents.created_by_user_id` is an audit identity; it does not model this separate permission relationship. A super-admin/college admin can author content for another faculty. In greenfield multi-college vNext the candidate field is nullable `owner_membership_id`, referring to `college_memberships.id` and **not** using a global numeric faculty ID or automatically equating creator and owner.
+vNext `lesson_contents.created_by_user_id` is an audit identity; it does not model this separate permission relationship. A super-admin/college admin can author content for another faculty. In greenfield multi-college vNext the candidate field is nullable `faculty_owner_membership_id`, referring to `college_memberships.id` and **not** using a global numeric faculty ID or automatically equating creator and owner.
 
-**Staged proposal:** `scripts/sql/db05-lesson-content-owner-membership.draft.sql` adds this FK and rejects different-college ownership based on actual course department, offering period and optional delivery's offering/section cohort/period/college. A generic owner-null row remains legal. It does not grant permissions or prove the faculty role, current assignment or active status.
+**Staged proposal:** `scripts/sql/db05-lesson-content-faculty-owner.draft.sql` adds this FK and rejects different-college ownership based on actual course department, offering period and optional delivery's offering/section cohort/period/college. A generic owner-null row remains legal. The canonical companion checks active FACULTY role on new/reassigned ownership while preserving historical ownership on later role loss; it does not grant permission to edit or prove a current teaching assignment.
 
 ## Release and integration blocking cases
 
