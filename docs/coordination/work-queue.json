@@ -2065,17 +2065,17 @@
         "docs/planning/db09-tpo-settings-normalization-2026-10-11.md",
         "tests/db-parity-db09-ledger.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "942066d0846c5fd9ef6598e0031cd07ce8bb9065",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Repaired malformed truncated SQL regex + 216-line duplicate export block in DB09 tpo-collaboration.ts. Redesigned four college optional-notification JSON switches and five personal TPO prefs as nine typed NOT NULL boolean fields with exact frozen legacy defaults; updated 279-field source ledger to 195 MAPPED/84 REDESIGNED, migration manifest and DB034 handoff. Authored 7 focused tests and repaired stale existing 2 DB09 suites. Thirteen actual committed source-test callbacks passed in isolated V8 assertion/filesystem shims; Node test runner, tsc, PostgreSQL migration/replay, API compatibility and notification dispatch runtime not executed. Task source implementation complete; no database acceptance or DONE_VERIFIED claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T14:10:00+05:30",
       "startedAt": "2026-10-11T14:12:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T08:32:41.569Z",
+      "completionCommitSha": "942066d0846c5fd9ef6598e0031cd07ce8bb9065",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2109,6 +2109,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:30:33.361Z",
           "reason": "Extend to DB09 legacy ledger regression: old 199/65/15 statuses are stale against 279 disposition-reviewed, 195 MAPPED/84 REDESIGNED, zero field-level BLOCKED."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T08:32:41.569Z",
+          "reason": "DB036 source/staged implementation, legacy source mapping, regression test repair and integration handoff committed; independent Node/PostgreSQL acceptance still pending."
         }
       ]
     },
