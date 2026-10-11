@@ -87,6 +87,15 @@
         "registered": false,
         "postgresExecuted": false,
         "note": "REPLACE existing function body once; do NOT install duplicate trigger. W01 owns integration. Child guard does not protect later reparenting."
+      },
+      "stagedTypedSchema": {
+        "path": "src/db/schema/db05-lesson-discussions.staged.ts",
+        "registered": false,
+        "exportedFromSchemaBarrel": false,
+        "postgresObserved": false,
+        "sourceMappingTestPath": "tests/db05-typed-staged-schema-parity.test.mjs",
+        "sourceParityCheckedInConnectedGitHub": true,
+        "sourceStaticAuditOnly": true
       }
     },
     {
@@ -155,7 +164,16 @@
       ],
       "registered": false,
       "executedAgainstPostgres": false,
-      "readyForProduction": false
+      "readyForProduction": false,
+      "stagedTypedSchema": {
+        "path": "src/db/schema/db05-lesson-settings.staged.ts",
+        "registered": false,
+        "exportedFromSchemaBarrel": false,
+        "postgresObserved": false,
+        "sourceMappingTestPath": "tests/db05-typed-staged-schema-parity.test.mjs",
+        "sourceParityCheckedInConnectedGitHub": true,
+        "sourceStaticAuditOnly": true
+      }
     }
   ],
   "gates": [
@@ -477,6 +495,24 @@
       "status": "BLOCKED",
       "owner": "W01_DB05_PRODUCT_SOURCE_DECISION",
       "evidence": "Two historical snapshot-only course columns require explicit typed-retain or retirement sign-off. 28 pinned legacy Java/FE paths scanned with zero matches, not global source proof. Optional compatibility SQL UNREGISTERED; no PG/schema/consumer acceptance."
+    },
+    {
+      "id": "DB05_LESSON_DISCUSSIONS_TYPED_SCHEMA_SQL_PARITY",
+      "status": "SOURCE_STATIC_ONLY",
+      "owner": "W01_DB05_INTEGRATOR",
+      "evidence": "No compiler/PG execution. Isolated typed schema mirrors 17 source SQL cols; self-referential parent composite FK. This is NOT runtime export."
+    },
+    {
+      "id": "DB05_LESSON_SETTINGS_TYPED_SCHEMA_SQL_PARITY",
+      "status": "SOURCE_STATIC_ONLY",
+      "owner": "W01_DB05_INTEGRATOR",
+      "evidence": "No compiler/PG execution. Isolated typed schema mirrors 14 source SQL cols; version bigint preserved."
+    },
+    {
+      "id": "DB05_STAGED_DISCUSSION_SETTINGS_POSTGRES_CATALOG",
+      "status": "NOT_RUN",
+      "owner": "W01_DB05_INTEGRATOR",
+      "evidence": "Opt-in read-only script scripts/db05-staged-schema-db-audit.mjs must observe exact two migrated tables, FK/index and strengthened tenant guard in disposable PG. Even PASS does not satisfy race/API/migration replay."
     }
   ],
   "sourceReview": {
@@ -753,5 +789,35 @@
       "RETAIN_NULLABLE_TYPED_IN_W01_MIGRATION_AFTER_SOURCE_DECISION",
       "DOCUMENTED_RETIREMENT_AFTER_FULL_CONSUMER_AUDIT"
     ]
+  },
+  "typedStagedSchemaReadiness": {
+    "phase": "DATABASE",
+    "status": "SOURCE_ONLY_NOT_REGISTERED_NOT_TYPECHECKED",
+    "artifacts": [
+      {
+        "artifactId": "db05-discussions",
+        "path": "src/db/schema/db05-lesson-discussions.staged.ts",
+        "sourceTest": "tests/db05-typed-staged-schema-parity.test.mjs"
+      },
+      {
+        "artifactId": "db05-content-settings",
+        "path": "src/db/schema/db05-lesson-settings.staged.ts",
+        "sourceTest": "tests/db05-typed-staged-schema-parity.test.mjs"
+      }
+    ],
+    "sourceAuditEvidence": {
+      "checkedScript": "tests/db05-typed-staged-schema-parity.test.mjs",
+      "connectedGitHubSourceChecks": 10,
+      "sourceChecksPassed": 10,
+      "nodeTestSuiteExecuted": false,
+      "typescriptCompilerExecuted": false
+    },
+    "readOnlyPgProbe": {
+      "path": "scripts/db05-staged-schema-db-audit.mjs",
+      "staticTestPath": "tests/db05-staged-postgres-catalog-audit.test.mjs",
+      "executed": false,
+      "connectionSafety": "Explicit disposable URL + opt-in and read-only transaction, no SQL mutations."
+    },
+    "neverAutoregister": "Chat 1 remains the only migration journal and schema-barrel integrator"
   }
 }
