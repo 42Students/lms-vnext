@@ -69,10 +69,17 @@ test("current Drizzle shape still needs DB-066 integration", () => {
 });
 
 test("source verifier covers service assumptions and corrupt-row preflight", () => {
-  assert.match(sourceVerifier, /liveRole\.jobId\s*!==\s*job\.id/);
-  assert.match(sourceVerifier, /row\.application\.jobId\s*!==\s*round\.jobId/);
-  assert.match(sourceVerifier, /round\.jobId\s*!==\s*application\.job\.id/);
-  assert.match(sourceVerifier, /offer\.applicationId\s*!==\s*application\.application\.id/);
+  // This file contains regex source literals, not evaluated service code.
+  // Compare the escaped patterns literally rather than searching for the
+  // unescaped JavaScript service expression (which produces a false failure).
+  for (const probe of [
+    String.raw`liveRole\.jobId\s*!==\s*job\.id`,
+    String.raw`row\.application\.jobId\s*!==\s*round\.jobId`,
+    String.raw`round\.jobId\s*!==\s*application\.job\.id`,
+    String.raw`offer\.applicationId\s*!==\s*application\.application\.id`,
+  ]) {
+    assert.ok(sourceVerifier.includes(probe), "Missing source guard: " + probe);
+  }
   assert.match(sourceVerifier, /candidate has corrupt-row preflight/);
 });
 
