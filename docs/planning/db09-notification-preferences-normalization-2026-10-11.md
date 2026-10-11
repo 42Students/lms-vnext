@@ -67,7 +67,7 @@ DB-036 surgically removed the duplicate block and completed the frozen trusted-d
 
 `docs/planning/database-parity-db09-field-ledger.json` rows `DB09-TPO_COLLEGE_SETTINGS-12` and `DB09-TPO_USER_PREFS-02` are now `REDESIGNED` with comma-delimited exact normalized target columns. **279/279** original source candidates have disposition records: **195 MAPPED, 84 REDESIGNED**, **0 DB/runtime or workflow verified**. No retirement was silently introduced.
 
-Seven Node static regression definitions were authored. Running `node --test tests/db09-notification-preferences-normalization.test.mjs` in a suitable checkout and the full independent migration harness is still required; do not claim a passed Node suite or PostgreSQL until executed and evidenced. GitHub Actions billing is intentionally not a blocker.
+Nine Node static regression definitions were authored. Running `node --test tests/db09-notification-preferences-normalization.test.mjs` in a suitable checkout and the full independent migration harness is still required; do not claim a passed Node suite or PostgreSQL until executed and evidenced. GitHub Actions billing is intentionally not a blocker.
 
 ## Source-level test execution evidence (not Node/PostgreSQL)
 
@@ -77,12 +77,14 @@ assertion shims (not Node's `node:test` runner):
 
 | Checked source | Result | Scope |
 | --- | --- | --- |
-| `tests/db09-notification-preferences-normalization.test.mjs` at blob `9391fc0eb4e2cb4efe9dea788f9130a066074565` | 7 / 7 passed | Typed defaults, intact college/user PK, no duplicate exports, legacy source-status proof |
+| `tests/db09-notification-preferences-normalization.test.mjs` at blob `1450d3de79f1de4356513dbbee3d648254f82d25` | **9 / 9 passed** | Typed defaults, fixed event-map + APP-always-on semantics, API-vs-UI evidence boundary, intact college/user PK, no duplicate exports |
 | `tests/db-parity-db09-ledger.test.mjs` at blob `92437febe5def39867ceff6b58807c536a8b290a` | 5 / 5 passed | 279 source fields, 195 MAPPED, 84 REDESIGNED, zero blocked/verified |
 | Updated DB09 collaboration JSON/typed-settings test at blob `3031c59f4692677372921666b6038fb169d2877f` | 1 / 1 passed | Canonical share privacy source guards + nine typed settings |
 
-**13/13 source-level test callbacks passed under V8 shims; 0 Node suite,
+**15/15 recorded source-level test callbacks passed under V8 shims (9 current DB-036 + 5 ledger + 1 collaboration guard); 0 Node suite,
 0 TypeScript compiler, 0 PostgreSQL or runtime API/notification verification.**
+
+A second connector-driven matrix executed **45 / 45 frozen cross-repo source assertions** across legacy backend, legacy frontend, current vNext schema, ledger, this contract and the integration manifest. It proves source/design consistency only; it is not runtime or database acceptance.
 The isolated evaluator is not a substitute for `npm run test:db:parity`,
 `node --test tests/db09-notification-preferences-normalization.test.mjs`
 or `npm run db:verify:independent`. Those gates are still pending.
