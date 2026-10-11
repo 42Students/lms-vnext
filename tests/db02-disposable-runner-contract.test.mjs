@@ -85,7 +85,7 @@ test("runner verifies core DB02 tables, columns and INACTIVE enum registration",
 
 test("runner inventory includes every DB02 rollback acceptance suite", () => {
   assert.match(runner, /tests\/db02-role-reactivation-contract\.test\.mjs/);
-  assert.match(runner, /tests\\/db02-active-parent-lifecycle-contract\\.test\\.mjs/);
+  assert.match(runner, /tests\/db02-active-parent-lifecycle-contract\.test\.mjs/);
   for (const path of [
     "db02-postgres-acceptance-unregistered.sql",
     "db02-schedule-progression-integrity-acceptance-unregistered.sql",
@@ -104,7 +104,7 @@ test("runner inventory includes combined and focused concurrency suites", () => 
     "db02-postgres-concurrency-unregistered.sh",
     "db02-promotion-readiness-concurrency-unregistered.sh",
     "db02-curriculum-type-history-concurrency-unregistered.sh",
-  "db02-role-reactivation-concurrency-unregistered.sh",
+    "db02-role-reactivation-concurrency-unregistered.sh",
     "db02-active-parent-lifecycle-concurrency-unregistered.sh",
   ]) {
     assert.ok(runner.includes(path), "missing concurrency suite: " + path);
