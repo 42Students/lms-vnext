@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:38:00+05:30",
+  "updatedOn": "2026-10-11T21:40:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3740,6 +3740,53 @@
           "status": "COMPLETED",
           "at": "2026-10-11T21:38:00+05:30",
           "reason": "TPO student-note append-only/future-time guard committed; 4/4 source assertions pass, 20/20 SQL function quoting valid; PostgreSQL pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-064",
+      "phase": "DATABASE",
+      "title": "Harden DB09 TPO preferences and saved-view lifecycle",
+      "scope": "Preserve active TpoSettingsHubService persistence semantics in staged DB09. User preferences are a fixed college+user record whose boolean state may be updated but not reassigned/deleted; updated_at must advance on content changes. Saved views are create/delete snapshots owned by a fixed college+user and have no source edit path, so UPDATE must fail. Reject future-dated timestamps. Add audit/static regression only; no migration/API/UI activation.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-056"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/db09-user-state-lifecycle-audit.md",
+        "tests/db09-user-state-lifecycle.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T21:40:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T21:40:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T21:40:00+05:30",
+          "reason": "Legacy TpoSettingsHubService upserts preferences for a fixed faculty identity and creates/deletes saved views without edit; staged DB permits preference identity/delete and saved-view UPDATE via direct SQL."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T21:40:00+05:30",
+          "reason": "Chat 3 claimed fresh non-overlapping DB09 TPO user-state lifecycle gap after DB-063 completion."
         }
       ]
     }
