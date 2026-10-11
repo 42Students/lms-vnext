@@ -8,6 +8,11 @@ export const lessonContentDeliverySequences = pgTable(
   "lesson_content_delivery_sequences",
   {
     lessonContentId: uuid("lesson_content_id").notNull().references(() => lessonContents.id, { onDelete: "cascade" }),
+    // Witness the lesson of the referenced content. W01 registers the paired
+    // (lesson_content_id,lesson_id) FK and per-lesson/delivery UNIQUE in SQL.
+    // There is deliberately NO standalone lessonId FK here: the composite
+    // FK, not two independent FKs, enforces actual ownership.
+    lessonId: uuid("lesson_id").notNull(),
     deliveryId: uuid("delivery_id").notNull().references(() => courseSectionDeliveries.id, { onDelete: "cascade" }),
     sequence: integer("sequence").notNull(),
     updatedByUserId: uuid("updated_by_user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
