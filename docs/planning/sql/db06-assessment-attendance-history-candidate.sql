@@ -315,7 +315,9 @@ DECLARE
 BEGIN
   IF NEW.points_awarded IS NOT DISTINCT FROM OLD.points_awarded
      AND NEW.grading_status IS NOT DISTINCT FROM OLD.grading_status
-     AND NEW.grade_published IS NOT DISTINCT FROM OLD.grade_published THEN
+     AND NEW.grade_published IS NOT DISTINCT FROM OLD.grade_published
+     AND NEW.graded_by_user_id IS NOT DISTINCT FROM OLD.graded_by_user_id
+     AND NEW.graded_at IS NOT DISTINCT FROM OLD.graded_at THEN
     RETURN NEW;
   END IF;
 
@@ -343,6 +345,10 @@ BEGIN
         AND e.new_grade_published = NEW.grade_published
         AND e.submission_version_before = OLD.version
         AND e.submission_version_after = NEW.version
+        AND (
+          expected_action = 'PUBLISH_GRADE'
+          OR e.actor_user_id = NEW.graded_by_user_id
+        )
   ) THEN
     RAISE EXCEPTION 'DB06 grading mutation missing immutable audit event'
       USING ERRCODE='23514';
