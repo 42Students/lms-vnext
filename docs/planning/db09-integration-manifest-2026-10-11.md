@@ -47,7 +47,7 @@ Use exactly one DB09 parent-key source:
 
 - `docs/planning/sql/db09-parent-composite-keys-candidate.sql`
 
-It standardizes ID-first composite UNIQUE keys for colleges, memberships, departments, company relationships, jobs, applications, rounds and activity events. The collaboration, scheduling and notification child drafts no longer declare their own competing parent keys.
+It standardizes ID-first composite UNIQUE keys for colleges, memberships, departments, company relationships, jobs, applications, rounds and activity events, plus `placement_recruiter_profiles(user_id, company_id)` so recruiter-owned multi-college groups cannot pair a recruiter with another company. The collaboration, scheduling and notification child drafts no longer declare their own competing parent keys.
 
 ## Recommended registration order
 
@@ -73,7 +73,7 @@ Creates:
 - `placement_tpo_lead_activities`
 - `placement_tpo_followups`
 
-The canonical SQL was repaired on 2026-10-11: one DDL copy only, valid phone/invite-hash checks, tenant owner/company guards, append-only activity history, and active same-college actor provenance.
+The canonical SQL was repaired and adversarially hardened on 2026-10-11: one DDL copy only; valid phone/invite-hash and invite-timestamp checks; ACTIVE placement-staff owner/activity/follow-up principals; active company relationship; joined recruiter must have an ACTIVE same-company college grant; append-only activity history; and completed follow-ups cannot be moved or rewound to incomplete. The structural Drizzle source mirrors source-proven invite and follow-up time checks.
 
 **Do not register** the superseded `db09-crm-scoped-fk-candidate.sql` or `db09-crm-tenant-fk-candidate.sql`.
 
@@ -84,7 +84,7 @@ Supplemental scope proposal: `docs/planning/sql/db09-collaboration-scoped-fk-can
 
 Includes message threads/messages, share links/events, college settings, user preferences, saved views, student notes, team members, recruiter-private notes and recruiter read-through state.
 
-The supplemental collaboration SQL now also stages fail-closed principal-scope guards: active same-company recruiter grants for threads/read markers/private notes; recruiter message author must equal the thread recruiter; TPO message authors must hold an ACTIVE college membership; published message identity/body cannot be rewritten and read state cannot be rewound; share events are append-only. W01 must preserve these semantics when translating the candidate into the registered migration.
+The supplemental collaboration SQL now stages fail-closed principal-scope guards: recruiter grants require ACTIVE canonical user/profile/company/relationship/college and same-company ownership; threads/read markers/private notes must stay inside that grant; recruiter message author must equal the thread recruiter; TPO message authors/share creators/preferences/views/student-note authors require explicit TPO actor scope (TPO/COLLEGE_ADMIN membership or placement-team role), not ordinary membership; student-note subjects require an ACTIVE LEARNER role; published message identity/body cannot be rewritten and read state cannot be rewound; share events are append-only. W01 must preserve these semantics when translating the candidate into the registered migration.
 
 The canonical schema uses final recruiter-era codes directly: `RECRUITER` and `RECRUITER_LEADS`. No HR→RECRUITER data-conversion migration is needed in greenfield vNext.
 
@@ -112,7 +112,7 @@ Legacy `industry_company.export_columns_json` is redesigned to tenant-safe `plac
 
 `docs/planning/sql/db09-multicollege-drive-group-candidate.sql`
 
-Register after recruiter identity/company relationships and `placement_jobs`.
+Register after recruiter identity/company relationships, the recruiter-profile user/company composite key, and `placement_jobs`. The staged group requires non-null recruiter+company, rejects recruiter/company mismatch, requires each child job's ACTIVE relationship/company and ACTIVE recruiter grant to match the group, and enforces one child job per group+college.
 
 ### 7. Round scheduling + drive coordinators
 
@@ -126,6 +126,11 @@ Includes:
 - row-version/concurrency fields
 - date-scoped drive coordinator assignment
 - final `RECRUITER` proposer code
+- slot-row locking before assignment so concurrent writes cannot exceed capacity
+- booked-slot protection against capacity shrink/unconfirm
+- ACTIVE LEARNER coordinator scope and TPO-scoped assigning principal
+
+This draft depends on `db09_has_active_tpo_actor` from the collaboration supplemental SQL, so collaboration principal helpers must exist before scheduling triggers are created.
 
 **Do not register** `db09-scheduling-premerge.sql`; it is superseded by the stronger canonical file.
 
@@ -133,13 +138,13 @@ Includes:
 
 `docs/planning/sql/db09-prep-bell-read-state-candidate.sql`
 
-Greenfield prep assignments are course-backed. Dormant legacy generic `assessment_id` is intentionally retired; do not invent an unconstrained polymorphic FK.
+Greenfield prep assignments are course-backed. Dormant legacy generic `assessment_id` is intentionally retired; do not invent an unconstrained polymorphic FK. The staged prep trigger requires an ACTIVE LEARNER in the assignment college, an ACTIVE course whose department belongs to that college, and a TPO-scoped assigning user. TPO bell readers require TPO actor scope; bell items and read receipts are append-only. This draft also depends on `db09_has_active_tpo_actor` from collaboration.
 
 ### 9. Notification undo/digest bridge
 
 **Canonical:** `docs/planning/sql/db09-notification-undo-digest-candidate.sql`
 
-Register only after activity/tenant parents and the approved DB10 encrypted external-delivery contract. It preserves:
+Register only after collaboration principal helpers, activity/tenant parents and the approved DB10 encrypted external-delivery contract. It preserves:
 
 - APP/EMAIL/SMS intent
 - arbitrary placement event keys
@@ -148,6 +153,11 @@ Register only after activity/tenant parents and the approved DB10 encrypted exte
 - claim lease/fence
 - final `RECRUITER` audience
 - APP materialization vs encrypted external delivery
+- recipient-kind/college principal checks
+- database-enforced undo deadline and cancelled-group fence
+- atomic all-or-nothing undo function
+- bounded lease/fence claim function using `FOR UPDATE SKIP LOCKED`
+- channel-specific terminal-state checks and FAILED-code shape
 
 **Do not register** `db09-notification-intents-candidate.sql`; it is superseded by the fuller undo/digest draft.
 
@@ -180,7 +190,13 @@ Before DB-012 can move beyond source/design completion:
 12. prep course tenant/catalog authorization and dedupe race;
 13. notification undo vs claim race, APP exactly-once fanout, digest isolation;
 14. external sender lease/fence/idempotency and suppression behavior;
-15. runtime producer/consumer checks against the exact registered schema.
+15. runtime producer/consumer checks against the exact registered schema;
+16. malformed PL/pgSQL delimiter regression and function/trigger dependency ordering;
+17. joined recruiter/company/grant mismatch and inactive principal negatives;
+18. share column/stage disclosure allowlists and JSON settings shape;
+19. drive-group recruiter/company mismatch, duplicate group+college child race and grant revocation;
+20. slot capacity race/booked-slot mutation negatives and TPO-only coordinator assignment;
+21. notification cancellation-before-deadline vs concurrent claim stress, stale lease fence and recipient-role forgery.
 
 GitHub Actions availability/billing is **not** a gate. Use the CI-independent disposable PostgreSQL verification path tracked by DB-001.
 
@@ -194,3 +210,14 @@ This manifest resolves staging ownership/order ambiguity only. It does not conve
 Post-source review found that parent FKs alone were insufficient for collaboration tables: a syntactically valid recruiter UUID plus college UUID could still be combined by direct SQL without proving an active same-company college grant. The canonical supplemental source is now `db09-collaboration-scoped-fk-candidate.sql` at/after commit `4bb1e313b87a394694bdac198e8cf82b9383d075`, with static guard coverage added in `tests/db09-integration-staging-guard.test.mjs`.
 
 This is still authored staging evidence only. W01 must validate function/trigger ordering, existing parent statuses, empty-DB replay and negative PostgreSQL witnesses before registration.
+
+
+## DB-032 adversarial staging hardening
+
+After the 279/279 DB09 source/design disposition closed, a second registration-focused pass found multiple invariants that were still service-only. DB-032 deliberately hardens the **unregistered** canonical staging without editing `drizzle/**` or `src/db/schema/index.ts`.
+
+The pass covers recruiter/TPO principal status, company/grant agreement, share disclosure allowlists, immutable message/share/bell history, multi-college drive-group identity, round-slot capacity concurrency, prep/course/learner scope, TPO bell reader scope and notification undo/claim races. Static guard coverage lives in `tests/db09-integration-staging-guard.test.mjs`.
+
+A staging syntax audit also caught single-dollar PL/pgSQL delimiters introduced by text-generation/replacement. All canonical DB09 function drafts were repaired to PostgreSQL `$$` delimiters and the guard suite now rejects a single-dollar opener/terminator regression.
+
+**Evidence classification:** authored staging + read-only source assertions only. Node tests and disposable PostgreSQL have not been executed by Chat 3. W01 must register the final approved shape, then independent DB execution must prove every negative/concurrency witness before DB09 can be runtime-verified.
