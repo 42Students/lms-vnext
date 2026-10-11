@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-040",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB039_ACTIVITY_AUDIT_CONTEXT_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB040_STAGED_DRAFT_PREFLIGHT_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "483988ea18f8d4d7ec33b029d67eba46b3a8d2fd",
+    "observedMainSha": "8fcf46c76c32e2df9ff4ec905852ab25dd45e0ec",
     "lastWorkerMergedSha": "c8688c5265d8461272c38e07e37769afd18c0345",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-039 mapped all 13 active admin-audit fields; 10 existing/normalized targets, 3 staged forensic additions. 40/40 source/shape checks; migration/API/privacy/runtime proof pending."
+    "summary": "DB-040 started: exact 75-field source→draft preflight for announcements, bug tracker and scheduled-job leases; no schema/migration edits."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -83,7 +83,7 @@
     "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval.",
     "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates."
   ],
-  "nextAction": "Refresh DATABASE queue and continue the next eligible or non-conflicting DB10 source gap.",
+  "nextAction": "Author consolidated migration-readiness manifest + static source-target preflight, reconcile 75 DB10 ledger rows, preserve UNMAPPED/0 verified state.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -137,7 +137,8 @@
     "DB-031",
     "DB-033",
     "DB-037",
-    "DB-039"
+    "DB-039",
+    "DB-040"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -155,7 +156,7 @@
     "DB-037",
     "DB-039"
   ],
-  "lastPickedAt": "2026-10-11T13:55:00+05:30",
+  "lastPickedAt": "2026-10-11T14:10:30+05:30",
   "lastCompletedAt": "2026-10-11T14:04:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
