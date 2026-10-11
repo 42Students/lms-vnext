@@ -38,7 +38,8 @@
     "test:db09:pg": "vitest run --config vitest.db.config.ts tests/integration/db09-tpo-policy.test.ts tests/integration/db09-tpo-crm.test.ts",
     "db:journal:verify": "node scripts/verify-drizzle-journal.mjs",
     "db04:promotion:verify": "node scripts/verify-db04-promotion.mjs",
-    "db01:promotion:verify": "node scripts/verify-db01-promotion.mjs"
+    "db01:promotion:verify": "node scripts/verify-db01-promotion.mjs",
+    "db:verify:independent": "node scripts/db-independent-verify.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
