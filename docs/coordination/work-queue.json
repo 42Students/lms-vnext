@@ -2448,6 +2448,52 @@
           "reason": "Released immediately: Chat 1 already had DB-041 reserved; one-active-task invariant restored before DB-042 implementation began."
         }
       ]
+    },
+    {
+      "id": "DB-043",
+      "phase": "DATABASE",
+      "title": "Reconcile DB10 notification campaign and recipient delivery",
+      "scope": "Close source-level disposition of all 21 legacy notification fields, preserving class/course/recipient broadcast addressing, scheduled admin authoring and per-user read state. Stage isolated tenant-scoped campaign SQL and Node source guards, without colliding with DB10 general outbox or Chat 1 migration ownership. Do not certify runtime/SQL without actual PostgreSQL execution.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-db10-notification-campaign-field-map.json",
+        "scripts/sql/db10-notification-campaign-staging.sql",
+        "docs/planning/database-parity-db10-notification-campaign-contract.md",
+        "tests/db10-notification-campaign-staging.test.mjs"
+      ],
+      "status": "PICKED",
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T08:39:31.780Z",
+      "startedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T08:39:31.780Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T08:39:31.780Z",
+          "reason": "Legacy notification table has 21 active source fields, class/course broadcast + scheduled admin state not represented by registered recipient-only in_app_notifications; DB040 completed and lane free."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T08:39:31.780Z",
+          "reason": "Chat 5 claims isolated DB10 notification campaign source/SQL/docs/tests; DB041 belongs to Chat 1 and DB042 is distinct."
+        }
+      ]
     }
   ],
   "eventModel": {
