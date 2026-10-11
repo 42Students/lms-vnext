@@ -159,8 +159,13 @@ test("DB09 prep FK depends on centralized parent key", () => {
 test("DB09 collaboration principal scope is fail-closed", () => {
   const sql = read("docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql");
   for (const needle of [
+    "CREATE FUNCTION db09_has_active_college_membership",
+    "CREATE FUNCTION db09_has_active_tpo_actor",
     "CREATE FUNCTION db09_has_active_recruiter_grant",
     "r.company_id = p.company_id",
+    "co.status = 'ACTIVE'",
+    "u.platform_status = 'ACTIVE'",
+    "c.status = 'ACTIVE'",
     "CREATE TRIGGER db09_message_thread_principal_scope_guard",
     "CREATE TRIGGER db09_message_sender_scope_guard",
     "CREATE TRIGGER db09_message_update_guard",
@@ -177,8 +182,14 @@ test("DB09 collaboration principal scope is fail-closed", () => {
   );
   assert.match(
     sql,
-    /m\.user_id = NEW\.sender_user_id[\s\S]*m\.college_id = v_college_id[\s\S]*m\.status = 'ACTIVE'/,
-    "a TPO message needs an active membership in the thread college",
+    /db09_has_active_tpo_actor\([\s\S]*NEW\.sender_user_id[\s\S]*v_college_id/,
+    "a TPO message needs explicit active TPO actor scope in the thread college",
+  );
+  assert.match(sql, /r\.role IN \('TPO','COLLEGE_ADMIN'\)/);
+  assert.match(
+    sql,
+    /tm\.role IN \('TPO_ADMIN','FACULTY_COORDINATOR'\)/,
+    "explicit placement team membership must satisfy the TPO actor helper",
   );
   assert.match(
     sql,
@@ -223,7 +234,7 @@ test("DB09 prep and TPO bell staging fail closed on tenant and history", () => {
   );
   assert.match(
     sql,
-    /m\.user_id = NEW\.assigned_by_user_id[\s\S]*m\.status = 'ACTIVE'/,
+    /db09_has_active_tpo_actor\([\s\S]*NEW\.assigned_by_user_id/,
   );
   assert.match(sql, /NEW\.due_at < NEW\.created_at - interval '5 minutes'/);
   assert.match(sql, /CREATE TRIGGER db09_bell_reader_scope_guard/);
@@ -247,7 +258,7 @@ test("DB09 scheduling serializes slot capacity and coordinator scope", () => {
   );
   assert.match(
     sql,
-    /m\.user_id = NEW\.created_by_user_id[\s\S]*m\.college_id = NEW\.college_id[\s\S]*m\.status = 'ACTIVE'/,
+    /db09_has_active_tpo_actor\([\s\S]*NEW\.created_by_user_id[\s\S]*NEW\.college_id/,
   );
 });
 
