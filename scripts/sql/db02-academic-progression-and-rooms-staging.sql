@@ -660,7 +660,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_event_delivery_scope();
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
 CREATE TABLE cohort_progression_state (
-  cohort_id uuid PRIMARY KEY REFERENCES cohorts(id) ON DELETE RESTRICT,
+  -- Initializer state is lifecycle-owned by the cohort. A history-free/child-free cohort may
+  -- be hard-deleted for legacy batch-delete compatibility; progression EVENTS remain RESTRICT
+  -- and therefore preserve any cohort that has actual academic history.
+  cohort_id uuid PRIMARY KEY REFERENCES cohorts(id) ON DELETE CASCADE,
   current_term_number integer NOT NULL DEFAULT 1,
   current_academic_year_start integer,
   current_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
@@ -1795,10 +1798,24 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_identity_immutable()
 CREATE FUNCTION db02_guard_progression_state_identity()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF TG_OP = 'DELETE' OR TG_OP = 'TRUNCATE' THEN
-    RAISE EXCEPTION 'Canonical cohort progression state is not deletable'
+  IF TG_OP = 'TRUNCATE' THEN
+    RAISE EXCEPTION 'Canonical cohort progression state is not truncatable'
       USING ERRCODE='23514';
   END IF;
+
+  IF TG_OP = 'DELETE' THEN
+    -- ON DELETE CASCADE from cohorts is the only permitted state deletion path.
+    -- Direct DELETE arrives at trigger depth 1 and remains forbidden. Any real promotion/
+    -- correction history keeps the cohort itself undeletable through
+    -- cohort_progression_events.cohort_id ON DELETE RESTRICT.
+    IF pg_trigger_depth() >= 2 THEN
+      RETURN OLD;
+    END IF;
+
+    RAISE EXCEPTION 'Canonical cohort progression state is not directly deletable'
+      USING ERRCODE='23514';
+  END IF;
+
   IF NEW.cohort_id IS DISTINCT FROM OLD.cohort_id THEN
     RAISE EXCEPTION 'Canonical cohort progression cannot switch cohort identity'
       USING ERRCODE='23514';
@@ -2028,8 +2045,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 --    ACTIVE FACULTY membership in the owning college, with role rows locked against de-role races.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
---    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
---    both state/event actor references without changing version/term or creating a fake event.
+--    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, direct progression-state
+--    DELETE/TRUNCATE fails, user deletion only nulls actor references, and a truly empty
+--    history-free cohort can hard-delete with its initializer state while any real history or
+--    academic child keeps the cohort undeletable.
 -- 10. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed;
 --     concurrently archiving a hall vs creating a future booking must yield exactly one valid winner.
 -- 11. Verify CANCELLED events release the scheduling resource while attendance/history remains.
