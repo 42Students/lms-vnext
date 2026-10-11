@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-034",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB034_TPO_SETTINGS_NORMALIZATION_IN_PROGRESS",
+    "checkpointKind": "DB034_TPO_SETTINGS_NORMALIZATION_COMPLETE_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a56bea993dee6e1e45942698cd81b369231cccfd",
-    "lastWorkerMergedSha": "b348a8c3ef052b7f7e7c3450d9954a167901db41",
+    "observedMainSha": "2d822b650f428e755ead9ca89b62192c5975ddb8",
+    "lastWorkerMergedSha": "3620bd6afdaac813a460a2f80b2b4ff0443e59db",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-034 active: normalize source-active trusted company domains and prep-course settings so drive auto-approval/readiness no longer rely on unscoped JSON identifiers. Staging only; no migration registration/runtime verification."
+    "summary": "DB-034 COMPLETED source/staging implementation. Trusted domains and prep-course selections are normalized, old JSON targets removed from canonical schema, two DB09 ledger rows are REDESIGNED, 47/47 connector source assertions clean. Node/PostgreSQL not executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -35,7 +35,8 @@
   "lastExecutedPassingTests": [
     "2026-10-11 10 read-only GitHub source assertions (not Node runner / PostgreSQL)",
     "2026-10-11 11 read-only GitHub source + ledger assertions (not Node runner / PostgreSQL)",
-    "2026-10-11 DB-032: 79/79 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)"
+    "2026-10-11 DB-032: 79/79 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
+    "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)"
   ],
   "blockers": [
     "DB-012: W01 migration registration/dependency reconciliation pending.",
@@ -55,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Stage normalized trusted-domain and prep-course SQL/doc/static guards, update DB09 integration manifest, source-audit invariants, then complete source-only task without claiming PostgreSQL verification.",
+  "nextAction": "Pick next eligible DATABASE task. DB-034 is complete but not verified; W01 must register normalized settings and independent PostgreSQL must execute acceptance witnesses.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -140,7 +141,13 @@
     "https://github.com/42Students/lms-vnext/commit/178d9e1f2776a9b67fcfadb50553a6007d396579",
     "https://github.com/42Students/lms-vnext/commit/bbd13557d6cfce889eef1caf787b5bb530950a85",
     "https://github.com/42Students/lms-vnext/commit/39d81d8fee4ffcc5173aab72a7fccffd245a049b",
-    "https://github.com/42Students/lms-vnext/commit/b348a8c3ef052b7f7e7c3450d9954a167901db41"
+    "https://github.com/42Students/lms-vnext/commit/b348a8c3ef052b7f7e7c3450d9954a167901db41",
+    "https://github.com/42Students/lms-vnext/commit/32558847bea6bdac18c01db803ef3a0fb8e3e34d",
+    "https://github.com/42Students/lms-vnext/commit/abfd0287d35ba1e58447d66d13f56fd5b68625ea",
+    "https://github.com/42Students/lms-vnext/commit/4d0cefff147c30b10bbe9b889bb73c2e6cc2779e",
+    "https://github.com/42Students/lms-vnext/commit/5f44d16bec1fb6393de3a50febab550974c3b9b1",
+    "https://github.com/42Students/lms-vnext/commit/651ca523646627695899a3a121f05226a265a493",
+    "https://github.com/42Students/lms-vnext/commit/3620bd6afdaac813a460a2f80b2b4ff0443e59db"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -152,10 +159,11 @@
   ],
   "completedTaskIds": [
     "DB-027",
-    "DB-032"
+    "DB-032",
+    "DB-034"
   ],
   "lastPickedAt": "2026-10-11T13:50:00+05:30",
-  "lastCompletedAt": "2026-10-11T13:45:00+05:30",
+  "lastCompletedAt": "2026-10-11T14:05:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
   "trackingDefinitions": {
