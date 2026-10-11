@@ -2,7 +2,7 @@
 
 **Phase:** DATABASE  
 **Restriction:** CORE_INFRA / Chat 1 writer  
-**Status:** source-confirmed safety gap; implementation not owned by Chat 5  
+**Status:** implementation complete on main; disposable PostgreSQL acceptance still pending  
 **Observed main source:** `scripts/db-lib.ts` blob `3cdd218eecac83c85d46dcf25d92bec416ee2b26`
 
 ## Problem
@@ -117,5 +117,4 @@ database execution before they are `DONE_VERIFIED`.
 DB-020 now depends on DB-025 so final DATABASE certification cannot bypass this
 destructive-command safety gate.
 
-Chat 5 discovered/documented this gap only. Chat 1 remains the exclusive writer
-for `scripts/db-lib.ts` / core DB infrastructure.
+Chat 5 discovered/documented this gap. Chat 1 implemented the fail-closed helper and destructive-entrypoint preflight on main; peer work additionally isolated the independent verifier's destructive environment. Source/no-DB safety evidence is recorded in `docs/planning/db025-local-safety-test-evidence.md`. PostgreSQL acceptance remains separate.
