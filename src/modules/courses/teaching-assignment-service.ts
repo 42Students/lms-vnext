@@ -7,6 +7,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  courseSectionDeliveries,
   courseTeachingAssignments,
   users,
 } from "@/db/schema";
@@ -150,13 +151,32 @@ export async function createCourseTeachingAssignment(
   }
 
   try {
-    const [created] = await getDb()
-      .insert(courseTeachingAssignments)
-      .values(input)
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // A previous delivery scope check can become stale while another
+      // transaction ends this delivery. Pair SHARE with end's FOR UPDATE.
+      const [liveDelivery] = await tx
+        .select({ id: courseSectionDeliveries.id })
+        .from(courseSectionDeliveries)
+        .where(and(
+          eq(courseSectionDeliveries.id, input.deliveryId),
+          isNull(courseSectionDeliveries.endedAt),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!liveDelivery) {
+        throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courseTeachingAssignments)
+        .values(input)
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapTeachingConstraint(error);
   }
 }
