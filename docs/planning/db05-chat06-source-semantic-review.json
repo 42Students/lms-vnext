@@ -252,14 +252,14 @@
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "scripts/sql/db05-course-parent-facets.draft.sql: courses.allowed_for_display, integer value semantics/consumers still unproven",
+      "targetProposal": "scripts/sql/db05-course-parent-facets.draft.sql courses.allowed_for_display integer; StudentCourseServiceImpl filters Integer.valueOf(0).equals(course.getAllowedForDisplay()) for semester course-card mappings; NO globally inferred enum, null/nonzero behavior still consumer-specific; see docs/planning/db05-learner-course-card-source-contract.json",
       "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column allowed_for_display Integer",
       "sourceReviewFinding": "Persisted tri-state/int display policy; cannot infer equivalence to vNext courses.status; keep unproven.",
-      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN"
+      "sourceContractStatus": "LEGACY_STUDENT_CARD_EXPLICIT_ZERO_HIDE_CONFIRMED_OTHER_CONSUMERS_UNPROVEN"
     },
     {
       "source": "course.course_name",
@@ -341,11 +341,12 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "targetProposal": "course_display_contents staged (partial: MetaData JSON properties not all represented)",
+      "targetProposal": "Legacy MetaData 14 nested fields: docs/planning/db05-course-metadata-subfields.json and unregistered course_display_contents extension. StudentCourseServiceImpl card code chooses nonblank metadata.courseCode override, falls back course.shortTitle. Current vNext courses.code NOT proven equal. See docs/planning/db05-learner-course-card-source-contract.json",
       "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_META_14_DTO_AND_STUDENT_CARD_CODE_CONSUMER_SOURCE_CONFIRMED_VNEXT_DISPARITY"
     },
     {
       "source": "course.parent_course_id",
@@ -1296,5 +1297,17 @@
     "postgres": "NOT_RUN",
     "api": "NOT_VERIFIED",
     "integrator": 1
+  },
+  "courseLearnerCardFollowUp": {
+    "source": "StudentCourseServiceImpl.java @ legacy backend SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "contract": "docs/planning/db05-learner-course-card-source-contract.json",
+    "consumerRules": [
+      "allowed_for_display == 0 hides semester student card",
+      "metadata.courseCode nonblank overrides shortTitle; blank/null fallback",
+      "byClass course detail vs byStudent redaction needs explicit full-route acceptance"
+    ],
+    "verified": false,
+    "postgres": "NOT_RUN",
+    "api": "NOT_RUN"
   }
 }
