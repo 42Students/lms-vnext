@@ -123,3 +123,35 @@ CREATE INDEX placement_round_reschedule_status_idx
 --    reproduced from current legacy service+UI only after direct oracle check
 -- 8. this draft must be reconciled with DB08-owned round exceptions; do not
 --    duplicate active status machines without deliberate domain ownership.
+
+
+-- Date-scoped student coordinator authorization for drive-day attendance.
+-- Kept in this canonical scheduling candidate so W01 does not need to combine
+-- two competing scheduling drafts.
+ALTER TABLE placement_jobs
+  ADD CONSTRAINT placement_jobs_id_college_uq
+  UNIQUE (id, college_id);
+
+ALTER TABLE college_memberships
+  ADD CONSTRAINT college_memberships_id_college_uq
+  UNIQUE (id, college_id);
+
+CREATE TABLE placement_drive_coordinator_assignments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
+  job_id uuid NOT NULL,
+  learner_membership_id uuid NOT NULL,
+  on_date date NOT NULL,
+  created_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT placement_drive_coordinators_job_college_fk
+    FOREIGN KEY (job_id,college_id)
+    REFERENCES placement_jobs(id,college_id) ON DELETE RESTRICT,
+  CONSTRAINT placement_drive_coordinators_member_college_fk
+    FOREIGN KEY (learner_membership_id,college_id)
+    REFERENCES college_memberships(id,college_id) ON DELETE RESTRICT,
+  CONSTRAINT placement_drive_coordinators_scope_uq
+    UNIQUE (job_id,learner_membership_id,on_date)
+);
+CREATE INDEX placement_drive_coordinators_member_date_idx
+  ON placement_drive_coordinator_assignments(learner_membership_id,on_date);
