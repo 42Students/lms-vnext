@@ -55,6 +55,24 @@ ALTER TABLE placement_recruiter_applicant_notes
 -- relationships but do not prove the named recruiter/user is allowed to act
 -- in that tenant. Direct SQL must not be able to create a valid-looking
 -- thread/read marker/private note for an unrelated recruiter.
+CREATE FUNCTION db09_has_active_college_membership(
+  p_user_id uuid,
+  p_college_id uuid
+) RETURNS boolean
+LANGUAGE sql STABLE AS $$
+  SELECT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+      JOIN users u ON u.id = m.user_id
+      JOIN colleges c ON c.id = m.college_id
+     WHERE m.user_id = p_user_id
+       AND m.college_id = p_college_id
+       AND m.status = 'ACTIVE'
+       AND u.platform_status = 'ACTIVE'
+       AND c.status = 'ACTIVE'
+  );
+$$;
+
 CREATE FUNCTION db09_has_active_recruiter_grant(
   p_recruiter_user_id uuid,
   p_college_id uuid,
@@ -68,10 +86,19 @@ LANGUAGE sql STABLE AS $$
         ON r.id = g.company_relationship_id
       JOIN placement_recruiter_profiles p
         ON p.user_id = g.recruiter_user_id
+      JOIN placement_companies co
+        ON co.id = p.company_id
+      JOIN users u
+        ON u.id = p.user_id
+      JOIN colleges c
+        ON c.id = r.college_id
      WHERE g.recruiter_user_id = p_recruiter_user_id
        AND g.status = 'ACTIVE'
        AND r.status = 'ACTIVE'
        AND p.status = 'ACTIVE'
+       AND co.status = 'ACTIVE'
+       AND u.platform_status = 'ACTIVE'
+       AND c.status = 'ACTIVE'
        AND r.college_id = p_college_id
        AND r.company_id = p.company_id
        AND (
@@ -140,12 +167,9 @@ BEGIN
         USING ERRCODE = '23514';
     END IF;
   ELSIF NEW.sender_type = 'TPO' THEN
-    IF NOT EXISTS (
-      SELECT 1
-        FROM college_memberships m
-       WHERE m.user_id = NEW.sender_user_id
-         AND m.college_id = v_college_id
-         AND m.status = 'ACTIVE'
+    IF NOT db09_has_active_college_membership(
+      NEW.sender_user_id,
+      v_college_id
     ) THEN
       RAISE EXCEPTION 'message TPO sender is not active in the thread college'
         USING ERRCODE = '23514';
@@ -230,6 +254,91 @@ CREATE TRIGGER db09_recruiter_read_scope_guard
   ON placement_recruiter_notification_reads
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_read_scope();
 
+CREATE FUNCTION db09_assert_share_creator_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT db09_has_active_college_membership(
+    NEW.created_by_user_id,
+    NEW.college_id
+  ) THEN
+    RAISE EXCEPTION 'share creator is not active in share college'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_share_creator_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,created_by_user_id
+  ON placement_tpo_share_links
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_share_creator_scope();
+
+CREATE FUNCTION db09_assert_tpo_user_state_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT db09_has_active_college_membership(NEW.user_id,NEW.college_id) THEN
+    RAISE EXCEPTION 'TPO user-scoped record belongs to inactive/foreign user'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_tpo_user_preferences_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,user_id
+  ON placement_tpo_user_preferences
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_tpo_user_state_scope();
+CREATE TRIGGER db09_tpo_saved_views_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,user_id
+  ON placement_tpo_saved_views
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_tpo_user_state_scope();
+
+CREATE FUNCTION db09_assert_student_note_principals() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+     WHERE m.id = NEW.learner_membership_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'student note learner is not active in note college'
+      USING ERRCODE = '23514';
+  END IF;
+  IF NOT db09_has_active_college_membership(
+    NEW.created_by_user_id,
+    NEW.college_id
+  ) THEN
+    RAISE EXCEPTION 'student note author is not active in note college'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_student_note_principal_scope_guard
+  BEFORE INSERT OR UPDATE OF
+    college_id,learner_membership_id,created_by_user_id
+  ON placement_tpo_student_notes
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_student_note_principals();
+
+CREATE FUNCTION db09_assert_team_member_principal_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM college_memberships m
+      JOIN membership_roles r ON r.membership_id = m.id
+     WHERE m.id = NEW.membership_id
+       AND m.college_id = NEW.college_id
+       AND m.status = 'ACTIVE'
+       AND r.role IN ('FACULTY','COLLEGE_ADMIN','TPO')
+  ) THEN
+    RAISE EXCEPTION 'TPO team member is not active staff in team college'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_team_member_principal_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,membership_id,role
+  ON placement_tpo_team_members
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_team_member_principal_scope();
+
 -- Share events are an audit trail. Their source service only appends.
 CREATE FUNCTION db09_reject_share_event_rewrite() RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -263,3 +372,8 @@ CREATE TRIGGER db09_share_event_immutable
 --     require an ACTIVE membership in the thread college.
 -- 13. Published message identity/body cannot be rewritten and read_at cannot be
 --     rewound; share-event history rejects UPDATE/DELETE.
+-- 14. Recruiter grant helper also requires ACTIVE canonical user, company and
+--     college, and the relationship company must equal recruiter profile company.
+-- 15. Share creators, TPO preferences/views, student-note authors and team
+--     members require active same-college principals; team rows require a
+--     current staff membership role.
