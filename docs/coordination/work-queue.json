@@ -1759,14 +1759,14 @@
         "docs/planning/database-parity-db10-sms-delivery-attempts.md",
         "tests/db10-sms-delivery-attempts-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:15:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T13:15:30+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1788,6 +1788,11 @@
           "status": "PICKED",
           "at": "2026-10-11T13:15:00+05:30",
           "reason": "Chat 5 CAS-created and reserved isolated DB10 SMS attempt-ledger staging paths; no active worker owns them."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T13:15:30+05:30",
+          "reason": "Chat 5 started source-to-vNext generic SMS provider-attempt ledger staging after confirming both active providers and super-admin support consumer."
         }
       ]
     }
