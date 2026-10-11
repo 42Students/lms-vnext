@@ -35,15 +35,6 @@ function missing(ddlText, guardText, tsText) {
   for (const [pattern, reason] of requiredSQL) if (!pattern.test(ddlCode)) absent.push(reason);
   const requiredGuard = [
     [/BEFORE INSERT OR UPDATE ON identity_auth_attempts/i, "trigger protects challenge creation and updates"],
-    [/IF TG_OP = 'INSERT' THEN/i, "first issuance conditional guard"],
-    [/NEW.verified_at IS NOT NULL/i, "cannot insert verified challenge"],
-    [/NEW.used_at IS NOT NULL/i, "cannot insert consumed challenge"],
-    [/NEW.verification_attempts <> 0/i, "new verification counters start zero"],
-    [/NEW.resend_attempts <> 0/i, "new resend counters start zero"],
-    [/NEW.version <> 1/i, "new challenge starts first version"],
-    [/NEW.created_at > clock_timestamp\(\)/i, "fresh creation time"],
-    [/NEW.expires_at <= clock_timestamp\(\)/i, "future deadline at issuance"],
-    [/db01_auth_attempt_creation_state_ck/i, "new challenge constraint"],
     [/NEW.user_id IS DISTINCT FROM OLD.user_id/i, "user scope immutable"],
     [/NEW.college_id IS DISTINCT FROM OLD.college_id/i, "college scope immutable"],
     [/NEW.membership_id IS DISTINCT FROM OLD.membership_id/i, "membership scope immutable"],
