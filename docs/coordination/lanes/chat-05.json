@@ -10,11 +10,11 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_AUTH_EXPIRY_SECURITY_STAGING_COMPLETE_PG_PENDING",
-    "updatedOn": "2026-10-11T20:16:20.732Z",
-    "observedMainSha": "f01d29f828ba5ca61f265cb2121a6d311725326d",
-    "lastWorkerMergedSha": "f01d29f828ba5ca61f265cb2121a6d311725326d",
-    "summary": "Staged DB004 OTP/handoff INSERT guards and real wall-clock expired/future proof denial committed, 20/20 OTP + 15/15 handoff exact-GitHub V8 source callbacks passed. Actual Node runner and PostgreSQL were NOT executed. Existing owner Chat2 contributions preserved; DB004 remains IN_PROGRESS."
+    "checkpointKind": "DB004_DB064_QUOTE_SYNTAX_REPAIR_SOURCE_ONLY",
+    "updatedOn": "2026-10-11T20:41:25.440Z",
+    "observedMainSha": "6ef9b04cebe4fb61d8ed31c46356b5891458469f",
+    "lastWorkerMergedSha": "6ef9b04cebe4fb61d8ed31c46356b5891458469f",
+    "summary": "Recovered and fixed malformed SQL function dollar delimiters in two DB004 auth lifecycle staging guards and two DB064 TPO lifecycle functions. SQL `AS $` invalid; DB09 also had invalid `END $;`. CI-selected DB01 guard file added 3 negative/positive tests; CI-selected DB09 parity added 2; CI-selected shared DB contracts scans all 112 staged + 43 registered SQL for lone-dollar syntax. New isolated exact-GitHub V8 callbacks: DB01 3/3 PASS, DB09 2/2 PASS, shared detector synthetic 1/1 PASS. Focused structural inspection across 155 SQL files found no remaining same-pattern violations. PostgreSQL/Node full suite NOT_RUN; GitHub Actions intentionally unused due billing; private repo preserved. DB004 still IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -50,12 +50,16 @@
     "tests/db01-auth-attempt-lifecycle-source.test.mjs (20 cases)",
     "tests/db01-auth-handoff-lifecycle-source.test.mjs (15 cases)",
     "tests/db01-auth-attempt-lifecycle-pg.test.mjs (additional negative expiry/clock cases unexecuted)",
-    "tests/db01-auth-handoff-lifecycle-pg.test.mjs (additional future proof case unexecuted)"
+    "tests/db01-auth-handoff-lifecycle-pg.test.mjs (additional future proof case unexecuted)",
+    "tests/db01-test-database-guard.test.mjs (+3 SQL delimiter cases, CI parity script)",
+    "tests/db-parity-db09-tracker.test.mjs (+2 DB09 delimiter cases, CI parity script)",
+    "tests/db-parity-contracts.test.mjs (+2 cross-domain registered/staged SQL delimiter cases, CI parity script)"
   ],
   "lastExecutedPassingTests": [
     "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547",
     "DB-064: exact fetched source V8 callbacks 20/20 PASS, NOT node --test / PG",
-    "DB004 2026-10-12: 35/35 V8 exact-GitHub source-test callbacks PASS, NOT Node node:test/PG"
+    "DB004 2026-10-12: 35/35 V8 exact-GitHub source-test callbacks PASS, NOT Node node:test/PG",
+    "2026-10-12: DB004 exact GitHub V8 3/3 + DB064 exact GitHub V8 2/2 + shared delimiter synthetic 1/1, no Node/PG runtime"
   ],
   "blockers": [
     "DB015 P5-R01: learner placement application can race paid-module/inherited-eligibility revocation after precheck.",
@@ -100,7 +104,7 @@
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
     "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
-  "nextAction": "DB004 active: verify provider vs DB-auth decision; run opt-in auth attempt + handoff disposable PostgreSQL witnesses and registered migration replay on independent PG (not Actions), then reconcile P0 identity source field semantics. Never certify from V8 source-only 35/35.",
+  "nextAction": "Continue DB004 identity P0 reconciliation and provider decision; independently execute disposable PostgreSQL DB01-auth-attempt and handoff tests and registered migration replay when runner available. Schema/migration promotion remains Chat1-only. Keep private repo, leave global DATABASE active.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -143,7 +147,8 @@
     "https://github.com/42Students/lms-vnext/commit/6c652ef6d03758d2b303c142ee719320a41965fe",
     "https://github.com/42Students/lms-vnext/commit/9c56dcf67a13419cf651c0845698ca36dee222d1",
     "docs/planning/db065-phase-gate-audit.md",
-    "docs/planning/db01-auth-otp-handoff-contract.md"
+    "docs/planning/db01-auth-otp-handoff-contract.md",
+    "docs/planning/db09-user-state-lifecycle-audit.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
