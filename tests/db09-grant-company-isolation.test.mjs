@@ -10,6 +10,7 @@ import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
+import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
 
 const service = readFileSync(
   resolve("src/modules/placements/tpo-messaging-service.ts"), "utf8");
@@ -58,6 +59,10 @@ const approved =
 
 test("grant/relationship/profile company mismatch and reassignment fail at PostgreSQL boundary",
   { skip: !approved, timeout: 90000 }, async () => {
+    // Explicit opt-in is not enough: verify a test-named database, reject
+    // the configured app database, and require exact remote confirmation.
+    // A localhost Cloud SQL proxy does NOT turn a production DB into a test DB.
+    assertSafeDb01TestTarget(process.env);
     const pg = await import("pg");
     const schema = "db09_company_" + randomUUID().replaceAll("-", "").slice(0, 20);
     const qSchema = '"' + schema + '"';
