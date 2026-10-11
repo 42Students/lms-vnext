@@ -298,7 +298,7 @@ END;
 $db06_option_shape_preflight$;
 
 CREATE UNIQUE INDEX quiz_options_question_lower_text_uq
-  ON quiz_options(question_id, lower(option_text));
+  ON quiz_options(question_id, lower(trim(option_text)));
 
 CREATE FUNCTION db06_require_quiz_question_option_shape()
 RETURNS trigger LANGUAGE plpgsql AS $db06_question_shape$
@@ -335,6 +335,20 @@ BEGIN
 
   IF option_count < 2 OR option_count > 20 THEN
     RAISE EXCEPTION 'DB06 quiz question requires 2 to 20 options'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_options o
+    WHERE o.question_id = target_question
+      AND (
+        length(trim(o.option_text)) < 1
+        OR length(trim(o.option_text)) > 2000
+        OR o.option_text IS DISTINCT FROM trim(o.option_text)
+      )
+  ) THEN
+    RAISE EXCEPTION 'DB06 quiz option text must be trimmed and 1 to 2000 characters'
       USING ERRCODE='23514';
   END IF;
 
@@ -663,6 +677,16 @@ BEGIN
     WHERE shape.option_count < 2
        OR shape.option_count > 20
        OR shape.distinct_text_count <> shape.option_count
+       OR EXISTS (
+         SELECT 1
+         FROM quiz_options poisoned
+         WHERE poisoned.question_id = q.id
+           AND (
+             length(trim(poisoned.option_text)) < 1
+             OR length(trim(poisoned.option_text)) > 2000
+             OR poisoned.option_text IS DISTINCT FROM trim(poisoned.option_text)
+           )
+       )
        OR (q.question_type::text = 'SINGLE_CHOICE'
            AND shape.correct_count <> 1)
        OR (q.question_type::text = 'MULTIPLE_CHOICE'
