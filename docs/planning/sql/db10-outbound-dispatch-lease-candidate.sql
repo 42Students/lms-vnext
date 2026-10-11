@@ -23,7 +23,9 @@ CREATE OR REPLACE FUNCTION db10_claim_outbound_messages(
 ) RETURNS TABLE(message_id uuid, fence integer, request_digest varchar)
 LANGUAGE plpgsql AS $db067_claim$
 BEGIN
-  IF p_worker IS NULL OR p_worker !~ '^[A-Za-z0-9_.:-]{1,120}
+  IF p_worker IS NULL OR p_worker !~ '^[A-Za-z0-9_.:-]{1,120}$'
+     OR p_max_rows IS NULL OR p_max_rows NOT BETWEEN 1 AND 100
+     OR p_lease_seconds IS NULL OR p_lease_seconds NOT BETWEEN 5 AND 300 THEN
     RAISE EXCEPTION 'INVALID_OUTBOUND_CLAIM' USING ERRCODE = '22023';
   END IF;
   RETURN QUERY
