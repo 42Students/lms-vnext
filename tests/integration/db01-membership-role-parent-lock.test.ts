@@ -272,6 +272,49 @@ describe("DB01 parent-lock role mutation against membership END", () => {
     });
   });
 
+
+  it("denies a stale grant after a membership is rebound to a different college", async () => {
+    await withFixture(async (f) => {
+      const staleMutation = mutationFor(f);
+      await pool.query(
+        "update college_memberships set college_id=$2 where id=$1",
+        [f.membershipId, SEED_IDS.collegeB],
+      );
+      await expect(
+        drizzlePeopleRepository.addMembershipRole(
+          f.membershipId,
+          "MENTOR",
+          staleMutation,
+        ),
+      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_FOUND" });
+      expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
+    });
+  });
+
+  it("denies stale onboarding of a suspended existing membership", async () => {
+    await withFixture(async (f) => {
+      await pool.query(
+        `update college_memberships set status='SUSPENDED',
+         suspended_at=now(), suspension_reason='DB01 role race test'
+         where id=$1`,
+        [f.membershipId],
+      );
+      await expect(
+        drizzlePeopleRepository.persistPersonMembership(
+          {
+            identityUid: f.identityUid,
+            phoneE164: `+1${randomInt(2_000_000_000, 9_000_000_000)}`,
+            displayName: "DB01 suspended membership fixture",
+            collegeId: SEED_IDS.collegeA,
+            roles: ["FACULTY", "MENTOR"],
+          },
+          { context: actor, organizationId: SEED_IDS.organization },
+        ),
+      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_ACTIVE" });
+      expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
+    });
+  });
+
   it("concurrent removals preserve at least one role on the parent", async () => {
     await withFixture(async (f) => {
       await pool.query(
