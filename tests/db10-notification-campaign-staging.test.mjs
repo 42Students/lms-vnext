@@ -28,6 +28,15 @@ test("DB043 tracks all 21 distinct legacy notification columns with explicit sou
   assert.equal(ledger.counts.retirementApproved, 0);
 });
 
+test("DB043 preserves the active GENERAL type alongside explicit producer types", () => {
+  for (const type of ["GENERAL", "JOB", "COURSE", "SYSTEM"]) {
+    assert.ok(sql.includes("'" + type + "'"), "Missing notification type " + type);
+  }
+  const row = ledger.records.find(item => item.legacyColumn === "notification_type");
+  assert.match(row.sourceRationale, /GENERAL default/);
+  assert.match(contract, /defaults a null non-course type to `GENERAL`/);
+});
+
 test("DB043 preserves broadcast audience shapes, including SECTION_COURSE and recipient-only", () => {
   assert.match(sql, /CREATE TABLE notification_campaigns/);
   assert.match(sql, /audience_scope varchar\(20\) NOT NULL/);
