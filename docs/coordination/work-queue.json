@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:10:00+05:30",
+  "updatedOn": "2026-10-11T08:36:30.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2189,7 +2189,7 @@
         "tests/db06-assessment-retention-staging.test.mjs"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "4089ec0a388840b03fb5d79ffd9492ad1fd89dc8",
+      "latestEvidenceSha": "c981943904764bab2bcaebae8964629bd51fd71a",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "Source-only DB06 retention staging complete. Candidate preserves quiz attempts/answer snapshots and assignment learner payload as immutable retained history; freezes non-DRAFT/post-attempt authoring; shares service advisory-lock namespace 6206001 for sequential/max attempts; enforces deferred quiz total-point and option-set shape, exact committed answer snapshots, complete attempt score/max coherence, and non-destructive poison preflights. DB-009 status/is_deleted/updated_at dispositions updated. Static guard registered. No journal registration or PostgreSQL execution claimed.",
@@ -2228,6 +2228,9 @@
           "at": "2026-10-11T08:34:45.119Z",
           "reason": "DB-038 source candidate, field dispositions, contract and static guard are committed and current-main source reconciliation is clean. Runtime PostgreSQL witnesses remain future promotion evidence."
         }
+      ],
+      "evidenceNotes": [
+        "CHAT1_POST_COMPLETION_HARDENING: poisoned option-set + selected correctness preflight added; option trim/casefold DB normalization aligned to live validator; student_assignment.is_deleted resolved to retained immutable history; contract/static guards updated. Connector source-consistency review 19/19 true. No Node/PostgreSQL execution claimed. Commits 143332f, 44d7803, 5aeb300, c31bb67, c981943."
       ]
     },
     {
