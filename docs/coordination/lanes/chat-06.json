@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_AUTHORING_FACETS_LEARNER_VISIBILITY_SCOPED_ORDER_DEDUP_PENDING_PG",
+    "checkpointKind": "DB008_COURSE_LESSON_SOFT_DELETE_OWNER_DEDUP_SOURCE_GATES_NOT_PG_VERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
-    "lastWorkerMergedSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
+    "observedMainSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
+    "lastWorkerMergedSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB008 remains IN_PROGRESS. Legacy DB05 snapshot 7 tables / 92 source fields, 25 semantic decisions OPEN, 0/92 formally database verified. Seven independent SQL drafts unregistered; DB05 child companions include canonical delivery order UNIQUE(delivery,lesson,sequence) with deferrable constraint (deduped duplicate), legacy lesson-content active/enabled/points bigint/naive deadline authoring, parent, discussion, progress, receipt tenant protections. Learner card allowed_for_display explicit-zero and metadata course-code override source evidence; learner status PUBLISHED versus legacy enabled&&active mismatch truth table authored. 19 read-only connector source structure assertions true, Node/PG/CI/typecheck/build NOT RUN/VERIFIED. Main commits directly; phase DATABASE unchanged."
+    "summary": "DB008 IN_PROGRESS in DATABASE. 92 legacy source fields reviewed, 25 top-level semantic decisions remain OPEN, 0 formally database-verified. Seven DB05 independent migration drafts UNREGISTERED, eight cross-domain companions including course live-child delete guard, atomic lesson delete+nonresurrecting restore (live child parent FOR SHARE), independent lesson active/enabled, canonical faculty owner ACTIVE FACULTY role and same-college guard. Deleted duplicate weaker owner SQL, reconciled to faculty_owner_membership_id. Readiness script checks all companions and subordinate order witness, 53 gates none PASS. Source tests authored, NOT executed. PostgreSQL replay/race, Node unit, lint/typecheck/build/CI not accepted."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -47,7 +47,12 @@
     "tests/db05-lesson-content-authoring-facets.test.mjs: 4 Node tests authored, NOT EXECUTED",
     "tests/db05-learner-course-card-source-contract.test.mjs: 3 authored, NOT EXECUTED",
     "tests/db05-learner-content-visibility-matrix.test.mjs: 3 authored, NOT EXECUTED",
-    "tests/db05-content-delivery-order-unique.test.mjs: peer canonical authored, NOT EXECUTED"
+    "tests/db05-content-delivery-order-unique.test.mjs: peer canonical authored, NOT EXECUTED",
+    "tests/db05-lesson-delete-restore-and-owner.test.mjs (9 authored, NOT executed)",
+    "tests/db05-lesson-active-enabled.test.mjs (3 authored, NOT executed)",
+    "tests/db05-course-soft-delete-guard.test.mjs (5 authored, NOT executed)",
+    "tests/db05-draft-contract-integrity.test.mjs (11 authored at last source scan, NOT executed)",
+    "tests/db05-lesson-faculty-owner-guard.test.mjs (canonical peer tests authored, not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -147,9 +152,15 @@
       "kind": "FACULTY_OWNER_AND_BASE_CONTENT_TENANT_SCOPE",
       "commitSha": "4529882e6441cdfe5013eede42249579dfdd05eb",
       "message": "Staged UNREGISTERED faculty_owner_membership_id same-college+active FACULTY assignment guard (separate from created_by_user_id) and direct lesson-content/optional delivery offering-cohort-period-college SQL guard shared 605008003 lock. Legacy class_id create/update null/0/negative rescope semantics source documented; vNext update currently forbids delivery change. Three static Node test files authored NOT executed; 26 connector assertions passed, PG/tenant/concurrency proof NOT RUN. W01 owns fold; preserve 0/92 verified."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB008_SOFT_DELETE_OWNER_CANONICAL_AND_COMPANION_READINESS",
+      "commitSha": "bc7697ff2258959860eac418fed885fd6ba7ab97",
+      "message": "W01: source-backed unregistered scripts/sql/db05-course-soft-delete-guard.draft.sql + db05-lesson-content-soft-delete-cascade.draft.sql + db05-lesson-active-enabled.draft.sql; canonical faculty owner is db05-lesson-content-faculty-owner.draft.sql, weaker competing owner draft DELETED. docs/planning/db05-lesson-soft-delete-owner-contract.md for restore/role/tenant constraints. Readiness checker now checks every unregistered crossDomainCompanion; 53 gates NOT PASS; PG acceptance NOT RUN."
     }
   ],
-  "nextAction": "Chat6 continues DATABASE DB-008: W01 must compose current 7 independent DB05 migration drafts + optional faculty owner and base content scope companions once; run clean PostgreSQL schema replay, wrong-college/role/tenant, member role-revocation, class reassignment downstream, concurrent offering/period/section reparent. Do not mark any source field verified or switch phase without executable evidence.",
+  "nextAction": "Continue DATABASE-only DB-008 source/consumer reconciliation and scoped constraints; W01 owns migration journal and must integrate canonical owner and course/lesson delete/restore companions exactly once with clean disposable PostgreSQL 23505/23514, tenant, role, CAS and two-session race evidence. No global phase promotion without actual verification.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -239,7 +250,25 @@
     "https://github.com/42Students/lms-vnext/commit/d764684f6102d2a6a33f33954dd3e1afa1fd797f",
     "https://github.com/42Students/lms-vnext/commit/ce71d5a831ba78c0af7fc4c47f8e1418f6dac851",
     "https://github.com/42Students/lms-vnext/commit/912dffae2e91ffac79d68e8bb1d4e2c6c6acfcc8",
-    "https://github.com/42Students/lms-vnext/commit/4529882e6441cdfe5013eede42249579dfdd05eb"
+    "https://github.com/42Students/lms-vnext/commit/4529882e6441cdfe5013eede42249579dfdd05eb",
+    "https://github.com/42Students/lms-vnext/commit/3bad7173974fde952e49c9e2fb40e2987401bf7f",
+    "https://github.com/42Students/lms-vnext/commit/9a4fecc6a31269a6d06666f996b61f63bc07626b",
+    "https://github.com/42Students/lms-vnext/commit/4079c365ef9d9fac39ea289728edc9d9ff5562c3",
+    "https://github.com/42Students/lms-vnext/commit/691b48147312bbc9153ef3acfe8e100093ecbf04",
+    "https://github.com/42Students/lms-vnext/commit/f444195ef07a572142fce4794b6996e32bd1ec08",
+    "https://github.com/42Students/lms-vnext/commit/2d36c94b4d502ed5a1e23262917022304857d79c",
+    "https://github.com/42Students/lms-vnext/commit/aa3810be4b6367eb73be5bf16ca43ebe4a13785b",
+    "https://github.com/42Students/lms-vnext/commit/72964af20abd1435f1996f0f7ae5fc9e39b149a7",
+    "https://github.com/42Students/lms-vnext/commit/a5ae8d0c91eba5027542294f1fa8ec6546598b4e",
+    "https://github.com/42Students/lms-vnext/commit/016d6283065864211b533bb33fb50089580b12b3",
+    "https://github.com/42Students/lms-vnext/commit/bd3be248fd695086ababd96dec867fc2f3b63a4b",
+    "https://github.com/42Students/lms-vnext/commit/0ed67118e3029652ec9152688ec33616d541c08e",
+    "https://github.com/42Students/lms-vnext/commit/6bfae42a05d3840124c4339006cbb9b964c33c09",
+    "https://github.com/42Students/lms-vnext/commit/d07688fa70aa61ffa19a85f0e581466686eba9d6",
+    "https://github.com/42Students/lms-vnext/commit/62875ae8cba87a89d1639c9bd5d4c15cd02f59a0",
+    "https://github.com/42Students/lms-vnext/commit/7e2ea56572fdf519912760e31514bf714fb2f8f7",
+    "https://github.com/42Students/lms-vnext/commit/bc7697ff2258959860eac418fed885fd6ba7ab97",
+    "https://github.com/42Students/lms-vnext/commit/c74e4cbfef19e11790b49c7a9982bf8a5a729037"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
