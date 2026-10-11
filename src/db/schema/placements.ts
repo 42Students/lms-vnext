@@ -78,6 +78,11 @@ export const placementCompanyRelationships = pgTable(
       .notNull()
       .default("ACTIVE"),
     isTrusted: boolean("is_trusted").notNull().default(false),
+    // DB-047 / DB09: legacy industry_company.export_columns_json is a
+    // relationship-scoped default in vNext so one college cannot change
+    // another college's disclosure defaults for the same global company.
+    // Each actual share still snapshots its own immutable columns separately.
+    shareColumnDefaults: jsonb("share_column_defaults").$type<string[]>(),
     ownerMembershipId: uuid("owner_membership_id").references(
       () => collegeMemberships.id,
       { onDelete: "restrict" },
@@ -122,6 +127,15 @@ export const placementCompanyRelationships = pgTable(
     check(
       "placement_company_relationships_archive_shape_ck",
       sql`(${table.status} = 'ARCHIVED') = (${table.archivedAt} is not null)`,
+    ),
+    check(
+      "placement_company_relationships_share_columns_ck",
+      sql`${table.shareColumnDefaults} is null
+        or (
+          jsonb_typeof(${table.shareColumnDefaults}) = 'array'
+          and ${table.shareColumnDefaults} <@
+            '["name","roll","branch","cgpa","tenth","twelfth","email","phone","resume","projects","skillMatch","stage"]'::jsonb
+        )`,
     ),
   ],
 );
