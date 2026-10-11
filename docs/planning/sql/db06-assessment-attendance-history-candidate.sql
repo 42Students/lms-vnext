@@ -308,13 +308,20 @@ FOR EACH ROW EXECUTE FUNCTION db06_grade_event_scope_guard();
 CREATE FUNCTION db06_attendance_event_scope_guard()
 RETURNS trigger LANGUAGE plpgsql AS $db06_attendance_scope$
 DECLARE
+  event_section uuid;
   event_college uuid;
+  linked_delivery uuid;
   learner_college uuid;
   actor_college uuid;
   actor_user uuid;
+  current_status text;
+  current_note text;
+  current_marked_by uuid;
+  current_marked_at timestamptz;
+  current_version integer;
 BEGIN
-  SELECT dep.college_id
-    INTO event_college
+  SELECT e.section_id, dep.college_id
+    INTO event_section, event_college
     FROM section_schedule_events e
     JOIN sections sec ON sec.id = e.section_id
     JOIN cohorts c ON c.id = sec.cohort_id
@@ -323,15 +330,48 @@ BEGIN
     WHERE e.id = NEW.schedule_event_id
     FOR SHARE OF e, sec, c, p, dep;
 
-  SELECT college_id INTO learner_college
+  IF event_section IS NULL OR event_college IS NULL THEN
+    RAISE EXCEPTION 'DB06 attendance event schedule scope is missing'
+      USING ERRCODE='23503';
+  END IF;
+
+  SELECT ec.delivery_id
+    INTO linked_delivery
+    FROM section_schedule_event_courses ec
+    WHERE ec.schedule_event_id = NEW.schedule_event_id
+    FOR SHARE;
+
+  IF NEW.delivery_id IS DISTINCT FROM linked_delivery THEN
+    RAISE EXCEPTION 'DB06 attendance event delivery does not match schedule link'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF linked_delivery IS NOT NULL THEN
+    PERFORM 1
+      FROM course_section_deliveries d
+      WHERE d.id = linked_delivery
+        AND d.section_id = event_section
+      FOR SHARE;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'DB06 attendance event delivery belongs to another section'
+        USING ERRCODE='23514';
+    END IF;
+  END IF;
+
+  SELECT college_id
+    INTO learner_college
     FROM college_memberships
     WHERE id = NEW.membership_id
     FOR SHARE;
 
-  IF event_college IS NULL
-     OR NEW.college_id IS DISTINCT FROM event_college
-     OR learner_college IS DISTINCT FROM event_college THEN
+  IF learner_college IS DISTINCT FROM event_college
+     OR NEW.college_id IS DISTINCT FROM event_college THEN
     RAISE EXCEPTION 'DB06 attendance event schedule/learner tenant mismatch'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF NEW.actor_user_id IS DISTINCT FROM NEW.new_marked_by_user_id THEN
+    RAISE EXCEPTION 'DB06 attendance event actor must equal current marker'
       USING ERRCODE='23514';
   END IF;
 
@@ -342,21 +382,88 @@ BEGIN
       WHERE id = NEW.actor_membership_id
         AND status = 'ACTIVE'
       FOR SHARE;
+
     IF actor_college IS DISTINCT FROM event_college
        OR actor_user IS DISTINCT FROM NEW.actor_user_id THEN
       RAISE EXCEPTION 'DB06 attendance event actor membership mismatch'
         USING ERRCODE='23514';
     END IF;
+
+    IF NEW.actor_role = 'COLLEGE_ADMIN' THEN
+      PERFORM 1
+        FROM membership_roles mr
+        WHERE mr.membership_id = NEW.actor_membership_id
+          AND mr.role = 'COLLEGE_ADMIN'
+        FOR SHARE;
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'DB06 attendance actor lacks COLLEGE_ADMIN grant'
+          USING ERRCODE='23514';
+      END IF;
+    ELSIF NEW.actor_role = 'FACULTY' THEN
+      IF linked_delivery IS NOT NULL THEN
+        PERFORM 1
+          FROM membership_roles mr
+          JOIN course_teaching_assignments cta
+            ON cta.membership_id = mr.membership_id
+           AND cta.delivery_id = linked_delivery
+           AND cta.ended_at IS NULL
+          WHERE mr.membership_id = NEW.actor_membership_id
+            AND mr.role = 'FACULTY'
+          FOR SHARE OF mr, cta;
+      ELSE
+        PERFORM 1
+          FROM membership_roles mr
+          JOIN section_faculty_assignments sfa
+            ON sfa.membership_id = mr.membership_id
+           AND sfa.section_id = event_section
+           AND sfa.ended_at IS NULL
+          WHERE mr.membership_id = NEW.actor_membership_id
+            AND mr.role = 'FACULTY'
+          FOR SHARE OF mr, sfa;
+      END IF;
+
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'DB06 attendance actor lacks teaching scope'
+          USING ERRCODE='23514';
+      END IF;
+    ELSE
+      RAISE EXCEPTION 'DB06 attendance tenant actor role invalid'
+        USING ERRCODE='23514';
+    END IF;
   ELSE
+    IF NEW.actor_role <> 'SUPER_ADMIN' THEN
+      RAISE EXCEPTION 'DB06 attendance actor without membership must be SUPER_ADMIN'
+        USING ERRCODE='23514';
+    END IF;
+
     PERFORM 1
       FROM system_roles
       WHERE user_id = NEW.actor_user_id
         AND role = 'SUPER_ADMIN'
       FOR SHARE;
     IF NOT FOUND THEN
-      RAISE EXCEPTION 'DB06 tenant attendance event requires actor membership'
+      RAISE EXCEPTION 'DB06 attendance SUPER_ADMIN role is missing'
         USING ERRCODE='23514';
     END IF;
+  END IF;
+
+  SELECT ar.status, ar.note, ar.marked_by_user_id, ar.marked_at, ar.version
+    INTO current_status, current_note, current_marked_by, current_marked_at,
+         current_version
+    FROM attendance_records ar
+    WHERE ar.id = NEW.attendance_record_id
+      AND ar.schedule_event_id = NEW.schedule_event_id
+      AND ar.membership_id = NEW.membership_id
+    FOR SHARE;
+
+  IF current_status IS NULL
+     OR NEW.new_status IS DISTINCT FROM current_status
+     OR NEW.new_note IS DISTINCT FROM current_note
+     OR NEW.new_marked_by_user_id IS DISTINCT FROM current_marked_by
+     OR NEW.new_marked_at IS DISTINCT FROM current_marked_at
+     OR NEW.record_version_after IS DISTINCT FROM current_version THEN
+    RAISE EXCEPTION 'DB06 attendance event does not match current row post-state'
+      USING ERRCODE='23514';
   END IF;
 
   RETURN NEW;
