@@ -25,6 +25,9 @@ ALTER TABLE attendance_records
 CREATE UNIQUE INDEX attendance_records_event_identity_uq
   ON attendance_records(id, schedule_event_id, membership_id);
 
+CREATE UNIQUE INDEX section_schedule_event_courses_event_delivery_uq
+  ON section_schedule_event_courses(schedule_event_id, delivery_id);
+
 CREATE TABLE assignment_grade_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   assignment_submission_id uuid NOT NULL,
@@ -123,7 +126,7 @@ CREATE TABLE attendance_record_events (
   attendance_record_id uuid NOT NULL,
   schedule_event_id uuid NOT NULL
     REFERENCES section_schedule_events(id) ON DELETE RESTRICT,
-  delivery_id uuid
+  delivery_id uuid NOT NULL
     REFERENCES course_section_deliveries(id) ON DELETE RESTRICT,
   membership_id uuid NOT NULL
     REFERENCES college_memberships(id) ON DELETE RESTRICT,
@@ -147,6 +150,10 @@ CREATE TABLE attendance_record_events (
   CONSTRAINT attendance_record_events_record_identity_fk
     FOREIGN KEY (attendance_record_id, schedule_event_id, membership_id)
     REFERENCES attendance_records(id, schedule_event_id, membership_id)
+      ON DELETE RESTRICT,
+  CONSTRAINT attendance_record_events_delivery_identity_fk
+    FOREIGN KEY (schedule_event_id, delivery_id)
+    REFERENCES section_schedule_event_courses(schedule_event_id, delivery_id)
       ON DELETE RESTRICT,
   CONSTRAINT attendance_record_events_actor_role_ck
     CHECK (actor_role IN ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')),
@@ -340,6 +347,11 @@ BEGIN
     FROM section_schedule_event_courses ec
     WHERE ec.schedule_event_id = NEW.schedule_event_id
     FOR SHARE;
+
+  IF linked_delivery IS NULL THEN
+    RAISE EXCEPTION 'DB06 attendance event requires a course-linked schedule'
+      USING ERRCODE='23514';
+  END IF;
 
   IF NEW.delivery_id IS DISTINCT FROM linked_delivery THEN
     RAISE EXCEPTION 'DB06 attendance event delivery does not match schedule link'
