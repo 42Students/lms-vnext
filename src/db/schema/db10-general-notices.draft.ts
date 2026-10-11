@@ -58,11 +58,13 @@ export const db10GeneralNotices = pgTable(
     failureCode: varchar("failure_code", { length: 60 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-    /** HMAC over tenant + event + role + recipient + channel; not raw PII. */
+    /** HMAC over tenant + sourceEventId + event + role + recipient + channel; not raw PII. */
     idempotencyKey: varchar("idempotency_key", { length: 64 }).notNull(),
   },
   (t) => [
     uniqueIndex("db10_general_notices_idempotency_uq").on(t.idempotencyKey),
+    uniqueIndex("db10_general_notices_source_recipient_channel_uq")
+      .on(t.sourceEventId, t.recipientUserId, t.channel),
     index("db10_general_notices_due_idx").on(t.status, t.sendAfter),
     index("db10_general_notices_undo_idx").on(t.collegeId, t.undoGroupId, t.status),
     index("db10_general_notices_recipient_idx")
@@ -95,8 +97,7 @@ export const db10GeneralNotices = pgTable(
       sql`(${t.status} = 'CLAIMED' and ${t.claimedBy} is not null
            and ${t.claimedAt} is not null and ${t.claimExpiresAt} is not null)
         or (${t.status} <> 'CLAIMED'
-           and ${t.claimedBy} is null and ${t.claimedAt} is null
-           and ${t.claimExpiresAt} is null)`),
+           and ${t.claimedBy} is null and ${t.claimExpiresAt} is null)`),
     check("db10_general_notices_claim_time_ck",
       sql`${t.claimExpiresAt} is null or ${t.claimExpiresAt} > ${t.claimedAt}`),
     check("db10_general_notices_fence_ck", sql`${t.claimFence} >= 0`),
