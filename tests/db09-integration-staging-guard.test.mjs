@@ -439,3 +439,26 @@ test("DB09 canonical SQL drafts do not redeclare DDL objects within a file", () 
     );
   }
 });
+
+
+test("DB09 drive groups enforce active owner lifecycle and immutable provenance", () => {
+  const sql = read("docs/planning/sql/db09-multicollege-drive-group-candidate.sql");
+  assert.match(sql, /CREATE TRIGGER db09_drive_group_owner_scope_guard/);
+  assert.match(
+    sql,
+    /NEW\.recruiter_user_id IS DISTINCT FROM OLD\.recruiter_user_id[\s\S]*NEW\.company_id IS DISTINCT FROM OLD\.company_id/,
+  );
+  assert.match(sql, /NEW\.created_by_user_id <> NEW\.recruiter_user_id/);
+  assert.match(
+    sql,
+    /JOIN placement_recruiter_profiles p[\s\S]*JOIN placement_companies co[\s\S]*JOIN users u[\s\S]*JOIN colleges c/,
+  );
+  for (const active of [
+    "p.status = 'ACTIVE'",
+    "co.status = 'ACTIVE'",
+    "u.platform_status = 'ACTIVE'",
+    "c.status = 'ACTIVE'",
+  ]) {
+    assert.match(sql, new RegExp(active.replace(/[()]/g, "\\$&")));
+  }
+});
