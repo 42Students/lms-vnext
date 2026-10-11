@@ -536,7 +536,7 @@
       "id": "DB05_AUTHORED_CONTENT_REPARENT_PG_NEGATIVE",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Existing DB05 order-only ancestry guard leaves content with zero delivery order overrides vulnerable to lesson/path/offering/delivery/section reparent. Unregistered authored-content companion blocks those moves after content exists using shared lock 605008003 under READ COMMITTED. W01 must execute CA-01..CA-16, child insert vs ancestor reparent races, deadlock/rollback and DB02/DB06 scope proof."
+      "evidence": "Staged upstream guard now covers authored class-specific content PLUS generic NULL-delivery offering content that appears in each class delivery. W01 to execute CA-01..CA-18 including SAME-college generic content audience shifts, two-session content INSERT vs section/delivery move, rollback, isolation and DB02/DB06 scope. No PostgreSQL or Node CLI acceptance yet."
     },
     {
       "id": "DB05_OFFERING_DELIVERY_PERIOD_COHORT_STATUS_POLICY",
@@ -609,7 +609,8 @@
     "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending.",
     "DB05 cohort+academic period scope guards source-staged only; CP-01..CP-22 PostgreSQL wrong-cohort/term and upstream reparent acceptance NOT_RUN.",
     "DB05_TOMBSTONE_OPTIMISTIC_VERSION: Guard staged to close stale CAS hole for course/lesson/content deletion/restore and cascade. W01 must register after version columns and prove TV-01..TV-14 concurrent PostgreSQL; 0 live DB acceptance, API version writers not yet switched.",
-    "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback."
+    "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback.",
+    "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -838,7 +839,7 @@
       "registered": false,
       "postgresExecuted": false,
       "readyForProduction": false,
-      "note": "W01 integrates after base lesson content schema and child scope guard, sharing READ COMMITTED/advisory 605008003; five upstream tables, 16 CA-01..CA-16 disposable PG/race cases. No duplicate columns. Does not replace DB02 term/department, DB06 assignment, private receipt, or membership guards."
+      "note": "W01 integrates after base schema and shared 605008003 scope lock. Guard NOW checks generic NULL-delivery content as visible in every offering delivery; delivery and section moves must reject even when no class-scoped row and no order override. CA-01..CA-18 PG acceptance (incl. two-session races) NOT RUN. DB02 term/department and DB06 assignment path remain separate."
     }
   ],
   "verifiedSourceReferenceTests": {
