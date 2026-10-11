@@ -582,10 +582,16 @@ CREATE TABLE cohort_progression_events (
   from_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
   to_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
   actor_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+  event_kind varchar(16) NOT NULL,
   reason text,
   state_version bigint NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT cohort_progression_events_forward_ck CHECK (to_term_number = from_term_number + 1),
+  CONSTRAINT cohort_progression_events_kind_ck
+    CHECK (event_kind IN ('PROMOTION','CORRECTION')),
+  CONSTRAINT cohort_progression_events_transition_ck CHECK (
+    (event_kind = 'PROMOTION' AND to_term_number = from_term_number + 1)
+    OR (event_kind = 'CORRECTION' AND to_term_number = from_term_number)
+  ),
   CONSTRAINT cohort_progression_events_version_ck CHECK (state_version >= 1),
   CONSTRAINT cohort_progression_events_cohort_version_uq UNIQUE (cohort_id, state_version)
 );
@@ -654,12 +660,19 @@ BEGIN
         USING ERRCODE='23514';
     END IF;
   ELSE
-    IF NEW.current_term_number <> OLD.current_term_number + 1 THEN
-      RAISE EXCEPTION 'Cohort promotion must advance exactly one term'
-        USING ERRCODE='23514';
-    END IF;
     IF NEW.version <> OLD.version + 1 THEN
       RAISE EXCEPTION 'Cohort progression version must increment exactly once'
+        USING ERRCODE='23514';
+    END IF;
+
+    IF NEW.current_term_number = OLD.current_term_number THEN
+      IF NEW.current_academic_year_start IS NOT DISTINCT FROM OLD.current_academic_year_start
+         AND NEW.current_period_id IS NOT DISTINCT FROM OLD.current_period_id THEN
+        RAISE EXCEPTION 'Cohort correction must change academic year or period'
+          USING ERRCODE='23514';
+      END IF;
+    ELSIF NEW.current_term_number <> OLD.current_term_number + 1 THEN
+      RAISE EXCEPTION 'Cohort promotion must advance exactly one term; direct semester correction is forbidden'
         USING ERRCODE='23514';
     END IF;
   END IF;
@@ -669,7 +682,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_progression_state_guard
-BEFORE INSERT OR UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
+BEFORE INSERT OR UPDATE OF current_term_number, current_academic_year_start, current_period_id, version, updated_by_user_id
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 
@@ -687,6 +700,7 @@ BEGIN
     from_period_id,
     to_period_id,
     actor_user_id,
+    event_kind,
     reason,
     state_version
   ) VALUES (
@@ -698,7 +712,14 @@ BEGIN
     OLD.current_period_id,
     NEW.current_period_id,
     NEW.updated_by_user_id,
-    'COHORT_PROMOTION',
+    CASE
+      WHEN NEW.current_term_number = OLD.current_term_number THEN 'CORRECTION'
+      ELSE 'PROMOTION'
+    END,
+    CASE
+      WHEN NEW.current_term_number = OLD.current_term_number THEN 'COHORT_CORRECTION'
+      ELSE 'COHORT_PROMOTION'
+    END,
     NEW.version
   );
   RETURN NEW;
@@ -706,7 +727,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_progression_history
-AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version, updated_by_user_id
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 
