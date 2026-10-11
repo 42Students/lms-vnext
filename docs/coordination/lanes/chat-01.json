@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-052",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB051_LOCAL_PROXY_RESET_GUARD_COMPLETED",
+    "checkpointKind": "DB052_QUIZ_LIFECYCLE_HISTORY_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "49efc04c1b1b004bf6e0bde2366320d2e4089034",
+    "observedMainSha": "d4ec3673e035c1e16bc7160f5ef56ee0fed1580c",
     "lastWorkerMergedSha": "e66e66d4a4d38d43cdb63d1ee52b10b123776b19",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-051 completed: localhost/proxy reset ambiguity closed. Explicit local test/E2E names stay frictionless; all other local DBs require exact DB_RESET_CONFIRM; remote still requires ALLOW_DB_RESET + exact token. Redirect params/system DBs fail closed. 10/10 isolated no-network matrix passed; repo tsx/PG execution not claimed."
+    "summary": "Chat 1 started DB-052: stage immutable quiz lifecycle/result-publication history and direct-SQL state rules. Source-only; no journal/API cutover."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -50,7 +50,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh DATABASE queue; if no dependency-satisfied unowned task exists, continue a non-duplicating DB06 source persistence gap.",
+  "nextAction": "Read current vNext quiz schema/services and pinned legacy quiz audit/state behavior; define source-backed lifecycle transitions, actor/tenant history row shape, same-transaction event completeness and static guards; keep migration unregistered.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -87,7 +87,8 @@
     "DB-044",
     "DB-045",
     "DB-048",
-    "DB-051"
+    "DB-051",
+    "DB-052"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -104,7 +105,7 @@
     "DB-048",
     "DB-051"
   ],
-  "lastPickedAt": "2026-10-11T14:30:00.000Z",
+  "lastPickedAt": "2026-10-11T14:58:00.000Z",
   "lastCompletedAt": "2026-10-11T14:14:04.081Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
