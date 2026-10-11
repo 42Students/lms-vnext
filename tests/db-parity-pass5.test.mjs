@@ -38,6 +38,7 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
   assert.equal(new Set(manifest.raceProbes.map(p => p.id)).size, 23);
   const allowed = new Set([
     "SOURCE_CONFIRMED_GAP",
+    "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION",
     "SOURCE_PROTECTED_NEEDS_EXECUTION",
     "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
     "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP",
@@ -62,7 +63,7 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
 
   const count = state =>
     manifest.raceProbes.filter(p => p.state === state).length;
-  assert.equal(count("SOURCE_CONFIRMED_GAP"), 4);
+  assert.equal(count("SOURCE_CONFIRMED_GAP"), 3);\n  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 1);
   assert.equal(count("SOURCE_PROTECTED_NEEDS_EXECUTION"), 13);
   assert.equal(count("SOURCE_PROTECTED_DRAFT_UNMIGRATED"), 3);
   assert.equal(count("PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP"), 1);
@@ -72,7 +73,13 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
     manifest.raceProbes
       .filter(p => p.state === "SOURCE_CONFIRMED_GAP")
       .map(p => p.id),
-    ["P5-R01", "P5-R02", "P5-R11", "P5-R21"],
+    ["P5-R02", "P5-R11", "P5-R21"],
+  );
+  assert.deepEqual(
+    manifest.raceProbes
+      .filter(p => p.state === "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION")
+      .map(p => p.id),
+    ["P5-R01"],
   );
   assert.equal(manifest.raceAudit.runtimeVerified, 0);
   assert.deepEqual(
@@ -247,4 +254,33 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
   assert.match(coverage, /Known-defect red concurrency witnesses \| 2 \| 0/);
   assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
+});
+
+
+test("DB18 mutation witnesses are fail-closed to an isolated database", () => {
+  const directFiles = [
+    "tests/integration/db18-registered-negative-witnesses.test.ts",
+    "tests/integration/db18-concurrency-witnesses.test.ts",
+  ];
+  const serviceFiles = [
+    "tests/integration/db18-known-race-gaps.test.ts",
+    "tests/integration/db18-placement-race-gap.test.ts",
+  ];
+  for (const file of [...directFiles, ...serviceFiles]) {
+    const source = fs.readFileSync(file, "utf8");
+    assert.match(source, /process\.env\.TEST_DATABASE_URL/);
+    assert.match(source, /DB018_ISOLATED_TEST_DATABASE/);
+    assert.match(source, /DB03_ISOLATED_TEST_DATABASE/);
+    assert.doesNotMatch(
+      source,
+      /TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/,
+    );
+  }
+  for (const file of serviceFiles) {
+    const source = fs.readFileSync(file, "utf8");
+    assert.match(
+      source,
+      /process\.env\.DATABASE_URL\s*===\s*databaseUrl/,
+    );
+  }
 });
