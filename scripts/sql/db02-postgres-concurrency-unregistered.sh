@@ -40,6 +40,13 @@ RACE_SECTION_B_ID="$(new_uuid)"
 USER_ID="$(new_uuid)"
 MEMBERSHIP_ID="$(new_uuid)"
 HALL_ID="$(new_uuid)"
+COURSE_RACE_A_ID="$(new_uuid)"
+COURSE_RACE_B_ID="$(new_uuid)"
+TERM_RACE_ID="$(new_uuid)"
+OFFERING_RACE_A_ID="$(new_uuid)"
+OFFERING_RACE_B_ID="$(new_uuid)"
+EVENT_RACE_A_ID="$(new_uuid)"
+EVENT_RACE_B_ID="$(new_uuid)"
 
 psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v run_tag="$RUN_TAG" \
@@ -137,7 +144,7 @@ echo "Fixture committed: $RUN_TAG"
 # ---------------------------------------------------------------------------
 PROMOTE_A="$(mktemp)"
 PROMOTE_B="$(mktemp)"
-trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}"' EXIT
+trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}" "${DELIVERY_FIRST:-}" "${OFFERING_MOVE_AFTER:-}" "${OFFERING_MOVE_FIRST:-}" "${DELIVERY_AFTER_MOVE:-}" "${ATTENDANCE_FIRST:-}" "${EVENT_MOVE_AFTER:-}" "${EVENT_MOVE_FIRST:-}" "${ATTENDANCE_AFTER_MOVE:-}"' EXIT
 
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" <<'SQL'
@@ -421,5 +428,276 @@ if [[ "$RACE_B_STATE" != "1:1" ]]; then
 fi
 
 echo "PASS section race B: reparent committed before serialized history insert"
+
+# ---------------------------------------------------------------------------
+# Prepare isolated offering/event fixtures for historic-parent races.
+# Race section A stayed on period_id; race section B was moved to alt_period_id above.
+# ---------------------------------------------------------------------------
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
+  -v run_tag="$RUN_TAG" \
+  -v dept_id="$DEPT_ID" \
+  -v program_id="$PROGRAM_ID" \
+  -v cohort_id="$COHORT_ID" \
+  -v period_id="$PERIOD_ID" \
+  -v race_section_a_id="$RACE_SECTION_A_ID" \
+  -v course_race_a_id="$COURSE_RACE_A_ID" \
+  -v course_race_b_id="$COURSE_RACE_B_ID" \
+  -v term_race_id="$TERM_RACE_ID" \
+  -v offering_race_a_id="$OFFERING_RACE_A_ID" \
+  -v offering_race_b_id="$OFFERING_RACE_B_ID" \
+  -v event_race_a_id="$EVENT_RACE_A_ID" \
+  -v event_race_b_id="$EVENT_RACE_B_ID" <<'SQL' >/dev/null
+INSERT INTO courses(id, department_id, name, code)
+VALUES
+  (:'course_race_a_id', :'dept_id', :'run_tag' || ' history course A', :'run_tag' || '-hist-course-a'),
+  (:'course_race_b_id', :'dept_id', :'run_tag' || ' history course B', :'run_tag' || '-hist-course-b');
+
+INSERT INTO program_terms(id, program_id, term_number, name, is_active)
+VALUES (:'term_race_id', :'program_id', 1, :'run_tag' || ' history term', true);
+
+INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
+VALUES
+  (:'term_race_id', :'course_race_a_id', 'CORE', 3, 1),
+  (:'term_race_id', :'course_race_b_id', 'CORE', 3, 2);
+
+INSERT INTO course_offerings(
+  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+) VALUES
+  (:'offering_race_a_id', :'course_race_a_id', :'cohort_id', :'period_id', :'term_race_id', 'CORE', 3, 1),
+  (:'offering_race_b_id', :'course_race_b_id', :'cohort_id', :'period_id', :'term_race_id', 'CORE', 3, 2);
+
+INSERT INTO section_schedule_events(id, section_id, title, starts_at, ends_at)
+VALUES
+  (
+    :'event_race_a_id', :'race_section_a_id', 'db02 attendance-first parent race',
+    date_trunc('day', now()) + interval '12 days 09 hours',
+    date_trunc('day', now()) + interval '12 days 10 hours'
+  ),
+  (
+    :'event_race_b_id', :'race_section_a_id', 'db02 event-move-first parent race',
+    date_trunc('day', now()) + interval '13 days 09 hours',
+    date_trunc('day', now()) + interval '13 days 10 hours'
+  );
+SQL
+
+# ---------------------------------------------------------------------------
+# Race 4A: delivery creation takes offering SHARE first. A concurrent otherwise-valid
+# offering period move must block and then reject once delivery history is committed.
+# ---------------------------------------------------------------------------
+DELIVERY_FIRST="$(mktemp)"
+OFFERING_MOVE_AFTER="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v offering_id="$OFFERING_RACE_A_ID" -v section_id="$RACE_SECTION_A_ID" <<'SQL'
+BEGIN;
+INSERT INTO course_section_deliveries(offering_id, section_id)
+VALUES (:'offering_id', :'section_id');
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$DELIVERY_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_A_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL' >"$OFFERING_MOVE_AFTER" 2>&1
+UPDATE course_offerings
+   SET academic_period_id = :'alt_period_id'
+ WHERE id = :'offering_id';
+SQL
+MOVE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$MOVE_STATUS" -eq 0 ]]; then
+  echo "Offering history-first race failed: offering reparent unexpectedly succeeded" >&2
+  cat "$OFFERING_MOVE_AFTER" >&2
+  exit 1
+fi
+
+OFFER_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_A_ID" -v period_id="$PERIOD_ID" <<'SQL'
+SELECT
+  (academic_period_id = :'period_id')::int || ':' ||
+  (SELECT count(*) FROM course_section_deliveries d WHERE d.offering_id = o.id)
+FROM course_offerings o
+WHERE id = :'offering_id';
+SQL
+)"
+
+if [[ "$OFFER_A_STATE" != "1:1" ]]; then
+  echo "Offering history-first final state mismatch: $OFFER_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS offering race A: committed delivery prevented offering reparent"
+
+# ---------------------------------------------------------------------------
+# Race 4B: offering reparent wins first. Delivery creation blocks on the offering,
+# then validates against the newly committed alt period and must reject a period_id section.
+# ---------------------------------------------------------------------------
+OFFERING_MOVE_FIRST="$(mktemp)"
+DELIVERY_AFTER_MOVE="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v offering_id="$OFFERING_RACE_B_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL'
+BEGIN;
+UPDATE course_offerings
+   SET academic_period_id = :'alt_period_id'
+ WHERE id = :'offering_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$OFFERING_MOVE_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_B_ID" -v section_id="$RACE_SECTION_A_ID" <<'SQL' >"$DELIVERY_AFTER_MOVE" 2>&1
+INSERT INTO course_section_deliveries(offering_id, section_id)
+VALUES (:'offering_id', :'section_id');
+SQL
+DELIVERY_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$DELIVERY_STATUS" -eq 0 ]]; then
+  echo "Offering move-first race failed: stale-period delivery unexpectedly succeeded" >&2
+  cat "$DELIVERY_AFTER_MOVE" >&2
+  exit 1
+fi
+
+OFFER_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v offering_id="$OFFERING_RACE_B_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL'
+SELECT
+  (academic_period_id = :'alt_period_id')::int || ':' ||
+  (SELECT count(*) FROM course_section_deliveries d WHERE d.offering_id = o.id)
+FROM course_offerings o
+WHERE id = :'offering_id';
+SQL
+)"
+
+if [[ "$OFFER_B_STATE" != "1:0" ]]; then
+  echo "Offering move-first final state mismatch: $OFFER_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS offering race B: reparent winner invalidated stale delivery creation"
+
+# ---------------------------------------------------------------------------
+# Race 5A: attendance creation takes schedule-event SHARE first. Concurrent section
+# reparent must block and then reject once attendance history commits.
+# ---------------------------------------------------------------------------
+ATTENDANCE_FIRST="$(mktemp)"
+EVENT_MOVE_AFTER="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v event_id="$EVENT_RACE_A_ID" <<'SQL'
+BEGIN;
+INSERT INTO attendance_sessions(schedule_event_id) VALUES (:'event_id');
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$ATTENDANCE_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v event_id="$EVENT_RACE_A_ID" -v section_id="$SECTION_ID" <<'SQL' >"$EVENT_MOVE_AFTER" 2>&1
+UPDATE section_schedule_events
+   SET section_id = :'section_id'
+ WHERE id = :'event_id';
+SQL
+EVENT_MOVE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$EVENT_MOVE_STATUS" -eq 0 ]]; then
+  echo "Attendance-first event race failed: event section move unexpectedly succeeded" >&2
+  cat "$EVENT_MOVE_AFTER" >&2
+  exit 1
+fi
+
+EVENT_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v event_id="$EVENT_RACE_A_ID" -v section_id="$RACE_SECTION_A_ID" <<'SQL'
+SELECT
+  (section_id = :'section_id')::int || ':' ||
+  (SELECT count(*) FROM attendance_sessions a WHERE a.schedule_event_id = e.id)
+FROM section_schedule_events e
+WHERE id = :'event_id';
+SQL
+)"
+
+if [[ "$EVENT_A_STATE" != "1:1" ]]; then
+  echo "Attendance-first event final state mismatch: $EVENT_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS event race A: committed attendance prevented event section rewrite"
+
+# ---------------------------------------------------------------------------
+# Race 5B: event section move wins first. Attendance creation blocks on the event
+# parent lock, then succeeds against the newly committed identity.
+# ---------------------------------------------------------------------------
+EVENT_MOVE_FIRST="$(mktemp)"
+ATTENDANCE_AFTER_MOVE="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+    -v event_id="$EVENT_RACE_B_ID" -v section_id="$SECTION_ID" <<'SQL'
+BEGIN;
+UPDATE section_schedule_events
+   SET section_id = :'section_id'
+ WHERE id = :'event_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$EVENT_MOVE_FIRST" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v event_id="$EVENT_RACE_B_ID" <<'SQL' >"$ATTENDANCE_AFTER_MOVE" 2>&1
+INSERT INTO attendance_sessions(schedule_event_id) VALUES (:'event_id');
+SQL
+ATTENDANCE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$ATTENDANCE_STATUS" -ne 0 ]]; then
+  echo "Event move-first race failed: attendance insert did not serialize and succeed" >&2
+  cat "$ATTENDANCE_AFTER_MOVE" >&2
+  exit 1
+fi
+
+EVENT_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
+  -v event_id="$EVENT_RACE_B_ID" -v section_id="$SECTION_ID" <<'SQL'
+SELECT
+  (section_id = :'section_id')::int || ':' ||
+  (SELECT count(*) FROM attendance_sessions a WHERE a.schedule_event_id = e.id)
+FROM section_schedule_events e
+WHERE id = :'event_id';
+SQL
+)"
+
+if [[ "$EVENT_B_STATE" != "1:1" ]]; then
+  echo "Event move-first final state mismatch: $EVENT_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS event race B: move committed before serialized attendance history"
 echo "DB02 concurrency acceptance PASS"
 echo "Fixture rows are intentionally left in this disposable database under tag: $RUN_TAG"
