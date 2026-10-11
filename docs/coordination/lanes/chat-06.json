@@ -59,7 +59,11 @@
     "tests/db05-content-ancestry-authored-guard.test.mjs (6 V8 mocked-source callbacks PASS incl generic content; native Node/PG NOT RUN)",
     "tests/db05-lesson-delete-restore-and-owner.test.mjs (10 V8 mocked-source callbacks PASS after brittle regex repair; native Node/PG NOT RUN)",
     "tests/db05-discussion-ancestry-reference.test.mjs (11/11 native pure reference-model PASS, not SQL)",
-    "tests/db05-discussion-ancestry-integrity.test.mjs (authored static SQL/manifest guard, NOT native-executed)"
+    "tests/db05-discussion-ancestry-integrity.test.mjs (authored static SQL/manifest guard, NOT native-executed)",
+    "tests/db05-hierarchy-archive-race.test.mjs (8 authored; not executed)",
+    "tests/db05-hierarchy-archive-transactions.test.mjs (4 authored; not executed)",
+    "tests/db05-hierarchy-paired-row-locks.test.mjs (5 authored; not executed)",
+    "tests/db05-authoring-parent-locks.test.mjs (7 authored; not executed)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-12: node --test /mnt/data/db008-check/tests/db05-discussion-ancestry-reference.test.mjs | native Node 22.16.0 11/11 PASS | exact blob 5581c1ae8c512614910a3fe72c2d315a96ee67a4 | PURE REFERENCE MODEL ONLY, NOT POSTGRES"
@@ -215,9 +219,15 @@
       "kind": "DB05_DISCUSSION_PARENT_CYCLE_AND_HISTORY_SCOPE_GUARDS",
       "commitSha": "d16540d8f21f933e7d05017759ffe1048fd4b5b2",
       "message": "PR #97 staged 2-trigger unregistered DB05 discussion parent-acyclic and lesson_content lesson_id/delivery_id reparent protection sharing advisory 605008003; read-only cycle/tenant preflight; pure native reference Node 11/11 PASS exact blob 5581c1ae; 16 connector source checks PASS. 20 DG cases, clean W01 PostgreSQL integration, non-READ-COMMITTED lock policy proof and nested reply source consumer decision NOT RUN. Source evidence docs/coordination/evidence/chat-06-db008-discussion-graph-2026-10-12.md. DO NOT mark DONE_VERIFIED."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB008_20261012_PAIRED_SERVICE_ARCHIVE_AND_AUTHORING_LOCKS",
+      "commitSha": "d68eab03f14b28167e3c94b30fcb68063d34c45f",
+      "message": "Direct-main live DB05: 13 service commits (3 parent archive/end tx UPDATE locks; 3 matching child INSERT tx SHARE locks; 7 path/lesson/content + delivery content authoring and atomic DRAFT PUBLISH predicates), 24 new authored Node regressions in four tests, source-connected structural assertions green. Staged six-trigger SQL lifecycle draft unregistered, read-only three-count drift preflight authored; 20 HL + 12 LC PostgreSQL two-session cases NOT RUN. Other DB05 TV/CA, tenant, history gates remain. W01 only migration integrator; global DATABASE active, DB008 remains IN_PROGRESS, formal DB05 verified 0/92."
     }
   ],
-  "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.",
+  "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.\n2026-10-12 handoff: run native Node/TS and two-session PG HL-01..20, LC-01..12, register trigger once only after W01 clean replay. Current live normal-service paired locks do not replace tenant/reparent/direct SQL DB acceptance.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -363,7 +373,18 @@
     "https://github.com/42Students/lms-vnext/commit/429636bd7c3703796339b8f76a3fd33607a789c2",
     "https://github.com/42Students/lms-vnext/commit/c27a797f931187b31c45f5fa24c4d0971868add1",
     "https://github.com/42Students/lms-vnext/commit/2db1f93cf41e44c3cbadcb5746ad866ec8898fa3",
-    "https://github.com/42Students/lms-vnext/commit/fb16b2b5665219c2afa49c06dfc4effdc225bcc9"
+    "https://github.com/42Students/lms-vnext/commit/fb16b2b5665219c2afa49c06dfc4effdc225bcc9",
+    "https://github.com/42Students/lms-vnext/commit/9778ce108d86053502d25fe4ed5d1cf1c899e02c",
+    "https://github.com/42Students/lms-vnext/commit/36cbf87508f8d79646fb7e4a5fc7f523590abb40",
+    "https://github.com/42Students/lms-vnext/commit/0a7287ee4820c9b3b1d6d65ed543ac417de54fc1",
+    "https://github.com/42Students/lms-vnext/commit/3ccb4d89f3d28e641363cc510968a06e2956c6a9",
+    "https://github.com/42Students/lms-vnext/commit/e8f35c41a4070089a3b3cacec5fcba20514f056f",
+    "https://github.com/42Students/lms-vnext/commit/a521cbdee68b923ad6f75e5dde91fa52191084b3",
+    "https://github.com/42Students/lms-vnext/commit/00f4a2283cf1c8fe6b2e151beb828a495c8c1eac",
+    "https://github.com/42Students/lms-vnext/commit/52c9fea17068e1f12b1e58fda92b1ab957f872ed",
+    "https://github.com/42Students/lms-vnext/commit/85132267d53953f7fbb3dd45a14cc2989d8d6bb9",
+    "https://github.com/42Students/lms-vnext/commit/cadfd9888db079276098cd7b3b35e06f7a44894d",
+    "https://github.com/42Students/lms-vnext/commit/d68eab03f14b28167e3c94b30fcb68063d34c45f"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
