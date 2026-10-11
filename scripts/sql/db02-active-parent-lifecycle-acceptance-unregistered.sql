@@ -36,7 +36,6 @@ DECLARE
   learner2_membership_id uuid;
   learner_enrollment_id uuid;
   withdrawn_learner_enrollment_id uuid;
-  planned_learner_enrollment_id uuid;
   historical_pool_id uuid;
   historical_section_faculty_id uuid;
   historical_teaching_id uuid;
@@ -156,12 +155,12 @@ BEGIN
 
   -- Separate offering can archive because it has no delivery.
   INSERT INTO course_offerings(
-    course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+    course_id, cohort_id, academic_period_id, program_term_id,
     type, credits, display_order, status
   )
   VALUES (
-    course_id, cohort_id, active_period_id, term_id, term_course_id,
-    'CORE', 3, 2, 'ACTIVE'
+    archived_course_id, cohort_id, active_period_id, term_id,
+    'ELECTIVE', 3, 2, 'ACTIVE'
   )
   RETURNING id INTO archived_offering_id;
   UPDATE course_offerings SET status='ARCHIVED' WHERE id=archived_offering_id;
@@ -249,7 +248,7 @@ BEGIN
   failed := false;
   BEGIN
     INSERT INTO section_faculty_assignments(section_id, membership_id, role)
-    VALUES (archived_section_id, faculty_membership_id, 'FACULTY');
+    VALUES (archived_section_id, faculty_membership_id, 'ADVISOR');
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
@@ -454,19 +453,11 @@ BEGIN
   END IF;
 
   -- PLANNED period is valid: services reject CLOSED, not PLANNED.
-  INSERT INTO learner_program_enrollments(
-    membership_id, program_id, cohort_id, status
-  )
-  VALUES (
-    learner2_membership_id, program_id, cohort_id, 'ACTIVE'
-  )
-  RETURNING id INTO planned_learner_enrollment_id;
-
   INSERT INTO section_enrollments(
     learner_enrollment_id, section_id, academic_period_id, status
   )
   VALUES (
-    planned_learner_enrollment_id, planned_section_id, planned_period_id, 'ACTIVE'
+    learner_enrollment_id, planned_section_id, planned_period_id, 'ACTIVE'
   );
 
   -- Historical section enrollment is representable but cannot reactivate under archived section.
