@@ -47,3 +47,56 @@ test("DB09 canonical notification draft preserves undo, digest and claim state",
   assert.match(sql, /'RECRUITER'/);
   assert.match(sql, /'APP','EMAIL','SMS'/);
 });
+
+
+test("DB09 parent composite keys are centralized once", () => {
+  const parents = read("docs/planning/sql/db09-parent-composite-keys-candidate.sql");
+  for (const shape of [
+    "UNIQUE (id, organization_id)",
+    "UNIQUE (id, college_id)",
+    "UNIQUE (id, job_id)",
+    "UNIQUE (id, organization_id, college_id)",
+  ]) {
+    assert.match(parents, new RegExp(shape.replace(/[()]/g, "\\$&")));
+  }
+
+  for (const path of [
+    "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+    "docs/planning/sql/db09-round-scheduling-candidate.sql",
+    "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+  ]) {
+    const sql = read(path);
+    assert.doesNotMatch(
+      sql,
+      /ADD CONSTRAINT .*_(?:id_college|id_job|college_id|event_scope|college_org)_.*UNIQUE/s,
+      path + " must not redeclare shared parent composite keys",
+    );
+  }
+});
+
+test("DB09 collaboration and scheduling agree on coordinator table identity", () => {
+  const collaboration = read("docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql");
+  const scheduling = read("docs/planning/sql/db09-round-scheduling-candidate.sql");
+  assert.match(scheduling, /CREATE TABLE placement_drive_coordinator_assignments/);
+  assert.doesNotMatch(collaboration, /placement_drive_day_coordinator_assignments/);
+  assert.match(
+    collaboration,
+    /Coordinator tenant negatives execute through the canonical scheduling/,
+  );
+});
+
+test("DB09 composite child FKs use the canonical ID-first parent shapes", () => {
+  const collaboration = read("docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql");
+  assert.match(
+    collaboration,
+    /FOREIGN KEY\(job_id, college_id\) REFERENCES placement_jobs\(id, college_id\)/,
+  );
+  assert.match(
+    collaboration,
+    /FOREIGN KEY\(learner_membership_id, college_id\)[\s\S]*REFERENCES college_memberships\(id, college_id\)/,
+  );
+  assert.match(
+    collaboration,
+    /FOREIGN KEY\(application_id, job_id\)[\s\S]*REFERENCES placement_applications\(id, job_id\)/,
+  );
+});
