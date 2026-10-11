@@ -74,3 +74,19 @@ test("DB05 owner upstream reparent and role security require independent proof",
   assert.match(cascade, /two-session delete\/move\/restore races/);
   assert.match(owner, /PostgreSQL clean replay/);
 });
+
+test("DB05 child insert and reparent block live content under deleted parent", () => {
+  assert.match(cascade, /CREATE OR REPLACE FUNCTION db05_lesson_content_live_parent_guard/);
+  assert.match(cascade, /SELECT lesson\.legacy_deleted_at INTO parent_deleted_at/);
+  assert.match(cascade, /FOR SHARE/);
+  assert.match(cascade, /parent_deleted_at IS NOT NULL AND NEW\.legacy_deleted_at IS NULL/);
+  assert.match(cascade, /BEFORE INSERT OR UPDATE OF lesson_id, legacy_deleted_at/);
+  assert.match(cascade, /USING ERRCODE = '23514'/);
+});
+
+test("DB05 delete versus insert race remains PostgreSQL-unverified", () => {
+  assert.match(cascade, /Must be verified with two PostgreSQL sessions/);
+  assert.match(cascade, /parent deletion sees\/cascades the new child/);
+  assert.match(cascade, /insert waits and then rejects/);
+  assert.match(cascade, /two-session delete\/move\/restore races/);
+});
