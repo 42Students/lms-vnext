@@ -41,6 +41,7 @@ DECLARE
   period_college_id uuid;
   owner_college_id uuid;
   owner_status text;
+  faculty_role_row_id uuid;
   content_offering_id uuid;
   delivery_offering_id uuid;
   section_period_college_id uuid;
@@ -78,10 +79,14 @@ BEGIN
     ON section_period.id = section_row.academic_period_id
   WHERE lesson.id = NEW.lesson_id;
 
+  -- Protect the assignment-time owner-college/status observation against
+  -- concurrent membership suspension and college reassignment. Historic
+  -- owner membership remains linked, even after a later role change.
   SELECT membership.college_id, membership.status::text
     INTO owner_college_id, owner_status
   FROM college_memberships membership
-  WHERE membership.id = NEW.faculty_owner_membership_id;
+  WHERE membership.id = NEW.faculty_owner_membership_id
+  FOR SHARE;
 
   IF course_college_id IS NULL OR period_college_id IS NULL
      OR owner_college_id IS NULL
@@ -107,15 +112,22 @@ BEGIN
       IS DISTINCT FROM OLD.faculty_owner_membership_id;
   END IF;
 
-  IF newly_assigned AND
-     (owner_status IS DISTINCT FROM 'ACTIVE'
-      OR NOT EXISTS (
-        SELECT 1 FROM membership_roles membership_role
-        WHERE membership_role.membership_id = NEW.faculty_owner_membership_id
-          AND membership_role.role::text = 'FACULTY'
-      )) THEN
-    RAISE EXCEPTION 'faculty owner assignment requires an active faculty membership'
-      USING ERRCODE = '23514';
+  IF newly_assigned THEN
+    -- Lock the current faculty-role row itself. A concurrent DELETE role
+    -- waits for this transaction, while a committed revocation is rejected.
+    -- This is an assignment-time invariant, NOT a lifetime requirement:
+    -- later loss of FACULTY role keeps provenance but revokes app access.
+    SELECT membership_role.id INTO faculty_role_row_id
+    FROM membership_roles membership_role
+    WHERE membership_role.membership_id = NEW.faculty_owner_membership_id
+      AND membership_role.role::text = 'FACULTY'
+    FOR SHARE;
+
+    IF owner_status IS DISTINCT FROM 'ACTIVE'
+       OR faculty_role_row_id IS NULL THEN
+      RAISE EXCEPTION 'faculty owner assignment requires an active faculty membership'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
 
   RETURN NEW;
@@ -144,6 +156,8 @@ COMMIT;
 -- 7. Reassigning faculty ownership never changes created_by_user_id.
 -- 8. Upstream department, period, offering, learning path and membership
 --    changes may invalidate existing ownership; row trigger insufficient.
--- 9. Concurrent reassignment, membership suspension, role revocation and
---    lesson reparent races require real disposable PostgreSQL tests.
+-- 9. Assignment-time role/membership row SHARE locks serialize concurrent
+--    suspension and faculty-role deletion; execute real two-session PostgreSQL
+--    tests to confirm lock wait, commit order, no deadlocks and retry policy.
+--    Upstream college/lesson reparent safety still needs independent guards.
 -- 10. W01 integrates once with Drizzle schema+writer+reader and clean replay.
