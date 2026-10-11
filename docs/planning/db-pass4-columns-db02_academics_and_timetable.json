@@ -7599,7 +7599,9 @@
       "Target design is now dispositioned for 125/125 DB02 legacy fields, but none is runtime-certified. Registered Drizzle schema, services/fixtures and PostgreSQL acceptance remain required.",
       "Legacy cohort INACTIVE is reversible and cannot be represented solely by vNext ARCHIVED; staging adds INACTIVE while preserving PLANNED/ARCHIVED for richer vNext lifecycle.",
       "Legacy batch and class lifecycle dates are independently authored compatibility state; staging preserves nullable cohort/section dates while academic periods and schedule events remain calendar authority.",
-      "new_program_structure is a backend compatibility store with no current production-FE consumer. No duplicate canonical table is proposed; API parity must either project canonical terms/curriculum or explicitly retire that compatibility API."
+      "new_program_structure is a backend compatibility store with no current production-FE consumer. No duplicate canonical table is proposed; API parity must either project canonical terms/curriculum or explicitly retire that compatibility API.",
+      "Chat 1 must consolidate the canonical DB02 staging and deconflicted parent/enrollment extension into one registered Drizzle migration set; current runtime/PostgreSQL verification remains zero.",
+      "Execute both DB02 PostgreSQL acceptance harnesses after registration, including promotion CAS, hall booking/archive races, and section reparent/history insertion lock-order races."
     ],
     "followUpEvidenceRequired": [
       "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
@@ -7837,6 +7839,74 @@
       "semanticEquivalenceVerifiedFields": 0,
       "postgresVerifiedFields": 0,
       "note": "Design disposition is complete, but staged/direct/normalized/retirement labels are NOT runtime equivalence. Retirement-proposed rows still require final consumer/product acceptance."
+    },
+    "integrationReadiness": {
+      "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
+      "observedMainSha": "e3f04beef4b3457d02ce10bb6dfff8afaedd318d",
+      "sourceDispositions": {
+        "classified": 125,
+        "total": 125
+      },
+      "targetDesignDispositions": {
+        "mapped": 125,
+        "total": 125
+      },
+      "canonicalStaging": {
+        "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "blobSha": "46705335848b18eb41f6e40353f04eff67efb3ce",
+        "plpgsqlFunctions": 25,
+        "pairedDollarQuoteOpenings": 25,
+        "malformedSingleDollarBodies": false
+      },
+      "parentEnrollmentExtension": {
+        "path": "scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
+        "blobSha": "4c05a2c5301da5983f9c15de750ba91b6cfde294",
+        "plpgsqlFunctions": 7,
+        "pairedDollarQuoteOpenings": 7,
+        "triggerNameOverlapWithCanonical": []
+      },
+      "acceptanceHarnesses": [
+        {
+          "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
+          "blobSha": "93a3ed4c89ec1c059a286cde0fb76ab100165b07",
+          "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
+          "covers": [
+            "tenant owner immutability",
+            "cohort/section/offering/progression period scope",
+            "program terms and curriculum",
+            "delivery/event scope",
+            "learner enrollment tenant/role/history identity",
+            "faculty association/teaching identity lifecycle",
+            "lecture hall overlap/cancellation/archive behavior"
+          ],
+          "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-postgres-concurrency-unregistered.sh",
+          "blobSha": "271c6a871b67940ae2829c32c83fe4e300ea2d05",
+          "type": "TWO_SESSION_PSQL_RACES",
+          "covers": [
+            "cohort promotion compare-and-set single winner",
+            "hall archive wins vs booking",
+            "booking wins vs hall archive",
+            "history insert wins vs section reparent",
+            "section reparent wins before serialized history insert"
+          ],
+          "executedPostgres": false
+        }
+      ],
+      "staticChecks": {
+        "canonicalFunctionDelimiterPairs": "25/25",
+        "extensionFunctionDelimiterPairs": "7/7",
+        "canonicalExtensionTriggerOverlap": 0,
+        "singleSessionHarnessEndsWithRollback": true,
+        "concurrencyRaceFamilies": 5
+      },
+      "registeredDrizzleDb02Found": false,
+      "postgresTestsExecuted": 0,
+      "runtimeEquivalenceVerifiedFields": 0,
+      "status": "READY_FOR_CHAT1_CONSOLIDATION_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
+      "warning": "Static/source/design evidence is not PASS. Chat 1 must consolidate/register schema and migrations, replay zero-to-current, then execute both PostgreSQL harnesses on an exact disposable-DB SHA."
     }
   }
 }
