@@ -275,3 +275,94 @@ test("fixture: dropping FK and weakening delete semantics both fail", () => {
     compareForeignKeys(fkTS.replace("parent.id", "otherParent.id"), fkSQL, "wrong parent"),
     /FK table, target, column or delete action drift/);
 });
+
+
+// Catch index-column order or indexed-table changes even when names and
+// uniqueness agree. Supports simple fields and lower(field) used by DB10.
+function insideParens(source, open) {
+  let depth=1;
+  for(let i=open+1;i<source.length;i++){
+    if(source[i]==="(")depth++;
+    else if(source[i]===")"&&--depth===0)return source.slice(open+1,i);
+  }
+  throw Error("unterminated index expression");
+}
+function indexExpr(value) {
+  let v=value.replace(/\s+/g,"").toLowerCase();
+  while(v.startsWith("(")&&v.endsWith(")")){
+    let depth=0,closed=-1;
+    for(let i=0;i<v.length;i++){
+      if(v[i]==="(")depth++;
+      else if(v[i]===")"&&--depth===0){closed=i;break;}
+    }
+    if(closed!==v.length-1)break;
+    v=v.slice(1,-1);
+  }
+  return v;
+}
+export function compareIndexColumnOrder(schema, sql, label) {
+  const properties=Object.fromEntries([...schema.matchAll(
+    /^\s*(\w+):\s*(?:uuid|bigint|integer|boolean|varchar|timestamp|date|jsonb|text)\(\s*["'](\w+)["']/gm,
+  )].map(m=>[m[1],m[2]]));
+  const tables=[...schema.matchAll(/\bpgTable\(\s*["'](\w+)["']/gm)]
+    .map(m=>({table:m[1],pos:m.index}));
+  const left=[];
+  for(const m of schema.matchAll(/\b(?:uniqueIndex|index)\(\s*["'](\w+)["']\s*\)/g)){
+    const tail=schema.slice(m.index+m[0].length);
+    const on=/^\s*\.on\s*\(/.exec(tail);
+    assert.ok(on,label+": unrecognized Drizzle index "+m[1]);
+    let expr=insideParens(tail,on[0].length-1)
+      .replaceAll(String.fromCharCode(96),"").replace(/\bsql(?=lower\()/g,"");
+    expr=expr.replace(/\$\{t\.(\w+)\}/g,(_,field)=>{
+      assert.ok(properties[field],label+": unknown indexed property "+field);
+      return properties[field];
+    }).replace(/\bt\.(\w+)\b/g,(_,field)=>{
+      assert.ok(properties[field],label+": unknown indexed property "+field);
+      return properties[field];
+    });
+    const normalized=indexExpr(expr);
+    assert.match(normalized,/^[a-z0-9_(),]+$/,label+": unsupported Drizzle index "+m[1]);
+    const table=tables.filter(t=>t.pos<m.index).at(-1)?.table;
+    assert.ok(table,label+": index has no table "+m[1]);
+    left.push([m[1],table,normalized]);
+  }
+  const right=[];
+  for(const m of sql.matchAll(
+    /\bCREATE\s+(?:UNIQUE\s+)?INDEX\s+(\w+)\s+ON\s+(\w+)\s*\(/gi,
+  )){
+    const expr=indexExpr(insideParens(sql,m.index+m[0].length-1));
+    assert.match(expr,/^[a-z0-9_(),]+$/,label+": unsupported staged index "+m[1]);
+    right.push([m[1],m[2],expr]);
+  }
+  assert.ok(left.length,label+": no indexes");
+  assert.deepEqual(left.map(JSON.stringify).toSorted(),right.map(JSON.stringify).toSorted(),
+    label+": index table, expression or field-order drift");
+  return left.length;
+}
+for(const [draft,stage] of pairs){
+  test("DB10 index field-order parity: "+draft,()=>{
+    compareIndexColumnOrder(readFileSync(draft,"utf8"),readFileSync(stage,"utf8"),draft);
+  });
+}
+test("fixture: reordered index columns and wrong indexed table are detected",()=>{
+  const draft=[
+    "export const source = pgTable('source_table', {",
+    "  first: uuid('first'),",
+    "  second: uuid('second'),",
+    "}, (t) => [index('source_idx').on(t.first, t.second)]);",
+  ].join("\n");
+  const stage=[
+    "CREATE TABLE source_table (",
+    "  first uuid,",
+    "  second uuid",
+    ");",
+    "CREATE INDEX source_idx ON source_table (first, second);",
+  ].join("\n");
+  assert.equal(compareIndexColumnOrder(draft,stage,"good"),1);
+  assert.throws(()=>compareIndexColumnOrder(draft,
+    stage.replace("(first, second)","(second, first)"),"reorder"),
+    /index table, expression or field-order drift/);
+  assert.throws(()=>compareIndexColumnOrder(draft,
+    stage.replace("ON source_table","ON other_table"),"table"),
+    /index table, expression or field-order drift/);
+});
