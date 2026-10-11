@@ -11,14 +11,28 @@
     "activenessLedger": "docs/planning/db01-chat02-312-field-source-triage.json",
     "activenessBlob": "efedb62f8738798e757186c7143836345405d33a",
     "snapshot": "drizzle/meta/0040_snapshot.json",
-    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "latestJournalObserved": "0041_db06_assessment_parent_scope",
+    "latestSnapshotObserved": "drizzle/meta/0041_snapshot.json",
+    "latestSnapshotBlob": "c2223126e5bcd0e95b34cd468f50fa06a61e7f63",
+    "db01RegisteredTableStructuralDiffSince0040": 0,
+    "comparedRegisteredTables": [
+      "public.organizations",
+      "public.colleges",
+      "public.users",
+      "public.college_memberships",
+      "public.membership_roles",
+      "public.system_roles",
+      "public.tenant_domains"
+    ]
   },
   "interpretation": [
     "These are 173 no-proposed-target fields out of 288 current active/lifecycle source candidate fields, not automatically 173 missing DB columns.",
     "Staged-only concepts, normalized expressions, provider ownership and justified security redesigns need review; not all require a new vNext table.",
     "DB04 and DB09 are cross-domain reconciliation consumers within the same global DATABASE phase, not permanent chat ownership or permission to work API/UI early.",
     "No old LMS user data needs migration. Never port raw password, OTP, refresh/access token or model-only legacy implementation without provider/job proof.",
-    "All 173 rows remain open; a written destination or source audit does not count as vNext runtime-semantic verification."
+    "All 173 rows remain open; a written destination or source audit does not count as vNext runtime-semantic verification.",
+    "Journal 0041 postdates 0040, but its seven registered DB01 parent tables exactly match snapshot 0040; a later journal entry must trigger a fresh re-screen before this queue is considered current."
   ],
   "summary": {
     "sourceCandidates": 312,
