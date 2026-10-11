@@ -2060,7 +2060,9 @@
         "docs/planning/database-parity-db09-field-ledger.json",
         "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
         "tests/db09-notification-preferences-normalization.test.mjs",
-        "docs/planning/db09-integration-manifest-2026-10-11.md"
+        "docs/planning/db09-integration-manifest-2026-10-11.md",
+        "tests/db09-integration-staging-guard.test.mjs",
+        "docs/planning/db09-tpo-settings-normalization-2026-10-11.md"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -2096,6 +2098,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:12:00+05:30",
           "reason": "Resume Chat 3: repair corrupted duplicate tpo-collaboration declarations, then source-backed normalization of fixed notification and personal preference booleans."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T08:29:08.621Z",
+          "reason": "Extend claim to stale DB09 source regression test and DB034 handoff text; JSONB preference assertions must be updated to DB036 typed columns."
         }
       ]
     },
