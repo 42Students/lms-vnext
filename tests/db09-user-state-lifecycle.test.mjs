@@ -56,8 +56,9 @@ test("preference tenant and owner are immutable",()=>{
 test("preference INSERT rejects future timestamps",()=>{
   assert.match(prefs(),/IF TG_OP = 'INSERT' THEN[\s\S]*?NEW\.updated_at > statement_timestamp\(\)/);
 });
-test("preference UPDATE rejects future old and new timestamps",()=>{
-  assert.match(prefs(),/OLD\.updated_at > statement_timestamp\(\)[\s\S]*?NEW\.updated_at > statement_timestamp\(\)/);
+test("preference UPDATE rejects forged future clock values without rejecting DB-owned monotonic ticks",()=>{
+  assert.match(prefs(),/NEW\.updated_at IS DISTINCT FROM OLD\.updated_at[\s\S]*?NEW\.updated_at > statement_timestamp\(\)/);
+  assert.doesNotMatch(prefs(),/IF OLD\.updated_at > statement_timestamp\(\)/);
 });
 test("preference changes compare every source boolean",()=>{
   const block=prefs().match(/IF ROW\(([\s\S]*?)\) IS DISTINCT FROM ROW\(([\s\S]*?)\) THEN/);
