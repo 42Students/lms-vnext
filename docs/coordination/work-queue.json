@@ -2203,6 +2203,52 @@
           "reason": "Staging immutable assessment history and definition-freeze guards outside registered migration journal."
         }
       ]
+    },
+    {
+      "id": "DB-039",
+      "phase": "DATABASE",
+      "title": "Stage DB10 admin audit actor and request-context fidelity",
+      "scope": "Preserve active legacy admin_audit_log actor role snapshot, request IP and User-Agent semantics in vNext activity persistence without duplicating actor phone. Stage explicit forensic columns and retention/privacy contract; map the other 10 legacy fields to existing activity_events columns/metadata. API request-header capture is deferred to API phase.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/sql/db10-activity-audit-context-staging.sql",
+        "docs/planning/database-parity-db10-activity-audit-context.md",
+        "tests/db10-activity-audit-context-staging.test.mjs",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T13:55:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T13:55:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Active legacy AdminAuditLogService persists actor user type, request IP and User-Agent; current vNext Activity detail explicitly exposes these as DB10 parity gaps."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:55:00+05:30",
+          "reason": "Chat 5 reserved isolated DB10 activity-audit staging/doc/test plus DB10 ledger rows; no active worker owns these paths."
+        }
+      ]
     }
   ],
   "eventModel": {
