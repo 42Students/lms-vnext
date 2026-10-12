@@ -56,7 +56,7 @@ test("DB01 guard rejects query parameters that can redirect the PostgreSQL targe
           TEST_DATABASE_URL:
             `postgresql://test_user:secret@127.0.0.1:5432/lms_vnext_test?${key}=pg.internal`,
         }),
-      new RegExp(`query parameter "\\${key}" may redirect the destructive target`),
+      new RegExp(`query parameter "${key}" may redirect the destructive target`),
     );
   }
 });
@@ -425,7 +425,7 @@ test("DB48 independent verifier preserves remote reset confirmation gates for de
 test("DB48 browser E2E reset inherits exact remote confirmation instead of synthesizing one", () => {
   assert.match(
     dbE2EPrepareSource,
-    /const guardEnv = \{\s*\.\.\.process\.env,/,
+    /const guardEnv(?::\s*NodeJS\.ProcessEnv)?\s*=\s*\{\s*\.\.\.process\.env,/,
   );
   assert.doesNotMatch(
     dbE2EPrepareSource,
