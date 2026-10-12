@@ -111,10 +111,10 @@ describe.skipIf(!enabled)("DB10 outbox immutable organization-college ownership 
           and contype = 'f'`,
     );
     expect(originalFks.some(({ definition }) =>
-      /FOREIGN KEY \\(organization_id\\) REFERENCES organizations\\(id\\)/i.test(definition),
+      /FOREIGN KEY \(organization_id\) REFERENCES organizations\(id\)/i.test(definition),
     )).toBe(true);
     expect(originalFks.some(({ definition }) =>
-      /FOREIGN KEY \\(college_id\\) REFERENCES colleges\\(id\\)/i.test(definition),
+      /FOREIGN KEY \(college_id\) REFERENCES colleges\(id\)/i.test(definition),
     )).toBe(true);
   });
 
