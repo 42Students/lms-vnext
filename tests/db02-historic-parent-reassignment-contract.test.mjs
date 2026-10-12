@@ -19,7 +19,7 @@ const base = readFileSync(new URL(
 const extension = base;
 
 test("consolidated SQL retains all seven history-parent functions and paired bodies", () => {
-  const all = [...draft.matchAll(/CREATE FUNCTION (db02_[a-z_]+)\(\)/g)].map(m => m[1]);
+  const all = [...draft.matchAll(/CREATE (?:OR REPLACE )?FUNCTION (db02_[a-z_]+)\(\)/g)].map(m => m[1]);
   for (const name of [
     "db02_guard_historic_offering_parent",
     "db02_guard_historic_delivery_parent",
