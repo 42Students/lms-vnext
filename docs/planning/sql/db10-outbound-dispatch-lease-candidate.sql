@@ -118,7 +118,6 @@ BEGIN
            claimed_by = NULL,
            claim_expires_at = NULL,
            pre_send_authorized_fence = NULL,
-           pre_send_authorized_fence = NULL,
            last_safe_failure_code = 'EXPIRED_PRE_SEND',
            updated_at = v_now
      WHERE id = v_row.id;
@@ -142,7 +141,6 @@ BEGIN
        SET status = 'SUPPRESSED',
            claimed_by = NULL,
            claim_expires_at = NULL,
-           pre_send_authorized_fence = NULL,
            pre_send_authorized_fence = NULL,
            last_safe_failure_code = 'SUPPRESSED_PRE_SEND',
            updated_at = v_now
@@ -200,7 +198,6 @@ BEGIN
            claimed_by = NULL,
            claim_expires_at = NULL,
            pre_send_authorized_fence = NULL,
-           pre_send_authorized_fence = NULL,
            last_safe_failure_code = NULL,
            updated_at = v_now
      WHERE id = v_row.id;
@@ -220,7 +217,6 @@ BEGIN
        SET status = p_outcome,
            claimed_by = NULL,
            claim_expires_at = NULL,
-           pre_send_authorized_fence = NULL,
            pre_send_authorized_fence = NULL,
            next_attempt_at = CASE WHEN p_outcome = 'RETRY'
                                   THEN p_next_attempt_at ELSE NULL END,
