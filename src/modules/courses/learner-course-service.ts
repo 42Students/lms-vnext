@@ -649,7 +649,7 @@ export async function getLearnerCourseWorkspace(
     maxPoints: number;
     sequence: number;
     submissionId: string | null;
-    submissionType: "TEXT" | "LINK" | null;
+    submissionType: "TEXT" | "LINK" | "FILE" | null;
     submissionText: string | null;
     submissionUrl: string | null;
     submittedAt: Date | null;
