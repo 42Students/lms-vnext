@@ -128,7 +128,7 @@ async function restoreActors() {
 
 async function assertManage(
   context: RequestContext,
-  collegeId = SEED_IDS.collegeA,
+  collegeId: string = SEED_IDS.collegeA,
 ) {
   return getDb().transaction((tx) =>
     assertPersistedPlatformPermission(
