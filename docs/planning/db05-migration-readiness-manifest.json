@@ -647,6 +647,20 @@
       "nodeTestPath": "tests/db05-tombstone-ancestor-preflight.test.mjs",
       "postgresExecuted": false,
       "mismatchCounts": null
+    },
+    {
+      "id": "DB05_LIVE_AUTHORING_LOCKED_SCOPE_TWO_SESSION_PG_ACCEPTANCE",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_DB02_VERIFICATION",
+      "evidence": "Four committed Chat6 service changes: delivery create section/cohort/period/college locked recheck, faculty create membership/role locked recheck, offering update cohort/period mutability locked recheck. Node test source authored; no PostgreSQL execution. 20 LC-01..20 two-session/stale authorization tests in docs/planning/db05-live-course-authoring-lock-acceptance.json; exact SHA/SQLSTATE/lock-order and clean database replay required. CI billing intentionally not a task blocker.",
+      "testMatrix": "docs/planning/db05-live-course-authoring-lock-acceptance.json",
+      "runtimeImplementation": [
+        "src/modules/courses/delivery-service.ts",
+        "src/modules/courses/teaching-assignment-service.ts",
+        "src/modules/courses/offering-service.ts"
+      ],
+      "postgresExecuted": false,
+      "scenarioCount": 20
     }
   ],
   "sourceReview": {
@@ -716,7 +730,8 @@
     "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback.",
     "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope.",
     "Paired app row locks committed across all 6 course/offering/delivery/teacher paths, but native Node/TS compilation and 20 two-session PostgreSQL HL tests NOT EXECUTED; direct SQL activation, upstream reparent and non-READ-COMMITTED lock order need W01 acceptance.",
-    "LC-01..12 learning-path/lesson/content/delivery authoring archive and publish CAS two-session PostgreSQL tests NOT EXECUTED. Direct SQL ancestor reparent and historical tombstone guards remain unregistered. Native Node/typecheck/build not observed."
+    "LC-01..12 learning-path/lesson/content/delivery authoring archive and publish CAS two-session PostgreSQL tests NOT EXECUTED. Direct SQL ancestor reparent and historical tombstone guards remain unregistered. Native Node/typecheck/build not observed.",
+    "DB05_LIVE_SCOPE_LOCK_PG_PENDING: Services recheck mutable offering/section and faculty scope under row locks, but PostgreSQL two-session LC-01..20 and ancestor authorization/deadlock tests are not executed. Source checks only; DB02/W01 upstream guard integration remains open."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
