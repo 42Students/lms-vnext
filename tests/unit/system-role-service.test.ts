@@ -46,7 +46,7 @@ function createIdentityDirectory(): {
         count += 1;
         const user = {
           uid: `identity-${count}`,
-          phoneNumber: input.phoneNumber,
+          phoneNumber: input.phoneNumber ?? null,
           email: input.email ?? null,
           displayName: input.displayName,
         };
