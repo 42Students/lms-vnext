@@ -132,50 +132,14 @@
       "title": "Reconcile DB01 tenant and identity field semantics",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": [],
-      "acceptanceEvidence": [
-        {
-          "kind": "EXECUTED_PARTIAL",
-          "result": "PASSED_LIMITED_SCOPE_NOT_TASK_ACCEPTANCE",
-          "exitCode": 0,
-          "commitSha": "f87b75e920a963b1e43f3016fccc4b7ddef7fec0",
-          "runner": "GitHub Actions ubuntu-latest; disposable PostgreSQL 17",
-          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38293097985/job/114957624509",
-          "commands": [
-            "npm run db:journal:verify",
-            "npm run db:test:prepare",
-            "node scripts/db01-final-field-disposition-audit.mjs",
-            "node scripts/db004-identity-disposition-audit.mjs",
-            "node --test tests/db004-identity-disposition-audit.test.mjs tests/db004-session-revocation-ownership.test.mjs",
-            "npx vitest run --config vitest.db.config.ts tests/integration/db01-tenant-identity-invariants.test.ts tests/integration/db01-identity-fk-invariants.test.ts tests/integration/db01-core-structure-invariants.test.ts tests/integration/db01-concurrent-integrity.test.ts tests/integration/db01-tenant-routing-lifecycle.test.ts tests/integration/db01-membership-role-parent-lock.test.ts"
-          ],
-          "details": "PARTIAL ONLY: 18 native source-contract checks and 46 PG integration checks PASSED; all 312 disposition rows parsed, but provider session cutover/retirement approvals and all staged identity persistence are NOT accepted."
-        }
-      ]
+      "dependsOn": []
     },
     {
       "id": "DB-005",
       "title": "Reconcile DB02 academic and schedule schema",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": [],
-      "acceptanceEvidence": [
-        {
-          "kind": "EXECUTED_PARTIAL",
-          "result": "PASSED_LIMITED_SCOPE_NOT_TASK_ACCEPTANCE",
-          "exitCode": 0,
-          "commitSha": "57d26f1575493e60a3a346d0d0b91be4332e5fd7",
-          "runner": "GitHub Actions ubuntu-latest; disposable PostgreSQL 17",
-          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38294951104/job/114963863562",
-          "commands": [
-            "npm run db:journal:verify",
-            "npm run db:test:prepare",
-            "psql -X -v ON_ERROR_STOP=1 -f scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-            "bash scripts/sql/db02-run-disposable-acceptance.sh"
-          ],
-          "details": "PARTIAL ONLY: unregistered DB02 staged SQL applied; 91 native source contracts, 8 rollback SQL acceptance suites, and 6 multi-session concurrency harnesses PASSED. No canonical numbered migration registration or final replay/promotion signoff."
-        }
-      ]
+      "dependsOn": []
     },
     {
       "id": "DB-006",
@@ -189,26 +153,7 @@
       "title": "Reconcile DB04 profile verification and private documents",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": [],
-      "acceptanceEvidence": [
-        {
-          "kind": "EXECUTED_PARTIAL",
-          "result": "PASSED_LIMITED_SCOPE_NOT_TASK_ACCEPTANCE",
-          "exitCode": 0,
-          "commitSha": "ba346ea691c169954efcc73fd512f335d99892b7",
-          "runner": "GitHub Actions ubuntu-latest; disposable PostgreSQL 17",
-          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38293878636/job/114960594214",
-          "commands": [
-            "npm run db:journal:verify",
-            "npm run db:test:prepare",
-            "psql -X -v ON_ERROR_STOP=1 -f docs/planning/db04-proposed-migration.sql",
-            "psql -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db04-faculty-profile-document-staging.sql",
-            "node --test tests/db04-profile-education-images-pg.test.mjs",
-            "node --test tests/db04-candidate-sql-integrity.test.mjs tests/db04-profile-education-images-staged.test.mjs"
-          ],
-          "details": "PARTIAL ONLY: unregistered DB04 private-receipt/education/image and faculty SQL plus isolated PostgreSQL negative checks PASSED; final migration registration, semantic/writer privacy integration, historical retirement approvals still missing."
-        }
-      ]
+      "dependsOn": []
     },
     {
       "id": "DB-008",
