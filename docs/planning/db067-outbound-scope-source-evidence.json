@@ -1,0 +1,78 @@
+{
+  "taskId": "DB-067",
+  "worker": 2,
+  "recordedOn": "2026-10-12",
+  "changeKind": "ADDITIVE_TENANT_BOUNDARY_CORRECTION",
+  "globalPhase": "DATABASE",
+  "sourceOnly": true,
+  "executed": {
+    "mode": "GITHUB_CONNECTOR_IN_PROCESS_V8",
+    "assertions": 18,
+    "passed": 18,
+    "failed": 0,
+    "standaloneNodeCases": 0,
+    "postgresqlCases": 0,
+    "drizzleGenerate": false,
+    "postgresqlMigrationReplay": false,
+    "typecheck": false,
+    "build": false
+  },
+  "authoredCases": {
+    "nodeSource": 10,
+    "postgresqlOptIn": 5
+  },
+  "sourceBlobs": [
+    {
+      "path": "src/db/schema/colleges.ts",
+      "blobSha": "529afe4f4bda1150fd0783a1cd8ad4f2b61b2a78"
+    },
+    {
+      "path": "src/db/schema/db10-outbound-messages.draft.ts",
+      "blobSha": "33aa8fcc8e9be19d52b608095a9b73ccfa45981d"
+    },
+    {
+      "path": "docs/planning/sql/db10-outbound-scope-fk-staging.sql",
+      "blobSha": "0dd5b34581fc37d87fa8119cb8843fb08f5ab701"
+    },
+    {
+      "path": "src/modules/operations/outbound-delivery-queue.ts",
+      "blobSha": "b7187c09d446a2e1902eb6b029208f842e7c3a5c"
+    },
+    {
+      "path": "src/db/schema/index.ts",
+      "blobSha": "e31aecccd745bd19e23959ffc017856f2b50a51b"
+    },
+    {
+      "path": "tests/integration/db10-outbound-scope-fk.test.ts",
+      "blobSha": "7a1976471d7b27f0baa3047ed73c0bc50bea11e2"
+    },
+    {
+      "path": "tests/db10-outbound-scope-fk-source.test.mjs",
+      "blobSha": "a97125f8236d06ac50fdfecd5dad798fdadfb034"
+    }
+  ],
+  "assertionNames": [
+    "parent org owner",
+    "draft composite FK columns",
+    "Drizzle ON UPDATE/DELETE RESTRICT",
+    "parent unique target before child FK",
+    "fail-closed mismatch preflight",
+    "SQL update/delete RESTRICT",
+    "staging stays unregistered",
+    "producer active tenant scope checks",
+    "opt-in PG flag and disposable suffix",
+    "rollback, no DB_URL fallback",
+    "PG FK catalog plus original FKs",
+    "PG regex syntax",
+    "5 authored opt-in PG cases",
+    "10 authored standalone Node cases",
+    "producer scope check before encryption",
+    "mutation witness existence",
+    "no rewrite/delete preflight",
+    "PG positive/negative cases"
+  ],
+  "migrationState": "STAGED_UNREGISTERED",
+  "runtimeState": "NOT_TESTED",
+  "recommendedNextStep": "Chat 1 register composite parent target and child constraint with clean replay. Run node --test tests/db10-outbound-scope-fk-source.test.mjs and opt-in PG suite against disposable database with DB10_OUTBOUND_SCOPE_FK_ENFORCED=1; add two-session race acceptance.",
+  "interpretation": "18 source structure assertions passed in JS over exact GitHub blobs. This is not execution of the committed Node/Vitest tests, not a real PostgreSQL catalog query, not a proof of network/provider behavior, and cannot mark any DATABASE task DONE_VERIFIED."
+}
