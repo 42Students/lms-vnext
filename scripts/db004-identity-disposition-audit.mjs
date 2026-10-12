@@ -43,7 +43,7 @@ export function inspectDb004(source, ledger) {
       issues.push("False verification/retirement approval " + row.legacyField);
     }
     if (row.proposedTarget === null && row.priorTargetPresent === false &&
-        !/REVIEW|REQUIRED|OPEN|PENDING|RETIREMENT|UNRESOLVED|DECISION/.test(row.proposalRule)) {
+        !/REVIEW|REQUIRED|OPEN|PENDING|RETIRED|RETIREMENT|UNRESOLVED|DECISION/.test(row.proposalRule)) {
       issues.push("No target and no explicit decision gate " + row.legacyField);
     }
   }
