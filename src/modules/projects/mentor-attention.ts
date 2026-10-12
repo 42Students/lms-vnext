@@ -14,6 +14,7 @@ export type MentorProjectAttentionSource = {
   }[];
 };
 export type MentorProjectAttention = {
+  projectId: string;
   key: string;
   kind: "REVIEW" | "STALLED" | "REQUESTED" | "MEETING_SOON";
   title: string;
@@ -33,6 +34,7 @@ export function deriveMentorProjectAttention(
     const href="/mentor/projects/"+encodeURIComponent(project.projectId);
     if (project.submission?.status==="SUBMITTED" && project.submission.submittedAt) {
       alerts.push({
+        projectId:project.projectId,
         key:"review:"+project.submission.id,kind:"REVIEW",
         title:"Delivery awaiting your review",
         description:project.projectTitle+" has a learner submission to review.",
@@ -46,7 +48,8 @@ export function deriveMentorProjectAttention(
     const stalled=project.projectStatus==="ACTIVE" && Number.isFinite(lastMillis) &&
       timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
-      key:"stalled:"+project.projectId,kind:"STALLED",
+      projectId:project.projectId,
+        key:"stalled:"+project.projectId,kind:"STALLED",
       title:"Project may be stalled",
       description:project.projectTitle+" has no recent recorded activity.",
       href,occurredAt:last.toISOString(),
@@ -54,7 +57,8 @@ export function deriveMentorProjectAttention(
     for (const meeting of project.meetings) {
       if (meeting.status==="REQUESTED") {
         alerts.push({
-          key:"request:"+meeting.id,kind:"REQUESTED",
+          projectId:project.projectId,
+        key:"request:"+meeting.id,kind:"REQUESTED",
           title:"Meeting request pending",
           description:project.projectTitle+": "+meeting.title,
           href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
@@ -62,7 +66,8 @@ export function deriveMentorProjectAttention(
       } else if (meeting.status==="SCHEDULED") {
         const delta=meeting.startsAt.getTime()-timestamp;
         if (delta>=0 && delta<=48*60*60*1000) alerts.push({
-          key:"soon:"+meeting.id,kind:"MEETING_SOON",
+          projectId:project.projectId,
+        key:"soon:"+meeting.id,kind:"MEETING_SOON",
           title:"Upcoming project meeting",
           description:project.projectTitle+": "+meeting.title,
           href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
