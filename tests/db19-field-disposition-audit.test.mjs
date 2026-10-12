@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { auditLedgers, auditCheckout, DOMAIN_SUFFIXES, HISTORICAL_FLOOR } from '../scripts/db19-field-disposition-audit.mjs';
+import { auditLedgers, auditCheckout, DOMAIN_SUFFIXES, HISTORICAL_FLOOR, FROZEN_LEGACY_ORACLE_SHA } from '../scripts/db19-field-disposition-audit.mjs';
 
 const field = (table, col, overrides = {}) => ({
   legacyTable: table, legacyColumn: col, sourceType: 'varchar(50)',
@@ -177,7 +177,7 @@ function writeSyntheticFullInventory(root, subtractOneField = false) {
       const rows = Array.from({ length: base + (t < extra ? 1 : 0) }, (_, f) => field(name,'field_'+f));
       return { table: name, sourceFieldCount: rows.length, rows };
     });
-    const doc = { domain: domain.toUpperCase(), sourceSha: 'a'.repeat(40),
+    const doc = { domain: domain.toUpperCase(), sourceSha: FROZEN_LEGACY_ORACLE_SHA,
       counts: { tables, fields: expected }, tables: specs };
     const location = path.join(root, 'docs/planning/db-pass4-columns-' + domain + '.json');
     fs.mkdirSync(path.dirname(location), { recursive: true });
@@ -260,6 +260,45 @@ test('DB19 rejects balanced cross-domain table drift with unchanged global 199/2
     assert.equal(result.counts.tables, 199);
     assert.equal(result.sourceInventoryIntegrity, 'FAIL');
     assert.equal(result.errors.filter(e => e.code === 'FROZEN_DOMAIN_CARDINALITY_DRIFT').length, 2);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+
+test('DB19 rejects an arbitrary valid-length SHA claiming to be the frozen legacy oracle', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'db19-false-oracle-'));
+  try {
+    writeSyntheticFullInventory(root);
+    const location = path.join(root, 'docs/planning/db-pass4-columns-db07_projects.json');
+    const doc = JSON.parse(fs.readFileSync(location, 'utf8'));
+    doc.sourceSha = 'a'.repeat(40);
+    fs.writeFileSync(location, JSON.stringify(doc));
+    const result = auditCheckout(root);
+    assert.equal(result.counts.tables, 199);
+    assert.equal(result.counts.fields, 2829);
+    assert.equal(result.sourceInventoryIntegrity, 'FAIL');
+    assert.equal(result.databaseParityVerified, false);
+    assert.ok(result.errors.some(e =>
+      e.code === 'UNAPPROVED_LEGACY_ORACLE_SHA' &&
+      e.path === 'docs/planning/db-pass4-columns-db07_projects.json' &&
+      e.expected === FROZEN_LEGACY_ORACLE_SHA));
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test('DB19 pins an identical but unapproved new source SHA in every domain', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'db19-false-uniform-oracle-'));
+  try {
+    writeSyntheticFullInventory(root);
+    for (const domain of DOMAIN_SUFFIXES) {
+      const location = path.join(root, 'docs/planning/db-pass4-columns-' + domain + '.json');
+      const doc = JSON.parse(fs.readFileSync(location, 'utf8'));
+      doc.sourceSha = 'b'.repeat(40);
+      fs.writeFileSync(location, JSON.stringify(doc));
+    }
+    const result = auditCheckout(root);
+    assert.equal(result.counts.fields, 2829);
+    assert.equal(result.errors.filter(e => e.code === 'UNAPPROVED_LEGACY_ORACLE_SHA').length, 11);
+    assert.ok(!result.errors.some(e => e.code === 'MIXED_LEGACY_ORACLE_SHAS'));
+    assert.equal(result.sourceInventoryIntegrity, 'FAIL');
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
 
