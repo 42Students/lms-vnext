@@ -132,3 +132,25 @@ test("these service locks are not misclassified as registered database constrain
   assert.notEqual(task.status, "DONE_VERIFIED");
   assert.equal(task.verificationEvidence.length, 0);
 });
+
+test("offering rechecks active organization, college, program and department after preflight", () => {
+  const body = exportedBody(offering, "createCourseOffering");
+  inOrder(body, [
+    ".from(courses)",
+    ".innerJoin(\n          departments,",
+    ".innerJoin(\n          colleges,",
+    ".innerJoin(\n          organizations,",
+    "isNull(departments.archivedAt)",
+    'eq(colleges.status, "ACTIVE")',
+    'eq(organizations.status, "ACTIVE")',
+    '.for("share")',
+    "activeCourse.collegeId !== course.collegeId",
+    ".from(cohorts)",
+    ".innerJoin(\n          programs,",
+    ".innerJoin(\n          departments,",
+    'eq(programs.status, "ACTIVE")',
+    "isNull(departments.archivedAt)",
+    '.for("share")',
+    ".insert(courseOfferings)",
+  ], "createCourseOfferingActiveAncestry");
+});
