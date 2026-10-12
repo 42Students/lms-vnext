@@ -6,7 +6,9 @@ function assertDestructiveE2ETargetPreflight(databaseUrl: string) {
   const guardPath = fileURLToPath(
     new URL("./db01-test-database-guard.mjs", import.meta.url),
   );
-  const guardEnv = {
+  // Preserve the full process-env index signature: deleting DATABASE_URL
+  // is intentional and must typecheck without weakening fail-closed preflight.
+  const guardEnv: NodeJS.ProcessEnv = {
     ...process.env,
     TEST_DATABASE_URL: databaseUrl,
   };
