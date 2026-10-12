@@ -72,3 +72,35 @@ The first version de-duplicated table names *inside each file* before checking d
 **Actually executed:** An in-process JavaScript V8 evaluator ran 15/15 synthetic targeted cases before the source write, 3/3 targeted false-positive checks before the follow-up write, and 24/24 source-only callbacks from the exact committed DB-027 test/scanner blobs after the test commit. Three filesystem-dependent tests were intentionally skipped in that evaluator. **These are not Node `node --test` runs.** An independent hosted shell has Node v22.16.0 but cannot resolve `github.com` to clone the repository; no PostgreSQL instance or migration replay was exercised. GitHub Actions was intentionally unused because of billing, not an engineering blocker.
 
 **Remaining review risk:** This source scanner is not a complete PostgreSQL grammar or migration executor. Particularly, qualified/quoted complex table names, actual partition attachment feasibility, inherited constraint semantics, and transaction ordering still require migration-integrator review and independently executed PostgreSQL acceptance. Source-only DB-027 remains `COMPLETED`, not `DONE_VERIFIED`. Global DATABASE is still ACTIVE.
+
+
+## Independent migration-source safety sweep — 2026-10-12 (read-only, DB-027 follow-up)
+
+**Direct-main commits:** [`b59aebd`](https://github.com/42Students/lms-vnext/commit/b59aebd5ee3038a9e1b68211abb2d0535745fd53) hardens the existing staged-SQL preflight; [`facc4b2`](https://github.com/42Students/lms-vnext/commit/facc4b237947d5ef4e699bd506e585a64a3f1b54) adds seven adversarial source test cases. Both are on `main`. This does **not** reopen DB-027 or mark original core DB tasks verified.
+
+### Concrete fail-open defects repaired
+
+1. `CREATE TEMP/TEMPORARY/GLOBAL TEMPORARY/LOCAL TEMP TABLE`, `CREATE FOREIGN TABLE` and top-level `SELECT ... INTO [TEMP] TABLE` were previously silently absent from the creation inventory. They now generate explicit `UNSUPPORTED_*_DDL` lexical hazards and cannot appear to be a clean migration candidate.
+2. `CREATE TABLE public."odd table"` previously invented a table named `public`; `CREATE TABLE U&"unicode escaped"` invented a table named `U`. Proper boundary detection avoids those phantom creators and flags unsupported quoted DDL for manual review. Valid `public."parent"`, `ALTER TABLE public."child"` and ordinary `REFERENCES public."parent"` remain visible.
+3. Masked SQL strings, comments and dollar-quoted routine bodies must not trigger those hazards. The added tests cover these false-positive boundaries.
+
+**Execution honesty:** 31 of 34 committed source-test callbacks passed in an isolated V8 evaluator using exact fetched GitHub source blobs (`afb3b0cdf8e653409d1c0d5cab32924588a045db` for the scanner; `70f7a85718073d8c19474d20c49778dc46afd747` for tests). Three fixture/filesystem callbacks could not run in that evaluator. This is **NOT** native `node --test`, full checkout CLI, TypeScript, or PostgreSQL acceptance.
+
+### Partial-batch review of the actual candidate corpus
+
+The independent evaluator fetched and inspected **113 current-at-read SQL candidates** in `docs/planning/sql`, `scripts/sql` and the extra DB04 canonical SQL, partitioned into separate batches (GitHub `main` continued receiving peer commits during the sweep). Totals are **100 active staged** and **13 ignored/superseded/reference-only** under the classifier. No unclosed SQL literal/comment/dollar quote hazards or duplicate `CREATE TABLE` within *each evaluated batch* were observed. The following review-required cases were surfaced:
+
+| Source finding | Affected staged files |
+| --- | --- |
+| Destructive DDL tokens requiring intentional migration review | `docs/planning/sql/db06-assignment-private-files-candidate.sql` (`DROP CONSTRAINT IF EXISTS`), `docs/planning/sql/db07-w03-task-backlog-and-delivery-state-candidate.sql`, `docs/planning/sql/db08-recruiter-round-result-code-candidate.sql`, `scripts/sql/db02-academic-progression-and-rooms-staging.sql`, `scripts/sql/db05-version-progress-attempts.draft.sql`, `scripts/sql/db08-offer-lifecycle-staging.sql` |
+| Ignored/reference candidates with executable DDL/ALTER (manual exclusion, not auto-install) | `docs/planning/sql/db07-w03-admin-workspace-state-candidate.sql`; `docs/planning/sql/db07-w03-workspace-state-parity-candidate.sql` |
+
+**Limitations:** Batches were analyzed separately, so **cross-batch duplicate creators, FK dependencies and ordering cycles are not cleared by this sweep**. The per-batch unresolved parent counts are not actual missing-table findings because the registered journal and the full staged set were not supplied to the same run. Changed concurrent source blobs require revalidation. PostgreSQL SQL validity, transactional semantics, deadlock freedom, migration replay and data safety remain entirely unverified.
+
+**Chat 1 action:** From a clean, freshly fetched checkout execute:
+```bash
+node --test tests/db27-stage-sql-preflight.test.mjs
+node scripts/db27-stage-sql-preflight.mjs --json
+npm run db:journal:verify
+```
+Reconcile the **complete** source inventory against registered migrations, exclude superseded drafts, examine the destructive operations in dependency order, and only after an approved isolated PostgreSQL target is prepared execute `npm run db:verify:independent`. Do not equate a scanner pass with database acceptance. The global DATABASE phase remains ACTIVE; original eleven task status is unchanged.
