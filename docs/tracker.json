@@ -363,8 +363,38 @@
       "id": "DB-030",
       "title": "Promote DB06 assessment cross-parent integrity guards and negative witnesses",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-12T18:28:12.000Z",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASSED",
+          "exitCode": 0,
+          "commitSha": "d7469db93e1179aff680f2f81d7a3166d7a2f240",
+          "runner": "GitHub Actions ubuntu-latest, ephemeral postgres:17-alpine, CI run 38291033418, db06-acceptance job 114950901098",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38291033418/job/114950901098",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare",
+            "npm run test:db06:pg"
+          ],
+          "details": "Registered 0041/0042 migration replayed; 28/28 DB06 integration negative/positive/grade/race witnesses passed without skips."
+        },
+        {
+          "kind": "EXECUTED_SOURCE_CONTRACTS",
+          "result": "PASSED",
+          "exitCode": 0,
+          "commitSha": "d7469db93e1179aff680f2f81d7a3166d7a2f240",
+          "runner": "GitHub Actions ubuntu-latest, CI run 38291033418, source-contracts job 114950900865",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38291033418",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run test:db:parity"
+          ],
+          "details": "Registered journal and static DB06 source contracts passed; source alone is not the basis for acceptance."
+        }
+      ]
     },
     {
       "id": "DB-031",
