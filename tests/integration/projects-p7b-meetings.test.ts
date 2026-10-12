@@ -547,11 +547,11 @@ describe("Projects P7B meetings", () => {
     expect(meeting).toMatchObject({id:request.id,status:"CANCELLED"});
   });
 
-  it("denies suspended platform accounts in both project list and direct workspace reads",async()=>{
+  it("denies disabled platform accounts in both project list and direct workspace reads",async()=>{
     const project=await createProject();
     const disabled: RequestContext = {
       ...mentor,
-      user:{...mentor.user,platformStatus:"SUSPENDED"},
+      user:{...mentor.user,platformStatus:"DISABLED"},
     };
     await expect(listMyProjectInstances(disabled))
       .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
