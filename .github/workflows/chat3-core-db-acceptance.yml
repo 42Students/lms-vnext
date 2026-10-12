@@ -1,0 +1,81 @@
+name: Chat3 Core DB Acceptance
+
+on:
+  push:
+    branches: [chat3-native-core-acceptance-20261012]
+
+permissions:
+  contents: read
+
+jobs:
+  native-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Database source parity
+        run: npm run test:db:parity
+      - name: Chat3 peer closure guards
+        run: |
+          node --test \
+            tests/db004-db04-profile-peer-review.test.mjs \
+            tests/db004-db09-recruiter-peer-review.test.mjs \
+            tests/db004-db02-academic-peer-review.test.mjs
+      - name: DB04 and DB09 static promotion guards
+        run: |
+          npm run db04:promotion:verify
+          npm run test:db09:static
+          node --test tests/db09-grant-company-isolation.test.mjs
+
+  postgres-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_chat3_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_chat3_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: ""
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_chat3_test
+      DB04_PROFILE_DISPOSABLE: I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA
+      DB09_GRANT_COMPANY_DISPOSABLE: I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered journal replay
+        run: |
+          npm run db:journal:verify
+          npm run db:test:prepare
+          npm run db:migrate
+          node scripts/db002-postgres-catalog-acceptance.mjs
+      - name: DB04 staged profile PostgreSQL witness
+        run: node --test tests/db04-profile-education-images-pg.test.mjs
+      - name: DB09 same-company race PostgreSQL witness
+        run: node --test tests/db09-grant-company-isolation.test.mjs
+      - name: DB09 registered PostgreSQL integration
+        run: npm run test:db09:pg
+      - name: DB06 registered PostgreSQL integration
+        run: npm run test:db06:pg
+      - name: Broad PostgreSQL integration suite
+        run: npm run test:db
