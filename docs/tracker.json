@@ -1,0 +1,762 @@
+{
+  "schemaVersion": 1,
+  "project": "42Students/lms-vnext",
+  "branch": "main",
+  "updatedOn": "2026-10-12",
+  "policy": "SOLE ACTIVE TRACKER. done:true means required task acceptance actually passed; committed code, drafts, source assertions, and authored-but-unrun tests remain done:false. There are no worker claims or intermediate states. Git history preserves superseded coordination records.",
+  "currentPhase": "DATABASE",
+  "phaseOrder": [
+    "DATABASE",
+    "API",
+    "UI",
+    "RELEASE"
+  ],
+  "coreEleven": [
+    "DB-002",
+    "DB-003",
+    "DB-004",
+    "DB-005",
+    "DB-007",
+    "DB-008",
+    "DB-012",
+    "DB-017",
+    "DB-019",
+    "DB-020",
+    "DB-030"
+  ],
+  "phaseGates": {
+    "DATABASE": [
+      "Every active historical data concept/field classified and mapped or explicitly justified as retired",
+      "All approved DB structures are registered; clean PostgreSQL migration replay and snapshot drift checks succeed",
+      "Tenant, authorization, FK, deletion, uniqueness, audit/history, state-machine and concurrency database invariants are proven with executed tests",
+      "No active DB migration, privacy, missing-table/field or cross-domain consistency blocker remains",
+      "Reconcile DB00–DB10 source inventories against fresh legacy oracles and sign off global DB gate"
+    ],
+    "API": [
+      "Global legacy API/service/UI-initiated user-job inventory completed across every role and domain",
+      "Each required operation mapped to tested vNext API/service or approved redesign/retirement",
+      "Authorization, tenant, input, error, concurrency and side-effect contracts pass executed integration tests",
+      "Full producer-to-consumer domain and cross-role workflows pass",
+      "No open required API/service parity rows remain"
+    ],
+    "UI": [
+      "Global route/navigation/section/action/modal inventory reconciled to frozen legacy FE/BE SHAs",
+      "Master and detailed page parity counters have zero required unresolved rows",
+      "Seven-account and shared cross-role browser regression suites pass",
+      "Clone parity gate reports READY YES on current main"
+    ],
+    "RELEASE": [
+      "All required lint/typecheck/build, migration, integration, negative and release tests executed and passing on the target commit in any approved test environment; GitHub Actions CI is optional and intentionally paused for billing",
+      "Live Identity Platform/Cloud SQL/GCS/outbound/provider integration and smoke validated",
+      "Security/adversarial/load/restore/rollback acceptance passed",
+      "Production launch and post-launch verification accepted"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "DB-001",
+      "title": "Provide CI-independent disposable PostgreSQL verification",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-002",
+      "title": "Replay registered migration journal from zero",
+      "phase": "DATABASE",
+      "done": true,
+      "dependsOn": [
+        "DB-001",
+        "DB-025"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PARTIAL",
+          "commitSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38250543374",
+          "jobId": 114815749817,
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL deliberately cleared; disposable PG17)",
+            "npm run db:migrate",
+            "node scripts/db002-postgres-catalog-acceptance.mjs"
+          ],
+          "runner": "GitHub Actions ubuntu-latest PostgreSQL 17.11",
+          "result": "PASSED_REGISTERED_MIGRATION_AND_CATALOG_ONLY",
+          "exitCode": 0
+        },
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "commitSha": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38253284021",
+          "jobId": 114825409502,
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare with DATABASE_URL cleared for destructive reset",
+            "npm run db:migrate",
+            "node scripts/db002-postgres-catalog-acceptance.mjs",
+            "node scripts/db017-share-defaults-pg-acceptance.mjs"
+          ],
+          "runner": "GitHub Actions ubuntu-latest PostgreSQL 17.11",
+          "result": "PASS",
+          "exitCode": 0
+        }
+      ],
+      "acceptedAt": "2026-10-12T14:08:30.000Z"
+    },
+    {
+      "id": "DB-003",
+      "title": "Reconcile DB00 historical active-vs-retired",
+      "phase": "DATABASE",
+      "done": true,
+      "dependsOn": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED",
+          "commitSha": "7c1990eb2d050fa3430e5c6fe39f73770870a113",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38249503811",
+          "jobId": 114811817582,
+          "commands": [
+            "node --test tests/db00-retirement-disposition.test.mjs tests/db19-db00-disposition-crosscheck.test.mjs",
+            "node scripts/db19-db00-disposition-crosscheck.mjs"
+          ],
+          "runner": "GitHub Actions Ubuntu Node 22",
+          "result": "PASSED",
+          "exitCode": 0
+        }
+      ],
+      "acceptedAt": "2026-10-12T12:32:37.487Z"
+    },
+    {
+      "id": "DB-004",
+      "title": "Reconcile DB01 tenant and identity field semantics",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-005",
+      "title": "Reconcile DB02 academic and schedule schema",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-006",
+      "title": "Reconcile DB03 groups/electives invariants",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-007",
+      "title": "Reconcile DB04 profile verification and private documents",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-008",
+      "title": "Reconcile DB05 courses/content persisted concepts",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-009",
+      "title": "Reconcile DB06 assessments and attendance persisted concepts",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-010",
+      "title": "Reconcile DB07 projects and history/task invariants",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-011",
+      "title": "Reconcile DB08 placement policy and outcomes",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-012",
+      "title": "Reconcile DB09 TPO and recruiter CRM persistence",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-013",
+      "title": "Reconcile DB10 shared operational persistence",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-014",
+      "title": "Cross-domain tenant FK integrity sweep",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-015",
+      "title": "Database state transition and race inventory",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-016",
+      "title": "Private document, identity and storage schema safety",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-017",
+      "title": "Reconcile staged schemas and migration dependency order",
+      "phase": "DATABASE",
+      "done": true,
+      "dependsOn": [
+        "DB-002"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "commitSha": "adecad2e324389e50961bdc3264a80fc93511c81",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38263376010",
+          "jobId": 114859309056,
+          "runner": "GitHub Actions ubuntu-24.04 + PostgreSQL 17-alpine",
+          "result": "PASS",
+          "exitCode": 0
+        }
+      ],
+      "acceptedAt": "2026-10-12T14:31:00.000Z"
+    },
+    {
+      "id": "DB-018",
+      "title": "Negative DB integration witness suite",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-001",
+        "DB-025"
+      ]
+    },
+    {
+      "id": "DB-019",
+      "title": "Global active field disposition audit",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-003",
+        "DB-004",
+        "DB-005",
+        "DB-006",
+        "DB-007",
+        "DB-008",
+        "DB-009",
+        "DB-010",
+        "DB-011",
+        "DB-012",
+        "DB-013"
+      ]
+    },
+    {
+      "id": "DB-020",
+      "title": "Fresh DB schema drift, readiness and phase-gate certification",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-002",
+        "DB-017",
+        "DB-018",
+        "DB-019",
+        "DB-025"
+      ]
+    },
+    {
+      "id": "DB-021",
+      "title": "Stage DB08 placed-policy, non-placement outcomes and offer terms",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-022",
+      "title": "Preserve DB10 skill alias and independent usage persistence",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-023",
+      "title": "Correct DB10 log-alert account identity and bigint retention semantics",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-024",
+      "title": "Stage DB10 general TPO notification outbox and undo/digest persistence",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-025",
+      "title": "Fail-close destructive test database target selection",
+      "phase": "DATABASE",
+      "done": true,
+      "dependsOn": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED",
+          "commitSha": "56a5105517708d7b63fe9aec5d4bd64e94a4c1a1",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38252058156",
+          "jobId": 114820608282,
+          "commands": [
+            "node --test tests/db01-test-database-guard.test.mjs tests/db-independent-verifier.test.mjs"
+          ],
+          "runner": "GitHub Actions Ubuntu Node22",
+          "result": "PASSED",
+          "exitCode": 0
+        }
+      ],
+      "acceptedAt": "2026-10-12T12:56:24.900Z"
+    },
+    {
+      "id": "DB-026",
+      "title": "Resolve DB03 elective slot-program oracle conflict",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-027",
+      "title": "Cross-domain staged SQL collision and dependency preflight",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-028",
+      "title": "Fail-close browser E2E destructive database target",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-029",
+      "title": "Stage DB08 offer selection/release/expiry/reversal lifecycle",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-030",
+      "title": "Promote DB06 assessment cross-parent integrity guards and negative witnesses",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-031",
+      "title": "Stage DB10 privacy-safe SMS provider attempt ledger",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-032",
+      "title": "Adversarial DB09 staged principal and race hardening",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-033",
+      "title": "Disposition active legacy app_setting runtime keys",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-034",
+      "title": "Normalize DB09 trusted domains and prep-course settings",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-035",
+      "title": "Stage DB06 immutable grading and attendance correction history",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-036",
+      "title": "Normalize DB09 notification toggle and TPO preference booleans",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-037",
+      "title": "Disposition duplicate legacy notification template registries",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-038",
+      "title": "Stage DB06 submitted assessment immutability and retention",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-039",
+      "title": "Stage DB10 admin audit actor and request-context fidelity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-040",
+      "title": "Preflight DB10 staged announcements bug tracker and job leases",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-041",
+      "title": "Stage DB06 quiz shuffle persistence parity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-042",
+      "title": "Stage DB06 attendance roster, tenant and marker integrity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-043",
+      "title": "Reconcile DB10 notification campaign and recipient delivery",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-044",
+      "title": "Resolve DB06 assignment re-attempt persistence parity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-045",
+      "title": "Reconcile DB06 attendance event-history identity and atomic producer cutover",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-046",
+      "title": "Close DB10 221-field source disposition denominator",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-047",
+      "title": "Align DB09 company share defaults with canonical placement schema",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-048",
+      "title": "Require exact confirmation for destructive remote database reset",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-049",
+      "title": "Harden DB10 notification campaign publish authorization races",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-050",
+      "title": "Preserve global email opt-out across organizations",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-051",
+      "title": "Fail-close localhost/proxy destructive database reset ambiguity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-052",
+      "title": "Stage DB06 quiz lifecycle and result-publication audit history",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-053",
+      "title": "Harden DB06 private assignment upload receipt lifecycle",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-054",
+      "title": "Close P5-R01 placement application access and eligibility race",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-018"
+      ]
+    },
+    {
+      "id": "DB-055",
+      "title": "Fail-close deterministic database seed target selection",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-056",
+      "title": "Fail-close DB09 college-wide TPO principal guards",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-057",
+      "title": "Harden recruiter notification read watermark integrity",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-058",
+      "title": "Fail-close PostgreSQL negative-witness database targeting",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-059",
+      "title": "Freeze DB09 secure share disclosure contract after creation",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-060",
+      "title": "Require DB09 secure share lifecycle event completeness",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-059"
+      ]
+    },
+    {
+      "id": "DB-061",
+      "title": "Enforce DB09 message chronology and thread projection",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-056"
+      ]
+    },
+    {
+      "id": "DB-062",
+      "title": "Freeze recruiter-private applicant note identity and timestamp lifecycle",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-056"
+      ]
+    },
+    {
+      "id": "DB-063",
+      "title": "Make DB09 TPO student notes append-only",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-056"
+      ]
+    },
+    {
+      "id": "DB-064",
+      "title": "Harden DB09 TPO preferences and saved-view lifecycle",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-056"
+      ]
+    },
+    {
+      "id": "DB-065",
+      "title": "Fail-closed global DATABASE task and worker phase gate preflight",
+      "phase": "DATABASE",
+      "done": true,
+      "dependsOn": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED",
+          "commitSha": "fb5504028847a9b1ca36611fe9ae942c735b351f",
+          "commands": [
+            "node --check scripts/db065-database-phase-gate.mjs",
+            "node --check tests/db065-database-phase-gate.test.mjs",
+            "node --test tests/db065-database-phase-gate.test.mjs"
+          ],
+          "runner": "isolated local Node.js v22.16.0",
+          "result": "PASS",
+          "exitCode": 0
+        }
+      ],
+      "acceptedAt": "2026-10-12T00:48:19+05:30"
+    },
+    {
+      "id": "DB-066",
+      "title": "Enforce same-job placement application/round/request relational scope",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-067",
+      "title": "Stage safe outbound sender claim, fencing and pre-send suppression",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-068",
+      "title": "Enforce DB07 project-template version ownership in assignments and instances",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-069",
+      "title": "Preserve mutable TPO drive ownership and atomic team-member removal",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-011"
+      ]
+    },
+    {
+      "id": "DB-070",
+      "title": "Preserve immutable DB07 project-template revision history",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-071",
+      "title": "Enforce deferred DB07 current/published template revision pointers",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-072",
+      "title": "Normalize final RECRUITER stored code for placement round results",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-011"
+      ]
+    },
+    {
+      "id": "DB-073",
+      "title": "Enforce DB07 release-sprint-task-submission same-project lineage",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-074",
+      "title": "Enforce DB07 project submission review and evaluation parent scope",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-075",
+      "title": "Enforce DB07 meeting-linked sprint and task ancestry",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-076",
+      "title": "Harden independent verifier with schema-drift and catalog gates",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-002"
+      ]
+    },
+    {
+      "id": "DB-077",
+      "title": "Finalize DB04 historical registration and approver-card source dispositions",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-078",
+      "title": "Finalize DB05 historical course-column persistence disposition",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-079",
+      "title": "Harden DB09 CRM principal revocation races and append-only history",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": [
+        "DB-002"
+      ]
+    },
+    {
+      "id": "DB-080",
+      "title": "Finalize DB04 active student-image normalized persistence contract",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    },
+    {
+      "id": "DB-081",
+      "title": "Finalize DB04 qualification 24-field normalized crosswalk",
+      "phase": "DATABASE",
+      "done": false,
+      "dependsOn": []
+    }
+  ]
+}
