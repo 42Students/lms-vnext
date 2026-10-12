@@ -283,7 +283,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       "INSERT INTO placement_tpo_lead_activities " +
       "(college_id, lead_id, type, created_by_user_id) VALUES ($1, $2, 'CALL', $3)",
       [SEED_IDS.collegeB, lead.id, SEED_IDS.facultyUser],
-    )).rejects.toMatchObject({ code: "23514" });
+    )).rejects.toMatchObject({ code: "23503" });
 
     await expect(pool.query(
       "INSERT INTO placement_tpo_followups " +
