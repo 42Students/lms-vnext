@@ -1,19 +1,119 @@
 name: CI
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
 
-jobs:
-  verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+# Nine independent required jobs: failing lint must not suppress DB acceptance.
+concurrency:
+  group: lms-vnext-ci-main
+  cancel-in-progress: true
 
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npm run lint
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+  db00-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Native DB003 exclusion acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/db00-retirement-disposition.test.mjs tests/db19-db00-disposition-crosscheck.test.mjs
+          node scripts/db19-db00-disposition-crosscheck.mjs
+  source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Journal and DB04 source checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:journal:verify
+          node --test tests/drizzle-journal-guard.test.mjs
+          npm run db04:promotion:verify
+      - name: Database source parity
+        run: npm run test:db:parity
+      - name: Nine-domain crosswalk regression
+        run: node --test tests/db019-crosswalk-identity.test.mjs
+      - name: Global source audit and crosswalk gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/db19-field-disposition-audit.mjs
+          node scripts/db019-crosswalk-identity.mjs
+  schema-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Committed Drizzle generation integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          git diff --exit-code -- drizzle/
+          test -z "$(git ls-files --others --exclude-standard drizzle/)"
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     services:
       postgres:
         image: postgres:17-alpine
@@ -28,46 +128,78 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
-
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Verify migration journal integrity
+      - run: npm ci
+      - name: Migration journal
         run: npm run db:journal:verify
-
-      - name: Test migration journal integrity guard
-        run: node --test tests/drizzle-journal-guard.test.mjs
-
-      - name: Verify DB04 promotion bundle
-        run: npm run db04:promotion:verify
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Unit tests
-        run: npm test
-
-      - name: Database parity source-ledger checks
-        run: npm run test:db:parity
-
-      - name: Deployment config validator
+      - name: Disposable PostgreSQL 17 replay from empty and seed
+        # Only the ephemeral TEST_DATABASE_URL may be reset.
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Migration replay idempotence
+        run: npm run db:migrate
+      - name: PostgreSQL integration and tenant-negative tests
+        run: npm run test:db
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable E2E database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral E2E auth secret
+        shell: bash
+        run: echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Playwright browser E2E
+        run: npm run test:e2e
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Deployment configuration
         env:
           GCP_PROJECT_ID: lms-vnext-dev
           GCP_REGION: asia-south1
@@ -81,8 +213,7 @@ jobs:
           DB_NAME: lms_vnext
           DB_PASSWORD_SECRET: lms-vnext-db-password
         run: node scripts/validate-deployment-config.mjs
-
-      - name: Deployment config validator rejects mismatched Cloud SQL
+      - name: Reject cross-project Cloud SQL target
         env:
           GCP_PROJECT_ID: lms-vnext-dev
           GCP_REGION: asia-south1
@@ -98,57 +229,18 @@ jobs:
         shell: bash
         run: |
           if node scripts/validate-deployment-config.mjs; then
-            echo "Expected malformed deployment config to fail validation"
+            echo "Invalid Cloud SQL target passed validation"
             exit 1
           fi
-
-      - name: Validate database schema
-        run: |
-          npm run db:generate
-          git diff --exit-code -- drizzle/
-
-      - name: Prepare integration database
-        run: npm run db:test:prepare
-
-      - name: Migration command smoke
-        run: npm run db:migrate
-
-      - name: Database integration tests
-        env:
-          DB03_ISOLATED_TEST_DATABASE: "1"
-        run: npm run test:db
-
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
-
-      - name: Prepare Course browser E2E database
-        env:
-          E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
-        run: npm run db:e2e:prepare
-
-      - name: Configure browser E2E auth secret
-        shell: bash
-        run: echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
-
-      - name: Browser E2E tests
-        env:
-          E2E_AUTH_ENABLED: "true"
-        run: npm run test:e2e
-
-      - name: Build
+      - name: Production build
         run: npm run build
-
-      - name: Public runtime smoke
+      - name: Standalone HTTP smoke
         shell: bash
         run: |
           set -euo pipefail
           PORT=3000 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-smoke.log 2>&1 &
           SERVER_PID=$!
-          cleanup() {
-            kill "$SERVER_PID" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           SMOKE_RETRIES=20 SMOKE_RETRY_DELAY_MS=500 npm run smoke:public -- http://127.0.0.1:3000 || {
             cat /tmp/lms-vnext-smoke.log
             exit 1
