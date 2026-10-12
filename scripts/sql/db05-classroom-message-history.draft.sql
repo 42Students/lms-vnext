@@ -21,6 +21,24 @@ CREATE INDEX IF NOT EXISTS db05_classroom_messages_active_timeline_idx
   ON course_discussion_messages (delivery_id, created_at, id)
   WHERE deleted_at IS NULL;
 
+-- Retain the audit record even when an application or maintenance SQL path
+-- attempts a hard DELETE. Legacy ClassroomServiceImpl sets is_deleted=true,
+-- never deletes the message row. Soft deletion must update deleted_at.
+-- Must NOT be registered until discussion-service.ts switches off hard DELETE;
+-- otherwise the current DELETE endpoint would fail with SQLSTATE 23514.
+CREATE OR REPLACE FUNCTION db05_classroom_message_hard_delete_fence()
+RETURNS trigger LANGUAGE plpgsql
+AS $db05_classroom_delete_fence$
+BEGIN
+  RAISE EXCEPTION 'classroom history must use soft deletion'
+    USING ERRCODE = '23514';
+END;
+$db05_classroom_delete_fence$;
+
+CREATE TRIGGER db05_classroom_message_prevent_hard_delete
+BEFORE DELETE ON course_discussion_messages
+FOR EACH ROW EXECUTE FUNCTION db05_classroom_message_hard_delete_fence();
+
 COMMIT;
 
 -- Required before acceptance:
@@ -30,8 +48,11 @@ COMMIT;
 --     rename does not silently rewrite message history.
 --  3. Deletion changes deleted_at and filters all listings/pin banners;
 --     moderator/own-author permission checks still apply.
---  4. Delivery FK currently ON DELETE CASCADE, potentially destroying
---     classroom history; reconcile with retention policy/soft delete.
+--  4. Delivery FK currently ON DELETE CASCADE. A delivery DELETE now fails
+--     if the history fence is active and any classroom messages remain;
+--     validate FK cascade trigger ordering under disposable PostgreSQL.
+--     A privileged retention/purge workflow is NOT designed here; no data
+--     can be silently purged merely because the delivery was deleted.
 --  5. Wrong tenant/unauthorized moderation must be denied; verify
 --     class/teaching scope and retention across enrollment changes.
 --  6. Execute negative PostgreSQL, app and UI tests + migration replay.
