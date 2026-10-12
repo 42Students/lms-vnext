@@ -250,6 +250,11 @@ export async function createCourseOffering(
       if (!activeCourse) {
         throw new CoursesServiceError("COURSE_NOT_FOUND");
       }
+      if (activeCourse.collegeId !== course.collegeId) {
+        // Authorization was evaluated for the earlier course college.
+        // Never let a concurrent department move reuse that stale grant.
+        throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
+      }
 
       // The preliminary cohort/period validation ran before this transaction.
       // Re-read and SHARE-lock every mutable parent whose status, dates or
