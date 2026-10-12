@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB004_DB012_RECRUITER_CROSSDOMAIN_PEER_REVIEW",
+  "worker": "CHAT_03",
+  "date": "2026-10-12",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceQueue": "docs/planning/db01-chat02-remaining-150-review-queue.json",
+  "scope": "All 30 rows handed from DB-004 to DB-012 for recruiter identity/grant lifecycle",
+  "counts": {
+    "reviewed": 30,
+    "MAPPED_DB09_REGISTERED_TARGET": 10,
+    "REDESIGNED_AUTH_ACTIVITY_TARGET": 1,
+    "REDESIGNED_ACTOR_PROVENANCE": 3,
+    "NORMALIZED_DB09_DERIVED_TARGET": 2,
+    "PROPOSED_DB09_STAGED_TARGET": 13,
+    "REDESIGNED_LIFECYCLE_TARGET": 1,
+    "explicitDisposition": 30,
+    "unresolved": 0,
+    "runtimeVerified": 0
+  },
+  "keyFindings": [
+    "Live recruiter access is request-time state: revoked, expired, suspended or missing capability must fail on the next request.",
+    "Current registered vNext grant schema drops expiry, pending invite state, capabilities, revoke reason, optimistic version, verification and agency/client context.",
+    "Legacy status PENDING_HR is live despite recruiter rename; greenfield target should use PENDING_RECRUITER.",
+    "Capability vocabulary is closed to COLLEGE_OVERVIEW, DRIVE_REQUEST, DRIVE_WORK.",
+    "College and organization should be derived through company_relationship->college->organization rather than copied onto grants.",
+    "Legacy actor-type strings are audit provenance, not authorization state; canonical user identity plus typed event/source snapshots is safer."
+  ],
+  "rows": [
+    {
+      "legacyField": "recruiter.designation",
+      "legacyType": "varchar(150)",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_profiles.title",
+      "note": "Active admin/auth views read/write designation; canonical recruiter profile title preserves it.",
+      "sourceEvidence": "lms@21bad59d... Recruiter.java + RecruiterAuthService + RecruiterAdminService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.industry_company_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_profiles.company_id",
+      "note": "Canonical recruiter profile owns the global placement company relation.",
+      "sourceEvidence": "lms@21bad59d... Recruiter.java + RecruiterAuthService + RecruiterAdminService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.last_login_at",
+      "legacyType": "datetime(6)",
+      "disposition": "REDESIGNED_AUTH_ACTIVITY_TARGET",
+      "proposedTarget": "activity_events(RECRUITER_LOGIN).occurred_at projection",
+      "note": "Legacy recordLogin writes last-login and admin view reads it. Prefer append-only auth activity / derived latest-login over mutable identity metadata; runtime producer still required.",
+      "sourceEvidence": "lms@21bad59d... Recruiter.java + RecruiterAuthService + RecruiterAdminService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.created_by_user_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_profiles.created_by_user_id",
+      "note": "Canonical creator user UUID.",
+      "sourceEvidence": "lms@21bad59d... Recruiter.java + RecruiterAuthService + RecruiterAdminService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.created_by_user_type",
+      "legacyType": "varchar(20)",
+      "disposition": "REDESIGNED_ACTOR_PROVENANCE",
+      "proposedTarget": "activity event actor role snapshot / canonical user roles",
+      "note": "Do not persist a free-form user-type string beside canonical actor identity; preserve audit provenance through typed activity/audit state.",
+      "sourceEvidence": "lms@21bad59d... Recruiter.java + RecruiterAuthService + RecruiterAdminService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.id",
+      "note": "Canonical grant UUID.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.college_id",
+      "legacyType": "int",
+      "disposition": "NORMALIZED_DB09_DERIVED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.company_relationship_id -> placement_company_relationships.college_id",
+      "note": "College belongs to the relationship; do not duplicate an independently mutable college_id on the grant.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.organization_id",
+      "legacyType": "int",
+      "disposition": "NORMALIZED_DB09_DERIVED_TARGET",
+      "proposedTarget": "company_relationship.college_id -> colleges.organization_id",
+      "note": "Organization is derivable from canonical college tenancy and must not drift independently.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.status",
+      "legacyType": "varchar(20)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.status = ACTIVE|PENDING_RECRUITER|REVOKED",
+      "note": "Current vNext has ACTIVE|REVOKED only, while live invite flow uses PENDING_HR. Greenfield uses PENDING_RECRUITER.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.valid_until",
+      "legacyType": "datetime(6)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.valid_until",
+      "note": "Live access service rejects expired ACTIVE grants and TPO/admin can extend/remove expiry.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_user_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.granted_by_user_id",
+      "note": "Canonical actor UUID.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_user_type",
+      "legacyType": "varchar(20)",
+      "disposition": "REDESIGNED_ACTOR_PROVENANCE",
+      "proposedTarget": "placement_recruiter_grant_events.actor_user_id + actor_role_snapshot",
+      "note": "Legacy duplicates actor type. Preserve audit role snapshot on event history, not authorization logic.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_at",
+      "legacyType": "datetime(6)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.granted_at",
+      "note": "Distinct from row created_at because reactivation/acceptance resets grant time.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_by_user_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.revoked_by_user_id",
+      "note": "Canonical revoking actor UUID.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_by_user_type",
+      "legacyType": "varchar(20)",
+      "disposition": "REDESIGNED_ACTOR_PROVENANCE",
+      "proposedTarget": "placement_recruiter_grant_events.actor_user_id + actor_role_snapshot",
+      "note": "Audit snapshot replaces free-form actor type.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_at",
+      "legacyType": "datetime(6)",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.revoked_at",
+      "note": "Canonical revocation timestamp.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoke_reason",
+      "legacyType": "varchar(500)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.revoke_reason",
+      "note": "Live TPO and super-admin revoke flows write and display reason.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.created_at",
+      "legacyType": "datetime(6)",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.created_at",
+      "note": "Canonical row creation timestamp.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.updated_at",
+      "legacyType": "datetime(6)",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.updated_at",
+      "note": "Canonical row update timestamp.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.is_deleted",
+      "legacyType": "boolean",
+      "disposition": "REDESIGNED_LIFECYCLE_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.status + immutable grant events",
+      "note": "Greenfield keeps revocation/pending lifecycle explicitly; no separate soft-delete flag.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.version",
+      "legacyType": "bigint",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.version",
+      "note": "Optimistic/CAS version required for concurrent extend/revoke/accept transitions.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_type",
+      "legacyType": "varchar(15)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.grant_source",
+      "note": "Typed SUPER_ADMIN|TPO|INVITE_ACCEPTANCE source; not an authorization bypass.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.verification",
+      "legacyType": "varchar(20)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.verification",
+      "note": "Live drive auto-approval reads PENDING vs verified state; preserve VERIFIED_DOMAIN|TPO_APPROVED|PENDING.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.hiring_for_company_id",
+      "legacyType": "bigint",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.hiring_company_id -> placement_companies.id",
+      "note": "Preserves client-company context for recruiter/agency grants; DB same-company/tenant policy must be explicit.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.agency_for_company_name",
+      "legacyType": "varchar(150)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.agency_client_name_snapshot",
+      "note": "Nullable source snapshot when agency/RPO client is not canonicalized.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.recruiter_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB09_REGISTERED_TARGET",
+      "proposedTarget": "placement_recruiter_college_grants.recruiter_user_id",
+      "note": "Legacy recruiter identity becomes canonical user UUID.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.pending_recruiter_lead_id",
+      "legacyType": "bigint",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_grant_invitation_links.lead_id",
+      "note": "Live existing-account invite flow needs lineage to the pending recruiter lead until accept/decline.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java + RecruiterAccessService + RecruiterInviteService + RecruiterAdminService + TpoRecruiterAccessController + TpoDriveService",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.access_id",
+      "legacyType": "int",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_grant_capabilities.grant_id",
+      "note": "Child relation to canonical grant.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java @ElementCollection + RecruiterAccessService + RecruiterCapability",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.capability",
+      "legacyType": "varchar(64)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_grant_capabilities.capability",
+      "note": "Closed live vocabulary: COLLEGE_OVERVIEW|DRIVE_REQUEST|DRIVE_WORK.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java @ElementCollection + RecruiterAccessService + RecruiterCapability",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.granted_at",
+      "legacyType": "datetime(6)",
+      "disposition": "PROPOSED_DB09_STAGED_TARGET",
+      "proposedTarget": "placement_recruiter_grant_capabilities.granted_at",
+      "note": "Per-capability grant timestamp retained independently.",
+      "sourceEvidence": "lms@21bad59d... RecruiterCollegeAccess.java @ElementCollection + RecruiterAccessService + RecruiterCapability",
+      "runtimeVerified": false
+    }
+  ]
+}
