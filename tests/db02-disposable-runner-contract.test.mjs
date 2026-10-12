@@ -143,10 +143,10 @@ test("direct concurrency scripts fail closed to the explicitly named disposable 
 
 test("all six direct DB02 race scripts source guarded URL validation before connecting", () => {
   assert.match(sharedTargetGuard, /assertSafeDb01TestTarget/);
-  assert.match(sharedTargetGuard, /TEST_DATABASE_URL: process\\.env\\.DATABASE_URL/);
-  assert.match(sharedTargetGuard, /DATABASE_URL: process\\.env\\.DB02_APP_DATABASE_URL/);
+  assert.match(sharedTargetGuard, /TEST_DATABASE_URL: process\.env\.DATABASE_URL/);
+  assert.match(sharedTargetGuard, /DATABASE_URL: process\.env\.DB02_APP_DATABASE_URL/);
   assert.match(sharedTargetGuard, /DB01_REMOTE_TEST_DATABASE_CONFIRM/);
-  assert.match(sharedTargetGuard, /target\\.database !== process\\.env\\.DB02_EXPECTED_DATABASE/);
+  assert.match(sharedTargetGuard, /target\.database !== process\.env\.DB02_EXPECTED_DATABASE/);
   const allScripts = [...concurrencyScripts, {
     name: "db02-program-archive-concurrency-unregistered.sh",
     source: archiveRace,
