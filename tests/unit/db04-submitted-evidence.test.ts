@@ -13,7 +13,7 @@ const entries = [
 function receipt(purpose:Receipt["purpose"], entryId:string|null=null):Receipt {
   return {
     id:purpose+"-"+(entryId??"main"), owningMembershipId:member, purpose,
-    educationEntryId:entryId, scanStatus:"CLEAN",
+    relatedEntryId:entryId, scanStatus:"CLEAN",
     privateObjectKey:"private/protected/"+id,objectGeneration:"323",
     sha256Hex:"a".repeat(64), mimeType:"application/pdf",sizeBytes:4567,
     revokedAt:null,retentionUntil:null,
