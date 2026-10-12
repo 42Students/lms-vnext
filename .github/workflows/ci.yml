@@ -161,6 +161,10 @@ jobs:
         run: npm run db:migrate
       - name: Read-only PostgreSQL 17 migration/catalog witness
         run: node scripts/db002-postgres-catalog-acceptance.mjs
+      - name: DB017 relationship-scoped disclosure defaults negative and tenant checks
+        env:
+          DB017_ISOLATED_TEST_DATABASE: "1"
+        run: node scripts/db017-share-defaults-pg-acceptance.mjs
       - name: PostgreSQL integration and tenant-negative tests
         run: npm run test:db
   browser:
