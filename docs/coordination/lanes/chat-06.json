@@ -69,12 +69,16 @@
     "tests/db05-tombstone-ancestor-preflight.test.mjs (6/6 native read-only SQL source checks PASS, not PostgreSQL)",
     "tests/db05-authoring-tenant-snapshot-tx.test.mjs (8 Node static tests authored, NOT native-executed; 8 V8 assertion callbacks PASS)",
     "tests/db05-authorized-parent-scope-cas.test.mjs (7 Node static tests authored, NOT native-executed; 7 V8 assertion callbacks PASS)",
-    "tests/integration/db05-course-authorization-races.test.ts (4 two-connection PostgreSQL/Vitest tests authored, NOT EXECUTED; fails closed on unsafe test target)"
+    "tests/integration/db05-course-authorization-races.test.ts (4 two-connection PostgreSQL/Vitest tests authored, NOT EXECUTED; fails closed on unsafe test target)",
+    "tests/db05-classroom-ancestor-retention.test.mjs: 6 Node static tests authored (NOT executed)",
+    "tests/db05-classroom-ancestor-reference.test.mjs: 18 native Node reference assertions executed PASS",
+    "tests/db05-sql-collision-audit.test.mjs: 2 Node static tests authored (NOT executed)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-12: node --test /mnt/data/db008-check/tests/db05-discussion-ancestry-reference.test.mjs | native Node 22.16.0 11/11 PASS | exact blob 5581c1ae8c512614910a3fe72c2d315a96ee67a4 | PURE REFERENCE MODEL ONLY, NOT POSTGRES",
     "2026-10-12: node --test /mnt/data/db008-check/tests/db05-lesson-restore-parent-reference.test.mjs | native Node 22.16.0 10/10 PASS | exact GitHub matching blob e95168a6a11bff101a0a9215a0899a36f1567848 | PURE REFERENCE MODEL ONLY, NOT POSTGRES",
-    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-tombstone-ancestor-preflight.test.mjs | native Node 22.16.0 6/6 PASS | exact SQL/test Git blobs 62aaee7168e87d051320b29c2396cec9e36a4509 and 5207360638af7cf437f4c03e4db981917f4a8091 | SOURCE-ONLY, NOT POSTGRES"
+    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-tombstone-ancestor-preflight.test.mjs | native Node 22.16.0 6/6 PASS | exact SQL/test Git blobs 62aaee7168e87d051320b29c2396cec9e36a4509 and 5207360638af7cf437f4c03e4db981917f4a8091 | SOURCE-ONLY, NOT POSTGRES",
+    "2026-10-12: native Node v22.16.0 --test; 18/18 PASS; Git blob d2cd43b8118dcdb1e925785fd0ba312e13890d9d; classroom ancestor *reference model only*, no SQL/DB/CI execution"
   ],
   "blockers": [],
   "handoffs": [
@@ -269,6 +273,12 @@
       "kind": "DB05_FACULTY_ASSIGNMENT_END_AND_ROSTER_SCOPE_20261012",
       "commitSha": "e528821184318b78cda27fa1ebebd8cd3fb1cd09",
       "message": "Chat 6 direct main a0adef4 assignment end write under row FOR UPDATE, ancestry FOR SHARE and delivery/member final eq; 4244400 staff listing same-statement college/org/offering/section scope, tests 1e9330b six authored static tests; docs 6f11efb FA01..08. Read-only GitHub source assertions 10/10. Native node/TS and PG not run; manifest e528821 2 NOT_RUN gates, DB008 IN_PROGRESS."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "CLASSROOM_ANCESTRY_RETENTION_REFERENCE_TEST_EXECUTED",
+      "message": "Direct-main DB05 classroom-message ancestor reparent+delivery delete companion staged, canonical hard-delete fence staged, 17-category read-only mismatch preflight, and DDL name/column collision audit authored. 18/18 native Node v22.16.0 tests PASSED on byte-identical committed reference-model test blob d2cd43b8118dcdb1e925785fd0ba312e13890d9d (commit 6a57ef4). No PostgreSQL/trigger/DB migration or full-repo Node acceptance. W01 must coordinate API soft-delete and clean PG CL-01..18 race tests before activation. Handoff docs/planning/db05-classroom-retention-execution-handoff-2026-10-12.md.",
+      "commitSha": "ca57a5d23e4b342305bbf4bdf08690bd09d22aad"
     }
   ],
   "nextAction": "Continue DB008 real correctness or service scope work while W01 handles DB migrations. Run native Node/typecheck and real PG/HTTP LP01..10/FA01..08 & archives and hierarchy races; do not claim source assertions as runtime proofs. Close 25 source decisions and execute all required DB gates before completion.",
@@ -459,7 +469,10 @@
     "https://github.com/42Students/lms-vnext/commit/42444009019c4bbb955eb696252ad97232b0deaa",
     "https://github.com/42Students/lms-vnext/commit/1e9330b5fada0345ef21cf92f6015d02a9a4ad6a",
     "https://github.com/42Students/lms-vnext/commit/f3d2e2fcb6c875cf9ccebe5551af37ff26e5a4f0",
-    "https://github.com/42Students/lms-vnext/commit/e528821184318b78cda27fa1ebebd8cd3fb1cd09"
+    "https://github.com/42Students/lms-vnext/commit/e528821184318b78cda27fa1ebebd8cd3fb1cd09",
+    "https://github.com/42Students/lms-vnext/commit/10743d1f4cda156d8e78dbec10b9276173f4c2a0",
+    "https://github.com/42Students/lms-vnext/commit/6a57ef41757458b71fce596eb420cfaee869fdb6",
+    "https://github.com/42Students/lms-vnext/commit/ca57a5d23e4b342305bbf4bdf08690bd09d22aad"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
