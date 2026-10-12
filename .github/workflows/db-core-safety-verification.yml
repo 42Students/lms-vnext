@@ -1,0 +1,60 @@
+name: DB Core Safety Verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db-core-safety-verification.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin latest main SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          echo "DB_SAFETY_VERIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "Verifying $(git rev-parse HEAD)"
+      - name: Execute fail-before-network safety suite
+        run: node --test tests/db01-test-database-guard.test.mjs
+      - name: Explicit disposable test reset and seed
+        run: env -u DATABASE_URL npm run db:test:prepare
+      - name: Explicit disposable local reset through shared helper
+        run: npm run db:reset
+      - name: Explicit disposable local seed through shared helper
+        run: npm run db:seed
+      - name: Journal remains valid after safety workflows
+        run: npm run db:journal:verify
