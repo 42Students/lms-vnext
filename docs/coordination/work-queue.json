@@ -5009,14 +5009,14 @@
         "docs/planning/db04-chat05-student-image-final-contract-2026-10-12.json",
         "tests/db080-db04-student-image-contract.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-12T14:29:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-12T14:30:00.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -5038,6 +5038,11 @@
           "status": "PICKED",
           "at": "2026-10-12T14:29:00.000Z",
           "reason": "Chat 5 atomically created and reserved the student_image source-contract task; DB-007 ownership remains Chat 3."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T14:30:00.000Z",
+          "reason": "Chat 5 started active student-image source-to-normalized persistence mapping."
         }
       ]
     }
