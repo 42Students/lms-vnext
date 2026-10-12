@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { assertSafeDb01TestTarget } from "../../scripts/db01-test-database-guard.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -9,11 +10,21 @@ import {
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
+// These tests INSERT and DELETE log-alert rows. The service also uses
+// DATABASE_URL, so both must refer to the same explicitly disposable target.
+// Never fall back from TEST_DATABASE_URL to an application database.
+const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl ||
-    process.env.DB10_DISPOSABLE_TEST_DATABASE !== "true") {
-  throw new Error("W06 log-alert integration requires DB10_DISPOSABLE_TEST_DATABASE=true on an isolated migrated PostgreSQL database.");
+    process.env.DB10_DISPOSABLE_TEST_DATABASE !== "true" ||
+    process.env.DATABASE_URL !== databaseUrl) {
+  throw new Error(
+    "W06 log-alert integration requires explicit matching TEST_DATABASE_URL and DATABASE_URL plus DB10_DISPOSABLE_TEST_DATABASE=true.",
+  );
 }
+// The DB01 no-connection target validator rejects production names, redirected
+// URLs and unconfirmed remote hosts. Alias is safe here only after the explicit
+// DB10 opt-in and the exact service/test equality check above.
+assertSafeDb01TestTarget({ ...process.env, DATABASE_URL: undefined });
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
 const id = crypto.randomUUID();
 const signatureHash = crypto.randomUUID().replaceAll("-", "").padEnd(64, "a");
