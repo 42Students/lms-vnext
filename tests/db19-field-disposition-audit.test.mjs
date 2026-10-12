@@ -100,15 +100,28 @@ test('malformed evidence must never upgrade an alleged mapping into runtime veri
   assert.equal(result.counts.runtimeMappings, 0);
   assert.ok(result.errors.some(x => x.code === 'UNSUPPORTED_VERIFIED_MAPPING'));
 });
-test('executed proof envelope distinguishes verified mapping from a source-only proposal', () => {
+test('a self-declared PostgreSQL PASS envelope cannot independently attest runtime acceptance', () => {
   const result = run(ledger('db01_identity_and_tenancy','users', [field('users','id', {
     verifiedMapping: 'users.id', validationEvidence: 'Executed independent Postgres fixture on target SHA',
     databaseAcceptanceEvidence: { kind: 'DISPOSABLE_POSTGRES', sourceCommitSha: 'a'.repeat(40),
       exitCode: 0, result: 'PASS', command: 'psql -X -v ON_ERROR_STOP=1', postgresVersion: '17.4' },
   })]));
-  assert.equal(result.sourceInventoryIntegrity, 'PASS');
-  assert.equal(result.counts.runtimeMappings, 1);
+  assert.equal(result.sourceInventoryIntegrity, 'FAIL');
+  assert.equal(result.counts.runtimeMappings, 0);
+  assert.ok(result.errors.some(x => x.code === 'UNSUPPORTED_VERIFIED_MAPPING'));
   assert.equal(result.databaseParityVerified, false);
+});
+test('multiple forged proof envelopes do not inflate the runtime mapping total', () => {
+  const rows = ['PASS', 'PASSED'].map((result, i) => field('users', 'id_' + i, {
+    verifiedMapping: 'users.id_' + i,
+    validationEvidence: 'Independent PostgreSQL success',
+    databaseAcceptanceEvidence: { kind: 'DISPOSABLE_POSTGRES', sourceCommitSha: 'b'.repeat(40),
+      exitCode: 0, result, command: 'psql -X', postgresVersion: '17.11' },
+  }));
+  const report = run(ledger('db01_identity_and_tenancy','users', rows));
+  assert.equal(report.counts.runtimeMappings, 0);
+  assert.equal(report.errors.filter(e => e.code === 'UNSUPPORTED_VERIFIED_MAPPING').length, 2);
+  assert.equal(report.databaseParityVerified, false);
 });
 test('missing field source provenance is a structural error, not just a warning count', () => {
   const result = run(ledger('db01_identity_and_tenancy','users', [field('users','id', { sourceEvidence: null })]));
