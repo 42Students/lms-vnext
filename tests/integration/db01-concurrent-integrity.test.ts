@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 /**
  * Chat 2 / DB-004: concurrent integrity witnesses for registered vNext DB01.
@@ -18,6 +19,9 @@ const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DB01 concurrency witnesses require explicit TEST_DATABASE_URL");
 }
+// These tests commit one winner and then delete it. Never send such writes
+// to an implicit application target or an unconfirmed non-disposable database.
+assertDb018DisposableTarget(process.env);
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -40,12 +44,10 @@ async function exactlyOneWins(
     pool.query(secondSql, secondParams),
   ]);
   const winners = outcomes.filter(
-    (result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof pool.query>>> =>
-      result.status === "fulfilled",
+    (result) => result.status === "fulfilled",
   );
   const rejected = outcomes.filter(
-    (result): result is PromiseRejectedResult =>
-      result.status === "rejected",
+    (result) => result.status === "rejected",
   );
   expect(winners).toHaveLength(1);
   expect(rejected).toHaveLength(1);
