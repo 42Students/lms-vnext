@@ -679,6 +679,12 @@
       "status": "NOT_RUN",
       "owner": 6,
       "evidence": "tests/integration/db05-course-authorization-races.test.ts authored: department archived vs course create; period CLOSED vs offering create; section archived vs delivery create; FACULTY role DELETE vs teaching assignment. Strict TEST_DATABASE_URL=DATABASE_URL and DB01 test-target preflight required before cleanup. Disposable seeded PostgreSQL and native Vitest execution NOT RUN."
+    },
+    {
+      "id": "CLASSROOM_MESSAGE_ANCESTOR_RETENTION_CL01_CL18",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered classroom ancestry retention companion guards ten table events including delivery delete and sender membership user reassignment. CL-01..CL-18 PostgreSQL / READ COMMITTED two-session race/deadlock and rollback acceptance must be executed on exact SHA."
     }
   ],
   "sourceReview": {
@@ -1027,6 +1033,25 @@
       "advisoryKey": "605008003",
       "sourceSemantics": "Historical parent/resolution/attachment columns exist but nested reply API is not currently proven active; defensive constraint is not UI/API parity evidence.",
       "note": "Conditional W01 integration only after original 16-field discussion draft and tenant guard. DG-01..DG-20 PostgreSQL and two-session race matrix NOT RUN. The authored pure reference-model test is not SQL acceptance."
+    },
+    {
+      "id": "DB05_CLASSROOM_MESSAGE_ANCESTOR_RETENTION",
+      "path": "scripts/sql/db05-classroom-message-ancestor-retention.draft.sql",
+      "type": "CROSS_DOMAIN_CLASSROOM_MESSAGE_HISTORY_ANCESTRY_RETENTION_COMPANION",
+      "baseCandidate": "scripts/sql/db05-classroom-message-history.draft.sql",
+      "dependencies": [
+        "scripts/sql/db05-classroom-chat-parity.draft.sql",
+        "scripts/sql/db05-classroom-message-history.draft.sql",
+        "DB02_COHORT_PROGRAM_ACADEMIC_PERIOD_DEPARTMENT_TENANT_SCOPE",
+        "W01_CONCURRENT_CHILD_INSERT_AND_ANCESTOR_UPDATE_PROOF"
+      ],
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "advisoryKey": "605008003",
+      "sourceUnitTest": "tests/db05-classroom-ancestor-retention.test.mjs",
+      "readOnlyPreflight": "scripts/sql/db05-classroom-message-integrity-preflight.readonly.sql",
+      "note": "Protects retained messages against delivery DELETE/reparent, offering/section/course/department/period/cohort/program/actor membership reparent. CL-01..18 disposable PostgreSQL negative and two-session race tests NOT_RUN. W01 must install once after canonical classroom history; no additional columns or indexes."
     }
   ],
   "verifiedSourceReferenceTests": {
