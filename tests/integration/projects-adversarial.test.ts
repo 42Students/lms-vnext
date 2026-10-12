@@ -17,6 +17,8 @@ import {
   getProjectInstanceWorkspace,
 } from "@/modules/projects/instance-service";
 import {
+  completeProjectSprint,
+  shipProjectRelease,
   startProjectSprint,
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
@@ -915,4 +917,234 @@ describe("Projects adversarial isolation", () => {
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
     });
   });
+
+  it("serializes concurrent resource sequence allocation", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "resource-race",
+    );
+
+    const results = await Promise.all([
+      createProjectResource(
+        mentor,
+        project.id,
+        {
+          title: "Concurrent resource A",
+          url: "https://example.com/resource-a",
+        },
+      ),
+      createProjectResource(
+        mentor,
+        project.id,
+        {
+          title: "Concurrent resource B",
+          url: "https://example.com/resource-b",
+        },
+      ),
+    ]);
+
+    expect(
+      results.map((row) => row.sequence).sort((a, b) => a - b),
+    ).toEqual([0, 1]);
+  });
+
+  it("allows only one concurrent task submission to win", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "task-submit-race",
+    );
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+    const sprint = workspace.sprints[0]!;
+    const task = workspace.tasks[0]!;
+
+    await startProjectSprint(
+      mentor,
+      project.id,
+      sprint.id,
+    );
+
+    const outcomes = await Promise.allSettled([
+      submitProjectTask(
+        learner,
+        project.id,
+        task.id,
+        {
+          submissionUrl:
+            "https://example.com/task-submit-a",
+        },
+      ),
+      submitProjectTask(
+        learner,
+        project.id,
+        task.id,
+        {
+          submissionUrl:
+            "https://example.com/task-submit-b",
+        },
+      ),
+    ]);
+
+    expect(
+      outcomes.filter(
+        (result) => result.status === "fulfilled",
+      ),
+    ).toHaveLength(1);
+    expect(
+      outcomes.filter(
+        (result) => result.status === "rejected",
+      ),
+    ).toHaveLength(1);
+
+    const rows = await pool.query(
+      `select version, status
+         from project_task_submissions
+        where project_id = $1
+          and task_id = $2`,
+      [project.id, task.id],
+    );
+    expect(rows.rows).toHaveLength(1);
+    expect(rows.rows[0]).toMatchObject({
+      version: 1,
+      status: "SUBMITTED",
+    });
+  });
+
+  it("serializes final delivery draft and evaluation creation", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "delivery-race",
+    );
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+    const sprint = workspace.sprints[0]!;
+    const task = workspace.tasks[0]!;
+    const release = workspace.releases[0]!;
+
+    await startProjectSprint(
+      mentor,
+      project.id,
+      sprint.id,
+    );
+    await updateProjectTaskStatus(
+      mentor,
+      project.id,
+      task.id,
+      { status: "DONE" },
+    );
+    await completeProjectSprint(
+      mentor,
+      project.id,
+      sprint.id,
+    );
+    await shipProjectRelease(
+      mentor,
+      project.id,
+      release.id,
+    );
+
+    const draftOutcomes =
+      await Promise.allSettled([
+        createProjectSubmissionDraft(
+          learner,
+          project.id,
+          {
+            summary: "Concurrent final A",
+            sourceUrl:
+              "https://example.com/final-a",
+          },
+        ),
+        createProjectSubmissionDraft(
+          learner,
+          project.id,
+          {
+            summary: "Concurrent final B",
+            sourceUrl:
+              "https://example.com/final-b",
+          },
+        ),
+      ]);
+
+    const created = draftOutcomes.find(
+      (result) => result.status === "fulfilled",
+    );
+    expect(created?.status).toBe("fulfilled");
+    expect(
+      draftOutcomes.filter(
+        (result) => result.status === "fulfilled",
+      ),
+    ).toHaveLength(1);
+
+    if (!created || created.status !== "fulfilled") {
+      throw new Error("Expected one final draft");
+    }
+
+    const submitted =
+      await submitProjectSubmission(
+        learner,
+        project.id,
+        created.value.id,
+      );
+    await reviewProjectSubmission(
+      mentor,
+      project.id,
+      submitted.id,
+      { decision: "APPROVED" },
+    );
+
+    const evaluationInput = {
+      summary: "Concurrent evaluation",
+      items: [
+        {
+          criterion: "Delivery",
+          score: 9,
+          maxScore: 10,
+        },
+      ],
+    };
+    const evaluationOutcomes =
+      await Promise.allSettled([
+        createProjectEvaluation(
+          mentor,
+          project.id,
+          submitted.id,
+          evaluationInput,
+        ),
+        createProjectEvaluation(
+          mentor,
+          project.id,
+          submitted.id,
+          evaluationInput,
+        ),
+      ]);
+
+    expect(
+      evaluationOutcomes.filter(
+        (result) => result.status === "fulfilled",
+      ),
+    ).toHaveLength(1);
+    expect(
+      evaluationOutcomes.filter(
+        (result) => result.status === "rejected",
+      ),
+    ).toHaveLength(1);
+
+    const evaluations = await pool.query(
+      `select id from project_evaluations
+        where project_id = $1
+          and submission_id = $2`,
+      [project.id, submitted.id],
+    );
+    expect(evaluations.rows).toHaveLength(1);
+  });
+
 });
