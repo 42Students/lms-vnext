@@ -4955,22 +4955,22 @@
       ],
       "restriction": "MIGRATION_INTEGRATOR",
       "paths": [
-        "drizzle/0046_db09_crm_principal_race_hardening.sql",
-        "drizzle/meta/0046_snapshot.json",
+        "drizzle/0048_db09_crm_principal_race_hardening.sql",
+        "drizzle/meta/0048_snapshot.json",
         "tests/db079-db09-crm-race-hardening.test.mjs",
         "docs/planning/db079-db09-crm-race-hardening.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a210f00b6ccd840030670a730ce9fd000820b3e9",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Forward-only DB09 CRM race hardening complete as registered 0048 after detecting/removing an unregistered 0046 numbering collision. Non-destructive preflight rejects poisoned owner/company/recruiter/followup/activity rows; successful principal checks SHARE-lock membership/role/user, relationship, recruiter profile/company/grant rows through commit; lead activity history now rejects TRUNCATE. Trigger-only snapshot chains from 0047 and static guard is registered. Source reconciliation clean; zero-to-head replay and two-session revocation races are not claimed executed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-12T14:24:18.741Z",
       "startedAt": "2026-10-12T14:24:18.741Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-12T14:29:49.982Z",
+      "completionCommitSha": "a210f00b6ccd840030670a730ce9fd000820b3e9",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4994,6 +4994,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T14:24:18.741Z",
           "reason": "Building forward-only 0046 principal row-lock and append-only TRUNCATE hardening."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:29:49.982Z",
+          "reason": "DB-079 registered as 0048 with principal revocation serialization and append-only TRUNCATE hardening; PostgreSQL replay/race verification remains downstream."
         }
       ]
     },
