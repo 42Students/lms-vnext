@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-078",
+  "phase": "DATABASE",
+  "worker": "CHAT_05",
+  "status": "PERSISTED_COLUMN_DISPOSITION_COMPLETE_RUNTIME_UNVERIFIED",
+  "source": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "historicalEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json",
+    "fullTermScanSummary": "docs/planning/db05-historical-terms-scan-summary.json",
+    "compatibilityDraft": "scripts/sql/db05-historical-course-columns.compatibility.draft.sql",
+    "currentLegacyCourseBlob": "2fcc9c296a13e53e9dede507f4024d8d8fb944c1",
+    "currentLegacyProgramProducerBlob": "8149df6879e0cdfc6362d1c302b01537decac77c",
+    "currentLegacyProgramDtoBlob": "14f2e4985585b9aceb06b5a43e892e6b618a9fff",
+    "vnextCourseIdentityDraft": "scripts/sql/db05-course-identity.draft.sql"
+  },
+  "decisions": [
+    {
+      "sourceField": "course.default_subscription_days",
+      "sourceType": "INT NULL",
+      "persistenceDisposition": "RETIRED_HISTORICAL_PHYSICAL_COLUMN_NO_CURRENT_PRODUCT_CONSUMER",
+      "vnextPersistenceTarget": null,
+      "currentProductBehaviorRequired": false,
+      "reasoning": [
+        "Field exists in the historical MySQL schema snapshot but is absent from the pinned current Course JPA model and CourseDTO/service/repository/controller surfaces already inspected.",
+        "Expanded pinned BE/FE source evidence found no current field-name consumer; GitHub code search also returns no indexed exact-name hit.",
+        "No current vNext delivery-validity behavior should be invented from this nullable historical value; subscription/expiry is a separate product policy if reintroduced."
+      ],
+      "futureRule": "A future subscription-duration feature must define an explicit typed policy and consumer contract; do not revive legacy_default_subscription_days for compatibility alone."
+    },
+    {
+      "sourceField": "course.formal_title",
+      "sourceType": "VARCHAR(255) NULL",
+      "persistenceDisposition": "RETIRED_HISTORICAL_PHYSICAL_COLUMN_ACTIVE_WIRE_CONCEPT_DERIVED",
+      "vnextPersistenceTarget": null,
+      "currentProductBehaviorRequired": true,
+      "activeWireContract": {
+        "responseField": "formal_title",
+        "legacyDerivedExpression": "course.shortTitle != null ? course.shortTitle : course.courseName",
+        "exactFallbackRule": "Fallback is null-based, not blank-string based, in the pinned legacy producer.",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+          "src/main/java/com/_42students/lms/dto/response/NewProgramDetailsDTO.java"
+        ],
+        "vnextPlan": "After canonical short_title is registered, serialize formal_title as a derived response from short_title when non-null, otherwise courses.name. Do not add a second mutable formal_title column."
+      },
+      "reasoning": [
+        "Pinned current Course.java maps short_title and course_name but does not map the historical physical formal_title column.",
+        "Pinned NewProgramServiceImpl explicitly computes CourseInfo.formalTitle from shortTitle or courseName, proving active wire behavior is derived rather than physical-column backed.",
+        "Persisting both short_title/name and a separate formal_title would create mutable duplicate display state with no current source writer."
+      ],
+      "futureRule": "Preserve the formal_title API compatibility field as a derived projection; any future independently editable formal title requires a new source-backed product decision."
+    }
+  ],
+  "compatibilityDraftDisposition": {
+    "file": "scripts/sql/db05-historical-course-columns.compatibility.draft.sql",
+    "decision": "DO_NOT_REGISTER_FOR_THESE_TWO_COLUMNS",
+    "reason": "Both historical physical columns now have explicit source dispositions. short_title remains a separate active source field handled by db05-course-identity.draft.sql; derived formal_title does not justify duplicate persistence."
+  },
+  "summary": {
+    "historicalPhysicalColumnsReviewed": 2,
+    "retiredPhysicalColumns": 2,
+    "activeDerivedWireConceptsPreserved": 1,
+    "replacementPhysicalColumnsRequired": 0,
+    "openPersistenceDecisions": 0,
+    "runtimeVerified": 0,
+    "postgresVerified": 0
+  },
+  "limits": [
+    "This is a pinned-source product-schema decision, not a claim that every historical deployed database lacked data in these columns.",
+    "The active formal_title wire response still needs API/browser acceptance when the API phase is active.",
+    "DB-008 remains responsible for registering short_title and the rest of course/content persistence through the migration integrator."
+  ]
+}
