@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
-import { assertSafeDb01TestTarget } from "../../scripts/db01-test-database-guard.mjs";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -21,10 +21,10 @@ if (!databaseUrl ||
     "W06 log-alert integration requires explicit matching TEST_DATABASE_URL and DATABASE_URL plus DB10_DISPOSABLE_TEST_DATABASE=true.",
   );
 }
-// The DB01 no-connection target validator rejects production names, redirected
-// URLs and unconfirmed remote hosts. Alias is safe here only after the explicit
-// DB10 opt-in and the exact service/test equality check above.
-assertSafeDb01TestTarget({ ...process.env, DATABASE_URL: undefined });
+// The independent verifier isolation flag is required as well as the DB10
+// opt-in. The shared guard rejects production names, redirected URLs,
+// unconfirmed remote targets and service/test URL mismatches before Pool.
+assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
 const id = crypto.randomUUID();
 const signatureHash = crypto.randomUUID().replaceAll("-", "").padEnd(64, "a");
