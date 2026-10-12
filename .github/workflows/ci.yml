@@ -216,6 +216,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Readiness is deliberately strict: a healthy application must have a
+    # reachable, fully migrated database. Give standalone smoke a disposable
+    # PostgreSQL 17 instance instead of teaching /ready to ignore failures.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_smoke_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_smoke_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_smoke_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_smoke_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -258,6 +278,12 @@ jobs:
           fi
       - name: Production build
         run: npm run build
+      - name: Prepare disposable PostgreSQL 17 for strict standalone readiness
+        # The reset guard rejects production/shared targets. DATABASE_URL is
+        # empty ONLY for the destructive setup step, then restored for smoke.
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
       - name: Standalone HTTP smoke
         shell: bash
         run: |
