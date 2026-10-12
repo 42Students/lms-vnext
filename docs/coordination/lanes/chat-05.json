@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-078",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB078_PICKED_DB05_HISTORICAL_COLUMN_DISPOSITION",
+    "checkpointKind": "DB078_DB05_HISTORICAL_COLUMNS_COMPLETED",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "f83a052efc6234348740c370c8a52b75b169b9b1",
-    "lastWorkerMergedSha": "f83a052efc6234348740c370c8a52b75b169b9b1",
+    "observedMainSha": "2c609210253b45687ec6c85ebc0c4fc2d36dc66b",
+    "lastWorkerMergedSha": "84e9be01dd49c3b6bb1a7baaa28bb33f6bce05f0",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-078 started to resolve physical course.default_subscription_days and course.formal_title persistence while preserving active derived formal_title API semantics."
+    "summary": "DB-078 COMPLETED source-only: retired two historical physical course columns, preserved active formal_title as derived shortTitle ?? courseName wire contract, and barred compatibility-only duplicate persistence."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -61,7 +61,8 @@
     "tests/db01-test-database-guard.test.mjs: redirecting PostgreSQL target query parameters are rejected before destructive test setup (authored, not executed)",
     "tests/db01-final-field-disposition.test.mjs: 9 source-denominator and mutation guards for all 312 DB01 fields (authored, not executed)",
     "tests/db01-source-closure.test.mjs: 5 closure guards across 312 dispositions, 70 consumer-evidence rows and 9 provider/persistence flows (authored, not executed)",
-    "tests/db077-db04-historical-final-disposition.test.mjs: 5 source-retirement guards for student_registration and approver_id_card (authored, not executed)"
+    "tests/db077-db04-historical-final-disposition.test.mjs: 5 source-retirement guards for student_registration and approver_id_card (authored, not executed)",
+    "tests/db078-db05-historical-course-column-disposition.test.mjs: 5 guards for retiring physical default_subscription_days/formal_title while preserving derived formal_title wire semantics (authored, not executed)"
   ],
   "lastExecutedPassingTests": [
     "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547",
@@ -116,7 +117,7 @@
     "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
     "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "Freeze typed retain-vs-retire decisions for the two historical physical course columns using pinned source evidence; author regression guards and hand off to DB-008.",
+  "nextAction": "Continue independent DATABASE blocker removal without changing DB-008 ownership.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -218,10 +219,11 @@
     "DB-065",
     "DB-064",
     "DB-004",
-    "DB-077"
+    "DB-077",
+    "DB-078"
   ],
   "lastPickedAt": "2026-10-12T14:18:00.000Z",
-  "lastCompletedAt": "2026-10-12T14:14:00.000Z",
+  "lastCompletedAt": "2026-10-12T14:25:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
   ],
@@ -248,7 +250,8 @@
     "DB-058",
     "DB-064",
     "DB-004",
-    "DB-077"
+    "DB-077",
+    "DB-078"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
