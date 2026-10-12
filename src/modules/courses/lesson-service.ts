@@ -65,6 +65,7 @@ export async function listCourseLessons(
       context,
       path.offeringId,
       deliveryId,
+      { includeHistorical: includeArchived },
     );
 
   if (access === "LEARNER") {
