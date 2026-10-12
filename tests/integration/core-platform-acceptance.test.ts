@@ -60,7 +60,7 @@ const identityPrefix = "acceptance-core-";
 
 const superAdmin: RequestContext = {
   user: {
-    id: "acceptance-superadmin",
+    id: SEED_IDS.superAdminUser,
     identityUid: "acceptance-superadmin-identity",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],
@@ -87,7 +87,7 @@ function createIdentityDirectory(
     async createUser(input) {
       user = {
         uid: identityUid,
-        phoneNumber: input.phoneNumber,
+        phoneNumber: input.phoneNumber ?? null,
         email: input.email ?? null,
         displayName: input.displayName,
       };
