@@ -37,7 +37,7 @@ export type LearnerAssignmentOverviewItem =
     kind: "ASSIGNMENT";
     maxPoints: number;
     submissionId: string | null;
-    submissionType: "TEXT" | "LINK" | null;
+    submissionType: "TEXT" | "LINK" | "FILE" | null;
     submissionText: string | null;
     submissionUrl: string | null;
     submittedAt: string | null;
@@ -503,6 +503,17 @@ export function LearnerAssessmentOverview({
                         {selectedAssignment.submissionUrl}
                       </p>
                     )}
+                  </div>
+                ) : null}
+
+                {selectedAssignment.submissionType === "FILE" ? (
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      File submission received
+                    </p>
+                    <p className="mt-2 text-sm text-body">
+                      Your uploaded file is recorded for this assignment. Open the course assignment for its attachment details.
+                    </p>
                   </div>
                 ) : null}
 
