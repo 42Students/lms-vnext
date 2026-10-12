@@ -11,9 +11,9 @@ permissions:
   contents: write
 
 jobs:
-  capture:
+  promote-file-enum:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,84 +23,144 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Generate latest Drizzle delta
+      - name: Generate, prove and promote one semantic delta
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main
-          base="$(git rev-parse origin/main)"
-          echo "DB17_BASE_SHA=$base" >> "$GITHUB_ENV"
-          git reset --hard "$base"
-          npm run db:generate
-      - name: Validate and curate semantic-only 0045
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t candidates < <(git ls-files --others --exclude-standard 'drizzle/0045_*.sql')
-          test "${#candidates[@]}" -eq 1
-          candidate="${candidates[0]}"
-          python - "$candidate" <<'PY'
-          import re, sys
-          p=sys.argv[1]
-          s=open(p,encoding="utf-8").read()
+          git config user.name "42Students DB17 Integrator"
+          git config user.email "actions@users.noreply.github.com"
+
+          success=0
+          for attempt in 1 2 3 4 5 6; do
+            echo "DB017 promotion attempt $attempt"
+            git fetch origin main
+            base="$(git rev-parse origin/main)"
+            git reset --hard "$base"
+            git clean -fd drizzle/
+
+            # FILE is compile-time-visible but DB-persistence must still be
+            # fail-closed until DB053 installs receipt/file completeness.
+            python - <<'PY'
+          from pathlib import Path
+          s=Path("src/db/schema/assessments.ts").read_text()
+          start=s.index('"assignment_submissions_payload_ck"')
+          end=s.index('"assignment_submissions_points_ck"', start)
+          payload=s[start:end]
+          if "= 'FILE'" in payload:
+              raise SystemExit("active payload CHECK already accepts FILE; refuse enum-only promotion")
+          PY
+
+            last_idx="$(node -e 'const j=require("./drizzle/meta/_journal.json"); process.stdout.write(String(j.entries.at(-1).idx))')"
+            next_idx="$(printf '%04d' "$((last_idx + 1))")"
+            prev_idx="$(printf '%04d' "$last_idx")"
+            prev_snapshot="drizzle/meta/${prev_idx}_snapshot.json"
+
+            npm run db:generate
+
+            mapfile -t candidates < <(git ls-files --others --exclude-standard "drizzle/${next_idx}_*.sql")
+            test "${#candidates[@]}" -eq 1
+            candidate="${candidates[0]}"
+            new_snapshot="drizzle/meta/${next_idx}_snapshot.json"
+            test -f "$prev_snapshot"
+            test -f "$new_snapshot"
+
+            python - "$prev_snapshot" "$new_snapshot" "$candidate" <<'PY'
+          import json, re, sys
+          old_path,new_path,sql_path=sys.argv[1:]
+          old=json.load(open(old_path,encoding="utf-8"))
+          new=json.load(open(new_path,encoding="utf-8"))
+
+          diffs=[]
+          def walk(a,b,path=""):
+              if type(a) is not type(b):
+                  diffs.append((path,a,b)); return
+              if isinstance(a,dict):
+                  for k in sorted(set(a)|set(b)):
+                      p=f"{path}/{k}"
+                      if k not in a: diffs.append((p,"<MISSING>",b[k]))
+                      elif k not in b: diffs.append((p,a[k],"<MISSING>"))
+                      else: walk(a[k],b[k],p)
+              elif isinstance(a,list):
+                  if a != b: diffs.append((path,a,b))
+              elif a != b:
+                  diffs.append((path,a,b))
+
+          walk(old,new)
+          substantive=[]
+          enum_seen=False
+          for path,a,b in diffs:
+              if path in ("/id","/prevId"):
+                  continue
+              if path == "/enums/public.assignment_submission_type/values":
+                  if b == [*a, "FILE"] and "FILE" not in a:
+                      enum_seen=True
+                      continue
+              if path.endswith("/default"):
+                  # Older hand-curated snapshots sometimes stored primitive
+                  # defaults as strings; generated metadata normalizes types.
+                  def canon(v):
+                      if isinstance(v,bool): return str(v).lower()
+                      return str(v)
+                  if canon(a).lower() == canon(b).lower():
+                      continue
+              if "/checkConstraints/" in path and path.endswith("/value"):
+                  def norm(v):
+                      return re.sub(r"\s+"," ",str(v).replace("\\n"," ")).strip()
+                  if norm(a) == norm(b):
+                      continue
+              substantive.append((path,a,b))
+
+          if not enum_seen:
+              raise SystemExit("expected FILE enum delta was not generated")
+          if substantive:
+              print(json.dumps(substantive,indent=2,default=str))
+              raise SystemExit("unexpected substantive Drizzle snapshot drift")
+
+          sql=open(sql_path,encoding="utf-8").read()
           required='ALTER TYPE "public"."assignment_submission_type" ADD VALUE \'FILE\';'
-          if required not in s:
-              raise SystemExit("generated 0045 missing FILE enum addition")
-          forbidden=[
-              r'CREATE\s+TABLE', r'DROP\s+TABLE', r'DELETE\s+FROM', r'TRUNCATE',
-              r'assignment_submissions_payload_ck', r'ADD\s+COLUMN', r'DROP\s+COLUMN',
-          ]
-          for pattern in forbidden:
-              if re.search(pattern,s,re.I):
-                  raise SystemExit(f"unsafe generated 0045 content: {pattern}")
-          # Everything except the FILE enum is known serializer/default/check
-          # churn already present semantically in registered migrations.
-          allowed_noise=[
-              "placement_company_relationships_share_columns_ck",
-              "placement_job_role_options_ctc_ck",
-              "attendance_sessions_lifecycle_ck",
-              "course_discussion_messages_pin_ck",
-              "module_access_rules_global_shape_ck",
-              "eligibility_threshold_percent", "correction_window_hours",
-              '"pinned"', '"active_count"', '"is_locked"', '"criteria_version"',
-              '"auto_refresh"', '"credits"', '"min_pick"', '"max_pick"', '"version"',
-          ]
-          rest=s.replace(required,"")
-          # Remove known statement-breakpoint token left beside the removed statement.
-          rest=rest.replace("--> statement-breakpoint","")
-          tokens=[x for x in re.split(r'\s+',rest) if x]
-          if rest.strip() and not all(any(a in line for a in allowed_noise)
-                                    or re.search(r'^(ALTER|TABLE|DROP|CONSTRAINT|ADD|CHECK|SET|DEFAULT|ON|OR|AND|IS|NOT|NULL|TRUE|FALSE|[()\"\'0-9<>=._,-]+)$', line, re.I)
-                                    for line in tokens):
-              # The stricter safety is the forbidden-token list plus the exact
-              # source review; print drift for inspection if generator changes.
-              print(s)
-          open(p,"w",encoding="utf-8").write(
+          if required not in sql:
+              raise SystemExit("generated SQL missing FILE enum addition")
+          for token in [
+              "CREATE TABLE", "DROP TABLE", "DELETE FROM", "TRUNCATE",
+              "ADD COLUMN", "DROP COLUMN", "assignment_submissions_payload_ck",
+          ]:
+              if token.lower() in sql.lower():
+                  raise SystemExit(f"unsafe generated SQL token: {token}")
+
+          open(sql_path,"w",encoding="utf-8").write(
               "-- DB-017 semantic-only schema alignment.\n"
               "-- FILE remains rejected by assignment_submissions_payload_ck until DB053.\n"
               + required + "--> statement-breakpoint\n"
           )
+          print(f"validated snapshot diffs={len(diffs)}; semantic delta=FILE enum only")
           PY
-          echo "Curated candidate: $candidate"
-          cat "$candidate"
-      - name: Commit generated snapshot and semantic SQL
-        shell: bash
-        run: |
-          set -euo pipefail
-          git fetch origin main
-          test "$(git rev-parse origin/main)" = "$DB17_BASE_SHA"
-          git config user.name "42Students DB17 Integrator"
-          git config user.email "actions@users.noreply.github.com"
-          git add drizzle/
-          git diff --cached --stat
-          git diff --cached -- drizzle/meta/_journal.json
-          git commit -m "db17: register assignment FILE enum shell"
-          git push origin HEAD:main
-      - name: Upload exact promoted Drizzle state
+
+            npm run db:journal:verify
+            git add drizzle/
+            git diff --cached --stat
+            git diff --cached -- "$candidate" drizzle/meta/_journal.json
+            git commit -m "db17: register fail-closed assignment FILE enum"
+
+            git fetch origin main
+            if test "$(git rev-parse origin/main)" != "$base"; then
+              echo "main advanced; regenerate from newest head"
+              git reset --hard origin/main
+              git clean -fd drizzle/
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              success=1
+              break
+            fi
+          done
+
+          test "$success" -eq 1
+      - name: Upload final Drizzle state
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: drizzle-db17-promotion-${{ github.sha }}
+          name: drizzle-db17-semantic-promotion-${{ github.sha }}
           path: drizzle/
           if-no-files-found: error
           retention-days: 7
