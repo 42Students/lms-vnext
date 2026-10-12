@@ -55,3 +55,23 @@ test("rollback-only PG acceptance witnesses all three living child statuses and 
   assert.match(acceptance, /IF SQLERRM NOT LIKE/);
   assert.match(acceptance, /DB02 program archive cohort dependencies PASS/);
 });
+
+test("two-session archive/candidate cohort race has guarded disposable preflight and both winning outcomes", () => {
+  const race = readFileSync(
+    new URL("../scripts/sql/db02-program-archive-concurrency-unregistered.sh", import.meta.url),
+    "utf8",
+  );
+  const runner = readFileSync(
+    new URL("../scripts/sql/db02-run-disposable-acceptance.sh", import.meta.url),
+    "utf8",
+  );
+  assert.match(race, /DB02_DISPOSABLE_ACCEPTANCE/);
+  assert.match(race, /DB02_EXPECTED_DATABASE/);
+  assert.match(race, /SELECT current_database\(\)/);
+  assert.match(race, /ARCHIVED:0/);
+  assert.match(race, /ACTIVE:1/);
+  assert.match(race, /Cannot archive program with nonarchived cohorts/);
+  assert.match(race, /Cannot activate or create a cohort under archived program/);
+  assert.match(race, /wait "\$PID_A"/);
+  assert.ok(runner.includes("scripts/sql/db02-program-archive-concurrency-unregistered.sh"));
+});
