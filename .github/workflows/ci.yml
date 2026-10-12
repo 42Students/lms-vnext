@@ -179,6 +179,10 @@ jobs:
         env:
           DB017_ISOLATED_TEST_DATABASE: "1"
         run: node scripts/db017-share-defaults-pg-acceptance.mjs
+      - name: DB-005 registered academic parent ownership guards against direct SQL
+        env:
+          DB02_REGISTERED_PARENT_GUARDS: "YES"
+        run: node --test tests/db02-registered-parent-guards-pg.test.mjs
       # Registered-schema matrix runs ONLY against committed numbered Drizzle
       # migrations. DB08/DB10 unregistered proposals run in their independent
       # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.

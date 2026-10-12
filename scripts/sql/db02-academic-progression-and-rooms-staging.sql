@@ -175,7 +175,7 @@ ALTER TABLE course_offerings
 -- Department ownership is immutable in product APIs. Programs may move departments only
 -- within one college; courses do not expose department reassignment. Protect those facts
 -- at the DB boundary because every downstream academic tenant scope derives through them.
-CREATE FUNCTION db02_guard_department_college_immutability()
+CREATE OR REPLACE FUNCTION db02_guard_department_college_immutability()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.college_id <> OLD.college_id THEN
@@ -186,11 +186,12 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_department_college_immutable ON departments;
 CREATE TRIGGER db02_department_college_immutable
 BEFORE UPDATE OF college_id ON departments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_department_college_immutability();
 
-CREATE FUNCTION db02_guard_program_department_move()
+CREATE OR REPLACE FUNCTION db02_guard_program_department_move()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   old_college uuid;
@@ -217,11 +218,12 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_department_move_guard ON programs;
 CREATE TRIGGER db02_program_department_move_guard
 BEFORE UPDATE OF department_id ON programs
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_department_move();
 
-CREATE FUNCTION db02_guard_course_department_move()
+CREATE OR REPLACE FUNCTION db02_guard_course_department_move()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   old_college uuid;
@@ -248,6 +250,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_course_department_move_guard ON courses;
 CREATE TRIGGER db02_course_department_move_guard
 BEFORE UPDATE OF department_id ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_department_move();
