@@ -7,6 +7,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  membershipRoles,
   courseSectionDeliveries,
   courseTeachingAssignments,
   users,
@@ -166,6 +167,41 @@ export async function createCourseTeachingAssignment(
 
       if (!liveDelivery) {
         throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+      }
+
+      // A faculty member's college, active status or FACULTY role may
+      // change after the earlier permission check. Lock the membership
+      // and its role row to avoid assigning an already-revoked teacher.
+      const [liveMember] = await tx
+        .select({
+          id: collegeMemberships.id,
+          collegeId: collegeMemberships.collegeId,
+          status: collegeMemberships.status,
+        })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, input.membershipId))
+        .for("share")
+        .limit(1);
+
+      if (!liveMember || liveMember.status !== "ACTIVE") {
+        throw new CoursesServiceError("MEMBERSHIP_NOT_ACTIVE");
+      }
+      if (liveMember.collegeId !== delivery.collegeId) {
+        throw new CoursesServiceError("MEMBERSHIP_COLLEGE_MISMATCH");
+      }
+
+      const [facultyRole] = await tx
+        .select({ id: membershipRoles.id })
+        .from(membershipRoles)
+        .where(and(
+          eq(membershipRoles.membershipId, input.membershipId),
+          eq(membershipRoles.role, "FACULTY"),
+        ))
+        .for("share")
+        .limit(1);
+
+      if (!facultyRole) {
+        throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
       }
 
       const [created] = await tx
