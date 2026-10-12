@@ -443,8 +443,9 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     expect(first.manualStage).toBe("CONTACTED");
     expect(repeated.manualStage).toBe("CONTACTED");
     const activities = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, created.id);
-    expect(activities.filter(x => x.type === "SYSTEM")).toHaveLength(1);
-    expect(activities[0]?.isSystem).toBe(true);
+    expect(activities.filter(x => x.type === "NOTE" && x.note === "Manual stage changed to Contacted")).toHaveLength(1);
+    expect(activities[0]?.isSystem).toBe(false);
+    expect(activities[0]?.createdByUserId).toBe(SEED_IDS.facultyUser);
 
     await markTpoLeadNotNow(tpo, created.id, {
       collegeId: SEED_IDS.collegeA,
@@ -457,7 +458,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     expect(resumed.notNowUntil).toBeNull();
     expect((await listTpoLeadActivities(
       tpo, SEED_IDS.collegeA, created.id,
-    )).filter(x => x.type === "SYSTEM")).toHaveLength(2);
+() ).filter(x => x.type === "NOTE" && x.note === "Manual stage changed to Contacted")).toHaveLength(2);
   });
 
   it("limits recruiter activity to newest 200 and prioritizes unfinished follow-ups", async () => {
