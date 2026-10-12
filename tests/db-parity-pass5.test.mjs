@@ -234,8 +234,19 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.equal(index.counts.observationalReadOnlyAuthored, 21);
   assert.equal(index.counts.directNegativeTotalAuthored, 13);
   assert.equal(index.counts.positiveConcurrencyAuthored, 4);
-  assert.equal(index.counts.knownRedRaceAuthored, 1);
-  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
+  // Source fixes exist for both races, but no PostgreSQL race acceptance ran.
+  // Derive the denominator from the canonical witness entries to catch drift.
+  const unresolvedRaces = index.knownRedRaceWitnesses.filter(
+    (w) => w.state === "EXPECTED_FAIL_UNTIL_FIXED",
+  );
+  const fixedPending = index.knownRedRaceWitnesses.filter(
+    (w) => w.state === "FIX_AUTHORED_RUNTIME_NOT_RUN",
+  );
+  assert.equal(index.counts.knownRedRaceAuthored, unresolvedRaces.length);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, fixedPending.length);
+  assert.equal(unresolvedRaces.length, 0);
+  assert.deepEqual(fixedPending.map((w) => w.raceProbe), ["P5-R01", "P5-R02"]);
+  assert.ok(fixedPending.every((w) => w.execution === "NOT_RUN"));
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
