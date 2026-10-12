@@ -126,6 +126,27 @@ try {
     [recruiter.id, relationshipA.id, admin.id],
   );
 
+  await expect23514("grant must bind recruiter and relationship to same company", () =>
+    client.query(
+      `insert into placement_recruiter_college_grants
+         (recruiter_user_id,company_relationship_id,status,granted_by_user_id)
+       values ($1,$2,'ACTIVE',$3)`,
+      [recruiter.id, otherRelationshipA.id, admin.id],
+    ),
+  );
+  await expect23514("recruiter company cannot move after grant history", () =>
+    client.query(
+      "update placement_recruiter_profiles set company_id=$2 where user_id=$1",
+      [recruiter.id, companyOther.id],
+    ),
+  );
+  await expect23514("relationship company cannot move after grant history", () =>
+    client.query(
+      "update placement_company_relationships set company_id=$2 where id=$1",
+      [relationshipA.id, companyOther.id],
+    ),
+  );
+
   const lead = await one(
     `insert into placement_tpo_leads
        (college_id,company_relationship_id,name,email_norm,owner_membership_id,recruiter_user_id)
@@ -283,7 +304,7 @@ try {
   );
 
   process.stdout.write(
-    "DB017 DB09 CRM PostgreSQL acceptance PASS: scoped owner/relationship/recruiter grants, actor history, append-only activity and terminal followups.\n",
+    "DB017 DB09 CRM PostgreSQL acceptance PASS: same-company grants/parent immutability, scoped lead owners/relationships/recruiters, actor history, append-only activity and terminal followups.\n",
   );
 } finally {
   try {
