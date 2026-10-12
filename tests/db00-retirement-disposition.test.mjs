@@ -47,7 +47,8 @@ test("DB00 retirement only covers source-classified backup/tooling rows", () => 
       assert.equal(source.sourceTableClass, "SCHEMA_TOOL_METADATA");
       assert.equal(row.table, "flyway_schema_history");
     } else {
-      assert.equal(row.disposition, "PENDING_PRODUCT_DECISION");
+      assert.equal(row.disposition, "RETIRE_VNEXT_USER_APPROVED");
+      assert.equal(row.productApprovalId, "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12");
       assert.equal(
         source.sourceTableClass,
         "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
@@ -56,19 +57,20 @@ test("DB00 retirement only covers source-classified backup/tooling rows", () => 
   }
 });
 
-test("DB00 leaves exactly seven Smrithi product decisions open", () => {
-  const open = disposition.tables
-    .filter((row) => row.disposition === "PENDING_PRODUCT_DECISION")
+test("DB00 records all seven Smrithi product exclusions with user approval", () => {
+  const approved = disposition.tables
+    .filter((row) => row.disposition === "RETIRE_VNEXT_USER_APPROVED")
     .map((row) => row.table)
     .sort();
 
-  assert.equal(disposition.counts.tableDispositionsClosed, 32);
-  assert.equal(
-    disposition.counts.fieldCandidatesDispositionedByTableDecision,
-    641,
-  );
+  assert.equal(disposition.counts.tableDispositionsClosed, 39);
+  assert.equal(disposition.counts.fieldCandidatesDispositionedByTableDecision, 732);
+  assert.equal(disposition.counts.pendingProductDecisionTables, 0);
+  assert.equal(disposition.counts.pendingProductDecisionFields, 0);
+  assert.equal(disposition.counts.approvedProductRetiredTables, 7);
+  assert.equal(disposition.counts.approvedProductRetiredFields, 91);
   assert.equal(disposition.counts.runtimeSemanticVerifiedFields, 0);
-  assert.deepEqual(open, [
+  assert.deepEqual(approved, [
     "smrithi_application",
     "smrithi_college",
     "smrithi_college_keywords",
@@ -93,8 +95,8 @@ const snapshot = JSON.parse(
 );
 
 test("DB00 Smrithi source inventory preserves exact field and constraint evidence", () => {
-  const pending = disposition.tables
-    .filter((row) => row.disposition === "PENDING_PRODUCT_DECISION")
+  const approved = disposition.tables
+    .filter((row) => row.disposition === "RETIRE_VNEXT_USER_APPROVED")
     .map((row) => row.table)
     .sort();
   const sourceByTable = new Map(inventory.tables.map((row) => [row.table, row]));
@@ -102,7 +104,7 @@ test("DB00 Smrithi source inventory preserves exact field and constraint evidenc
 
   assert.equal(smrithiEvidence.legacyBackendSha, inventory.sourceSha);
   assert.equal(snapshot.sourceSha, inventory.sourceSha);
-  assert.deepEqual(smrithiEvidence.tables.map((row) => row.table).sort(), pending);
+  assert.deepEqual(smrithiEvidence.tables.map((row) => row.table).sort(), approved);
   assert.equal(smrithiEvidence.counts.tables, smrithiEvidence.tables.length);
   assert.equal(
     smrithiEvidence.counts.sourceFields,
@@ -110,7 +112,7 @@ test("DB00 Smrithi source inventory preserves exact field and constraint evidenc
   );
   assert.equal(
     smrithiEvidence.counts.unprovenRetirementDecisions,
-    pending.length,
+    approved.length,
   );
 
   for (const row of smrithiEvidence.tables) {
@@ -141,6 +143,8 @@ test("DB00 Smrithi source inventory preserves exact field and constraint evidenc
       snapshotRow.indexAndConstraintClauses || [],
       "source unique/FK/index drift for " + row.table,
     );
+    // This is the *historical source evidence*, intentionally not rewritten as
+    // proof that legacy runtime consumers or physical table data vanished.
     assert.equal(row.ledgerDisposition, "PENDING_PRODUCT_DECISION");
     assert.equal(row.safeToRetire, false);
     assert.equal(row.runtimeDbPresence, "NOT_VERIFIED");
@@ -155,4 +159,21 @@ test("DB00 Smrithi source inventory preserves exact field and constraint evidenc
     }
     assert.ok(row.requiredNextEvidence.length >= 3);
   }
+});
+
+const approval = JSON.parse(readFileSync(
+  "docs/planning/db003-smrithi-vnext-scope-decision.json", "utf8",
+));
+test("Smrithi retirement is vNext-only and explicitly user-authorized",()=>{
+  assert.equal(approval.authority,"USER_EXPLICIT");
+  assert.equal(approval.decision,"EXCLUDE_FROM_VNEXT");
+  assert.equal(approval.appliesTo,"42Students/lms-vnext");
+  assert.equal(approval.legacyProductionMutationAuthorized,false);
+  assert.equal(approval.externalConsumerAbsenceProven,false);
+  assert.equal(approval.counts.tables,7);
+  assert.equal(approval.counts.fields,91);
+  assert.deepEqual(
+    approval.tables.map(t=>t.table).sort(),
+    disposition.tables.filter(t=>t.disposition==="RETIRE_VNEXT_USER_APPROVED").map(t=>t.table).sort(),
+  );
 });
