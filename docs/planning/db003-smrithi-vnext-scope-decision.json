@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12",
+  "taskId": "DB-003",
+  "decision": "EXCLUDE_FROM_VNEXT",
+  "authority": "USER_EXPLICIT",
+  "approvedOn": "2026-10-12",
+  "userInstruction": "Please remove them not required",
+  "approvalContext": "Explicit reply to question asking whether seven historical Smrithi admissions tables should be excluded from LMS vNext.",
+  "appliesTo": "42Students/lms-vnext",
+  "branch": "main",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "exclusionType": "PRODUCT_SCOPE_RETIREMENT_NOT_LIVE_DATABASE_DELETION",
+  "scope": "Do not port the historical Smrithi admissions/application subsystem, its seven tables, 91 legacy fields, jobs, routes or data migration into LMS vNext.",
+  "tables": [
+    {
+      "table": "smrithi_application",
+      "sourceFieldCount": 28,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_college",
+      "sourceFieldCount": 7,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_college_keywords",
+      "sourceFieldCount": 2,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_education_type",
+      "sourceFieldCount": 9,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_notification_template",
+      "sourceFieldCount": 28,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_program",
+      "sourceFieldCount": 9,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    },
+    {
+      "table": "smrithi_specialization",
+      "sourceFieldCount": 8,
+      "decision": "RETIRE_VNEXT_USER_APPROVED"
+    }
+  ],
+  "counts": {
+    "tables": 7,
+    "fields": 91
+  },
+  "dataMigrationRequired": false,
+  "legacyProductionMutationAuthorized": false,
+  "externalConsumerAbsenceProven": false,
+  "oldLmsProducerConsumerAudit": "NOT_COMPLETE",
+  "vnextRuntimePgAcceptance": "NOT_RUN",
+  "decisionRationale": "User explicitly states this subsystem is not required in vNext; the greenfield vNext design does not need to maintain this legacy admissions subsystem regardless of historical legacy schema residue. Current old LMS runtime or external usage cannot be inferred absent from this product decision.",
+  "evidence": [
+    "docs/planning/db00-smrithi-source-evidence.json",
+    "docs/planning/db00-smrithi-peer-review-2026-10-11.md",
+    "docs/planning/db00-chat05-smrithi-peer-review-2026-10-11.md",
+    "docs/coordination/evidence/db003-smrithi-consumer-audit-2026-10-12.md"
+  ],
+  "safeguards": [
+    "No DROP TABLE against the legacy LMS or any deployed database.",
+    "Keep historical legacy source inventory immutable for traceability.",
+    "DB-003 source approval must never be treated as registered migration replay or PostgreSQL verification.",
+    "If Smrithi features are requested later, design and test new vNext scoped models explicitly rather than silently reintroducing seven legacy tables."
+  ]
+}
