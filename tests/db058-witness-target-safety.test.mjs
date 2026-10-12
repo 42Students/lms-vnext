@@ -128,7 +128,7 @@ test("DB004 concurrent write witnesses validate the disposable target before cre
   assert.ok(imported >= 0, "DB01 must import the shared no-connect preflight");
   assert.ok(preflight > imported && connection > preflight,
     "DB01 must preflight before creating any PG connection");
-  assert.doesNotMatch(source, /TEST_DATABASE_URL\\s*\\?\\?\\s*process\\.env\\.DATABASE_URL/);
+  assert.doesNotMatch(source, /TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
 });
 
 test("DB030 assessment acceptance witnesses validate the target before creating Pool", () => {
@@ -149,7 +149,7 @@ test("DB030 negative witness helpers accept independent learner identities", () 
     "tests/integration/db06-assessment-parent-scope.test.ts", "utf8",
   );
   assert.match(source,
-    /async function attempt\\(db:Sql,q:string,d:string,m:string=SEED_IDS\\.learnerCollegeAMembership\\)/);
+    /async function attempt\(db:Sql,q:string,d:string,m:string=SEED_IDS\.learnerCollegeAMembership\)/);
   assert.match(source,
-    /async function submission\\(db:Sql,a:string,d:string,m:string=SEED_IDS\\.learnerCollegeAMembership\\)/);
+    /async function submission\(db:Sql,a:string,d:string,m:string=SEED_IDS\.learnerCollegeAMembership\)/);
 });
