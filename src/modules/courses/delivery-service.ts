@@ -138,7 +138,11 @@ export async function createCourseSectionDelivery(
       // Recheck ACTIVE after acquiring the parent's SHARE row lock.
       // An offering archival FOR UPDATE must serialize with this create.
       const [activeOffering] = await tx
-        .select({ id: courseOfferings.id })
+        .select({
+          id: courseOfferings.id,
+          cohortId: courseOfferings.cohortId,
+          academicPeriodId: courseOfferings.academicPeriodId,
+        })
         .from(courseOfferings)
         .where(and(
           eq(courseOfferings.id, input.offeringId),
@@ -149,6 +153,32 @@ export async function createCourseSectionDelivery(
 
       if (!activeOffering) {
         throw new CoursesServiceError("OFFERING_NOT_FOUND");
+      }
+
+      // The pre-transaction section eligibility check can become stale if
+      // a section is archived or rescheduled before we insert this delivery.
+      // SHARE locks the exact section row and rechecks it against the locked
+      // offering. A section reassignment cannot commit between this read
+      // and the child insert through the normal academic update path.
+      const [lockedSection] = await tx
+        .select({
+          id: sections.id,
+          cohortId: sections.cohortId,
+          academicPeriodId: sections.academicPeriodId,
+          status: sections.status,
+        })
+        .from(sections)
+        .where(eq(sections.id, input.sectionId))
+        .for("share")
+        .limit(1);
+
+      if (
+        !lockedSection ||
+        lockedSection.status !== "ACTIVE" ||
+        lockedSection.cohortId !== activeOffering.cohortId ||
+        lockedSection.academicPeriodId !== activeOffering.academicPeriodId
+      ) {
+        throw new CoursesServiceError("SECTION_NOT_DELIVERABLE");
       }
 
       const [created] = await tx
