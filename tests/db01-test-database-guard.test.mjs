@@ -31,6 +31,26 @@ test("DB01 guard rejects same app target with different credentials", () => {
     TEST_DATABASE_URL:local, DATABASE_URL:"postgres://other:pass@127.0.0.1/lms_vnext_test"
   }), /configured application database/);
 });
+test("DB051 canonical guard collapses local host aliases before application target check", () => {
+  for (const appHost of ["localhost", "[::1]"]) {
+    assert.throws(
+      () => assertSafeDb01TestTarget({
+        TEST_DATABASE_URL: local,
+        DATABASE_URL: `postgresql://app:other-secret@${appHost}:5432/lms_vnext_test`,
+      }),
+      /configured application database/,
+      appHost,
+    );
+  }
+  assert.throws(
+    () => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL: "postgresql://test:secret@localhost/lms_vnext_test",
+      DATABASE_URL: "postgresql://app:secret@127.0.0.1:5432/lms_vnext_test",
+    }),
+    /configured application database/,
+  );
+});
+
 test("DB01 guard rejects non-PostgreSQL URL schemes", () => {
   assert.throws(() => assertSafeDb01TestTarget({ TEST_DATABASE_URL:"https://127.0.0.1/lms_vnext_test" }),
     /PostgreSQL URL/);
