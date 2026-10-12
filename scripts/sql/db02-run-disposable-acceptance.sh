@@ -38,6 +38,27 @@ if [[ ! -f "AGENTS.md" ]] ||
   exit 2
 fi
 
+# A caller-controlled expected name alone is NOT a safe disposal boundary:
+# before the first database connection, validate the actual URL as an explicitly
+# named test/e2e target, reject redirecting DSN parameters, require exact
+# confirmation for remote hosts, and reject an optional configured app target.
+# The existing DB01 guard is shared and already covered by negative tests.
+# Set DB02_APP_DATABASE_URL to the app/production URL when available; do not
+# replace this with the disposable URL. Never echo either URL or credentials.
+node --input-type=module <<'DB02_SAFE_TARGET'
+import { assertSafeDb01TestTarget } from "./scripts/db01-test-database-guard.mjs";
+
+const target = assertSafeDb01TestTarget({
+  TEST_DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_URL: process.env.DB02_APP_DATABASE_URL,
+  DB01_REMOTE_TEST_DATABASE_CONFIRM: process.env.DB01_REMOTE_TEST_DATABASE_CONFIRM,
+});
+if (target.database !== process.env.DB02_EXPECTED_DATABASE) {
+  throw new Error("DB02 expected database does not match guarded URL target");
+}
+console.log(`DB02 guarded test-target preflight PASS: ${target.mode} ${target.host}/${target.database}`);
+DB02_SAFE_TARGET
+
 # Do not hardcode URL/password into error messages. The actual database name,
 # not a guessed hostname, must match the caller's explicit disposable target.
 ACTUAL_DATABASE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
