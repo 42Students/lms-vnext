@@ -514,7 +514,7 @@ export function AdminAttendanceWorkspace({
                                 "Roll unavailable"}
                           </p>
                         </td>
-                        {data.grid.sessions.map(
+                        {(data.grid?.sessions ?? []).map(
                           (session) => {
                             const record =
                               recordMap.get(
