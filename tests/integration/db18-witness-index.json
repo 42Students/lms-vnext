@@ -59,7 +59,7 @@
       "file": "tests/integration/db18-registered-negative-witnesses.test.ts",
       "title": "rejects a quiz attempt using a different delivery than its quiz",
       "guard": "db06_quiz_attempt_parent_guard",
-      "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
+      "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
       "execution": "NOT_RUN"
     },
