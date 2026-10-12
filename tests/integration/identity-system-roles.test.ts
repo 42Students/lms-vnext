@@ -108,7 +108,7 @@ function createBootstrapDirectory() {
       createCount += 1;
       user = {
         uid: bootstrapIdentityUid,
-        phoneNumber: input.phoneNumber,
+        phoneNumber: input.phoneNumber ?? null,
         email: input.email ?? null,
         displayName: input.displayName,
       };
