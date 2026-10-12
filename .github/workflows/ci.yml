@@ -591,11 +591,15 @@ jobs:
           psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-outbound-queue-staging.sql
           psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-global-email-suppression-candidate.sql
           psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-outbound-scope-fk-staging.sql
-      - name: DB10 queue confidentiality, idempotency, suppression and composite tenancy PG
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql
+      - name: DB10 queue confidentiality, idempotency, suppression, tenant and dispatch-fence PG
+        env:
+          DB067_DISPATCH_ACCEPTANCE: "1"
         run: >
           npx vitest run --config vitest.db.config.ts
           tests/integration/db10-outbound-queue.test.ts
           tests/integration/db10-outbound-scope-fk.test.ts
+          tests/integration/db067-global-email-pre-send.test.ts
 
   browser:
     runs-on: ubuntu-latest
