@@ -40,8 +40,11 @@ function issues(sqlSource, schemaSource) {
     problems.push("COMMENT_HARD_DELETE_ALLOWED");
   if (!new RegExp("BEFORE TRUNCATE\\s+ON project_task_comments\\s+FOR EACH STATEMENT\\s+EXECUTE FUNCTION " + erased, "i").test(trigger(sqlSource, "w03_task_comments_no_truncate") ?? ""))
     problems.push("COMMENT_TRUNCATE_ALLOWED");
-  if (!/CREATE FUNCTION w03_guard_project_comment_identity\(\) RETURNS trigger[\s\S]*?END \$\$;/i.test(sqlSource))
-    problems.push("MISSING_COMMENT_IDENTITY_FUNCTION");
+  for (const functionName of ["w03_reject_project_comment_erasure", "w03_guard_project_comment_identity"]) {
+    const pattern = new RegExp("CREATE FUNCTION " + functionName +
+      "\\(\\) RETURNS trigger\\s+LANGUAGE plpgsql AS \\$w03_comments_guard\\$[\\s\\S]*?END \\$w03_comments_guard\\$;", "i");
+    if (!pattern.test(sqlSource)) problems.push("MALFORMED_COMMENT_FUNCTION:" + functionName);
+  }
   for (const field of ["id", "project_id", "project_task_id", "commenter_user_id", "created_at"]) {
     if (!sqlSource.includes("NEW." + field + " IS DISTINCT FROM OLD." + field))
       problems.push("COMMENT_IDENTITY_MUTABLE:" + field);
@@ -78,6 +81,10 @@ test("detects missing comment soft-delete and reparent guards", () => {
   assert(issues(noReparent, schema).includes("COMMENT_IDENTITY_MUTABLE:project_task_id"));
 });
 
+test("detects invalid unbalanced PL/pgSQL dollar delimiters", () => {
+  const mutant = sql.replace("LANGUAGE plpgsql AS $w03_comments_guard$", "LANGUAGE plpgsql AS $");
+  assert(issues(mutant, schema).some(code => code.startsWith("MALFORMED_COMMENT_FUNCTION:")));
+});
 test("detects SQL/Drizzle chronology mismatch", () => {
   const mutant = schema.replace('check("w03_task_comments_deleted_after_created_ck"', 'check("wrong_name"');
   assert(issues(sql, mutant).includes("MISSING_DRIZZLE_CHRONOLOGY:w03_task_comments_deleted_after_created_ck"));
