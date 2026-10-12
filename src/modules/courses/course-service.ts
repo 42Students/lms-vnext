@@ -8,9 +8,11 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  colleges,
   courseOfferings,
   courses,
   departments,
+  organizations,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -210,18 +212,54 @@ export async function createCourse(
   );
 
   try {
-    const [created] = await getDb()
-      .insert(courses)
-      .values({
-        departmentId: input.departmentId,
-        name: input.name,
-        code: input.code,
-        description: input.description ?? null,
-      })
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // Department may be archived, transferred to another college, or its
+      // college/organization disabled after the permission precheck. Hold
+      // SHARE locks on the entire authorized tenant path through INSERT.
+      const [lockedDepartment] = await tx
+        .select({
+          id: departments.id,
+          collegeId: departments.collegeId,
+          organizationId: colleges.organizationId,
+        })
+        .from(departments)
+        .innerJoin(
+          colleges,
+          eq(colleges.id, departments.collegeId),
+        )
+        .innerJoin(
+          organizations,
+          eq(organizations.id, colleges.organizationId),
+        )
+        .where(and(
+          eq(departments.id, input.departmentId),
+          isNull(departments.archivedAt),
+          eq(colleges.status, "ACTIVE"),
+          eq(organizations.status, "ACTIVE"),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!lockedDepartment ||
+          lockedDepartment.collegeId !== department.collegeId ||
+          lockedDepartment.organizationId !== department.organizationId) {
+        throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courses)
+        .values({
+          departmentId: input.departmentId,
+          name: input.name,
+          code: input.code,
+          description: input.description ?? null,
+        })
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapCourseConstraint(error);
   }
 }
