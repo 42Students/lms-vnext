@@ -10,6 +10,10 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   courseLearningPaths,
   courseOfferings,
+  courses,
+  departments,
+  colleges,
+  organizations,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -139,16 +143,37 @@ export async function createLearningPath(
       // A stale offering scope read must not allow a new path after archive.
       // Offering archive holds FOR UPDATE; SHARE rechecks status in this tx.
       const [activeOffering] = await tx
-        .select({ id: courseOfferings.id })
+        .select({
+          id: courseOfferings.id,
+          courseId: courseOfferings.courseId,
+          cohortId: courseOfferings.cohortId,
+          academicPeriodId: courseOfferings.academicPeriodId,
+          collegeId: departments.collegeId,
+          organizationId: colleges.organizationId,
+        })
         .from(courseOfferings)
+        .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
         .where(and(
           eq(courseOfferings.id, input.offeringId),
           eq(courseOfferings.status, "ACTIVE"),
+          eq(courses.status, "ACTIVE"),
+          eq(colleges.status, "ACTIVE"),
+          eq(organizations.status, "ACTIVE"),
         ))
         .for("share")
         .limit(1);
 
-      if (!activeOffering) {
+      if (!activeOffering ||
+          activeOffering.courseId !== offering.courseId ||
+          activeOffering.cohortId !== offering.cohortId ||
+          activeOffering.academicPeriodId !== offering.academicPeriodId ||
+          activeOffering.collegeId !== offering.collegeId ||
+          activeOffering.organizationId !== offering.organizationId) {
+        // Authorization was granted for the previously loaded offering.
+        // A concurrent tenant/scope move must not reuse that stale grant.
         throw new CoursesServiceError("OFFERING_NOT_FOUND");
       }
 
@@ -193,33 +218,75 @@ export async function updateLearningPath(
     collegeId: current.collegeId,
   });
 
-  const [updated] = await getDb()
-    .update(courseLearningPaths)
-    .set({
-      ...input,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(
-          courseLearningPaths.id,
-          learningPathId,
-        ),
-        ne(
-          courseLearningPaths.status,
-          "ARCHIVED",
-        ),
-      ),
-    )
-    .returning();
+  return getDb().transaction(async (tx) => {
+    const [lockedPath] = await tx
+      .select({ id: courseLearningPaths.id })
+      .from(courseLearningPaths)
+      .where(and(
+        eq(courseLearningPaths.id, learningPathId),
+        eq(courseLearningPaths.offeringId, current.offeringId),
+        ne(courseLearningPaths.status, "ARCHIVED"),
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "LEARNING_PATH_NOT_FOUND",
-    );
-  }
+    if (!lockedPath) {
+      throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
+    }
 
-  return updated;
+    // Re-evaluate the offering's tenant and course linkage while locked.
+    // An earlier auth check cannot authorize a concurrent scope change.
+    const [lockedOffering] = await tx
+      .select({
+        id: courseOfferings.id,
+        courseId: courseOfferings.courseId,
+        cohortId: courseOfferings.cohortId,
+        academicPeriodId: courseOfferings.academicPeriodId,
+        collegeId: departments.collegeId,
+        organizationId: colleges.organizationId,
+      })
+      .from(courseOfferings)
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(
+        eq(courseOfferings.id, current.offeringId),
+        eq(courseOfferings.status, "ACTIVE"),
+        eq(courses.status, "ACTIVE"),
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
+      ))
+      .for("share")
+      .limit(1);
+
+    if (!lockedOffering ||
+        lockedOffering.courseId !== current.courseId ||
+        lockedOffering.cohortId !== current.cohortId ||
+        lockedOffering.academicPeriodId !== current.academicPeriodId ||
+        lockedOffering.collegeId !== current.collegeId ||
+        lockedOffering.organizationId !== current.organizationId) {
+      throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
+    }
+
+    const [updated] = await tx
+      .update(courseLearningPaths)
+      .set({
+        ...input,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(courseLearningPaths.id, learningPathId),
+        eq(courseLearningPaths.offeringId, current.offeringId),
+        ne(courseLearningPaths.status, "ARCHIVED"),
+      ))
+      .returning();
+
+    if (!updated) {
+      throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
+    }
+    return updated;
+  });
 }
 
 export async function transitionLearningPath(
@@ -263,6 +330,58 @@ export async function transitionLearningPath(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    const [lockedPath] = await tx
+      .select({ id: courseLearningPaths.id })
+      .from(courseLearningPaths)
+      .where(and(
+        eq(courseLearningPaths.id, learningPathId),
+        eq(courseLearningPaths.offeringId, current.offeringId),
+        input.action === "PUBLISH"
+          ? eq(courseLearningPaths.status, "DRAFT")
+          : ne(courseLearningPaths.status, "ARCHIVED"),
+      ))
+      .for("update")
+      .limit(1);
+
+    if (!lockedPath) {
+      throw new CoursesServiceError("INVALID_LEARNING_PATH_TRANSITION");
+    }
+
+    // Re-evaluate the offering's tenant and course linkage while locked.
+    // An earlier auth check cannot authorize a concurrent scope change.
+    const [lockedOffering] = await tx
+      .select({
+        id: courseOfferings.id,
+        courseId: courseOfferings.courseId,
+        cohortId: courseOfferings.cohortId,
+        academicPeriodId: courseOfferings.academicPeriodId,
+        collegeId: departments.collegeId,
+        organizationId: colleges.organizationId,
+      })
+      .from(courseOfferings)
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(
+        eq(courseOfferings.id, current.offeringId),
+        eq(courseOfferings.status, "ACTIVE"),
+        eq(courses.status, "ACTIVE"),
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
+      ))
+      .for("share")
+      .limit(1);
+
+    if (!lockedOffering ||
+        lockedOffering.courseId !== current.courseId ||
+        lockedOffering.cohortId !== current.cohortId ||
+        lockedOffering.academicPeriodId !== current.academicPeriodId ||
+        lockedOffering.collegeId !== current.collegeId ||
+        lockedOffering.organizationId !== current.organizationId) {
+      throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
+    }
+
     const [updated] = await tx
       .update(courseLearningPaths)
       .set({
@@ -271,6 +390,7 @@ export async function transitionLearningPath(
       })
       .where(and(
         eq(courseLearningPaths.id, learningPathId),
+        eq(courseLearningPaths.offeringId, current.offeringId),
         input.action === "PUBLISH"
           ? eq(courseLearningPaths.status, "DRAFT")
           : ne(courseLearningPaths.status, "ARCHIVED"),
