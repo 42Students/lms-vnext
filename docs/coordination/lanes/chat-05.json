@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-078",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB077_DB04_HISTORICAL_SOURCE_DISPOSITION_COMPLETED",
+    "checkpointKind": "DB078_PICKED_DB05_HISTORICAL_COLUMN_DISPOSITION",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "fd55271695dcb348a31b1a550bce79fc6d631d39",
-    "lastWorkerMergedSha": "51e6af72a65d6b5fb787e70264ad77ae0649ee69",
+    "observedMainSha": "f83a052efc6234348740c370c8a52b75b169b9b1",
+    "lastWorkerMergedSha": "f83a052efc6234348740c370c8a52b75b169b9b1",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-077 COMPLETED source-only: 33 historical DB04 fields finalized. approver_id_card retired with removed proctored-exam module; student_registration retired from current product as unconsumed historical external-sync ledger. Future integrations require new normalized contracts."
+    "summary": "DB-078 started to resolve physical course.default_subscription_days and course.formal_title persistence while preserving active derived formal_title API semantics."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -116,7 +116,7 @@
     "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
     "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "Refresh DATABASE queue and continue with another independent blocker-removal task; do not modify Chat 3 DB-007 implementation ownership.",
+  "nextAction": "Freeze typed retain-vs-retire decisions for the two historical physical course columns using pinned source evidence; author regression guards and hand off to DB-008.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -190,7 +190,8 @@
     "DB-065",
     "DB-064",
     "DB-004",
-    "DB-077"
+    "DB-077",
+    "DB-078"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -219,7 +220,7 @@
     "DB-004",
     "DB-077"
   ],
-  "lastPickedAt": "2026-10-12T14:06:00.000Z",
+  "lastPickedAt": "2026-10-12T14:18:00.000Z",
   "lastCompletedAt": "2026-10-12T14:14:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
