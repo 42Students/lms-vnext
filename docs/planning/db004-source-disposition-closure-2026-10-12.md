@@ -3,6 +3,8 @@
 **Date:** 2026-10-12 · **Legacy backend pinned:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
 **Phase:** DATABASE · **Acceptance:** SOURCE COMPLETED / NOT DATABASE-VERIFIED
 
+**Important subsequent synchronization:** The authoritative DB-004 source-disposition closure was independently committed at `docs/planning/db01-chat05-final-field-disposition.json` (312/312 source decisions, runtime unverified). The 123 alternative destinations / 14 non-persistence review cases below are a **supplementary adversarial design review**, NOT the canonical denominator or a claim of 14 still anonymous source dispositions. Three active `token_version` security fields were corrected in the canonical ledger to DB-004 provider/session revocation ownership (commit `195c285`). See `tests/db004-session-revocation-ownership.test.mjs`. Independent source V8 checks passed 10/10; no Node/PG migration test executed.
+
 ## Delivered on `main`
 
 - Canonical, exact-keyed **312 / 312** field-level source-disposition proposals in `docs/planning/db004-312-source-target-disposition-proposals.json`.
