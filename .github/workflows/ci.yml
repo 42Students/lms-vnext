@@ -543,6 +543,55 @@ jobs:
           tests/integration/placements-db08-external-offers.test.ts
           tests/integration/placements-w04-company-drive-facts.test.ts
 
+
+  # DB-024/050/067: verify encrypted outbox queue, private opt-outs and
+  # composite organization-college FK using an independent disposable fixture.
+  # This NEVER sends email and does NOT register or activate draft tables.
+  db10-outbound-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB10_ISOLATED_TEST_DATABASE: "1"
+      DB10_OUTBOUND_SCOPE_FK_ENFORCED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate registered database journal
+        run: npm run db:journal:verify
+      - name: Prepare ephemeral PostgreSQL without application DB alias
+        run: npm run db:test:prepare
+      - name: Apply encrypted outbox and both suppression layers to disposable PG only
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-outbound-queue-staging.sql
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-global-email-suppression-candidate.sql
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-outbound-scope-fk-staging.sql
+      - name: DB10 queue confidentiality, idempotency, suppression and composite tenancy PG
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db10-outbound-queue.test.ts
+          tests/integration/db10-outbound-scope-fk.test.ts
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
