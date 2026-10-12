@@ -2,7 +2,7 @@
 
 **Owner:** Chat 3 / DB-012 source + staging reconciliation  
 **Integrator:** W01 / Chat 1 only  
-**Status:** integration-ready staging map; **not migrated, not replayed, not DB-verified**  
+**Status:** partially structurally registered by Chat 1; 0043 share defaults are PostgreSQL-accepted under DB-002, 0044 policy/CRM table structure is registered, and stronger DB09 integrity/runtime cutover remains pending  
 **Legacy BE oracle:** `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
 **Legacy FE oracle:** `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`
 
@@ -49,6 +49,17 @@ Use exactly one DB09 parent-key source:
 
 It standardizes ID-first composite UNIQUE keys for colleges, memberships, departments, company relationships, jobs, applications, rounds and activity events, plus `placement_recruiter_profiles(user_id, company_id)` so recruiter-owned multi-college groups cannot pair a recruiter with another company. The collaboration, scheduling and notification child drafts no longer declare their own competing parent keys.
 
+## Current W01 registration checkpoint — 2026-10-12
+
+Chat 1 has integrated only the canonical structural delta already present in Drizzle source:
+
+- `0043_db09_share_column_defaults` — relationship-scoped share-default column/check; PostgreSQL accepted under DB-002.
+- `0044_db09_policy_crm_structural` — two policy tables plus three recruiter CRM tables from `tpo-policy.ts` and `tpo-crm.ts`.
+
+0044 deliberately excludes the stronger `db09_*` functions/triggers from the staged SQL. Those remain DB-017/DB-012 follow-up and require targeted PostgreSQL tenant/principal/lifecycle acceptance. Structural registration is not DB09 runtime verification.
+
+Cross-domain authoritative disposition: `docs/planning/db017-staged-integration-manifest.json`.
+
 ## Recommended registration order
 
 ### 0. Shared parent composite keys
@@ -60,12 +71,14 @@ Reconcile `db09-parent-composite-keys-candidate.sql` against already registered 
 Structural source: `src/db/schema/tpo-policy.ts`  
 Reference DDL: `docs/planning/sql/db09-policy-visibility-premerge.sql`
 
-Creates/normalizes college placement rules and company visibility settings.
+**Registered structural baseline:** `0044_db09_policy_crm_structural`. It creates/normalizes college placement rules and company visibility settings. PostgreSQL policy/runtime behavior remains unverified.
 
 ### 2. Recruiter CRM
 
 Structural source: `src/db/schema/tpo-crm.ts`  
 Canonical staged SQL: `docs/planning/sql/db09-tpo-crm-premerge.sql`
+
+**Registered structural baseline:** `0044_db09_policy_crm_structural` creates the three CRM tables/checks/FKs/indexes only. The stronger owner/grant/activity/follow-up functions and triggers in the canonical staged SQL remain deferred.
 
 Creates:
 
@@ -146,6 +159,8 @@ Do **not** register a post-create ALTER for the four scalar fields. The old
 ### 5. Company relationship share defaults
 
 **Canonical structural source:** `src/db/schema/placements.ts :: placementCompanyRelationships.shareColumnDefaults`
+
+**Registered + DB-002 PostgreSQL accepted:** `0043_db09_share_column_defaults`
 
 Legacy `industry_company.export_columns_json` is redesigned to tenant-safe
 `placement_company_relationships.share_column_defaults`; actual share links
