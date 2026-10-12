@@ -23,6 +23,7 @@ export function verifyDrizzleJournal(root = process.cwd()) {
   const tags = new Set();
   const snapshotIds = new Set();
   let previousSnapshotId = null;
+  let previousMigrationWhen = null;
   for (const [ordinal, entry] of journal.entries.entries()) {
     const prefix = String(ordinal).padStart(4, "0");
     if (entry.idx !== ordinal) errors.push(`Journal entry ${ordinal} has idx ${entry.idx}`);
@@ -33,6 +34,9 @@ export function verifyDrizzleJournal(root = process.cwd()) {
     tags.add(entry.tag);
     if (!Number.isSafeInteger(entry.when) || entry.when <= 0)
       errors.push(`Journal entry ${ordinal} has invalid timestamp`);
+    else if (previousMigrationWhen !== null && entry.when <= previousMigrationWhen)
+      errors.push(`Migration timestamp is not strictly increasing at ${entry.tag}`);
+    if (Number.isSafeInteger(entry.when)) previousMigrationWhen = entry.when;
 
     const sqlPath = path.join(folder, entry.tag + ".sql");
     if (!existsSync(sqlPath)) errors.push(`Missing registered SQL: ${entry.tag}.sql`);
