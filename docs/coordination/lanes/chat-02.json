@@ -721,6 +721,61 @@
       "doc": "docs/planning/db067-outbound-dispatch-fencing-contract.md",
       "w01HandoffIssue": 21,
       "sourceHeadBeforeCheckpoint": "488202a08dcbe4ac47d85e0918fc5d28b3a96b66"
+    },
+    "db073ProjectLineage": {
+      "status": "COMPLETED_STAGING_NOT_DONE_VERIFIED",
+      "implementationSha": "1d25dd4c97bc99bbcea5fb9aa9d7661f2e251937",
+      "scope": "3 composite FKs sprint→release, task→sprint, task submission→task, preflight DO 23514",
+      "sourceAuthored": 14,
+      "pgAuthored": 7,
+      "sourceV8Passed": 14,
+      "postgresPassed": 0,
+      "files": [
+        "docs/planning/sql/db07-project-lineage-fks-staging.sql",
+        "docs/planning/db073-project-lineage-integrity-contract.md",
+        "tests/db073-project-lineage-source.test.mjs",
+        "tests/integration/db073-project-lineage-fks.test.ts"
+      ]
+    },
+    "db074ProjectReviewEvaluation": {
+      "status": "COMPLETED_STAGING_NOT_DONE_VERIFIED",
+      "implementationSha": "5624a861df042693770aa12369273340abf833f3",
+      "scope": "2 composite FKs reviews/evaluations→parent project submission, preflight DO 23514",
+      "sourceAuthored": 12,
+      "pgAuthored": 6,
+      "sourceV8Passed": 12,
+      "postgresPassed": 0,
+      "files": [
+        "docs/planning/sql/db07-review-evaluation-parent-fks-staging.sql",
+        "docs/planning/db074-review-evaluation-integrity-contract.md",
+        "tests/db074-review-evaluation-source.test.mjs",
+        "tests/integration/db074-review-evaluation-parent-fks.test.ts"
+      ]
+    },
+    "db075ProjectMeetingLinks": {
+      "status": "COMPLETED_STAGING_NOT_DONE_VERIFIED",
+      "implementationSha": "c43fa7fd707c35d07432c31f07c766ac9070f2ad",
+      "scope": "3 composite FKs meeting→same-project sprint/task and paired same-sprint task",
+      "sourceAuthored": 12,
+      "pgAuthored": 9,
+      "sourceV8Passed": 12,
+      "postgresPassed": 0,
+      "files": [
+        "docs/planning/sql/db07-meeting-linked-ancestry-staging.sql",
+        "docs/planning/db075-meeting-ancestry-integrity-contract.md",
+        "tests/db075-meeting-ancestry-source.test.mjs",
+        "tests/integration/db075-meeting-ancestry.test.ts"
+      ]
+    },
+    "db073075ExecutionEvidence": {
+      "sourceRunner": "GitHub exact-blob JavaScript V8 compatibility harness",
+      "sourcePassed": 38,
+      "sourceFailed": 0,
+      "nodeTestRunnerExecuted": false,
+      "postgresAuthored": 22,
+      "postgresExecuted": 0,
+      "record": "docs/planning/db073-075-chat02-source-evidence-2026-10-12.json",
+      "evidenceCommit": "28b2b7b707491ed706a3527318809f3d86dd3ed5"
     }
   },
   "qualityGates": {
@@ -789,7 +844,13 @@
     "tests/db07-template-version-pointer-source.test.mjs",
     "tests/integration/db07-template-version-pointer-fks.test.ts",
     "tests/db10-outbound-scope-fk-source.test.mjs",
-    "tests/integration/db10-outbound-scope-fk.test.ts"
+    "tests/integration/db10-outbound-scope-fk.test.ts",
+    "tests/db073-project-lineage-source.test.mjs",
+    "tests/integration/db073-project-lineage-fks.test.ts",
+    "tests/db074-review-evaluation-source.test.mjs",
+    "tests/integration/db074-review-evaluation-parent-fks.test.ts",
+    "tests/db075-meeting-ancestry-source.test.mjs",
+    "tests/integration/db075-meeting-ancestry.test.ts"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)",
@@ -798,7 +859,8 @@
   "blockers": [
     "Separate verification gap (not GitHub Actions): disposable PostgreSQL not available in this runner for DB01 migration replay and 14 authored integration witnesses.",
     "DB01 staged tombstone, membership-state and auth/session schema need Chat 1 migration/product-policy decisions; none applied or PG verified.",
-    "DB01 code-fixed parent lock and owner scope must be executed under actual PG and typechecked: 8 real-repository PG cases and 18 authored Node cases, 0 runner passes claimed."
+    "DB01 code-fixed parent lock and owner scope must be executed under actual PG and typechecked: 8 real-repository PG cases and 18 authored Node cases, 0 runner passes claimed.",
+    "DB073/074/075 are source-COMPLETED, but all 22 PostgreSQL acceptance cases, Drizzle migration registration/replay and service regressions remain unexecuted; these are verification gates, NOT GitHub Actions billing blockers."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -817,7 +879,7 @@
       "request": "User-authorized resumed database identity work; original Chat2 findings, commits, tests and pending policy decisions retained; Chat5 owns current source-only hardening."
     }
   ],
-  "nextAction": "Chat1 migration integrator: register unique colleges(id,organization_id), composite outbound FK after DB10 base schema, replay disposable PG and execute 5 opt-in witnesses; run 10 Node cases independently. Chat2 should support original core DATABASE closure without stealing DB004 (Chat5) or Chat1 registered files. GitHub Actions billing not blocker.",
+  "nextAction": "Chat1 single migration integrator: de-duplicate DB073/075 shared unique parent indexes; register DB073/074/075 composite FKs in generated Drizzle schema/migrations with dirty-data preflights. Run 22 opt-in PG witnesses on independently provisioned disposable DB. Chat2 free to claim another non-overlapping DATABASE task, not DB004 owned by Chat5.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -932,7 +994,11 @@
     "https://github.com/42Students/lms-vnext/commit/073d74509ce34eb63634b40b3fa2841750e199a1",
     "https://github.com/42Students/lms-vnext/commit/f3acf038aac98fc00df8f3bde0723209ab9511cc",
     "https://github.com/42Students/lms-vnext/commit/ad7feb5b4f5bf4febaaeb8f12ffb9afc8b334a64",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6123100875"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6123100875",
+    "https://github.com/42Students/lms-vnext/commit/1d25dd4c97bc99bbcea5fb9aa9d7661f2e251937",
+    "https://github.com/42Students/lms-vnext/commit/5624a861df042693770aa12369273340abf833f3",
+    "https://github.com/42Students/lms-vnext/commit/c43fa7fd707c35d07432c31f07c766ac9070f2ad",
+    "https://github.com/42Students/lms-vnext/commit/28b2b7b707491ed706a3527318809f3d86dd3ed5"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -940,13 +1006,19 @@
     "DB-067",
     "DB-068",
     "DB-070",
-    "DB-071"
+    "DB-071",
+    "DB-073",
+    "DB-074",
+    "DB-075"
   ],
   "completedTaskIds": [
     "DB-067",
     "DB-068",
     "DB-070",
-    "DB-071"
+    "DB-071",
+    "DB-073",
+    "DB-074",
+    "DB-075"
   ],
   "lastPickedAt": "2026-10-10T20:26:41.998Z",
   "lastCompletedAt": "2026-10-11T21:15:41.072Z",
