@@ -114,16 +114,21 @@ function blueprint(label: string) {
 }
 
 async function cleanup() {
-  // Once DB070 is active, these revisions are permanently append-only.
+  // DB070 immutable revision triggers or DB071 deferred header/version pointers
+  // make destructive revision cleanup invalid: preserve both invariants.
   // A test must never disable audit triggers or DELETE immutable history.
   // Unique fixture slugs prevent collisions on repeated disposable DB runs.
-  const status = await pool.query<{ immutable: boolean }>(
-    "select exists (select 1 from pg_trigger " +
+  const status = await pool.query<{ retainHistory: boolean }>(
+    "select (exists (select 1 from pg_trigger " +
       "where tgrelid = 'project_template_versions'::regclass " +
       "and tgname = 'db07_project_template_versions_append_only' " +
-      "and tgenabled = 'O' and not tgisinternal) as immutable",
+      "and tgenabled = 'O' and not tgisinternal) " +
+      "or exists (select 1 from pg_constraint " +
+      "where conrelid = 'project_templates'::regclass " +
+      "and conname in ('project_templates_current_version_snapshot_fk', " +
+      "'project_templates_published_version_snapshot_fk'))) as \"retainHistory\"",
   );
-  if (status.rows[0]?.immutable) return;
+  if (status.rows[0]?.retainHistory) return;
   await pool.query(
     "delete from project_template_college_assignments " +
       "where template_id in (select id from project_templates where slug like 'p2-%')",
