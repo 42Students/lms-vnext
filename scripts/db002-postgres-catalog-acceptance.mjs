@@ -3,7 +3,7 @@
 import {readFileSync} from "node:fs";
 import pg from "pg";
 import {assertSafeDb01TestTarget} from "./db01-test-database-guard.mjs";
-export const requiredTables=["organizations","colleges","users","college_memberships","courses","course_section_deliveries","quiz_attempts","assignment_submissions"];
+export const requiredTables=["organizations","colleges","users","college_memberships","courses","course_section_deliveries","quiz_attempts","assignment_submissions","placement_company_relationships","placement_college_rules","placement_company_visibility_settings","placement_tpo_leads","placement_tpo_lead_activities","placement_tpo_followups"];
 export function validateTarget(raw, env=process.env){
  if(!raw)throw Error("TEST_DATABASE_URL required");
  const target=assertSafeDb01TestTarget({
