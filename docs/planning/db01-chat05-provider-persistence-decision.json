@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "worker": "CHAT_05",
+  "status": "ARCHITECTURE_DECIDED_RUNTIME_UNVERIFIED",
+  "decision": "EXTERNAL_IDENTITY_AUTHORITY_WITH_MINIMAL_POSTGRES_SECURITY_SIDECARS",
+  "principles": [
+    "Firebase/Identity Platform is the authority for identity UID, credential proof, session-cookie validity and global refresh-token revocation.",
+    "PostgreSQL is authoritative for canonical platform users, tenant memberships, roles, organization/college status and application authorization.",
+    "Never persist raw passwords, Firebase ID/access/refresh tokens, session cookies or raw one-time handoff codes.",
+    "A PostgreSQL sidecar is allowed only when it preserves a concrete product/audit/concurrency job not represented by the provider, and it must fail closed with keyed digests/MACs.",
+    "Provider acceptance and PostgreSQL migration replay remain separate DONE_VERIFIED gates."
+  ],
+  "flows": [
+    {
+      "id": "IDENTITY_DIRECTORY",
+      "legacyConcepts": [
+        "user identity/contact",
+        "learner/faculty/recruiter identity"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM",
+      "postgresRole": "users.identity_uid plus normalized email/phone/display/status projection",
+      "implementationEvidence": [
+        "src/modules/people/firebase-identity-directory.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/db/schema/users.ts"
+      ],
+      "decision": "KEEP_PROVIDER_AUTHORITY_AND_CANONICAL_USER_PROJECTION",
+      "runtimeVerified": false
+    },
+    {
+      "id": "LOCAL_PASSWORDS",
+      "legacyConcepts": [
+        "user.password",
+        "login_user.password",
+        "login_user.user_name"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM",
+      "postgresRole": "NONE_FOR_CREDENTIAL_SECRET",
+      "implementationEvidence": [
+        "src/auth/firebase-admin.ts",
+        "src/auth/session.ts"
+      ],
+      "decision": "RETIRE_LOCAL_PASSWORD_AND_LOGIN_USER_TABLE",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SESSION_COOKIE",
+      "legacyConcepts": [
+        "JWT access/refresh lifecycle",
+        "token_version"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM",
+      "postgresRole": "tenant authorization is re-resolved from current users/memberships/roles on every request",
+      "implementationEvidence": [
+        "src/auth/session.ts",
+        "src/auth/request-context.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "decision": "PROVIDER_SESSION_PLUS_LIVE_POSTGRES_AUTHORIZATION",
+      "runtimeVerified": false
+    },
+    {
+      "id": "PER_DEVICE_SESSION",
+      "legacyConcepts": [
+        "user_session",
+        "refresh_token_blocklist",
+        "single-device revoke UI"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM_FOR_CREDENTIAL_VALIDITY",
+      "postgresRole": "identity_device_sessions sidecar stores only keyed credential digest, device metadata, expiry/revocation actor/reason",
+      "implementationEvidence": [
+        "src/db/schema/db01-device-sessions.staged.ts",
+        "docs/planning/sql/db01-device-session-staging.sql"
+      ],
+      "decision": "PRESERVE_AS_MINIMAL_SIDECAR_NOT_CREDENTIAL_AUTHORITY",
+      "migrationState": "STAGED_UNREGISTERED",
+      "runtimeVerified": false
+    },
+    {
+      "id": "CROSS_HOST_HANDOFF",
+      "legacyConcepts": [
+        "auth_handoff_token",
+        "membership/domain switch"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM_FOR_FINAL_SESSION",
+      "postgresRole": "identity_auth_handoffs one-time keyed code MAC plus user/membership/domain/host binding and 2-minute TTL",
+      "implementationEvidence": [
+        "src/db/schema/db01-auth-handoffs.staged.ts",
+        "docs/planning/sql/db01-auth-handoffs-staging.sql",
+        "docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql"
+      ],
+      "decision": "PRESERVE_ONE_TIME_SCOPE_SIDECAR_RETIRE_RAW_ACCESS_REFRESH_TOKEN_COLUMNS",
+      "migrationState": "STAGED_UNREGISTERED",
+      "runtimeVerified": false
+    },
+    {
+      "id": "PHONE_EMAIL_OTP",
+      "legacyConcepts": [
+        "mobile_login_attempt",
+        "faculty_acct_verification",
+        "learner_acct_verification",
+        "OTP retry/resend/fallback"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM_FOR_IDENTITY_CREDENTIAL_PROOF",
+      "postgresRole": "identity_auth_attempts may preserve server-orchestrated retry budget, email fallback and anti-replay audit using keyed MACs/fingerprints only; it never becomes password/session authority",
+      "implementationEvidence": [
+        "src/db/schema/db01-auth-attempts.staged.ts",
+        "docs/planning/sql/db01-auth-attempts-staging.sql",
+        "docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql"
+      ],
+      "decision": "PRESERVE_MINIMAL_CHALLENGE_METADATA_SIDECAR_FOR_LEGACY_USER_JOBS",
+      "migrationState": "STAGED_UNREGISTERED",
+      "runtimeVerified": false
+    },
+    {
+      "id": "EMAIL_VERIFICATION_TOKEN",
+      "legacyConcepts": [
+        "email_verification_token"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM",
+      "postgresRole": "No raw verification token table. Store application/domain audit correlation only if a later API workflow proves it is required.",
+      "implementationEvidence": [
+        "src/modules/people/firebase-identity-directory.ts",
+        "src/modules/people/identity.ts"
+      ],
+      "decision": "PROVIDER_MANAGED_RETIRE_LOCAL_TOKEN_TABLE",
+      "runtimeVerified": false
+    },
+    {
+      "id": "TOKEN_VERSION",
+      "legacyConcepts": [
+        "faculty.token_version",
+        "learner.token_version",
+        "recruiter.token_version"
+      ],
+      "authority": "FIREBASE_IDENTITY_PLATFORM",
+      "postgresRole": "users.platform_status + current membership/role checks; per-device sidecar revocation where promoted",
+      "implementationEvidence": [
+        "src/auth/session.ts",
+        "src/modules/identity/context-service.ts",
+        "src/db/schema/db01-device-sessions.staged.ts"
+      ],
+      "decision": "RETIRE_PER_ROLE_TOKEN_EPOCH_COLUMNS",
+      "runtimeVerified": false
+    },
+    {
+      "id": "TENANT_AUTHORIZATION",
+      "legacyConcepts": [
+        "user_roles",
+        "role",
+        "faculty/learner/recruiter tenant role"
+      ],
+      "authority": "POSTGRESQL",
+      "postgresRole": "college_memberships, membership_roles, system_roles, recruiter grants and current organization/college lifecycle",
+      "implementationEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "decision": "POSTGRES_AUTHORITATIVE_CURRENT_ROLE_AND_TENANT_SCOPE",
+      "runtimeVerified": false
+    }
+  ],
+  "acceptance": {
+    "sourceDecisionComplete": true,
+    "activeMigrationRegistered": false,
+    "disposablePostgresVerified": false,
+    "providerEndToEndVerified": false,
+    "apiWorkflowVerified": false,
+    "doneVerified": false
+  }
+}
