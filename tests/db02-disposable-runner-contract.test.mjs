@@ -29,6 +29,21 @@ test("runner is opt-in and verifies exact disposable database identity", () => {
   assert.match(runner, /MUST NOT be run against production\/shared DB/);
 });
 
+test("runner validates the real URL through the shared fail-closed guard before psql", () => {
+  assert.match(runner, /assertSafeDb01TestTarget/);
+  assert.match(runner, /TEST_DATABASE_URL: process\.env\.DATABASE_URL/);
+  assert.match(runner, /DATABASE_URL: process\.env\.DB02_APP_DATABASE_URL/);
+  assert.match(runner, /DB01_REMOTE_TEST_DATABASE_CONFIRM: process\.env\.DB01_REMOTE_TEST_DATABASE_CONFIRM/);
+  assert.match(runner, /target\.database !== process\.env\.DB02_EXPECTED_DATABASE/);
+  assert.match(runner, /DB02 expected database does not match guarded URL target/);
+  const guardStart = runner.indexOf("node --input-type=module");
+  const databaseConnect = runner.indexOf('ACTUAL_DATABASE="$(psql');
+  assert.ok(guardStart >= 0 && databaseConnect > guardStart,
+    "test-target guard must run before any database connection");
+  assert.match(runner, /Guarded|guarded/);
+  assert.doesNotMatch(runner, /console\.log\([^)]*process\.env\.DATABASE_URL/);
+});
+
 test("runner derives and compares the exact canonical DB02 trigger manifest", () => {
   assert.match(runner, /EXPECTED_TRIGGER_NAMES/);
   assert.match(
