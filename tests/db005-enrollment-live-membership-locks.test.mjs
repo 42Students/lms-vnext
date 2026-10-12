@@ -37,7 +37,7 @@ test("DB005 keeps a real disposable PostgreSQL race witness, not an assertion-on
     new URL("./integration/db005-enrollment-membership-revocation-race.test.ts", import.meta.url),
     "utf8",
   );
-  assert.match(integration, /DB017_ISOLATED_TEST_DATABASE/);
+  assert.match(integration, /DB03_ISOLATED_TEST_DATABASE/);
   assert.match(integration, /testUrl !== process\.env\.DATABASE_URL/);
   assert.match(integration, /for update/);
   assert.match(integration, /MEMBERSHIP_NOT_ACTIVE/);
