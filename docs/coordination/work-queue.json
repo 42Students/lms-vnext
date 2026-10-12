@@ -374,17 +374,19 @@
       "paths": [
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "73c61ae091c55b7cc46a115ff4b69c3e7d19355b",
+      "status": "COMPLETED",
+      "latestEvidenceSha": "13de3dd968e7e7cb587429d6cba25ad55640c2a5",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "DB005_PG_VERIFICATION_PENDING: Chat1 must register/reconcile canonical DB02 staging, clean replay 0000->latest, run guarded db02-run-disposable-acceptance.sh with Node/PG negative+six two-session suites and record exact accepted SHA/results; no current runtime verified DB02 fields. Not a GitHub Actions billing blocker."
+      ],
+      "completionNote": "DB005 SOURCE IMPLEMENTATION COMPLETE / ACCEPTANCE PENDING: all 125/125 legacy DB02 source fields classified and target dispositioned; canonical additive UNREGISTERED DB02 staging contains 61 paired PL/pgSQL functions and 71 distinct triggers incl program ARCHIVE vs PLANNED/ACTIVE/COMPLETED cohort lifecycle lock hardening (5aa4d21, 12c7c69). Complete guarded disposable runner includes 10 native source test files, 8 rollback-only PG suites and 6 multi-session concurrency harnesses (new program archive pair 624b123); 16/16 exact-fetched-source V8 structural assertions PASSED; Node/PG/typecheck/migration replay NOT EXECUTED. Full handoff at docs/planning/db02-academic-progression-contract.md@13de3dd. Chat1 exclusively owns numbered DB02 Drizzle/schema-barrel registration and PostgreSQL acceptance; DB005 remains globally UNVERIFIED, so source completion does not close original 11 gate or unlock API/UI.",
       "pickedBy": 4,
       "pickedAt": "2026-10-10T20:27:02.917Z",
       "startedAt": "2026-10-10T20:27:20.228Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 4,
+      "completedAt": "2026-10-12T14:21:13.219Z",
+      "completionCommitSha": "13de3dd968e7e7cb587429d6cba25ad55640c2a5",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -408,6 +410,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:27:20.228Z",
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:21:13.219Z",
+          "reason": "Chat4 source implementation closed with 125/125 field design dispositions, canonical 61-function/71-trigger DB02 staging, program archive two-way row lock and all authored witness suites; W1 migration and executed PG acceptance still pending."
         }
       ],
       "progressNote": "DB02 source and canonical target disposition remains 125/125. Latest canonical UNREGISTERED staging has 61 unique db02_* trigger functions and 71 unique db02_* triggers; source-contract inventory is 97 authored cases across 11 db02*.test.mjs files, plus 8 rollback-only PostgreSQL acceptance SQL suites and 5 two-session concurrency suites. Chat 4 fixed stale DB02 cross-domain test path at 63b92f6 and hardened the disposable runner at 4e87f02/62b8c3c/73c61ae so trigger/table/column registration manifests are derived from the canonical staging instead of stale hard-coded counts. GitHub CI run 3446 executed PostgreSQL 17 and PASSED migration journal, clean replay+seed, second-run idempotence and catalog witness for the CURRENT REGISTERED schema, then failed later global integration tests. DB02 staged objects still have zero drizzle registration hits, so no DB02 PostgreSQL/runtime equivalence is claimed. DB-005 stays IN_PROGRESS pending Chat 1 registration and DB02 disposable/race execution."
