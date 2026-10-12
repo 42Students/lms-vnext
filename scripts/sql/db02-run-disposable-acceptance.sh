@@ -49,40 +49,37 @@ fi
 
 # Registration must have already occurred. Avoid accidentally measuring the
 # UNREGISTERED source artifacts against an older schema and reporting success.
-TRIGGER_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
-SELECT count(*)::integer
-FROM pg_trigger
-WHERE NOT tgisinternal
-  AND tgname IN (
-    'db02_cohort_promotion_readiness_guard',
-    'db02_program_term_course_type_history_guard',
-    'db02_program_term_delete_history_guard',
-    'db02_cohort_status_lifecycle_guard',
-    'db02_academic_period_date_history_guard',
-    'db02_cohort_progression_history',
-    'db02_progression_state_no_truncate',
-    'db02_lecture_hall_archive_guard',
-    'db02_schedule_future_hall_lifecycle_guard',
-    'db02_historic_offering_parent_guard',
-    'db02_learner_program_enrollment_tenant',
-    'db02_section_enrollment_cohort_period',
-    'db02_course_pool_reactivation_role_guard',
-    'db02_section_faculty_reactivation_role_guard',
-    'db02_teaching_reactivation_role_guard',
-    'db02_program_enrollment_reactivation_role_guard',
-    'db02_section_enrollment_reactivation_role_guard',
-    'db02_program_exit_close_active_sections',
-    'db02_course_archive_dependency_guard',
-    'db02_course_offering_archive_dependency_guard',
-    'db02_delivery_end_dependency_guard',
-    'db02_section_archive_dependency_guard'
-  );
-SQL
+# Derive the exact expected DB02 trigger manifest from the canonical staging source so this
+# preflight cannot silently go stale as the source is hardened. Trigger names are part of the
+# reviewable migration contract; a missing OR unexpected db02_* trigger fails closed.
+EXPECTED_TRIGGER_NAMES="$(
+  grep -Eo '^CREATE TRIGGER db02_[a-z0-9_]+'     scripts/sql/db02-academic-progression-and-rooms-staging.sql     | awk '{print $3}'     | sort -u
 )"
-if [[ "$TRIGGER_WITNESSES" != "22" ]]; then
-  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 22, found: $TRIGGER_WITNESSES)" >&2
+if [[ -z "$EXPECTED_TRIGGER_NAMES" ]]; then
+  echo "DB02 canonical staging exposes no trigger manifest" >&2
   exit 2
 fi
+
+REGISTERED_TRIGGER_NAMES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT tgname
+FROM pg_trigger
+WHERE NOT tgisinternal
+  AND tgname LIKE 'db02_%'
+ORDER BY tgname;
+SQL
+)"
+
+if [[ "$REGISTERED_TRIGGER_NAMES" != "$EXPECTED_TRIGGER_NAMES" ]]; then
+  echo "DB02 canonical migration trigger manifest mismatch" >&2
+  echo "Expected canonical triggers:" >&2
+  printf '%s\n' "$EXPECTED_TRIGGER_NAMES" >&2
+  echo "Registered database triggers:" >&2
+  printf '%s\n' "$REGISTERED_TRIGGER_NAMES" >&2
+  exit 2
+fi
+
+EXPECTED_TRIGGER_COUNT="$(printf '%s\n' "$EXPECTED_TRIGGER_NAMES" | sed '/^$/d' | wc -l | tr -d ' ')"
+echo "DB02 trigger manifest preflight PASS ($EXPECTED_TRIGGER_COUNT canonical triggers registered)"
 
 TABLE_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
 SELECT count(*)::integer
