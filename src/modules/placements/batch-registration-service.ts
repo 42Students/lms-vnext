@@ -11,6 +11,7 @@ import {
   programs,
   sectionEnrollments,
   sections,
+  users,
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
@@ -80,14 +81,19 @@ export async function registerOwnPlacementChoice(
       status: collegeMemberships.status,
       collegeId: collegeMemberships.collegeId,
       userId: collegeMemberships.userId,
+      platformStatus: users.platformStatus,
     }).from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .innerJoin(membershipRoles, and(
         eq(membershipRoles.membershipId, collegeMemberships.id),
         eq(membershipRoles.role, "LEARNER"),
       ))
       .where(eq(collegeMemberships.id, membership.id))
+      // Keep account/role/membership live through the registration INSERT.
+      .for("share")
       .limit(1);
     if (!learner || learner.status !== "ACTIVE" ||
+        learner.platformStatus !== "ACTIVE" ||
         learner.collegeId !== membership.collegeId ||
         learner.userId !== context.user.id) {
       throw new PlacementRegistrationError("DB08_REGISTRATION_FORBIDDEN");
