@@ -12,7 +12,8 @@
 | Read-only relational mismatch probes | 21 | 0 | Existing-row observation only; zero mismatches do not prove prevention |
 | Direct negative SQL boundary tests | 13 | 0 | Real FK/check/trigger/unique violations against registered schema |
 | Positive concurrency witnesses | 4 | 0 | Races whose current source has a locking/CAS strategy |
-| Known-defect red concurrency witnesses | 0 | 0 | No currently known race is still source-unfixed |\n| Fix-authored race regression pending runtime | 2 | 0 | P5-R01 placement and P5-R02 academics fixes are authored; PostgreSQL execution still required |
+| Known-defect red concurrency witnesses | 0 | 0 | No currently known race is still source-unfixed |
+| Fix-authored race regression pending runtime | 2 | 0 | P5-R01 placement and P5-R02 academics fixes are authored; PostgreSQL execution still required |
 | Draft/unregistered race families excluded | 3 | 0 | Lease, outbound and log-alert candidates are not registered runtime schema |
 
 Machine-readable denominator: `tests/integration/db18-witness-index.json`.
@@ -57,7 +58,7 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 
 **P5-R02 — learner enrollment stale cohort state**
 
-`tests/integration/db18-known-race-gaps.test.ts` blocks the enrollment insert after source prechecks, changes the cohort to `COMPLETED`, releases the insert, and requires the operation to reject. Current source checks cohort mutability before its transaction and does not re-read/lock the cohort inside the insert transaction, so this is intentionally red until fixed.
+`tests/integration/db18-known-race-gaps.test.ts` blocks the enrollment insert after source prechecks, changes the cohort to `COMPLETED`, releases the insert, and requires the operation to reject. The source fix now re-reads and `FOR SHARE` locks the cohort within the enrollment transaction. This test remains unverified until an isolated PostgreSQL race execution passes; source inspection alone does not establish correctness.
 
 These red tests are evidence of known defects, not failed infrastructure.
 
