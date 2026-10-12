@@ -12,13 +12,13 @@
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB017_DONE_VERIFIED",
+    "checkpointKind": "CHAT1_MULTI_TASK_BATCH_COMPLETE",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "22eef499c2f0b682a0585e2431e2654c01163b80",
-    "lastWorkerMergedSha": "adecad2e324389e50961bdc3264a80fc93511c81",
+    "observedMainSha": "0b87f5dfdfc0ccd8714066fb2fa1b4a17bedbed1",
+    "lastWorkerMergedSha": "a210f00b6ccd840030670a730ce9fd000820b3e9",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-017 DONE_VERIFIED at adecad2e: 49 migrations through 0048 replayed/idempotent on PG17, DB09 targeted negative witnesses passed, and exported Drizzle schema generated with zero drift."
+    "summary": "Closed DB-017 staged migration integration control, DB-076 independent verifier drift/catalog hardening, and DB-079 DB09 CRM principal-race/TRUNCATE hardening. Registered DB09 chain includes 0044 policy/CRM structural, 0045 scope/history, 0046 recruiter-grant integrity, 0047 FILE enum alignment and 0048 CRM race hardening. Exact-current PostgreSQL replay for 0044–0048 remains pending; no workflow run exists at current HEAD."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -42,7 +42,10 @@
     "tests/db06-assignment-attempt-staging.test.mjs",
     "tests/db41-history-schema-drift.test.mjs",
     "tests/db06-quiz-lifecycle-staging.test.mjs",
-    "tests/db06-assignment-upload-receipt-staging.test.mjs"
+    "tests/db06-assignment-upload-receipt-staging.test.mjs",
+    "tests/db017-integration-manifest.test.mjs",
+    "tests/db076-independent-verifier-drift.test.mjs",
+    "tests/db079-db09-crm-race-hardening.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)",
@@ -54,7 +57,7 @@
     "DB-055 PostgreSQL and full tsx Node process regressions remain unexecuted in this session; GitHub Actions intentionally unused due billing."
   ],
   "handoffs": [],
-  "nextAction": "Refresh shared DATABASE queue. Verify independent completed core-safety tasks where exact acceptance can execute; do not steal DB05 active work.",
+  "nextAction": "Continue DATABASE work from shared queue. Highest-leverage migration-integrator follow-up: reconcile the 13 canonical tpo-collaboration.ts tables currently absent from snapshot 0048, without hand-promoting superseded DB09 drafts.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -115,10 +118,13 @@
     "DB-052",
     "DB-053",
     "DB-055",
-    "DB-002"
+    "DB-002",
+    "DB-017",
+    "DB-076",
+    "DB-079"
   ],
   "lastPickedAt": "2026-10-12T14:09:00.000Z",
-  "lastCompletedAt": "2026-10-12T14:09:00.000Z",
+  "lastCompletedAt": "2026-10-12T14:32:06.468Z",
   "verifiedTaskIds": [
     "DB-002",
     "DB-017"
@@ -139,7 +145,10 @@
     "DB-051",
     "DB-052",
     "DB-053",
-    "DB-055"
+    "DB-055",
+    "DB-017",
+    "DB-076",
+    "DB-079"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
