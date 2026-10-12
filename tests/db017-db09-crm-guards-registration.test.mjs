@@ -8,7 +8,7 @@ const next=JSON.parse(readFileSync("drizzle/meta/0045_snapshot.json","utf8"));
 const functions=["db09_assert_lead_scoped_links","db09_assert_followup_owner_scope","db09_restrict_completed_followup_rewrite","db09_reject_lead_activity_rewrite","db09_assert_activity_actor_scope"];
 const triggers=["db09_lead_scoped_links_guard","db09_followup_owner_scope_guard","db09_followup_terminal_guard","db09_lead_activity_immutable","db09_lead_activity_actor_scope_guard"];
 test("DB017 migration journal/snapshot chain is additive and intact",()=>{
- assert.equal(journal.entries.at(-1)?.tag,"0045_db09_crm_scope_history_guards");
+ assert.equal(journal.entries.find((row)=>row.tag==="0045_db09_crm_scope_history_guards")?.idx,45);
  assert.equal(next.prevId,prev.id);assert.notEqual(next.id,prev.id);
  assert.deepEqual(next.tables,prev.tables);assert.deepEqual(next.enums,prev.enums);
 });
