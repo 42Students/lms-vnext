@@ -115,3 +115,28 @@ test("DB05 offering update fails closed on stale cross-college reparent", () => 
   const error = offeringUpdate.indexOf('throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH")');
   assert.ok(error > 0 && error < offeringUpdate.indexOf(".update(courseOfferings)"));
 });
+
+const witness = JSON.parse(read("../docs/planning/db05-live-course-authoring-lock-acceptance.json"));
+
+test("DB05 all authoring lock acceptance cases remain independently unverified", () => {
+  assert.equal(witness.taskId, "DB-008");
+  assert.equal(witness.status, "SOURCE_IMPLEMENTED_RUNTIME_PG_NOT_RUN");
+  assert.equal(witness.postgresRun, "NOT_RUN");
+  assert.equal(witness.acceptance.length, 20);
+  assert.deepEqual(
+    witness.acceptance.map(x => x.id),
+    Array.from({ length: 20 }, (_, i) => "LC-" + String(i + 1).padStart(2, "0")),
+  );
+  assert.ok(witness.acceptance.every(x => !x.executed && !x.passed));
+  assert.ok(witness.acceptance.every(x => x.expectedMarker && x.operation && x.interleaving));
+});
+
+test("DB05 service lock matrix remains a required gate, not a completion assertion", () => {
+  const manifest = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
+  const gate = manifest.gates.find(x => x.id === "DB05_LIVE_AUTHORING_LOCKED_SCOPE_TWO_SESSION_PG_ACCEPTANCE");
+  assert.ok(gate);
+  assert.equal(gate.status, "NOT_RUN");
+  assert.equal(gate.postgresExecuted, false);
+  assert.equal(gate.scenarioCount, 20);
+  assert.equal(manifest.status, "SOURCE_STAGED_BLOCKED");
+});
