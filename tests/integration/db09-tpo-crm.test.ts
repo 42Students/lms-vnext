@@ -178,7 +178,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       email: "invite-shield@example.org",
     });
     await pool.query(
-      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1, invite_sent_at = now() WHERE id = $2",
       ["a".repeat(64), lead.id],
     );
     const [listed] = await listTpoLeads(tpo, SEED_IDS.collegeA);
@@ -214,7 +214,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     });
 
     await expect(pool.query(
-      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1, invite_sent_at = now() WHERE id = $2",
       ["not-a-sha256-digest", lead.id],
     )).rejects.toMatchObject({ code: "23514" });
 
@@ -281,9 +281,9 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     });
     await expect(pool.query(
       "INSERT INTO placement_tpo_lead_activities " +
-      "(college_id, lead_id, type) VALUES ($1, $2, 'CALL')",
-      [SEED_IDS.collegeB, lead.id],
-    )).rejects.toMatchObject({ code: "23503" });
+      "(college_id, lead_id, type, created_by_user_id) VALUES ($1, $2, 'CALL', $3)",
+      [SEED_IDS.collegeB, lead.id, SEED_IDS.facultyUser],
+    )).rejects.toMatchObject({ code: "23514" });
 
     await expect(pool.query(
       "INSERT INTO placement_tpo_followups " +
@@ -314,7 +314,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       phone: "+91 98765 43210",
     });
     await pool.query(
-      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1, invite_sent_at = now() WHERE id = $2",
       ["b".repeat(64), created.id],
     );
     for (const contact of ["one@example.org", "+91 98765 43210"]) {
