@@ -143,12 +143,12 @@
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
     "runtimePassed": 0,
-    "knownRedRaceAuthored": 1,
+    "knownRedRaceAuthored": 0,
     "observationalReadOnlyAuthored": 21,
     "baselineDirectBoundaryAuthored": 4,
     "directNegativeTotalAuthored": 13,
     "positiveConcurrencyAuthored": 4,
-    "fixAuthoredRaceRuntimePending": 1
+    "fixAuthoredRaceRuntimePending": 2
   },
   "knownRedRaceWitnesses": [
     {
@@ -172,9 +172,13 @@
       "domain": "ACADEMICS",
       "file": "tests/integration/db18-known-race-gaps.test.ts",
       "title": "P5-R02 rejects enrollment if the cohort stops being mutable after precheck",
-      "state": "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+      "state": "FIX_AUTHORED_RUNTIME_NOT_RUN",
       "execution": "NOT_RUN",
-      "requiredFix": "Lock/re-read cohort mutability inside learner enrollment transaction, ordered against cohort lifecycle transitions."
+      "requiredFix": "Authored: enrollment transaction re-reads and FOR SHARE locks cohort status/program before insert; PostgreSQL race execution remains pending.",
+      "fixEvidence": [
+        "src/modules/academics/enrollment-service.ts",
+        "tests/integration/db18-known-race-gaps.test.ts"
+      ]
     }
   ],
   "observationalWitnesses": {
