@@ -56,39 +56,6 @@ export async function createProjectEvaluation(
     createProjectEvaluationInputSchema.parse(
       rawInput,
     );
-  const submission =
-    await loadApprovedSubmission(
-      scope.project.id,
-      submissionIdInput,
-    );
-
-  const totalScore = input.items.reduce(
-    (sum, item) => sum + item.score,
-    0,
-  );
-  const maxScore = input.items.reduce(
-    (sum, item) => sum + item.maxScore,
-    0,
-  );
-  const db = getDb();
-
-  try {
-    return await db.transaction(async (tx) => {
-      const [eexport async function createProjectEvaluation(
-  context: RequestContext,
-  projectIdInput: string,
-  submissionIdInput: string,
-  rawInput: CreateProjectEvaluationInput,
-) {
-  const scope =
-    await requireProjectLifecycleAccess(
-      context,
-      projectIdInput,
-    );
-  const input =
-    createProjectEvaluationInputSchema.parse(
-      rawInput,
-    );
   const submissionId =
     projectSubmissionIdSchema.parse(
       submissionIdInput,
