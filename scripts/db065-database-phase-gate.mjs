@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 export const PHASES = Object.freeze(['DATABASE', 'API', 'UI', 'RELEASE']);
 export const TASK_STATES = Object.freeze(['READY','PICKED','IN_PROGRESS','COMPLETED','BLOCKED','DONE_VERIFIED','RETIRED_APPROVED']);
+export const TASK_RESTRICTIONS = Object.freeze(['ANY','MIGRATION_INTEGRATOR','CORE_INFRA']);
 const complete = new Set(['DONE_VERIFIED', 'RETIRED_APPROVED']);
 const active = new Set(['PICKED', 'IN_PROGRESS']);
 const isSha = value => typeof value === 'string' && /^[a-f0-9]{40}$/i.test(value);
@@ -71,6 +72,8 @@ export function inspectGate({phaseState, workQueue, lanes}) {
       push(errors,'DUPLICATE_OR_INVALID_TASK_ID',{id:task?.id ?? null}); continue;
     }
     byId.set(task.id,task);
+    if (!TASK_RESTRICTIONS.includes(task.restriction))
+      push(errors,'INVALID_TASK_RESTRICTION',{id:task.id,restriction:task.restriction ?? null});
     if (!TASK_STATES.includes(task.status)) push(errors,'INVALID_TASK_STATUS',{id:task.id,status:task.status});
     else counts[task.status]++;
     if (!PHASES.includes(task.phase)) push(errors,'INVALID_TASK_PHASE',{id:task.id});
