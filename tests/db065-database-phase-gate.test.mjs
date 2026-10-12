@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { inspectGate, inspectCheckout, PHASES, TASK_STATES } from '../scripts/db065-database-phase-gate.mjs';
 const SHA='f'.repeat(40);
 const states=()=>({currentPhase:'DATABASE',phases:Object.fromEntries(PHASES.map(p=>[p,{state:p==='DATABASE'?'ACTIVE':'LOCKED',certifiedAt:null,requiredGates:['PostgreSQL negative tests']}]))});
-const task=(id,status='READY',overrides={})=>({id,phase:'DATABASE',status,dependsOn:[],restriction:'ANY',pickedBy:null,completionCommitSha:null,verifiedAt:null,verifiedBy:null,verificationEvidence:[], ...overrides});
+const task=(id,status='READY',overrides={})=>({id,phase:'DATABASE',status,dependsOn:[],paths:[],restriction:'ANY',pickedBy:null,completionCommitSha:null,verifiedAt:null,verifiedBy:null,verificationEvidence:[], ...overrides});
 const lanes=()=>Array.from({length:6},(_,i)=>({chatNumber:i+1,currentPhase:'DATABASE',activeTaskId:null}));
 const input=()=>({phaseState:states(),workQueue:{phase:'DATABASE',tasks:[task('DB-101')]},lanes:lanes()});
 const bad=r=>r.errors.map(x=>x.code);
