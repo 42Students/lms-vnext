@@ -4023,7 +4023,7 @@
       "completionCommitSha": "28f8b58e9e9406a9f6a243100da9f4aaf9c7df81",
       "verifiedBy": null,
       "verifiedAt": null,
-      "latestEvidenceSha": "1a94f81534e7940528821f3782706f376ba24d59",
+      "latestEvidenceSha": "ad7feb5b4f5bf4febaaeb8f12ffb9afc8b334a64",
       "verificationEvidence": [
         {
           "type": "SOURCE_ONLY_NOT_DB_ACCEPTANCE",
@@ -4066,6 +4066,22 @@
           "sql": "docs/planning/sql/db10-outbound-scope-fk-staging.sql",
           "contract": "docs/planning/db067-outbound-dispatch-fencing-contract.md",
           "evidenceCommitSha": "1a94f81534e7940528821f3782706f376ba24d59"
+        },
+        {
+          "type": "SOURCE_ONLY_EXECUTED_IN_PROCESS_CORRECTED_TENANT_FK",
+          "sourceAssertions": {
+            "executed": 18,
+            "passed": 18,
+            "failed": 0,
+            "runner": "GITHUB_CONNECTOR_JS_V8_EXACT_BLOBS"
+          },
+          "authoredNodeSourceCases": 10,
+          "authoredPgCases": 5,
+          "nodeCasesExecuted": 0,
+          "pgCasesExecuted": 0,
+          "migrationRegistered": false,
+          "evidenceFile": "docs/planning/db067-outbound-scope-source-evidence.json",
+          "evidenceCommitSha": "ad7feb5b4f5bf4febaaeb8f12ffb9afc8b334a64"
         }
       ],
       "blockers": [
@@ -4074,7 +4090,7 @@
         "Subsequent trusted dispatcher implementation required; P5-R09 and P5-R21 still not runtime closed.",
         "DB067 additive composite outbox college/org FK staged on main; Chat1 migration registration + executed disposable PostgreSQL scope/owner-transfer witnesses pending, not GitHub Actions billing."
       ],
-      "completionNote": "Source scope finished: four unregistered PG claim/presend/fenced-completion/unsent-expiry functions committed main, 13 Node static cases authored, 14 PostgreSQL acceptance scenarios documented. Exact GitHub source blobs validated 17/17 via V8 assertions, no node --test/PostgreSQL/provider invocation. P5-R09/R21 remain unverified until Chat1 integration, trusted sender and PG race witnesses. 2026-10-12 additive SECURITY correction committed directly to main: staged composite outbound (college_id,organization_id) tenant FK + parent unique target/preflight, 10 Node/5 PG witnesses authored, 14/14 GitHub-V8 source checks passed. Still unregistered; 0 Node/PG runtime tests executed.",
+      "completionNote": "Source scope finished: four unregistered PG claim/presend/fenced-completion/unsent-expiry functions committed main, 13 Node static cases authored, 14 PostgreSQL acceptance scenarios documented. Exact GitHub source blobs validated 17/17 via V8 assertions, no node --test/PostgreSQL/provider invocation. P5-R09/R21 remain unverified until Chat1 integration, trusted sender and PG race witnesses. 2026-10-12 additive SECURITY correction committed directly to main: staged composite outbound (college_id,organization_id) tenant FK + parent unique target/preflight, 10 Node/5 PG witnesses authored, 14/14 GitHub-V8 source checks passed. Still unregistered; 0 Node/PG runtime tests executed. Final staged Drizzle FK explicitly matches SQL ON UPDATE/DELETE RESTRICT. Follow-up source assertions 18/18 PASS at GitHub exact blobs in docs/planning/db067-outbound-scope-source-evidence.json; Node/Vitest/PG execution still zero.",
       "pickHistory": [
         {
           "chatNumber": 2,
