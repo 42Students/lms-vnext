@@ -9,6 +9,7 @@ import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
+  projectInstances,
   projectSprints,
   projectTasks,
   projectTaskSubmissions,
@@ -49,39 +50,6 @@ function mapSubmissionConstraint(error: unknown) {
   return error;
 }
 
-async function loadTaskForSubmission(
-  projectId: string,
-  taskIdInput: string,
-) {
-  const taskId =
-    projectTaskIdSchema.parse(taskIdInput);
-  const [row] = await getDb()
-    .select({
-      task: projectTasks,
-      sprintStatus: projectSprints.status,
-    })
-    .from(projectTasks)
-    .innerJoin(
-      projectSprints,
-      eq(projectSprints.id, projectTasks.sprintId),
-    )
-    .where(
-      and(
-        eq(projectTasks.id, taskId),
-        eq(projectTasks.projectId, projectId),
-      ),
-    )
-    .limit(1);
-
-  if (!row) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_NOT_FOUND",
-    );
-  }
-
-  return row;
-}
-
 export async function submitProjectTask(
   context: RequestContext,
   projectIdInput: string,
@@ -105,55 +73,23 @@ export async function submitProjectTask(
 
   const input =
     submitProjectTaskInputSchema.parse(rawInput);
-  const row = await loadTaskForSubmission(
-    scope.project.id,
-    taskIdInput,
-  );
-
-  if (
-    row.sprintStatus !== "ACTIVE" ||
-    row.task.status === "DONE" ||
-    row.task.status === "IN_REVIEW"
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_SUBMISSION_INVALID_STATE",
-    );
-  }
-
-  const [latest] = await getDb()
-    .select({
-      version: projectTaskSubmissions.version,
-    })
-    .from(projectTaskSubmissions)
-    .where(
-      eq(
-        projectTaskSubmissions.taskId,
-        row.task.id,
-      ),
-    )
-    .orderBy(
-      desc(projectTaskSubmissions.version),
-    )
-    .limit(1);
-  const version = (latest?.version ?? 0) + 1;
+  const taskId =
+    projectTaskIdSchema.parse(taskIdInput);
   const db = getDb();
 
   try {
     return await db.transaction(async (tx) => {
-      const [activeSprint] = await tx
-        .select({ status: projectSprints.status })
-        .from(projectSprints)
-        .where(
-          eq(
-            projectSprints.id,
-            row.task.sprintId,
-          ),
-        )
+      const [project] = await tx
+        .select({ status: projectInstances.status })
+        .from(projectInstances)
+        .where(eq(projectInstances.id, scope.project.id))
+        .for("update")
         .limit(1);
 
       if (
-        !activeSprint ||
-        activeSprint.status !== "ACTIVE"
+        !project ||
+        project.status === "ARCHIVED" ||
+        project.status === "COMPLETED"
       ) {
         throw new ProjectsServiceError(
           "PROJECT_TASK_SUBMISSION_INVALID_STATE",
@@ -161,6 +97,66 @@ export async function submitProjectTask(
       }
 
       const [task] = await tx
+        .select()
+        .from(projectTasks)
+        .where(
+          and(
+            eq(projectTasks.id, taskId),
+            eq(projectTasks.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!task) {
+        throw new ProjectsServiceError(
+          "PROJECT_TASK_NOT_FOUND",
+        );
+      }
+
+      const [sprint] = await tx
+        .select({ status: projectSprints.status })
+        .from(projectSprints)
+        .where(
+          and(
+            eq(projectSprints.id, task.sprintId),
+            eq(projectSprints.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (
+        !sprint ||
+        sprint.status !== "ACTIVE" ||
+        task.status === "DONE" ||
+        task.status === "IN_REVIEW"
+      ) {
+        throw new ProjectsServiceError(
+          "PROJECT_TASK_SUBMISSION_INVALID_STATE",
+        );
+      }
+
+      // The task row lock serializes version allocation and state transition
+      // for a task, so two concurrent submissions cannot both win.
+      const [latest] = await tx
+        .select({
+          version: projectTaskSubmissions.version,
+        })
+        .from(projectTaskSubmissions)
+        .where(
+          eq(
+            projectTaskSubmissions.taskId,
+            task.id,
+          ),
+        )
+        .orderBy(
+          desc(projectTaskSubmissions.version),
+        )
+        .limit(1);
+      const version = (latest?.version ?? 0) + 1;
+
+      const [updatedTask] = await tx
         .update(projectTasks)
         .set({
           status: "IN_REVIEW",
@@ -168,17 +164,14 @@ export async function submitProjectTask(
         })
         .where(
           and(
-            eq(projectTasks.id, row.task.id),
-            ne(projectTasks.status, "DONE"),
-            ne(
-              projectTasks.status,
-              "IN_REVIEW",
-            ),
+            eq(projectTasks.id, task.id),
+            eq(projectTasks.projectId, scope.project.id),
+            eq(projectTasks.status, task.status),
           ),
         )
         .returning();
 
-      if (!task) {
+      if (!updatedTask) {
         throw new ProjectsServiceError(
           "PROJECT_TASK_SUBMISSION_INVALID_STATE",
         );
@@ -209,12 +202,12 @@ export async function submitProjectTask(
           subjectType:
             "project_task_submission",
           subjectId: submission.id,
-          subjectLabel: task.title,
+          subjectLabel: updatedTask.title,
           summary:
-            `${task.title} submitted for review`,
+            `${updatedTask.title} submitted for review`,
           metadata: {
             projectId: scope.project.id,
-            taskId: task.id,
+            taskId: updatedTask.id,
             version: submission.version,
             membershipId:
               context.membership!.id,
@@ -258,44 +251,68 @@ export async function reviewProjectTaskSubmission(
     reviewProjectTaskSubmissionInputSchema.parse(
       rawInput,
     );
-
-  const [submission] = await getDb()
-    .select()
-    .from(projectTaskSubmissions)
-    .where(
-      and(
-        eq(
-          projectTaskSubmissions.id,
-          submissionId,
-        ),
-        eq(
-          projectTaskSubmissions.projectId,
-          scope.project.id,
-        ),
-        eq(
-          projectTaskSubmissions.taskId,
-          taskId,
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (!submission) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_SUBMISSION_NOT_FOUND",
-    );
-  }
-
-  if (submission.status !== "SUBMITTED") {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_SUBMISSION_INVALID_STATE",
-    );
-  }
-
   const db = getDb();
   const now = new Date();
 
   return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({ status: projectInstances.status })
+      .from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id))
+      .for("update")
+      .limit(1);
+
+    if (!project || project.status === "ARCHIVED") {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_SUBMISSION_INVALID_STATE",
+      );
+    }
+
+    const [submission] = await tx
+      .select()
+      .from(projectTaskSubmissions)
+      .where(
+        and(
+          eq(projectTaskSubmissions.id, submissionId),
+          eq(projectTaskSubmissions.projectId, scope.project.id),
+          eq(projectTaskSubmissions.taskId, taskId),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!submission) {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_SUBMISSION_NOT_FOUND",
+      );
+    }
+    if (submission.status !== "SUBMITTED") {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_SUBMISSION_INVALID_STATE",
+      );
+    }
+
+    const [task] = await tx
+      .select({
+        id: projectTasks.id,
+        status: projectTasks.status,
+      })
+      .from(projectTasks)
+      .where(
+        and(
+          eq(projectTasks.id, submission.taskId),
+          eq(projectTasks.projectId, scope.project.id),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!task || task.status !== "IN_REVIEW") {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_SUBMISSION_INVALID_STATE",
+      );
+    }
+
     const [reviewed] = await tx
       .update(projectTaskSubmissions)
       .set({
@@ -309,14 +326,9 @@ export async function reviewProjectTaskSubmission(
       })
       .where(
         and(
-          eq(
-            projectTaskSubmissions.id,
-            submission.id,
-          ),
-          eq(
-            projectTaskSubmissions.status,
-            "SUBMITTED",
-          ),
+          eq(projectTaskSubmissions.id, submission.id),
+          eq(projectTaskSubmissions.projectId, scope.project.id),
+          eq(projectTaskSubmissions.status, "SUBMITTED"),
         ),
       )
       .returning();
@@ -332,7 +344,7 @@ export async function reviewProjectTaskSubmission(
         ? "DONE"
         : "IN_PROGRESS";
 
-    const [task] = await tx
+    const [updatedTask] = await tx
       .update(projectTasks)
       .set({
         status: nextTaskStatus,
@@ -340,26 +352,20 @@ export async function reviewProjectTaskSubmission(
       })
       .where(
         and(
-          eq(projectTasks.id, submission.taskId),
-          eq(
-            projectTasks.projectId,
-            scope.project.id,
-          ),
-          eq(
-            projectTasks.status,
-            "IN_REVIEW",
-          ),
+          eq(projectTasks.id, task.id),
+          eq(projectTasks.projectId, scope.project.id),
+          eq(projectTasks.status, "IN_REVIEW"),
         ),
       )
       .returning();
 
-    if (!task) {
+    if (!updatedTask) {
       throw new ProjectsServiceError(
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
       );
     }
 
-    return { submission: reviewed, task };
+    return { submission: reviewed, task: updatedTask };
   });
 }
 
