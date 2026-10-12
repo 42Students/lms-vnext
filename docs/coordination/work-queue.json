@@ -307,22 +307,17 @@
       "paths": [
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "3fa57cf879866eda95eec0a2249a79609898f199",
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a0a1643eab2d92762212dca4bea4362ac3450f4f",
       "verificationEvidence": [],
-      "blockers": [
-        "DB01_FIELD_DISPOSITION_OPEN: 137 of 312 legacy DB01 fields still lack a proposed normalized vNext target or explicit approved retirement; 175 candidate targets are source proposals only, not active schema acceptance.",
-        "DB01_LEGACY_CONSUMER_EVIDENCE: 70 active-classified DB01 source rows currently have no direct consumer source path/summary; ensure owner/security and cross-domain disposition before certification.",
-        "DB01_PROVIDER_PRODUCT_DECISION: Identity Platform vs staged DB-backed OTP/account claim/session host handoff, revocation, global policy and secure retention must preserve legacy user jobs; do not register redundant authentication engine without decision/proof.",
-        "DB01_EXECUTED_PG_NOT_AVAILABLE: Auth/handoff, membership/archive, domain tombstone and cross-tenant races are authored but no live disposable PostgreSQL execution, registered migration replay or actual provider acceptance evidence exists. GitHub Actions billing is deliberately not treated as engineering blocker."
-      ],
-      "completionNote": "DB-004 IN_PROGRESS: DB01 312 source candidates dispositioned only, no accepted runtime semantics. Direct-main locking and canonical ownership guard for membership role mutation landed; 18 authored Node and 8 authored PG cases, none executed. Staged DB01 auth/tenant changes remain unregistered; Chat 1 migration owner. DATABASE phase active.",
+      "blockers": [],
+      "completionNote": "DB-004 source/implementation reconciliation completed: all 312 legacy DB01 fields now have explicit target, redesign, retirement, provider-managed, or named cross-domain handoff dispositions; the former 137 anonymous target gaps are 0. All 70 previously source-active rows lacking consumer evidence now have family-level producer/consumer evidence. Identity authority is frozen to Firebase/Identity Platform for credential/session proof plus canonical PostgreSQL tenant authorization and narrowly scoped keyed-digest security sidecars; raw passwords/tokens are explicitly retired. Early disposable-DB preflight now rejects target-redirect query params. Source closure/audit tests authored. No numbered migration/schema-barrel edit; PostgreSQL/provider/API acceptance remains unexecuted, so this is COMPLETED and not DONE_VERIFIED.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-12T14:01:00.000Z",
+      "completionCommitSha": "a0a1643eab2d92762212dca4bea4362ac3450f4f",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -351,6 +346,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:50:23.621Z",
           "reason": "CAS reassignment Chat2→Chat5 under explicit user takeover; partial DB004 source hardening continues, no forged completion."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:01:00.000Z",
+          "reason": "DB01 source denominator closed 312/312; former 137 target gaps and 70 consumer-evidence gaps reduced to zero explicit source decisions; provider-vs-Postgres authority frozen. Runtime acceptance remains downstream."
         }
       ],
       "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified.\nChat 2 tombstone/archive active-domain conflict: confirmed legacy current vNext college usage counts every persisted hostname, so preserving DNS history as deleted_at creates permanent archive deadlock. Prepared explicit policy decision and active-only staged replacement preserving non-ENDED membership and all-time host uniqueness; 12 Node tests authored, 29/29 connector in-process source assertions PASS, 0 Node/PG executed, approval FALSE. Evidence docs/planning/db01-chat02-domain-tombstone-archive-conflict-source-evidence.json.\nChat 2 role-lock source hardening final current batch: direct-main role grant/remove/onboarding row locks revalidate user/college and status (2194420,e7bab10); source guards 18 authored Node and 10 real repo PG cases (9b1c0ac), connector exact-source 38/38 assertions passed (3111fb8), Node/Vitest/typecheck/PG not run. Preserve concurrent tombstone/archive findings and zero runtime verification.\nChat 2 code lock batch final sync: parent-row F/U + user/college check for grant/removal/onboarding on main (2194420,e7bab10); 19 authored Node, 10 real repository PG cases incl locked END race, suspended onboarding, direct SQL college rebind. PG runner fail-close on non-_test URL; exact GitHub blob V8 assertions 38/38 pass, no actual Node/Postgres/typecheck. Evidence b450951. Other Chat2 tombstone archive work preserved.\nDB004 2026-10-12 closure-first reconciliation: frozen 312/312 fields source-activeness-classified, crosswalk union 175/312 distinct unverified target proposals (116 original + 59 from existing auth/remaining ledgers); 137 fields lack proposed targets, 70 active-classified fields lack direct consumer proof. Exact-GitHub-source V8 crosswalk callbacks 32/32 PASS, V8 isolated witness safety callbacks 22/22 PASS; actual Node CLI and PostgreSQL NOT executed. Five isolated staged PG suites now orchestrated by scripts/db-staged-pg-witnesses.mjs with explicit opt-in and strict skip-failure; staged source not migrated. Global 11-domain source checker passes structurally, 0 database field acceptances.",
