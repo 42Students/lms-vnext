@@ -28,7 +28,7 @@ test("percent-encoded database alias cannot bypass same-target protection",()=>{
 });
 test("URL-encoded slash cannot disguise a destructive noncanonical database name",()=>{
   denied({...base(),
-    TEST_DATABASE_URL:"postgresql://tester:demo@localhost/lms_test%2Fshadow",
+    TEST_DATABASE_URL:"postgresql://tester:demo@localhost/lms_test_shadow%2Finternal",
   },"Canonical disposable target refused");
 });
 test("disposable name is subject to the canonical test naming policy",()=>{
