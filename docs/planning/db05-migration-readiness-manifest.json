@@ -697,6 +697,12 @@
       "status": "NOT_RUN",
       "owner": "DB05_API_INTEGRATION",
       "evidence": "Historical includeArchived is propagated as includeHistorical from path/lesson/content three service listings (62a5f47, a9f9e59, c732e53); courses.manage gate and learner PUBLISHED requirements stay in place. Need real API role/tenant/archived-parent/learner negative tests; source tests bfa0ab0 authored not native Node-run."
+    },
+    {
+      "id": "CLASSROOM_ANCESTOR_REFERENCE_MODEL_NATIVE_NODE",
+      "status": "PASS",
+      "owner": 6,
+      "evidence": "Native Node v22.16.0 node --test executed on byte-identical file (git blob d2cd43b8118dcdb1e925785fd0ba312e13890d9d; committed at 6a57ef41757458b71fce596eb420cfaee869fdb6): 18 tests passed, 0 failed; source-reference behavior only, NOT PostgreSQL trigger acceptance."
     }
   ],
   "sourceReview": {
@@ -1064,7 +1070,21 @@
       "advisoryKey": "605008003",
       "sourceUnitTest": "tests/db05-classroom-ancestor-retention.test.mjs",
       "readOnlyPreflight": "scripts/sql/db05-classroom-message-integrity-preflight.readonly.sql",
-      "note": "Protects retained messages against delivery DELETE/reparent, offering/section/course/department/period/cohort/program/actor membership reparent. CL-01..18 disposable PostgreSQL negative and two-session race tests NOT_RUN. W01 must install once after canonical classroom history; no additional columns or indexes."
+      "note": "Protects retained messages against delivery DELETE/reparent, offering/section/course/department/period/cohort/program/actor membership reparent. CL-01..18 disposable PostgreSQL negative and two-session race tests NOT_RUN. W01 must install once after canonical classroom history; no additional columns or indexes.",
+      "referenceNodeTest": "tests/db05-classroom-ancestor-reference.test.mjs",
+      "referenceNodeExecution": {
+        "status": "PASS_REFERENCE_MODEL_ONLY",
+        "nodeVersion": "v22.16.0",
+        "command": "node --test /mnt/data/db05-native-tests/classroom-ancestor-reference.test.mjs",
+        "localFileGitBlob": "d2cd43b8118dcdb1e925785fd0ba312e13890d9d",
+        "committedFileGitBlob": "d2cd43b8118dcdb1e925785fd0ba312e13890d9d",
+        "sourceCommit": "6a57ef41757458b71fce596eb420cfaee869fdb6",
+        "passed": 18,
+        "failed": 0,
+        "postgresqlProof": false,
+        "sourceSqlExecution": false,
+        "note": "Byte-identical native Node test copy executed outside GitHub Actions; reference graph logic only, NOT trigger SQL acceptance."
+      }
     }
   ],
   "verifiedSourceReferenceTests": {
