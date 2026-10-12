@@ -61,6 +61,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Single tracker structural integrity (not database certification)
+        run: node scripts/tracker.mjs --check
       - name: Native DB003 exclusion acceptance
         shell: bash
         run: |
