@@ -8,7 +8,7 @@
 - Current legacy frontend `42Students/lms2-fe@prod-2026` Git tree: `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`.
 - Neither recursive Git tree contains a pathname with `smrithi` in it. **A filename search is not a consumer-content search**, and cannot justify retirement.
 - New source-audit tool: `scripts/db00-smrithi-consumer-audit.mjs`; regression suite: `tests/db00-smrithi-consumer-audit.test.mjs`.
-- **Actually executed:** `node --test tests/db00-smrithi-consumer-audit.test.mjs` using Node 22.16.0 against exact file blobs `c8772bdd74c893bbcb2981ade799c4a702261f41` and `2c6a83a519d9eaf12e9a9f902836c46b6215977a` (9 tests passed, 0 failed).
+- **Actually executed:** `node --test tests/db00-smrithi-consumer-audit.test.mjs` using Node 22.16.0 against exact file blobs `7dbd410e6110bca7a01b5bdb29697cd456c8f615` and `f13e4169eaf071fc775b4583e8a640583c5c9679` (11 tests passed, 0 failed).
 - **Not executed:** full real-legacy-content scan, executable PostgreSQL acceptance, and any external integration/production consumer inventory.
 
 ## Run on immutable local clones
@@ -27,7 +27,7 @@ node scripts/db00-smrithi-consumer-audit.mjs \
   --out /tmp/db003-smrithi-source-references.json
 ```
 
-The executable verifies the pinned backend identity against the DB-003 source evidence, requires the exact frontend commit specified by the caller, rejects dirty tracked source, scans **every Git-tracked supported textual source file**, records exact file/line and six style classifications (migration, test, documentation, generated, runtime candidate), and preserves generic `Smrithi*` references not matching the seven table names. It refuses missing, malformed or changed evidence. It does **not** fetch a source checkout itself.
+The executable verifies the pinned backend identity against the DB-003 source evidence, requires the exact frontend commit specified by the caller, rejects dirty tracked source, scans **every Git-tracked supported textual source file**, rejects tracked symlinks, scans script/native source extensions, records exact file/line and five source classifications (migration, test, documentation, generated, runtime candidate), and preserves generic `Smrithi*` references not matching the seven table names. It refuses missing, malformed or changed evidence. It does **not** fetch a source checkout itself.
 
 ### Still required to close DB-003
 
