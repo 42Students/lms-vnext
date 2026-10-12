@@ -12,6 +12,12 @@ const canonical = readFileSync(
 const promotionStart = canonical.indexOf("CREATE FUNCTION db02_guard_cohort_promotion_readiness()");
 const promotionEnd = canonical.indexOf("CREATE FUNCTION db02_record_cohort_progression_event()", promotionStart);
 const draft = canonical.slice(promotionStart, promotionEnd);
+// Promotion implementation obligations are documented immediately before the
+// trigger declaration, outside the PL/pgSQL function body.
+const promotionContract = canonical.slice(
+  canonical.lastIndexOf("-- Source-parity semester promotion", promotionStart),
+  promotionEnd,
+);
 const acceptance = readFileSync(
   new URL("../scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql", import.meta.url),
   "utf8",
@@ -65,9 +71,9 @@ test("PG acceptance covers absence, inactive, empty course, cohort inactive, val
 });
 
 test("canonical CAS concurrency requirement is not silently replaced by a trigger", () => {
-  assert.match(draft, /version=:expectedVersion CAS predicate/);
-  assert.match(draft, /Staffing readiness is informational/);
-  assert.match(draft, /Faculty-teaching assignment deactivation must remain transactional/);
+  assert.match(promotionContract, /version=:expectedVersion CAS predicate/);
+  assert.match(promotionContract, /Staffing readiness is informational/);
+  assert.match(promotionContract, /Faculty-teaching assignment deactivation must remain transactional/);
 });
 
 test("two-session race harness cannot pass on unrelated SQL errors", () => {
