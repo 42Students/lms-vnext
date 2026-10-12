@@ -1,0 +1,101 @@
+{
+  "taskId": "DB-008",
+  "worker": 6,
+  "date": "2026-10-12",
+  "status": "AUTHORED_NOT_EXECUTED",
+  "sourceFile": "src/modules/courses/lesson-service.ts",
+  "scope": "Lesson create/update/archive authorization ancestry compare and PostgreSQL SHARE locks before mutation",
+  "sourceStaticTest": "tests/db05-lesson-write-ancestry.test.mjs",
+  "databaseEngine": "PostgreSQL READ COMMITTED; disposable database with two sessions",
+  "postgresExecuted": false,
+  "cases": [
+    {
+      "id": "LA-01",
+      "operation": "CREATE",
+      "interleaving": "Learning path archived before path SHARE lock",
+      "expected": "REJECT LEARNING_PATH_NOT_FOUND",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-02",
+      "operation": "CREATE",
+      "interleaving": "Offering archived between outer read and transaction offering SHARE",
+      "expected": "REJECT LEARNING_PATH_NOT_FOUND",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-03",
+      "operation": "CREATE",
+      "interleaving": "Course status ARCHIVED after pre-read before ancestor SHARE lock",
+      "expected": "REJECT LEARNING_PATH_NOT_FOUND",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-04",
+      "operation": "CREATE",
+      "interleaving": "Course reassigned to department in another college after outer authorization",
+      "expected": "REJECT LEARNING_PATH_NOT_FOUND",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-05",
+      "operation": "CREATE",
+      "interleaving": "Offering course/cohort/term swapped after pre-read",
+      "expected": "REJECT LEARNING_PATH_NOT_FOUND",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-06",
+      "operation": "UPDATE",
+      "interleaving": "Learning path archived or reparented during mutation; SHARE lock races UPDATE",
+      "expected": "REJECT or serialize safely",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-07",
+      "operation": "UPDATE",
+      "interleaving": "Course/department/college disabled after authorization",
+      "expected": "REJECT and no partial update",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-08",
+      "operation": "ARCHIVE",
+      "interleaving": "Offered course moved to another college after pre-read, before archive",
+      "expected": "REJECT without deleting lesson",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-09",
+      "operation": "ARCHIVE",
+      "interleaving": "Concurrent content INSERT racing FOR UPDATE lesson lock",
+      "expected": "NO orphaned visible content; no deadlock",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-10",
+      "operation": "ALL",
+      "interleaving": "Concurrent authorization membership suspension and role revocation",
+      "expected": "W01 centralized transaction permission semantics needed",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LA-11",
+      "operation": "ALL",
+      "interleaving": "Two-session lock order vs offering/course archive and academic-period reparent",
+      "expected": "NO deadlock; expected rollback or retry semantics",
+      "executed": false,
+      "passed": false
+    }
+  ]
+}
