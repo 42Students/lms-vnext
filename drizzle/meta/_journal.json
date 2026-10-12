@@ -316,6 +316,13 @@
       "when": 1791811200000,
       "tag": "0044_db09_policy_crm_structural",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1791840600000,
+      "tag": "0045_db09_crm_scope_history_guards",
+      "breakpoints": true
     }
   ]
 }
