@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-080",
+  "phase": "DATABASE",
+  "worker": "CHAT_05",
+  "status": "ACTIVE_SOURCE_CONTRACT_COMPLETE_SCHEMA_STAGED_RUNTIME_UNVERIFIED",
+  "source": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyModel": {
+      "path": "src/main/java/com/_42students/lms/model/StudentImage.java",
+      "blobSha": "13d799ba4dd9ffe1c1a153197343c1251cfe4f79"
+    },
+    "legacyService": {
+      "path": "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+      "blobSha": "06cfafc009226185f467ee5665acea1f0f71967a"
+    },
+    "legacyController": {
+      "path": "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+      "blobSha": "c723d0fa430f9bdb8808a5645bd14b3bd8a9e8aa"
+    },
+    "stagedSchema": {
+      "path": "src/db/schema/db04-profile-education-images.staged.ts",
+      "blobSha": "b23173f79d8c2aa4c1bc20420788a6b9de0f45e7"
+    },
+    "stagedContract": "docs/planning/db04-qualification-image-persistence-contract.md"
+  },
+  "classification": {
+    "legacyTable": "student_image",
+    "sourceFieldCount": 3,
+    "disposition": "ACTIVE_CURRENT_PRODUCT_REDESIGNED_NORMALIZED",
+    "retirementAllowed": false,
+    "reason": "Pinned legacy has authenticated create/get/deactivate routes, current service writes learner-owned image collections and mutates active state, and controller verifies learner access plus storage path ownership."
+  },
+  "fieldMappings": [
+    {
+      "legacyField": "student_image.id",
+      "legacyMeaning": "surrogate row for one learner image collection",
+      "vnextTarget": "learner_profile_images.id",
+      "redesign": "The legacy collection row is decomposed into one normalized row per image; each vNext image UUID is the canonical image identifier.",
+      "status": "STAGED_UNREGISTERED"
+    },
+    {
+      "legacyField": "student_image.learner_id",
+      "legacyMeaning": "string learner owner ID used by create/read/deactivate",
+      "vnextTarget": "learner_profile_images.learner_membership_id",
+      "redesign": "Resolve authenticated canonical learner membership server-side; never trust a client learner ID as ownership.",
+      "status": "STAGED_UNREGISTERED"
+    },
+    {
+      "legacyField": "student_image.image_data",
+      "legacyMeaning": "JSON array of {imageId,imageUrl,active}",
+      "vnextTarget": "learner_profile_images rows + profile_private_document_receipts",
+      "redesign": "Normalize each array entry. row id replaces imageId; receipt-backed object identity replaces arbitrary imageUrl persistence; is_active/deactivated_at replaces integer active; display_order preserves list ordering.",
+      "status": "STAGED_UNREGISTERED"
+    }
+  ],
+  "embeddedEntryMappings": [
+    {
+      "legacy": "imageId",
+      "target": "learner_profile_images.id",
+      "rule": "Expose canonical UUID/string as API image identifier; do not preserve random 12-char legacy format as a DB requirement."
+    },
+    {
+      "legacy": "imageUrl",
+      "target": "profile_private_document_receipts private object identity; URL derived by authorized delivery policy",
+      "rule": "Canonical DB state must not be an arbitrary client URL. Legacy controller already constrained URLs/storage keys to the learner profile-images folder."
+    },
+    {
+      "legacy": "active",
+      "target": "learner_profile_images.is_active + deactivated_at",
+      "rule": "Deactivate is a state transition, not hard delete. false requires deactivated_at; active rows require null deactivated_at."
+    },
+    {
+      "legacy": "array order",
+      "target": "learner_profile_images.display_order",
+      "rule": "Preserve deterministic presentation order with nonnegative integer ordering."
+    }
+  ],
+  "requiredDatabaseInvariants": [
+    "learner_membership_id must reference the canonical owning college membership.",
+    "receipt FK must bind receipt_id + learner_membership_id + PROFILE_IMAGE purpose, preventing cross-owner attachment.",
+    "one receipt cannot be attached twice to the same learner.",
+    "is_active and deactivated_at must agree.",
+    "display_order must be nonnegative.",
+    "storage object identity comes from a verified receipt, not arbitrary request URL text."
+  ],
+  "apiCompatibility": [
+    "Create accepts one or more learner-owned image objects and returns learner plus image list.",
+    "Get returns the learner's images.",
+    "Deactivate targets one image identifier and is idempotent/no-cross-owner.",
+    "Authorization must resolve the authenticated learner/current membership server-side; administrators require explicit profile permission rather than forged learnerId.",
+    "Public or signed URL rendering is a delivery-policy decision; it is not the canonical persisted object identity."
+  ],
+  "acceptance": {
+    "sourceClassificationComplete": true,
+    "fieldMappingComplete": true,
+    "stagedSchemaExists": true,
+    "migrationRegistered": false,
+    "postgresExecuted": false,
+    "apiCutoverVerified": false,
+    "browserVerified": false,
+    "doneVerified": false
+  }
+}
