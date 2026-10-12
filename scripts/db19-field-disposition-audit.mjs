@@ -19,7 +19,7 @@ const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
 const missing = value => typeof value !== 'string' || value.trim() === '';
 
 export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true,
-  db00Disposition = null, db01Triage = null, db01InventoryBlobSha = null,
+  db00Disposition = null, db00Approval = null, db01Triage = null, db01InventoryBlobSha = null,
   db01Auth78 = null, db01Remaining150 = null, db01QueueBlobSha = null } = {}) {
   const errors = [];
   const tableOwners = new Map();
@@ -133,7 +133,7 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
   // upgrade of 631 raw backup rows to runtime-verified field mappings.
   const db00Review = db00Disposition === null ? null : reconcileDb00(
     inputs.find(entry => entry?.ledger?.domain === 'DB00_HISTORICAL_AND_ENGINE')?.ledger,
-    db00Disposition,
+    db00Disposition, db00Approval,
   );
   if (db00Review && !db00Review.valid) for (const detail of db00Review.errors)
     errors.push({ code: 'DB00_DISPOSITION_' + detail.code, detail });
@@ -171,6 +171,7 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
       backupFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.retiredBackupFields : null,
       migrationMetadataFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.replacedMetadataFields : null,
       smrithiFieldsPendingProductDecision: db00Review?.valid ? db00Review.summary.pendingProductFields : null,
+      smrithiFieldsExcludedByUserDecision: db00Review?.valid ? db00Review.summary.approvedProductFields : null,
       db01SourceActivenessReviewed: db01Review?.valid ? db01Review.summary.reviewedFields : null,
       db01SourceActiveFields: db01Review?.valid ? db01Review.summary.sourceActiveFields : null,
       db01TargetCandidatesUnverified: db01Review?.valid ? db01Review.summary.targetCandidatesUnverified : null,
@@ -191,6 +192,9 @@ export function auditCheckout(root) {
   const decisionPath = path.join(root, 'docs/planning/db00-historical-engine-disposition.json');
   const db00Disposition = fs.existsSync(decisionPath)
     ? JSON.parse(fs.readFileSync(decisionPath, 'utf8')) : null;
+  const approvalPath=path.join(root,'docs/planning/db003-smrithi-vnext-scope-decision.json');
+  const db00Approval=fs.existsSync(approvalPath)
+    ? JSON.parse(fs.readFileSync(approvalPath,'utf8')):null;
   // Mandatory overlays fail closed, but report structural errors instead
   // of throwing, so an empty/incomplete checkout still yields diagnostics.
   const requiredDb01Paths = [
@@ -211,7 +215,7 @@ export function auditCheckout(root) {
   const db01LedgerPath=path.join(root,'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
   const db01InventoryBlobSha=fs.existsSync(db01LedgerPath)
     ? gitBlobSha(fs.readFileSync(db01LedgerPath)):null;
-  const report=auditLedgers(inputs,{db00Disposition,db01Triage,db01InventoryBlobSha,
+  const report=auditLedgers(inputs,{db00Disposition,db00Approval,db01Triage,db01InventoryBlobSha,
     db01Auth78,db01Remaining150,db01QueueBlobSha});
   for(const missingPath of missingDb01Paths)
     report.errors.push({code:'MISSING_MANDATORY_DB01_SOURCE_FILE',path:missingPath});
