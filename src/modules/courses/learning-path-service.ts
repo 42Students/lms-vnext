@@ -76,6 +76,7 @@ export async function listLearningPaths(
       context,
       offeringId,
       deliveryId,
+      { includeHistorical: includeArchived },
     );
 
   if (
