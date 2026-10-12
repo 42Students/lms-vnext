@@ -9,11 +9,11 @@ const ledger = (domain, names=["id","name"], other=[])=>({
 });
 const crosswalk=(domain,names=["id","name"])=>{
   const rows=names.map(legacyColumn=>({legacyTable:"alpha",legacyColumn}));
-  if(["DB01","DB04","DB07","DB09","DB10"].includes(domain))return {records:rows};
-  if(domain==="DB03")return {fields:names.map(n=>({legacyColumn:"alpha."+n}))};
-  if(domain==="DB05")return {fields:names.map(n=>({source:"alpha."+n}))};
-  if(domain==="DB06")return {tables:[{legacyTable:"alpha",fields:names.map(legacyField=>({legacyField}))}]};
-  return {tables:[{legacyTable:"alpha",fields:rows}]};
+  if(["DB01","DB04","DB07","DB09","DB10"].includes(domain))return {legacyBackendSha:"a".repeat(40),records:rows};
+  if(domain==="DB03")return {legacyBackendSha:"a".repeat(40),fields:names.map(n=>({legacyColumn:"alpha."+n}))};
+  if(domain==="DB05")return {legacyBackendSha:"a".repeat(40),fields:names.map(n=>({source:"alpha."+n}))};
+  if(domain==="DB06")return {legacyBackendSha:"a".repeat(40),tables:[{legacyTable:"alpha",fields:names.map(legacyField=>({legacyField}))}]};
+  return {legacyBackendSha:"a".repeat(40),tables:[{legacyTable:"alpha",fields:rows}]};
 };
 for(const domain of Object.keys(CROSSWALKS))test(domain+" crosswalk identity matches but proves no runtime parity",()=>{
   const x=reconcileCrosswalk(domain,ledger(domain),crosswalk(domain));
@@ -61,4 +61,30 @@ test("malformed crosswalk row and wrong ledger are rejected",()=>{
 });
 test("unknown source domain cannot be accepted",()=>{
   assert.throws(()=>reconcileCrosswalk("DB99",ledger("DB01"),{}),/Unknown domain/);
+});
+
+test("missing legacy oracle is rejected even when every field identity matches",()=>{
+  const artifact=crosswalk("DB10");
+  delete artifact.legacyBackendSha;
+  const x=reconcileCrosswalk("DB10",ledger("DB10"),artifact);
+  assert.ok(x.errors.some(e=>e.code==="MISSING_LEGACY_SOURCE_SHA"));
+});
+test("DB03 legacyOracleSha and DB08 capturedFrom backend are checked",()=>{
+  const db03=crosswalk("DB03");delete db03.legacyBackendSha;
+  db03.legacyOracleSha="b".repeat(40);
+  assert.ok(reconcileCrosswalk("DB03",ledger("DB03"),db03).errors.some(
+    e=>e.code==="LEGACY_SOURCE_SHA_DRIFT"));
+  const db08=crosswalk("DB08");delete db08.legacyBackendSha;
+  db08.capturedFrom={legacyBackendSha:"b".repeat(40)};
+  assert.ok(reconcileCrosswalk("DB08",ledger("DB08"),db08).errors.some(
+    e=>e.code==="LEGACY_SOURCE_SHA_DRIFT"));
+});
+test("DB01 triage uses immutable source inventory pin, not only field names",()=>{
+  const a=crosswalk("DB01");delete a.legacyBackendSha;
+  a.sourceInventory={legacyBackendSha:"a".repeat(40),blobSha:"b".repeat(40)};
+  const mismatch=reconcileCrosswalk("DB01",ledger("DB01"),a,"c".repeat(40));
+  assert.ok(mismatch.errors.some(e=>e.code==="INVENTORY_BLOB_SHA_DRIFT"));
+  const match=reconcileCrosswalk("DB01",ledger("DB01"),a,"b".repeat(40));
+  assert.deepEqual(match.errors,[]);
+  assert.equal(match.pinChecked,true);
 });
