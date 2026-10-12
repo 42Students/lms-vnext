@@ -387,27 +387,86 @@ export async function updateCourseOffering(
     );
   }
 
-  const [updated] = await getDb()
-    .update(courseOfferings)
-    .set({
-      ...input,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
+  // Keep the offering mutable-status decision inside the same transaction
+  // as the write. Without this recheck, a cohort or academic period can
+  // close after loadCourseOfferingScope but before the update commits.
+  return getDb().transaction(async (tx) => {
+    const [lockedOffering] = await tx
+      .select({
+        id: courseOfferings.id,
+        cohortId: courseOfferings.cohortId,
+        academicPeriodId: courseOfferings.academicPeriodId,
+      })
+      .from(courseOfferings)
+      .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
-      ),
-    )
-    .returning();
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "OFFERING_NOT_FOUND",
-    );
-  }
+    if (!lockedOffering) {
+      throw new CoursesServiceError("OFFERING_NOT_FOUND");
+    }
 
-  return updated;
+    const [lockedCohort] = await tx
+      .select({
+        id: cohorts.id,
+        status: cohorts.status,
+        collegeId: departments.collegeId,
+      })
+      .from(cohorts)
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(eq(cohorts.id, lockedOffering.cohortId))
+      .for("share")
+      .limit(1);
+
+    const [lockedPeriod] = await tx
+      .select({
+        id: academicPeriods.id,
+        status: academicPeriods.status,
+        collegeId: academicPeriods.collegeId,
+      })
+      .from(academicPeriods)
+      .where(eq(academicPeriods.id, lockedOffering.academicPeriodId))
+      .for("share")
+      .limit(1);
+
+    if (
+      !lockedCohort ||
+      !lockedPeriod ||
+      lockedCohort.collegeId !== current.collegeId ||
+      lockedPeriod.collegeId !== current.collegeId
+    ) {
+      throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
+    }
+
+    if (
+      lockedPeriod.status === "CLOSED" ||
+      (lockedCohort.status !== "PLANNED" &&
+       lockedCohort.status !== "ACTIVE")
+    ) {
+      throw new CoursesServiceError("OFFERING_NOT_MUTABLE");
+    }
+
+    const [updated] = await tx
+      .update(courseOfferings)
+      .set({
+        ...input,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(courseOfferings.id, offeringId),
+        eq(courseOfferings.status, "ACTIVE"),
+      ))
+      .returning();
+
+    if (!updated) {
+      throw new CoursesServiceError("OFFERING_NOT_FOUND");
+    }
+    return updated;
+  });
 }
 
 export async function archiveCourseOffering(
