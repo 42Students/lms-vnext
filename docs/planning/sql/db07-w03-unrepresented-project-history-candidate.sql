@@ -111,10 +111,10 @@ CREATE TRIGGER w03_delivery_history_no_truncate BEFORE TRUNCATE
 -- Legacy project_task_comment.is_deleted is intentionally normalized to
 -- deleted_at. Physical DELETE/TRUNCATE would bypass that recoverable state.
 CREATE FUNCTION w03_reject_project_comment_erasure() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $w03_comments_guard$
 BEGIN
   RAISE EXCEPTION 'project task comments must use soft deletion' USING ERRCODE='23514';
-END $;
+END 6351$w03_comments_guard$;
 CREATE TRIGGER w03_task_comments_no_delete BEFORE DELETE
   ON project_task_comments FOR EACH ROW EXECUTE FUNCTION w03_reject_project_comment_erasure();
 CREATE TRIGGER w03_task_comments_no_truncate BEFORE TRUNCATE
@@ -124,7 +124,7 @@ CREATE TRIGGER w03_task_comments_no_truncate BEFORE TRUNCATE
 -- change the immutable author/creation identity. Message/progress editing and
 -- setting deleted_at remain available to the future API implementation.
 CREATE FUNCTION w03_guard_project_comment_identity() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $w03_comments_guard$
 BEGIN
   IF NEW.id IS DISTINCT FROM OLD.id
      OR NEW.project_id IS DISTINCT FROM OLD.project_id
@@ -134,7 +134,7 @@ BEGIN
     RAISE EXCEPTION 'project task comment identity is immutable' USING ERRCODE='23514';
   END IF;
   RETURN NEW;
-END $;
+END 7126$w03_comments_guard$;
 CREATE TRIGGER w03_task_comments_identity_immutable BEFORE UPDATE
   ON project_task_comments FOR EACH ROW EXECUTE FUNCTION w03_guard_project_comment_identity();
 
