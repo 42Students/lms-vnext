@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-080",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB078_DB05_HISTORICAL_COLUMNS_COMPLETED",
+    "checkpointKind": "DB080_PICKED_DB04_STUDENT_IMAGE_CONTRACT",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "2c609210253b45687ec6c85ebc0c4fc2d36dc66b",
-    "lastWorkerMergedSha": "84e9be01dd49c3b6bb1a7baaa28bb33f6bce05f0",
+    "observedMainSha": "99da1e91122c3001b93e64d4f7185a09fc72f573",
+    "lastWorkerMergedSha": "99da1e91122c3001b93e64d4f7185a09fc72f573",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-078 COMPLETED source-only: retired two historical physical course columns, preserved active formal_title as derived shortTitle ?? courseName wire contract, and barred compatibility-only duplicate persistence."
+    "summary": "DB-080 started to classify active student_image and freeze its receipt-backed normalized mapping without modifying DB-007 owned migration files."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -117,7 +117,7 @@
     "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
     "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "Continue independent DATABASE blocker removal without changing DB-008 ownership.",
+  "nextAction": "Map all 3 legacy student_image fields plus embedded image entry identity/url/active semantics to learner_profile_images/private receipt contract and author regression guards.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -192,7 +192,8 @@
     "DB-064",
     "DB-004",
     "DB-077",
-    "DB-078"
+    "DB-078",
+    "DB-080"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -222,7 +223,7 @@
     "DB-077",
     "DB-078"
   ],
-  "lastPickedAt": "2026-10-12T14:18:00.000Z",
+  "lastPickedAt": "2026-10-12T14:29:00.000Z",
   "lastCompletedAt": "2026-10-12T14:25:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
