@@ -83,7 +83,11 @@ export default async function LearnerCourseTabPage({
           return left.pinned ? -1 : 1;
         }
         return right.createdAt.getTime() - left.createdAt.getTime();
-      });
+      })
+      .map((message) => ({
+        ...message,
+        senderName: message.senderName?.trim() || "Instructor",
+      }));
 
     content = (
       <LearnerCourseOverview
