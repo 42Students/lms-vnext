@@ -40,6 +40,68 @@ import {
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 
+// Validate persisted academic ownership under the same transaction that writes
+// the policy; a client-supplied UUID may belong to another college. SHARE locks
+// prevent a concurrent program/department reparent during policy creation.
+async function validateEligibilityAcademicScope(
+  tx: Tx,
+  collegeId: string,
+  allowedProgramIds: readonly string[],
+  allowedCohortIds: readonly string[],
+) {
+  if (allowedProgramIds.length > 0) {
+    const rows = await tx
+      .select({ id: programs.id })
+      .from(programs)
+      .innerJoin(
+        departments,
+        eq(departments.id, programs.departmentId),
+      )
+      .where(
+        and(
+          inArray(programs.id, [...allowedProgramIds]),
+          eq(departments.collegeId, collegeId),
+          isNull(departments.archivedAt),
+          eq(programs.status, "ACTIVE"),
+        ),
+      )
+      .for("share");
+    if (
+      rows.length !== new Set(allowedProgramIds).size
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      );
+    }
+  }
+  if (allowedCohortIds.length > 0) {
+    const rows = await tx
+      .select({ id: cohorts.id })
+      .from(cohorts)
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(
+        departments,
+        eq(departments.id, programs.departmentId),
+      )
+      .where(
+        and(
+          inArray(cohorts.id, [...allowedCohortIds]),
+          eq(departments.collegeId, collegeId),
+          isNull(departments.archivedAt),
+          eq(programs.status, "ACTIVE"),
+        ),
+      )
+      .for("share");
+    if (
+      rows.length !== new Set(allowedCohortIds).size
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      );
+    }
+  }
+}
+
 async function lockEligibilityJob(tx: Tx, jobId: string) {
   const [job] = await tx
     .select({
@@ -508,11 +570,6 @@ export async function upsertJobEligibilityPolicy(
     placementEligibilityPolicyInputSchema.parse(
       rawInput,
     );
-  await validateEligibilityAcademicScope(
-    job.collegeId,
-    input.allowedProgramIds,
-    input.allowedCohortIds,
-  );
   const values = {
     allowedProgramIds: input.allowedProgramIds,
     allowedCohortIds: input.allowedCohortIds,
@@ -551,6 +608,12 @@ export async function upsertJobEligibilityPolicy(
         "PLACEMENT_ELIGIBILITY_POLICY_LOCKED",
       );
     }
+    await validateEligibilityAcademicScope(
+      tx,
+      liveJob.collegeId,
+      input.allowedProgramIds,
+      input.allowedCohortIds,
+    );
     const [row] = await tx
       .insert(placementJobEligibilityPolicies)
       .values({ jobId, ...values })
