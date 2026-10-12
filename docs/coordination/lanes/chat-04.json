@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_CANONICAL_52_60_WITH_66_SOURCE_TESTS_AND_GUARDED_RUNNER",
-    "updatedOn": "2026-10-11",
-    "observedMainSha": "88f77c130435ff05a2313967a26be483306e84f3",
-    "lastWorkerMergedSha": "905620c62467dbdf842be7fcb5c963a8004cf57a",
+    "checkpointKind": "DB005_SOURCE_TARGET_COMPLETE_ACCEPTANCE_RUNNER_HARDENED_REGISTRATION_OPEN",
+    "updatedOn": "2026-10-12",
+    "observedMainSha": "8b308660f063cd26446d7d64b8a47e0dc3864038",
+    "lastWorkerMergedSha": "73c61ae091c55b7cc46a115ff4b69c3e7d19355b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 remains IN_PROGRESS in DATABASE. Source/target mapping 125/125; runtime verified 0. Canonical UNREGISTERED staging is structurally clean at 52 paired functions / 60 unique triggers. Authored evidence: 66 source-test cases across 7 files, five rollback-only PG suites, three two-session race suites; combined harness has 17 named race families. Guarded disposable runner now preflights 12 critical triggers, 6 staged tables, 9 staged columns and INACTIVE enum before executing every suite. Shared promotion CAS/acceptance fixtures satisfy new promotion-readiness rules. No Node/PG/migration replay/CI execution claimed."
+    "summary": "DB02 source + target disposition 125/125. Canonical unregistered staging currently 61 unique trigger functions / 71 unique triggers. Authored DB02 evidence totals 97 source-test cases across 11 files, 8 rollback-only PG suites and 5 concurrency suites. Disposable runner now derives exact canonical trigger/table/column manifests, preventing partial registration from passing stale hard-coded witness counts. CI run 3446 proves the current registered schema can replay cleanly on PostgreSQL 17 and is idempotent/catalog-valid, but DB02 has 0 drizzle registration hits and 0 DB02 runtime verifications."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -86,7 +86,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Remain in DATABASE. Chat1 registers/reconciles canonical DB02; on a freshly replayed disposable PostgreSQL database run DB02_DISPOSABLE_ACCEPTANCE=YES DB02_EXPECTED_DATABASE=<exact> DATABASE_URL=<secret> bash scripts/sql/db02-run-disposable-acceptance.sh. The runner now executes 7 source-test files, 5 rollback suites and 3 race suites after registration witnesses pass. Do not mark DB-005 DONE_VERIFIED from authored/static evidence.",
+  "nextAction": "Chat 1 must translate/register the reviewed DB02 canonical staging into numbered Drizzle/schema exports, then run scripts/sql/db02-run-disposable-acceptance.sh against an isolated fresh PostgreSQL database. Chat 4 should consume the exact run logs, fix DB02-specific failures only, and mark DB-005 complete only after all canonical manifest, rollback and concurrency suites pass at one exact main SHA.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -163,7 +163,12 @@
     "https://github.com/42Students/lms-vnext/commit/64d6ea12b0070af99396fae7a4e34c01d86225f6",
     "https://github.com/42Students/lms-vnext/commit/61cc3bce77cd95c2f992d1779f8eecc81647631f",
     "https://github.com/42Students/lms-vnext/commit/6fd9302f3d1b93000e70ef3602d180cdc56c9243",
-    "https://github.com/42Students/lms-vnext/issues/24#issuecomment-6107151836"
+    "https://github.com/42Students/lms-vnext/issues/24#issuecomment-6107151836",
+    "https://github.com/42Students/lms-vnext/commit/63b92f6d6822cb244acad116072bedd62abc8f1c",
+    "https://github.com/42Students/lms-vnext/commit/4e87f02885ff21765fc223c0bf74f8d88665c4cc",
+    "https://github.com/42Students/lms-vnext/commit/62b8c3c52392b691e382aa1e5f1d12115689aa36",
+    "https://github.com/42Students/lms-vnext/commit/73c61ae091c55b7cc46a115ff4b69c3e7d19355b",
+    "https://github.com/42Students/lms-vnext/actions/runs/38260021902"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
