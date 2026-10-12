@@ -4826,17 +4826,17 @@
         "docs/planning/db04-chat05-historical-final-disposition-2026-10-12.json",
         "tests/db077-db04-historical-final-disposition.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "51e6af72a65d6b5fb787e70264ad77ae0649ee69",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-077 finalized source disposition for all 33 fields across historical student_registration and approver_id_card. approver_id_card is source-confirmed retired with the proctored-exam subsystem removed wholesale at legacy commit 87731589d37f7a2fe3bce6a689b3f440a77de28c. student_registration is classified retired from the current product as a historical external-sync ledger: no current prod-2026 path/consumer, no post-V150 evolution, and current registration paths are placement-specific and semantically different. Any future CRM/proctor integration requires a fresh normalized contract. Five Node guards authored, not executed.",
       "pickedBy": 5,
       "pickedAt": "2026-10-12T14:06:00.000Z",
       "startedAt": "2026-10-12T14:07:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-12T14:14:00.000Z",
+      "completionCommitSha": "51e6af72a65d6b5fb787e70264ad77ae0649ee69",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4860,6 +4860,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T14:07:00.000Z",
           "reason": "Chat 5 started pinned-source historical product disposition audit."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:14:00.000Z",
+          "reason": "Pinned-source and removal-history evidence closes the current-product source disposition for both historical DB04 tables; no replacement schema is required."
         }
       ]
     }
