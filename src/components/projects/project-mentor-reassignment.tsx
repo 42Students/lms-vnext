@@ -17,7 +17,7 @@ type Workspace = {
 type Mentor = {
   membershipId: string;
   displayName: string | null;
-  email: string;
+  email: string | null;
 };
 
 export function ProjectMentorReassignment({
@@ -58,7 +58,7 @@ export function ProjectMentorReassignment({
       (
         (mentor.displayName ?? "") +
         " " +
-        mentor.email
+        (mentor.email ?? "")
       )
         .toLowerCase()
         .includes(q),
