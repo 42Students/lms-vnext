@@ -462,10 +462,10 @@
     {
       "id": "P5-R02",
       "domain": "ACADEMICS",
-      "state": "SOURCE_CONFIRMED_GAP",
+      "state": "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION",
       "purpose": "Learner enrollment must not commit into a cohort that becomes non-mutable after the precheck",
       "source": "src/modules/academics/enrollment-service.ts",
-      "currentProtection": "Cohort PLANNED/ACTIVE is checked before db.transaction; insert does not lock or re-read cohort status.",
+      "currentProtection": "Enrollment transaction re-reads the cohort with FOR SHARE, revalidates PLANNED/ACTIVE and program identity, and holds that parent row against concurrent lifecycle transition until enrollment + activity commit.",
       "requiredWitness": "T1 loads an ACTIVE cohort and pauses; T2 completes/archives it; T1 resumes. Enrollment insert must not commit after the cohort is no longer mutable.",
       "executionEvidence": "NOT_RUN"
     },
@@ -687,13 +687,13 @@
     "kind": "SOURCE_AUDITED_CONCURRENCY_AND_STATE_TRANSITION_WITNESSES_NOT_EXECUTED",
     "totalScenarios": 23,
     "stateCounts": {
-      "SOURCE_CONFIRMED_GAP": 3,
+      "SOURCE_CONFIRMED_GAP": 2,
       "SOURCE_PROTECTED_NEEDS_EXECUTION": 13,
       "SOURCE_PROTECTED_DRAFT_UNMIGRATED": 3,
       "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP": 1,
       "DRAFT_UNIMPLEMENTED": 1,
       "SOURCE_POLICY_UNDECIDED": 1,
-      "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION": 1
+      "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION": 2
     },
     "runtimeVerified": 0,
     "blockingGaps": [
@@ -705,6 +705,6 @@
       "P5-R21",
       "P5-R22"
     ],
-    "note": "Source protection is not a PASS. Every scenario requires disposable-PostgreSQL execution through the negative witness gate; confirmed gaps require implementation or explicit policy before DATABASE certification."
+    "note": "Source protection is not a PASS. P5-R01 and P5-R02 now have authored locking/revalidation fixes but both remain runtime-pending; every scenario still requires disposable-PostgreSQL execution before DATABASE certification."
   }
 }
