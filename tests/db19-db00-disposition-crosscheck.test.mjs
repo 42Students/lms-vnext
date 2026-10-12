@@ -101,3 +101,62 @@ test('Node CLI confirms synthetic disposition and refuses incorrect review',()=>
   assert.ok(JSON.parse(rejected.stdout).errors.some(x=>x.code==='REVIEW_TOTAL_DRIFT'));
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+const approvedScope=()=>({
+ schemaVersion:1,taskId:'DB-003',
+ decisionId:'DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12',
+ authority:'USER_EXPLICIT',userInstruction:'Please remove them not required',
+ decision:'EXCLUDE_FROM_VNEXT',appliesTo:'42Students/lms-vnext',
+ legacyBackendSha:sha,legacyProductionMutationAuthorized:false,
+ dataMigrationRequired:false,externalConsumerAbsenceProven:false,
+ counts:{tables:1,fields:2},
+ tables:[{table:'smrithi_application',sourceFieldCount:2,decision:'RETIRE_VNEXT_USER_APPROVED'}],
+});
+const approvedReview=()=>{
+ const r=review();
+ r.tables[2].disposition='RETIRE_VNEXT_USER_APPROVED';
+ r.tables[2].productApprovalId='DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12';
+ r.counts.tableDispositionsClosed=3;
+ r.counts.fieldCandidatesDispositionedByTableDecision=5;
+ r.counts.pendingProductDecisionTables=0;
+ r.counts.pendingProductDecisionFields=0;
+ r.counts.approvedProductRetiredTables=1;
+ r.counts.approvedProductRetiredFields=2;
+ return r;
+};
+test('accepts approved vNext-only retirement and never asserts PostgreSQL runtime proof',()=>{
+ const result=reconcileDb00(source(),approvedReview(),approvedScope());
+ assert.equal(result.valid,true,JSON.stringify(result.errors));
+ assert.equal(result.smrithiProductDecisionClosed,true);
+ assert.equal(result.productScopeExclusionApproved,true);
+ assert.equal(result.databaseVerified,false);
+ assert.equal(result.summary.pendingProductFields,0);
+ assert.equal(result.summary.approvedProductFields,2);
+});
+test('an attempted retirement without approval remains rejected',()=>{
+ const result=reconcileDb00(source(),approvedReview());
+ assert.ok(errors(result).includes('DISPOSITION_MISMATCH'));
+ assert.equal(result.smrithiProductDecisionClosed,false);
+});
+test('wrong legacy oracle, wrong scope and mutation permission cannot authorize retirement',()=>{
+ for(const mutation of [
+  x=>{x.legacyBackendSha='b'.repeat(40);},
+  x=>{x.appliesTo='42Students/lms';},
+  x=>{x.legacyProductionMutationAuthorized=true;},
+  x=>{x.externalConsumerAbsenceProven=true;},
+  x=>{x.authority='SOURCE_SCAN';},
+  x=>{x.userInstruction='inferred approval';},
+  x=>{x.counts.fields=3;},
+  x=>{x.tables[0].sourceFieldCount=4;},
+  x=>{x.tables.push(x.tables[0]);},
+ ]) {
+  const approval=approvedScope();mutation(approval);
+  const result=reconcileDb00(source(),approvedReview(),approval);
+  assert.equal(result.valid,false,JSON.stringify(approval));
+  assert.equal(result.smrithiProductDecisionClosed,false);
+ }
+});
+test('missing or incorrect table approval ID is not accepted',()=>{
+ const r=approvedReview();r.tables[2].productApprovalId='wrong';
+ assert.ok(errors(reconcileDb00(source(),r,approvedScope())).includes('DISPOSITION_MISMATCH'));
+});
