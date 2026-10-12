@@ -25,7 +25,7 @@ const activeMember: RequestContext = {
 };
 
 describe("DB10 shared skills reader scope", () => {
-  it("accepts active college members, rejects inactive/suspended users", () => {
+  it("accepts active college members, rejects disabled users and memberships", () => {
     expect(canReadSkillCatalog(activeMember)).toBe(true);
     expect(canReadSkillCatalog({
       ...activeMember,
@@ -33,7 +33,7 @@ describe("DB10 shared skills reader scope", () => {
     })).toBe(false);
     expect(canReadSkillCatalog({
       ...activeMember,
-      membership: { ...activeMember.membership!, status: "SUSPENDED" },
+      membership: { ...activeMember.membership!, status: "DISABLED" },
     })).toBe(false);
     expect(canReadSkillCatalog({
       ...activeMember,
