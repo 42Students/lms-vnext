@@ -458,7 +458,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     expect(resumed.notNowUntil).toBeNull();
     expect((await listTpoLeadActivities(
       tpo, SEED_IDS.collegeA, created.id,
-() ).filter(x => x.type === "NOTE" && x.note === "Manual stage changed to Contacted")).toHaveLength(2);
+)).filter(x => x.type === "NOTE" && x.note === "Manual stage changed to Contacted")).toHaveLength(2);
   });
 
   it("limits recruiter activity to newest 200 and prioritizes unfinished follow-ups", async () => {
