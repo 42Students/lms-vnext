@@ -70,13 +70,24 @@ describe.skipIf(!enabled)("DB070 immutable project template versions (opt-in Pos
          from pg_trigger tg
          join pg_proc proc on proc.oid = tg.tgfoid
         where tg.tgrelid = 'project_template_versions'::regclass
-          and tg.tgname = 'db07_project_template_versions_append_only'
+          and tg.tgname in (
+            'db07_project_template_versions_append_only',
+            'db07_project_template_versions_no_truncate'
+          )
           and not tgisinternal`,
     );
-    expect(result.rows).toHaveLength(1);
-    expect(result.rows[0].tgenabled).toBe("O");
-    expect(result.rows[0].proname).toBe("db07_deny_template_version_mutation");
-    expect(result.rows[0].trigger_def).toMatch(/BEFORE (?:UPDATE OR DELETE|DELETE OR UPDATE)/);
+    expect(result.rows).toHaveLength(2);
+    const rowGuard = result.rows.find(row => row.tgname === "db07_project_template_versions_append_only");
+    const truncateGuard = result.rows.find(row => row.tgname === "db07_project_template_versions_no_truncate");
+    expect(rowGuard).toBeDefined();
+    expect(truncateGuard).toBeDefined();
+    for (const row of result.rows) {
+      expect(row.tgenabled).toBe("O");
+      expect(row.proname).toBe("db07_deny_template_version_mutation");
+    }
+    expect(rowGuard?.trigger_def).toMatch(/BEFORE (?:UPDATE OR DELETE|DELETE OR UPDATE)/);
+    expect(truncateGuard?.trigger_def).toMatch(/BEFORE TRUNCATE/);
+    expect(truncateGuard?.trigger_def).toMatch(/FOR EACH STATEMENT/);
   });
 
   afterAll(async () => {
@@ -148,6 +159,14 @@ describe.skipIf(!enabled)("DB070 immutable project template versions (opt-in Pos
     });
   });
 
+  it("rejects TRUNCATE CASCADE on revisions, which bypasses DELETE row triggers", async () => {
+    // Catalog preflight above checks the enabled statement trigger. The
+    // disposable transaction is rolled back by withVersion, including errors.
+    await withVersion(async ({ client }) => {
+      await expect(client.query("TRUNCATE TABLE project_template_versions CASCADE"))
+        .rejects.toMatchObject({ code: "23514" });
+    });
+  });
   it("leaves the mutable project template header writable", async () => {
     await withVersion(async ({ client, templateId }) => {
       const updated = await client.query(
