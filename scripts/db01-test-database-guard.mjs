@@ -41,8 +41,13 @@ export function assertSafeDb01TestTarget(env = process.env) {
   }
   if (env.DATABASE_URL) {
     const app = readPgTarget(env.DATABASE_URL, 'DATABASE_URL');
+    // localhost, IPv4 loopback and IPv6 loopback can reach the same
+    // PostgreSQL socket despite different spelling. Never let the host
+    // alias alone exempt a configured application database from refusal.
+    const sameHost = test.host === app.host ||
+      (LOCAL_HOSTS.has(test.host) && LOCAL_HOSTS.has(app.host));
     if (test.db.toLowerCase() === app.db.toLowerCase() &&
-        test.host === app.host && test.port === app.port) {
+        sameHost && test.port === app.port) {
       throw new Error('Refusing to reset the configured application database');
     }
   }
