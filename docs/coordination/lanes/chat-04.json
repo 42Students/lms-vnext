@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-005",
+  "executionState": "AWAITING_DATABASE_ACCEPTANCE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_TARGET_COMPLETE_ACCEPTANCE_RUNNER_HARDENED_REGISTRATION_OPEN",
+    "checkpointKind": "DB005_SOURCE_COMPLETE_125_125_UNVERIFIED_61_FUNCTIONS_71_TRIGGERS",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "8b308660f063cd26446d7d64b8a47e0dc3864038",
-    "lastWorkerMergedSha": "73c61ae091c55b7cc46a115ff4b69c3e7d19355b",
+    "lastWorkerMergedSha": "d300d38678581b4dfdf5ef2c1920abc4c9227977",
+    "observedMainSha": "d300d38678581b4dfdf5ef2c1920abc4c9227977",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 source + target disposition 125/125. Canonical unregistered staging currently 61 unique trigger functions / 71 unique triggers. Authored DB02 evidence totals 97 source-test cases across 11 files, 8 rollback-only PG suites and 5 concurrency suites. Disposable runner now derives exact canonical trigger/table/column manifests, preventing partial registration from passing stale hard-coded witness counts. CI run 3446 proves the current registered schema can replay cleanly on PostgreSQL 17 and is idempotent/catalog-valid, but DB02 has 0 drizzle registration hits and 0 DB02 runtime verifications."
+    "summary": "DB005 125/125 legacy field source/target design dispositions complete, canonical unregistered DB02 stage 61 valid functions/71 triggers. Program archive now blocks nonarchived cohorts, cohort create/activate acquires parent SHARE lock, both archive/cohort commit order tests authored. 16/16 GitHub-fetched V8 source assertions PASSED. 0 native Node/PG/migration acceptance. Queue COMPLETED by Chat4, NOT DONE_VERIFIED; W01 numbered migration, 0000 replay, schema+runner execution pending."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -42,12 +42,15 @@
     "scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh",
     "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
     "scripts/sql/db02-run-disposable-acceptance.sh",
-    "tests/db02-disposable-runner-contract.test.mjs"
+    "tests/db02-disposable-runner-contract.test.mjs",
+    "tests/db02-program-archive-integrity-contract.test.mjs",
+    "scripts/sql/db02-program-archive-acceptance-unregistered.sql",
+    "scripts/sql/db02-program-archive-concurrency-unregistered.sh"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "Verification gate only: DB02 remains unregistered under Chat 1 schema/migration ownership and Chat 4 has 0 executed PostgreSQL/Node acceptance runs.",
-    "Chat 1 must register/reconcile DB02, zero-to-current replay a disposable PostgreSQL DB, then run the guarded DB02 runner and preserve exact outputs/version/commit. CI billing is intentionally not a blocker."
+    "Source task DB005 COMPLETED but ACCEPTANCE OPEN: W01 exclusive migration owner must register staged DB02 and execute full disposable PostgreSQL replay/tests; no PG/Node runtime acceptance attributed.",
+    "Global DATABASE remains ACTIVE; original eleven closure requires DONE_VERIFIED not source task completion."
   ],
   "handoffs": [
     {
@@ -86,7 +89,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Chat 1 must translate/register the reviewed DB02 canonical staging into numbered Drizzle/schema exports, then run scripts/sql/db02-run-disposable-acceptance.sh against an isolated fresh PostgreSQL database. Chat 4 should consume the exact run logs, fix DB02-specific failures only, and mark DB-005 complete only after all canonical manifest, rollback and concurrency suites pass at one exact main SHA.",
+  "nextAction": "No new DB microtasks. Hand off canonical DB02 migration/acceptance to W01 Issue #21, then in DATABASE wave select the next truly READY/dependency-satisfied work package after fresh CAS queue review. DB019/DB020 depend on DONE_VERIFIED upstream; do not steal them or mark DB005 verified without execution.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -174,11 +177,15 @@
   "pickedTaskIds": [
     "DB-005"
   ],
-  "completedTaskIds": [],
+  "completedTaskIds": [
+    "DB-005"
+  ],
   "lastPickedAt": "2026-10-10T20:27:02.917Z",
-  "lastCompletedAt": null,
+  "lastCompletedAt": "2026-10-12T14:22:02.602Z",
   "verifiedTaskIds": [],
-  "awaitingVerificationTaskIds": [],
+  "awaitingVerificationTaskIds": [
+    "DB-005"
+  ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
