@@ -100,7 +100,7 @@ test("DB05 offering update rechecks mutable cohort and period under transaction 
   const mutation = offeringUpdate.indexOf(".update(courseOfferings)");
   assert.ok(parent >= 0 && parent < cohort && cohort < period && period < mutation);
   assert.match(offeringUpdate, /\.for\("update"\)/);
-  assert.equal((offeringUpdate.match(/\.for\("share"\)/g) || []).length, 2);
+  assert.equal((offeringUpdate.match(/\.for\("share"\)/g) || []).length, 3);
   assert.match(offeringUpdate, /lockedPeriod\.status === "CLOSED"/);
   assert.match(offeringUpdate, /lockedCohort\.status !== "PLANNED"/);
   assert.match(offeringUpdate, /lockedCohort\.status !== "ACTIVE"/);
@@ -139,4 +139,13 @@ test("DB05 service lock matrix remains a required gate, not a completion asserti
   assert.equal(gate.postgresExecuted, false);
   assert.equal(gate.scenarioCount, 20);
   assert.equal(manifest.status, "SOURCE_STAGED_BLOCKED");
+});
+
+test("DB05 offering update rechecks locked course ancestor college before mutation", () => {
+  assert.match(offeringUpdate, /const \[lockedCourse\] = await tx/);
+  assert.match(offeringUpdate, /\.innerJoin\(departments, eq\(departments\.id, courses\.departmentId\)\)/);
+  assert.match(offeringUpdate, /lockedCourse\.status !== "ACTIVE"/);
+  assert.match(offeringUpdate, /lockedCourse\.collegeId !== current\.collegeId/);
+  assert.ok(offeringUpdate.indexOf(".from(courses)") < offeringUpdate.indexOf(".from(cohorts)"));
+  assert.ok(offeringUpdate.indexOf(".from(courses)") < offeringUpdate.indexOf(".update(courseOfferings)"));
 });
