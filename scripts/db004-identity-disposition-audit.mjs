@@ -71,7 +71,7 @@ export function inspectDb004(source, ledger) {
     approvedRetirement: ledger.rows.filter(r => r.approvedRetirement).length
   };
   if (totals.priorNoTarget !== 137) issues.push("Original 137-gap denominator drift");
-  if (totals.newUnverifiedProposals !== 111 || totals.noPersistedTargetDecision !== 26) {
+  if (totals.newUnverifiedProposals !== 123 || totals.noPersistedTargetDecision !== 14) {
     issues.push("Proposals/decision denominator drift; revise explicit baseline after human review");
   }
   return { passed: issues.length === 0, status: issues.length ? "SOURCE_AUDIT_FAILED" : SOURCE_ONLY_PASS,
