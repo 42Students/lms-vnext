@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB004_DB005_ACADEMIC_CROSSDOMAIN_PEER_REVIEW",
+  "worker": "CHAT_03",
+  "date": "2026-10-12",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceQueue": "docs/planning/db01-chat02-remaining-150-review-queue.json",
+  "scope": "All 6 rows handed from DB-004 to DB-005 for academic hierarchy/import persistence",
+  "counts": {
+    "reviewed": 6,
+    "explicitDisposition": 6,
+    "unresolved": 0,
+    "runtimeVerified": 0
+  },
+  "keyFindings": [
+    "Legacy class_id/program_id/department flatten current hierarchy; vNext active program + period-aware section enrollment is the canonical redesign.",
+    "Faculty department name is display data derived from primary_department_id; dept_id maps directly to that canonical FK.",
+    "bulk_import_batch_id is an active rollback-safety feature, not disposable metadata; vNext needs normalized import batch lineage and undo state."
+  ],
+  "rows": [
+    {
+      "legacyField": "faculty.department",
+      "legacyType": "varchar(255)",
+      "disposition": "NORMALIZED_DB02_DERIVED_TARGET",
+      "proposedTarget": "faculty_profiles.primary_department_id -> departments.name",
+      "note": "Legacy faculty profile exposes a department name, but canonical persistence is department identity; derive the display name from the FK.",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.dept_id",
+      "legacyType": "int",
+      "disposition": "MAPPED_DB02_REGISTERED_TARGET",
+      "proposedTarget": "faculty_profiles.primary_department_id",
+      "note": "Canonical faculty primary-department UUID.",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.class_id",
+      "legacyType": "int",
+      "disposition": "NORMALIZED_DB02_REGISTERED_TARGET",
+      "proposedTarget": "active section_enrollments.section_id via learner_program_enrollments",
+      "note": "Legacy class_id is current placement; vNext models period-aware section enrollment history instead of overwriting one class field.",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerServiceImpl + ScopeResolutionService hierarchy semantics",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.department",
+      "legacyType": "varchar(255)",
+      "disposition": "NORMALIZED_DB02_DERIVED_TARGET",
+      "proposedTarget": "active learner_program_enrollments.program_id -> programs.department_id -> departments.name",
+      "note": "Legacy denormalized department is derivable from current academic enrollment and must not drift independently.",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerServiceImpl + ScopeResolutionService hierarchy semantics",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.program_id",
+      "legacyType": "int",
+      "disposition": "NORMALIZED_DB02_REGISTERED_TARGET",
+      "proposedTarget": "active learner_program_enrollments.program_id",
+      "note": "Canonical current program is the unique ACTIVE learner program enrollment, retaining historical enrollments.",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerServiceImpl + ScopeResolutionService hierarchy semantics",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.bulk_import_batch_id",
+      "legacyType": "varchar(64)",
+      "disposition": "PROPOSED_DB02_STAGED_TARGET",
+      "proposedTarget": "learner_import_batch_members.batch_id -> learner_import_batches.id",
+      "note": "Live bulk import stamps all successfully-created learners in one request so an admin can undo the import as a unit; normalize batch metadata and membership instead of copying a batch string onto every learner.",
+      "sourceEvidence": "lms@21bad59d... V126__learner_bulk_import_batch_id.sql + LearnerServiceImpl.bulkRegister/saveBulkLearnerRow",
+      "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
+      "runtimeVerified": false
+    }
+  ]
+}
