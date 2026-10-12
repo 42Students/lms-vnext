@@ -434,12 +434,21 @@ export async function updateTpoLead(
   } catch (error) {
     // Convert only the two known college-scoped contact uniqueness races.
     // Never claim a random constraint failure is a duplicate lead.
-    const pgError = error as { code?: string; constraint?: string };
-    if (pgError.code === "23505" && (
-      pgError.constraint === "placement_tpo_leads_college_email_uq" ||
-      pgError.constraint === "placement_tpo_leads_college_phone_uq"
-    )) {
-      throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+    // Drizzle wraps node-postgres errors in DrizzleQueryError.cause.
+    // Check only real SQLSTATE+constraint, not error messages or arbitrary
+    // unique conflicts, and bound traversal of driver exception wrappers.
+    let cause: unknown = error;
+    for (let depth = 0; depth < 4 && cause && typeof cause === "object"; depth++) {
+      const pgError = cause as {
+        code?: unknown; constraint?: unknown; cause?: unknown;
+      };
+      if (pgError.code === "23505" && (
+        pgError.constraint === "placement_tpo_leads_college_email_uq" ||
+        pgError.constraint === "placement_tpo_leads_college_phone_uq"
+      )) {
+        throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+      }
+      cause = pgError.cause;
     }
     throw error;
   }
