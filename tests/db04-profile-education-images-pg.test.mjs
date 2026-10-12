@@ -66,7 +66,7 @@ if (!optIn) {
       const insertReceipt = async ({
         owner = membershipA,
         purpose = "MARKSHEET",
-        key = "private/profile/evidence.bin",
+        key = "private/profile/evidence_bin",
         generation = "1",
         sha = "a".repeat(64),
       } = {}) => {
@@ -188,7 +188,7 @@ if (!optIn) {
         const marksheetB = await insertReceipt({
           owner: membershipB,
           purpose: "MARKSHEET",
-          key: "private/profile/foreign-marksheet.bin",
+          key: "private/profile/foreign-marksheet_bin",
           generation: "2",
         });
         await db.query(
@@ -210,7 +210,7 @@ if (!optIn) {
 
         const imageReceipt = await insertReceipt({
           purpose: "PROFILE_IMAGE",
-          key: "private/profile/avatar.bin",
+          key: "private/profile/avatar_bin",
           generation: "3",
         });
         await db.query(
