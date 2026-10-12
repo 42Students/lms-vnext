@@ -10,6 +10,7 @@ import {
   collegeMemberships,
   cohorts,
   learnerProgramEnrollments,
+  membershipRoles,
   sectionEnrollments,
   users,
 } from "@/db/schema";
@@ -181,6 +182,45 @@ export async function createLearnerProgramEnrollment(
 
   try {
     return await db.transaction(async (tx) => {
+      // Membership/role can be suspended or revoked after the initial
+      // loadAcademicsMembership() preflight. Lock the canonical parent first,
+      // matching people/repository.ts role-writer lock order, then SHARE-lock
+      // the actual LEARNER grant. A concurrent status UPDATE or role DELETE
+      // must commit first or wait for this enrollment transaction; otherwise
+      // a formerly authorized learner could acquire a fresh enrollment.
+      const [liveMembership] = await tx
+        .select({
+          collegeId: collegeMemberships.collegeId,
+          status: collegeMemberships.status,
+        })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, input.membershipId))
+        .for("share")
+        .limit(1);
+      if (!liveMembership) {
+        throw new AcademicsServiceError("MEMBERSHIP_NOT_FOUND");
+      }
+      if (liveMembership.status !== "ACTIVE") {
+        throw new AcademicsServiceError("MEMBERSHIP_NOT_ACTIVE");
+      }
+      if (liveMembership.collegeId !== program.collegeId) {
+        throw new AcademicsServiceError("ENROLLMENT_COLLEGE_MISMATCH");
+      }
+      const [liveLearnerRole] = await tx
+        .select({ id: membershipRoles.id })
+        .from(membershipRoles)
+        .where(
+          and(
+            eq(membershipRoles.membershipId, input.membershipId),
+            eq(membershipRoles.role, "LEARNER"),
+          ),
+        )
+        .for("share")
+        .limit(1);
+      if (!liveLearnerRole) {
+        throw new AcademicsServiceError("LEARNER_ROLE_REQUIRED");
+      }
+
       // The preflight cohort can become COMPLETED or ARCHIVED before this
       // transaction starts. SHARE both re-reads the latest committed state
       // after a competing status writer and holds the row against a later
