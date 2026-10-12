@@ -63,17 +63,19 @@ async function insertOutbound(
   await client.query(
     `insert into outbound_messages (
        id, organization_id, college_id, source_event_id,
-       channel, template_key, recipient_hash, idempotency_key, request_digest,
+       channel, template_key, recipient_hash, global_email_hash_commitment,
+       idempotency_key, request_digest,
        key_id, nonce_base64, tag_base64, ciphertext_base64
      ) values (
        $1, $2, $3, $4,
-       'EMAIL', 'RECRUITER_INVITATION', $5, $6, $7,
+       'EMAIL', 'RECRUITER_INVITATION', $5, $8, $6, $7,
        'db10-test-key', 'test-nonce', 'test-tag', 'test-ciphertext'
      )`,
     [
       id, organizationId, collegeId, randomUUID(),
       "a".repeat(64), randomUUID().replaceAll("-", "").padEnd(64, "0"),
       "b".repeat(64),
+      "c".repeat(64), // deterministic, non-PII EMAIL commitment required by canonical table CHECK
     ],
   );
   return id;
