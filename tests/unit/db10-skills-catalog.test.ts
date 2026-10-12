@@ -5,7 +5,7 @@ import {
 } from "@/modules/skills/catalog-validation";
 import {
   canReadSkillCatalog,
-} from "@/modules/skills/catalog-service";
+} from "@/modules/skills/catalog-access";
 import type { RequestContext } from "@/modules/identity/context";
 
 const activeMember: RequestContext = {
