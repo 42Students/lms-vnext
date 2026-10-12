@@ -652,7 +652,7 @@
       "id": "DB05_LIVE_AUTHORING_LOCKED_SCOPE_TWO_SESSION_PG_ACCEPTANCE",
       "status": "NOT_RUN",
       "owner": "DB05_W01_DB02_VERIFICATION",
-      "evidence": "Four committed Chat6 service changes: delivery create section/cohort/period/college locked recheck, faculty create membership/role locked recheck, offering update cohort/period mutability locked recheck. Node test source authored; no PostgreSQL execution. 20 LC-01..20 two-session/stale authorization tests in docs/planning/db05-live-course-authoring-lock-acceptance.json; exact SHA/SQLSTATE/lock-order and clean database replay required. CI billing intentionally not a task blocker.",
+      "evidence": "Committed Chat 6 delivery-create ancestry/section and faculty active role/member SHARE rechecks, offering-update ancestor course/cohort/period locked rechecks. 21 LC-01..21 scenarios in docs/planning/db05-live-course-authoring-lock-acceptance.json. Node regressions authored but PG/CI/typecheck not executed; require two-session lock-order and negative tenant cases on disposable PostgreSQL. CI billing is not a task blocker.",
       "testMatrix": "docs/planning/db05-live-course-authoring-lock-acceptance.json",
       "runtimeImplementation": [
         "src/modules/courses/delivery-service.ts",
@@ -660,7 +660,7 @@
         "src/modules/courses/offering-service.ts"
       ],
       "postgresExecuted": false,
-      "scenarioCount": 20
+      "scenarioCount": 21
     }
   ],
   "sourceReview": {
