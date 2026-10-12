@@ -133,6 +133,10 @@ export function apiErrorResponse(error: unknown) {
       "MEMBERSHIP_NOT_FOUND",
     ]);
 
+    // AcademicsServiceError is not a permission decision by itself; only
+    // explicit access-denied codes map to HTTP 403.
+    const forbidden = new Set(["ACADEMICS_ACCESS_DENIED", "FACULTY_ACCESS_DENIED"]);
+
     return NextResponse.json(
       { error: error.code },
       {
