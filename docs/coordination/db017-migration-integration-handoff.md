@@ -1,0 +1,9 @@
+# W01 DB-017 migration integration — 12 October 2026
+
+**Registered:** 0041–0042 DB06 parent integrity; 0043 DB09 share defaults; 0044 five canonical DB09 policy/CRM tables; **0045 DB09 CRM authorization/history follow-up**. Migration 0045 imports five reviewed functions and five triggers from staged CRM SQL, deliberately excluding CREATE TABLE clauses already applied by 0044. Its snapshot preserves the same five structural tables and makes the ancestry explicit. These functions are not represented in Drizzle table snapshots.
+
+**Not executed:** 0045 PostgreSQL replay, negative actor/college/grant cases, parent-company reparent/concurrency, frontend/browser, and end-to-end API proof. An authored Node contract test is not a passing test or DB proof. Run `npm run db:journal:verify`, `node --test tests/db017-db09-crm-guards-registration.test.mjs`, and `npm run db:verify:independent` on an authorized disposable PostgreSQL checkout; retain exact SHA and results.
+
+**Dependency order requiring additional review:** DB04 profile verification/private receipts (unregistered SQL and migration barrel, runtime conversion pending); DB08 batch lifecycle → registration → debarment → external outcomes; DB05 course content and DB06 attachment receipts; DB09 recruiter same-company grant parent restrictions, collaboration and scheduling; DB10 shared notification/outbox. Do not promote any isolated draft that recreates the five 0044 tables, mutates legacy production data, or conflicts with existing FKs. DB-017 is ongoing until those candidates are accepted or explicitly deferred with gate evidence.
+
+**Branch audit:** historical Chat 1 branches have squash-merged equivalents for PRs #60, #62, #68 and #95; a git ahead count alone is not proof of missing functionality. Never merge a stale full branch; compare its changed files with main first.
