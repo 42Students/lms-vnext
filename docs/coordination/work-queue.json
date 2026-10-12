@@ -375,7 +375,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "905620c62467dbdf842be7fcb5c963a8004cf57a",
+      "latestEvidenceSha": "73c61ae091c55b7cc46a115ff4b69c3e7d19355b",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -410,7 +410,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source classification and target mapping 125/125; runtime verified 0. Canonical UNREGISTERED stage: 52 paired PL/pgSQL functions, 60 unique triggers, zero malformed/duplicate definitions. 66 authored source-test cases across 7 files. Guarded disposable runner inventories 5 rollback-only PostgreSQL suites + 3 concurrency suites and fails closed unless 12 critical triggers, 6 staged tables, 9 staged columns and cohort_status.INACTIVE are registered. Combined concurrency harness specifies 17 named races; focused promotion/type suites add exact-error scenarios. Promotion-readiness dependencies in shared CAS/rollback fixtures were repaired. Recent hardening includes CORE curriculum row/type history, progression-backed term retention, safe empty-cohort delete, archive-vs-INACTIVE separation, referenced period/window integrity, rooms/faculty/parent-history races. No Node/PostgreSQL/CI execution claimed. Chat1 migration registration/replay/disposable execution remains the verification gate; DB-005 IN_PROGRESS."
+      "progressNote": "DB02 source and canonical target disposition remains 125/125. Latest canonical UNREGISTERED staging has 61 unique db02_* trigger functions and 71 unique db02_* triggers; source-contract inventory is 97 authored cases across 11 db02*.test.mjs files, plus 8 rollback-only PostgreSQL acceptance SQL suites and 5 two-session concurrency suites. Chat 4 fixed stale DB02 cross-domain test path at 63b92f6 and hardened the disposable runner at 4e87f02/62b8c3c/73c61ae so trigger/table/column registration manifests are derived from the canonical staging instead of stale hard-coded counts. GitHub CI run 3446 executed PostgreSQL 17 and PASSED migration journal, clean replay+seed, second-run idempotence and catalog witness for the CURRENT REGISTERED schema, then failed later global integration tests. DB02 staged objects still have zero drizzle registration hits, so no DB02 PostgreSQL/runtime equivalence is claimed. DB-005 stays IN_PROGRESS pending Chat 1 registration and DB02 disposable/race execution."
     },
     {
       "id": "DB-006",
