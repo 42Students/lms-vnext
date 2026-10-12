@@ -6,9 +6,13 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  cohorts,
   courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
+  courses,
+  departments,
+  programs,
   sections,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -142,8 +146,11 @@ export async function createCourseSectionDelivery(
           id: courseOfferings.id,
           cohortId: courseOfferings.cohortId,
           academicPeriodId: courseOfferings.academicPeriodId,
+          collegeId: departments.collegeId,
         })
         .from(courseOfferings)
+        .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
         .where(and(
           eq(courseOfferings.id, input.offeringId),
           eq(courseOfferings.status, "ACTIVE"),
@@ -153,6 +160,10 @@ export async function createCourseSectionDelivery(
 
       if (!activeOffering) {
         throw new CoursesServiceError("OFFERING_NOT_FOUND");
+      }
+      if (activeOffering.collegeId !== offering.collegeId) {
+        // The grant was evaluated against the previous offering college.
+        throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
       }
 
       // The pre-transaction section eligibility check can become stale if
@@ -166,8 +177,12 @@ export async function createCourseSectionDelivery(
           cohortId: sections.cohortId,
           academicPeriodId: sections.academicPeriodId,
           status: sections.status,
+          collegeId: departments.collegeId,
         })
         .from(sections)
+        .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+        .innerJoin(programs, eq(programs.id, cohorts.programId))
+        .innerJoin(departments, eq(departments.id, programs.departmentId))
         .where(eq(sections.id, input.sectionId))
         .for("share")
         .limit(1);
@@ -176,7 +191,8 @@ export async function createCourseSectionDelivery(
         !lockedSection ||
         lockedSection.status !== "ACTIVE" ||
         lockedSection.cohortId !== activeOffering.cohortId ||
-        lockedSection.academicPeriodId !== activeOffering.academicPeriodId
+        lockedSection.academicPeriodId !== activeOffering.academicPeriodId ||
+        lockedSection.collegeId !== activeOffering.collegeId
       ) {
         throw new CoursesServiceError("SECTION_NOT_DELIVERABLE");
       }
