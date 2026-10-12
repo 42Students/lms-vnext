@@ -703,6 +703,12 @@
       "status": "PASS",
       "owner": 6,
       "evidence": "Native Node v22.16.0 node --test executed on byte-identical file (git blob d2cd43b8118dcdb1e925785fd0ba312e13890d9d; committed at 6a57ef41757458b71fce596eb420cfaee869fdb6): 18 tests passed, 0 failed; source-reference behavior only, NOT PostgreSQL trigger acceptance."
+    },
+    {
+      "id": "DB05_FACULTY_ASSIGNMENT_END_TENANT_RACE",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Chat6 main a0adef4 transactional assignment lock + delivery/member final WHERE and SHARE-locked delivery/offering/course/department/college/organization ancestry. Four Node static tests authored not native executed. FA-01..08 two-session PostgreSQL and tenant API authorization tests NOT RUN; docs/planning/db05-faculty-assignment-end-race-contract.md."
     }
   ],
   "sourceReview": {
