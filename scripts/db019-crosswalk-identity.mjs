@@ -66,11 +66,17 @@ export function reconcileCrosswalk(domain, ledger, artifact, inventoryBlobSha = 
   if (dst.duplicate.length) errors.push({code:"DUPLICATE_CROSSWALK_FIELDS", fields:dst.duplicate});
   if (missing.length) errors.push({code:"CROSSWALK_MISSING_FIELDS", fields:missing});
   if (extra.length) errors.push({code:"CROSSWALK_EXTRA_FIELDS", fields:extra});
+  // Crosswalk formats store the frozen backend oracle and inventory pin in
+  // different locations. Checking only a top-level sourceSha would silently
+  // bypass DB01/DB03/DB08 source-drift detection.
   const sourceSha = artifact.sourceSha || artifact.legacyBackendSha || artifact.legacyOracleSha ||
-    artifact.source?.legacyBackendSha || null;
-  if (sourceSha && sourceSha !== ledger.sourceSha)
+    artifact.source?.legacyBackendSha || artifact.sourceInventory?.legacyBackendSha ||
+    artifact.capturedFrom?.legacyBackendSha || null;
+  if (!/^[a-f0-9]{40}$/i.test(sourceSha || ""))
+    errors.push({code:"MISSING_LEGACY_SOURCE_SHA", domain});
+  else if (sourceSha !== ledger.sourceSha)
     errors.push({code:"LEGACY_SOURCE_SHA_DRIFT", expected:ledger.sourceSha, observed:sourceSha});
-  const pin = artifact.source?.inventoryBlobSha || null;
+  const pin = artifact.source?.inventoryBlobSha || artifact.sourceInventory?.blobSha || null;
   if (pin && (!/^[a-f0-9]{40}$/i.test(inventoryBlobSha || "") || pin !== inventoryBlobSha))
     errors.push({code:"INVENTORY_BLOB_SHA_DRIFT", pinned:pin, observed:inventoryBlobSha});
   return {domain, sourceOnly:true, databaseVerified:false,
