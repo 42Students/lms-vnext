@@ -950,7 +950,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 -- with the owning role/membership status change; this trigger cannot
 -- prove that service-layer transition.
 CREATE FUNCTION db02_guard_cohort_promotion_readiness()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_id uuid;
   v_cohort_status cohort_status;
