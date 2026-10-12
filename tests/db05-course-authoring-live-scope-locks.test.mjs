@@ -122,10 +122,10 @@ test("DB05 all authoring lock acceptance cases remain independently unverified",
   assert.equal(witness.taskId, "DB-008");
   assert.equal(witness.status, "SOURCE_IMPLEMENTED_RUNTIME_PG_NOT_RUN");
   assert.equal(witness.postgresRun, "NOT_RUN");
-  assert.equal(witness.acceptance.length, 20);
+  assert.equal(witness.acceptance.length, 21);
   assert.deepEqual(
     witness.acceptance.map(x => x.id),
-    Array.from({ length: 20 }, (_, i) => "LC-" + String(i + 1).padStart(2, "0")),
+    Array.from({ length: 21 }, (_, i) => "LC-" + String(i + 1).padStart(2, "0")),
   );
   assert.ok(witness.acceptance.every(x => !x.executed && !x.passed));
   assert.ok(witness.acceptance.every(x => x.expectedMarker && x.operation && x.interleaving));
@@ -137,7 +137,7 @@ test("DB05 service lock matrix remains a required gate, not a completion asserti
   assert.ok(gate);
   assert.equal(gate.status, "NOT_RUN");
   assert.equal(gate.postgresExecuted, false);
-  assert.equal(gate.scenarioCount, 20);
+  assert.equal(gate.scenarioCount, 21);
   assert.equal(manifest.status, "SOURCE_STAGED_BLOCKED");
 });
 
