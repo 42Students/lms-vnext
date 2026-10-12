@@ -1,17 +1,14 @@
-# LMS vNext main engineering continuation (single tracker)
+# LMS vNext continuation runbook — closure-first, single tracker
 
-**Current direction (2026-10-12):** This scheduled workflow works from **one** tracker: [docs/tracker.json](../../docs/tracker.json). The earlier six-chat model, six task claims, lane checkpoint files, per-worker issue updates and Chat-1-only ownership are retired. This file is a continuation runbook, not a separate progress tracker.
+This is a **runbook**, not a second tracker or a promise of continuous/asynchronous execution. The six-chat system and all worker lanes are retired. Authority: [AGENTS.md](../../AGENTS.md), [closure-first delivery strategy](../planning/closure-first-delivery-strategy.md), [docs/tracker.json](../tracker.json).
 
-When invoked:
+For each actual user-triggered or scheduled run:
 
-1. Fetch latest `main`, read `AGENTS.md`, `docs/tracker.json`, and current domain contracts/test evidence. Run `node scripts/tracker.mjs --check` where available.
-2. Select a substantive, relevant `done:false` task in the current shared phase (DATABASE first). The original eleven closure tasks take priority. Do not create cosmetic new queue entries to increase the denominator.
-3. Implement and test safely against disposable data. Shared numbered migrations/CI/root changes require serialized review; do not overwrite parallel edits.
-4. Commit directly to fresh `main` with optimistic GitHub blob SHAs; verify commit ancestry. No force-push, no ordinary PR/branch churn.
-5. Set `done:true` **only** when all task acceptance evidence is actually executed and passed on an identified SHA, and required policy approval exists. Otherwise it remains `done:false`, regardless of how much code has been written.
-6. Report DONE / NOT DONE totals, original eleven progress, exact commits, executed versus skipped tests and concrete remaining verification requirements.
-7. Keep currentPhase DATABASE until all database prerequisites and independent phase gates pass. The one tracker replaces phase-state.json and work-queue.json as operating authority.
+1. Fetch `42Students/lms-vnext@main`, read the one tracker and the current dependency, migration and test evidence.
+2. Choose a **specific executable outcome** in DATABASE—prefer moving an original-core blocker into registered, PG-replayable, tested functionality. Prioritize upstream DB-004/005/007, then DB-008/012, then global DB-019/020; do not spawn another project plan or staging-only task.
+3. Implement a cohesive code/DDL/consumer/test change. Check the real registered Drizzle journal and safely run targeted and cross-tenant negative tests on **disposable PostgreSQL only**; no production/shared writes. Don't hide a failing test.
+4. Use one atomic optimistic-SHA direct-`main` commit where practicable; serialize shared journal/schema barrel/CI changes; verify remote HEAD and exact acceptance SHA. Avoid re-triggering serial Actions for every small file.
+5. Change the sole tracker DONE Boolean **only** with full independently executed acceptance and any required product/privacy approval. Never unlock API/UI/RELEASE until the five global DATABASE gates pass.
+6. Report: code change, SHA, genuinely executed test results, total DONE/NOT DONE, original-core DONE/NOT DONE, precise unresolved blocker and the next runnable integration. If no task closed, explicitly state zero closures.
 
-A recurring scheduler runs only when triggered. Do not promise continuous hour-long execution or infer that a future task ran. GitHub Actions may be used as an available test runner, but CI failures and missing PostgreSQL proof must be reported honestly, not ignored.
-
-Historical evidence and old per-worker documents remain readable through Git history. This runbook supersedes their execution policy.
+A recurring scheduler only works when it actually runs. No promise of an hour of uninterrupted work, no invented later completion, no worker claims or secondary progress statuses.

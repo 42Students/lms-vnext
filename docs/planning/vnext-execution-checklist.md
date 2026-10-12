@@ -1,10 +1,12 @@
 # LMS vNext — Execution Checklist
 
+> **HISTORICAL REFERENCE ONLY (2026-10-13).** This checklist records implementation-era source progress, not current task acceptance. The **only** live DONE/NOT DONE tracker is [docs/tracker.json](../tracker.json); follow [closure-first delivery](closure-first-delivery-strategy.md). The checked boxes below do **not** certify the corresponding feature, runtime, database or UI parity gate.
+
 **Baseline:** 2026-10-02  
 **Repository:** `42Students/lms-vnext`  
 **Baseline HEAD before this documentation commit:** `be1527cf3ef7b90be1b6fe6830dbf91c3223cf8e`
 
-Use this as the day-to-day tracker. Check items only after code is committed and CI is green.
+Do **not** use this as a day-to-day tracker or add task status here. Inspect the one binary tracker and exact current SHA/acceptance logs instead; preserve old checkmarks as historical notes.
 
 Legend:
 - [x] complete and committed

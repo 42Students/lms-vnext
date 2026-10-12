@@ -25,6 +25,7 @@
     "db:e2e:prepare": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/db-e2e-prepare.ts",
     "test:load:reads": "tsx scripts/load-read.ts",
     "status": "tsx scripts/project-status.ts",
+    "progress": "node scripts/tracker.mjs",
     "smoke:authenticated": "tsx scripts/smoke-authenticated.ts",
     "parity:status": "tsx scripts/parity-status.ts",
     "parity:pages": "tsx scripts/page-parity-status.ts",

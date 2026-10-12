@@ -1,5 +1,14 @@
 # LMS vNext engineering rules
 
+## Closure-first delivery: authoritative execution method (2026-10-13)
+
+**Read [docs/planning/closure-first-delivery-strategy.md](docs/planning/closure-first-delivery-strategy.md) before beginning an engineering batch.** Optimize for an integrated, runnable, tested capability and a safely closable existing task—not additional source-only plans, parallel trackers, duplicate audits or CI jobs. This delivery method does **not** replace the binary tracker, waive task acceptance, or unlock DATABASE phase gates.
+
+- Each batch declares a testable **before → after outcome**, targets the highest-value prerequisite for the original seven open core tasks, implements real migration/service integration, and produces a remote commit plus executed evidence. Report task counts even if unchanged; never count a green staged-only witness as registered migration completion.
+- Prefer a **single coherent, optimistic-SHA direct-main commit** over repeated tiny pushes and serial GitHub Actions restarts. For shared Drizzle journal/snapshot/schema barrel/CI edits use one writer and fresh ancestry.
+- Start with DB-004/005/007 parent integration, then DB-008/012 downstream, then DB-019/020 global certification (subject to verified dependencies); work on other tasks as required for safe closure, not task inflation.
+- The read-only `npm run progress` command reports the **sole tracker** counts and remaining original core IDs. No secondary kanban/checklist statuses.
+
 ## Single tracker and direct-main engineering (2026-10-12 — current authority)
 
 **User directive:** The six-chat system is retired. There are no Chat 1–6 assignments, claims, lane checkpoints, picked/in-progress/completed/blocked statuses, or chat-specific migration/CI ownership. **The sole live tracker is [docs/tracker.json](docs/tracker.json)**. All older files under docs/coordination/ (including work-queue.json, phase-state.json, lanes/ and six-chat-operating-system.md) are historical evidence, not instructions or a second progress tracker. Issues #21–#26 are historical journals.
@@ -33,17 +42,14 @@
 - Database access must use shared pooled Drizzle/Postgres infrastructure.
 - New abstractions require a concrete use case.
 
-## Quality gates
+## Quality gates — targeted during implementation, full at acceptance
 
-Before committing or accepting meaningful changes:
+- **Inside a cohesive batch:** run the relevant focused lint/typecheck/unit or SQL/database tests that can detect the touched regression quickly. Keep the known full-suite failures visible; do not add skip flags to hide them.
+- **Before declaring a database migration or a task DONE:** independently execute the required **registered-journal replay, drift check, tenant/FK/history/state/concurrency and affected service tests on disposable PostgreSQL**, plus all other task-specific acceptance and approvals. A staged-only test is not promotion proof.
+- **Before phase or release sign-off:** execute and pass the complete applicable lint, typecheck, unit, build and relevant browser/Playwright matrix on an identified revision. Unrelated red CI jobs remain blockers to global acceptance, even if the focused batch succeeds.
+- Commit and test **one coherent batch**, rather than causing a full serial GitHub Actions run on every small document/test adjustment.
 
-1. lint
-2. typecheck
-3. unit tests
-4. build
-5. relevant Playwright flows for user-facing behavior
-
-Every migrated legacy rule should gain a regression test where practical.
+Every migrated legacy rule should gain a meaningful regression test where practical.
 
 ## Migration principle
 

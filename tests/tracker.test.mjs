@@ -22,8 +22,12 @@ const accepted = (id, extras={}) => ({
 test('sole tracker validates exactly the original 81 tasks and the original core 11',()=>{
   const x=inspectTracker(actual);
   assert.deepEqual(x.errors,[]);
-  assert.deepEqual(x.counts,{total:81,done:5,notDone:76});
-  assert.deepEqual(x.core,{total:11,done:3,notDone:8});
+  const done = actual.tasks.filter(t => t.done).length;
+  const coreDone = CORE_ELEVEN.filter(id => actual.tasks.find(t => t.id === id)?.done).length;
+  assert.deepEqual(x.counts,{total:81,done,notDone:81-done});
+  assert.deepEqual(x.core,{total:11,done:coreDone,notDone:11-coreDone});
+  assert.deepEqual(x.coreRemaining.map(t => t.id),
+    CORE_ELEVEN.filter(id => !actual.tasks.find(t => t.id === id)?.done));
   assert.equal(x.activePhase,'DATABASE');
   assert.equal(x.readyForNextPhase,false);
 });
@@ -90,7 +94,7 @@ test('the CLI reads one tracker and no legacy work queue or lane files',()=>{
     const p=spawnSync(process.execPath,[path.join(root,'scripts/tracker.mjs'),dir,'--json'],
       {encoding:'utf8'});
     assert.equal(p.status,0,p.stderr);
-    assert.deepEqual(JSON.parse(p.stdout).counts,{total:81,done:5,notDone:76});
+    assert.deepEqual(JSON.parse(p.stdout).counts,inspectTracker(actual).counts);
   } finally {fs.rmSync(dir,{recursive:true,force:true});}
 });
 test('CLI rejects missing tracker fail closed',()=>{
