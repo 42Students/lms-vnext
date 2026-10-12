@@ -15,6 +15,8 @@ if ! command -v psql >/dev/null 2>&1; then
   exit 2
 fi
 
+source scripts/sql/db02-assert-disposable-target.sh
+
 ACTUAL_DATABASE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -c 'SELECT current_database()')"
 if [[ "$ACTUAL_DATABASE" != "$DB02_EXPECTED_DATABASE" ]]; then
   echo "Refusing to run: DB name mismatch; expected $DB02_EXPECTED_DATABASE, actual $ACTUAL_DATABASE" >&2
