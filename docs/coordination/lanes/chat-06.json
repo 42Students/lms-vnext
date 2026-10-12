@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_LIVE_COURSE_AUTHORING_21_CASE_PG_ACCEPTANCE_OPEN",
+    "checkpointKind": "DB008_MAIN_ANCESTRY_AND_TRANSACTIONAL_SCOPE_RECHECKS_STAGED_NATIVE_PG_OPEN",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
-    "lastWorkerMergedSha": "294ddbca5045d6a0af4056dc6443afb928b887fe",
+    "observedMainSha": "64ace377e5a71dd0e3c7b2e0726453bc27a58a62",
+    "lastWorkerMergedSha": "03d7f6ab09872ec2d50e80cfce9bec7b10133c87",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Direct-main service implementation strengthened five source paths: delivery create rechecks locked offering/section college/cohort/term, teaching assignment rechecks membership status/college and FACULTY role under locks, offering updates recheck locked offering, course, cohort/period for stale authorization and mutability. 11 new Node regression tests authored NOT_EXECUTED; LC01..21 two-connection PG acceptance NOT_RUN; 27/27 exact GitHub blob structural assertions true at main 3bfc3be source snapshot; evidence 294ddbca5. DB008 IN_PROGRESS; DB05 journal unregistered, overall DATABASE phase active."
+    "summary": "Chat6 this iteration committed 15 direct-main commits: course create now locks authorized active department/college/org; offering create locks current course/cohort/program and sorted chosen/start/end academic periods and compares tenant/date bounds; course/offering/delivery/lesson/content edit/archive/transition final predicates refuse stale parent scope; two new static tests define 15 cases, plus four disposable two-connection PG race scenarios. JS V8 harness executed 15 test callbacks + 8 safety/source checks (23/23 PASS) against exact GitHub blobs; this is NOT native node --test, Vitest, TypeScript build or PostgreSQL. PG race test targets require TEST_DATABASE_URL=DATABASE_URL plus DB01 test-target preflight. Three new manifest gates NOT_RUN. DB008 still IN_PROGRESS, DATABASE global active, seven unregistered DB05 principal drafts and independent companions, zero formal field verification."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -66,7 +66,10 @@
     "tests/db05-authoring-parent-locks.test.mjs (7 authored; not executed)",
     "tests/db05-lesson-restore-parent-reference.test.mjs (10/10 native pure reference-model PASS, not SQL)",
     "tests/db05-lesson-restore-parent-guard.test.mjs (authored source SQL/manifest checks, NOT native-executed)",
-    "tests/db05-tombstone-ancestor-preflight.test.mjs (6/6 native read-only SQL source checks PASS, not PostgreSQL)"
+    "tests/db05-tombstone-ancestor-preflight.test.mjs (6/6 native read-only SQL source checks PASS, not PostgreSQL)",
+    "tests/db05-authoring-tenant-snapshot-tx.test.mjs (8 Node static tests authored, NOT native-executed; 8 V8 assertion callbacks PASS)",
+    "tests/db05-authorized-parent-scope-cas.test.mjs (7 Node static tests authored, NOT native-executed; 7 V8 assertion callbacks PASS)",
+    "tests/integration/db05-course-authorization-races.test.ts (4 two-connection PostgreSQL/Vitest tests authored, NOT EXECUTED; fails closed on unsafe test target)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-12: node --test /mnt/data/db008-check/tests/db05-discussion-ancestry-reference.test.mjs | native Node 22.16.0 11/11 PASS | exact blob 5581c1ae8c512614910a3fe72c2d315a96ee67a4 | PURE REFERENCE MODEL ONLY, NOT POSTGRES",
@@ -248,9 +251,15 @@
       "kind": "DB008_LIVE_COURSE_AUTHORING_SCOPE_LOCKS_21_PG_SCENARIOS",
       "commitSha": "294ddbca5045d6a0af4056dc6443afb928b887fe",
       "message": "Five direct-main service scope lock changes in delivery-create, teacher-create, and offering-update; exact source structural inspection 27/27 PASS, evidence docs/coordination/evidence/chat-06-db008-live-authoring-source-2026-10-12.md. 11 new authored source tests, NOT executed; 21 two-session PostgreSQL LC-01..21 NOT_RUN; manifest gate NOT_RUN, W01 sole migrator. 0 formally DB05-verified field claims."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "APP_AUTHORIZED_ANCESTRY_LOCKS_AND_PG_RACE_TESTS",
+      "message": "W01/DB02: 15 direct main commits harden course/offering/delivery/lesson/content stale authorization and parent locking. 4 PostgreSQL two-session tests require disposable seeded TEST_DATABASE_URL=DATABASE_URL; 15 static Node cases authored. V8 source assertions 23/23, native Node/PG/typecheck/build UNVERIFIED. W01 solely owns migration; do not enable seven DB05 drafts/companions until race/tenant and journal replay pass. Three NOT_RUN manifest gates.",
+      "commitSha": "03d7f6ab09872ec2d50e80cfce9bec7b10133c87"
     }
   ],
-  "nextAction": "Execute native Node/TS and disposable two-session PostgreSQL cases LC01..21, HL01..20, CA/TV and DB02 parent races. W01 integrates seven canonical DB05 drafts plus companions exactly once; protect active root/role ancestor invariants and revisit 25 source semantic decisions. Do not prematurely promote DB008 or global DATABASE phase.",
+  "nextAction": "Run native Node static tests and independent TypeScript build on latest main; on safe disposable seeded PG execute tests/integration/db05-course-authorization-races.test.ts (4 scenarios) plus 21 LC, 20 HL, 14 TV and ancestor/race PG witnesses; Chat1 integrate seven DB05 drafts and companions once with clean replay only after passing proof. Continue DB05 unresolved 25 semantic decisions and 0/92 DB field verification; remain DATABASE.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -417,7 +426,13 @@
     "https://github.com/42Students/lms-vnext/commit/d7adfed8b93340902b721444cb440a0b29ec70aa",
     "https://github.com/42Students/lms-vnext/commit/ff41aad9df485977a736e42a731dba67735ca46e",
     "https://github.com/42Students/lms-vnext/commit/c3525e14118cdcd292ca4b9c8e2c4502c94c7217",
-    "https://github.com/42Students/lms-vnext/commit/294ddbca5045d6a0af4056dc6443afb928b887fe"
+    "https://github.com/42Students/lms-vnext/commit/294ddbca5045d6a0af4056dc6443afb928b887fe",
+    "https://github.com/42Students/lms-vnext/commit/80f84117bc815a09f7af56911b14507a8ad9d9c9",
+    "https://github.com/42Students/lms-vnext/commit/4b13cc15bca92d568eddb9911907e59a19ef2f6e",
+    "https://github.com/42Students/lms-vnext/commit/73f3953e13a86f55aa35bf5ff84d4ce5c97cf009",
+    "https://github.com/42Students/lms-vnext/commit/e7dc60713e1e2d178fb143ad45fe89c14ebff907",
+    "https://github.com/42Students/lms-vnext/commit/e8f7c23491867b4fc29763d2a32ffdc386e7c534",
+    "https://github.com/42Students/lms-vnext/commit/03d7f6ab09872ec2d50e80cfce9bec7b10133c87"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
