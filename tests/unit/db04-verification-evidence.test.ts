@@ -7,7 +7,7 @@ const owner = "membership-a";
 function receipt(purpose: Receipt["purpose"], educationEntryId: string | null = null): Receipt {
   return {
     id: purpose + "-" + educationEntryId,
-    owningMembershipId: owner, purpose, educationEntryId,
+    owningMembershipId: owner, purpose, relatedEntryId: educationEntryId,
     scanStatus: "CLEAN", privateObjectKey: "private/college-a/receipt",
     objectGeneration: "1", sha256Hex: "a".repeat(64),
     mimeType: "application/pdf", sizeBytes: 500,
