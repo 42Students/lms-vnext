@@ -71,6 +71,19 @@ test("DB068 retains legal same-template assignment version advancement", () => {
   assert.doesNotMatch(sql, /CHECK\s*\(\s*revoked_at\s+is\s+null/i);
 });
 
+test("DB068 assigned template detail joins by both version UUID and template owner", () => {
+  const start = service.indexOf("export async function getAssignedProjectTemplateDetail(");
+  assert.ok(start >= 0, "missing assigned template detail service");
+  const end = service.indexOf("\nexport async function ", start + 1);
+  const detail = service.slice(start, end < 0 ? undefined : end);
+  assert.match(detail, /\.innerJoin\(\s*projectTemplateVersions,\s*and\(/);
+  assert.match(detail, /eq\(\s*projectTemplateVersions\.id,\s*projectTemplateCollegeAssignments\.templateVersionId/);
+  assert.match(detail, /eq\(\s*projectTemplateVersions\.templateId,\s*projectTemplateCollegeAssignments\.templateId/);
+  // This mutation simulates a future refactor accidentally returning to UUID-only.
+  const mutant = detail.replace(/eq\(\s*projectTemplateVersions\.templateId,\s*projectTemplateCollegeAssignments\.templateId,?\s*\),?/, "true,");
+  assert.doesNotMatch(mutant, /eq\(\s*projectTemplateVersions\.templateId,\s*projectTemplateCollegeAssignments\.templateId/);
+});
+
 test("DB068 application instance creation joins version with its parent template", () => {
   assert.match(instance, /eq\(\s*projectTemplateVersions\.templateId,\s*projectTemplateCollegeAssignments\.templateId/);
   assert.match(instance, /templateVersionId:\s*assigned\.templateVersionId/);
