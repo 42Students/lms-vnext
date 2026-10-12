@@ -113,20 +113,25 @@
         "drizzle/**",
         "src/db/schema/index.ts"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-12T12:25:36.007Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-12T12:25:36.007Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
@@ -137,6 +142,11 @@
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Dependency hardening: destructive/replay DB execution must wait for DB-025 fail-closed TEST_DATABASE_URL safety before using shared reset paths."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T12:25:36.007Z",
+          "reason": "User-directed closure-first Chat1 integrator claim; migrate/CI executable acceptance on fresh main."
         }
       ]
     },
