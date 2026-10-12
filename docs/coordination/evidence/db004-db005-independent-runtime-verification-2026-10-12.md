@@ -53,8 +53,8 @@ This is proof of the **registered baseline only**, not the unregistered DB01/DB0
 
 ```bash
 DB02_DISPOSABLE_ACCEPTANCE=YES \
-DB02_EXPECTED_DATABASE=db02_verify_fresh \
-DATABASE_URL='<isolated local disposable postgres URL ending /db02_verify_fresh>' \
+DB02_EXPECTED_DATABASE=db02_verify_test \
+DATABASE_URL='<isolated local disposable postgres URL ending /db02_verify_test>' \
 bash scripts/sql/db02-run-disposable-acceptance.sh
 ```
 
