@@ -110,6 +110,75 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
   };
 }
 
+/**
+ * A source-only zero-violation scan of a completely empty database proves
+ * nothing. Create real, in-scope academic edges inside each probe's private
+ * rollback transaction, so P5-17/18/19 execute against populated joins.
+ * No fixture identity or PII escapes; all inserts are rolled back.
+ */
+const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19"]);
+
+async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
+  if (!academicFixtureProbes.has(id)) throw new Error("Unreviewed fixture");
+  const program = randomUUID();
+  const period = randomUUID();
+  const cohort = randomUUID();
+  const section = randomUUID();
+  const code = randomUUID().replaceAll("-", "").slice(0, 12);
+  await client.query(
+    "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+    [program, SEED_IDS.departmentA, "DB018 isolated program "+code, "P5-"+code],
+  );
+  await client.query(
+    "INSERT INTO academic_periods (id,college_id,name,code,start_date,end_date,status) VALUES ($1,$2,$3,$4,'2026-01-01','2026-06-30','ACTIVE')",
+    [period,SEED_IDS.collegeA,"DB018 isolated period "+code,"P5-"+code],
+  );
+  await client.query(
+    "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+    [cohort,program,"DB018 isolated cohort "+code,"P5-"+code,period],
+  );
+  await client.query(
+    "INSERT INTO sections (id,cohort_id,academic_period_id,name,code,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+    [section,cohort,period,"DB018 isolated section "+code,"P5-"+code],
+  );
+  if (id === "P5-19") {
+    const course = randomUUID();
+    const offering = randomUUID();
+    await client.query(
+      "INSERT INTO courses (id,department_id,name,code,status) VALUES ($1,$2,$3,$4,'ACTIVE')",
+      [course,SEED_IDS.departmentA,"DB018 isolated course "+code,"P5-"+code],
+    );
+    await client.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'CORE',3,0)",
+      [offering,course,cohort,period],
+    );
+    await client.query(
+      "INSERT INTO course_section_deliveries (offering_id,section_id) VALUES ($1,$2)",
+      [offering,section],
+    );
+  } else {
+    const user = randomUUID();
+    const membership = randomUUID();
+    const enrollment = randomUUID();
+    await client.query(
+      "INSERT INTO users (id,identity_uid,display_name,platform_status) VALUES ($1,$2,'DB018 synthetic learner','ACTIVE')",
+      [user,"db018-test-"+user],
+    );
+    await client.query(
+      "INSERT INTO college_memberships (id,user_id,college_id,status) VALUES ($1,$2,$3,'ACTIVE')",
+      [membership,user,SEED_IDS.collegeA],
+    );
+    await client.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id,status) VALUES ($1,$2,$3,$4,'ACTIVE')",
+      [enrollment,membership,program,cohort],
+    );
+    await client.query(
+      "INSERT INTO section_enrollments (learner_enrollment_id,section_id,academic_period_id,status) VALUES ($1,$2,$3,'ACTIVE')",
+      [enrollment,section,period],
+    );
+  }
+}
+
 async function withRollback(run: (client: PoolClient) => Promise<void>, readOnly = false) {
   const client = await db().connect();
   let transaction = false;
@@ -143,6 +212,7 @@ afterAll(async () => {
           joinedSamplesEmpty: empty.length,
           emptyProbeIds: empty,
           directSqlNegativeCases: 4,
+          syntheticRollbackFixtureProbeIds: [...academicFixtureProbes],
           caveat:
             "Zero violations and nonempty fixture counts do NOT establish prevention; mutation/race witnesses and source semantics still require acceptance.",
         }),
@@ -163,7 +233,12 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
     it(`${probe.id} [${probe.family}] has no existing relational violations`, async () => {
       const sql = sqlFor(probe);
       await withRollback(async (client) => {
-        // This is a real PostgreSQL read-only transaction, not a source shim.
+        // Three academic joins are tested with real in-transaction fixture
+        // edges. All other probes remain strictly read-only observational
+        // checks; never promote an empty sample to prevention evidence.
+        if (academicFixtureProbes.has(probe.id)) {
+          await insertAcademicWitnessFixture(client, probe.id);
+        }
         const sample = await client.query<{ sample_count: string }>(sql.sample);
         const count = await client.query<{ violations: string }>(sql.violations);
         const n = Number(count.rows[0]?.violations);
@@ -173,13 +248,15 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
         if (sampled > 0) nonEmpty.push(probe.id);
         else empty.push(probe.id);
         expect(n, `${probe.id} has relational mismatch rows`).toBe(0);
-      }, true);
+      }, !academicFixtureProbes.has(probe.id));
     });
   }
 
-  it("never reports a completely empty witness fixture as acceptance evidence", () => {
-    // For a clean fixture without any source rows, all zeroes are vacuous.
-    expect(nonEmpty.length).toBeGreaterThan(0);
+  it("requires real populated academic joins rather than vacuous zeroes", () => {
+    // Source-only, empty results in the other families remain explicitly
+    // unverified; this only covers the three synthetically populated joins.
+    for (const id of academicFixtureProbes) expect(nonEmpty).toContain(id);
+    expect(nonEmpty.length).toBeGreaterThanOrEqual(academicFixtureProbes.size);
   });
 });
 
