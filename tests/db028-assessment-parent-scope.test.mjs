@@ -20,7 +20,7 @@ const permissionPolicy = fs.readFileSync(
   "utf8",
 );
 const db02History = fs.readFileSync(
-  "scripts/sql/db02-historic-parent-reassignment-guards.draft.sql",
+  "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
   "utf8",
 );
 
