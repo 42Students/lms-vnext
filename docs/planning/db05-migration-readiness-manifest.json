@@ -685,6 +685,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Unregistered classroom ancestry retention companion guards ten table events including delivery delete and sender membership user reassignment. CL-01..CL-18 PostgreSQL / READ COMMITTED two-session race/deadlock and rollback acceptance must be executed on exact SHA."
+    },
+    {
+      "id": "DB05_LEARNING_PATH_TENANT_WRITE_SCOPE_RACE",
+      "status": "NOT_RUN",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Chat6 9df8a16 source transactional CREATE/UPDATE/PUBLISH checks current offering's course/cohort/period/college/org in SHARE-lock after earlier authorization, and locks path FOR UPDATE. 10 two-session LP tests authored contract 814a8bc, not run on PG. Standalone source tests 4000a98 authored not native Node-run."
+    },
+    {
+      "id": "DB05_ADMIN_HISTORICAL_LEARNING_HIERARCHY_READ",
+      "status": "NOT_RUN",
+      "owner": "DB05_API_INTEGRATION",
+      "evidence": "Historical includeArchived is propagated as includeHistorical from path/lesson/content three service listings (62a5f47, a9f9e59, c732e53); courses.manage gate and learner PUBLISHED requirements stay in place. Need real API role/tenant/archived-parent/learner negative tests; source tests bfa0ab0 authored not native Node-run."
     }
   ],
   "sourceReview": {
@@ -755,7 +767,8 @@
     "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope.",
     "Paired app row locks committed across all 6 course/offering/delivery/teacher paths, but native Node/TS compilation and 20 two-session PostgreSQL HL tests NOT EXECUTED; direct SQL activation, upstream reparent and non-READ-COMMITTED lock order need W01 acceptance.",
     "LC-01..12 learning-path/lesson/content/delivery authoring archive and publish CAS two-session PostgreSQL tests NOT EXECUTED. Direct SQL ancestor reparent and historical tombstone guards remain unregistered. Native Node/typecheck/build not observed.",
-    "DB05_LIVE_SCOPE_LOCK_PG_PENDING: Services recheck mutable offering/section and faculty scope under row locks, but PostgreSQL two-session LC-01..20 and ancestor authorization/deadlock tests are not executed. Source checks only; DB02/W01 upstream guard integration remains open."
+    "DB05_LIVE_SCOPE_LOCK_PG_PENDING: Services recheck mutable offering/section and faculty scope under row locks, but PostgreSQL two-session LC-01..20 and ancestor authorization/deadlock tests are not executed. Source checks only; DB02/W01 upstream guard integration remains open.",
+    "DB05_LEARNING_PATH_SCOPE_AND_ADMIN_HISTORY_API_PG_OPEN: Learning path CREATE/UPDATE/PUBLISH source locks and archived admin path/lesson/content reads are committed, but LP-01..10 two-session PG and archived role/tenant API negative tests remain unexecuted."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
