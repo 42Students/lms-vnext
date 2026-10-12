@@ -48,6 +48,7 @@ BEGIN
            claimed_by = p_worker,
            claim_expires_at = clock_timestamp() + make_interval(secs => p_lease_seconds),
            claim_fence = o.claim_fence + 1,
+           pre_send_authorized_fence = NULL,
            attempts = o.attempts + 1,
            next_attempt_at = NULL,
            updated_at = clock_timestamp()
@@ -99,11 +100,25 @@ BEGIN
     RAISE EXCEPTION 'UNEXPECTED_GLOBAL_EMAIL_HASH'
       USING ERRCODE = '22023';
   END IF;
+  -- The worker-supplied HMAC must belong to this exact recipient. Accepting
+  -- any syntactically valid digest would bypass another college's EMAIL opt-out.
+  -- The outbox stores only a per-message SHA-256 commitment, never the globally
+  -- correlatable EMAIL HMAC or plaintext recipient.
+  IF v_row.channel = 'EMAIL' AND
+     v_row.global_email_hash_commitment IS DISTINCT FROM
+       encode(sha256(convert_to(
+         'db10-global-email-binding-v1:' || v_row.id::text || ':' || p_global_email_hash,
+         'UTF8')), 'hex') THEN
+    RAISE EXCEPTION 'GLOBAL_EMAIL_HASH_MISMATCH'
+      USING ERRCODE = '22023';
+  END IF;
   IF v_row.expires_at IS NOT NULL AND v_row.expires_at <= v_now THEN
     UPDATE outbound_messages
        SET status = 'EXPIRED',
            claimed_by = NULL,
            claim_expires_at = NULL,
+           pre_send_authorized_fence = NULL,
+           pre_send_authorized_fence = NULL,
            last_safe_failure_code = 'EXPIRED_PRE_SEND',
            updated_at = v_now
      WHERE id = v_row.id;
@@ -127,11 +142,18 @@ BEGIN
        SET status = 'SUPPRESSED',
            claimed_by = NULL,
            claim_expires_at = NULL,
+           pre_send_authorized_fence = NULL,
+           pre_send_authorized_fence = NULL,
            last_safe_failure_code = 'SUPPRESSED_PRE_SEND',
            updated_at = v_now
      WHERE id = v_row.id;
     RETURN false;
   END IF;
+  -- Completion MUST be impossible unless this exact claim passed the
+  -- global/local suppression, deadline and recipient-binding checks.
+  UPDATE outbound_messages
+     SET pre_send_authorized_fence = p_fence, updated_at = v_now
+   WHERE id = v_row.id;
   RETURN true;
 END;
 $db067_presend$;
@@ -160,7 +182,8 @@ BEGIN
      OR v_row.claimed_by IS DISTINCT FROM p_worker
      OR v_row.claim_fence IS DISTINCT FROM p_fence
      OR v_row.claim_expires_at IS NULL
-     OR v_row.claim_expires_at <= v_now THEN
+     OR v_row.claim_expires_at <= v_now
+     OR v_row.pre_send_authorized_fence IS DISTINCT FROM p_fence THEN
     RETURN false;
   END IF;
   IF p_outcome = 'PROVIDER_ACCEPTED' THEN
@@ -176,6 +199,8 @@ BEGIN
            provider_accepted_at = v_now,
            claimed_by = NULL,
            claim_expires_at = NULL,
+           pre_send_authorized_fence = NULL,
+           pre_send_authorized_fence = NULL,
            last_safe_failure_code = NULL,
            updated_at = v_now
      WHERE id = v_row.id;
@@ -195,6 +220,8 @@ BEGIN
        SET status = p_outcome,
            claimed_by = NULL,
            claim_expires_at = NULL,
+           pre_send_authorized_fence = NULL,
+           pre_send_authorized_fence = NULL,
            next_attempt_at = CASE WHEN p_outcome = 'RETRY'
                                   THEN p_next_attempt_at ELSE NULL END,
            last_safe_failure_code = p_safe_failure_code,
