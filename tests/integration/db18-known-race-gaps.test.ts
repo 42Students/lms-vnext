@@ -66,6 +66,23 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
     const periodId = randomUUID();
     const programId = randomUUID();
     const cohortId = randomUUID();
+    // The seeded learner already has an active enrollment. Using that row
+    // makes this race test fail early with LEARNER_ALREADY_ENROLLED instead
+    // of exercising the intended cohort status mutation window.
+    const learnerUserId = randomUUID();
+    const learnerMembershipId = randomUUID();
+    await pool.query(
+      "insert into users (id,identity_uid,display_name) values ($1,$2,'DB18 race learner')",
+      [learnerUserId, "db18-race-" + learnerUserId],
+    );
+    await pool.query(
+      "insert into college_memberships (id,user_id,college_id) values ($1,$2,$3)",
+      [learnerMembershipId, learnerUserId, SEED_IDS.collegeA],
+    );
+    await pool.query(
+      "insert into membership_roles (membership_id,role) values ($1,'LEARNER')",
+      [learnerMembershipId],
+    );
 
     await pool.query(
       `insert into academic_periods
@@ -116,7 +133,7 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
       );
 
       const pending = createLearnerProgramEnrollment(collegeAdmin, {
-        membershipId: SEED_IDS.learnerCollegeAMembership,
+        membershipId: learnerMembershipId,
         programId,
         cohortId,
       }).then(
@@ -159,7 +176,7 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
                where membership_id = $1 and program_id = $2 and cohort_id = $3
             )`,
         [
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
           programId,
           cohortId,
         ],
@@ -168,7 +185,7 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
         `delete from learner_program_enrollments
           where membership_id = $1 and program_id = $2 and cohort_id = $3`,
         [
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
           programId,
           cohortId,
         ],
@@ -176,6 +193,9 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
       await pool.query("delete from cohorts where id = $1", [cohortId]);
       await pool.query("delete from programs where id = $1", [programId]);
       await pool.query("delete from academic_periods where id = $1", [periodId]);
+      await pool.query("delete from membership_roles where membership_id = $1", [learnerMembershipId]);
+      await pool.query("delete from college_memberships where id = $1", [learnerMembershipId]);
+      await pool.query("delete from users where id = $1", [learnerUserId]);
     }
   });
 });
