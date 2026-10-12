@@ -1,0 +1,110 @@
+{
+  "taskId": "DB-008",
+  "chatNumber": 6,
+  "artifact": "Lesson content create/update/publish/archive parent scope two-session acceptance",
+  "createdOn": "2026-10-12",
+  "status": "SOURCE_AUTHORED_DATABASE_NOT_RUN",
+  "scopedSource": "src/modules/courses/lesson-content-service.ts",
+  "tests": [
+    "tests/db05-lesson-content-write-ancestry.test.mjs"
+  ],
+  "postgresRun": "NOT_RUN",
+  "acceptance": [
+    {
+      "id": "CW-01",
+      "operation": "CREATE",
+      "race": "Path ARCHIVED after pre-read",
+      "expected": "REJECT, no inserted content",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-02",
+      "operation": "CREATE",
+      "race": "Lesson ARCHIVED after pre-read",
+      "expected": "REJECT, no inserted content",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-03",
+      "operation": "CREATE",
+      "race": "Offering reparented to different college",
+      "expected": "REJECT, no cross-tenant content",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-04",
+      "operation": "CREATE",
+      "race": "Cohort/program moved while offering ID stable",
+      "expected": "REJECT, no cross-tenant content",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-05",
+      "operation": "CREATE",
+      "race": "Period moved while offering ID stable",
+      "expected": "REJECT, no cross-tenant content",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-06",
+      "operation": "CREATE",
+      "race": "Delivery END races new scoped content",
+      "expected": "REJECT/serializable safe, no new content on ended delivery",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-07",
+      "operation": "UPDATE",
+      "race": "Lesson rescope/archive races update",
+      "expected": "REJECT; old content unchanged",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-08",
+      "operation": "UPDATE",
+      "race": "Content type/lesson/delivery reassigned between read+update",
+      "expected": "REJECT conditional mutation",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-09",
+      "operation": "PUBLISH",
+      "race": "Offering/course archived between auth and write",
+      "expected": "REJECT; no publication",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-10",
+      "operation": "ARCHIVE",
+      "race": "Concurrent delivery end/lesson archive",
+      "expected": "REJECT or deterministic serial transition",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-11",
+      "operation": "ALL",
+      "race": "Concurrent FACULTY role/membership suspension and teaching assignment removal",
+      "expected": "W01 permission lock/cutover still required",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "CW-12",
+      "operation": "ALL",
+      "race": "Concurrent parent reparent/cross-domain Drizzle guard with direct SQL writes",
+      "expected": "W01 direct-SQL guard/lock ordering required",
+      "executed": false,
+      "passed": false
+    }
+  ]
+}
