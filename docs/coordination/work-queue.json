@@ -4555,6 +4555,50 @@
           "reason": "Chat 3 completed full stored-code/provenance source sweep, two-release DB design, dynamic source verifier and PG witness; API/migration/runtime verification remains downstream."
         }
       ]
+    },
+    {
+      "id": "DB-073",
+      "phase": "DATABASE",
+      "title": "Enforce DB07 release-sprint-task-submission same-project lineage",
+      "scope": "Add scoped parent uniqueness, composite relation FKs and mismatch rollback acceptance draft for project release→sprint→task→task submission graph; keep registered migrations under Chat1 integration.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db07-project-lineage-fks-staging.sql",
+        "docs/planning/db07-project-lineage-integrity-contract.md",
+        "tests/db073-project-lineage-source.test.mjs",
+        "tests/integration/db073-project-lineage-fks.test.ts"
+      ],
+      "status": "IN_PROGRESS",
+      "pickedBy": 2,
+      "pickedAt": "2026-10-12T13:57:00.000Z",
+      "startedAt": "2026-10-12T13:57:00.000Z",
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "pickHistory": [
+        {
+          "chatNumber": 2,
+          "pickedAt": "2026-10-12T13:57:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T13:57:00.000Z",
+          "reason": "Chat 2 claims new uncovered same-project DB07 lineage gap after DB-004 reassigned to Chat 5."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T13:57:00.000Z",
+          "reason": "Begin bounded staging + executed source tests; do not touch shared migrations."
+        }
+      ]
     }
   ],
   "eventModel": {
