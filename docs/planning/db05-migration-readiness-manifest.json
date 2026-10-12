@@ -107,7 +107,8 @@
         "CLASSROOM_CASCADE_RETENTION_POLICY",
         "CLASSROOM_SAME_COLLEGE_GUARD_MERGED_ONCE",
         "CLASSROOM_UPSTREAM_REPARENTING_SAFETY",
-        "CLASSROOM_PIN_ACTOR_SCOPE_PROOF"
+        "CLASSROOM_PIN_ACTOR_SCOPE_PROOF",
+        "CLASSROOM_HARD_DELETE_FENCE_MERGED_AFTER_API_CUTOVER"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
@@ -709,6 +710,12 @@
       "status": "NOT_RUN",
       "owner": "DB05_W01_API_PHASE",
       "evidence": "Chat6 main a0adef4 transactional assignment lock + delivery/member final WHERE and SHARE-locked delivery/offering/course/department/college/organization ancestry. Four Node static tests authored not native executed. FA-01..08 two-session PostgreSQL and tenant API authorization tests NOT RUN; docs/planning/db05-faculty-assignment-end-race-contract.md."
+    },
+    {
+      "id": "CLASSROOM_HARD_DELETE_FENCE_API_CUTOVER",
+      "status": "BLOCKED",
+      "owner": 1,
+      "evidence": "Canonical unregistered scripts/sql/db05-classroom-message-history.draft.sql now proposes BEFORE DELETE fence to preserve audit history. Existing discussion-service.ts still uses hard DELETE; registering without coordinated API soft-delete cutover would break endpoint. Disposable PostgreSQL direct delete/ON DELETE CASCADE/retention/rollback and API tests NOT RUN."
     }
   ],
   "sourceReview": {
