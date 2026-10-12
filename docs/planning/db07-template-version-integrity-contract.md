@@ -48,3 +48,28 @@ The opt-in PostgreSQL suite `tests/integration/db07-template-version-parent-inte
 - Cross-college template assignment authorization is controlled by application and may need additional tenant-scoped trigger evidence.
 - Other DB07 composite parents (project/release/sprint/task, submission/review, team membership, meeting links) remain governed by existing DB07 staged work and do not become verified through this contract.
 - The global DATABASE phase stays active. API/UI work does not become unlocked by this local source completion.
+
+
+## Read-path defense before migration registration — 2026-10-12
+
+The assigned-template detail workflow must not return a version from another
+template, even if a privileged import persisted two independently valid UUIDs
+before the DB-068 composite FK is registered.
+
+- The live getAssignedProjectTemplateDetail query in
+  src/modules/projects/template-service.ts now joins version UUID **and**
+  version.templateId = assignment.templateId. A forged cross-template relation
+  fails closed as PROJECT_TEMPLATE_NOT_ASSIGNED.
+- tests/db07-template-version-parent-integrity-source.test.mjs guards both
+  predicates and includes a source mutation regression.
+- tests/integration/projects-p2-templates.test.ts creates a cross-template
+  version assignment in a disposable database. Without DB-068 it must fail
+  closed in the read path; with DB-068 it must reject the invalid UPDATE with
+  SQLSTATE 23503. The test restores a forged fixture in finally.
+- Template P2 test fixtures now use per-run unique slugs and, if the DB-070
+  immutable history trigger is active, do not physically delete revision rows.
+
+**Not certified:** source checks passed, but Node/Vitest, typecheck, migration
+replay and PostgreSQL witness execution were not performed in this pass.
+The registered schema/migration is owned by Chat 1, and the DATABASE phase
+remains active.
