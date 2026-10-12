@@ -113,14 +113,44 @@
         "drizzle/**",
         "src/db/schema/index.ts"
       ],
-      "status": "PICKED",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
+      "status": "IN_PROGRESS",
+      "latestEvidenceSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
+      "verificationEvidence": [
+        {
+          "kind": "EXECUTED_PARTIAL",
+          "result": "PASSED_REGISTERED_MIGRATION_AND_CATALOG_ONLY",
+          "exitCode": 0,
+          "commitSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
+          "runner": "GitHub Actions ubuntu-latest PostgreSQL 17.11",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38250543374",
+          "jobId": 114815749817,
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL deliberately cleared; disposable PG17)",
+            "npm run db:migrate",
+            "node scripts/db002-postgres-catalog-acceptance.mjs"
+          ],
+          "catalog": {
+            "migrations": 43,
+            "postgresVersion": 170011,
+            "publicTables": 90,
+            "foreignKeys": 211,
+            "checks": 201,
+            "uniqueAndPrimaryConstraints": 92,
+            "indexes": 314,
+            "missingCoreTables": 0
+          },
+          "qualification": "Full PostgreSQL domain integration still fails 99 tests; auto-generated 0043 migration remains unregistered and schema-drift job fails. No database phase certification."
+        }
+      ],
+      "blockers": [
+        "REGISTERED_JOURNAL_REPLAY_PASSED_BUT_SCHEMA_DRIFT: 43/43 Drizzle migrations replay/idempotence and PG17 read-only catalog witness pass in CI #3429; generation produces an unregistered 0043 migration. W1 must reconcile reviewed staged changes and snapshot generation under DB017 before DB002 full acceptance.",
+        "DOMAIN_POSTGRES_ACCEPTANCE_RED: Full PG suite at exact run #3429 has 99 failed/275 passed/83 skipped. Several registered runtime schema expectations (placement_company_relationships.share_column_defaults, skill_synonyms) are absent; do not certify active domain parity."
+      ],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-12T12:25:36.007Z",
-      "startedAt": null,
+      "startedAt": "2026-10-12T12:47:08.107Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -147,6 +177,11 @@
           "status": "PICKED",
           "at": "2026-10-12T12:25:36.007Z",
           "reason": "User-directed closure-first Chat1 integrator claim; migrate/CI executable acceptance on fresh main."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T12:47:08.107Z",
+          "reason": "Real public CI PostgreSQL migration from zero, idempotence and read-only catalog passed; unregistered 0043/schema drift and domain acceptance remain red."
         }
       ]
     },
