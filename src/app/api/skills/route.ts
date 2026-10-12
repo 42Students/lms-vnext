@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
-import {
-  canReadSkillCatalog,
-  readSkillCatalog,
-} from "@/modules/skills/catalog-service";
+import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
+import { readSkillCatalog } from "@/modules/skills/catalog-service";
 import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness";
 import { parseSkillCatalogQuery } from "@/modules/skills/catalog-validation";
 

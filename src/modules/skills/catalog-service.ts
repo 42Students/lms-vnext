@@ -7,24 +7,11 @@ import {
   db10SkillSynonyms,
   db10SkillUsage,
 } from "@/db/schema/db10-skills-catalog.draft";
-import {
-  hasActiveMembership,
-  hasActiveRecruiter,
-  isSuperAdmin,
-  type RequestContext,
-} from "@/modules/identity/context";
+export { canReadSkillCatalog } from "./catalog-access";
 import {
   normalizeSkillSearchQuery,
   type SkillCatalogQuery,
 } from "./catalog-validation";
-
-/** The shared catalog may serve authenticated active college and recruiter users. */
-export function canReadSkillCatalog(context: RequestContext) {
-  return context.user.platformStatus === "ACTIVE" &&
-    (hasActiveMembership(context) ||
-      hasActiveRecruiter(context) ||
-      isSuperAdmin(context));
-}
 
 const columns = {
   id: db10Skills.id,
