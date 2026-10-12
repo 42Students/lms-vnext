@@ -161,21 +161,35 @@
       "paths": [
         "docs/planning/db00-historical-engine-disposition.json"
       ],
-      "status": "COMPLETED",
+      "status": "DONE_VERIFIED",
       "latestEvidenceSha": "e9b9bc41cbb5f71a31bd937299a17948047a6047",
-      "verificationEvidence": [],
-      "blockers": [
-        "NATIVE_SOURCE_ACCEPTANCE_PENDING: User-approved Smrithi exclusion is implemented and 43 registered migrations plus 54 DB schema files were read-only scanned with no Smrithi references, but the newly authored repository-wide runtime exclusion Node test has not executed in native CI/Node. Preserve historical source evidence; DONE_VERIFIED only after independently executed proof."
+      "verificationEvidence": [
+        {
+          "kind": "EXECUTED",
+          "result": "PASSED",
+          "exitCode": 0,
+          "commands": [
+            "node --test tests/db00-retirement-disposition.test.mjs tests/db19-db00-disposition-crosscheck.test.mjs",
+            "node scripts/db19-db00-disposition-crosscheck.mjs"
+          ],
+          "commitSha": "7c1990eb2d050fa3430e5c6fe39f73770870a113",
+          "runner": "GitHub Actions Ubuntu Node 22",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38249503811",
+          "runId": 38249503811,
+          "jobId": 114811817582,
+          "details": "27 native node:test cases passed / 0 failed; CLI DB00 39/39 source dispositions and 91 Smrithi fields excluded by user approval, valid:true. No legacy DB deletion. PostgreSQL is not required for a greenfield-excluded subsystem; other DATABASE tasks retain their own independent PostgreSQL acceptance."
+        }
       ],
-      "completionNote": "2026-10-12 user explicitly approved excluding seven historical Smrithi tables (91 fields) from greenfield LMS vNext. Decision doc 52b13cb, validated scope guard cdb86e3, audited disposition d0e3eaf, global audit consumer 5fc9879, regression tests bfe6f45/de28950/842db8d/e9b9bc4. Product disposition 39/39 tables, 732/732 fields; zero unresolved Smrithi product decisions. No legacy SQL was altered and no production DROP is authorized. Static V8 approval guard returned valid and rejected forged/wrong-scope cases; registered 43 migrations and 54 DB schema files checked without Smrithi references. Native Node-wide runtime exclusion and PostgreSQL migration acceptance were NOT executed; this is COMPLETED implementation, NOT DONE_VERIFIED.",
+      "blockers": [],
+      "completionNote": "2026-10-12 user explicitly approved excluding seven historical Smrithi tables (91 fields) from greenfield LMS vNext. Decision doc 52b13cb, validated scope guard cdb86e3, audited disposition d0e3eaf, global audit consumer 5fc9879, regression tests bfe6f45/de28950/842db8d/e9b9bc4. Product disposition 39/39 tables, 732/732 fields; zero unresolved Smrithi product decisions. No legacy SQL was altered and no production DROP is authorized. Static V8 approval guard returned valid and rejected forged/wrong-scope cases; registered 43 migrations and 54 DB schema files checked without Smrithi references. Native Node-wide runtime exclusion and PostgreSQL migration acceptance were NOT executed; this is COMPLETED implementation, NOT DONE_VERIFIED. NATIVE ACCEPTANCE 2026-10-12: GitHub Actions job db00-scope #3426 executes Node 22 with 27 tests PASS plus DB00 source CLI exit 0; vNext-only excluded subsystem. Exact acceptance run SHA 7c1990e; no overall database phase advancement.",
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:22:09.399Z",
       "startedAt": "2026-10-10T20:22:45.059Z",
       "completedBy": null,
       "completedAt": "2026-10-12T12:04:58Z",
       "completionCommitSha": "e9b9bc41cbb5f71a31bd937299a17948047a6047",
-      "verifiedBy": null,
-      "verifiedAt": null,
+      "verifiedBy": 1,
+      "verifiedAt": "2026-10-12T12:32:37.487Z",
       "pickHistory": [
         {
           "chatNumber": 6,
@@ -207,6 +221,11 @@
           "status": "COMPLETED",
           "at": "2026-10-12T12:04:58Z",
           "reason": "User explicitly excluded historical Smrithi admissions from vNext; product scope and source ledger now approved, native executable exclusion regression pending. User-directed completion; no Chat 6 execution attribution."
+        },
+        {
+          "status": "DONE_VERIFIED",
+          "at": "2026-10-12T12:32:37.487Z",
+          "reason": "Independent native source-level exclusion and user approval fully accepted in GitHub Actions run #3426; 27/27 Node tests + DB00 CLI pass; no product PostgreSQL operation required."
         }
       ]
     },
