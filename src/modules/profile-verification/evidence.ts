@@ -55,8 +55,8 @@ export function usablePrivateReceipt(r: Receipt, memberId: string, purpose: Priv
   return r.owningMembershipId === memberId && r.purpose === purpose &&
     r.relatedEntryId === relatedEntryId && r.scanStatus === "CLEAN" &&
     r.revokedAt === null && (r.retentionUntil === null || r.retentionUntil > at) &&
-    Boolean(key && !key.includes("://") && !key.includes("..") && !key.startsWith("/")) &&
-    Boolean(r.objectGeneration) && /^[0-9a-f]{64}$/i.test(r.sha256Hex) &&
+    Boolean(/^private\/[a-zA-Z0-9_\/-]+$/.test(key) && !key.includes("..")) &&
+    /^[0-9]+$/.test(r.objectGeneration) && /^[0-9a-f]{64}$/i.test(r.sha256Hex) &&
     r.sizeBytes > 0 && r.sizeBytes <= 26214400 &&
     ["application/pdf", "image/jpeg", "image/png"].includes(r.mimeType);
 }
