@@ -7,18 +7,18 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-002",
+  "activeTaskId": "DB-017",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB002_NATIVE_PG17_REPLAY_CATALOG_PASS_SCHEMA_DRIFT_OPEN",
-    "updatedOn": "2026-10-12T12:47:08.107Z",
-    "observedMainSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
-    "lastWorkerMergedSha": "e3858810c0bbde30d567f741676faa44da8b2e9e",
+    "checkpointKind": "DB017_MIGRATION_DRIFT_RECONCILIATION_STARTED",
+    "updatedOn": "2026-10-12",
+    "observedMainSha": "3d3b974e41655ec0e3f8a99c7ac621d8bacdf436",
+    "lastWorkerMergedSha": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "On GitHub Actions public runner, 43/43 registered migration replay, rerun idempotence and PG17 read-only catalog 90 tables/211 FK/201 CHECK/92 unique+PK/314 indexes pass; global PG tests 99 red due unregistered staged changes; in progress on 0043 schema drift. DB003 DONE_VERIFIED."
+    "summary": "DB-002 DONE_VERIFIED on PG17 registered 0000..0043 replay. Chat 1 now owns DB-017 staged-schema/migration dependency reconciliation; generated 0044 remains unapproved until reviewed by domain."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -53,7 +53,7 @@
     "DB-055 PostgreSQL and full tsx Node process regressions remain unexecuted in this session; GitHub Actions intentionally unused due billing."
   ],
   "handoffs": [],
-  "nextAction": "Claim next globally eligible DATABASE work from shared queue after reconciling active worker claims; review DB-055 runtime tests on non-Actions executor when possible.",
+  "nextAction": "Review generated 0044 against current canonical schema and DB09/DB06/DB03 handoffs; register only approved dependency-safe changes with generated snapshot evidence, then rerun schema-drift/replay.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -94,7 +94,8 @@
     "DB-052",
     "DB-053",
     "DB-055",
-    "DB-002"
+    "DB-002",
+    "DB-017"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -112,11 +113,14 @@
     "DB-051",
     "DB-052",
     "DB-053",
-    "DB-055"
+    "DB-055",
+    "DB-002"
   ],
-  "lastPickedAt": "2026-10-12T12:25:36.007Z",
-  "lastCompletedAt": "2026-10-11T15:16:11.227Z",
-  "verifiedTaskIds": [],
+  "lastPickedAt": "2026-10-12T14:09:00.000Z",
+  "lastCompletedAt": "2026-10-12T14:09:00.000Z",
+  "verifiedTaskIds": [
+    "DB-002"
+  ],
   "awaitingVerificationTaskIds": [
     "DB-009",
     "DB-010",
