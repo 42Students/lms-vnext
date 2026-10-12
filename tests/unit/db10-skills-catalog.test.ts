@@ -29,7 +29,7 @@ describe("DB10 shared skills reader scope", () => {
     expect(canReadSkillCatalog(activeMember)).toBe(true);
     expect(canReadSkillCatalog({
       ...activeMember,
-      user: { ...activeMember.user, platformStatus: "SUSPENDED" },
+      user: { ...activeMember.user, platformStatus: "DISABLED" },
     })).toBe(false);
     expect(canReadSkillCatalog({
       ...activeMember,
