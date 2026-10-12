@@ -15,7 +15,7 @@ const policy = fs.readFileSync(
 function functionBody(name) {
   const start = sql.indexOf(`CREATE FUNCTION ${name}(`);
   assert.notEqual(start, -1, `missing ${name}`);
-  const end = sql.indexOf("$;", start);
+  const end = sql.indexOf("$".repeat(2) + ";", start);
   assert.notEqual(end, -1, `unterminated ${name}`);
   return sql.slice(start, end);
 }
