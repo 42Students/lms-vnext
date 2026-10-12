@@ -63,6 +63,8 @@ jobs:
       - run: npm ci
       - name: Single tracker structural integrity (not database certification)
         run: node scripts/tracker.mjs --check
+      - name: Independently prove required staging coverage for registered CI exclusions
+        run: node --test tests/db020-ci-matrix-coverage.test.mjs
       - name: Native DB003 exclusion acceptance
         shell: bash
         run: |
