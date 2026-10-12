@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_LEARNING_PATH_TENANT_LOCK_AND_ARCHIVED_READ_SOURCE_COMMITTED",
+    "checkpointKind": "DB008_LEARNING_AND_FACULTY_SCOPE_SECURITY_BATCH_ON_MAIN",
     "updatedOn": "2026-10-12",
     "observedMainSha": "64ace377e5a71dd0e3c7b2e0726453bc27a58a62",
-    "lastWorkerMergedSha": "da3a887b2ec8794f3b9cb8583017fdf54537dabd",
+    "lastWorkerMergedSha": "e528821184318b78cda27fa1ebebd8cd3fb1cd09",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "This Chat 6 batch committed 4 service changes to main: learning path create/update/publish revalidate exact course, cohort, academic period, college and organization under parent SHARE locks and path UPDATE lock; archived path/lesson/content list methods now pass historical scope and retain courses.manage. 2 new Node source test files with ten tests authored (NOT native node-executed), two acceptance contracts and two NOT_RUN manifest gates. 14/14 in-memory GitHub source assertions true only. Prior DB05 seven principal drafts plus companions remain UNREGISTERED. No PostgreSQL or API acceptance, formal DB05 field verification 0/92; DATABASE active, DB008 IN_PROGRESS."
+    "summary": "This Chat6 round committed learning-path create/edit/publish tenant/parent transaction scope, archived path/lesson/content authorized historical reads, teaching assignment ending same-tenant lock/recheck, teaching roster same-statement authorized college/offering/section filter; 6 live service files changed, 3 new test files (6+4+6 =16 authored tests), 3 contracts/notes, 4 source acceptance manifest gates. Exact GitHub source structural scans passed (14/14 path/admin and 10/10 faculty). Native Node/typecheck/build, PostgreSQL/HTTP acceptance NOT RUN. DB008 IN_PROGRESS, global DATABASE active, 0/92 DB05 semantic fields formally DB verified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -263,9 +263,15 @@
       "kind": "DB05_LEARNING_PATH_TXN_SCOPE_AND_ARCHIVED_HIERARCHY_20261012",
       "commitSha": "da3a887b2ec8794f3b9cb8583017fdf54537dabd",
       "message": "Chat6 main: 9df8a16 guards learning-path create/update/publish under transaction with locked offering/tenant linkage; 62a5f47, a9f9e59, c732e53 wire includeArchived to includeHistorical for admin path/lesson/content reads. Source tests 4000a98, bfa0ab0 authored 10; only 14 exact GitHub source assertions executed PASS. PG LP01..10, archived ACL/API, native Node/TS tests NOT_RUN. DB008 still IN_PROGRESS; W01 controls migration journal."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_FACULTY_ASSIGNMENT_END_AND_ROSTER_SCOPE_20261012",
+      "commitSha": "e528821184318b78cda27fa1ebebd8cd3fb1cd09",
+      "message": "Chat 6 direct main a0adef4 assignment end write under row FOR UPDATE, ancestry FOR SHARE and delivery/member final eq; 4244400 staff listing same-statement college/org/offering/section scope, tests 1e9330b six authored static tests; docs 6f11efb FA01..08. Read-only GitHub source assertions 10/10. Native node/TS and PG not run; manifest e528821 2 NOT_RUN gates, DB008 IN_PROGRESS."
     }
   ],
-  "nextAction": "Continue source consumer race/tenant fixes while W01 integrates approved DB05 guarded drafts and independently executes clean PostgreSQL replay, LP01..10 scope/archived ACL API and hierarchy 20-case races. Do not mark DB008 COMPLETED until 25 source decisions and API consumers resolved; DONE_VERIFIED needs executed DB evidence.",
+  "nextAction": "Continue DB008 real correctness or service scope work while W01 handles DB migrations. Run native Node/typecheck and real PG/HTTP LP01..10/FA01..08 & archives and hierarchy races; do not claim source assertions as runtime proofs. Close 25 source decisions and execute all required DB gates before completion.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -447,7 +453,13 @@
     "https://github.com/42Students/lms-vnext/commit/c732e53751d4db2de14a262a0d9d35edf783212d",
     "https://github.com/42Students/lms-vnext/commit/bfa0ab0e0a9b3396cb95fe806f9c988f20d3b8d2",
     "https://github.com/42Students/lms-vnext/commit/5e955611ddd35a8dca869adae186f7871970b117",
-    "https://github.com/42Students/lms-vnext/commit/da3a887b2ec8794f3b9cb8583017fdf54537dabd"
+    "https://github.com/42Students/lms-vnext/commit/da3a887b2ec8794f3b9cb8583017fdf54537dabd",
+    "https://github.com/42Students/lms-vnext/commit/a0adef4a897320bfbffe7261438de62e3a5dbe04",
+    "https://github.com/42Students/lms-vnext/commit/6f11efb73322be244a982a5a6bf7fd7780c34720",
+    "https://github.com/42Students/lms-vnext/commit/42444009019c4bbb955eb696252ad97232b0deaa",
+    "https://github.com/42Students/lms-vnext/commit/1e9330b5fada0345ef21cf92f6015d02a9a4ad6a",
+    "https://github.com/42Students/lms-vnext/commit/f3d2e2fcb6c875cf9ccebe5551af37ff26e5a4f0",
+    "https://github.com/42Students/lms-vnext/commit/e528821184318b78cda27fa1ebebd8cd3fb1cd09"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
