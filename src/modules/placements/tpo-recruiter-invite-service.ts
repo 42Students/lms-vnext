@@ -138,9 +138,11 @@ export async function issueTpoRecruiterInvite(
     await tx.insert(placementTpoLeadActivities).values({
       collegeId,
       leadId,
-      type: "SYSTEM",
+      // A TPO explicitly issued this link: record the real staff actor as
+      // user activity. Public token responses remain SYSTEM with null actor.
+      type: "NOTE",
       note: "Invite link created",
-      isSystem: true,
+      isSystem: false,
       createdByUserId: context.user.id,
       createdAt: credential.issuedAt,
     });
