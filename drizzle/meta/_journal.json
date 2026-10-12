@@ -309,6 +309,13 @@
       "when": 1791808286207,
       "tag": "0043_db09_share_column_defaults",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1791811200000,
+      "tag": "0044_db09_policy_crm_structural",
+      "breakpoints": true
     }
   ]
 }
