@@ -1,0 +1,1650 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "worker": "CHAT_05",
+  "phase": "DATABASE",
+  "status": "ACTIVE_SOURCE_CONSUMER_EVIDENCE_ACCOUNTED_RUNTIME_UNVERIFIED",
+  "purpose": "Replace the 70-row blanket active-consumer-evidence blocker with explicit source family producer/consumer paths and vNext target/handoff evidence.",
+  "source": {
+    "triageBlob": "efedb62f8738798e757186c7143836345405d33a",
+    "dispositionBlob": "c242d002c777689fbd24d31e4979d65f9728fb90",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextMainSha": "1d7f9393b399e7c7763a71fca18a2536db2546d2"
+  },
+  "summary": {
+    "previousActiveRowsWithoutDirectEvidence": 70,
+    "evidenceRows": 70,
+    "unaccountedRows": 0,
+    "runtimeVerified": 0,
+    "postgresVerified": 0,
+    "byFamily": {
+      "college": 17,
+      "college_branding": 15,
+      "organization": 5,
+      "role": 6,
+      "tenant_domain": 13,
+      "user": 12,
+      "user_roles": 2
+    },
+    "byStatus": {
+      "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE": 69,
+      "CROSS_DOMAIN_HANDOFF_WITH_SOURCE_EVIDENCE": 1
+    },
+    "byOwner": {
+      "DB-004": 69,
+      "DB-007/DB-012": 1
+    }
+  },
+  "rules": [
+    "Family evidence is valid only for fields of the same persisted aggregate and must include an actual model/repository/service path.",
+    "This closes source-consumer accounting, not provider, migration or PostgreSQL acceptance.",
+    "Staged vNext targets remain unregistered until the migration integrator promotes them.",
+    "Cross-domain handoffs preserve the source evidence but remain completion obligations of the named owner task."
+  ],
+  "rows": [
+    {
+      "legacyField": "college.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.created_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.status",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.updated_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.address_line1",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.address_line1",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.address_line2",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.address_line2",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.city",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.city",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.college_chair_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "REDESIGNED_PRODUCT_FIELD_OMITTED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles/system_roles if a future leadership permission is introduced",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.college_vice_chair_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "REDESIGNED_PRODUCT_FIELD_OMITTED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles/system_roles if a future leadership permission is introduced",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.country",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.country",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.landmark",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.landmark",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.logo",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.logo_object_path",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.name",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.name",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.org_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.organization_id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.pin_code",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.postal_code",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.state",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.state",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college.unique_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "colleges.code",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/dto/request/CollegeDTO.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy CollegeServiceImpl create/update/delete directly persists the college aggregate (including setCollegeFields); vNext colleges + tenant-aware services are the normalized target.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.college_id (STAGED; legacy surrogate id replaced by college key)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.created_at (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.updated_at (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.archived_at (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.college_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.college_id (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.logo_url",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.logo_url (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.favicon_url",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.favicon_url (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.login_background_url",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.login_background_url (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.login_background_url_mobile",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.login_background_url_mobile (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.primary_color",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.primary_color (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.secondary_color",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.secondary_color (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.support_email",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.support_email (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.support_phone",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.support_phone (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.terms_url",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.terms_url (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "college_branding.privacy_url",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "college_branding.privacy_url (STAGED)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/CollegeBranding.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/db01-tenant-branding.staged.ts",
+        "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql"
+      ],
+      "evidenceSummary": "Legacy has a live JPA entity/repository keyed by college; vNext branding remains an explicit staged target and is not yet registered/runtime verified.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "organization.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "organizations.id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/organizations.ts",
+        "src/modules/organizations/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy OrganizationServiceImpl creates, updates, lists and soft-deletes organizations; vNext keeps typed organization lifecycle and identity scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "organization.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "organizations.created_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/organizations.ts",
+        "src/modules/organizations/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy OrganizationServiceImpl creates, updates, lists and soft-deletes organizations; vNext keeps typed organization lifecycle and identity scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "organization.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "organizations.status",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/organizations.ts",
+        "src/modules/organizations/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy OrganizationServiceImpl creates, updates, lists and soft-deletes organizations; vNext keeps typed organization lifecycle and identity scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "organization.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "organizations.updated_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/organizations.ts",
+        "src/modules/organizations/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy OrganizationServiceImpl creates, updates, lists and soft-deletes organizations; vNext keeps typed organization lifecycle and identity scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "organization.name",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "organizations.name",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/organizations.ts",
+        "src/modules/organizations/service.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy OrganizationServiceImpl creates, updates, lists and soft-deletes organizations; vNext keeps typed organization lifecycle and identity scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "NORMALIZED_TYPED_ROLE_MODEL",
+      "ownerTask": "DB-004",
+      "target": "membership_roles/system_roles typed enums and relation lifecycle",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles.created_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "NORMALIZED_TYPED_ROLE_MODEL",
+      "ownerTask": "DB-004",
+      "target": "membership_roles/system_roles typed enums and relation lifecycle",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "dispositionStatus": "NORMALIZED_TYPED_ROLE_MODEL",
+      "ownerTask": "DB-004",
+      "target": "membership_roles/system_roles typed enums and relation lifecycle",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.description",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "NORMALIZED_TYPED_ROLE_MODEL",
+      "ownerTask": "DB-004",
+      "target": "code-defined permission policy documentation",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "role.name",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles.role / system_roles.role",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy user authentication resolves mutable Role rows through User.roles; vNext intentionally replaces the role catalog with typed membership/system role relations and code-defined permission policy.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.created_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.updated_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.deleted_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.college_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.college_id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.host",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.host",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.is_primary",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.is_primary",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.verification_token",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.verification_token",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.verified_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.verified_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.is_verified",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.is_verified",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.last_checked_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.last_checked_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.last_check_result",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.last_check_result",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.last_found_values",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "tenant_domains.last_found_values (STAGED SQL ONLY)",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/CollegeServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/service.ts",
+        "src/modules/tenant-domains/repository.ts",
+        "src/modules/tenant-domains/runtime.ts"
+      ],
+      "evidenceSummary": "Legacy domain verification directly reads/writes verification token/status/check diagnostics; vNext has dedicated tenant-domain persistence/runtime services, with last_found_values still staged.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.created_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.created_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.is_deleted",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.platform_status",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.updated_at",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.updated_at",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.business_title",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "CROSS_DOMAIN_ROLE_SPECIFIC_PROFILE",
+      "ownerTask": "DB-007/DB-012",
+      "target": "faculty_profiles.academic_title or placement_recruiter_profiles.title as role-appropriate",
+      "evidenceStatus": "CROSS_DOMAIN_HANDOFF_WITH_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.email",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.email",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.name",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.display_name",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.password",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "SECURITY_RETIRED_LOCAL_PASSWORD",
+      "ownerTask": "DB-004",
+      "target": "EXTERNAL_IDENTITY_PROVIDER_CREDENTIAL",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.phone",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.phone_e164",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.unique_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.identity_uid",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.user_name",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "dispositionStatus": "NORMALIZED_PROVIDER_LOGIN_IDENTIFIER",
+      "ownerTask": "DB-004",
+      "target": "users.identity_uid / users.email / users.phone_e164",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user.user_type",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles.role / system_roles.role",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/users.ts",
+        "src/modules/people/identity-provisioning.ts",
+        "src/modules/identity/context-service.ts",
+        "src/auth/session.ts"
+      ],
+      "evidenceSummary": "Legacy UserServiceImpl reads username/password/roles and writes user identity/contact/title fields; vNext normalizes identity to external provider UID + canonical user/contact/status and current role assignments.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user_roles.user_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "users.id / college_memberships.user_id",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy USER_ROLES is the concrete User↔Role join consumed by authentication; vNext uses membership_roles/system_roles with canonical user/membership scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    },
+    {
+      "legacyField": "user_roles.role_id",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "dispositionStatus": "PROPOSED_TARGET_UNVERIFIED",
+      "ownerTask": "DB-004",
+      "target": "membership_roles.role / system_roles.role",
+      "evidenceStatus": "DIRECT_FAMILY_PRODUCER_CONSUMER_SOURCE_EVIDENCE",
+      "legacyEvidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java"
+      ],
+      "vnextEvidence": [
+        "src/db/schema/memberships.ts",
+        "src/modules/permissions/policy.ts",
+        "src/modules/identity/context-service.ts"
+      ],
+      "evidenceSummary": "Legacy USER_ROLES is the concrete User↔Role join consumed by authentication; vNext uses membership_roles/system_roles with canonical user/membership scoping.",
+      "runtimeVerified": false,
+      "postgresVerified": false
+    }
+  ]
+}
