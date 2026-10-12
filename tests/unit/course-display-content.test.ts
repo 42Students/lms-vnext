@@ -11,7 +11,7 @@ describe("W02 DB05 Course display content", () => {
         '<p onclick="alert(1)">Hello <strong>world</strong></p><script>alert(2)</script><a href="javascript:alert(3)">click</a>',
       ),
     ).toBe(
-      "<p>Hello <strong>world</strong></p>&lt;script&gt;alert(2)&lt;/script&gt;&lt;a href="javascript:alert(3)"&gt;click&lt;/a&gt;",
+      '<p>Hello <strong>world</strong></p>&lt;script&gt;alert(2)&lt;/script&gt;&lt;a href="javascript:alert(3)"&gt;click&lt;/a&gt;',
     );
   });
 
