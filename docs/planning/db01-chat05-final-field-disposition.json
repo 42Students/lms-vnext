@@ -32,8 +32,8 @@
       "RETIRED_NO_CURRENT_WORKFLOW": 5,
       "REDESIGNED_PRODUCT_FIELD_OMITTED": 2,
       "RETIRED_FRONTEND_PRODUCT_FIELD": 2,
-      "EXTERNAL_PROVIDER_MANAGED": 7,
-      "CROSS_DOMAIN_HANDOFF": 98,
+      "EXTERNAL_PROVIDER_MANAGED": 10,
+      "CROSS_DOMAIN_HANDOFF": 95,
       "REDESIGNED_AUTH_ABUSE_CONTROL": 2,
       "RETIRED_LOCAL_PASSWORD_WORKFLOW": 6,
       "NORMALIZED_CANONICAL_USER": 2,
@@ -48,7 +48,8 @@
     "CROSS_DOMAIN_HANDOFF rows remain acceptance obligations of the named task.",
     "EXTERNAL_PROVIDER_MANAGED rows require provider/API proof before DONE_VERIFIED.",
     "SECURITY_RETIRED rows intentionally do not recreate raw credential persistence.",
-    "Only the migration integrator may register staged DB01 tables in the active journal/schema barrel."
+    "Only the migration integrator may register staged DB01 tables in the active journal/schema barrel.",
+    "DB004 peer hardening: legacy faculty/learner/recruiter token_version is auth-session revocation, owned by DB-004/provider, NOT privacy/profile or recruiter CRM ownership. Check src/auth/session.ts verifySessionCookie(...,true) plus actual lifecycle producers before DONE_VERIFIED."
   ],
   "rows": [
     {
@@ -2016,11 +2017,11 @@
       "runtimeVerified": false,
       "postgresVerified": false,
       "providerVerified": false,
-      "decisionStatus": "CROSS_DOMAIN_HANDOFF",
-      "ownerTask": "DB-007",
-      "target": null,
-      "rationale": "Active legacy profile/academic field is explicitly handed to the profile/academic parity owner; DB004 does not invent a generic identity column.",
-      "proposalSource": null
+      "decisionStatus": "EXTERNAL_PROVIDER_MANAGED",
+      "ownerTask": "DB-004",
+      "target": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "rationale": "Legacy token_version invalidates previously issued role-typed JWTs after a suspend/logout/revoke. This is an auth/session invariant, not a DB04 personal-profile or DB09 recruiter-CRM field. Existing src/auth/session.ts uses verifySessionCookie(cookie, true) and revokeRefreshTokens(identityUid); require producer proof that every relevant suspension/grant revocation actually invokes revocation and live authorization. Whole-user revocation is stricter than role-specific invalidation, intentional security redesign; do not fabricate a Postgres token_version. DB-007/DB-012 remain secondary role-lifecycle dependencies.",
+      "proposalSource": "DB004_AUTH_SESSION_PEER_CORRECTION_2026_10_12"
     },
     {
       "legacyField": "faculty.unique_id",
@@ -3389,11 +3390,11 @@
       "runtimeVerified": false,
       "postgresVerified": false,
       "providerVerified": false,
-      "decisionStatus": "CROSS_DOMAIN_HANDOFF",
-      "ownerTask": "DB-007",
-      "target": null,
-      "rationale": "Active legacy profile/academic field is explicitly handed to the profile/academic parity owner; DB004 does not invent a generic identity column.",
-      "proposalSource": null
+      "decisionStatus": "EXTERNAL_PROVIDER_MANAGED",
+      "ownerTask": "DB-004",
+      "target": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "rationale": "Legacy token_version invalidates previously issued role-typed JWTs after a suspend/logout/revoke. This is an auth/session invariant, not a DB04 personal-profile or DB09 recruiter-CRM field. Existing src/auth/session.ts uses verifySessionCookie(cookie, true) and revokeRefreshTokens(identityUid); require producer proof that every relevant suspension/grant revocation actually invokes revocation and live authorization. Whole-user revocation is stricter than role-specific invalidation, intentional security redesign; do not fabricate a Postgres token_version. DB-007/DB-012 remain secondary role-lifecycle dependencies.",
+      "proposalSource": "DB004_AUTH_SESSION_PEER_CORRECTION_2026_10_12"
     },
     {
       "legacyField": "learner.twitter",
@@ -4763,11 +4764,11 @@
       "runtimeVerified": false,
       "postgresVerified": false,
       "providerVerified": false,
-      "decisionStatus": "CROSS_DOMAIN_HANDOFF",
-      "ownerTask": "DB-012",
-      "target": null,
-      "rationale": "Recruiter/grant lifecycle persistence is explicitly handed to DB09; DB004 records identity semantics but does not duplicate recruiter CRM schema.",
-      "proposalSource": null
+      "decisionStatus": "EXTERNAL_PROVIDER_MANAGED",
+      "ownerTask": "DB-004",
+      "target": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "rationale": "Legacy token_version invalidates previously issued role-typed JWTs after a suspend/logout/revoke. This is an auth/session invariant, not a DB04 personal-profile or DB09 recruiter-CRM field. Existing src/auth/session.ts uses verifySessionCookie(cookie, true) and revokeRefreshTokens(identityUid); require producer proof that every relevant suspension/grant revocation actually invokes revocation and live authorization. Whole-user revocation is stricter than role-specific invalidation, intentional security redesign; do not fabricate a Postgres token_version. DB-007/DB-012 remain secondary role-lifecycle dependencies.",
+      "proposalSource": "DB004_AUTH_SESSION_PEER_CORRECTION_2026_10_12"
     },
     {
       "legacyField": "recruiter.last_login_at",
