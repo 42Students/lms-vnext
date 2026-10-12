@@ -14,6 +14,7 @@ import {
   assignProjectTemplateToCollege,
   createProjectTemplate,
   duplicateProjectTemplate,
+  getAssignedProjectTemplateDetail,
   listAssignedProjectTemplates,
   publishProjectTemplate,
   reviseProjectTemplate,
@@ -135,6 +136,44 @@ afterAll(async () => {
 });
 
 describe("Projects P2 template persistence", () => {
+  it("never discloses a foreign revision through assigned template detail", async () => {
+    const owned = await createProjectTemplate(superAdmin, {
+      slug: "p2-detail-owner-a", title: "P2 Owner A", blueprint: blueprint("Owner A"),
+    });
+    const foreign = await createProjectTemplate(superAdmin, {
+      slug: "p2-detail-owner-b", title: "P2 Owner B", blueprint: blueprint("Owner B"),
+    });
+    await publishProjectTemplate(superAdmin, owned.template.id);
+    await assignProjectTemplateToCollege(scopedSuperAdmin, owned.template.id, SEED_IDS.collegeA);
+    const initial = await getAssignedProjectTemplateDetail(
+      collegeAdmin, SEED_IDS.collegeA, owned.template.id,
+    );
+    expect(initial.version.templateId).toBe(owned.template.id);
+    // Before DB068 promotion UUID-only FKs may allow this invalid pair; once
+    // promoted, the composite FK must reject it with SQLSTATE 23503.
+    const forged = await pool.query(
+      "update project_template_college_assignments set template_version_id = $1 " +
+      "where template_id = $2 and college_id = $3 and revoked_at is null returning id",
+      [foreign.version.id, owned.template.id, SEED_IDS.collegeA],
+    ).then(
+      ({ rows }) => rows.length > 0,
+      (error: unknown) => {
+        if ((error as { code?: string }).code !== "23503") throw error;
+        return false;
+      },
+    );
+    if (forged) {
+      await expect(getAssignedProjectTemplateDetail(
+        collegeAdmin, SEED_IDS.collegeA, owned.template.id,
+      )).rejects.toMatchObject({ code: "PROJECT_TEMPLATE_NOT_ASSIGNED" });
+    } else {
+      const stillOwned = await getAssignedProjectTemplateDetail(
+        collegeAdmin, SEED_IDS.collegeA, owned.template.id,
+      );
+      expect(stillOwned.version.templateId).toBe(owned.template.id);
+    }
+  });
+
   it("advances active college assignments when a revised template is republished", async () => {
     const created = await createProjectTemplate(
       superAdmin,
