@@ -183,6 +183,7 @@ source_tests=(
   tests/db02-disposable-runner-contract.test.mjs
   tests/db02-role-reactivation-contract.test.mjs
   tests/db02-active-parent-lifecycle-contract.test.mjs
+  tests/db02-program-archive-integrity-contract.test.mjs
 )
 single_session_sql=(
   scripts/sql/db02-postgres-acceptance-unregistered.sql
@@ -192,6 +193,7 @@ single_session_sql=(
   scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql
   scripts/sql/db02-activation-role-lifecycle-acceptance-unregistered.sql
   scripts/sql/db02-active-parent-lifecycle-acceptance-unregistered.sql
+  scripts/sql/db02-program-archive-acceptance-unregistered.sql
 )
 two_session_bash=(
   scripts/sql/db02-postgres-concurrency-unregistered.sh
