@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // DB-003: exhaustive tracked-source reference census. A clean scan is NOT approval to retire a product.
-import { readFileSync, statSync, writeFileSync } from 'node:fs';
+import { readFileSync, statSync, lstatSync, writeFileSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const SOURCE_EXT = new Set(['.java','.kt','.sql','.ts','.tsx','.js','.jsx','.mjs','.cjs','.json','.yml','.yaml','.xml','.properties','.html','.jsp','.graphql','.md','.txt']);
+const SOURCE_EXT = new Set(['.java','.kt','.sql','.ts','.tsx','.js','.jsx','.mjs','.cjs','.json','.yml','.yaml','.xml','.properties','.html','.jsp','.graphql','.gql','.proto','.md','.mdx','.txt','.py','.sh','.zsh','.bash','.gradle','.kts','.go','.rs','.php','.rb','.pl','.groovy','.c','.cc','.cpp','.h','.hpp','.conf','.ini','.toml','.vue','.svelte','.ftl','.hbs','.env']);
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const SHA = /^[a-f\d]{40}$/i;
 const BASELINE_TABLES = Object.freeze([
@@ -72,6 +72,7 @@ export function scanCheckout({name, root, expectedSha}) {
     if(!SOURCE_EXT.has(extname(file).toLowerCase())) {skippedNonSource++;continue;}
     const absolute=resolve(root,file);
     if(!absolute.startsWith(root+sep)) throw new Error(`Unsafe tracked path: ${file}`);
+    if(lstatSync(absolute).isSymbolicLink()) throw new Error(`${name}: tracked symlink ${file} is not permitted in consumer scan`);
     const size=statSync(absolute).size;
     if(size>MAX_FILE_BYTES) throw new Error(`${name}: oversized candidate file ${file} (${size} bytes), refusing incomplete scan`);
     const content=readFileSync(absolute,'utf8');
