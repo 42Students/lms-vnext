@@ -1,0 +1,194 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
+import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
+
+type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
+
+function formatInstant(value: Date | string | null) {
+  if (!value) return "—";
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium", timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function KnownErrorCard({ item }: { item: KnownError }) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const [pending, setPending] = useState(false);
+  const [note, setNote] = useState("");
+  const [commit, setCommit] = useState("");
+  const [issuePublicId, setIssuePublicId] = useState(item.issuePublicId ?? "");
+
+  async function update(body: Record<string, unknown>) {
+    setPending(true);
+    try {
+      const response = await fetch(
+        "/api/tracker/logs/known-errors/" + item.id,
+        { method: "PATCH", headers: { "content-type": "application/json" },
+          body: JSON.stringify(body) },
+      );
+      if (!response.ok) {
+        throw new Error("Could not update this known error. Please retry.");
+      }
+      showToast({ tone: "success", title: "Known error updated" });
+      router.refresh();
+    } catch (error) {
+      showToast({
+        tone: "error", title: "Known error update failed",
+        description: error instanceof Error ? error.message : "Please retry.",
+      });
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <article className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="m-0 break-all font-mono text-xs text-muted-foreground">
+            Signature {item.signatureHash.slice(0, 12)}…
+          </p>
+          <h3 className="mt-2 text-base font-semibold text-foreground">
+            {item.fixStatus} · {item.muted ? "Muted" : "Unmuted"}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {item.occurrenceCount} occurrences · {item.affectedAccounts} distinct affected accounts
+          </p>
+        </div>
+        <p className="m-0 text-xs text-muted-foreground">
+          Last seen {formatInstant(item.lastSeenAt)}
+        </p>
+      </div>
+      {item.regressedAt ? (
+        <p role="status" className="text-sm font-semibold text-error">
+          Regression observed {formatInstant(item.regressedAt)}
+        </p>
+      ) : null}
+      <div className="grid gap-3 sm:grid-cols-3">
+        <label className="block text-xs font-semibold text-body">
+          Triage note
+          <Input
+            className="mt-1" value={note} maxLength={500}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="Reason / owner update"
+          />
+        </label>
+        <label className="block text-xs font-semibold text-body">
+          Fix commit (optional)
+          <Input
+            className="mt-1" value={commit} maxLength={64}
+            onChange={(event) => setCommit(event.target.value)}
+            placeholder="Git commit SHA"
+          />
+        </label>
+        <label className="block text-xs font-semibold text-body">
+          Tracker issue ID
+          <Input
+            className="mt-1" value={issuePublicId} maxLength={32}
+            onChange={(event) => setIssuePublicId(event.target.value)}
+            placeholder="e.g. BT-123"
+          />
+        </label>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={() => update({
+            action: "MUTE", muted: !item.muted,
+            ...(!item.muted && note.trim() ? { reason: note.trim().slice(0, 255) } : {}),
+          })}>
+          {item.muted ? "Unmute" : "Mute"}
+        </Button>
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={() => update({
+            action: "STATUS", status: "EXPECTED",
+            ...(note.trim() ? { note } : {}),
+          })}>
+          Mark expected
+        </Button>
+        <Button size="sm" variant="secondary"
+          disabled={pending || (commit.trim() !== "" && !/^[0-9a-f]{7,64}$/i.test(commit.trim()))}
+          onClick={() => update({
+            action: "STATUS", status: "FIXED",
+            ...(commit.trim() ? { commit: commit.trim() } : {}),
+            ...(note.trim() ? { note } : {}),
+          })}>
+          Mark fixed
+        </Button>
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={() => update({ action: "STATUS", status: "OPEN" })}>
+          Reopen
+        </Button>
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={() => update({
+            action: "LINK_ISSUE", issuePublicId: issuePublicId.trim() || null,
+          })}>
+          Save issue link
+        </Button>
+      </div>
+      {item.issuePublicId ? (
+        <p className="m-0 text-xs text-muted-foreground">
+          Linked tracker issue: {item.issuePublicId}
+        </p>
+      ) : null}
+      <p className="text-xs text-muted-foreground">
+        Raw log samples, error paths and account identities are deliberately not exposed here.
+      </p>
+    </article>
+  );
+}
+
+export function KnownErrorsWorkspace({
+  items,
+  lastViewedAt,
+}: {
+  items: readonly KnownError[];
+  lastViewedAt: Date | null;
+}) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const [pending, setPending] = useState(false);
+
+  async function markViewed() {
+    setPending(true);
+    try {
+      const response = await fetch("/api/tracker/logs/viewed", { method: "POST" });
+      if (!response.ok) throw new Error("Last-viewed status could not be updated.");
+      router.refresh();
+      showToast({ tone: "success", title: "Logs review time updated" });
+    } catch (error) {
+      showToast({
+        tone: "error", title: "Update failed",
+        description: error instanceof Error ? error.message : "Retry",
+      });
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+        <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
+        <Button variant="secondary" size="sm" disabled={pending} onClick={markViewed}>
+          {pending ? "Saving…" : "Mark logs reviewed"}
+        </Button>
+      </div>
+      {items.length === 0 ? (
+        <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+          No known signatures for this environment. This does not prove that live Cloud Logging contains no errors.
+        </p>
+      ) : (
+        <div className="grid gap-4">
+          {items.map((item) => <KnownErrorCard key={item.id} item={item} />)}
+        </div>
+      )}
+    </div>
+  );
+}
