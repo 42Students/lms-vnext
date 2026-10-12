@@ -20,6 +20,18 @@ DB-009 found two active legacy persistence jobs with no equivalent vNext history
 
 The current vNext schemas therefore have correct **current state**, but not enough immutable evidence for disputes, audit, concurrency review or historical reporting.
 
+## Attendance source-event retention guarantee
+
+The immutable attendance history uses a non-null parent key to the canonical
+`section_schedule_events` schedule row. A **hard schedule-event delete must remain RESTRICT**
+while an attendance event refers to that schedule event, even if the current
+attendance marker row has subsequently changed. Never CASCADE the parent
+because that would erase evidence for a past absence, marking actor or
+correction. The SQL draft explicitly declares
+`schedule_event_id REFERENCES section_schedule_events(id) ON DELETE RESTRICT`.
+This is staging evidence only, not proof that the numbered PostgreSQL
+migration or legacy producer cutover has completed.
+
 ## Assignment grade events
 
 Staged table: `assignment_grade_events`.
