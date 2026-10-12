@@ -7,6 +7,7 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -23,6 +24,7 @@ import {
   loadCourseLessonScope,
   loadCourseSectionDeliveryScope,
   loadLessonContentScope,
+  loadLearningPathScope,
 } from "./scope";
 import {
   courseSectionDeliveryIdSchema,
@@ -34,6 +36,65 @@ import {
   type CreateLessonContentInput,
   type UpdateLessonContentInput,
 } from "./validation";
+
+type ContentWriteScope = {
+  lessonId: string;
+  learningPathId: string;
+  offeringId: string;
+  collegeId: string;
+  organizationId: string;
+  deliveryId: string | null;
+};
+
+/**
+ * Content may have been authorized before an ancestor transition. Serialize
+ * with lesson archive, offering/course reparent, cohort/program rescope and
+ * optional delivery end; reject stale parent identities before any write.
+ */
+async function lockLiveContentWriteParents(
+  tx: Pick<ReturnType<typeof getDb>, "select">,
+  path: Awaited<ReturnType<typeof loadLearningPathScope>>,
+  scope: ContentWriteScope,
+) {
+  if (path.id !== scope.learningPathId ||
+      path.offeringId !== scope.offeringId ||
+      path.collegeId !== scope.collegeId ||
+      path.organizationId !== scope.organizationId) {
+    throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
+  }
+
+  await lockLiveLessonWriteAncestry(tx, path);
+
+  const [lesson] = await tx.select({ id: courseLessons.id })
+    .from(courseLessons)
+    .where(and(
+      eq(courseLessons.id, scope.lessonId),
+      eq(courseLessons.learningPathId, scope.learningPathId),
+      eq(courseLessons.status, "ACTIVE"),
+    ))
+    .for("share")
+    .limit(1);
+  if (!lesson) {
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
+  }
+
+  if (scope.deliveryId) {
+    const [delivery] = await tx.select({
+      id: courseSectionDeliveries.id,
+      offeringId: courseSectionDeliveries.offeringId,
+    })
+      .from(courseSectionDeliveries)
+      .where(and(
+        eq(courseSectionDeliveries.id, scope.deliveryId),
+        isNull(courseSectionDeliveries.endedAt),
+      ))
+      .for("share")
+      .limit(1);
+    if (!delivery || delivery.offeringId !== scope.offeringId) {
+      throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+    }
+  }
+}
 
 function normalizedContentValues(
   input: CreateLessonContentInput,
@@ -355,44 +416,16 @@ export async function createLessonContent(
     );
   }
 
+  const path = await loadLearningPathScope(lesson.learningPathId);
   return getDb().transaction(async (tx) => {
-    // Preliminary permission/offering checks can be stale at insert time.
-    // Lesson archive locks this row FOR UPDATE; recheck it under SHARE.
-    const [activeLesson] = await tx
-      .select({ id: courseLessons.id })
-      .from(courseLessons)
-      .where(and(
-        eq(courseLessons.id, input.lessonId),
-        eq(courseLessons.status, "ACTIVE"),
-      ))
-      .for("share")
-      .limit(1);
-
-    if (!activeLesson) {
-      throw new CoursesServiceError("LESSON_NOT_FOUND");
-    }
-
-    if (input.deliveryId) {
-      // Ending the delivery takes FOR UPDATE; acquire SHARE and repeat the
-      // active-delivery/offering check before persisting section content.
-      const [activeDelivery] = await tx
-        .select({
-          id: courseSectionDeliveries.id,
-          offeringId: courseSectionDeliveries.offeringId,
-        })
-        .from(courseSectionDeliveries)
-        .where(and(
-          eq(courseSectionDeliveries.id, input.deliveryId),
-          isNull(courseSectionDeliveries.endedAt),
-        ))
-        .for("share")
-        .limit(1);
-
-      if (!activeDelivery ||
-          activeDelivery.offeringId !== lesson.offeringId) {
-        throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
-      }
-    }
+    await lockLiveContentWriteParents(tx, path, {
+      lessonId: input.lessonId,
+      learningPathId: lesson.learningPathId,
+      offeringId: lesson.offeringId,
+      collegeId: lesson.collegeId,
+      organizationId: lesson.organizationId,
+      deliveryId: input.deliveryId ?? null,
+    });
 
     const [created] = await tx
       .insert(lessonContents)
@@ -439,7 +472,10 @@ export async function updateLessonContent(
       current.createdByUserId,
     );
 
-  const [updated] = await getDb()
+  const path = await loadLearningPathScope(current.learningPathId);
+  return getDb().transaction(async (tx) => {
+    await lockLiveContentWriteParents(tx, path, current);
+    const [updated] = await tx
     .update(lessonContents)
     .set({
       title: normalized.title,
@@ -475,7 +511,8 @@ export async function updateLessonContent(
     );
   }
 
-  return updated;
+    return updated;
+  });
 }
 
 export async function transitionLessonContent(
@@ -513,7 +550,10 @@ export async function transitionLessonContent(
       ? "PUBLISHED"
       : "ARCHIVED";
 
-  const [updated] = await getDb()
+  const path = await loadLearningPathScope(current.learningPathId);
+  return getDb().transaction(async (tx) => {
+    await lockLiveContentWriteParents(tx, path, current);
+    const [updated] = await tx
     .update(lessonContents)
     .set({
       status: nextStatus,
@@ -543,5 +583,6 @@ export async function transitionLessonContent(
     );
   }
 
-  return updated;
+    return updated;
+  });
 }
