@@ -401,6 +401,9 @@ export async function updateCourseOffering(
       .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
+        eq(courseOfferings.courseId, current.courseId),
+        eq(courseOfferings.cohortId, current.cohortId),
+        eq(courseOfferings.academicPeriodId, current.academicPeriodId),
       ))
       .for("update")
       .limit(1);
@@ -459,6 +462,9 @@ export async function updateCourseOffering(
       .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
+        eq(courseOfferings.courseId, current.courseId),
+        eq(courseOfferings.cohortId, current.cohortId),
+        eq(courseOfferings.academicPeriodId, current.academicPeriodId),
       ))
       .returning();
 
@@ -494,6 +500,9 @@ export async function archiveCourseOffering(
       .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
+        eq(courseOfferings.courseId, current.courseId),
+        eq(courseOfferings.cohortId, current.cohortId),
+        eq(courseOfferings.academicPeriodId, current.academicPeriodId),
       ))
       .for("update")
       .limit(1);
@@ -524,6 +533,9 @@ export async function archiveCourseOffering(
       .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
+        eq(courseOfferings.courseId, current.courseId),
+        eq(courseOfferings.cohortId, current.cohortId),
+        eq(courseOfferings.academicPeriodId, current.academicPeriodId),
       ))
       .returning();
 
