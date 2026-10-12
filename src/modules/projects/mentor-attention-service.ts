@@ -1,6 +1,11 @@
-import { and, desc, eq, inArray, like, or } from "drizzle-orm";
+import { and, desc, eq, inArray, like, max, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents, projectMeetings, projectSubmissions } from "@/db/schema";
+import {
+  activityEvents,
+  projectMeetings,
+  projectSubmissions,
+  projectTaskSubmissions,
+} from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
 import { listMyProjectInstances } from "./member-service";
@@ -20,7 +25,14 @@ export async function listMyMentorProjectAttention(
     .filter(row=>row.memberRole==="MENTOR");
   if (!rows.length) return [];
   const ids=rows.map(row=>row.project.id);
-  const [submissions, meetings, activities] = await Promise.all([
+  const [
+    submissions,
+    meetings,
+    activities,
+    submissionActivity,
+    meetingActivity,
+    taskSubmissionActivity,
+  ] = await Promise.all([
     getDb().select({
       id:projectSubmissions.id,projectId:projectSubmissions.projectId,
       status:projectSubmissions.status,submittedAt:projectSubmissions.submittedAt,
@@ -42,6 +54,24 @@ export async function listMyMentorProjectAttention(
       eq(activityEvents.module,"PROJECTS"),
       or(...ids.map(id=>like(activityEvents.groupKey,"project:"+id+"%"))),
     )).orderBy(desc(activityEvents.occurredAt)),
+    getDb().select({
+      projectId:projectSubmissions.projectId,
+      occurredAt:max(projectSubmissions.updatedAt),
+    }).from(projectSubmissions)
+      .where(inArray(projectSubmissions.projectId,ids))
+      .groupBy(projectSubmissions.projectId),
+    getDb().select({
+      projectId:projectMeetings.projectId,
+      occurredAt:max(projectMeetings.updatedAt),
+    }).from(projectMeetings)
+      .where(inArray(projectMeetings.projectId,ids))
+      .groupBy(projectMeetings.projectId),
+    getDb().select({
+      projectId:projectTaskSubmissions.projectId,
+      occurredAt:max(projectTaskSubmissions.updatedAt),
+    }).from(projectTaskSubmissions)
+      .where(inArray(projectTaskSubmissions.projectId,ids))
+      .groupBy(projectTaskSubmissions.projectId),
   ]);
   const submissionMap=new Map<string,(typeof submissions)[number]>();
   for (const submission of submissions) {
@@ -54,11 +84,27 @@ export async function listMyMentorProjectAttention(
     meetingMap.set(meeting.projectId,m);
   }
   const activityMap=new Map<string,Date>();
+  const recordActivity=(projectId:string,occurredAt:Date|null)=>{
+    if (!occurredAt) return;
+    const current=activityMap.get(projectId);
+    if (!current || occurredAt.getTime()>current.getTime()) {
+      activityMap.set(projectId,occurredAt);
+    }
+  };
   for (const activity of activities) {
     if (!activity.groupKey?.startsWith("project:")) continue;
     const suffix=activity.groupKey.slice("project:".length);
     const id=suffix.split(":",1)[0];
-    if (id && !activityMap.has(id)) activityMap.set(id,activity.occurredAt);
+    if (id) recordActivity(id,activity.occurredAt);
+  }
+  for (const row of submissionActivity) {
+    recordActivity(row.projectId,row.occurredAt);
+  }
+  for (const row of meetingActivity) {
+    recordActivity(row.projectId,row.occurredAt);
+  }
+  for (const row of taskSubmissionActivity) {
+    recordActivity(row.projectId,row.occurredAt);
   }
   return deriveMentorProjectAttention(rows.map(row=>({
     projectId:row.project.id,projectTitle:row.project.title,
