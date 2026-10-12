@@ -1,0 +1,67 @@
+{
+  "evidenceType": "EXACT_BLOB_SOURCE_CONTRACT_EXECUTION_NOT_NODE_OR_POSTGRES",
+  "observedOn": "2026-10-12",
+  "worker": 2,
+  "phase": "DATABASE",
+  "taskIds": [
+    "DB-073",
+    "DB-074",
+    "DB-075"
+  ],
+  "mainSchemaBlob": "b9579c57e84d3db4f62b577bbf5603d1a8d26cdc",
+  "execution": {
+    "runner": "functions.exec JavaScript V8 isolate, source-only compatibility shim",
+    "description": "Fetched exact GitHub blobs at main, removed static import declarations, ran authored synchronous test callback bodies through new Function with readFileSync(join(process.cwd(),path)), assert.match/doesNotMatch/ok/equal, and node:test callback stubs. This independently executes source assertions on the original fetched file contents, not Node's own test runner.",
+    "executed": true,
+    "passed": 38,
+    "failed": 0,
+    "byTask": [
+      {
+        "id": "DB-073",
+        "authoredSourceTests": 14,
+        "executedSourceTests": 14,
+        "passed": 14,
+        "sourceTestBlob": "d687fcd219c45ae50a40163ed05c7ba81946fe2a",
+        "sqlBlob": "0f1260a99165e785a2f7ab5632033517b457850c",
+        "contractBlob": "7b0389df099a70357e4127ab17cf52a5bcc64cd8",
+        "pgTestBlob": "1de205e7b869e1423024a2a0d4282a0ac018f603",
+        "pgTestCasesAuthored": 7
+      },
+      {
+        "id": "DB-074",
+        "authoredSourceTests": 12,
+        "executedSourceTests": 12,
+        "passed": 12,
+        "sourceTestBlob": "2a86b2d1e982e96e6fd2089b845ac038245640c5",
+        "sqlBlob": "032399ce369ef843e39e80731a1c8c8bdaa736e9",
+        "contractBlob": "9c9be7704f694f2a562ce07b24eaf977491d9e00",
+        "pgTestBlob": "d990a9b0431e2e680e48dd997fe9bc94f6618d31",
+        "pgTestCasesAuthored": 6
+      },
+      {
+        "id": "DB-075",
+        "authoredSourceTests": 12,
+        "executedSourceTests": 12,
+        "passed": 12,
+        "sourceTestBlob": "f41e22413fb8b943903a53d9312f7947b581ca27",
+        "sqlBlob": "428b0db301346b61835687e1612b759594d19910",
+        "contractBlob": "25901b09e8b7962da625fea4cc0e455a3ea25505",
+        "pgTestBlob": "7c491c7a4de0b58838bdb55a9abd55f5e5fbfc36",
+        "pgTestCasesAuthored": 9
+      }
+    ]
+  },
+  "verificationLimits": {
+    "nodeTestRunnerExecuted": false,
+    "postgresTestRunnerExecuted": false,
+    "postgresTestCasesAuthored": 22,
+    "postgresTestCasesExecuted": 0,
+    "registeredDrizzleSchemaChanged": false,
+    "numberedMigrationGenerated": false,
+    "migrationReplayExecuted": false,
+    "lintTypecheckBuildExecuted": false,
+    "doneVerifiedTasks": 0,
+    "integrationOwner": "Chat 1",
+    "gate": "Do not promote any DB073/074/075 task to DONE_VERIFIED until registered migration and disposable PostgreSQL catalog/negative writes pass."
+  }
+}
