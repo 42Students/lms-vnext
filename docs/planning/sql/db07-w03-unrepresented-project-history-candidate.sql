@@ -114,7 +114,7 @@ CREATE FUNCTION w03_reject_project_comment_erasure() RETURNS trigger
 LANGUAGE plpgsql AS $w03_comments_guard$
 BEGIN
   RAISE EXCEPTION 'project task comments must use soft deletion' USING ERRCODE='23514';
-END 6351$w03_comments_guard$;
+END $w03_comments_guard$;
 CREATE TRIGGER w03_task_comments_no_delete BEFORE DELETE
   ON project_task_comments FOR EACH ROW EXECUTE FUNCTION w03_reject_project_comment_erasure();
 CREATE TRIGGER w03_task_comments_no_truncate BEFORE TRUNCATE
@@ -134,7 +134,7 @@ BEGIN
     RAISE EXCEPTION 'project task comment identity is immutable' USING ERRCODE='23514';
   END IF;
   RETURN NEW;
-END 7126$w03_comments_guard$;
+END $w03_comments_guard$;
 CREATE TRIGGER w03_task_comments_identity_immutable BEFORE UPDATE
   ON project_task_comments FOR EACH ROW EXECUTE FUNCTION w03_guard_project_comment_identity();
 
