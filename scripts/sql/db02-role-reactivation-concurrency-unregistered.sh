@@ -10,6 +10,8 @@ if [[ "${DB02_DISPOSABLE_ACCEPTANCE:-}" != "YES" ]]; then
   exit 2
 fi
 command -v psql >/dev/null || { echo "psql required" >&2; exit 2; }
+source scripts/sql/db02-assert-disposable-target.sh
+
 ACTUAL_DATABASE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
   -c 'SELECT current_database()')"
 if [[ "$ACTUAL_DATABASE" != "$DB02_EXPECTED_DATABASE" ]]; then
