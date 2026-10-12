@@ -86,6 +86,8 @@ export async function listFacultyCourseDeliveries(
         academicPeriods.code,
       academicPeriodStatus:
         academicPeriods.status,
+      periodStartDate: academicPeriods.startDate,
+      periodEndDate: academicPeriods.endDate,
       startedAt:
         courseTeachingAssignments.startedAt,
     })
