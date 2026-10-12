@@ -123,7 +123,12 @@ BEGIN
     UPDATE course_teaching_assignments SET ended_at=NULL WHERE id=v_teaching;
   EXCEPTION WHEN check_violation THEN
     GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
-    v_rejected := (v_error = 'Cannot reactivate faculty assignment without FACULTY role');
+    -- The earlier teaching-scope guard is at least as strict as the
+    -- generic reactivation guard and may reject this write first.
+    v_rejected := (v_error IN (
+      'Cannot reactivate faculty assignment without FACULTY role',
+      'Course teaching assignment requires FACULTY role'
+    ));
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked FACULTY reopened teaching assignment'; END IF;
 
