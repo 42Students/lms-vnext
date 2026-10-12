@@ -10,13 +10,13 @@
   "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB067_SOURCE_COMPLETED_PENDING_PG",
+    "checkpointKind": "DB067_SECURITY_PEER_HARDENING_ON_MAIN_PG_UNVERIFIED",
     "updatedOn": "2026-10-12",
     "observedMainSha": "51a74ad52fba953d8071501cd02017a080beb11b",
-    "lastWorkerMergedSha": "2d2a437f4db5cbbd55f13b7adaac1e1996ff6125",
+    "lastWorkerMergedSha": "488202a08dcbe4ac47d85e0918fc5d28b3a96b66",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Completed isolated DB067 staged SQL claim/fence/pre-send suppression package with 13 authored Node cases and 14 PG scenarios; in-process source assertions 17/17 PASS, no node --test, PostgreSQL/provider execution. Migration integrator Chat1 handoff via issue #21; P5-R09/R21 pending runtime. DB004 belongs Chat5; no overlap. Worker available for next eligible DB-phase task.\n2026-10-12 Chat2 additive DB067 security fix committed directly to main; outbox composite college+organization FK draft/SQL, 10 Node and 5 opt-in PG cases authored, 18/18 source assertions in process, 0 Node/PG runtime, unregistered migration. Chat1 handoff posted.",
+    "summary": "DB067/DB050 independent peer hardening committed on main: bound recipient-hash commitment, require pre-send claim fence, fail-close PostgreSQL NULL commitment, isolated test writer+cleanup Pool; authored 8 Node and 9 PG cases. 24/24 exact-main V8 source checks and independent Node SHA256 vector PASS; repo Node tests/PG not executed; no registered migration, no completed original core-eleven task claimed. DB004 is assigned Chat5, Chat2 remains AVAILABLE.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -693,6 +693,34 @@
       "migrationRegistered": false,
       "postgresVerified": false,
       "note": "Prevent independent-valid but cross-tenant organization/college pair in durable outbound message. Requires colleges(id,organization_id) unique target + child composite FK; ON UPDATE and ON DELETE RESTRICT. No migrations/CI/PG executions claimed."
+    },
+    "db067SecurityPeerHardening": {
+      "status": "CODE_AND_TESTS_COMMITTED_STAGED_SCHEMA_NO_PG",
+      "scope": "Global EMAIL HMAC row-specific recipient commitment, mandatory pre-send claim fence, destructive DB10 queue test isolation",
+      "sourcePaths": [
+        "src/modules/operations/outbound-delivery-envelope.ts",
+        "src/modules/operations/outbound-delivery-queue.ts",
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql"
+      ],
+      "authoredTests": [
+        "tests/db067-global-email-pre-send-binding.test.mjs",
+        "tests/integration/db067-global-email-pre-send.test.ts"
+      ],
+      "authoredNodeCases": 8,
+      "authoredPostgresCases": 9,
+      "exactMainV8Assertions": {
+        "passed": 24,
+        "total": 24,
+        "runner": "GITHUB_CONNECTOR_V8_SOURCE_ONLY"
+      },
+      "nodeIndependentVector": "Node v22.16.0 per-message SHA-256 two-UUID vector PASS; NOT repo test runner",
+      "postgresExecuted": 0,
+      "migrationRegistered": false,
+      "runnerTestsExecuted": false,
+      "doc": "docs/planning/db067-outbound-dispatch-fencing-contract.md",
+      "w01HandoffIssue": 21,
+      "sourceHeadBeforeCheckpoint": "488202a08dcbe4ac47d85e0918fc5d28b3a96b66"
     }
   },
   "qualityGates": {
