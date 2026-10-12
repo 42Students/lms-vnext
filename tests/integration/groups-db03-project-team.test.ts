@@ -17,6 +17,7 @@ const admin: RequestContext = {
     organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
 const fixtures: Array<{groupId:string;projectId:string;templateId:string;versionId:string}> = [];
+const unrelatedGroups: string[] = [];
 
 async function setupTeam() {
   const group = await createGroup(admin,{
@@ -50,6 +51,10 @@ afterEach(async () => {
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[f.groupId]);
   }
   fixtures.length=0;
+  for (const id of unrelatedGroups) {
+    await pool.query("DELETE FROM lms_groups WHERE id=$1",[id]);
+  }
+  unrelatedGroups.length=0;
 });
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();});
 
@@ -92,10 +97,17 @@ describe("DB03 project TEAM roster mirroring (PostgreSQL)", () => {
 
   it("rejects privileged SQL binding a project to an unrelated group kind", async () => {
     const f=await setupTeam();
-    await pool.query("UPDATE lms_groups SET kind='BUS' WHERE id=$1",[f.groupId]);
+    // The registered DB03 lifecycle trigger correctly forbids changing a
+    // group's kind. Create an unrelated kind directly, so this witness reaches
+    // and exercises the project→team-group parent validation instead.
+    const other=await createGroup(admin,{
+      collegeId:SEED_IDS.collegeA,kind:"BUS",
+      name:"DB03 unrelated "+randomUUID(),configJson:{},
+    });
+    unrelatedGroups.push(other.id);
     await expect(pool.query(
       "UPDATE project_instances SET team_group_id=$1 WHERE id=$2",
-      [f.groupId,f.projectId],
+      [other.id,f.projectId],
     )).rejects.toMatchObject({code:"23514"});
     const link=await pool.query("SELECT team_group_id FROM project_instances WHERE id=$1",[f.projectId]);
     expect(link.rows[0].team_group_id).toBeNull();
