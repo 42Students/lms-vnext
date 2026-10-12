@@ -96,21 +96,21 @@ test("DB018 witness runner is integrated safely but does not claim database acce
   );
   const config = fs.readFileSync("vitest.db.config.ts", "utf8");
   const verifier = fs.readFileSync("scripts/db-independent-verify.mjs", "utf8");
-  assert.match(config, /tests\\/integration\\/\\*\\*\\/\\*\\.test\\.ts/);
+  assert.match(config, /tests\/integration\/\*\*\/\*\.test\.ts/);
   assert.match(runtime, /TEST_DATABASE_URL/);
-  assert.doesNotMatch(runtime, /process\\.env\\.DATABASE_URL/);
+  assert.doesNotMatch(runtime, /process\.env\.DATABASE_URL/);
   assert.match(runtime, /DB018_ISOLATED_TEST_DATABASE/);
   assert.match(runtime, /DB03_ISOLATED_TEST_DATABASE/);
   assert.match(verifier, /DB03_ISOLATED_TEST_DATABASE: "1"/);
   assert.match(runtime, /BEGIN READ ONLY/);
   assert.match(runtime, /ROLLBACK/);
   assert.match(runtime, /joinedSamplesNonEmpty/);
-  assert.match(runtime, /nonEmpty\\.length\\)\\.toBeGreaterThan\\(0\\)/);
-  assert.match(runtime, /expect\\(n, \`\\$\\{probe\\.id\\} has relational mismatch rows\`\\)\\.toBe\\(0\\)/);
+  assert.match(runtime, /nonEmpty\.length\)\.toBeGreaterThan\(0\)/);
+  assert.match(runtime, /expect\(n, \`\$\{probe\.id\} has relational mismatch rows\`\)\.toBe\(0\)/);
   assert.match(runtime, /"23503"/);
   assert.match(runtime, /"23505"/);
   assert.match(runtime, /"23514"/);
-  assert.match(runtime, /describe\\.skipIf\\(!enabled\\)/);
+  assert.match(runtime, /describe\.skipIf\(!enabled\)/);
   assert.equal(manifest.raceAudit.runtimeVerified, 0);
 });
 
@@ -255,8 +255,8 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
   assert.match(coverage, /Direct negative SQL boundary tests \| 13 \| 0/);
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
-  assert.match(coverage, /Known-defect red concurrency witnesses \\| 1 \\| 0/);
-  assert.match(coverage, /Fix-authored race regression pending runtime \\| 1 \\| 0/);
+  assert.match(coverage, /Known-defect red concurrency witnesses \| 1 \| 0/);
+  assert.match(coverage, /Fix-authored race regression pending runtime \| 1 \| 0/);
   assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
 });
 
