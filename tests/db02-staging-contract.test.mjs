@@ -18,7 +18,7 @@ const concurrencyShell = readFileSync(
 );
 
 test("DB02 draft has paired PL/pgSQL dollar-quoted function bodies", () => {
-  const functions = [...sql.matchAll(/\bCREATE FUNCTION\s+db02_[a-z_]+\s*\(/g)];
+  const functions = [...sql.matchAll(/\bCREATE (?:OR REPLACE )?FUNCTION\s+db02_[a-z_]+\s*\(/g)];
   const openings = [...sql.matchAll(/\bRETURNS trigger LANGUAGE plpgsql AS \$\$/g)];
   const delimiters = [...sql.matchAll(/\$\$/g)];
   assert.ok(functions.length >= 8, "Expected DB02 tenant and lifecycle guards");
@@ -115,7 +115,7 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
   };
 
   uniqueNames(/\bCREATE TABLE\s+([a-z_][a-z0-9_]*)/gi, "tables");
-  uniqueNames(/\bCREATE FUNCTION\s+([a-z_][a-z0-9_]*)\s*\(/gi, "functions");
+  uniqueNames(/\bCREATE (?:OR REPLACE )?FUNCTION\s+([a-z_][a-z0-9_]*)\s*\(/gi, "functions");
   uniqueNames(/\bCREATE TRIGGER\s+([a-z_][a-z0-9_]*)/gi, "triggers");
 
   assert.equal([...sql.matchAll(/ADD COLUMN description text/g)].length, 1);
