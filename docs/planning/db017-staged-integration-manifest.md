@@ -104,3 +104,15 @@ DB-017 source/integration control is complete once:
 It is **not** global database certification. Every future migration batch still
 requires fresh Drizzle no-drift, zero-to-head PostgreSQL replay, idempotence and
 targeted negative/race tests on the exact committed SHA.
+
+## Follow-up registrations through 0047 — 2026-10-12
+
+Since the original structural 0044 manifest, migration integrator Chat 1 also merged:
+
+- [PR #108](https://github.com/42Students/lms-vnext/pull/108), `0045_db09_crm_scope_history_guards`: five lead/follow-up/activity database functions and triggers, including stored staff status/college and immutable history.
+- [PR #110](https://github.com/42Students/lms-vnext/pull/110), `0046_db09_recruiter_grant_company_integrity`: three recruiter/company-grant and parent reparenting guard functions and triggers.
+- `0047_bouncy_kree` has also been journaled by a concurrent worker: it changes the assignment submission enum and belongs to the DB06 assessment workstream, **not** DB09.
+
+The original `0044` structural-registration baseline remains in the machine ledger for historical tests; it is **not** the current journal HEAD. Current journal status must be read from `registeredJournalBaseline.currentJournalHead` dynamically (or freshest `_journal.json`). There is no claim of PostgreSQL replay after `0043`. Drizzle snapshots `0045` and `0046` model unchanged tables because database triggers are not represented in the table snapshot.
+
+**Safe acceptance:** independent 0000→current-head PostgreSQL replay, schema drift check, wrong-college/membership/company, inactive-user, actor forgery, append-only activity, follow-up terminal-state and two-session recruiter grant reparent races. Tests authored and connector source assertions are not runtime evidence. No database phase promotion is authorized.

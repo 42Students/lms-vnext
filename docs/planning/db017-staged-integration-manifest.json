@@ -9,7 +9,14 @@
     "verifiedCommit": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
     "postgresVersion": "17.11",
     "currentStructuralRegistration": "0044_db09_policy_crm_structural",
-    "currentStructuralReplay": "PENDING_EXECUTION"
+    "currentStructuralReplay": "PENDING_EXECUTION",
+    "triggerFollowupsRegistered": [
+      "0045_db09_crm_scope_history_guards",
+      "0046_db09_recruiter_grant_company_integrity"
+    ],
+    "currentJournalHead": "0047_bouncy_kree",
+    "currentJournalLength": 48,
+    "currentRuntimeReplay": "PENDING_INDEPENDENT_POSTGRES"
   },
   "domains": [
     {
@@ -137,17 +144,19 @@
     {
       "domain": "DB09",
       "state": "STRUCTURAL_PARTIAL_REGISTERED",
-      "decision": "0043 owns relationship share defaults and is PostgreSQL accepted under DB-002. 0044 registers canonical policy + recruiter CRM table structure. Stronger CRM/policy/collaboration/settings/scheduling/notification principal and lifecycle guards remain DB-012/DB-017 follow-up; superseded/reference SQL must never be registered.",
+      "decision": "0043 owns relationship share defaults and is PostgreSQL accepted under DB-002. 0044 registers canonical policy + recruiter CRM table structure. Stronger CRM/policy/collaboration/settings/scheduling/notification principal and lifecycle guards remain DB-012/DB-017 follow-up; superseded/reference SQL must never be registered. 0045 registers five CRM principal/actor/history/terminal guards and 0046 registers three same-company recruiter-grant/history guards. Old draft scripts are superseded where these bodies overlap; no 0045–0047 runtime replay claimed.",
       "dependsOn": [
         "DB-012"
       ],
       "registered": [
         "0043_db09_share_column_defaults",
-        "0044_db09_policy_crm_structural"
+        "0044_db09_policy_crm_structural",
+        "0045_db09_crm_scope_history_guards",
+        "0046_db09_recruiter_grant_company_integrity"
       ],
       "deferred": [
         "db09-parent-composite-keys-candidate.sql",
-        "db09-tpo-crm-premerge.sql trigger/function portion",
+        "db09-tpo-crm-premerge.sql trigger/function portion (SOURCE REFERENCE ONLY: structural tables 0044, DB09 guards 0045; DO NOT REAPPLY)",
         "db09-collaboration-scoped-fk-candidate.sql",
         "db09-tpo-settings-normalization-candidate.sql",
         "db09-multicollege-drive-group-candidate.sql",
