@@ -957,6 +957,47 @@ export async function withdrawPlacementApplication(
   const now = new Date();
   const updated = await getDb().transaction(
     async (tx) => {
+      // Self-withdrawal is also a write: do not let a cached request context
+      // outlive a persisted account disable, membership suspension, or role
+      // removal between the preflight and the status/history update.
+      // Lock in the same order as application creation: membership, user, role.
+      const [liveMembership] = await tx
+        .select({
+          userId: collegeMemberships.userId,
+          collegeId: collegeMemberships.collegeId,
+          status: collegeMemberships.status,
+        })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, membership.id))
+        .for("share")
+        .limit(1);
+      if (!liveMembership || liveMembership.status !== "ACTIVE" ||
+          liveMembership.collegeId !== row.job.collegeId ||
+          liveMembership.userId !== context.user.id) {
+        throw new AuthorizationError("placements.read");
+      }
+
+      const [liveUser] = await tx
+        .select({ platformStatus: users.platformStatus })
+        .from(users)
+        .where(eq(users.id, context.user.id))
+        .for("share")
+        .limit(1);
+      if (!liveUser || liveUser.platformStatus !== "ACTIVE") {
+        throw new AuthorizationError("placements.read");
+      }
+
+      const [liveRole] = await tx
+        .select({ id: membershipRoles.id })
+        .from(membershipRoles)
+        .where(and(
+          eq(membershipRoles.membershipId, membership.id),
+          eq(membershipRoles.role, "LEARNER"),
+        ))
+        .for("share")
+        .limit(1);
+      if (!liveRole) throw new AuthorizationError("placements.read");
+
       const [application] = await tx
         .update(placementApplications)
         .set({
