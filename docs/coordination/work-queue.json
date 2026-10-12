@@ -4635,10 +4635,10 @@
       ],
       "status": "COMPLETED",
       "pickedBy": 2,
-      "pickedAt": "2026-10-12T13:57:00.000Z",
-      "startedAt": "2026-10-12T13:57:00.000Z",
+      "pickedAt": "2026-10-12T14:01:19.000Z",
+      "startedAt": "2026-10-12T14:01:19.000Z",
       "completedBy": 2,
-      "completedAt": "2026-10-12T14:08:00.000Z",
+      "completedAt": "2026-10-12T14:09:15.000Z",
       "completionCommitSha": "1d25dd4c97bc99bbcea5fb9aa9d7661f2e251937",
       "verifiedBy": null,
       "verifiedAt": null,
@@ -4650,23 +4650,23 @@
       "pickHistory": [
         {
           "chatNumber": 2,
-          "pickedAt": "2026-10-12T13:57:00.000Z"
+          "pickedAt": "2026-10-12T14:01:19.000Z"
         }
       ],
       "statusHistory": [
         {
           "status": "PICKED",
-          "at": "2026-10-12T13:57:00.000Z",
+          "at": "2026-10-12T14:01:19.000Z",
           "reason": "Chat 2 claims new uncovered same-project DB07 lineage gap after DB-004 reassigned to Chat 5."
         },
         {
           "status": "IN_PROGRESS",
-          "at": "2026-10-12T13:57:00.000Z",
+          "at": "2026-10-12T14:01:19.000Z",
           "reason": "Begin bounded staging + executed source tests; do not touch shared migrations."
         },
         {
           "status": "COMPLETED",
-          "at": "2026-10-12T14:08:00.000Z",
+          "at": "2026-10-12T14:09:15.000Z",
           "reason": "Source staged SQL+contract+tests committed main; 16 source assertions executed; actual PG unverified."
         }
       ],
@@ -4688,10 +4688,10 @@
       ],
       "status": "COMPLETED",
       "pickedBy": 2,
-      "pickedAt": "2026-10-12T14:12:00.000Z",
-      "startedAt": "2026-10-12T14:12:00.000Z",
+      "pickedAt": "2026-10-12T14:10:27.000Z",
+      "startedAt": "2026-10-12T14:10:27.000Z",
       "completedBy": 2,
-      "completedAt": "2026-10-12T14:22:00.000Z",
+      "completedAt": "2026-10-12T14:15:33.000Z",
       "completionCommitSha": "5624a861df042693770aa12369273340abf833f3",
       "verifiedBy": null,
       "verifiedAt": null,
@@ -4703,23 +4703,23 @@
       "pickHistory": [
         {
           "chatNumber": 2,
-          "pickedAt": "2026-10-12T14:12:00.000Z"
+          "pickedAt": "2026-10-12T14:10:27.000Z"
         }
       ],
       "statusHistory": [
         {
           "status": "PICKED",
-          "at": "2026-10-12T14:12:00.000Z",
+          "at": "2026-10-12T14:10:27.000Z",
           "reason": "Unclaimed DB07 review/evaluation cross-project foreign-key gap."
         },
         {
           "status": "IN_PROGRESS",
-          "at": "2026-10-12T14:12:00.000Z",
+          "at": "2026-10-12T14:10:27.000Z",
           "reason": "Chat 2 starts isolated SQL, source tests and opt-in PG witness batch."
         },
         {
           "status": "COMPLETED",
-          "at": "2026-10-12T14:22:00.000Z",
+          "at": "2026-10-12T14:15:33.000Z",
           "reason": "Source staging + two composite FKs and 18 authored tests on main; source V8 assertions pass, PG not run."
         }
       ],
@@ -4741,10 +4741,10 @@
       ],
       "status": "COMPLETED",
       "pickedBy": 2,
-      "pickedAt": "2026-10-12T14:26:00.000Z",
-      "startedAt": "2026-10-12T14:26:00.000Z",
+      "pickedAt": "2026-10-12T14:17:01.000Z",
+      "startedAt": "2026-10-12T14:17:01.000Z",
       "completedBy": 2,
-      "completedAt": "2026-10-12T14:39:00.000Z",
+      "completedAt": "2026-10-12T14:22:37.000Z",
       "completionCommitSha": "c43fa7fd707c35d07432c31f07c766ac9070f2ad",
       "verifiedBy": null,
       "verifiedAt": null,
@@ -4756,23 +4756,23 @@
       "pickHistory": [
         {
           "chatNumber": 2,
-          "pickedAt": "2026-10-12T14:26:00.000Z"
+          "pickedAt": "2026-10-12T14:17:01.000Z"
         }
       ],
       "statusHistory": [
         {
           "status": "PICKED",
-          "at": "2026-10-12T14:26:00.000Z",
+          "at": "2026-10-12T14:17:01.000Z",
           "reason": "Chat2 claims uncovered meeting linked sprint/task cross-project and cross-sprint integrity hole."
         },
         {
           "status": "IN_PROGRESS",
-          "at": "2026-10-12T14:26:00.000Z",
+          "at": "2026-10-12T14:17:01.000Z",
           "reason": "Implement independent candidate SQL and negative tests under current DATABASE phase."
         },
         {
           "status": "COMPLETED",
-          "at": "2026-10-12T14:39:00.000Z",
+          "at": "2026-10-12T14:22:37.000Z",
           "reason": "Three-meeting-FK source staging and 9 opt-in PG tests authored main; 12 source tests passed V8 exact-content; PostgreSQL unverified."
         }
       ],
