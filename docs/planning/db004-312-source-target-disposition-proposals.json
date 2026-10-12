@@ -5443,6 +5443,6 @@
   ],
   "authority": {
     "canonical": "docs/planning/db01-chat05-final-field-disposition.json",
-    "note": "DB004 authoritative 312-row source-disposition ledger takes precedence. This artifact preserves alternative unregistered target proposals and review challenges only. Its 14 null target entries are supplemental non-persistence options, not an authoritative open-source-denominator metric. Do not use this file for global DB19 completion counts."
+    "note": "The authoritative 312-row DB004 source disposition ledger takes precedence. This file preserves alternative unregistered target proposals and review challenges only. Its 14 null target entries do not imply 14 anonymous canonical source gaps. Do not use for DB019 phase completion counts."
   }
 }
