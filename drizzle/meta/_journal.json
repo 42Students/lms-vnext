@@ -330,6 +330,13 @@
       "when": 1791844200000,
       "tag": "0046_db09_recruiter_grant_company_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1791815028762,
+      "tag": "0047_bouncy_kree",
+      "breakpoints": true
     }
   ]
 }
