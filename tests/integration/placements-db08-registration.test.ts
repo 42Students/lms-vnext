@@ -231,7 +231,12 @@ describe("DB08-B per-cohort consented learner registration", () => {
     await expect(pool.query(
       "INSERT INTO placement_batch_registrations(college_id,cohort_id,membership_id,choice,consent_at,consent_version,source,recorded_by_user_id) VALUES($1,$2,$3,'PLACEMENTS',now(),'v1','SELF',$4)",
       [SEED_IDS.collegeA, randomUUID(), SEED_IDS.learnerCollegeAMembership, SEED_IDS.learnerUser],
-    )).rejects.toMatchObject({ code: "23503" });
+    )).rejects.toMatchObject({
+      // Ownership trigger rejects a nonexistent/non-enrolled cohort before
+      // PostgreSQL's deferred FK check; this is the stronger fail-closed gate.
+      code: "23514",
+      message: "Registration cohort is not owned by learner college",
+    });
     await expect(pool.query(
       "INSERT INTO placement_batch_registrations(college_id,cohort_id,membership_id,choice,source,recorded_by_user_id) VALUES($1,$2,$3,'PLACEMENTS','SELF',$4)",
       [SEED_IDS.collegeA, a.cohort, SEED_IDS.learnerCollegeAMembership, SEED_IDS.learnerUser],
