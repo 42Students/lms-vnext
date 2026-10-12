@@ -105,15 +105,22 @@ test("DB018 witness runner is integrated safely but does not claim database acce
   assert.match(runtime, /BEGIN READ ONLY/);
   assert.match(runtime, /ROLLBACK/);
   assert.match(runtime, /joinedSamplesNonEmpty/);
-  // Observational zeros are no longer accepted from an entirely empty
-  // fixture: require three rollback-only academic joins to be populated.
+  // No completely empty join corpus may be reported as evidence.
+  // Academic and placement fixtures are inserted into rollback-only PG
+  // transactions; the remaining unseeded joins still remain observational.
   assert.match(runtime, /academicFixtureProbes = new Set/);
-  for (const id of ["P5-17", "P5-18", "P5-19"]) {
+  assert.match(runtime, /placementFixtureProbes = new Set/);
+  assert.match(runtime, /populatedFixtureProbes = new Set/);
+  for (const id of [
+    "P5-07", "P5-08", "P5-09", "P5-10", "P5-11",
+    "P5-17", "P5-18", "P5-19",
+  ]) {
     assert.ok(runtime.includes('"' + id + '"'), id + ": fixture ID missing");
   }
   assert.match(runtime, /insertAcademicWitnessFixture\(client, probe\.id\)/);
+  assert.match(runtime, /insertPlacementWitnessFixture\(client, probe\.id\)/);
   assert.match(runtime, /expect\(nonEmpty\)\.toContain\(id\)/);
-  assert.match(runtime, /!academicFixtureProbes\.has\(probe\.id\)/);
+  assert.match(runtime, /!populatedFixtureProbes\.has\(probe\.id\)/);
   assert.match(runtime, /expect\(n, \`\$\{probe\.id\} has relational mismatch rows\`\)\.toBe\(0\)/);
   assert.match(runtime, /"23503"/);
   assert.match(runtime, /"23505"/);
