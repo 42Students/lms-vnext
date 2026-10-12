@@ -70,7 +70,7 @@ jobs:
       - name: DB025 destructive database reset fail-closed native tests
         run: node --test tests/db01-test-database-guard.test.mjs tests/db-independent-verifier.test.mjs
       - name: DB058 negative-witness no-connect target guards
-        run: node --test tests/db058-witness-target-safety.test.mjs
+        run: node --test tests/db058-witness-target-safety.test.mjs tests/db-staged-pg-witnesses.test.mjs
   source-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
