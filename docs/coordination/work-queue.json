@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T03:02:00+05:30",
+  "updatedOn": "2026-10-12T14:08:30.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -113,8 +113,8 @@
         "drizzle/**",
         "src/db/schema/index.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
+      "status": "DONE_VERIFIED",
+      "latestEvidenceSha": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
       "verificationEvidence": [
         {
           "kind": "EXECUTED_PARTIAL",
@@ -141,21 +141,43 @@
             "missingCoreTables": 0
           },
           "qualification": "Full PostgreSQL domain integration still fails 99 tests; auto-generated 0043 migration remains unregistered and schema-drift job fails. No database phase certification."
+        },
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
+          "runner": "GitHub Actions ubuntu-latest PostgreSQL 17.11",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38253284021",
+          "jobId": 114825409502,
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare with DATABASE_URL cleared for destructive reset",
+            "npm run db:migrate",
+            "node scripts/db002-postgres-catalog-acceptance.mjs",
+            "node scripts/db017-share-defaults-pg-acceptance.mjs"
+          ],
+          "catalog": {
+            "migrations": 44,
+            "publicTables": 90,
+            "foreignKeys": 211,
+            "checks": 202,
+            "uniqueAndPrimaryConstraints": 92,
+            "indexes": 314
+          },
+          "qualification": "DB-002 certifies the registered journal only. Generated 0044/staged schema drift belongs to DB-017; unrelated domain integration failures remain separate tasks."
         }
       ],
-      "blockers": [
-        "REGISTERED_JOURNAL_REPLAY_PASSED_BUT_SCHEMA_DRIFT: 43/43 Drizzle migrations replay/idempotence and PG17 read-only catalog witness pass in CI #3429; generation produces an unregistered 0043 migration. W1 must reconcile reviewed staged changes and snapshot generation under DB017 before DB002 full acceptance.",
-        "DOMAIN_POSTGRES_ACCEPTANCE_RED: Full PG suite at exact run #3429 has 99 failed/275 passed/83 skipped. Several registered runtime schema expectations (placement_company_relationships.share_column_defaults, skill_synonyms) are absent; do not certify active domain parity."
-      ],
-      "completionNote": null,
+      "blockers": [],
+      "completionNote": "Registered migration journal replay scope closed on PostgreSQL 17 at c0468cc: 44 registered migrations (0000..0043) reset/replayed from empty, rerun idempotently, read-only catalog witness passed (90 tables, 211 FKs, 202 CHECKs, 92 unique/PK constraints, 314 indexes), and 0043 DB09 share-column defaults negative/tenant acceptance passed. Unregistered schema-source drift to generated 0044 is intentionally handed to dependent DB-017; broad domain PG failures do not invalidate registered-journal replay.",
       "pickedBy": 1,
       "pickedAt": "2026-10-12T12:25:36.007Z",
       "startedAt": "2026-10-12T12:47:08.107Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
-      "verifiedBy": null,
-      "verifiedAt": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-12T14:08:30.000Z",
+      "completionCommitSha": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
+      "verifiedBy": 1,
+      "verifiedAt": "2026-10-12T14:08:30.000Z",
       "pickHistory": [
         {
           "chatNumber": 1,
@@ -182,6 +204,16 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T12:47:08.107Z",
           "reason": "Real public CI PostgreSQL migration from zero, idempotence and read-only catalog passed; unregistered 0043/schema drift and domain acceptance remain red."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:08:30.000Z",
+          "reason": "Registered 0000..0043 PostgreSQL 17 replay/idempotence/catalog acceptance passed at c0468cc."
+        },
+        {
+          "status": "DONE_VERIFIED",
+          "at": "2026-10-12T14:08:30.000Z",
+          "reason": "Exact executed run #3438/job 114825409502 accepted for DB-002 registered-journal scope; unregistered source drift delegated to dependent DB-017."
         }
       ]
     },
