@@ -116,3 +116,40 @@ test("DB058 all five DB18 integration suites preflight before Pool construction"
     if (name.includes("race-gap")) assert.match(source, /serviceBound: true/);
   }
 });
+
+
+test("DB004 concurrent write witnesses validate the disposable target before creating Pool", () => {
+  const source = readFileSync(
+    "tests/integration/db01-concurrent-integrity.test.ts", "utf8",
+  );
+  const imported = source.indexOf('from "../support/db018-test-target.mjs"');
+  const preflight = source.indexOf("assertDb018DisposableTarget(process.env)");
+  const connection = source.indexOf("new Pool(");
+  assert.ok(imported >= 0, "DB01 must import the shared no-connect preflight");
+  assert.ok(preflight > imported && connection > preflight,
+    "DB01 must preflight before creating any PG connection");
+  assert.doesNotMatch(source, /TEST_DATABASE_URL\\s*\\?\\?\\s*process\\.env\\.DATABASE_URL/);
+});
+
+test("DB030 assessment acceptance witnesses validate the target before creating Pool", () => {
+  const source = readFileSync(
+    "tests/integration/db06-assessment-parent-scope.test.ts", "utf8",
+  );
+  const imported = source.indexOf('from "../support/db018-test-target.mjs"');
+  const preflight = source.indexOf("assertDb018DisposableTarget({");
+  const connection = source.indexOf("new Pool(");
+  assert.ok(imported >= 0, "DB06 must import the shared no-connect preflight");
+  assert.ok(preflight > imported && connection > preflight,
+    "DB06 must preflight before creating any PG connection");
+  assert.match(source, /DB06_ISOLATED_TEST_DATABASE===["']1["']/);
+});
+
+test("DB030 negative witness helpers accept independent learner identities", () => {
+  const source = readFileSync(
+    "tests/integration/db06-assessment-parent-scope.test.ts", "utf8",
+  );
+  assert.match(source,
+    /async function attempt\\(db:Sql,q:string,d:string,m:string=SEED_IDS\\.learnerCollegeAMembership\\)/);
+  assert.match(source,
+    /async function submission\\(db:Sql,a:string,d:string,m:string=SEED_IDS\\.learnerCollegeAMembership\\)/);
+});
