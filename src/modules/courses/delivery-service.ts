@@ -238,6 +238,8 @@ export async function endCourseSectionDelivery(
       .where(and(
         eq(courseSectionDeliveries.id, deliveryId),
         isNull(courseSectionDeliveries.endedAt),
+        eq(courseSectionDeliveries.offeringId, current.offeringId),
+        eq(courseSectionDeliveries.sectionId, current.sectionId),
       ))
       .for("update")
       .limit(1);
@@ -269,6 +271,8 @@ export async function endCourseSectionDelivery(
       .where(and(
         eq(courseSectionDeliveries.id, deliveryId),
         isNull(courseSectionDeliveries.endedAt),
+        eq(courseSectionDeliveries.offeringId, current.offeringId),
+        eq(courseSectionDeliveries.sectionId, current.sectionId),
       ))
       .returning();
 
