@@ -266,7 +266,8 @@ BEGIN
     INTO program_college
     FROM programs p
     JOIN departments d ON d.id = p.department_id
-   WHERE p.id = NEW.program_id;
+   WHERE p.id = NEW.program_id
+   FOR SHARE OF p;
 
   SELECT ap.college_id, ap.start_date, ap.status
     INTO start_college, start_day, start_status
@@ -588,8 +589,19 @@ DROP TYPE cohort_status_pre_db02;
 -- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
 -- ACTIVE/INACTIVE cohorts behind the service state machine, or resurrect an archived cohort.
 CREATE FUNCTION db02_guard_cohort_status_lifecycle()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  v_program_status program_status;
 BEGIN
+  -- A cohort is a live child of its academic program. Lock the program row
+  -- against concurrent ARCHIVE before allowing creation/reactivation.
+  SELECT status INTO v_program_status FROM programs
+   WHERE id = NEW.program_id FOR SHARE;
+  IF v_program_status IS DISTINCT FROM 'ACTIVE'
+     AND (TG_OP = 'INSERT' OR NEW.status IS DISTINCT FROM 'ARCHIVED') THEN
+    RAISE EXCEPTION 'Cannot activate or create a cohort under archived program'
+      USING ERRCODE='23514';
+  END IF;
   IF TG_OP = 'INSERT' THEN
     IF NEW.status = 'ARCHIVED' THEN
       RAISE EXCEPTION 'Cohort cannot be created already archived'
@@ -616,6 +628,31 @@ $$;
 CREATE TRIGGER db02_cohort_status_lifecycle_guard
 BEFORE INSERT OR UPDATE OF status ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
+
+-- An ARCHIVED program is not a live parent. Without this reverse guard,
+-- a college could archive the program while a PLANNED/ACTIVE/COMPLETED
+-- cohort still depends on it. The cohort insert/status guards acquire a
+-- SHARE lock on this same program row to serialize both commit orders.
+CREATE FUNCTION db02_guard_program_archive_with_live_cohorts()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED'
+     AND EXISTS (
+       SELECT 1 FROM cohorts c
+        WHERE c.program_id = OLD.id
+          AND c.status <> 'ARCHIVED'
+     ) THEN
+    RAISE EXCEPTION 'Cannot archive program with nonarchived cohorts'
+      USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_program_archive_cohort_dependency_guard
+BEFORE UPDATE OF status ON programs
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_archive_with_live_cohorts();
+
 
 
 
