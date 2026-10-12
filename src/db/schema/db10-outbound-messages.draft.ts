@@ -78,7 +78,7 @@ export const db10OutboundMessages = pgTable(
     check("db10_outbound_recipient_hash_ck",
       sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
     check("db10_outbound_email_commitment_ck",
-      sql`(${t.channel} = 'EMAIL' and ${t.globalEmailHashCommitment} ~ '^[0-9a-f]{64}$')
+      sql`(${t.channel} = 'EMAIL' and ${t.globalEmailHashCommitment} is not null and ${t.globalEmailHashCommitment} ~ '^[0-9a-f]{64}$')
         or (${t.channel} <> 'EMAIL' and ${t.globalEmailHashCommitment} is null)`),
     check("db10_outbound_pre_send_fence_ck",
       sql`${t.preSendAuthorizedFence} is null or
