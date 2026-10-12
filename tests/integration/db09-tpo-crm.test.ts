@@ -39,11 +39,13 @@ import {
   listTpoCompanies,
 } from "@/modules/placements/tpo-company-memory-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 const enabled =
   process.env.DB09_ISOLATED_TEST_DATABASE === "1" &&
   Boolean(databaseUrl);
+if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = enabled ? new Pool({ connectionString: databaseUrl, max: 4 }) : null;
 
 const tpo: RequestContext = {
@@ -83,20 +85,53 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     )).rows.map(x => x.tgname);
     expect(triggers).toContain("db09_lead_activity_immutable");
     expect(triggers).toContain("db09_lead_activity_actor_scope_guard");
+    expect(triggers).toContain("db09_lead_activity_no_truncate");
   });
 
   beforeEach(async () => {
     if (!pool) return;
-    // ONLY a disposable isolated database. Append-only trigger correctly
-    // rejects row DELETE; TRUNCATE is deliberately used by test cleanup.
-    await pool.query(
-      "TRUNCATE placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads",
+    // Migration 0048 correctly forbids TRUNCATE of immutable audit history.
+    // On the independently verified disposable fixture ONLY, temporarily
+    // suspend *that exact truncate trigger* inside a single rollback-safe
+    // maintenance transaction; re-enable it before any service assertion.
+    // Never disable row-level append-only, tenant or actor guards.
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(
+        "ALTER TABLE placement_tpo_lead_activities DISABLE TRIGGER db09_lead_activity_no_truncate",
+      );
+      await client.query(
+        "TRUNCATE placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads",
+      );
+      await client.query(
+        "ALTER TABLE placement_tpo_lead_activities ENABLE TRIGGER db09_lead_activity_no_truncate",
+      );
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+    const enabledTrigger = await pool.query(
+      "SELECT tgenabled FROM pg_trigger " +
+      "WHERE tgrelid = 'placement_tpo_lead_activities'::regclass " +
+      "AND tgname = 'db09_lead_activity_no_truncate'",
     );
+    expect(enabledTrigger.rows).toEqual([{ tgenabled: "O" }]);
   });
 
   afterAll(async () => {
     await pool?.end();
     await closeDatabaseConnection();
+  });
+
+  it("preserves immutable lead history against direct TRUNCATE", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    await expect(
+      pool.query("TRUNCATE placement_tpo_lead_activities"),
+    ).rejects.toMatchObject({ code: "23514" });
   });
 
   it("creates tenant-scoped lead, lists it, and transitions NEW to CONTACTED on real activity", async () => {
