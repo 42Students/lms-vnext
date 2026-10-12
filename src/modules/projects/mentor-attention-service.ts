@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, like, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, projectMeetings, projectSubmissions } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
@@ -40,7 +40,7 @@ export async function listMyMentorProjectAttention(
       groupKey:activityEvents.groupKey,occurredAt:activityEvents.occurredAt,
     }).from(activityEvents).where(and(
       eq(activityEvents.module,"PROJECTS"),
-      inArray(activityEvents.groupKey,ids.map(id=>"project:"+id)),
+      or(...ids.map(id=>like(activityEvents.groupKey,"project:"+id+"%"))),
     )).orderBy(desc(activityEvents.occurredAt)),
   ]);
   const submissionMap=new Map<string,(typeof submissions)[number]>();
@@ -56,8 +56,9 @@ export async function listMyMentorProjectAttention(
   const activityMap=new Map<string,Date>();
   for (const activity of activities) {
     if (!activity.groupKey?.startsWith("project:")) continue;
-    const id=activity.groupKey.slice("project:".length);
-    if (!activityMap.has(id)) activityMap.set(id,activity.occurredAt);
+    const suffix=activity.groupKey.slice("project:".length);
+    const id=suffix.split(":",1)[0];
+    if (id && !activityMap.has(id)) activityMap.set(id,activity.occurredAt);
   }
   return deriveMentorProjectAttention(rows.map(row=>({
     projectId:row.project.id,projectTitle:row.project.title,
