@@ -4954,25 +4954,40 @@
         "tests/db079-db09-crm-race-hardening.test.mjs",
         "docs/planning/db079-db09-crm-race-hardening.md"
       ],
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
-      "startedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-12T14:24:18.741Z",
+      "startedAt": "2026-10-12T14:24:18.741Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-12T14:24:18.741Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-12",
           "reason": "Post-0045 adversarial review found principal/grant EXISTS checks can race revocation and append-only lead activity lacks TRUNCATE rejection."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T14:24:18.741Z",
+          "reason": "Chat 1 migration-integrator claim after 0045 audit."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T14:24:18.741Z",
+          "reason": "Building forward-only 0046 principal row-lock and append-only TRUNCATE hardening."
         }
       ]
     }
