@@ -7,7 +7,7 @@ import {
   OutboundDeliveryError,
   parseOutboundIntent,
 } from "./outbound-delivery-contract";
-import { deriveGlobalEmailSuppressionHash, sealOutboundDelivery } from "./outbound-delivery-envelope";
+import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHash, sealOutboundDelivery } from "./outbound-delivery-envelope";
 
 /**
  * W06 durable queue boundary, deliberately disabled until W01 migrates the
@@ -82,6 +82,12 @@ export async function queueOutboundDeliveryInTransaction(
     intent,
     process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "",
   );
+  // A unique per-message commitment lets the dispatcher prove its global
+  // EMAIL opt-out HMAC matches the queued recipient without storing that
+  // cross-tenant linkable HMAC in the outbox table.
+  const globalEmailHashCommitment = bindGlobalEmailSuppressionHashToOutbox(
+    envelope.id, globalEmailSuppressionHash,
+  );
   const notBefore = envelope.notBefore
     ? new Date(envelope.notBefore) : null;
   const expiresAt = envelope.expiresAt
@@ -96,7 +102,7 @@ export async function queueOutboundDeliveryInTransaction(
     with inserted as (
       insert into outbound_messages (
         id, organization_id, college_id, source_event_id,
-        channel, template_key, recipient_hash, idempotency_key,
+        channel, template_key, recipient_hash, global_email_hash_commitment, idempotency_key,
         request_digest, key_id, nonce_base64, tag_base64,
         ciphertext_base64, status, not_before, expires_at
       )
@@ -104,7 +110,7 @@ export async function queueOutboundDeliveryInTransaction(
         ${envelope.id}, ${envelope.organizationId}, ${envelope.collegeId},
         ${envelope.sourceEventId}, ${envelope.channel},
         ${envelope.templateKey}, ${envelope.recipientHash},
-        ${envelope.idempotencyKey}, ${envelope.requestDigest},
+        ${globalEmailHashCommitment}, ${envelope.idempotencyKey}, ${envelope.requestDigest},
         ${envelope.keyId}, ${envelope.nonceBase64},
         ${envelope.tagBase64}, ${envelope.ciphertextBase64},
         'PENDING', ${notBefore}, ${expiresAt}
