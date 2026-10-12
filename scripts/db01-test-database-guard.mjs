@@ -20,6 +20,11 @@ function readPgTarget(raw, name) {
   if (!['postgresql:', 'postgres:'].includes(url.protocol)) {
     throw new Error(`${name} must use a PostgreSQL URL`);
   }
+  const targetOverrideParams = ['host', 'hostaddr', 'port', 'database', 'dbname'];
+  const redirectedBy = targetOverrideParams.find((key) => url.searchParams.has(key));
+  if (redirectedBy) {
+    throw new Error(`${name} query parameter "${redirectedBy}" may redirect the destructive target`);
+  }
   let db;
   try { db = decodeURIComponent(url.pathname.replace(/^\//, '')); }
   catch { throw new Error(`${name} contains invalid database encoding`); }
