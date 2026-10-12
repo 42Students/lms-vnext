@@ -221,6 +221,62 @@ jobs:
       - name: DB-030 PostgreSQL parent, tenant, grading and concurrency acceptance
         run: npm run test:db06:pg
 
+
+  # DB-004 partial acceptance against a fresh PostgreSQL 17 fixture. This is
+  # independent of the general database matrix; it does NOT certify the 312
+  # legacy field dispositions, staged DB01 schemas, or provider/OTP cutover.
+  db01-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered Drizzle journal
+        run: npm run db:journal:verify
+      - name: Safely reset and seed disposable DB01 PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: DB-004 active identity and field disposition source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/db01-final-field-disposition-audit.mjs
+          node scripts/db004-identity-disposition-audit.mjs
+          node --test tests/db004-identity-disposition-audit.test.mjs tests/db004-session-revocation-ownership.test.mjs
+      - name: DB-004 tenant identity FK, constraints, repository and concurrent races
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db01-tenant-identity-invariants.test.ts
+          tests/integration/db01-identity-fk-invariants.test.ts
+          tests/integration/db01-core-structure-invariants.test.ts
+          tests/integration/db01-concurrent-integrity.test.ts
+          tests/integration/db01-tenant-routing-lifecycle.test.ts
+          tests/integration/db01-membership-role-parent-lock.test.ts
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
