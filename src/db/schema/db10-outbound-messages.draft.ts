@@ -60,7 +60,7 @@ export const db10OutboundMessages = pgTable(
       name: "db10_outbound_college_organization_fk",
       columns: [t.collegeId, t.organizationId],
       foreignColumns: [colleges.id, colleges.organizationId],
-    }).onDelete("restrict"),
+    }).onUpdate("restrict").onDelete("restrict"),
     uniqueIndex("db10_outbound_idempotency_uq").on(t.idempotencyKey),
     index("db10_outbound_due_idx").on(t.status, t.nextAttemptAt, t.notBefore),
     index("db10_outbound_scope_idx").on(t.organizationId, t.collegeId, t.createdAt),
