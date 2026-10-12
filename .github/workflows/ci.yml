@@ -67,6 +67,8 @@ jobs:
           set -euo pipefail
           node --test tests/db00-retirement-disposition.test.mjs tests/db19-db00-disposition-crosscheck.test.mjs
           node scripts/db19-db00-disposition-crosscheck.mjs
+      - name: DB025 destructive database reset fail-closed native tests
+        run: node --test tests/db01-test-database-guard.test.mjs tests/db-independent-verifier.test.mjs
   source-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
