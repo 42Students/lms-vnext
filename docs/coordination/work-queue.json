@@ -4888,6 +4888,50 @@
           "reason": "Pinned-source and removal-history evidence closes the current-product source disposition for both historical DB04 tables; no replacement schema is required."
         }
       ]
+    },
+    {
+      "id": "DB-078",
+      "phase": "DATABASE",
+      "title": "Finalize DB05 historical course-column persistence disposition",
+      "scope": "Resolve historical course.default_subscription_days and course.formal_title persistence separately from active derived formal_title wire behavior; preserve current API semantics without cloning unused snapshot columns.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db05-chat05-historical-course-column-final-disposition-2026-10-12.json",
+        "tests/db078-db05-historical-course-column-disposition.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-12T14:18:00.000Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-12T14:18:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T14:18:00.000Z",
+          "reason": "Created as an independent non-overlapping DB05 source-decision blocker-removal task after DB-077 completion."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T14:18:00.000Z",
+          "reason": "Chat 5 atomically created and reserved historical course-column persistence disposition; DB-008 ownership remains Chat 6."
+        }
+      ]
     }
   ],
   "eventModel": {
