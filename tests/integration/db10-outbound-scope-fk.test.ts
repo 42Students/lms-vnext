@@ -101,6 +101,21 @@ describe.skipIf(!enabled)("DB10 outbox immutable organization-college ownership 
           and indexname = 'colleges_id_organization_uq'`,
     );
     expect(target).toHaveLength(1);
+
+    // Composite ownership must strengthen, never replace, the original
+    // single-column organization and college existence constraints.
+    const { rows: originalFks } = await pool.query<{ definition: string }>(
+      `select pg_get_constraintdef(oid) as definition
+         from pg_constraint
+        where conrelid = 'outbound_messages'::regclass
+          and contype = 'f'`,
+    );
+    expect(originalFks.some(({ definition }) =>
+      /FOREIGN KEY \\(organization_id\\) REFERENCES organizations\\(id\\)/i.test(definition),
+    )).toBe(true);
+    expect(originalFks.some(({ definition }) =>
+      /FOREIGN KEY \\(college_id\\) REFERENCES colleges\\(id\\)/i.test(definition),
+    )).toBe(true);
   });
 
   afterAll(async () => {
