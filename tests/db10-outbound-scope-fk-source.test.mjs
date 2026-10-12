@@ -22,7 +22,7 @@ test("outbox draft enforces the tenant pair, not just independent FKs", () => {
   assert.match(draft, /foreignKey\(\{[\s\S]*?name:\s*"db10_outbound_college_organization_fk"/);
   assert.match(draft, /columns:\s*\[t\.collegeId,\s*t\.organizationId\]/);
   assert.match(draft, /foreignColumns:\s*\[colleges\.id,\s*colleges\.organizationId\]/);
-  assert.match(draft, /\}\)\.onDelete\("restrict"\)/);
+  assert.match(draft, /\}\)\.onUpdate\("restrict"\)\.onDelete\("restrict"\)/);
 });
 
 test("the migration proposes the unique parent key before composite child FK", () => {
