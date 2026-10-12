@@ -940,8 +940,17 @@ ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 
 -- Source-parity semester promotion curriculum-readiness guard.
+-- Contract boundary: the application promotion writer must use a
+-- version=:expectedVersion CAS predicate and atomically return a conflict
+-- when another actor wins. This SQL trigger enforces readiness on direct
+-- writes, but MUST NOT be mistaken for application optimistic concurrency.
+-- Staffing readiness is informational: lack of assigned faculty must not
+-- prevent otherwise valid curriculum promotion.
+-- Faculty-teaching assignment deactivation must remain transactional
+-- with the owning role/membership status change; this trigger cannot
+-- prove that service-layer transition.
 CREATE FUNCTION db02_guard_cohort_promotion_readiness()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   v_program_id uuid;
   v_cohort_status cohort_status;
