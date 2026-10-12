@@ -15,6 +15,25 @@ export const DOMAIN_SUFFIXES = Object.freeze([
   'db10_shared_operations',
 ]);
 export const HISTORICAL_FLOOR = Object.freeze({ tables: 199, fields: 2829 });
+
+// Frozen per-domain counts from legacy BE oracle 21bad59d. The global
+// 199/2829 floor alone misses a field moved or lost in one domain and
+// offset by an unrelated field added in another. Refresh only with a
+// documented, source-backed oracle reconciliation.
+export const FROZEN_DOMAIN_SHAPES = Object.freeze({
+  DB00_HISTORICAL_AND_ENGINE: Object.freeze({ tables: 39, fields: 732 }),
+  DB01_IDENTITY_AND_TENANCY: Object.freeze({ tables: 22, fields: 312 }),
+  DB02_ACADEMICS_AND_TIMETABLE: Object.freeze({ tables: 13, fields: 125 }),
+  DB03_GROUPS_AND_ELECTIVES: Object.freeze({ tables: 6, fields: 79 }),
+  DB04_PROFILES_AND_VERIFICATION: Object.freeze({ tables: 7, fields: 103 }),
+  DB05_COURSES_AND_CONTENT: Object.freeze({ tables: 7, fields: 92 }),
+  DB06_ASSESSMENTS_AND_ATTENDANCE: Object.freeze({ tables: 21, fields: 248 }),
+  DB07_PROJECTS: Object.freeze({ tables: 16, fields: 358 }),
+  DB08_PLACEMENT_POLICY_AND_OUTCOMES: Object.freeze({ tables: 18, fields: 280 }),
+  DB09_TPO_AND_RECRUITER_OPERATIONS: Object.freeze({ tables: 31, fields: 279 }),
+  DB10_SHARED_OPERATIONS: Object.freeze({ tables: 19, fields: 221 }),
+});
+
 const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
 const missing = value => typeof value !== 'string' || value.trim() === '';
 
@@ -118,6 +137,12 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     if (ledger.counts?.tables !== record.tables || ledger.counts?.fields !== record.fields)
       errors.push({ code: 'LEDGER_COUNTS_MISMATCH', domain: ledger.domain,
         declared: ledger.counts, actual: { tables: record.tables, fields: record.fields } });
+    if (requireAllDomains) {
+      const frozen = FROZEN_DOMAIN_SHAPES[ledger.domain];
+      if (!frozen || frozen.tables !== record.tables || frozen.fields !== record.fields)
+        errors.push({ code: 'FROZEN_DOMAIN_CARDINALITY_DRIFT', domain: ledger.domain,
+          expected: frozen ?? null, actual: { tables: record.tables, fields: record.fields } });
+    }
     perDomain.push(record);
   }
   if (requireAllDomains) for (const suffix of DOMAIN_SUFFIXES) {
