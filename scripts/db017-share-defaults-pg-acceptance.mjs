@@ -50,7 +50,7 @@ export async function main(){
   await c.query("UPDATE placement_company_relationships SET share_column_defaults=NULL WHERE id=$1",[id1]);
   const nullAllowed=(await c.query("SELECT share_column_defaults IS NULL AS allowed FROM placement_company_relationships WHERE id=$1",[id1])).rows[0]?.allowed===true;
   if(!nullAllowed)throw Error("Nullable default disclosure values unexpectedly rejected");
-  console.log(JSON.stringify({type:"DB017_EXECUTED_POSTGRESQL_SHARE_DEFAULTS",gitSha:process.env.GITHUB_SHA??null,database,registeredMigration:"0043_db09_share_column_defaults",negativeCheckViolations:negatives,positiveWrites:4,twoCollegeIndependence:true,sqlNullAllowed:true,transactionRolledBack:true},null,2));
+  console.log(JSON.stringify({type:"DB017_EXECUTED_POSTGRESQL_SHARE_DEFAULTS",gitSha:process.env.GITHUB_SHA??null,database,registeredMigration:"0043_db09_share_column_defaults",negativeCheckViolations:negatives,positiveWrites:5,twoCollegeIndependence:true,sqlNullAllowed:true,transactionRolledBack:true},null,2));
  }finally{
   if(begun){try{await c.query("ROLLBACK")}catch{}}
   await c.end();
