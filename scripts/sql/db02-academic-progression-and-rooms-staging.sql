@@ -201,8 +201,8 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  SELECT college_id INTO old_college FROM departments WHERE id = OLD.department_id;
-  SELECT college_id INTO new_college FROM departments WHERE id = NEW.department_id;
+  SELECT college_id INTO old_college FROM departments WHERE id = OLD.department_id FOR SHARE;
+  SELECT college_id INTO new_college FROM departments WHERE id = NEW.department_id FOR SHARE;
 
   IF old_college IS NULL OR new_college IS NULL THEN
     RAISE EXCEPTION 'Unknown program department'
@@ -233,8 +233,8 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  SELECT college_id INTO old_college FROM departments WHERE id = OLD.department_id;
-  SELECT college_id INTO new_college FROM departments WHERE id = NEW.department_id;
+  SELECT college_id INTO old_college FROM departments WHERE id = OLD.department_id FOR SHARE;
+  SELECT college_id INTO new_college FROM departments WHERE id = NEW.department_id FOR SHARE;
 
   IF old_college IS NULL OR new_college IS NULL THEN
     RAISE EXCEPTION 'Unknown course department'

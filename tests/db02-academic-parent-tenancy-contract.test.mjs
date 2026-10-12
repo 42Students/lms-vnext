@@ -10,7 +10,7 @@ const canonical = readFileSync(
 );
 
 function functionNames(sql) {
-  return [...sql.matchAll(/\bCREATE FUNCTION ([\w]+)\s*\(/g)].map((m) => m[1]);
+  return [...sql.matchAll(/\bCREATE (?:OR REPLACE )?FUNCTION ([\w]+)\s*\(/g)].map((m) => m[1]);
 }
 
 function triggerNames(sql) {
