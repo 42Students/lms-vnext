@@ -238,7 +238,11 @@ BEGIN
       USING ERRCODE='23514';
   END IF;
 
-  -- Revocation is irreversible and the evidence is immutable. An unused
+  -- Policy witness: consumed upload receipt revocation requires COLLEGE_ADMIN or SUPER_ADMIN.
+-- Actual authorization below verifies ACTIVE same-college college membership and
+-- COLLEGE_ADMIN role, or persisted ACTIVE SUPER_ADMIN system role; this comment
+-- does not constitute PostgreSQL execution proof.
+-- Revocation is irreversible and the evidence is immutable. An unused
   -- owner may cancel their own grant; consumed evidence can only be revoked by
   -- a same-college College Admin or a persisted active SUPER_ADMIN.
   IF OLD.revoked = true AND NEW.revoked = false THEN
