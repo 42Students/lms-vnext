@@ -12,7 +12,7 @@
 | Read-only relational mismatch probes | 21 | 0 | Existing-row observation only; zero mismatches do not prove prevention |
 | Direct negative SQL boundary tests | 13 | 0 | Real FK/check/trigger/unique violations against registered schema |
 | Positive concurrency witnesses | 4 | 0 | Races whose current source has a locking/CAS strategy |
-| Known-defect red concurrency witnesses | 1 | 0 | P5-R02 remains expected-fail until the academics fix lands |\n| Fix-authored race regression pending runtime | 1 | 0 | P5-R01 placement fix is authored in DB-054; PostgreSQL execution still required |
+| Known-defect red concurrency witnesses | 0 | 0 | No currently known race is still source-unfixed |\n| Fix-authored race regression pending runtime | 2 | 0 | P5-R01 placement and P5-R02 academics fixes are authored; PostgreSQL execution still required |
 | Draft/unregistered race families excluded | 3 | 0 | Lease, outbound and log-alert candidates are not registered runtime schema |
 
 Machine-readable denominator: `tests/integration/db18-witness-index.json`.
@@ -81,7 +81,7 @@ npx vitest run --config vitest.db.config.ts \
   tests/integration/db18-placement-race-gap.test.ts
 ```
 
-The two red tests should remain failing until P5-R01/P5-R02 implementation fixes land. They must not be suppressed, skipped or counted as green.
+Both P5-R01 and P5-R02 fixes are authored. Their race tests must now execute green on disposable PostgreSQL before either is counted runtime-passed; they must not be suppressed or skipped.
 
 ## DB-018 completion interpretation
 
