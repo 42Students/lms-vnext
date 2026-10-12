@@ -15,6 +15,9 @@ export const DOMAIN_SUFFIXES = Object.freeze([
   'db10_shared_operations',
 ]);
 export const HISTORICAL_FLOOR = Object.freeze({ tables: 199, fields: 2829 });
+// The historical table/field inventory is pinned to this exact legacy source.
+// Arbitrary 40-digit SHAs must not satisfy the source oracle acceptance gate.
+export const FROZEN_LEGACY_ORACLE_SHA = '21bad59d4dfaf2fa11fdeaf9353327ce105697d5';
 
 // Frozen per-domain counts from legacy BE oracle 21bad59d. The global
 // 199/2829 floor alone misses a field moved or lost in one domain and
@@ -73,7 +76,12 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
       if (ledger.domain !== expected) errors.push({ code: 'DOMAIN_FILENAME_MISMATCH', path: filename, domain: ledger.domain, expected });
       if (!/^[a-f0-9]{40}$/i.test(ledger.sourceSha || ''))
         errors.push({ code: 'INVALID_SOURCE_ORACLE_SHA', path: filename, sourceSha: ledger.sourceSha ?? null });
-      else sourceShas.add(ledger.sourceSha);
+      else {
+        sourceShas.add(ledger.sourceSha);
+        if (ledger.sourceSha.toLowerCase() !== FROZEN_LEGACY_ORACLE_SHA)
+          errors.push({ code: 'UNAPPROVED_LEGACY_ORACLE_SHA', path: filename,
+            expected: FROZEN_LEGACY_ORACLE_SHA, actual: ledger.sourceSha });
+      }
     }
     if (!Array.isArray(ledger.tables)) {
       errors.push({ code: 'MISSING_TABLE_LIST', path: filename });
