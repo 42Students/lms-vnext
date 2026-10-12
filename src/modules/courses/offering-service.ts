@@ -2,14 +2,18 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  cohorts,
   courseOfferings,
   courseSectionDeliveries,
   courses,
+  departments,
+  programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -227,8 +231,15 @@ export async function createCourseOffering(
       // race with course archival. Lock and recheck inside the INSERT tx.
       // SHARE conflicts with the course archive's FOR UPDATE.
       const [activeCourse] = await tx
-        .select({ id: courses.id })
+        .select({
+          id: courses.id,
+          collegeId: departments.collegeId,
+        })
         .from(courses)
+        .innerJoin(
+          departments,
+          eq(departments.id, courses.departmentId),
+        )
         .where(and(
           eq(courses.id, input.courseId),
           eq(courses.status, "ACTIVE"),
@@ -238,6 +249,85 @@ export async function createCourseOffering(
 
       if (!activeCourse) {
         throw new CoursesServiceError("COURSE_NOT_FOUND");
+      }
+
+      // The preliminary cohort/period validation ran before this transaction.
+      // Re-read and SHARE-lock every mutable parent whose status, dates or
+      // college might change before the offering INSERT commits.
+      const [lockedCohort] = await tx
+        .select({
+          id: cohorts.id,
+          status: cohorts.status,
+          collegeId: departments.collegeId,
+          startPeriodId: cohorts.startPeriodId,
+          expectedEndPeriodId: cohorts.expectedEndPeriodId,
+        })
+        .from(cohorts)
+        .innerJoin(
+          programs,
+          eq(programs.id, cohorts.programId),
+        )
+        .innerJoin(
+          departments,
+          eq(departments.id, programs.departmentId),
+        )
+        .where(eq(cohorts.id, input.cohortId))
+        .for("share")
+        .limit(1);
+
+      if (!lockedCohort ||
+          (lockedCohort.status !== "PLANNED" &&
+           lockedCohort.status !== "ACTIVE")) {
+        throw new CoursesServiceError("COHORT_NOT_MUTABLE");
+      }
+
+      if (lockedCohort.collegeId !== activeCourse.collegeId) {
+        throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
+      }
+
+      // Stable ID ordering reduces parent-row lock inversions when multiple
+      // offerings reference the same academic periods in different roles.
+      const periodIds = [...new Set([
+        input.academicPeriodId,
+        lockedCohort.startPeriodId,
+        ...(lockedCohort.expectedEndPeriodId
+          ? [lockedCohort.expectedEndPeriodId]
+          : []),
+      ])].sort();
+      const lockedPeriods = await tx
+        .select({
+          id: academicPeriods.id,
+          collegeId: academicPeriods.collegeId,
+          status: academicPeriods.status,
+          startDate: academicPeriods.startDate,
+          endDate: academicPeriods.endDate,
+        })
+        .from(academicPeriods)
+        .where(inArray(academicPeriods.id, periodIds))
+        .orderBy(asc(academicPeriods.id))
+        .for("share");
+
+      const periodById = new Map(
+        lockedPeriods.map((period) => [period.id, period]),
+      );
+      const chosenPeriod = periodById.get(input.academicPeriodId);
+      const startPeriod = periodById.get(lockedCohort.startPeriodId);
+      const endPeriod = lockedCohort.expectedEndPeriodId
+        ? periodById.get(lockedCohort.expectedEndPeriodId)
+        : null;
+
+      if (!chosenPeriod || !startPeriod ||
+          (lockedCohort.expectedEndPeriodId && !endPeriod) ||
+          lockedPeriods.some((period) =>
+            period.collegeId !== activeCourse.collegeId)) {
+        throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
+      }
+      if (chosenPeriod.status === "CLOSED") {
+        throw new CoursesServiceError("ACADEMIC_PERIOD_CLOSED");
+      }
+      if (chosenPeriod.startDate < startPeriod.startDate ||
+          (endPeriod && chosenPeriod.endDate > endPeriod.endDate)) {
+        throw new CoursesServiceError("OFFERING_COHORT_PERIOD_MISMATCH");
       }
 
       const [created] = await tx
