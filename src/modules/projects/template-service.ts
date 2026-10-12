@@ -202,9 +202,17 @@ export async function getAssignedProjectTemplateDetail(
     )
     .innerJoin(
       projectTemplateVersions,
-      eq(
-        projectTemplateVersions.id,
-        projectTemplateCollegeAssignments.templateVersionId,
+      and(
+        eq(
+          projectTemplateVersions.id,
+          projectTemplateCollegeAssignments.templateVersionId,
+        ),
+        // Source safeguard until DB-068's composite owner FK is registered.
+        // A valid version UUID must also belong to the assigned template.
+        eq(
+          projectTemplateVersions.templateId,
+          projectTemplateCollegeAssignments.templateId,
+        ),
       ),
     )
     .where(
