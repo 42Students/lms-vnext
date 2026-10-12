@@ -13,17 +13,17 @@
     "REDESIGNED_CROSS_DOMAIN_IDENTITY_ROLE_SPLIT": 1,
     "REDESIGNED_DB04_PRIVACY_SAFE_TARGET": 2,
     "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT": 23,
-    "ACTIVE_DB04_TARGET_GAP": 11,
+    "PROPOSED_DB04_STAGED_TARGET": 11,
     "MAPPED_DB04_STAGED_PROFILE_IMAGE": 1,
-    "resolvedTargetOrExplicitRedesign": 53,
-    "activeTargetGaps": 11,
+    "resolvedTargetOrExplicitRedesign": 64,
+    "activeTargetGaps": 0,
     "retirementCandidates": 2,
     "runtimeVerified": 0
   },
   "keyFindings": [
     "faculty.faculty_type is authorization-bearing and must not be flattened into faculty_profiles.employment_type.",
     "faculty/learner legacy address alias is explicitly compatibility-only and is not used by current profile AddressDTO CRUD; retirement still needs approval.",
-    "learner current/permanent city/state/pincode six-field detail is active source behavior but missing from current learner typed profile document.",
+    "Learner granular current/permanent city/state/pincode, coding profiles, privacy-safe identity, resume and one-time video-intro now have explicit staged DB04 targets; registration/API/runtime proof remains pending.",
     "learner coding_profiles, resume_url, video_intro_url/video_intro_uploaded_at and privacy-safe identity persistence remain active DB04 target gaps.",
     "Faculty identity/profile image already have a privacy-safe staged DB04 contract; raw identity secrets and arbitrary image URLs are deliberate redesigns."
   ],
@@ -461,11 +461,11 @@
     {
       "legacyField": "learner.identity",
       "legacyType": "json",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_identity_summaries + learner_profile_private_document_bindings(AADHAAR|PAN)",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_PRIVACY_TARGET_GAP: source get/update persists identity JSON; current vNext write guard rejects raw Aadhaar/PAN and learner document has no masked summary/private receipt linkage. Add a safe identitySummary + AADHAAR/PAN receipt contract before parity.",
+      "note": "ACTIVE_PRIVACY_TARGET_GAP: source get/update persists identity JSON; current vNext write guard rejects raw Aadhaar/PAN and learner document has no masked summary/private receipt linkage. Add a safe identitySummary + AADHAAR/PAN receipt contract before parity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
@@ -541,11 +541,11 @@
     {
       "legacyField": "learner.resume_url",
       "legacyType": "text",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_private_document_bindings(purpose=RESUME)",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_PRIVATE_DOCUMENT_GAP: source get/update persists resume and deletes replaced private objects; profile receipt supports RESUME purpose but learner document has no resumeDocumentId binding.",
+      "note": "ACTIVE_PRIVATE_DOCUMENT_GAP: source get/update persists resume and deletes replaced private objects; profile receipt supports RESUME purpose but learner document has no resumeDocumentId binding. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
@@ -591,21 +591,21 @@
     {
       "legacyField": "learner.video_intro_uploaded_at",
       "legacyType": "datetime(6)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_video_intros.uploaded_at",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_STATE_GAP: source uses uploaded_at as the one-time-upload guard; no vNext persisted equivalent exists.",
+      "note": "ACTIVE_STATE_GAP: source uses uploaded_at as the one-time-upload guard; no vNext persisted equivalent exists. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.video_intro_url",
       "legacyType": "text",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_video_intros.receipt_id (VIDEO_INTRO private receipt)",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_MEDIA_GAP: source get/update exposes a one-time learner video intro; current learner document has no canonical video-intro object/receipt field.",
+      "note": "ACTIVE_MEDIA_GAP: source get/update exposes a one-time learner video intro; current learner document has no canonical video-intro object/receipt field. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
@@ -621,72 +621,91 @@
     {
       "legacyField": "learner.current_city",
       "legacyType": "varchar(255)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentCity",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_city; current learner profile address schema omits currentCity.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_city; current learner profile address schema omits currentCity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.current_state",
       "legacyType": "varchar(255)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentState",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_state; current learner profile address schema omits currentState.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_state; current learner profile address schema omits currentState. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.current_pincode",
       "legacyType": "varchar(20)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentPincode",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_pincode; current learner profile address schema omits currentPincode.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_pincode; current learner profile address schema omits currentPincode. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.permanent_city",
       "legacyType": "varchar(255)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentCity",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_city; current learner profile address schema omits permanentCity.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_city; current learner profile address schema omits permanentCity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.permanent_state",
       "legacyType": "varchar(255)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentState",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_state; current learner profile address schema omits permanentState.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_state; current learner profile address schema omits permanentState. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.permanent_pincode",
       "legacyType": "varchar(20)",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentPincode",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_pincode; current learner profile address schema omits permanentPincode.",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_pincode; current learner profile address schema omits permanentPincode. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     },
     {
       "legacyField": "learner.coding_profiles",
       "legacyType": "json",
-      "disposition": "ACTIVE_DB04_TARGET_GAP",
-      "proposedTarget": null,
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.codingProfiles",
       "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
       "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
-      "note": "ACTIVE_TYPED_DOCUMENT_GAP: source social profile get/update persists normalized coding-platform usernames; learnerProfileDocument.socialProfiles lacks codingProfiles.",
+      "note": "ACTIVE_TYPED_DOCUMENT_GAP: source social profile get/update persists normalized coding-platform usernames; learnerProfileDocument.socialProfiles lacks codingProfiles. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
       "runtimeVerified": false
     }
-  ]
+  ],
+  "stagedGapClosure": {
+    "schema": "src/db/schema/db04-learner-profile-extras.staged.ts",
+    "sql": "docs/planning/sql/db04-learner-profile-extras-candidate.sql",
+    "contract": "docs/planning/db04-learner-profile-gap-contract.md",
+    "fields": [
+      "learner.identity",
+      "learner.coding_profiles",
+      "learner.resume_url",
+      "learner.video_intro_url",
+      "learner.video_intro_uploaded_at",
+      "learner.current_city",
+      "learner.current_state",
+      "learner.current_pincode",
+      "learner.permanent_city",
+      "learner.permanent_state",
+      "learner.permanent_pincode"
+    ],
+    "state": "PROPOSED_UNREGISTERED_NOT_RUNTIME_VERIFIED"
+  }
 }
