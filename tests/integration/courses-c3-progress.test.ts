@@ -802,6 +802,8 @@ describe("courses C3 learner progress against PostgreSQL", () => {
       );
     expect(historicalDiscussion.canPost).toBe(false);
 
+    // The mutation scope intentionally hides ended deliveries from active
+    // readers; historical reads work, but writes fail closed as NOT_FOUND.
     await expect(
       createCourseDiscussionMessage(
         learner,
@@ -811,7 +813,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         },
       ),
     ).rejects.toMatchObject({
-      code: "SECTION_DELIVERY_NOT_ACTIVE",
+      code: "SECTION_DELIVERY_NOT_FOUND",
     });
 
     await expect(
@@ -824,7 +826,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         },
       ),
     ).rejects.toMatchObject({
-      code: "SECTION_DELIVERY_NOT_ACTIVE",
+      code: "SECTION_DELIVERY_NOT_FOUND",
     });
   });
 
