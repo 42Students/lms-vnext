@@ -99,3 +99,23 @@ available environment: `Node cases executed = 0`,
 registered schema, and P5-R09/R21 remain unverified. This correction is
 contained within the existing DB067/DB10 scope and does **not** create
 another shared-queue task or imply database phase completion.
+
+
+## 2026-10-12 independent peer hardening: provable global EMAIL identity + pre-send fence
+
+A DB067/DB050 cross-contract review found two additional bypasses in the original staged shape:
+
+1. Pre-send accepted **any** valid-looking 64-hex `p_global_email_hash`; a sender could accidentally supply an unrelated EMAIL hash and silently miss the real recipient's global opt-out. A format check does not establish provenance.
+2. Completion could move a `CLAIMED` row to provider-accepted/retry/failure **without having called pre-send** at all. Recommending a pre-send call in documentation alone is not a database invariant.
+
+The source-stage patch now binds the global EMAIL HMAC to the specific queued message without making its reusable cross-organization HMAC queryable from outbound rows:
+
+- `src/modules/operations/outbound-delivery-envelope.ts` computes a `SHA-256("db10-global-email-binding-v1:" || canonical message UUID || ":" || global EMAIL HMAC)` commitment; it returns NULL for non-EMAIL channels. A per-message UUID prevents correlating the same opted-out recipient across two ordinary outbound rows based only on their stored values.
+- `src/modules/operations/outbound-delivery-queue.ts` writes only that row-specific `global_email_hash_commitment`, **not** the global HMAC itself. It still uses the real HMAC exclusively for the global-suppression anti-join during enqueue. The authenticated sender must decrypt the envelope and derive the actual HMAC with the dedicated stable secret before calling the pre-send function.
+- `src/db/schema/db10-outbound-messages.draft.ts` adds a channel-specific commitment CHECK (EMAIL requires valid hex; SMS/WhatsApp require NULL), `pre_send_authorized_fence` and a CHECK that any non-NULL authorization belongs to the current `CLAIMED` fence.
+- `docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql` compares `p_global_email_hash` to the stored commitment by recomputing PostgreSQL `sha256(convert_to(..., 'UTF8'))` for the **locked row ID**. It refuses mismatches with `GLOBAL_EMAIL_HASH_MISMATCH`, authorizes `pre_send_authorized_fence` only **after** both local/global suppression checks, clears that authorization on claim/retry/failure/accept/suppress/expire, and refuses claim completion if authorization does not equal the current fence.
+- `tests/db067-global-email-pre-send-binding.test.mjs` contains seven Node source/cryptographic-vector tests. The 2026-10-12 remote exact-main source assertions passed **14/14 in the connector's V8 process**, **not** `node --test`, a typecheck or PostgreSQL acceptance. No production sender or numbered migration was enabled.
+
+**Migration-integrator handoff to Chat 1:** Include both `global_email_hash_commitment` and `pre_send_authorized_fence` in canonical DB10 generated Drizzle DDL **before** applying the four dispatch functions. Reconcile DB050 and DB067 together, verify the target PostgreSQL supports the used `sha256(bytea)` function, and preserve privileged function-only execution. Run fresh migration replay and negative/race tests; existing old references that lack either column must fail promotion, not silently disable suppression. Do not duplicate this DDL in a second standalone table migration.
+
+**New required live witnesses (not executed):** (a) wrong valid HMAC from another recipient is refused without authorizing send; (b) correct committed HMAC passes when not opted out; (c) same email across two message UUIDs has distinct stored commitments but one global suppression match; (d) completion before pre-send returns false; (e) completion after successful exact-fence pre-send succeeds; (f) stale fence and second claim reset prior authorization; (g) EMAIL rows with NULL commitment or SMS rows with non-NULL commitment reject CHECK; (h) late opt-out before pre-send terminalizes the claim. A post-check unsubscribe/provider race is still unresolved as documented above. These are **staged** checks, not a claim of executed acceptance.
