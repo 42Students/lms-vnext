@@ -46,7 +46,7 @@ test("commitments are different for same opted-out email across two message UUID
 test("schema requires EMAIL-specific commitments and no non-EMAIL commitments", () => {
   assert.match(schema, /globalEmailHashCommitment: varchar\("global_email_hash_commitment", \{ length: 64 \}\)/);
   assert.match(schema, /db10_outbound_email_commitment_ck/);
-  assert.match(schema, /\$\{t\.channel\} = 'EMAIL' and \$\{t\.globalEmailHashCommitment\} ~/);
+  assert.match(schema, /\$\{t\.channel\} = 'EMAIL' and \$\{t\.globalEmailHashCommitment\} is not null and \$\{t\.globalEmailHashCommitment\} ~/);
   assert.match(schema, /\$\{t\.channel\} <> 'EMAIL' and \$\{t\.globalEmailHashCommitment\} is null/);
   assert.doesNotMatch(schema, /globalEmailSuppressionHash:\s*varchar/);
 });
