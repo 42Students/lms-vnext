@@ -3,6 +3,7 @@
 import {spawnSync} from "node:child_process";
 import {fileURLToPath} from "node:url";
 import {resolve} from "node:path";
+import {assertSafeDb01TestTarget} from "./db01-test-database-guard.mjs";
 export const CONSENT="I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA";
 export const WITNESSES=Object.freeze([
  ["tests/db01-auth-attempt-lifecycle-pg.test.mjs","DB01_AUTH_DISPOSABLE"],
@@ -12,7 +13,7 @@ export const WITNESSES=Object.freeze([
  ["tests/db04-profile-education-images-pg.test.mjs","DB04_PROFILE_DISPOSABLE"],
 ]);
 const isLocal=h=>["localhost","127.0.0.1","[::1]","::1"].includes(h.toLowerCase());
-const endpoint=u=>(isLocal(u.hostname)?"LOCAL_LOOPBACK":u.hostname.toLowerCase())+":"+(u.port||"5432")+u.pathname;
+const endpoint=u=>(isLocal(u.hostname)?"LOCAL_LOOPBACK":u.hostname.toLowerCase())+":"+(u.port||"5432")+"/"+decodeURIComponent(u.pathname.slice(1)).toLowerCase();
 export function validateTarget(env, optIn=true){
  const errors=[];
  if(!env.TEST_DATABASE_URL)return {safe:false,errors:["TEST_DATABASE_URL required"]};
@@ -28,6 +29,24 @@ export function validateTarget(env, optIn=true){
    if(env.DB_WITNESS_REMOTE_CONFIRM!=="DISPOSABLE:"+u.hostname.toLowerCase()+":"+(u.port||"5432")+"/"+db)errors.push("Exact remote target confirmation required");
  }
  if(optIn&&env.DB_STAGED_WITNESSES!==CONSENT)errors.push("DB_STAGED_WITNESSES opt-in missing");
+ // The shared disposable-target policy is stricter than the witness-specific
+ // opt-ins: it rejects path-encoded aliases, special database names and
+ // connection-string overrides before any test subprocess can connect.
+ // Translate an already-verified witness remote confirmation into the
+ // canonical guard's format; never bypass either of the remote opt-ins.
+ if(!errors.length){
+   const remoteConfirmation="DISPOSABLE:"+u.hostname.toLowerCase()+":"+(u.port||"5432")+"/"+db;
+   const canonicalEnv={
+     TEST_DATABASE_URL:env.TEST_DATABASE_URL,
+     DATABASE_URL:env.DATABASE_URL,
+     DB01_REMOTE_TEST_DATABASE_CONFIRM:
+       !isLocal(u.hostname)&&env.ALLOW_REMOTE_TEST_WITNESS==="true"&&
+       env.DB_WITNESS_REMOTE_CONFIRM===remoteConfirmation
+         ? "RESET:"+u.hostname.toLowerCase()+"/"+db : undefined,
+   };
+   try{assertSafeDb01TestTarget(canonicalEnv)}
+   catch(error){errors.push("Canonical disposable target refused: "+error.message)}
+ }
  return {safe:!errors.length,errors,target:{host:u.hostname,database:db,port:u.port||"5432"}};
 }
 export function parseTap(output) {
