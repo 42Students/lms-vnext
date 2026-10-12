@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-077",
+  "phase": "DATABASE",
+  "worker": "CHAT_05",
+  "status": "SOURCE_DISPOSITION_COMPLETE_RUNTIME_NOT_APPLICABLE",
+  "source": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "db04Inventory": "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+    "peerEvidence": [
+      "docs/planning/db04-chat05-retirement-peer-review-2026-10-11.md",
+      "docs/planning/db04-historical-registration-approver-peer-review-2026-10-11.md",
+      "docs/planning/db04-historical-disposition-evidence-2026-10-11.md"
+    ]
+  },
+  "scopeRule": "vNext is a greenfield rebuild of the current product contract, not a migration of historical physical tables. A source concept with an explicitly removed subsystem or no current producer/consumer after exhaustive connected-source review may be retired from the current product schema. A later external integration must be modeled from its actual current contract rather than reviving a historical table by name.",
+  "dispositions": [
+    {
+      "legacyTable": "approver_id_card",
+      "sourceFieldCount": 11,
+      "disposition": "RETIRED_SOURCE_CONFIRMED_LEGACY_PROCTORED_EXAM_REMOVED",
+      "replacementTarget": null,
+      "currentProductRequired": false,
+      "evidence": [
+        "Legacy FK approver_id_card.assigned_exam_id -> assigned_exam.id ties the table to the old proctored-exam subsystem.",
+        "42Students/lms commit 87731589d37f7a2fe3bce6a689b3f440a77de28c on 2026-08-28 removes ApproverIdCard.java, AssignedExam.java and the complete com._42students.exam controller/model/repository/service stack.",
+        "Frozen prod-2026 tree contains zero src/main/java/com/_42students/exam paths.",
+        "Post-V150 migration sweep V151-V194 contains zero approver_id_card/assigned_exam evolution.",
+        "Current qualifying-exam/profile code is a different product concept and is not a mapping target."
+      ],
+      "futureRule": "If proctored exam identity-card evidence is reintroduced, create a new private-object receipt/authorization contract against the current assessment engine; do not recreate this historical table automatically.",
+      "runtimeVerificationRequiredForRetirement": false
+    },
+    {
+      "legacyTable": "student_registration",
+      "sourceFieldCount": 22,
+      "disposition": "RETIRED_CURRENT_PRODUCT_ABSENT_HISTORICAL_EXTERNAL_SYNC_LEDGER",
+      "replacementTarget": null,
+      "currentProductRequired": false,
+      "evidence": [
+        "Historical shape is an external intake/sync ledger: tenant/external_ref/registration_number/contact and academic snapshots, source=crm_sync, synced_at, metadata and optimistic versioning.",
+        "Frozen prod-2026 recursive source tree contains no student_registration or crm_sync path.",
+        "Frozen prod-2026 current registration paths are LearnerRegistrationController, PlacementRegistration, PlacementRegistrationRepository and BatchRegistrationService; those implement placement-choice registration and are semantically distinct.",
+        "Post-V150 migration sweep V151-V194 contains zero student_registration evolution.",
+        "DB02 independently records no canonical academics dependency, and connected-organization source review found no producer."
+      ],
+      "futureRule": "If a detached CRM/roster importer is introduced or rediscovered, open a new normalized ingestion task with source identity, idempotency, tenant scope and audit semantics. Do not map it to placement_registration and do not resurrect the historical table solely for parity.",
+      "runtimeVerificationRequiredForRetirement": false
+    }
+  ],
+  "summary": {
+    "tablesReviewed": 2,
+    "fieldsDispositioned": 33,
+    "sourceConfirmedRetiredTables": 2,
+    "replacementTablesRequired": 0,
+    "anonymousDispositionGaps": 0,
+    "postgresRuntimeTestsRequiredForSourceRetirement": 0
+  },
+  "guardrails": [
+    "This decision applies only to the current vNext product schema; it does not claim the historical tables never existed in deployed MySQL.",
+    "No historical data migration/backfill is required.",
+    "Retirement must not be reversed by name similarity to placement registration or current qualifying-exam configuration.",
+    "A future external integration is a new product contract and must receive a separately tracked schema/API/security design."
+  ]
+}
