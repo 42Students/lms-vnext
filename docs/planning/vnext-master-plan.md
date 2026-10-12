@@ -1,5 +1,7 @@
 # LMS vNext — Master Execution Plan
 
+> **OPERATING NOTICE — 2026-10-13:** This is a historical architecture and scope reference, **not the active execution schedule or status report**. The current execution method is [closure-first delivery](closure-first-delivery-strategy.md); the sole task/phase progress authority is [docs/tracker.json](../tracker.json). Old `DONE`/`MOSTLY DONE` section labels below are historical authored-scope descriptions, not independently accepted DATABASE task completion. DATABASE remains the current global phase; later phases stay locked until the tracker gates are certified. Do not work through this document sequentially as a second queue.
+
 **Repository:** `42Students/lms-vnext`  
 **Planning baseline date:** 2026-10-02  
 **Audience:** future ChatGPT sessions + solo developer  
@@ -20,7 +22,7 @@ This plan is intentionally biased toward:
 - cohesive commits instead of scattered tiny pushes
 - postponing complex infrastructure until real need appears
 
-The plan should be followed in order unless a blocking dependency or production requirement justifies deviation.
+For **active execution**, follow the closure-first strategy and sole binary tracker, not the historical order or completion labels below. The sections remain useful as feature and architecture context.
 
 ---
 

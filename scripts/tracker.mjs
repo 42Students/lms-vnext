@@ -87,12 +87,16 @@ export function inspectTracker(doc) {
   const all = [...tasks.values()];
   const done = all.filter(t=>t.done === true).length;
   const coreDone = CORE_ELEVEN.filter(id=>tasks.get(id)?.done === true).length;
+  const coreRemaining = CORE_ELEVEN
+    .filter(id => tasks.get(id)?.done !== true)
+    .map(id => ({id,title:tasks.get(id)?.title ?? 'Missing task'}));
   const currentOpen = all.filter(t=>t.phase === doc.currentPhase && t.done !== true);
   return {
     mode:'TRACKER_STRUCTURE_ONLY_NOT_DATABASE_ACCEPTANCE',
     activePhase:doc.currentPhase,
     counts:{total:all.length,done,notDone:all.length-done},
     core:{total:CORE_ELEVEN.length,done:coreDone,notDone:CORE_ELEVEN.length-coreDone},
+    coreRemaining,
     currentPhaseOpen:currentOpen.map(t=>t.id),
     readyForNextPhase:false, // Executed independent phase-gate signoff is separate.
     errors,
@@ -117,6 +121,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
         ' | NOT DONE ' + report.counts.notDone);
       console.log('Original core: DONE ' + report.core.done +
         '/' + report.core.total + ' | NOT DONE ' + report.core.notDone);
+      console.log('Original core remaining: ' +
+        (report.coreRemaining.map(t => t.id).join(', ') || 'none'));
+      console.log('Phase gate: NOT CERTIFIED by task counts');
       console.log('Tracker integrity: ' + (report.errors.length ? 'FAIL' : 'PASS'));
       if (report.errors.length) console.error(JSON.stringify(report.errors));
     }

@@ -2,13 +2,17 @@
 
 The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular monolith.
 
-## Six-chat development system
+## How development works now
 
-Use **"Continue chat 1 work"** through **"Continue chat 6 work"** to resume six interchangeable workers in the **same active project-wide phase**. Ask **"Chat 2 stats"** or **"All chat stats"** for live sourced progress. The [shared-phase operating system](docs/coordination/six-chat-operating-system.md) is authoritative; [Project instructions](docs/coordination/chatgpt-project-instructions.md) make short prompts work in new conversations.
+**Closure-first, direct to `main`.** The old six-chat system is retired; do not use lane files, issue #21–#26 assignments or historical work queues as live progress.
 
-All six work on **DATABASE across DB00–DB10**, then move together to **API parity**, then **UI parity**, then **RELEASE** only after global proof. Workers take temporary tasks from the [shared queue](docs/coordination/work-queue.json); a worker finishing a task claims the next unowned task in that same phase. [Global phase state](docs/coordination/phase-state.json) holds certification gates. [Chat checkpoints](docs/coordination/lanes) and GitHub issues #21–#26 persist handoffs.
+- **Execution strategy:** [Closure-first delivery](docs/planning/closure-first-delivery-strategy.md)
+- **Only live tracker:** [docs/tracker.json](docs/tracker.json) — DONE/NOT DONE only
+- **Current global phase:** DATABASE; API/UI/RELEASE require independent phase gates
+- **Visible progress command:** `npm run progress` (read-only; original core eleven and total DONE/NOT DONE)
+- **Continuation instructions:** [ChatGPT project instructions](docs/coordination/chatgpt-project-instructions.md)
 
-`node scripts/six-chat-status.mjs`, `--lane 4`, and `--json` report **offline committed snapshots**, not live CI. For live stats refresh GitHub issues, checks, oracle SHAs, and repo HEAD.
+Each engineering batch should integrate or repair a concrete runnable capability, run its acceptance tests on a disposable database, commit one cohesive change on fresh `main` and report exact evidence. Draft migrations and partially green CI jobs are **not** completed tasks.
 
 ## Core stack
 
@@ -31,7 +35,9 @@ Business logic lives in domain modules rather than React components. Infrastruct
 
 ## Current status
 
-The original core platform and major domain implementations are substantially authored, but **full database/API parity and current CI/runtime verification are still open**. The six-chat operating system coordinates source-backed backend-first closure. Historical checklist checkmarks and authored tests are not proof of current release readiness; consult the lane files, GitHub issues and current CI.
+The legacy-source feature skeleton is substantial, but database completion is determined by the strict binary tracker—not historical checklists or counts of drafted SQL. At the strategy adoption snapshot (2026-10-13): **6/81 DATABASE tasks DONE; 4/11 original core tasks DONE**. Consult `npm run progress` for the current repository snapshot; these numbers are **not** an estimate of authored-code coverage.
+
+The immediate execution goal is **registered, cleanly replayable, acceptance-tested database integration**, beginning with upstream original-core requirements. No new production/API/UI phase readiness is implied by a preview or isolated staging test.
 
 ## Local database
 
@@ -43,14 +49,12 @@ The account-independent deployment decisions and provisioning order are document
 
 ## Continuation documents
 
-A new ChatGPT session should read these before making changes:
+For a new development session, read in this order:
 
 1. `AGENTS.md`
-2. `docs/handoff/2026-10-02-vnext-handoff.md`
-3. `docs/planning/vnext-master-plan.md`
-4. `docs/planning/vnext-execution-checklist.md`
-5. `docs/core-platform-migration-map.md`
-6. `docs/architecture.md`
-7. `docs/migration-strategy.md`
+2. `docs/planning/closure-first-delivery-strategy.md`
+3. `docs/tracker.json`
+4. the specific domain's active code, migration state and executed test evidence
+5. `docs/coordination/chatgpt-project-instructions.md` for the exact single-tracker operating rules
 
-The checklist is the operational source of truth for what is done and what should be implemented next.
+`docs/planning/vnext-master-plan.md` and `docs/planning/vnext-execution-checklist.md` are **historical implementation references, not live progress trackers**. When they conflict, `AGENTS.md`, the closure-first strategy and `docs/tracker.json` control.
