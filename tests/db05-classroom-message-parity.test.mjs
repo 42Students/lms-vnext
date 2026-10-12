@@ -132,3 +132,17 @@ test("read-only classroom drift probe inventories every missing join and scope m
   assert.match(integrityPreflight, /count\(violations.failure_code\)::bigint/);
   assert.doesNotMatch(integrityPreflight, /\b(?:UPDATE|DELETE|INSERT|ALTER|CREATE|TRUNCATE|DROP)\s+(?:TABLE\s+)?(?:course_discussion_messages|course_offerings|courses|sections|college_memberships)\b/i);
 });
+
+test("staged classroom canonical history rejects hard DELETE while retaining soft-delete update", () => {
+  assert.match(historySql, /CREATE OR REPLACE FUNCTION db05_classroom_message_hard_delete_fence/);
+  assert.match(historySql, /CREATE TRIGGER db05_classroom_message_prevent_hard_delete/);
+  assert.match(historySql, /BEFORE DELETE ON course_discussion_messages/);
+  assert.match(historySql, /RAISE EXCEPTION 'classroom history must use soft deletion'/);
+  assert.match(historySql, /USING ERRCODE = '23514'/);
+  assert.match(historySql, /ADD COLUMN IF NOT EXISTS deleted_at timestamptz/);
+  assert.doesNotMatch(historySql, /DELETE FROM course_discussion_messages/i);
+  assert.doesNotMatch(guardSql, /CREATE TRIGGER db05_classroom_message_prevent_hard_delete/);
+  assert.ok(readiness.gates.some(g =>
+    g.id === "CLASSROOM_HARD_DELETE_FENCE_API_CUTOVER" &&
+    g.status === "BLOCKED"), "hard-delete fence must fail closed before cutover");
+});
