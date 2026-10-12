@@ -186,10 +186,14 @@ test("DB09 collaboration principal scope is fail-closed", () => {
     "a TPO message needs explicit active TPO actor scope in the thread college",
   );
   assert.match(sql, /r\.role IN \('TPO','COLLEGE_ADMIN'\)/);
-  assert.match(
-    sql,
-    /tm\.role IN \('TPO_ADMIN','FACULTY_COORDINATOR'\)/,
-    "explicit placement team membership must satisfy the TPO actor helper",
+  const tpoHelperStart = sql.indexOf("CREATE FUNCTION db09_has_active_tpo_actor(");
+  const tpoHelperEnd = sql.indexOf("CREATE FUNCTION db09_has_active_recruiter_grant(", tpoHelperStart);
+  assert.ok(tpoHelperStart >= 0 && tpoHelperEnd > tpoHelperStart);
+  const tpoHelper = sql.slice(tpoHelperStart, tpoHelperEnd);
+  assert.doesNotMatch(
+    tpoHelper,
+    /placement_tpo_team_members|FACULTY_COORDINATOR|TPO_ADMIN/,
+    "college-wide TPO authority must not be widened by scoped placement team roles",
   );
   assert.match(
     sql,
@@ -230,7 +234,7 @@ test("DB09 prep and TPO bell staging fail closed on tenant and history", () => {
   assert.match(sql, /CREATE TRIGGER db09_prep_assignment_scope_guard/);
   assert.match(
     sql,
-    /JOIN departments d ON d\.id = c\.department_id[\s\S]*d\.college_id = NEW\.college_id/,
+    /JOIN departments d ON d\.id = c\.department_id[\s\S]*JOIN colleges owner_college ON owner_college\.id = d\.college_id[\s\S]*owner_college\.organization_id = v_assignment_org/,
   );
   assert.match(
     sql,
@@ -373,7 +377,7 @@ test("DB09 recruiter CRM staging enforces joined identity and terminal follow-up
   );
   assert.match(
     sql,
-    /JOIN placement_recruiter_profiles p[\s\S]*JOIN placement_companies co[\s\S]*JOIN users u/,
+    /FROM placement_recruiter_profiles p[\s\S]*JOIN placement_companies co[\s\S]*JOIN users u/,
   );
   assert.match(
     sql,
