@@ -9,10 +9,12 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods,
   cohorts,
+  colleges,
   courseOfferings,
   courseSectionDeliveries,
   courses,
   departments,
+  organizations,
   programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -240,9 +242,20 @@ export async function createCourseOffering(
           departments,
           eq(departments.id, courses.departmentId),
         )
+        .innerJoin(
+          colleges,
+          eq(colleges.id, departments.collegeId),
+        )
+        .innerJoin(
+          organizations,
+          eq(organizations.id, colleges.organizationId),
+        )
         .where(and(
           eq(courses.id, input.courseId),
           eq(courses.status, "ACTIVE"),
+          isNull(departments.archivedAt),
+          eq(colleges.status, "ACTIVE"),
+          eq(organizations.status, "ACTIVE"),
         ))
         .for("share")
         .limit(1);
@@ -276,7 +289,11 @@ export async function createCourseOffering(
           departments,
           eq(departments.id, programs.departmentId),
         )
-        .where(eq(cohorts.id, input.cohortId))
+        .where(and(
+          eq(cohorts.id, input.cohortId),
+          eq(programs.status, "ACTIVE"),
+          isNull(departments.archivedAt),
+        ))
         .for("share")
         .limit(1);
 
