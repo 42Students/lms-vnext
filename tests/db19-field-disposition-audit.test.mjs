@@ -211,6 +211,58 @@ test('DB19 CLI rejects 2828-field inventory even if all internal counters agree'
 });
 
 
+
+test('DB19 rejects balanced cross-domain field drift even when global totals remain 2829', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'db19-balanced-drift-'));
+  try {
+    writeSyntheticFullInventory(root);
+    const db00 = path.join(root, 'docs/planning/db-pass4-columns-db00_historical_and_engine.json');
+    const db01 = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
+    const a = JSON.parse(fs.readFileSync(db00, 'utf8'));
+    const b = JSON.parse(fs.readFileSync(db01, 'utf8'));
+    a.tables[0].rows.pop();
+    a.tables[0].sourceFieldCount--;
+    a.counts.fields--;
+    b.tables[0].rows.push(field(b.tables[0].table, 'extra_new_field'));
+    b.tables[0].sourceFieldCount++;
+    b.counts.fields++;
+    fs.writeFileSync(db00, JSON.stringify(a));
+    fs.writeFileSync(db01, JSON.stringify(b));
+    const result = auditCheckout(root);
+    assert.equal(result.counts.fields, 2829);
+    assert.equal(result.counts.tables, 199);
+    assert.equal(result.sourceInventoryIntegrity, 'FAIL');
+    assert.equal(result.databaseParityVerified, false);
+    assert.equal(result.errors.filter(e => e.code === 'FROZEN_DOMAIN_CARDINALITY_DRIFT').length, 2);
+    assert.ok(!result.errors.some(e => e.code === 'HISTORICAL_INVENTORY_REGRESSION'));
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test('DB19 rejects balanced cross-domain table drift with unchanged global 199/2829', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'db19-balanced-tables-'));
+  try {
+    writeSyntheticFullInventory(root);
+    const db00 = path.join(root, 'docs/planning/db-pass4-columns-db00_historical_and_engine.json');
+    const db01 = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
+    const a = JSON.parse(fs.readFileSync(db00, 'utf8'));
+    const b = JSON.parse(fs.readFileSync(db01, 'utf8'));
+    const removed = a.tables.pop();
+    a.counts.tables--;
+    a.counts.fields -= removed.rows.length;
+    b.tables.push({ ...removed, table: 'migrated_unrelated_table',
+      rows: removed.rows.map(row => ({ ...row, legacyTable: 'migrated_unrelated_table' })) });
+    b.counts.tables++;
+    b.counts.fields += removed.rows.length;
+    fs.writeFileSync(db00, JSON.stringify(a));
+    fs.writeFileSync(db01, JSON.stringify(b));
+    const result = auditCheckout(root);
+    assert.equal(result.counts.fields, 2829);
+    assert.equal(result.counts.tables, 199);
+    assert.equal(result.sourceInventoryIntegrity, 'FAIL');
+    assert.equal(result.errors.filter(e => e.code === 'FROZEN_DOMAIN_CARDINALITY_DRIFT').length, 2);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
 test('DB19 source inventory projects approved DB00 backup dispositions without runtime verification', () => {
   const input = ledger('db00_historical_and_engine','backup', [field('backup','id',{reviewStatus:'CLASSIFY_HISTORIC_RETIREMENT'})]);
   input.ledger.domain='DB00_HISTORICAL_AND_ENGINE';input.ledger.sourceSha='f'.repeat(40);
