@@ -716,6 +716,12 @@
       "status": "BLOCKED",
       "owner": 1,
       "evidence": "Canonical unregistered scripts/sql/db05-classroom-message-history.draft.sql now proposes BEFORE DELETE fence to preserve audit history. Existing discussion-service.ts still uses hard DELETE; registering without coordinated API soft-delete cutover would break endpoint. Disposable PostgreSQL direct delete/ON DELETE CASCADE/retention/rollback and API tests NOT RUN."
+    },
+    {
+      "id": "DB05_FACULTY_ROSTER_QUERY_TENANT_REPARENT_AUTH",
+      "status": "NOT_RUN",
+      "owner": "DB05_API_INTEGRATION",
+      "evidence": "Chat6 4244400 query-joins exact delivery/offering/section plus department college and org to match prior authorization snapshot, preventing a new tenant from being enumerated on stale read. Node source tests 1e9330b authored but not executed. Need two-session reparent and cross-college HTTP/API negative results."
     }
   ],
   "sourceReview": {
