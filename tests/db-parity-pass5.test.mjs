@@ -134,8 +134,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
-  assert.equal(index.counts.knownRedRaceAuthored, 1);
-  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
+  assert.equal(index.counts.knownRedRaceAuthored, 0);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 2);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
 
@@ -178,7 +178,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
 });
 
-test("DB18 stale-check source state tracks fixed placement and red academics", () => {
+test("DB18 stale-check source state tracks authored placement and academics race fixes", () => {
   const placementSource = fs.readFileSync(
     "src/modules/placements/application-service.ts",
     "utf8",
@@ -206,8 +206,13 @@ test("DB18 stale-check source state tracks fixed placement and red academics", (
   const cohortPrecheck = createBody.indexOf('cohort.status !== "PLANNED"');
   assert.ok(cohortPrecheck > 0 && cohortPrecheck < academicTx);
   const academicTxBody = createBody.slice(academicTx);
-  assert.equal(academicTxBody.includes(".from(cohorts)"), false);
-  assert.equal(academicTxBody.includes("cohorts.status"), false);
+  assert.equal(academicTxBody.includes(".from(cohorts)"), true);
+  assert.equal(academicTxBody.includes("cohorts.status"), true);
+  assert.equal(academicTxBody.includes('.for("share")'), true);
+  assert.ok(
+    academicTxBody.includes('liveCohort.status !== "PLANNED"') &&
+      academicTxBody.includes('liveCohort.status !== "ACTIVE"'),
+  );
 
   const index = load("tests/integration/db18-witness-index.json");
   assert.deepEqual(
@@ -220,7 +225,7 @@ test("DB18 stale-check source state tracks fixed placement and red academics", (
   );
   assert.equal(
     index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R02")?.state,
-    "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+    "FIX_AUTHORED_RUNTIME_NOT_RUN",
   );
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
