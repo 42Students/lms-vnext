@@ -12,6 +12,23 @@ function project(overrides:Partial<MentorProjectAttentionSource>={}):MentorProje
   };
 }
 describe("W03 mentor notification attention parity",()=>{
+  it("preserves project identity on every notification for mentor list filtering",()=>{
+    const first=project({
+      submission:{id:"sub-multi",status:"SUBMITTED",submittedAt:now},
+      projectUpdatedAt:new Date("2026-09-01T00:00:00Z"),
+      meetings:[
+        {id:"req-multi",title:"Review",status:"REQUESTED",startsAt:now},
+        {id:"next-multi",title:"Next",status:"SCHEDULED",startsAt:new Date("2026-10-11T11:00:00Z")},
+      ],
+    });
+    const other=project({projectId:"62bb9aae-c90e-4434-bdbf-4d1c83326c79",
+      submission:{id:"other",status:"SUBMITTED",submittedAt:now}});
+    const alerts=deriveMentorProjectAttention([first,other],now);
+    expect(alerts.filter(alert=>alert.projectId===first.projectId).map(alert=>alert.kind))
+      .toEqual(expect.arrayContaining(["REVIEW","STALLED","REQUESTED","MEETING_SOON"]));
+    expect(alerts.filter(alert=>alert.projectId===other.projectId)).toHaveLength(1);
+    expect(alerts.every(alert=>alert.projectId===first.projectId || alert.projectId===other.projectId)).toBe(true);
+  });
   it("notifies about freshly submitted learner delivery",()=>{
     const alerts=deriveMentorProjectAttention([project({
       submission:{id:"sub-1",status:"SUBMITTED",submittedAt:now},
