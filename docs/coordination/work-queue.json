@@ -4937,6 +4937,44 @@
           "reason": "Chat 5 started pinned-source historical course-column decision."
         }
       ]
+    },
+    {
+      "id": "DB-079",
+      "phase": "DATABASE",
+      "title": "Harden DB09 CRM principal revocation races and append-only history",
+      "scope": "Forward-only hardening after registered 0045: lock lead/followup/activity actor principal rows against concurrent membership/company/grant revocation and reject TRUNCATE of placement_tpo_lead_activities. Preserve 0045 immutable history; do not rewrite prior migration.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-002"
+      ],
+      "restriction": "MIGRATION_INTEGRATOR",
+      "paths": [
+        "drizzle/0046_db09_crm_principal_race_hardening.sql",
+        "drizzle/meta/0046_snapshot.json",
+        "tests/db079-db09-crm-race-hardening.test.mjs",
+        "docs/planning/db079-db09-crm-race-hardening.md"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12",
+          "reason": "Post-0045 adversarial review found principal/grant EXISTS checks can race revocation and append-only lead activity lacks TRUNCATE rejection."
+        }
+      ]
     }
   ],
   "eventModel": {
