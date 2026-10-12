@@ -33,7 +33,11 @@ describe("DB10 shared skills reader scope", () => {
     })).toBe(false);
     expect(canReadSkillCatalog({
       ...activeMember,
-      membership: { ...activeMember.membership!, status: "DISABLED" },
+      membership: { ...activeMember.membership!, status: "SUSPENDED" },
+    })).toBe(false);
+    expect(canReadSkillCatalog({
+      ...activeMember,
+      membership: { ...activeMember.membership!, status: "ENDED" },
     })).toBe(false);
     expect(canReadSkillCatalog({
       ...activeMember,
