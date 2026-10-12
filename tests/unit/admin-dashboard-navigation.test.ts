@@ -5,6 +5,8 @@ import {
   SUPER_ADMIN_GLOBAL_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
 
+type SetupStep = { key: string; label: string; href: string | null };
+
 describe("W06 legacy admin Dashboard navigation fidelity", () => {
   it("preserves the complete 11-card College Admin Quick Actions roster", () => {
     expect(COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => item.label)).toEqual([
@@ -17,7 +19,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
   });
 
   it("preserves all 14 legacy College Admin setup steps by phase", () => {
-    const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap((phase) => phase.steps);
+    const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps]);
     expect(COLLEGE_ADMIN_SETUP_PHASES.map((phase) => phase.title)).toEqual([
       "Structure", "Courses", "Academic Structure", "People",
       "Lecture Halls & Jobs (Optional)",
@@ -33,13 +35,13 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
   it("links only actual vNext workspace routes; never invents missing legacy screens", () => {
     const links = [
       ...COLLEGE_ADMIN_QUICK_ACTIONS,
-      ...COLLEGE_ADMIN_SETUP_PHASES.flatMap((phase) => phase.steps),
+      ...COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps]),
     ].filter((item) => item.href !== null);
     for (const link of links) {
       expect(link.href).toMatch(/^\/college\/(departments|courses|programs|placements)$/);
       expect(link.href).not.toContain("/college-admin/");
     }
-    const missing = COLLEGE_ADMIN_SETUP_PHASES.flatMap((phase) => phase.steps)
+    const missing = COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps])
       .filter((item) => item.href === null).map((item) => item.key);
     expect(missing).toContain("faculty-assignment");
     expect(missing).toContain("lecture-halls");
