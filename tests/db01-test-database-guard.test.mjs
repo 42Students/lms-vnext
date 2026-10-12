@@ -56,7 +56,7 @@ test("DB01 guard rejects query parameters that can redirect the PostgreSQL targe
           TEST_DATABASE_URL:
             `postgresql://test_user:secret@127.0.0.1:5432/lms_vnext_test?${key}=pg.internal`,
         }),
-      new RegExp(`query parameter "\\${key}" may redirect the destructive target`),
+      new RegExp(`query parameter "${key}" may redirect the destructive target`),
     );
   }
 });
