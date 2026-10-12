@@ -69,6 +69,12 @@ describe("DB04 education and identity private evidence gates", () => {
     ];
     expect(evaluateVerificationEvidence(input(changed({privateObjectKey: "https://example.com/pan.pdf"}))).ready)
       .toBe(false);
+    expect(evaluateVerificationEvidence(input(changed({privateObjectKey: "public/college-a/receipt"}))).ready)
+      .toBe(false);
+    expect(evaluateVerificationEvidence(input(changed({objectGeneration: "not-a-generation"}))).ready)
+      .toBe(false);
+    expect(evaluateVerificationEvidence(input(changed({objectGeneration: "12"}))).ready)
+      .toBe(true);
     expect(evaluateVerificationEvidence(input(changed({sha256Hex: "short"}))).ready).toBe(false);
     expect(evaluateVerificationEvidence(input(changed({sizeBytes: 27_000_000}))).ready).toBe(false);
     expect(evaluateVerificationEvidence(input(changed({mimeType: "text/html"}))).ready).toBe(false);
