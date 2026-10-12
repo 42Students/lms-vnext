@@ -4,7 +4,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-const code = readFileSync(new URL("../src/modules/courses/lesson-service.ts", import.meta.url), "utf8");
+const code = readFileSync(new URL("../src/modules/courses/lesson-service.ts", import.meta.url), "utf8") +
+  "\n" + readFileSync(new URL("../src/modules/courses/lesson-write-ancestry.ts", import.meta.url), "utf8");
 const body = (name, next = "export async function") => {
   const start = code.indexOf("export async function " + name + "(");
   assert.ok(start >= 0, "missing " + name);
