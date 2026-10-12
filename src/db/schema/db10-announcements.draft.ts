@@ -49,21 +49,21 @@ export const db10Announcements = pgTable(
       .on(t.receiverType, t.receiverId, t.deletedAt, t.scheduledAt, t.expiresAt, t.isPinned),
     check(
       "db10_announcements_receiver_type_ck",
-      sql\`${t.receiverType} in ('COLLEGE','PROGRAM','DEPARTMENT','LEARNER','FACULTY','CLASS')\`,
+      sql`${t.receiverType} in ('COLLEGE','PROGRAM','DEPARTMENT','LEARNER','FACULTY','CLASS')`,
     ),
     check(
       "db10_announcements_sender_type_ck",
-      sql\`${t.senderType} in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY','LEARNER','TPO','SYSTEM')\`,
+      sql`${t.senderType} in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY','LEARNER','TPO','SYSTEM')`,
     ),
-    check("db10_announcements_version_ck", sql\`${t.version} >= 0\`),
+    check("db10_announcements_version_ck", sql`${t.version} >= 0`),
     check(
       "db10_announcements_schedule_order_ck",
-      sql\`${t.expiresAt} is null or ${t.scheduledAt} is null or ${t.expiresAt} > ${t.scheduledAt}\`,
+      sql`${t.expiresAt} is null or ${t.scheduledAt} is null or ${t.expiresAt} > ${t.scheduledAt}`,
     ),
     check(
       "db10_announcements_delete_shape_ck",
-      sql\`(${t.deletedAt} is null and ${t.deletedByUserId} is null)
-        or (${t.deletedAt} is not null and ${t.deletedByUserId} is not null)\`,
+      sql`(${t.deletedAt} is null and ${t.deletedByUserId} is null)
+        or (${t.deletedAt} is not null and ${t.deletedByUserId} is not null)`,
     ),
   ],
 );
