@@ -216,8 +216,10 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     const suspended: RequestContext = { ...host.ctx, user: { ...host.ctx.user, platformStatus: "DISABLED" } };
     await expect(listLearnerCourseDeliveries(suspended))
       .rejects.toMatchObject({ code: "LEARNER_PROGRESS_ACCESS_DENIED" });
+    // Suspended platform identities fail the top-level learning authorization
+    // gate before any specific enrollment-visibility checks are evaluated.
     await expect(requireLearningReadAccess(suspended,f.offeringId,f.deliveryId))
-      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+      .rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
     await expect(getLearnerClassSchedule(suspended))
       .rejects.toMatchObject({ code: "LEARNER_SCHEDULE_ACCESS_DENIED" });
   });
