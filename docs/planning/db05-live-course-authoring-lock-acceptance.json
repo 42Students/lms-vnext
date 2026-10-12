@@ -1,0 +1,231 @@
+{
+  "artifact": "DB008 live course authoring lock acceptance matrix",
+  "phase": "DATABASE",
+  "taskId": "DB-008",
+  "ownerChat": 6,
+  "createdOn": "2026-10-12",
+  "status": "SOURCE_IMPLEMENTED_RUNTIME_PG_NOT_RUN",
+  "currentImplementationCommits": [
+    "a8aa245e16215486987f47de41ff0f0914177f4b",
+    "ebdb0d1825ab2569c64055afc57741d5c964bc76",
+    "881f1e6e341492f16a2d694bffee2fb68bde6741",
+    "1aa4d663c2700cc620333889e76af1e44c9bc4f2"
+  ],
+  "sourceFiles": [
+    "src/modules/courses/offering-service.ts",
+    "src/modules/courses/delivery-service.ts",
+    "src/modules/courses/teaching-assignment-service.ts"
+  ],
+  "tests": "tests/db05-course-authoring-live-scope-locks.test.mjs (8 authored source tests; Node execution not proven)",
+  "postgresRun": "NOT_RUN",
+  "typecheckRun": "NOT_RUN",
+  "acceptance": [
+    {
+      "id": "LC-01",
+      "operation": "Delivery create",
+      "interleaving": "Offering archives after pre-read, before parent SHARE lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "OFFERING_NOT_FOUND",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-02",
+      "operation": "Delivery create",
+      "interleaving": "Section archived after pre-read, before section SHARE lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "SECTION_NOT_DELIVERABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-03",
+      "operation": "Delivery create",
+      "interleaving": "Section cohort changes after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "SECTION_NOT_DELIVERABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-04",
+      "operation": "Delivery create",
+      "interleaving": "Section academic period changes after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "SECTION_NOT_DELIVERABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-05",
+      "operation": "Delivery create",
+      "interleaving": "Section college changes through cohort/program/dept ancestor",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "SECTION_NOT_DELIVERABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-06",
+      "operation": "Delivery create",
+      "interleaving": "Offering college changes via course/department ancestry",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "COURSE_COLLEGE_MISMATCH",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-07",
+      "operation": "Delivery create",
+      "interleaving": "Correct active section/cohort/period/tenant",
+      "expectedOutcome": "ALLOW",
+      "expectedMarker": "CREATED",
+      "environment": "READ_COMMITTED",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-08",
+      "operation": "Teaching assignment create",
+      "interleaving": "Delivery ends after pre-read before SHARE lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "SECTION_DELIVERY_NOT_FOUND",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-09",
+      "operation": "Teaching assignment create",
+      "interleaving": "Faculty membership suspended before locked check",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "MEMBERSHIP_NOT_ACTIVE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-10",
+      "operation": "Teaching assignment create",
+      "interleaving": "Faculty role removed before SHARE lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "FACULTY_ROLE_REQUIRED",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-11",
+      "operation": "Teaching assignment create",
+      "interleaving": "Membership college reassigned before locked check",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "MEMBERSHIP_COLLEGE_MISMATCH",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-12",
+      "operation": "Teaching assignment create",
+      "interleaving": "Correct faculty role and active membership",
+      "expectedOutcome": "ALLOW",
+      "expectedMarker": "CREATED",
+      "environment": "READ_COMMITTED",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-13",
+      "operation": "Offering update",
+      "interleaving": "Cohort changed from ACTIVE to COMPLETED after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "OFFERING_NOT_MUTABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-14",
+      "operation": "Offering update",
+      "interleaving": "Academic period changed to CLOSED after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "OFFERING_NOT_MUTABLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-15",
+      "operation": "Offering update",
+      "interleaving": "Cohort moves across colleges after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "COURSE_COLLEGE_MISMATCH",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-16",
+      "operation": "Offering update",
+      "interleaving": "Academic period moved to another college after pre-read",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "COURSE_COLLEGE_MISMATCH",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-17",
+      "operation": "Offering update",
+      "interleaving": "Offering itself archived while update waits for lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "OFFERING_NOT_FOUND",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-18",
+      "operation": "Offering update",
+      "interleaving": "Same-college mutable cohort and open period",
+      "expectedOutcome": "ALLOW",
+      "expectedMarker": "UPDATED",
+      "environment": "READ_COMMITTED",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-19",
+      "operation": "Delivery create",
+      "interleaving": "Concurrent read/write ancestor update lock ordering through DB02 guards",
+      "expectedOutcome": "VERIFY_ONLY",
+      "expectedMarker": "NO_ORPHAN_NO_DEADLOCK",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-20",
+      "operation": "Teaching assignment create",
+      "interleaving": "Concurrent membership role removal and role grant; no stale FACULTY assignment",
+      "expectedOutcome": "VERIFY_ONLY",
+      "expectedMarker": "NO_INVALID_ROLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    }
+  ],
+  "unprovenUpstream": [
+    "Current parent row lock and ancestry joins do not replace upstream DB02 change guards on academic period/cohort/program/department edits.",
+    "Current active-app checks do not prove direct SQL or non-READ-COMMITTED races without executed PG triggers.",
+    "Existing W01 staged companion db05-offering-delivery-scope.draft.sql must merge exactly once, and mapping into migrations needs clean replay.",
+    "Do not promote DB008 or global DATABASE based on source-only inspection.",
+    "Review deadlock behavior against parent archive transaction, course lesson-content ancestry guards and academic progression mutations."
+  ]
+}
