@@ -1,0 +1,711 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB004_DB007_PROFILE_CROSSDOMAIN_PEER_REVIEW",
+  "worker": "CHAT_03",
+  "date": "2026-10-12",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceQueue": "docs/planning/db01-chat02-remaining-150-review-queue.json",
+  "scope": "All 66 rows handed from DB-004 to DB-007 for faculty/learner profile persistence",
+  "counts": {
+    "reviewed": 66,
+    "RETIREMENT_CANDIDATE_COMPAT_ALIAS": 2,
+    "MAPPED_DB04_STAGED_PROFILE_DOCUMENT": 26,
+    "REDESIGNED_CROSS_DOMAIN_IDENTITY_ROLE_SPLIT": 1,
+    "REDESIGNED_DB04_PRIVACY_SAFE_TARGET": 2,
+    "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT": 23,
+    "PROPOSED_DB04_STAGED_TARGET": 11,
+    "MAPPED_DB04_STAGED_PROFILE_IMAGE": 1,
+    "resolvedTargetOrExplicitRedesign": 64,
+    "activeTargetGaps": 0,
+    "retirementCandidates": 2,
+    "runtimeVerified": 0
+  },
+  "keyFindings": [
+    "faculty.faculty_type is authorization-bearing and must not be flattened into faculty_profiles.employment_type.",
+    "faculty/learner legacy address alias is explicitly compatibility-only and is not used by current profile AddressDTO CRUD; retirement still needs approval.",
+    "Learner granular current/permanent city/state/pincode, coding profiles, privacy-safe identity, resume and one-time video-intro now have explicit staged DB04 targets; registration/API/runtime proof remains pending.",
+    "learner coding_profiles, resume_url, video_intro_url/video_intro_uploaded_at and privacy-safe identity persistence remain active DB04 target gaps.",
+    "Faculty identity/profile image already have a privacy-safe staged DB04 contract; raw identity secrets and arbitrary image URLs are deliberate redesigns."
+  ],
+  "rows": [
+    {
+      "legacyField": "faculty.address",
+      "legacyType": "varchar(255)",
+      "disposition": "RETIREMENT_CANDIDATE_COMPAT_ALIAS",
+      "proposedTarget": null,
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Faculty.java explicitly labels address legacy/backward-compatibility; current FacultyProfileServiceImpl AddressDTO reads/writes current_address/permanent_address/city/state/pincode/current*/permanent* fields, not faculty.address. Retirement still needs DB19/product approval.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.awards",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.awards[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.blood_group",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.personalDetails.bloodGroup",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.certifications",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.certifications[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.city",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.city",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.current_address",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.currentAddress",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.description",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.about.description",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.dob",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.personalDetails.dateOfBirth",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.experiences",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.experiences[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.faculty_type",
+      "legacyType": "int",
+      "disposition": "REDESIGNED_CROSS_DOMAIN_IDENTITY_ROLE_SPLIT",
+      "proposedTarget": "college_membership roles + faculty_profiles academic/employment attributes (explicit split required)",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Security-bearing ordinal mixes ADMIN/MENTOR/TPO and academic/employment labels. UserPrincipal reads it into authorization context; do not map the whole field to employment_type.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.gender",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.personalDetails.gender",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.google_scholar",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.socialProfiles.googleScholar",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.identity",
+      "legacyType": "json",
+      "disposition": "REDESIGNED_DB04_PRIVACY_SAFE_TARGET",
+      "proposedTarget": "faculty_profiles.profile_document.identitySummary + profile_private_document_receipts(AADHAAR|PAN)",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active source identity CRUD preserved by masked summary + private receipts; raw Aadhaar/PAN is deliberately not copied.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.languages",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.languages[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.linkedin",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.socialProfiles.linkedIn",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.metadata",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.metadata",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.permanent_address",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.permanentAddress",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.pincode",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.pincode",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.publications",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.publications[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.qualifications",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.education[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.research_gate",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.socialProfiles.researchGate",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.skills",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.skills[]",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.state",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.state",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.website",
+      "legacyType": "varchar(255)",
+      "disposition": "REDESIGNED_DB04_PRIVACY_SAFE_TARGET",
+      "proposedTarget": "faculty_profiles.profile_document.profileImageDocumentId + profile_private_document_receipts(PROFILE_IMAGE)",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Legacy website is used as profile image in profile header; vNext should preserve the user job through private receipt-backed profile image identity rather than arbitrary URL.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.current_city",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.currentCity",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.current_state",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.currentState",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.current_pincode",
+      "legacyType": "varchar(20)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.currentPincode",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.permanent_city",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.permanentCity",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.permanent_state",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.permanentState",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.permanent_pincode",
+      "legacyType": "varchar(20)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_DOCUMENT",
+      "proposedTarget": "faculty_profiles.profile_document.address.permanentPincode",
+      "sourceEvidence": "lms@21bad59d... Faculty.java + FacultyProfileServiceImpl + FacultyProfileController",
+      "vnextEvidence": "src/modules/people/faculty-profile-document.ts + docs/planning/db04-faculty-profile-contract.md",
+      "note": "Active Faculty profile CRUD has a typed DB04 document target; target remains staged/unregistered and not runtime verified.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.achievements",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.achievements[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.address",
+      "legacyType": "varchar(255)",
+      "disposition": "RETIREMENT_CANDIDATE_COMPAT_ALIAS",
+      "proposedTarget": null,
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Learner.java explicitly labels address legacy/backward-compatibility; current LearnerProfileServiceImpl AddressDTO does not read/write learner.address. Retirement still needs DB19/product approval.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.blood_group",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.personalDetails.bloodGroup",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.certifications",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.certifications[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.city",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.address.city",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.current_address",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.address.currentAddress",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.description",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.bio",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.dob",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.personalDetails.dateOfBirth",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.experiences",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.experiences[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.extracurricular",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.extracurriculars[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.gender",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.personalDetails.gender",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.github",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.githubUrl",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.hobbies",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.hobbies[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.identity",
+      "legacyType": "json",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_identity_summaries + learner_profile_private_document_bindings(AADHAAR|PAN)",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_PRIVACY_TARGET_GAP: source get/update persists identity JSON; current vNext write guard rejects raw Aadhaar/PAN and learner document has no masked summary/private receipt linkage. Add a safe identitySummary + AADHAAR/PAN receipt contract before parity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.languages",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.languages[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.linkedin",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.linkedinUrl",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.metadata",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.metadata[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.permanent_address",
+      "legacyType": "text",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentAddress",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.pincode",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.address.pincode",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.portfolio",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.portfolioUrl",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.projects",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.projects[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.resume_url",
+      "legacyType": "text",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_private_document_bindings(purpose=RESUME)",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_PRIVATE_DOCUMENT_GAP: source get/update persists resume and deletes replaced private objects; profile receipt supports RESUME purpose but learner document has no resumeDocumentId binding. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.roll_number",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.roll_number",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.skills",
+      "legacyType": "json",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.skills[]",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.state",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.address.state",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.twitter",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_ACTIVE_PROFILE_DOCUMENT",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.twitterUrl",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Active Learner profile CRUD has a canonical typed document/normalized field target; semantic/runtime DB proof remains separate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.video_intro_uploaded_at",
+      "legacyType": "datetime(6)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_video_intros.uploaded_at",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_STATE_GAP: source uses uploaded_at as the one-time-upload guard; no vNext persisted equivalent exists. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.video_intro_url",
+      "legacyType": "text",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profile_video_intros.receipt_id (VIDEO_INTRO private receipt)",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_MEDIA_GAP: source get/update exposes a one-time learner video intro; current learner document has no canonical video-intro object/receipt field. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.website",
+      "legacyType": "varchar(255)",
+      "disposition": "MAPPED_DB04_STAGED_PROFILE_IMAGE",
+      "proposedTarget": "learner_profile_images + profile_private_document_receipts(PROFILE_IMAGE)",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "Legacy website is the learner profile-image URL; staged learner_profile_images + private PROFILE_IMAGE receipt preserves collection/active-state semantics more safely.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.current_city",
+      "legacyType": "varchar(255)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentCity",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_city; current learner profile address schema omits currentCity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.current_state",
+      "legacyType": "varchar(255)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentState",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_state; current learner profile address schema omits currentState. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.current_pincode",
+      "legacyType": "varchar(20)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.currentPincode",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes current_pincode; current learner profile address schema omits currentPincode. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.permanent_city",
+      "legacyType": "varchar(255)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentCity",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_city; current learner profile address schema omits permanentCity. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.permanent_state",
+      "legacyType": "varchar(255)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentState",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_state; current learner profile address schema omits permanentState. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.permanent_pincode",
+      "legacyType": "varchar(20)",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.address.permanentPincode",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_ADDRESS_GAP: source AddressDTO reads/writes permanent_pincode; current learner profile address schema omits permanentPincode. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.coding_profiles",
+      "legacyType": "json",
+      "disposition": "PROPOSED_DB04_STAGED_TARGET",
+      "proposedTarget": "learner_profiles.profile_document.socialProfiles.codingProfiles",
+      "sourceEvidence": "lms@21bad59d... Learner.java + LearnerProfileServiceImpl + LearnerProfileController",
+      "vnextEvidence": "src/modules/people/profile-validation.ts + src/db/schema/profiles.ts + DB04 staged receipt/image contracts",
+      "note": "ACTIVE_TYPED_DOCUMENT_GAP: source social profile get/update persists normalized coding-platform usernames; learnerProfileDocument.socialProfiles lacks codingProfiles. Target design is now staged in db04 learner-profile extras; migration/API/runtime proof remains pending.",
+      "runtimeVerified": false
+    }
+  ],
+  "stagedGapClosure": {
+    "schema": "src/db/schema/db04-learner-profile-extras.staged.ts",
+    "sql": "docs/planning/sql/db04-learner-profile-extras-candidate.sql",
+    "contract": "docs/planning/db04-learner-profile-gap-contract.md",
+    "fields": [
+      "learner.identity",
+      "learner.coding_profiles",
+      "learner.resume_url",
+      "learner.video_intro_url",
+      "learner.video_intro_uploaded_at",
+      "learner.current_city",
+      "learner.current_state",
+      "learner.current_pincode",
+      "learner.permanent_city",
+      "learner.permanent_state",
+      "learner.permanent_pincode"
+    ],
+    "state": "PROPOSED_UNREGISTERED_NOT_RUNTIME_VERIFIED"
+  }
+}
