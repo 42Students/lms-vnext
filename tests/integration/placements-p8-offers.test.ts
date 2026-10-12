@@ -598,7 +598,10 @@ describe("Placement P8 offers and joining", () => {
       [application.id],
     );
     await pool.query(
-      "update placement_round_results set outcome = 'FAIL' where application_id = $1 and status = 'APPLIED'",
+      // A rejected result must satisfy the persisted candidate-message
+      // contract. Otherwise this fixture fails its CHECK before offer
+      // eligibility is exercised.
+      "update placement_round_results set outcome = 'FAIL', candidate_message = 'Did not meet the required round threshold' where application_id = $1 and status = 'APPLIED'",
       [application.id],
     );
     await expect(issuePlacementOffer(tpo, application.id, {
