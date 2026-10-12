@@ -117,6 +117,50 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
  * No fixture identity or PII escapes; all inserts are rolled back.
  */
 const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19"]);
+const placementFixtureProbes = new Set([
+  "P5-07", "P5-08", "P5-09", "P5-10", "P5-11",
+]);
+const populatedFixtureProbes = new Set([
+  ...academicFixtureProbes, ...placementFixtureProbes,
+]);
+
+async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
+  if (!placementFixtureProbes.has(id)) throw new Error("Unreviewed fixture");
+  const suffix = randomUUID().replaceAll("-", "").slice(0, 12);
+  const season = randomUUID();
+  const company = randomUUID();
+  const relationship = randomUUID();
+  const job = randomUUID();
+  const role = randomUUID();
+  await client.query(
+    "INSERT INTO placement_seasons (id,college_id,name,code,start_date,end_date,status,created_by_user_id) VALUES ($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE',$5)",
+    [season,SEED_IDS.collegeA,"DB018 isolated season "+suffix,"P5-"+suffix,SEED_IDS.collegeAdminUser],
+  );
+  await client.query(
+    "INSERT INTO placement_companies (id,name,status,created_by_user_id) VALUES ($1,$2,'ACTIVE',$3)",
+    [company,"DB018 isolated company "+suffix,SEED_IDS.collegeAdminUser],
+  );
+  await client.query(
+    "INSERT INTO placement_company_relationships (id,college_id,company_id,owner_membership_id,status,created_by_user_id) VALUES ($1,$2,$3,$4,'ACTIVE',$5)",
+    [relationship,SEED_IDS.collegeA,company,SEED_IDS.collegeAdminMembership,SEED_IDS.collegeAdminUser],
+  );
+  await client.query(
+    "INSERT INTO placement_jobs (id,college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,application_mode,status,published_at,created_by_user_id) VALUES ($1,$2,$3,$4,$5,'DB018 isolated role','FULL_TIME','ONSITE','INTERNAL','PUBLISHED',now(),$6)",
+    [job,SEED_IDS.collegeA,season,relationship,"DB018 isolated drive "+suffix,SEED_IDS.collegeAdminUser],
+  );
+  if (id === "P5-10" || id === "P5-11") {
+    await client.query(
+      "INSERT INTO placement_job_role_options (id,job_id,title,employment_type,work_mode,is_primary,status) VALUES ($1,$2,'Engineer','FULL_TIME','ONSITE',true,'ACTIVE')",
+      [role,job],
+    );
+    await client.query(
+      "INSERT INTO placement_applications (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4)",
+      [job,role,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser],
+    );
+  }
+}
+
+
 
 async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
   if (!academicFixtureProbes.has(id)) throw new Error("Unreviewed fixture");
@@ -212,7 +256,7 @@ afterAll(async () => {
           joinedSamplesEmpty: empty.length,
           emptyProbeIds: empty,
           directSqlNegativeCases: 4,
-          syntheticRollbackFixtureProbeIds: [...academicFixtureProbes],
+          syntheticRollbackFixtureProbeIds: [...populatedFixtureProbes],
           caveat:
             "Zero violations and nonempty fixture counts do NOT establish prevention; mutation/race witnesses and source semantics still require acceptance.",
         }),
@@ -233,11 +277,14 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
     it(`${probe.id} [${probe.family}] has no existing relational violations`, async () => {
       const sql = sqlFor(probe);
       await withRollback(async (client) => {
-        // Three academic joins are tested with real in-transaction fixture
+        // Eight selected joins are tested with real in-transaction fixture
         // edges. All other probes remain strictly read-only observational
         // checks; never promote an empty sample to prevention evidence.
         if (academicFixtureProbes.has(probe.id)) {
           await insertAcademicWitnessFixture(client, probe.id);
+        }
+        if (placementFixtureProbes.has(probe.id)) {
+          await insertPlacementWitnessFixture(client, probe.id);
         }
         const sample = await client.query<{ sample_count: string }>(sql.sample);
         const count = await client.query<{ violations: string }>(sql.violations);
@@ -248,15 +295,15 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
         if (sampled > 0) nonEmpty.push(probe.id);
         else empty.push(probe.id);
         expect(n, `${probe.id} has relational mismatch rows`).toBe(0);
-      }, !academicFixtureProbes.has(probe.id));
+      }, !populatedFixtureProbes.has(probe.id));
     });
   }
 
   it("requires real populated academic joins rather than vacuous zeroes", () => {
     // Source-only, empty results in the other families remain explicitly
     // unverified; this only covers the three synthetically populated joins.
-    for (const id of academicFixtureProbes) expect(nonEmpty).toContain(id);
-    expect(nonEmpty.length).toBeGreaterThanOrEqual(academicFixtureProbes.size);
+    for (const id of populatedFixtureProbes) expect(nonEmpty).toContain(id);
+    expect(nonEmpty.length).toBeGreaterThanOrEqual(populatedFixtureProbes.size);
   });
 });
 
