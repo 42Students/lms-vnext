@@ -40,7 +40,7 @@ Normalized DB06 decisions:
 - deletion cannot start before retention ends;
 - consumed receipt/object identity is immutable;
 - persisted file evidence must exactly equal the consumed receipt;
-- multiple distinct receipts/files may bind to one submission in stable sequence order;
+- multiple distinct receipts may bind to one submission in stable sequence order; each persisted file has a distinct receipt.
 - private file/read runtime remains disabled until migration + producer/read cutover + execution evidence.
 
 ## Staged receipt shape
@@ -173,6 +173,19 @@ DB-053 corrects that source shape:
 - each receipt may still be consumed only once.
 
 This is database parity staging only. Current submitAssignmentInputSchema accepts one FILE receipt and the current assignment submission type enum does not yet expose full MULTI_PART semantics. API/UI parity must cut over later.
+
+### Transactional producer cutover and private read
+
+An authorized producer must insert submission, then consume its exact receipt,
+then insert matching file evidence in the same atomic transaction. A multi-part
+submission repeats receipt consumption and file insertion for each unique
+receipt; rollback must undo all writes together. Existing single-receipt
+FILE submission behavior is not falsely described as MULTI_PART-ready.
+
+The private read path must join/read course_upload_receipts and recheck
+college scope, consumption, revocation and deletion before issuing a signed
+read. Do not use Date.now() as fake scanner attestation time; CLEAN requires
+trusted scanner evidence and its original timestamp.
 
 ## Exact consumed-attestation FK
 
