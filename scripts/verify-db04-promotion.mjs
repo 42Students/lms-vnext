@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import ts from "typescript";
 
 const ROOT = process.cwd();
 const pairs = [
@@ -28,6 +29,37 @@ const facultyAdapter = read("src/modules/people/faculty-profile-self.staged.ts")
 const facultySql = read("docs/planning/sql/db04-faculty-profile-document-staging.sql");
 const journal = JSON.parse(read("drizzle/meta/_journal.json"));
 const errors = [];
+
+// Candidate-only DB04 schema must be syntactically complete and define every
+// persisted table exactly once. A substring presence check missed a corrupted,
+// quadruple-duplicated schema with a truncated private-receipt CHECK clause.
+const parsedSchema = ts.createSourceFile(
+  "src/db/schema/profile-verification.ts", schema, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS,
+);
+for (const diagnostic of parsedSchema.parseDiagnostics) {
+  const position = parsedSchema.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
+  errors.push("Staged DB04 TypeScript syntax error at " + (position.line + 1) + ":" +
+    (position.character + 1) + ": " + ts.flattenDiagnosticMessageText(diagnostic.messageText, " "));
+}
+for (const [symbol, table] of pairs) {
+  const matches = [...schema.matchAll(new RegExp(
+    "export\\s+const\\s+" + symbol + "\\s*=\\s*pgTable\\(\\s*['\\\"]" + table + "['\\\"]", "g",
+  ))];
+  if (matches.length !== 1) errors.push(
+    "Staged DB04 table " + table + " must have one declaration, found " + matches.length,
+  );
+}
+for (const guard of [
+  "profile_private_doc_object_key_ck",
+  "profile_private_doc_generation_ck",
+  "profile_private_doc_sha256_ck",
+  "profile_private_doc_mimetype_ck",
+  "profile_private_doc_retention_ck",
+  "profile_private_doc_revocation_ck",
+]) {
+  if (!schema.includes('check("' + guard + '"'))
+    errors.push("Staged DB04 private-receipt integrity constraint missing: " + guard);
+}
 
 for (const [symbol, table] of pairs) {
   if (!schema.includes("export const " + symbol + " = pgTable(\"" + table + "\"")) {
