@@ -51,3 +51,51 @@
 **Integration prerequisites:** Chat 1 single-writer Drizzle migration + schema-barrel registration, source/drift review of `db10-outbound-messages.draft.ts`, exact function grants, atomic claim/callback implementation in a trusted provider worker, independent disposable PostgreSQL negative/race witnesses, full retry/provider-idempotency contract, and source-vs-runtime regression. No GitHub Actions runner is required; the CI billing pause is not a blocker to these independent checks.
 
 **Verification accounting:** source guard file authored (13 Node cases); SQL functions 4 staged; PostgreSQL cases executed **0**; external provider calls **0**; live runtime claims verified **0**; P5-R09/P5-R21 **not closed**. Do not mark DATABASE certified.
+
+
+## DB067 follow-up: organization/college composite ownership (2026-10-12)
+
+**Security finding in the existing DB10 staged draft:** `outbound_messages.organization_id`
+and `college_id` had independent foreign keys. Both references could be individually
+valid while identifying different tenants. The trusted enqueue path currently calls
+`requirePermission` and checks both active persisted owners before inserting, but
+a direct database writer or a college-owner update between application precheck and
+insert could still persist the mismatched pair. This remains an active storage-level
+authorization invariant, not a UI/API feature to postpone until cutover.
+
+**Direct-main candidate changes (NOT registered/activated):**
+
+- `src/db/schema/db10-outbound-messages.draft.ts`: adds composite
+  `db10_outbound_college_organization_fk` from
+  `(college_id,organization_id)` to `colleges(id,organization_id)`.
+- `docs/planning/sql/db10-outbound-scope-fk-staging.sql`: first detects a
+  mismatched existing row and raises `23514`, then adds the required unique
+  target `colleges(id,organization_id)` and the composite child FK with
+  `ON UPDATE RESTRICT / ON DELETE RESTRICT`.
+- `tests/db10-outbound-scope-fk-source.test.mjs`: 10 authored standalone
+  Node source-contract cases, including mutation witnesses.
+- `tests/integration/db10-outbound-scope-fk.test.ts`: 5 authored, opt-in,
+  rollback-only PostgreSQL cases (valid pair, forged organization on INSERT,
+  forged organization on UPDATE, forged college on UPDATE, and changing the
+  college's organization after an outbound row exists). The suite requires
+  `DB10_OUTBOUND_SCOPE_FK_ENFORCED=1`, explicit `TEST_DATABASE_URL`
+  and a disposable `_test` database.
+
+**Dependency/acceptance:** Chat 1 must register the parent composite unique target
+*before* the outbox FK, integrate with the existing draft and numbered migration
+journal (not paste the staging SQL), perform a clean disposable PostgreSQL
+replay, verify the constraint catalog and then run the five SQL witnesses.
+Separate organization and college FKs must remain. A race between a new
+outbox insert and a concurrent college-owner reassignment must be accepted
+only when their final persisted scope is consistent; source checks alone
+cannot certify the race. Consumer/sender workers must still enforce
+authorization, late unsubscribe and encryption.
+
+**Evidence boundaries:** 14 connector-in-process V8 source assertions
+were executed against exact current GitHub blobs (14 passed, 0 failed).
+The authored Node and PostgreSQL suites have **not** been executed in the
+available environment: `Node cases executed = 0`,
+`PostgreSQL cases executed = 0`. The database draft is not part of the
+registered schema, and P5-R09/R21 remain unverified. This correction is
+contained within the existing DB067/DB10 scope and does **not** create
+another shared-queue task or imply database phase completion.
