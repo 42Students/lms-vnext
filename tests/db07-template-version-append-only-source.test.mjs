@@ -96,7 +96,8 @@ test("DB070 PG acceptance isolates writes and refuses to assert execution in thi
 test("DB070 existing project template integration suite never erases immutable revisions", () => {
   assert.match(templateP2, /from pg_trigger|select exists \(select 1 from pg_trigger/);
   assert.match(templateP2, /tgname = 'db07_project_template_versions_append_only'/);
-  assert.match(templateP2, /if \(status\.rows\[0\]\?\.immutable\) return/);
+  assert.match(templateP2, /project_templates_current_version_snapshot_fk/);
+  assert.match(templateP2, /if \(status\.rows\[0\]\?\.retainHistory\) return/);
   assert.match(templateP2, /fixtureSlug = \(label: string\)/);
   assert.match(templateP2, /fixtureSuffix = randomUUID\(\)/);
   assert.match(templateP2, /getAssignedProjectTemplateDetail/);
