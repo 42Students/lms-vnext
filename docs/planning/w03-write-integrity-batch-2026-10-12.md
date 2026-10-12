@@ -71,3 +71,12 @@ Therefore the new PostgreSQL scenarios are **AUTHORED, NOT COUNTED AS PASSING**.
 - Legacy recoverable delete/restore, readiness override and richer final-delivery lifecycle remain schema-backed gaps.
 - Broad-announcement delivery remains a W06 dependency.
 - The DB07 field ledger remains 358/358 `UNVERIFIED`, 0 runtime-semantic verified; source implementation is not semantic closure.
+
+
+## Follow-up: persisted child-activity fallback
+
+Commit `61388cf72cfbe2ff935a1808cdf2c10cbf6556e6` makes stalled detection resilient even when a W03 write does not yet emit a shared activity event. It aggregates the latest persisted `updated_at` for project final submissions, meetings and task submissions and takes the newest signal together with activity events.
+
+Commit `4304a69c2908db573e395574eda46f3ca0fafae6` adds a PostgreSQL regression where the workspace timestamp is deliberately made eight days old, a meeting is then scheduled, and Mentor attention must not return a STALLED alert.
+
+These tests are also authored-but-not-yet-counted-as-passing until a stable CI run executes them.
