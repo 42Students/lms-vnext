@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
+  beforeAll,
   beforeEach,
   describe,
   expect,
@@ -74,15 +76,20 @@ const collegeAdmin: RequestContext = {
   },
 };
 
+// The seeded learner belongs to another active program. Course C3 must use
+// an isolated membership so its tests exercise learning behavior, not a unique
+// active-enrollment conflict caused by an unrelated baseline fixture.
+const learnerUserId = randomUUID();
+const learnerMembershipId = randomUUID();
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
+    id: learnerUserId,
+    identityUid: `c3-fixture-${learnerUserId}`,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: learnerMembershipId,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -308,7 +315,7 @@ async function createStructure() {
       collegeAdmin,
       {
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
         programId: program.id,
         cohortId: cohort.id,
       },
@@ -406,12 +413,29 @@ async function createStructure() {
   };
 }
 
+beforeAll(async () => {
+  await pool.query(
+    "insert into users (id, identity_uid, display_name) values ($1,$2,$3)",
+    [learnerUserId, `c3-fixture-${learnerUserId}`, "C3 learner fixture"],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id) values ($1,$2,$3)",
+    [learnerMembershipId, learnerUserId, SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "insert into membership_roles (membership_id, role) values ($1,'LEARNER')",
+    [learnerMembershipId],
+  );
+});
+
 beforeEach(async () => {
   await cleanupC3();
 });
 
 afterAll(async () => {
   await cleanupC3();
+  // Preserve actor identities referenced by append-only activity events in
+  // this isolated database; CI discards the database after integration.
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -836,7 +860,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         (membership_id, lesson_content_id, last_position_seconds)
        values ($1, $2, 1)`,
       [
-        SEED_IDS.learnerCollegeAMembership,
+        learnerMembershipId,
         structure.resource.id,
       ],
     );
@@ -847,7 +871,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
           (membership_id, lesson_content_id, last_position_seconds)
          values ($1, $2, 2)`,
         [
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
           structure.resource.id,
         ],
       ),
@@ -861,7 +885,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
           (membership_id, lesson_content_id, last_position_seconds)
          values ($1, $2, -1)`,
         [
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
           structure.video.id,
         ],
       ),
