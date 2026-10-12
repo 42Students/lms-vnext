@@ -62,6 +62,9 @@ if (!optIn) {
       const membershipA = randomUUID();
       const membershipB = randomUUID();
       const uploader = randomUUID();
+      const fixtureCollegeId = randomUUID();
+      const createPrivateKey = (owner) =>
+        `private/${fixtureCollegeId}/${owner}/profile-verification/${randomUUID()}`;
 
       const expectConstraint = async (promise, code, constraint) => {
         await assert.rejects(promise, (error) => {
@@ -74,7 +77,7 @@ if (!optIn) {
       const insertReceipt = async ({
         owner = membershipA,
         purpose = "MARKSHEET",
-        key = "private/profile/evidence.bin",
+        key = createPrivateKey(owner),
         generation = "1",
         sha = "a".repeat(64),
       } = {}) => {
@@ -196,7 +199,7 @@ if (!optIn) {
         const marksheetB = await insertReceipt({
           owner: membershipB,
           purpose: "MARKSHEET",
-          key: "private/profile/foreign-marksheet.bin",
+          key: createPrivateKey(membershipB),
           generation: "2",
         });
         await db.query(
@@ -218,7 +221,7 @@ if (!optIn) {
 
         const imageReceipt = await insertReceipt({
           purpose: "PROFILE_IMAGE",
-          key: "private/profile/avatar.bin",
+          key: createPrivateKey(membershipA),
           generation: "3",
         });
         await db.query(
