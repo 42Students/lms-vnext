@@ -49,7 +49,13 @@ test("name matches are explicitly hypotheses and never semantic proof", () => {
   assert.equal(diff.stats.legacySourceFieldsWithNameMatch,321);
   assert.equal(diff.matches.length,331);
   assert.ok(diff.matches.every(r=>r.verification==="STRUCTURAL_NAME_MATCH_ONLY"));
-  assert.ok(rows.every(r=>r.verifiedMapping===null&&r.validationEvidence===null));
+  assert.ok(rows.every(r=>r.verifiedMapping===null), "No source name match is runtime-verified");
+  const sourceEvidence=rows.filter(r=>r.validationEvidence!==null);
+  assert.ok(sourceEvidence.length > 0, "Source-reviewed fields must retain provenance");
+  assert.ok(sourceEvidence.every(r=>
+    typeof r.validationEvidence==="string" &&
+    /pending|unverified|not run|not executed|not verified|runtime remains|runtime.*open/i.test(r.validationEvidence)
+  ), "Source review notes must not be mistaken for executed PostgreSQL evidence");
   assert.equal(diff.stats.sourceFieldsWithoutNameMatch, 2508);
 });
 
@@ -72,9 +78,11 @@ test("all historical and unclear physical tables require explicit retirement rev
   assert.ok(provenance.rows.every(r=>!r.verified));
 });
 
-test("pass 4 findings open; pass 5 must not start in this batch", () => {
+test("pass 4 and 5 source work cannot silently claim PostgreSQL acceptance", () => {
   assert.equal(decisions.decisions.length,18);
   assert.ok(decisions.decisions.every(d=>d.status==="OPEN_NEEDS_IMPLEMENTATION_AND_EVIDENCE"&&!d.approvedRetirement));
   assert.equal(tracker.passes[3].status,"SOURCE_FIELD_SWEEP_DONE_UNVERIFIED");
-  assert.equal(tracker.passes[4].status,"NOT_STARTED");
+  assert.equal(tracker.passes[4].status,"SOURCE_THREAT_AUDIT_DONE_RUNTIME_BLOCKED");
+  assert.notEqual(tracker.phases?.DATABASE?.status, "DONE_VERIFIED");
+  assert.ok(tracker.passes[4].output.length > 0);
 });
