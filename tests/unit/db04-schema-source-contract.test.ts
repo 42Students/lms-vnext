@@ -22,7 +22,10 @@ describe("DB04 staged schema source contract (not SQL execution)",()=>{
   it("keeps verification and document provenance constrained",()=>{
     expect(candidate).toContain("UNIQUE (learner_membership_id,section)");
     expect(candidate).toContain("FOREIGN KEY (verification_id,learner_membership_id)");
-    expect(candidate).toContain("CHECK (position('://' IN private_object_key)=0)");
+    expect(candidate).toContain("profile_private_doc_key_ck");
+    expect(candidate).toContain("private_object_key");
+    expect(candidate).toContain("profile_private_doc_generation_ck");
+    expect(candidate).toContain("profile_private_doc_sha256_ck");
     expect(candidate).toContain("source_snapshot_version");
   });
   it("rejects event history updates/deletes and version skipping",()=>{
