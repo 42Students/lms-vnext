@@ -214,7 +214,6 @@ export const assignmentSubmissions = pgTable(
     // until course_upload_receipts + assignment_submission_files and their
     // deferred completeness/tenant guards are registered and verified. DB053
     // removes/expands this payload gate atomically with that migration.
-    ),
     check(
       "assignment_submissions_points_ck",
       sql`${table.pointsAwarded} is null or ${table.pointsAwarded} >= 0`,
