@@ -35,6 +35,11 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
       out+="  ";i+=2;escapedString=true;mode="string";continue;
     }
     if(a==="'"){out+=" ";i++;escapedString=false;mode="string";continue;}
+    if((a==='U'||a==='u')&&b==='&'&&sql[i+2]==='"'){
+      if(/\b(?:CREATE\s+(?:UNLOGGED\s+)?TABLE|ALTER\s+TABLE(?:\s+ONLY)?|REFERENCES)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(?:public\.)?$/i.test(out))
+        lexicalErrors.push('UNSUPPORTED_UNICODE_DDL_IDENTIFIER');
+      out+='  ';i+=2;continue;
+    }
     if(a==='"'){
       let j=i+1, identifier="", closed=false;
       while(j<sql.length){
@@ -68,9 +73,9 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
   if(mode==="dollar")lexicalErrors.push("UNCLOSED_DOLLAR_QUOTE:"+tag);
   return out;
 }
-const creations=/\bCREATE\s+(?:UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
-const alters=/\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
-const refs=/\bREFERENCES\s+(?:public\.)?("[\w]+"|[\w]+)/gi;
+const creations=/\bCREATE\s+(?:UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)(?![.\w"&])/gi;
+const alters=/\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?(?:public\.)?("[\w]+"|[\w]+)(?![.\w"&])/gi;
+const refs=/\bREFERENCES\s+(?:public\.)?("[\w]+"|[\w]+)(?![.\w"&])/gi;
 // Source-only hazard detection: never authorize migration promotion from regex.
 const destructiveStatements = [
   /\bDROP\s+(?:TABLE|INDEX|SCHEMA|TYPE|DOMAIN|EXTENSION|FUNCTION|TRIGGER|VIEW|MATERIALIZED\s+VIEW|SEQUENCE|COLUMN|CONSTRAINT|DEFAULT|NOT\s+NULL|POLICY|RULE|OWNED|IDENTITY)\b/i,
@@ -127,9 +132,18 @@ export function classify(sql) {
   if(/\bSOURCE REFERENCE ONLY\b|\bNO DDL\b|\bNOT FOR EXECUTION\b/i.test(head))return "REFERENCE_ONLY";
   return "STAGED";
 }
+// Nonstandard relation DDL cannot be silently counted as zero dependencies.
+// Report an explicit manual-review hazard instead of pretending the table is absent.
+const unsupportedRelationSyntax = [
+  [/\bCREATE\s+(?:(?:GLOBAL|LOCAL)\s+)?TEMP(?:ORARY)?\s+TABLE\b/i,'UNSUPPORTED_TEMP_TABLE_DDL'],
+  [/\bCREATE\s+FOREIGN\s+TABLE\b/i,'UNSUPPORTED_FOREIGN_TABLE_DDL'],
+  [/\bSELECT\b[^;]*?\bINTO\s+(?:TEMP(?:ORARY)?\s+)?(?:TABLE\s+)?[\w"]/i,'UNSUPPORTED_SELECT_INTO_DDL'],
+];
 export function inspect(item){
   const lexicalErrors=[];
   const body=stripSqlLiterals(item.sql,lexicalErrors);
+  for (const [pattern, error] of unsupportedRelationSyntax)
+    if(pattern.test(body))lexicalErrors.push(error);
   const allCreates=[...body.matchAll(creations)].map(m=>m[1].replaceAll('"',"").toLowerCase());
   const createDuplicates=[...new Set(allCreates.filter((t,i)=>allCreates.indexOf(t)!==i))];
   const tableParents=relationDependencies(body,lexicalErrors);
