@@ -186,19 +186,22 @@ describe("Placement candidate preferences", () => {
       notifyApplicationUpdates: true,
     });
 
-    await upsertCandidatePreferences(
+    // Paid placement entitlement is college-scoped. The same user having
+    // an ACTIVE membership at another college does not inherit College A's
+    // academic enrollment or its placement access decision.
+    await expect(upsertCandidatePreferences(
       learnerInCollegeB,
-      {
-        preferredRoleTitles: ["Civil Engineer"],
-      },
-    );
-
+      { preferredRoleTitles: ["Civil Engineer"] },
+    )).rejects.toBeInstanceOf(AuthorizationError);
     await expect(
       getCandidatePreferences(learnerInCollegeB),
-    ).resolves.toMatchObject({
-      membershipId: secondMembership.membershipId,
-      preferredRoleTitles: ["Civil Engineer"],
-    });
+    ).rejects.toBeInstanceOf(AuthorizationError);
+
+    const foreignPreferences = await pool.query<{ total: string }>(
+      "SELECT count(*)::text AS total FROM placement_candidate_preferences WHERE membership_id=$1",
+      [secondMembership.membershipId],
+    );
+    expect(foreignPreferences.rows[0]?.total).toBe("0");
 
     await expect(
       getCandidatePreferences(learner),
