@@ -466,10 +466,18 @@ jobs:
         run: |
           set -euo pipefail
           psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-skills-catalog-staging.sql
-      - name: DB-022 real catalog search, independent usage and synonym acceptance
+      - name: Apply DB10 unregistered log-alert triage proposal to isolated fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-log-alerts-staging.sql
+      - name: DB-022 and DB-023 skill catalog, synonym and private admin triage acceptance
+        env:
+          DB10_DISPOSABLE_TEST_DATABASE: "true"
         run: >
           npx vitest run --config vitest.db.config.ts
           tests/integration/db10-skills-catalog.test.ts
+          tests/integration/db10-log-alert-admin.test.ts
 
 
   # DB08-A/B/C: disposable-only placement batch, registration, debarment
