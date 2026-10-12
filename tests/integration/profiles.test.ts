@@ -131,6 +131,14 @@ describe("learner and faculty profiles against PostgreSQL", () => {
       initial.profile.profileDocument.skills,
     ).toEqual([]);
 
+    // Raw Aadhaar/PAN must not fall back to generic profile JSONB storage
+    // while the private identity receipt/encryption flow is unregistered.
+    await expect(upsertOwnLearnerProfileDocument(
+      learner,
+      { identity: { aadhaarNumber: "123412341234", panNumber: "ABCDE1234F" } },
+      drizzleProfileRepository,
+    )).rejects.toMatchObject({ code: "PRIVATE_IDENTITY_STORAGE_NOT_READY" });
+
     const updated =
       await upsertOwnLearnerProfileDocument(
         learner,
@@ -152,8 +160,8 @@ describe("learner and faculty profiles against PostgreSQL", () => {
             bloodGroup: "O+",
           },
           identity: {
-            aadhaarNumber: "123412341234",
-            panNumber: "ABCDE1234F",
+            aadhaarNumber: "",
+            panNumber: "",
           },
           skills: [
             {
@@ -171,8 +179,8 @@ describe("learner and faculty profiles against PostgreSQL", () => {
       headline:
         "Backend engineer interested in distributed systems",
       identity: {
-        aadhaarNumber: "123412341234",
-        panNumber: "ABCDE1234F",
+        aadhaarNumber: "",
+        panNumber: "",
       },
       hobbies: ["Reading"],
     });
