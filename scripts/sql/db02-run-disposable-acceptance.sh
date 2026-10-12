@@ -5,8 +5,8 @@
 #
 # Invocation:
 #   DB02_DISPOSABLE_ACCEPTANCE=YES \
-#   DB02_EXPECTED_DATABASE=db02_verify_fresh \
-#   DATABASE_URL='postgres://.../db02_verify_fresh' \
+#   DB02_EXPECTED_DATABASE=db02_verify_test \
+#   DATABASE_URL='postgres://...@127.0.0.1:5432/db02_verify_test' \
 #   bash scripts/sql/db02-run-disposable-acceptance.sh
 #
 # Requires node >=20, bash, psql, and an isolated database on which a clean
