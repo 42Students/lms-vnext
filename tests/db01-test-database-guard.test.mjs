@@ -263,8 +263,12 @@ test("DB48 shared reset helper requires exact remote target confirmation", () =>
   assert.match(helper, /target\.host/);
   assert.match(helper, /target\.port/);
   assert.match(helper, /target\.name/);
-  assert.match(helper, /postgresql:/);
-  assert.match(helper, /postgres:/);
+  assert.match(helper, /resetTarget\(databaseUrl\)/);
+  const targetStart = dbLibSource.indexOf("function resetTarget(databaseUrl: string)");
+  assert.ok(targetStart >= 0, "shared reset uses the canonical target parser");
+  const targetParser = dbLibSource.slice(targetStart, start);
+  assert.match(targetParser, /postgresql:/);
+  assert.match(targetParser, /postgres:/);
   assert.match(helper, /\[::1\]/);
 });
 
@@ -563,7 +567,9 @@ test("DB55 deterministic seed checks authorization before constructing PostgreSQ
   assert.ok(guard >= 0 && pool > guard);
   const guardStart = dbLibSource.indexOf("export function assertSeedAllowed(databaseUrl: string)");
   assert.ok(guardStart >= 0);
-  const helper = dbLibSource.slice(guardStart, seedStart);
+  const guardEnd = dbLibSource.indexOf("\n}\n", guardStart);
+  assert.ok(guardEnd > guardStart, "seed authorization helper closes before database pool setup");
+  const helper = dbLibSource.slice(guardStart, guardEnd + 2);
   assert.match(helper, /DB_SEED_CONFIRM/);
   assert.match(helper, /ALLOW_DB_SEED/);
   assert.match(helper, /DB_RESET_CONFIRM/);
