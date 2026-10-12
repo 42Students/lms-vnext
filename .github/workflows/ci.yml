@@ -601,6 +601,50 @@ jobs:
           tests/integration/db10-outbound-scope-fk.test.ts
           tests/integration/db067-global-email-pre-send.test.ts
 
+
+  # Original core DB-008: SQL-only evidence for source-backed COURSE identity
+  # and parent facets. Both drafts remain unregistered; this cannot certify
+  # service/API slug cutover, hierarchy racing or full DB05 field parity.
+  db05-staged-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB05_IDENTITY_DISPOSABLE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered Drizzle journal first
+        run: npm run db:journal:verify
+      - name: Safely reset and seed disposable PG17 baseline
+        run: npm run db:test:prepare
+      - name: Apply UNREGISTERED DB05 identity and parent drafts on disposable PG17 ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db05-course-identity.draft.sql
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db05-course-parent-facets.draft.sql
+      - name: DB-008 SQL slug, name, short title, archive and parent FK negative acceptance
+        run: node --test tests/db05-course-identity-parent-pg.test.mjs
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
