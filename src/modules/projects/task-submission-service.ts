@@ -3,7 +3,6 @@ import {
   asc,
   desc,
   eq,
-  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
