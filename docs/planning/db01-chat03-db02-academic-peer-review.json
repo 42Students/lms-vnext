@@ -15,7 +15,7 @@
   "keyFindings": [
     "Legacy class_id/program_id/department flatten current hierarchy; vNext active program + period-aware section enrollment is the canonical redesign.",
     "Faculty department name is display data derived from primary_department_id; dept_id maps directly to that canonical FK.",
-    "bulk_import_batch_id is an active rollback-safety feature, not disposable metadata; vNext needs normalized import batch lineage and undo state."
+    "bulk_import_batch_id remains active lineage/audit grouping, but current legacy explicitly disables generic bulk undo to protect learner work; vNext should preserve immutable batch membership, not mass deletion."
   ],
   "rows": [
     {
@@ -73,7 +73,7 @@
       "legacyType": "varchar(64)",
       "disposition": "PROPOSED_DB02_STAGED_TARGET",
       "proposedTarget": "learner_import_batch_members.batch_id -> learner_import_batches.id",
-      "note": "Live bulk import stamps all successfully-created learners in one request so an admin can undo the import as a unit; normalize batch metadata and membership instead of copying a batch string onto every learner.",
+      "note": "Current production still groups successfully-created learners by batch for audit/listing, but undoBulkImport now deliberately throws because generic batch deletion can orphan learner work. Normalize immutable import lineage; do NOT recreate mass-delete undo.",
       "sourceEvidence": "lms@21bad59d... V126__learner_bulk_import_batch_id.sql + LearnerServiceImpl.bulkRegister/saveBulkLearnerRow",
       "vnextEvidence": "src/db/schema/academics.ts + faculty_profiles.primary_department_id",
       "runtimeVerified": false
