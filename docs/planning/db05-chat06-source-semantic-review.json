@@ -8,7 +8,7 @@
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
     "inventoryFile": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
-    "inventoryBlobSha": "f21860ff81d2fc5eda205ccaab715d213b20df5e",
+    "inventoryBlobSha": "0c2dfd7e0a6f8ca1fbb6dd61664c6699d819ec54",
     "versioningFlyway": [
       "V120",
       "V121",
@@ -98,7 +98,19 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-classroom-message-history.draft.sql -> course_discussion_messages.deleted_at",
+        "db008SourceDisposition": "LEGACY_CLASSROOM_SERVICE_SOURCE_CONFIRMED_DRAFT_ONLY",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source ClassroomMessage.java",
+          "legacy source ClassroomServiceImpl.java",
+          "legacy source ClassroomMessageRepository.java",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "classroom_messages.course_id",
@@ -151,7 +163,18 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "ClassroomMessage.java @Column sender_name String",
       "sourceReviewFinding": "Legacy message author display snapshot persists independently from sender_id; resolving current user name later loses historical rename semantics.",
-      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-classroom-message-history.draft.sql -> course_discussion_messages.sender_name_snapshot",
+        "db008SourceDisposition": "LEGACY_CLASSROOM_SERVICE_SOURCE_CONFIRMED_DRAFT_ONLY",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source ClassroomMessage.java",
+          "legacy source ClassroomServiceImpl.java",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "classroom_messages.sender_role",
@@ -222,7 +245,20 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_COURSE_LIVE_DESCENDANT_DELETE_RESTORE_SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+      "sourceContractStatus": "LEGACY_COURSE_LIVE_DESCENDANT_DELETE_RESTORE_SOURCE_CONFIRMED_RUNTIME_UNVERIFIED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-course-soft-delete-guard.draft.sql -> courses.legacy_deleted_at. CourseServiceImpl refuses delete with ANY live lesson or live content (repo counts exclude is_deleted=true). Restore same-college course only, does NOT restore descendants. Do not confuse courses.status ARCHIVED.",
+        "db008SourceDisposition": "LEGACY_COURSE_LIVE_DESCENDANT_DELETE_SOURCE_CONFIRMED_UNREGISTERED_PG_UNVERIFIED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "CourseServiceImpl.deleteCourse and restoreCourse",
+          "LessonRepository.countActiveByCourseId",
+          "LessonContentsRepository.countByCourseId",
+          "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+          "No PostgreSQL negative/rollback or concurrent lesson insertion proof"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.updated_at",
@@ -260,7 +296,22 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column allowed_for_display Integer",
       "sourceReviewFinding": "Persisted tri-state/int display policy; cannot infer equivalence to vNext courses.status; keep unproven.",
-      "sourceContractStatus": "LEGACY_STUDENT_CARD_EXPLICIT_ZERO_HIDE_CONFIRMED_OTHER_CONSUMERS_UNPROVEN"
+      "sourceContractStatus": "LEGACY_STUDENT_CARD_EXPLICIT_ZERO_HIDE_CONFIRMED_OTHER_CONSUMERS_UNPROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "StudentCourseServiceImpl: explicit Integer.valueOf(0).equals(course.getAllowedForDisplay()) skips semester card. Staged courses.allowed_for_display integer, no global enum proof; docs/planning/db05-learner-course-card-source-contract.json",
+        "db008SourceDisposition": "ACTIVE_STUDENT_CARD_SOURCE_CONSUMER_CONFIRMED_DB_PARITY_UNVERIFIED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source CourseDTO.java",
+          "legacy source CourseServiceImpl.java",
+          "staged draft only; no registered migration or execution",
+          "Legacy StudentCourseServiceImpl.java source-backed 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "docs/planning/db05-learner-course-card-source-contract.json",
+          "No executed PostgreSQL API frontend acceptance"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.course_name",
@@ -287,7 +338,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column created_by_org_id Integer",
       "sourceReviewFinding": "Nullable authored-organization attribution, not equivalent to vNext department_id; requires tenant identity mapping.",
-      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN"
+      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.created_by_organization_id",
+        "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_SCOPE_SECURITY_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source CourseDTO.java",
+          "legacy source CourseServiceImpl.java",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.default_subscription_days",
@@ -301,7 +364,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "sourceContractStatus": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
       "sourceReviewFinding": "Column present in historical MySQL snapshot; zero symbol hits in 13 source-controlled current course model/DTO/service/repository/controller/response files inspected at BE 21bad59d. Does NOT rule out native SQL/report/FE/partner usage. Explicit preserve-vs-retire decision OPEN.",
-      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json"
+      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "NO ACTIVE JAVA COURSE READ/WRITE IN BOUNDED 13-FILE SOURCE REVIEW; historical MySQL snapshot field; explicit typed-retain vs retire decision PENDING; see docs/planning/db05-historical-course-columns-source-evidence.json.",
+        "db008SourceDisposition": "HISTORICAL_SNAPSHOT_PERSISTED_ONLY_BOUNDED_CURRENT_RUNTIME_NEGATIVE_NO_PRODUCT_DECISION",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "src/test/resources/db/mysql-schema-snapshot.sql (historical column)",
+          "13 inspected current legacy course Java source surfaces, exact Git blob evidence stored in docs/planning/db05-historical-course-columns-source-evidence.json",
+          "Source scan is bounded, not a complete repository-wide proof",
+          "Migration/unification/retirement not approved; PostgreSQL not executed"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.dept_id",
@@ -339,7 +414,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "sourceContractStatus": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
       "sourceReviewFinding": "Column present in historical MySQL snapshot; zero symbol hits in 13 source-controlled current course model/DTO/service/repository/controller/response files inspected at BE 21bad59d. Does NOT rule out native SQL/report/FE/partner usage. Explicit preserve-vs-retire decision OPEN.",
-      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json"
+      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "NO ACTIVE JAVA COURSE READ/WRITE IN BOUNDED 13-FILE SOURCE REVIEW; historical MySQL snapshot field; explicit typed-retain vs retire decision PENDING; see docs/planning/db05-historical-course-columns-source-evidence.json.",
+        "db008SourceDisposition": "HISTORICAL_SNAPSHOT_PERSISTED_ONLY_BOUNDED_CURRENT_RUNTIME_NEGATIVE_NO_PRODUCT_DECISION",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "src/test/resources/db/mysql-schema-snapshot.sql (historical column)",
+          "13 inspected current legacy course Java source surfaces, exact Git blob evidence stored in docs/planning/db05-historical-course-columns-source-evidence.json",
+          "Source scan is bounded, not a complete repository-wide proof",
+          "Migration/unification/retirement not approved; PostgreSQL not executed"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.contents",
@@ -353,7 +440,22 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_META_14_DTO_AND_STUDENT_CARD_CODE_CONSUMER_SOURCE_CONFIRMED_VNEXT_DISPARITY"
+      "sourceContractStatus": "LEGACY_META_14_DTO_AND_STUDENT_CARD_CODE_CONSUMER_SOURCE_CONFIRMED_VNEXT_DISPARITY",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "Legacy MetaData 14 keys staged in course_display_contents extension; learner card courseCode = nonblank MetaData.courseCode or fallback shortTitle, distinct from vNext courses.code; docs/planning/db05-learner-course-card-source-contract.json",
+        "db008SourceDisposition": "ACTIVE_STUDENT_CARD_SOURCE_CONSUMER_CONFIRMED_DB_PARITY_UNVERIFIED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source MetaData.java",
+          "legacy source CourseServiceImpl.java",
+          "staged draft only; no registered migration or execution",
+          "Legacy StudentCourseServiceImpl.java source-backed 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "docs/planning/db05-learner-course-card-source-contract.json",
+          "No executed PostgreSQL API frontend acceptance"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.parent_course_id",
@@ -369,7 +471,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column parent_course_id int",
       "sourceReviewFinding": "Legacy primitive int defaults to zero for absent parent; a nullable vNext UUID parent FK must normalize sentinel zero and prevent cycles/cross-college links.",
-      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.parent_course_id",
+        "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_CYCLE_TENANT_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source CourseDTO.java",
+          "legacy source CourseServiceImpl.java",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.short_title",
@@ -381,7 +495,20 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-course-identity.draft.sql -> courses.short_title",
+        "db008SourceDisposition": "LEGACY_COURSE_DTO_REQUIRED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source CourseDTO.java",
+          "legacy source CourseRepository.java",
+          "legacy source V131__course_lesson_unique_names.sql",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.slug",
@@ -393,7 +520,19 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-course-identity.draft.sql -> courses.slug (globally reserved even deleted)",
+        "db008SourceDisposition": "LEGACY_COURSE_SLUG_REPOSITORY_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source Course.java",
+          "legacy source CourseRepository.java",
+          "legacy source CourseServiceImpl.java",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "course.version",
@@ -442,7 +581,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.id",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.created_at",
@@ -456,7 +605,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.created_at",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.is_deleted",
@@ -468,7 +627,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.deleted_at (normalized soft-delete state)",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.updated_at",
@@ -482,7 +651,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.updated_at",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.content_text",
@@ -494,7 +673,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.content_text",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.lesson_content_id",
@@ -508,7 +697,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.lesson_content_id",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.profile_name",
@@ -520,7 +719,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_profile_name_snapshot",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.sequence",
@@ -532,7 +741,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.sequence",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.user_id",
@@ -546,7 +765,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_membership_id (normalized tenant identity)",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.user_name",
@@ -558,7 +787,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_unique_name_snapshot",
+        "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.parent_discussion_id",
@@ -572,7 +811,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.parent_discussion_id",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.discussion_status",
@@ -584,7 +833,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.discussion_status",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.is_faculty_answer",
@@ -596,7 +855,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.is_faculty_answer",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.resolved_at",
@@ -610,7 +879,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.resolved_at",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.resolved_by",
@@ -622,7 +901,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.resolved_by_membership_id",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "discussions.attachment_url",
@@ -634,7 +923,17 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.attachment_object_key (private-storage redesign)",
+        "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+          "scripts/sql/db05-lesson-content-discussions.draft.sql"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "learner_content_progress.id",
@@ -748,7 +1047,22 @@
       "producerConsumerVerification": "LEGACY_CONSUMER_SOURCE_CONFIRMED_VNEXT_SERVICE_NOT_ADAPTED",
       "legacyEntityEvidence": "LearnerContentProgress extends BaseModel.isDeleted; V36 DDL; V132 attempt migration; LearnerContentProgressRepository.countCompletedPerLearner/select latest; startNewAttempt resets is_deleted",
       "sourceReviewFinding": "Not historical-only. Explicit tombstone read/write field persists in source; normalized deleted_at drafted. Distinct latest-attempt counting vs direct latest read must be preserved. Still unregistered and never PostgreSQL executed.",
-      "sourceContractStatus": "LIVE_LEGACY_REPOSITORY_QUERY_CONFIRMED_PER_READER_DIVERGENCE"
+      "sourceContractStatus": "LIVE_LEGACY_REPOSITORY_QUERY_CONFIRMED_PER_READER_DIVERGENCE",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "SOURCE-BASED UNREGISTERED DRAFT: scripts/sql/db05-version-progress-attempts.draft.sql -> learner_content_progress.deleted_at, preserves legacy BaseModel.isDeleted. LearnerContentProgressRepository.countCompletedPerLearner chooses highest attempt BEFORE deleted filtering; direct latest-attempt reads do NOT filter deleted. API consumer parity, same-college scope and PG negative/race not verified.",
+        "db008SourceDisposition": "ACTIVE_LEGACY_REPOSITORY_TOMBSTONE_CONSUMER_CONFIRMED_UNREGISTERED_CANDIDATE",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "BaseModel.java @Column is_deleted false default",
+          "LearnerContentProgress.java extends BaseModel",
+          "V36__learner_content_progress.sql",
+          "V132__learner_content_progress_attempt.sql",
+          "LearnerContentProgressRepository.countCompletedPerLearner, findTopByLearnerIdAndLessonContentIdOrderByAttemptDesc, findByLearnerIdAndLessonContentIdIn, startNewAttempt",
+          "scripts/sql/db05-version-progress-attempts.draft.sql (UNREGISTERED, not PG tested)",
+          "docs/planning/db05-progress-deletion-attempt-contract.md"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "learner_content_progress.first_completed_at",
@@ -772,7 +1086,19 @@
       "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-version-progress-attempts.draft.sql -> learner_content_progress.attempt (new composite unique key)",
+        "db008SourceDisposition": "LEGACY_CURRENT_ATTEMPT_READ_SERVICE_CONFIRMED_STAGED_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "legacy source LearnerContentProgress.java",
+          "legacy source LearnerContentProgressServiceImpl.java",
+          "legacy source V132__learner_content_progress_attempt.sql",
+          "staged draft only; no registered migration or execution"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson.id",
@@ -810,7 +1136,18 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_LESSON_DELETE_RESTORE_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_LESSON_DELETE_RESTORE_SOURCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql -> course_lessons.legacy_deleted_at. Source atomic child tombstones, ONLY parent restore; NOT status=ARCHIVED equivalent.",
+        "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+          "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+          "No registered migration or executed PostgreSQL/API evidence"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson.updated_at",
@@ -835,7 +1172,18 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-active-enabled.draft.sql -> course_lessons.legacy_active. Legacy create default true, update only if field provided; status distinct.",
+        "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+          "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+          "No registered migration or executed PostgreSQL/API evidence"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson.course_id",
@@ -860,7 +1208,18 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_LESSON_CREATE_UPDATE_FLAGS_SOURCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-active-enabled.draft.sql -> course_lessons.legacy_enabled. Independent from active and archive; source create default true.",
+        "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+          "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+          "No registered migration or executed PostgreSQL/API evidence"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson.lesson_name",
@@ -1018,7 +1377,18 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTENT_DELETE_AND_LESSON_CASCADE_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTENT_DELETE_AND_LESSON_CASCADE_SOURCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql -> lesson_contents.legacy_deleted_at. Separate content deletion disables active/enabled, parent lesson restore does not restore children.",
+        "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+          "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+          "No registered migration or executed PostgreSQL/API evidence"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.updated_at",
@@ -1043,7 +1413,19 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_active boolean distinct from content status; independent on create/update; source evidence LessonContentsServiceImpl.setLessonContents",
+        "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonContents.java",
+          "LessonContentsDTO.java",
+          "LessonContentsServiceImpl.setLessonContents",
+          "staged only, PostgreSQL/API NOT RUN"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.class_id",
@@ -1073,7 +1455,20 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_CONTENTDATA_DTO_17_FIELDS_V163_RETIREMENT_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_CONTENTDATA_DTO_17_FIELDS_V163_RETIREMENT_SOURCE_CONFIRMED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "docs/planning/db05-lesson-content-payload-subfields.json (17 nested fields): scripts/sql/db05-lesson-content-settings.draft.sql nine settings candidates; src/db/schema/courses.ts scalar/multi-materials six unproven; DB06 two assignment resources/allowed-submission types missing",
+        "db008SourceDisposition": "ACTIVE_TYPED_JSON_PAYLOAD_SOURCE_17_NESTED_FIELDS_STAGED_PARTIAL_NOT_VERIFIED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "ContentDataDTO.java and LessonContents.java",
+          "V163__retire_legacy_lesson_content_types.sql (active resource types)",
+          "scripts/sql/db05-lesson-content-settings.draft.sql",
+          "docs/planning/db05-lesson-content-payload-subfields.json",
+          "Not executed; no registered migration or consumer proof"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.content_title",
@@ -1137,7 +1532,19 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_enabled boolean distinct from content status; independent on create/update; source evidence LessonContentsServiceImpl.setLessonContents",
+        "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonContents.java",
+          "LessonContentsDTO.java",
+          "LessonContentsServiceImpl.setLessonContents",
+          "staged only, PostgreSQL/API NOT RUN"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.faculty_id",
@@ -1155,7 +1562,18 @@
       "sourceProducerEvidence": "42Students/lms@21bad59d: LessonContents.java @Column faculty_id Integer nullable; LessonContentsServiceImpl.createLessonContents lines ~140-149 overwrites facultyId for ordinary authenticated faculty; setLessonContents line 461 persists owner; updateLessonContent ~794-812 and deleteLessonContent ~1011-1026 compare owner vs trusted principal and also enforce teaching scope; admin faculty exception.",
       "vnextConsumerGap": "vNext lesson_contents.created_by_user_id is creator provenance; current lesson-content-service.ts only uses delivery teaching-scope management, no persisted explicit faculty owner. Owner != creator and owner-specific authorization are not yet implemented.",
       "proposedFacultyOwnerDraft": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
-      "sourceProducerConfidence": "SOURCE_CONFIRMED_WRITES_AND_AUTHORIZATION_NOT_RUNTIME_VERIFIED"
+      "sourceProducerConfidence": "SOURCE_CONFIRMED_WRITES_AND_AUTHORIZATION_NOT_RUNTIME_VERIFIED",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql -> lesson_contents.faculty_owner_membership_id nullable owner; current creator ID NOT equal. Canonical row guard same-college, ACTIVE FACULTY on new owner, history retained on role loss; API teaching scope/open PG tests.",
+        "db008SourceDisposition": "LEGACY_FACULTY_OWNER_SEMANTICS_SOURCE_CONFIRMED_CANONICAL_GUARD_UNREGISTERED",
+        "db008Evidence": [
+          "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+          "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+          "No registered migration or executed PostgreSQL/API evidence"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.lesson_id",
@@ -1182,7 +1600,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column points long",
       "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points.",
-      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_points bigint with source clamp negative -> 0; DB06 assignment.max_points NOT proven equivalent",
+        "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonContents.java",
+          "LessonContentsDTO.java",
+          "LessonContentsServiceImpl.setLessonContents",
+          "staged only, PostgreSQL/API NOT RUN"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.sequence",
@@ -1209,7 +1639,19 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column deadline LocalDateTime",
       "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy.",
-      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN"
+      "sourceContractStatus": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_REMODELED_CONSUMER_UNPROVEN",
+      "canonicalInventoryReview": {
+        "proposedSemanticMapping": "scripts/sql/db05-lesson-content-authoring-facets.draft.sql: Shadow legacy_deadline_local timestamp WITHOUT timezone with clearDeadline=true distinct from omitted null; DB06 due_at TIMESTAMPTZ NOT proven equivalent",
+        "db008SourceDisposition": "LEGACY_RUNTIME_PRODUCER_CONFIRMED_SHADOW_DRAFT_CONSUMER_PROOF_OPEN",
+        "db008Evidence": [
+          "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+          "LessonContents.java",
+          "LessonContentsDTO.java",
+          "LessonContentsServiceImpl.setLessonContents",
+          "staged only, PostgreSQL/API NOT RUN"
+        ],
+        "reconciliation": "SOURCE_ANNOTATION_ONLY_NOT_VERIFIED"
+      }
     },
     {
       "source": "lesson_contents.version",
@@ -1400,5 +1842,56 @@
     "verifiedNoActiveConsumer": false,
     "decision": "RETAIN_TYPED_OR_EXPLICITLY_RETIRE",
     "status": "OPEN_NOT_VERIFIED"
+  },
+  "sourceReconciliation": {
+    "date": "2026-10-12",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "previousInventoryBlobSha": "f21860ff81d2fc5eda205ccaab715d213b20df5e",
+    "canonicalInventoryBlobSha": "0c2dfd7e0a6f8ca1fbb6dd61664c6699d819ec54",
+    "fieldIdentitiesCompared": 92,
+    "fieldIdentitiesAddedOrRemoved": 0,
+    "updatedSemanticDispositionEvidenceRows": 39,
+    "fieldsUpdated": [
+      "classroom_messages.is_deleted",
+      "classroom_messages.sender_name",
+      "course.is_deleted",
+      "course.allowed_for_display",
+      "course.created_by_org_id",
+      "course.default_subscription_days",
+      "course.formal_title",
+      "course.contents",
+      "course.parent_course_id",
+      "course.short_title",
+      "course.slug",
+      "discussions.id",
+      "discussions.created_at",
+      "discussions.is_deleted",
+      "discussions.updated_at",
+      "discussions.content_text",
+      "discussions.lesson_content_id",
+      "discussions.profile_name",
+      "discussions.sequence",
+      "discussions.user_id",
+      "discussions.user_name",
+      "discussions.parent_discussion_id",
+      "discussions.discussion_status",
+      "discussions.is_faculty_answer",
+      "discussions.resolved_at",
+      "discussions.resolved_by",
+      "discussions.attachment_url",
+      "learner_content_progress.is_deleted",
+      "learner_content_progress.attempt",
+      "lesson.is_deleted",
+      "lesson.active",
+      "lesson.enabled",
+      "lesson_contents.is_deleted",
+      "lesson_contents.active",
+      "lesson_contents.content_data",
+      "lesson_contents.enabled",
+      "lesson_contents.faculty_id",
+      "lesson_contents.points",
+      "lesson_contents.deadline"
+    ],
+    "policy": "Canonical inventory evidence copied into review as separate unapproved annotation; do not supersede deeper targetProposal rationale or promote semanticVerification, runtimeDatabaseVerification or producerConsumerVerification. Existing 92 source fields remain NOT_VERIFIED."
   }
 }
