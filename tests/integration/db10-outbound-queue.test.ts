@@ -7,7 +7,10 @@ import {
   queueOutboundDeliveryInTransaction,
   outboundQueueRuntimeEnabled,
 } from "@/modules/operations/outbound-delivery-queue";
-import { sealOutboundDelivery } from "@/modules/operations/outbound-delivery-envelope";
+import {
+  deriveGlobalEmailSuppressionHash,
+  sealOutboundDelivery,
+} from "@/modules/operations/outbound-delivery-envelope";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 /**
@@ -48,6 +51,7 @@ const prevKey = process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64;
 const prevGlobalKey = process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
 const issuedEventIds: string[] = [];
 const suppressionHashes: string[] = [];
+const globalSuppressionHashes: string[] = [];
 
 const adminA: RequestContext = {
   user: {
@@ -95,6 +99,12 @@ beforeEach(async () => {
       [SEED_IDS.organization, suppressionHashes.splice(0)],
     );
   }
+  if (globalSuppressionHashes.length) {
+    await pool.query(
+      "delete from outbound_global_email_suppressions where recipient_hash=any($1::varchar[])",
+      [globalSuppressionHashes.splice(0)],
+    );
+  }
   if (issuedEventIds.length) {
     await pool.query("delete from outbound_messages where source_event_id = any($1::uuid[])", [issuedEventIds.splice(0)]);
   }
@@ -107,6 +117,12 @@ afterAll(async () => {
     await pool.query(
       "delete from outbound_suppressions where organization_id=$1 and recipient_hash=any($2::varchar[])",
       [SEED_IDS.organization, suppressionHashes],
+    );
+  }
+  if (globalSuppressionHashes.length) {
+    await pool.query(
+      "delete from outbound_global_email_suppressions where recipient_hash=any($1::varchar[])",
+      [globalSuppressionHashes],
     );
   }
   if (prevFlag === undefined) delete process.env.DB10_OUTBOUND_READY;
@@ -167,6 +183,70 @@ describe("W06 transactional outbound queue security", () => {
     );
     const queued = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
     expect(queued).toEqual({ status: "SUPPRESSED", id: null });
+  });
+
+  it("globally suppresses an opted-out email without storing the raw address", async () => {
+    const suppressedEvent = issueId();
+    const recipientHash = deriveGlobalEmailSuppressionHash(intent(suppressedEvent), globalKey);
+    expect(recipientHash).toMatch(/^[0-9a-f]{64}$/);
+    globalSuppressionHashes.push(recipientHash!);
+    await pool.query(
+      "insert into outbound_global_email_suppressions (recipient_hash,reason) values ($1,'UNSUBSCRIBED')",
+      [recipientHash],
+    );
+    const suppressed = await queueInIsolatedDatabase(adminA, intent(suppressedEvent));
+    expect(suppressed).toEqual({ status: "SUPPRESSED", id: null });
+    const nothingQueued = await pool.query(
+      "select id from outbound_messages where source_event_id=$1",
+      [suppressedEvent],
+    );
+    expect(nothingQueued.rowCount).toBe(0);
+
+    // The privileged opt-out clear is deliberately a SQL test fixture action,
+    // never an application API and never a provider send.
+    await pool.query(
+      "update outbound_global_email_suppressions set cleared_at=clock_timestamp() where recipient_hash=$1",
+      [recipientHash],
+    );
+    const newEvent = issueId();
+    expect((await queueInIsolatedDatabase(adminA, intent(newEvent))).status).toBe("QUEUED");
+    const rows = await pool.query(
+      "select global_email_hash_commitment,ciphertext_base64 from outbound_messages where source_event_id=$1",
+      [newEvent],
+    );
+    expect(rows.rows).toHaveLength(1);
+    expect(rows.rows[0]?.global_email_hash_commitment).toMatch(/^[0-9a-f]{64}$/);
+    expect(rows.rows[0]?.global_email_hash_commitment).not.toBe(recipientHash);
+    expect(JSON.stringify(rows.rows)).not.toContain("recruiting@private.example");
+  });
+
+  it("deduplicates concurrent same-event attempts through PostgreSQL uniqueness", async () => {
+    const eventId = issueId();
+    const results = await Promise.all(
+      Array.from({ length: 10 }, () => queueInIsolatedDatabase(adminA, intent(eventId))),
+    );
+    expect(results.filter(x => x.status === "QUEUED")).toHaveLength(1);
+    expect(results.filter(x => x.status === "ALREADY_QUEUED")).toHaveLength(9);
+    expect(new Set(results.map(x => x.id)).size).toBe(1);
+    const { rows } = await pool.query(
+      "select count(*)::int as count from outbound_messages where source_event_id=$1",
+      [eventId],
+    );
+    expect(rows[0]?.count).toBe(1);
+  });
+
+  it("commits distinct non-linkable EMAIL suppression bindings for distinct events", async () => {
+    const firstEvent = issueId();
+    const secondEvent = issueId();
+    await queueInIsolatedDatabase(adminA, intent(firstEvent));
+    await queueInIsolatedDatabase(adminA, intent(secondEvent));
+    const { rows } = await pool.query<{ global_email_hash_commitment: string }>(
+      "select global_email_hash_commitment from outbound_messages where source_event_id = any($1::uuid[])",
+      [[firstEvent, secondEvent]],
+    );
+    expect(rows).toHaveLength(2);
+    expect(rows[0]?.global_email_hash_commitment).not.toBe(rows[1]?.global_email_hash_commitment);
+    expect(rows.every(row => /^[0-9a-f]{64}$/.test(row.global_email_hash_commitment))).toBe(true);
   });
 
   it("fails closed when queue flag is not verified", async () => {
