@@ -197,6 +197,7 @@ export async function updateCourseLesson(
         and(
           eq(courseLessons.id, lessonId),
           eq(courseLessons.status, "ACTIVE"),
+          eq(courseLessons.learningPathId, current.learningPathId),
         ),
       )
       .returning();
@@ -241,6 +242,7 @@ export async function archiveCourseLesson(
       .where(and(
         eq(courseLessons.id, lessonId),
         eq(courseLessons.status, "ACTIVE"),
+        eq(courseLessons.learningPathId, current.learningPathId),
       ))
       .for("update")
       .limit(1);
@@ -258,6 +260,7 @@ export async function archiveCourseLesson(
       .where(and(
         eq(courseLessons.id, lessonId),
         eq(courseLessons.status, "ACTIVE"),
+        eq(courseLessons.learningPathId, current.learningPathId),
       ))
       .returning();
 
