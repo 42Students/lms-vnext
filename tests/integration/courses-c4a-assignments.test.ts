@@ -888,7 +888,9 @@ describe("courses C4A assignments against PostgreSQL", () => {
       await expect(submission).rejects.toMatchObject({
         code: "ASSIGNMENT_NOT_PUBLISHED",
       });
-      const result = await pool.query(
+      // The fixture pool has max:1 and holder is still checked out here.
+      // Querying pool.query would self-deadlock until the test times out.
+      const result = await holder.query(
         "select count(*)::int as n from assignment_submissions where assignment_id=$1",
         [assignment.id],
       );
