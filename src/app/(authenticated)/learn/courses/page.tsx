@@ -49,7 +49,7 @@ export default async function LearnerCoursesPage() {
           periodEndDate: course.periodEndDate,
         },
         instructorNames: instructors.map(
-          (instructor) => instructor.name,
+          (instructor) => instructor.name?.trim() || "Instructor",
         ),
         summary: {
           overallPercent: workspace.summary.overallPercent,
