@@ -12,10 +12,11 @@ const isSha = value => typeof value === 'string' && /^[a-f0-9]{40}$/i.test(value
 const push = (errors, code, extra = {}) => errors.push({code, ...extra});
 const validWorker = n => Number.isInteger(n) && n >= 1 && n <= 6;
 const validPath = p => typeof p === 'string' && p.trim() === p && p.length > 0 &&
-  !p.startsWith('/') && !p.includes(String.fromCharCode(92)) && !p.split('/').some(x => x === '..' || x === '.');
+  !p.startsWith('/') && !p.includes('//') && !p.includes(String.fromCharCode(92)) && !p.split('/').some(x => x === '..' || x === '.');
 const directoryScope = p => p.endsWith('/**') ? p.slice(0,-2) : p.endsWith('/') ? p : null;
 const pathsOverlap = (a,b) => {
-  if (a === b) return true;
+  if (a === b || a.replace(/\/$/, '') === b.replace(/\/$/, '')) return true;
+  if (a.startsWith(b.replace(/\/$/, '') + '/') || b.startsWith(a.replace(/\/$/, '') + '/')) return true;
   const da = directoryScope(a), db = directoryScope(b);
   if (da && b.startsWith(da)) return true;
   if (db && a.startsWith(db)) return true;
@@ -40,10 +41,11 @@ export function inspectGate({phaseState, workQueue, lanes}) {
     verification:'SOURCE_COORDINATION_ONLY_NOT_DATABASE_ACCEPTANCE', readyForNextPhase:false,
     errors:[...errors,{code:'INVALID_WORK_QUEUE'}], blockers, counts:{}, activePhase:phase ?? null,
   };
-  if (!Array.isArray(lanes) || lanes.length !== 6) push(errors,'MISSING_WORKER_CHECKPOINTS');
+  const laneRows = Array.isArray(lanes) ? lanes : [];
+  if (laneRows.length !== 6) push(errors,'MISSING_WORKER_CHECKPOINTS');
   const byId = new Map(), ownerTask = new Map(), laneByNumber = new Map(), activePaths = [];
   const counts = Object.fromEntries(TASK_STATES.map(x=>[x,0]));
-  for (const lane of lanes || []) {
+  for (const lane of laneRows) {
     if (!validWorker(lane?.chatNumber) || laneByNumber.has(lane.chatNumber))
       push(errors,'INVALID_WORKER_ID',{worker:lane?.chatNumber ?? null});
     else {
