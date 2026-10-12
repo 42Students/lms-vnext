@@ -40,7 +40,7 @@ async function createActiveGroup(kind = "BUS", capacity = 1) {
   await transitionGroup(admin, group.id, "ACTIVATE");
   return group.id;
 }
-async function createLearner(collegeId = SEED_IDS.collegeA): Promise<{ ctx: RequestContext; membershipId: string }> {
+async function createLearner(collegeId: string = SEED_IDS.collegeA): Promise<{ ctx: RequestContext; membershipId: string }> {
   const userId = randomUUID(), membershipId = randomUUID();
   fixture.users.push(userId);
   fixture.memberships.push(membershipId);
