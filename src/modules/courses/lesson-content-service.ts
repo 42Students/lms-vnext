@@ -455,6 +455,11 @@ export async function updateLessonContent(
     .where(
       and(
         eq(lessonContents.id, contentId),
+        eq(lessonContents.lessonId, current.lessonId),
+        current.deliveryId
+          ? eq(lessonContents.deliveryId, current.deliveryId)
+          : isNull(lessonContents.deliveryId),
+        eq(lessonContents.contentType, current.contentType),
         ne(
           lessonContents.status,
           "ARCHIVED",
@@ -516,6 +521,14 @@ export async function transitionLessonContent(
     .where(
       and(
         eq(lessonContents.id, contentId),
+        // The actor was authorized for this exact lesson, content kind,
+        // and optional class delivery. A reparent/type change between the
+        // pre-read and transition must never inherit a stale permission.
+        eq(lessonContents.lessonId, current.lessonId),
+        current.deliveryId
+          ? eq(lessonContents.deliveryId, current.deliveryId)
+          : isNull(lessonContents.deliveryId),
+        eq(lessonContents.contentType, current.contentType),
         input.action === "PUBLISH"
           ? eq(lessonContents.status, "DRAFT")
           : ne(lessonContents.status, "ARCHIVED"),
