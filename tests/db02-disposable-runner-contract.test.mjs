@@ -43,30 +43,22 @@ test("runner derives and compares the exact canonical DB02 trigger manifest", ()
   assert.doesNotMatch(runner, /required trigger witnesses: 22/);
 });
 
-test("runner verifies core DB02 tables, columns and INACTIVE enum registration", () => {
-  for (const table of [
-    "program_terms",
-    "program_term_courses",
-    "cohort_progression_state",
-    "cohort_progression_events",
-    "lecture_halls",
-    "faculty_course_associations",
-  ]) {
-    assert.ok(runner.includes("'" + table + "'"), "missing table witness: " + table);
-  }
-  for (const column of [
-    "program_term_id",
-    "program_term_course_id",
-    "start_date",
-    "end_date",
-    "description",
-    "minimum_capacity",
-    "lecture_hall_id",
-  ]) {
-    assert.ok(runner.includes("'" + column + "'"), "missing column witness: " + column);
-  }
-  assert.match(runner, /COLUMN_WITNESSES/);
-  assert.match(runner, /!= "9"/);
+test("runner derives staged table and added-column manifests from canonical DB02 source", () => {
+  assert.match(runner, /EXPECTED_TABLE_NAMES/);
+  assert.match(runner, /grep -Eo '\^CREATE TABLE \(IF NOT EXISTS \)\?\[a-z0-9_\]\+'/);
+  assert.match(runner, /information_schema\.tables/);
+  assert.match(runner, /missing staged table: \$table/);
+  assert.match(runner, /EXPECTED_TABLE_COUNT/);
+
+  assert.match(runner, /EXPECTED_COLUMN_PAIRS/);
+  assert.match(runner, /\^ALTER TABLE \[a-z0-9_\]\+/);
+  assert.match(runner, /ADD COLUMN/);
+  assert.match(runner, /information_schema\.columns/);
+  assert.match(runner, /missing staged column: \$pair/);
+  assert.match(runner, /EXPECTED_COLUMN_COUNT/);
+
+  assert.doesNotMatch(runner, /required: 6, found/);
+  assert.doesNotMatch(runner, /required: 9, found/);
   assert.match(runner, /enumlabel = 'INACTIVE'/);
 });
 
