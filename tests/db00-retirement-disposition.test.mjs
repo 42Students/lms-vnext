@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 import test from "node:test";
 
 const inventory = JSON.parse(
@@ -176,4 +177,27 @@ test("Smrithi retirement is vNext-only and explicitly user-authorized",()=>{
     approval.tables.map(t=>t.table).sort(),
     disposition.tables.filter(t=>t.disposition==="RETIRE_VNEXT_USER_APPROVED").map(t=>t.table).sort(),
   );
+});
+
+test("Smrithi vNext scope does not reappear in runtime source or registered migrations", () => {
+  const isSource = file => /\\.(?:ts|tsx|js|jsx|mjs|cjs)$/.test(file);
+  const walk = root => readdirSync(root, { withFileTypes: true }).flatMap(entry => {
+    const absolute = join(root, entry.name);
+    if (entry.isDirectory()) return walk(absolute);
+    if (!entry.isFile() || !isSource(absolute)) return [];
+    return [absolute];
+  });
+  const runtimeSources = walk("src");
+  const migrations = readdirSync("drizzle")
+    .filter(name => /^\\d{4}_[^/]+\\.sql$/.test(name))
+    .map(name => join("drizzle", name));
+  assert.ok(runtimeSources.length > 0, "no vNext runtime files were scanned");
+  assert.ok(migrations.length >= 43, "registered migration history unexpectedly incomplete");
+  const forbidden = /\\bsmrithi(?:[_A-Z]|\\b)/i;
+  for (const file of [...runtimeSources, ...migrations]) {
+    assert.doesNotMatch(
+      readFileSync(file, "utf8"), forbidden,
+      "Retired Smrithi subsystem must not be registered or used by vNext runtime: " + file,
+    );
+  }
 });
