@@ -8,6 +8,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
+  cohorts,
   learnerProgramEnrollments,
   sectionEnrollments,
   users,
@@ -180,6 +181,24 @@ export async function createLearnerProgramEnrollment(
 
   try {
     return await db.transaction(async (tx) => {
+      // The preflight cohort can become COMPLETED or ARCHIVED before this
+      // transaction starts. SHARE both re-reads the latest committed state
+      // after a competing status writer and holds the row against a later
+      // transition until the enrollment/append-only activity event commits.
+      const [liveCohort] = await tx
+        .select({ programId: cohorts.programId, status: cohorts.status })
+        .from(cohorts)
+        .where(eq(cohorts.id, input.cohortId))
+        .for("share")
+        .limit(1);
+      if (!liveCohort || (liveCohort.status !== "PLANNED" &&
+                          liveCohort.status !== "ACTIVE")) {
+        throw new AcademicsServiceError("COHORT_NOT_MUTABLE");
+      }
+      if (liveCohort.programId !== input.programId) {
+        throw new AcademicsServiceError("COHORT_PROGRAM_MISMATCH");
+      }
+
       const [created] = await tx
         .insert(learnerProgramEnrollments)
         .values({
