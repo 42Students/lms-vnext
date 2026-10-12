@@ -93,3 +93,23 @@ test('verified metadata cannot contain string worker ID', () => {
   })];
   assert.ok(codes(x).includes('VERIFIED_WITHOUT_EVIDENCE'));
 });
+
+test('unknown task restriction fails closed for ready and claimed tasks', () => {
+  const bad = ['MIGRATION_INTEGRATR', 'CORE_INFRA ', 'any', '', null, undefined, {}, [], 42, 'UNRESTRICTED'];
+  for (const restriction of bad) {
+    for (const active of [false, true]) {
+      const x = active ? claim(2, ['docs/safe/source.md']) : context();
+      x.workQueue.tasks[0].restriction = restriction;
+      assert.ok(codes(x).includes('INVALID_TASK_RESTRICTION'),
+        'failed to reject ' + String(restriction) + ', active=' + active);
+    }
+  }
+});
+
+test('only three canonical restrictions are allowed on unclaimed work', () => {
+  for (const restriction of ['ANY', 'CORE_INFRA', 'MIGRATION_INTEGRATOR']) {
+    const x = context();
+    x.workQueue.tasks[0].restriction = restriction;
+    assert.deepEqual(codes(x), [], restriction);
+  }
+});
