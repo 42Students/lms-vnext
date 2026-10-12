@@ -8,7 +8,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
-  check, index, integer, pgTable, text, timestamp, uniqueIndex,
+  check, foreignKey, index, integer, pgTable, text, timestamp, uniqueIndex,
   uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
@@ -49,6 +49,14 @@ export const db10OutboundMessages = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    // Prevent forged or subsequently reassigned organization/college pairs.
+    // Chat 1 must first register UNIQUE colleges(id, organization_id) and
+    // stage-check any existing rows before promoting this composite FK.
+    foreignKey({
+      name: "db10_outbound_college_organization_fk",
+      columns: [t.collegeId, t.organizationId],
+      foreignColumns: [colleges.id, colleges.organizationId],
+    }).onDelete("restrict"),
     uniqueIndex("db10_outbound_idempotency_uq").on(t.idempotencyKey),
     index("db10_outbound_due_idx").on(t.status, t.nextAttemptAt, t.notBefore),
     index("db10_outbound_scope_idx").on(t.organizationId, t.collegeId, t.createdAt),
