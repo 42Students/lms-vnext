@@ -15,9 +15,23 @@ const policy = fs.readFileSync(
 function functionBody(name) {
   const start = sql.indexOf(`CREATE FUNCTION ${name}(`);
   assert.notEqual(start, -1, `missing ${name}`);
-  const end = sql.indexOf("\n$$;", start);
+  const end = sql.indexOf("$;", start);
   assert.notEqual(end, -1, `unterminated ${name}`);
   return sql.slice(start, end);
+}
+
+// PostgreSQL permits END $; on the same line; do not scan into a later function.
+for (const functionName of [
+  "db09_assert_message_sender_scope",
+  "db09_assert_share_creator_scope",
+  "db09_assert_tpo_user_state_scope",
+  "db09_assert_student_note_principals",
+]) {
+  test("function parser isolates same-line terminator: " + functionName, () => {
+    const body = functionBody(functionName);
+    assert.match(body, /RETURN NEW;\s*END\s*$/);
+    assert.doesNotMatch(body.slice("CREATE FUNCTION ".length), /CREATE FUNCTION\s+\w+\s*\(/);
+  });
 }
 
 test("canonical placements.manage is TPO/COLLEGE_ADMIN only", () => {
