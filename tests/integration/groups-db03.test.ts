@@ -26,7 +26,7 @@ const fixture = {
   groups: [] as string[], slots: [] as string[], courses: [] as string[], programs: [] as string[],
   users: [] as string[], memberships: [] as string[],
   periods: [] as string[], cohorts: [] as string[], sections: [] as string[],
-  offerings: [] as string[], deliveries: [] as string[],
+  offerings: [] as string[], electiveOfferingIds: [] as string[], deliveries: [] as string[],
   learnerEnrollments: [] as string[], learnerSections: [] as string[],
 };
 
@@ -90,9 +90,10 @@ async function createElectiveFixture() {
     await pool.query(
       "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
       [deliveryId,offeringId,sectionId]);
-    await pool.query(
-      "INSERT INTO elective_offerings (slot_id,course_id,group_id,backed_delivery_id) VALUES ($1,$2,$3,$4)",
+    const elective = await pool.query<{id:string}>(
+      "INSERT INTO elective_offerings (slot_id,course_id,group_id,backed_delivery_id) VALUES ($1,$2,$3,$4) RETURNING id",
       [slotId,courseId,groups[i],deliveryId]);
+    fixture.electiveOfferingIds.push(elective.rows[0].id);
   }
   const candidate = await createLearner();
   const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
@@ -160,12 +161,26 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     );
     expect(afterSections.rows[0].n).toBe(initialSections.rows[0].n);
   });
+  it("resolves actual elective offering IDs independently from delivery course offering IDs", async () => {
+    const { slotId } = await createElectiveFixture();
+    expect(fixture.offerings).toHaveLength(2);
+    expect(fixture.electiveOfferingIds).toHaveLength(2);
+    expect(fixture.electiveOfferingIds[0]).not.toBe(fixture.offerings[0]);
+    const rows = await pool.query<{ id:string; backed_delivery_id:string }>(
+      "SELECT id,backed_delivery_id FROM elective_offerings WHERE slot_id=$1 ORDER BY backed_delivery_id",
+      [slotId],
+    );
+    expect(new Set(rows.rows.map(row => row.id))).toEqual(new Set(fixture.electiveOfferingIds));
+    expect(await listElectiveOfferings(admin,slotId))
+      .toEqual(expect.arrayContaining(fixture.electiveOfferingIds.map(offeringId =>
+        expect.objectContaining({ offeringId }))));
+  });
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
     expect(active.state).toBe("ACTIVE");
     const moved = await moveElectiveMember(
-      admin, fixture.offerings[0], fixture.offerings[1], candidate.membershipId,
+      admin, fixture.electiveOfferingIds[0], fixture.electiveOfferingIds[1], candidate.membershipId,
     );
     expect(moved.state).toBe("ACTIVE");
     const counts = await pool.query(
@@ -224,7 +239,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     );
 
     await expect(moveElectiveMember(
-      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+      admin,fixture.electiveOfferingIds[0],fixture.electiveOfferingIds[1],candidate.membershipId,
     )).rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
 
     const source = await pool.query(
@@ -255,7 +270,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     );
     await joinGroup(admin,groups[0],candidate.membershipId,"MANUAL");
     const moved=await moveElectiveMember(
-      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+      admin,fixture.electiveOfferingIds[0],fixture.electiveOfferingIds[1],candidate.membershipId,
     );
     expect(moved.state).toBe("ACTIVE");
     const target=await pool.query(
@@ -282,7 +297,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await joinGroup(other.ctx,groups[1],other.membershipId);
     await joinGroup(candidate.ctx,groups[0],candidate.membershipId);
     const moved=await moveElectiveMember(
-      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+      admin,fixture.electiveOfferingIds[0],fixture.electiveOfferingIds[1],candidate.membershipId,
     );
     expect(moved.state).toBe("WAITLISTED");
     const source=await pool.query(
@@ -312,7 +327,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await joinGroup(other.ctx,groups[1],other.membershipId);
     await joinGroup(candidate.ctx,groups[0],candidate.membershipId);
     await expect(moveElectiveMember(
-      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+      admin,fixture.electiveOfferingIds[0],fixture.electiveOfferingIds[1],candidate.membershipId,
     )).rejects.toMatchObject({ code: "GROUP_CAPACITY_REACHED" });
     const membership = await pool.query(
       "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
@@ -331,11 +346,11 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(await listElectiveOfferings(admin,slotId)).toHaveLength(2);
     await pool.query(
       "UPDATE elective_offerings SET deleted_at=now() WHERE id=$1",
-      [fixture.offerings[0]],
+      [fixture.electiveOfferingIds[0]],
     );
     const visible=await listElectiveOfferings(admin,slotId);
     expect(visible).toHaveLength(1);
-    expect(visible[0].offeringId).toBe(fixture.offerings[1]);
+    expect(visible[0].offeringId).toBe(fixture.electiveOfferingIds[1]);
   });
 
   it("rejects a backed elective delivery from another program in the same college", async () => {
