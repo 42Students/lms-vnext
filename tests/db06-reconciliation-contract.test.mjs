@@ -141,7 +141,11 @@ test("DB06 dispositions cover every active source field exactly once", () => {
     assert.equal(table.fields.length, table.sourceFieldCount);
     for (const field of table.fields) {
       assert.equal(field.runtimeVerified, false);
-      assert.equal(field.validationEvidence, null);
+      if (field.validationEvidence !== null) {
+        assert.equal(typeof field.validationEvidence, "string");
+        assert.match(field.validationEvidence, /pinned|docs\/planning|source/i);
+      }
+      assert.equal(field.runtimeVerified, false);
       assert.ok(field.decision);
       assert.ok(Object.hasOwn(field, "targetRef"));
       assert.ok(field.reason);
@@ -161,11 +165,11 @@ test("DB06 source-backed target gaps cannot disappear without an explicit decisi
 
   assert.equal(
     byKey.get("quizzes.shuffle_questions").decision,
-    "TARGET_GAP_REQUIRED",
+    "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
   );
   assert.equal(
     byKey.get("quizzes.shuffle_options").decision,
-    "TARGET_GAP_REQUIRED",
+    "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
   );
   assert.equal(
     byKey.get("grade_audit_log.action").decision,
@@ -173,8 +177,18 @@ test("DB06 source-backed target gaps cannot disappear without an explicit decisi
   );
   assert.equal(
     byKey.get("student_assignment.attempt_number").decision,
-    "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+    "DERIVED_METADATA_NOT_PERSISTED",
   );
+  for (const name of ["quizzes.shuffle_questions", "quizzes.shuffle_options"]) {
+    const entry=byKey.get(name);
+    assert.equal(entry.runtimeVerified,false);
+    assert.match(entry.validationEvidence,/db06-quiz-shuffle-parity-candidate/);
+    assert.match(entry.targetRef,/^course_quizzes\./);
+  }
+  const attempt=byKey.get("student_assignment.attempt_number");
+  assert.equal(attempt.runtimeVerified,false);
+  assert.match(attempt.reason,/exactly one submission/i);
+  assert.match(attempt.validationEvidence,/V28__student_assignment_unique_submission/);
   assert.equal(
     byKey.get("assignment_upload_receipt.public_url").decision,
     "RETIRE_SECURITY_ANTI_PATTERN",
