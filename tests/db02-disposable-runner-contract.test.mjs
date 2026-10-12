@@ -1,9 +1,19 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
 
 const runner = readFileSync(
   new URL("../scripts/sql/db02-run-disposable-acceptance.sh", import.meta.url),
+  "utf8",
+);
+
+const sharedTargetGuard = readFileSync(
+  new URL("../scripts/sql/db02-assert-disposable-target.sh", import.meta.url),
+  "utf8",
+);
+const archiveRace = readFileSync(
+  new URL("../scripts/sql/db02-program-archive-concurrency-unregistered.sh", import.meta.url),
   "utf8",
 );
 
@@ -129,6 +139,56 @@ test("direct concurrency scripts fail closed to the explicitly named disposable 
       name + ": database identity check must run only after psql availability is established",
     );
   }
+});
+
+test("all six direct DB02 race scripts source guarded URL validation before connecting", () => {
+  assert.match(sharedTargetGuard, /assertSafeDb01TestTarget/);
+  assert.match(sharedTargetGuard, /TEST_DATABASE_URL: process\\.env\\.DATABASE_URL/);
+  assert.match(sharedTargetGuard, /DATABASE_URL: process\\.env\\.DB02_APP_DATABASE_URL/);
+  assert.match(sharedTargetGuard, /DB01_REMOTE_TEST_DATABASE_CONFIRM/);
+  assert.match(sharedTargetGuard, /target\\.database !== process\\.env\\.DB02_EXPECTED_DATABASE/);
+  const allScripts = [...concurrencyScripts, {
+    name: "db02-program-archive-concurrency-unregistered.sh",
+    source: archiveRace,
+  }];
+  assert.equal(allScripts.length, 6);
+  for (const { name, source } of allScripts) {
+    const shared = source.indexOf("source scripts/sql/db02-assert-disposable-target.sh");
+    const firstConnect = source.indexOf('ACTUAL_DATABASE="$(psql');
+    assert.ok(shared >= 0, name + ": missing shared safe-target verification");
+    assert.ok(firstConnect > shared, name + ": unsafe direct PostgreSQL access");
+  }
+});
+
+test("DB02 target guard rejects production names, redirects, remote ambiguity and app DB reuse", () => {
+  const TEST_DATABASE_URL = "postgres://test:secret@127.0.0.1:5432/db02_acceptance_test";
+  assert.equal(assertSafeDb01TestTarget({ TEST_DATABASE_URL }).database,
+    "db02_acceptance_test");
+  assert.throws(
+    () => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL: "postgres://test:secret@127.0.0.1:5432/lms_production",
+    }),
+    /not explicitly a test database/,
+  );
+  assert.throws(
+    () => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL: TEST_DATABASE_URL + "?host=production.internal",
+    }),
+    /may redirect the destructive target/,
+  );
+  assert.throws(
+    () => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL: "postgres://test:secret@production.internal/db02_acceptance_test",
+    }),
+    /Remote test database requires/,
+  );
+  assert.throws(
+    () => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL,
+      DATABASE_URL: "postgres://different:secret@127.0.0.1:5432/db02_acceptance_test",
+    }),
+    /configured application database/,
+  );
 });
 
 test("runner trigger preflight cannot drift behind later canonical hardening", () => {
