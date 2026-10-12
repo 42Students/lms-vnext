@@ -260,3 +260,29 @@ Key source-backed conclusions:
 - no “encryption controls verified” claim is allowed until the approved storage/database encryption policy and actual infrastructure configuration are witnessed.
 
 DB-016 cannot become `DONE_VERIFIED` until PostgreSQL replay/negative tests and real private-storage configuration checks execute. DB-001 remains a blocking dependency for those witnesses.
+
+
+## DB-019 global eleven-domain source field crosscheck — 2026-10-12
+
+**Evidence level: SOURCE-ONLY, NOT PostgreSQL acceptance.** Re-fetched all 11 canonical `docs/planning/db-pass4-columns-*.json` ledgers from `main` and independently enumerated each table and field, requiring consistent declared counts, distinct `table.column` identities inside each domain, and nonempty `sourceEvidence`. Observed **199 candidate tables / 2,829 candidate fields, zero structural errors**, with **0 non-null declared `verifiedMapping`**. The latter is a field-ledger evidence marker, **not** proof that nothing has been implemented. Source snapshot candidate arrays are empty for **1,547 rows**, of which DB00 historical rows contribute 732. An empty candidate array is not evidence of retirement or missing runtime implementation; it must be reconciled to domain crosswalks and approved redesign/external dispositions.
+
+| Domain | Table candidates | Field candidates | Empty snapshot table-candidate arrays |
+| --- | ---: | ---: | ---: |
+| DB00 historical | 39 | 732 | 732 |
+| DB01 identity/tenant | 22 | 312 | 87 |
+| DB02 academics | 13 | 125 | 59 |
+| DB03 groups/electives | 6 | 79 | 0 |
+| DB04 profiles/private verification | 7 | 103 | 85 |
+| DB05 course/content | 7 | 92 | 17 |
+| DB06 assessments/attendance | 21 | 248 | 183 |
+| DB07 projects | 16 | 358 | 58 |
+| DB08 placement policy | 18 | 280 | 0 |
+| DB09 TPO/recruiter | 31 | 279 | 231 |
+| DB10 shared operations | 19 | 221 | 95 |
+| **Total** | **199** | **2,829** | **1,547** |
+
+DB-019 remains **READY / not completed**, because its domain dependencies DB-003, DB-004, DB-005, DB-007, DB-008, DB-012 and actual migration/PostgreSQL acceptance remain open. DB-003 specifically needs explicit decisions on seven Smrithi aggregate tables (91 source fields); DB-004 has 137 owner-defined remaining target dispositions, a different measure than the 87 DB01 snapshot candidate-empty rows. Do not infer implicit retirements or replace crosswalk semantics with field-count arithmetic.
+
+**GitHub Actions re-enabled proof:** an on-demand retry of preexisting CI run [#3313](https://github.com/42Students/lms-vnext/actions/runs/38210379636) on the now-public repository allocated a runner and PostgreSQL 17 service, passed dependency installation, migration-journal integrity and DB04 promotion-source verification, but **failed at lint** (26 errors / 23 warnings). Typecheck, unit, full database integration, Playwright, production build and smoke were skipped on that attempt. That run does **not** constitute clean migration replay, DB018 race/tenant negative evidence, or DB-020 certification. Later push runs must be checked separately at their own exact SHAs. This paragraph replaces the old assumption that *no* hosted executable environment is obtainable; absence of GitHub Actions was not itself acceptance.
+
+**Required closure actions:** freeze fresh legacy source oracle; settle DB00 active/retire decisions and every active field's semantic target, tenancy, FK/state/history and producer/consumer evidence; have Chat 1 alone integrate `drizzle/**` and the schema barrel in dependency order; independently run clean PostgreSQL replay, negative tenant/FK/state, two-session concurrency and drift checks against that committed exact SHA; retain command, runner, PG version and logs before updating `verifiedMapping` or certifying DB-020. The global phase stays DATABASE.
