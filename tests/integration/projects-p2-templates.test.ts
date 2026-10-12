@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
   beforeEach,
@@ -37,6 +38,11 @@ const pool = new Pool({
   connectionString: databaseUrl,
   max: 1,
 });
+
+// Append-only revisions intentionally survive test transactions; a per-process
+// nonce keeps normal fixtures independent across repeated disposable DB runs.
+const fixtureSuffix = randomUUID().slice(0, 12);
+const fixtureSlug = (label: string) => `p2-${label}-${fixtureSuffix}`;
 
 const superAdmin: RequestContext = {
   user: {
@@ -108,23 +114,25 @@ function blueprint(label: string) {
 }
 
 async function cleanup() {
+  // Once DB070 is active, these revisions are permanently append-only.
+  // A test must never disable audit triggers or DELETE immutable history.
+  // Unique fixture slugs prevent collisions on repeated disposable DB runs.
+  const status = await pool.query<{ immutable: boolean }>(
+    "select exists (select 1 from pg_trigger " +
+      "where tgrelid = 'project_template_versions'::regclass " +
+      "and tgname = 'db07_project_template_versions_append_only' " +
+      "and tgenabled = 'O' and not tgisinternal) as immutable",
+  );
+  if (status.rows[0]?.immutable) return;
   await pool.query(
-    `delete from project_template_college_assignments
-     where template_id in (
-       select id from project_templates
-       where slug like 'p2-%'
-     )`,
+    "delete from project_template_college_assignments " +
+      "where template_id in (select id from project_templates where slug like 'p2-%')",
   );
   await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p2-%'
-     )`,
+    "delete from project_template_versions " +
+      "where template_id in (select id from project_templates where slug like 'p2-%')",
   );
-  await pool.query(
-    "delete from project_templates where slug like 'p2-%'",
-  );
+  await pool.query("delete from project_templates where slug like 'p2-%'");
 }
 
 beforeEach(cleanup);
@@ -138,10 +146,10 @@ afterAll(async () => {
 describe("Projects P2 template persistence", () => {
   it("never discloses a foreign revision through assigned template detail", async () => {
     const owned = await createProjectTemplate(superAdmin, {
-      slug: "p2-detail-owner-a", title: "P2 Owner A", blueprint: blueprint("Owner A"),
+      slug: fixtureSlug("detail-owner-a"), title: "P2 Owner A", blueprint: blueprint("Owner A"),
     });
     const foreign = await createProjectTemplate(superAdmin, {
-      slug: "p2-detail-owner-b", title: "P2 Owner B", blueprint: blueprint("Owner B"),
+      slug: fixtureSlug("detail-owner-b"), title: "P2 Owner B", blueprint: blueprint("Owner B"),
     });
     await publishProjectTemplate(superAdmin, owned.template.id);
     await assignProjectTemplateToCollege(scopedSuperAdmin, owned.template.id, SEED_IDS.collegeA);
@@ -163,9 +171,18 @@ describe("Projects P2 template persistence", () => {
       },
     );
     if (forged) {
-      await expect(getAssignedProjectTemplateDetail(
-        collegeAdmin, SEED_IDS.collegeA, owned.template.id,
-      )).rejects.toMatchObject({ code: "PROJECT_TEMPLATE_NOT_ASSIGNED" });
+      try {
+        await expect(getAssignedProjectTemplateDetail(
+          collegeAdmin, SEED_IDS.collegeA, owned.template.id,
+        )).rejects.toMatchObject({ code: "PROJECT_TEMPLATE_NOT_ASSIGNED" });
+      } finally {
+        // Do not leave an intentionally corrupt fixture behind for other suites.
+        await pool.query(
+          "update project_template_college_assignments set template_version_id = $1 " +
+            "where template_id = $2 and college_id = $3 and revoked_at is null",
+          [owned.version.id, owned.template.id, SEED_IDS.collegeA],
+        );
+      }
     } else {
       const stillOwned = await getAssignedProjectTemplateDetail(
         collegeAdmin, SEED_IDS.collegeA, owned.template.id,
@@ -178,7 +195,7 @@ describe("Projects P2 template persistence", () => {
     const created = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p2-version-pinning",
+        slug: fixtureSlug("version-pinning"),
         title: "P2 Version Pinning",
         blueprint: blueprint("V1"),
       },
@@ -268,7 +285,7 @@ describe("Projects P2 template persistence", () => {
     const source = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p2-duplicate-source",
+        slug: fixtureSlug("duplicate-source"),
         title: "P2 Duplicate Source",
         blueprint: blueprint("Duplicate"),
       },
@@ -288,13 +305,13 @@ describe("Projects P2 template persistence", () => {
         superAdmin,
         source.template.id,
         {
-          slug: "p2-duplicate-copy",
+          slug: fixtureSlug("duplicate-copy"),
           title: "P2 Duplicate Copy",
         },
       );
 
     expect(duplicated.template).toMatchObject({
-      slug: "p2-duplicate-copy",
+      slug: fixtureSlug("duplicate-copy"),
       title: "P2 Duplicate Copy",
       status: "DRAFT",
       currentVersion: 1,
@@ -317,7 +334,7 @@ describe("Projects P2 template persistence", () => {
   it("keeps global template mutation superadmin-only and assignment safety-scoped", async () => {
     await expect(
       createProjectTemplate(collegeAdmin, {
-        slug: "p2-admin-denied",
+        slug: fixtureSlug("admin-denied"),
         title: "P2 Admin Denied",
         blueprint: blueprint("Denied"),
       }),
@@ -325,7 +342,7 @@ describe("Projects P2 template persistence", () => {
 
     await expect(
       createProjectTemplate(scopedSuperAdmin, {
-        slug: "p2-scoped-denied",
+        slug: fixtureSlug("scoped-denied"),
         title: "P2 Scoped Denied",
         blueprint: blueprint("Scoped"),
       }),
@@ -334,7 +351,7 @@ describe("Projects P2 template persistence", () => {
     const created = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p2-assignment-scope",
+        slug: fixtureSlug("assignment-scope"),
         title: "P2 Assignment Scope",
         blueprint: blueprint("Scope"),
       },
@@ -364,7 +381,7 @@ describe("Projects P2 template persistence", () => {
     const created = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p2-archive-guard",
+        slug: fixtureSlug("archive-guard"),
         title: "P2 Archive Guard",
         blueprint: blueprint("Archive"),
       },
