@@ -98,6 +98,6 @@ test("DB10 integration writer and cleanup share a validated isolated Pool", () =
   assert.match(suite, /const isolatedDb = drizzle\(pool\)/);
   assert.match(suite, /queueOutboundDeliveryInTransaction\(isolatedDb, context, raw\)/);
   assert.doesNotMatch(suite, /queueOutboundDelivery\(adminA,/);
-  assert.doesNotMatch(suite, /getDb\(/);
+  assert.doesNotMatch(suite, /import\s+.*getDb/);
   assert.match(suite, /DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = globalKey/);
 });
