@@ -100,11 +100,11 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
           errors.push({ code: 'FIELD_WITHOUT_SOURCE_EVIDENCE', key });
         }
         if (row.verifiedMapping !== null && row.verifiedMapping !== undefined) {
-          const evidence = row.databaseAcceptanceEvidence;
-          const hasProof = evidence && evidence.kind === 'DISPOSABLE_POSTGRES' &&
-            /^[a-f0-9]{40}$/i.test(evidence.sourceCommitSha || '') &&
-            evidence.exitCode === 0 && evidence.result === 'PASS' &&
-            !missing(evidence.command) && !missing(evidence.postgresVersion);
+          // Self-declared execution envelopes are not independently verifiable.
+          // A source ledger can forge a SHA, command, version and PASS result.
+          // Keep verifiedMapping fail-closed until independent run attestation
+          // is checked outside this source-inventory integrity scanner.
+          const hasProof = false;
           if (missing(row.verifiedMapping) || !hasProof || !row.validationEvidence ||
               /source[- ]only|not (?:runtime|postgres)|pending/i.test(row.validationEvidence))
             errors.push({ code: 'UNSUPPORTED_VERIFIED_MAPPING', key });
