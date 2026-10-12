@@ -39,11 +39,15 @@ test("all multi-parent and priority review cases are tracked without false verif
   for(const item of audit.priorityChecks) assert.ok(tables.has(item.table));
 });
 
-test("audit passes 4 and 5 remain unstarted after first additional pass", () => {
+test("audit passes 4 and 5 record source progress without claiming runtime verification", () => {
   assert.deepEqual(ledger.passes.map(p=>p.pass), [1,2,3,4,5]);
   assert.equal(ledger.passes[2].status,"SOURCE_AUDIT_DONE");
-  assert.equal(ledger.passes[3].status,"NOT_STARTED");
-  assert.equal(ledger.passes[4].status,"NOT_STARTED");
+  assert.equal(ledger.passes[3].status,"SOURCE_FIELD_SWEEP_DONE_UNVERIFIED");
+  assert.equal(ledger.passes[4].status,"SOURCE_THREAT_AUDIT_DONE_RUNTIME_BLOCKED");
+  for (const pass of ledger.passes.slice(3)) {
+    assert.ok(pass.output.length > 0, "A progressed pass needs evidence artifacts");
+    assert.doesNotMatch(pass.status, /^(?:DONE_VERIFIED|RUNTIME_VERIFIED|CERTIFIED)$/);
+  }
 });
 
 test("no source-only audit implies actual Postgres has been verified", () => {
