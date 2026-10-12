@@ -128,6 +128,55 @@ afterAll(async () => {
 });
 
 describe("DB08-B per-cohort consented learner registration", () => {
+  it("denies stale ACTIVE context when the persisted learner account was disabled", async () => {
+    const fixture = await createBatchFixture();
+    try {
+      await pool.query(
+        "UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+        [SEED_IDS.learnerUser],
+      );
+      await expect(registerOwnPlacementChoice(learner, {
+        choice: "PLACEMENTS", acceptedConsent: true,
+      })).rejects.toMatchObject({ code: "DB08_REGISTRATION_FORBIDDEN" });
+
+      // A failed authorization must not persist either consent or event.
+      const registrations = await pool.query(
+        "SELECT id FROM placement_batch_registrations WHERE membership_id=$1 AND cohort_id=$2",
+        [SEED_IDS.learnerCollegeAMembership, fixture.cohort],
+      );
+      expect(registrations.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.learnerUser],
+      );
+    }
+  });
+
+  it("denies a stale ACTIVE context when the persisted membership is suspended", async () => {
+    const fixture = await createBatchFixture();
+    try {
+      await pool.query(
+        "UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+      await expect(registerOwnPlacementChoice(learner, {
+        choice: "PLACEMENTS", acceptedConsent: true,
+      })).rejects.toMatchObject({ code: "DB08_REGISTRATION_FORBIDDEN" });
+
+      const registrations = await pool.query(
+        "SELECT id FROM placement_batch_registrations WHERE membership_id=$1 AND cohort_id=$2",
+        [SEED_IDS.learnerCollegeAMembership, fixture.cohort],
+      );
+      expect(registrations.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "UPDATE college_memberships SET status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+    }
+  });
+
   it("stores a single consent and event on repeated identical self registration", async () => {
     const ids = await createBatchFixture();
     const first = await registerOwnPlacementChoice(learner, {
