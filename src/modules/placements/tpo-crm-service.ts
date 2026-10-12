@@ -550,8 +550,11 @@ export async function markTpoLeadContacted(
     await tx.insert(placementTpoLeadActivities).values({
       collegeId,
       leadId,
-      type: "SYSTEM",
-      isSystem: true,
+      // A staff member initiated this transition. Keep the verified user
+      // actor on an immutable user-authored NOTE; reserved SYSTEM events
+      // must never forge a user actor under registered DB09 constraints.
+      type: "NOTE",
+      isSystem: false,
       note: "Manual stage changed to Contacted",
       createdByUserId: context.user.id,
     });
