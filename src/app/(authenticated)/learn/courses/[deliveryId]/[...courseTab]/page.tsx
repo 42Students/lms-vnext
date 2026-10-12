@@ -106,7 +106,10 @@ export default async function LearnerCourseTabPage({
           sectionName: courseMeta.sectionName,
           sectionCode: courseMeta.sectionCode,
           academicPeriodName: courseMeta.academicPeriodName,
-          instructors,
+          instructors: instructors.map((instructor) => ({
+            ...instructor,
+            name: instructor.name?.trim() || "Instructor",
+          })),
         }}
         readOnly={readOnly}
         courseUpdates={courseUpdates}
