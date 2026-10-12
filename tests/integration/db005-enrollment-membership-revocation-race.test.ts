@@ -15,8 +15,8 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
  */
 const testUrl = process.env.TEST_DATABASE_URL;
 if (!testUrl || testUrl !== process.env.DATABASE_URL ||
-    process.env.DB017_ISOLATED_TEST_DATABASE !== "1") {
-  throw new Error("DB005 enrollment races require the isolated, identical TEST_DATABASE_URL and DATABASE_URL with DB017_ISOLATED_TEST_DATABASE=1");
+    process.env.DB03_ISOLATED_TEST_DATABASE !== "1") {
+  throw new Error("DB005 enrollment races require the isolated, identical TEST_DATABASE_URL and DATABASE_URL with DB03_ISOLATED_TEST_DATABASE=1");
 }
 const target = new URL(testUrl);
 const dbName = decodeURIComponent(target.pathname.replace(/^\//, ""));
