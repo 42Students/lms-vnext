@@ -6,9 +6,19 @@ import { closeDatabaseConnection } from "@/db/client";
 import { gradeAssignmentSubmission } from "@/modules/courses/assignment-submission-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const url=process.env.TEST_DATABASE_URL;
 const enabled=process.env.DB06_ISOLATED_TEST_DATABASE==="1"&&Boolean(url);
+// DB06 creates/deletes real rows, so fail closed before opening any connection.
+// A standalone DB06 run must use a distinct disposable target; only the
+// independent verifier's DB03 isolation may alias its own disposable URL.
+if(enabled){
+  assertDb018DisposableTarget({
+    ...process.env,
+    DB018_ISOLATED_TEST_DATABASE:"1",
+  });
+}
 const pool=enabled?new Pool({connectionString:url,max:8}):null;
 type Sql=Pool|PoolClient;
 type Graph={program:string;period:string;cohort:string;section:string;section2:string;course:string;offering:string;delivery:string;delivery2:string;path:string;lesson:string};
@@ -62,10 +72,10 @@ async function faculty(db:Sql,college:string){
 }
 async function quiz(db:Sql,lesson:string,delivery:string|null=null){const sequence=made.quizzes.length;const id=keep("quizzes",randomUUID());await db.query("INSERT INTO course_quizzes(id,lesson_id,delivery_id,title,max_attempts,total_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,$4,3,10,$6,'PUBLISHED',$5)",[id,lesson,delivery,`DB06 quiz ${id}`,SEED_IDS.collegeAdminUser,sequence]);return id}
 async function question(db:Sql,q:string){const id=keep("questions",randomUUID());await db.query("INSERT INTO quiz_questions(id,quiz_id,question_type,prompt,points,sequence) VALUES($1,$2,'SINGLE_CHOICE',$3,10,0)",[id,q,`DB06 question ${id}`]);return id}
-async function attempt(db:Sql,q:string,d:string,m=SEED_IDS.learnerCollegeAMembership){const id=keep("attempts",randomUUID());await db.query("INSERT INTO quiz_attempts(id,quiz_id,delivery_id,membership_id,attempt_number,score,max_score) VALUES($1,$2,$3,$4,1,10,10)",[id,q,d,m]);return id}
+async function attempt(db:Sql,q:string,d:string,m:string=SEED_IDS.learnerCollegeAMembership){const id=keep("attempts",randomUUID());await db.query("INSERT INTO quiz_attempts(id,quiz_id,delivery_id,membership_id,attempt_number,score,max_score) VALUES($1,$2,$3,$4,1,10,10)",[id,q,d,m]);return id}
 async function answer(db:Sql,a:string,q:string){await db.query("INSERT INTO quiz_attempt_answers(attempt_id,question_id,question_type,prompt_snapshot,points_possible,selected_option_ids,options_snapshot,correct,points_awarded) VALUES($1,$2,'SINGLE_CHOICE','snapshot',10,'[]'::jsonb,'[]'::jsonb,true,10)",[a,q])}
 async function assignment(db:Sql,lesson:string,delivery:string|null=null){const id=keep("assignments",randomUUID());await db.query("INSERT INTO course_assignments(id,lesson_id,delivery_id,title,max_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,$4,100,0,'PUBLISHED',$5)",[id,lesson,delivery,`DB06 assignment ${id}`,SEED_IDS.collegeAdminUser]);return id}
-async function submission(db:Sql,a:string,d:string,m=SEED_IDS.learnerCollegeAMembership){const id=keep("submissions",randomUUID());await db.query("INSERT INTO assignment_submissions(id,assignment_id,delivery_id,membership_id,submission_type,text_content) VALUES($1,$2,$3,$4,'TEXT','DB06 answer')",[id,a,d,m]);return id}
+async function submission(db:Sql,a:string,d:string,m:string=SEED_IDS.learnerCollegeAMembership){const id=keep("submissions",randomUUID());await db.query("INSERT INTO assignment_submissions(id,assignment_id,delivery_id,membership_id,submission_type,text_content) VALUES($1,$2,$3,$4,'TEXT','DB06 answer')",[id,a,d,m]);return id}
 async function alternateOffering(db:Sql,g:Graph){const c=keep("courses",randomUUID()),o=keep("offerings",randomUUID());await db.query("INSERT INTO courses(id,department_id,name,code,status) SELECT $1,department_id,$2,$3,'ACTIVE' FROM courses WHERE id=$4",[c,`DB06 alternate ${c}`,`DB06-ALT-${c}`,g.course]);await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,'CORE',4,1,'ACTIVE')",[o,c,g.cohort,g.period]);return o}
 async function bindElective(db:Sql,g:Graph,delivery:string,membership?:string){
  const group=keep("groups",randomUUID()),slot=keep("electiveSlots",randomUUID()),eo=keep("electiveOfferings",randomUUID());
