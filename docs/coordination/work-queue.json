@@ -151,21 +151,19 @@
       "paths": [
         "docs/planning/db00-historical-engine-disposition.json"
       ],
-      "status": "BLOCKED",
-      "latestEvidenceSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2",
+      "status": "COMPLETED",
+      "latestEvidenceSha": "e9b9bc41cbb5f71a31bd937299a17948047a6047",
       "verificationEvidence": [],
       "blockers": [
-        "PRODUCT_DECISION_REQUIRED: Decide whether the seven Smrithi persisted aggregates are active in vNext scope, externally consumed, or explicitly retired; no safe-retirement evidence yet.",
-        "PRODUCER_CONSUMER_EVIDENCE_REQUIRED: Pinned Java model census and GitHub indexed search do not prove absence of native SQL, detached services, or client dependencies.",
-        "LIVE_SCHEMA_AND_TEST_EVIDENCE_REQUIRED: Historical MySQL test snapshot through ~V150 is not a live schema; reconcile subsequent Flyway migrations and execute DB tests when CI runner is available."
+        "NATIVE_SOURCE_ACCEPTANCE_PENDING: User-approved Smrithi exclusion is implemented and 43 registered migrations plus 54 DB schema files were read-only scanned with no Smrithi references, but the newly authored repository-wide runtime exclusion Node test has not executed in native CI/Node. Preserve historical source evidence; DONE_VERIFIED only after independently executed proof."
       ],
-      "completionNote": "Partial DB-003 source-audit batch committed: full 91-column historical Smrithi inventory, source indices/constraints, risk/decision matrix and authored regression guard; all seven decisions remain open, so DB-003 is BLOCKED, not COMPLETED/DONE_VERIFIED.",
+      "completionNote": "2026-10-12 user explicitly approved excluding seven historical Smrithi tables (91 fields) from greenfield LMS vNext. Decision doc 52b13cb, validated scope guard cdb86e3, audited disposition d0e3eaf, global audit consumer 5fc9879, regression tests bfe6f45/de28950/842db8d/e9b9bc4. Product disposition 39/39 tables, 732/732 fields; zero unresolved Smrithi product decisions. No legacy SQL was altered and no production DROP is authorized. Static V8 approval guard returned valid and rejected forged/wrong-scope cases; registered 43 migrations and 54 DB schema files checked without Smrithi references. Native Node-wide runtime exclusion and PostgreSQL migration acceptance were NOT executed; this is COMPLETED implementation, NOT DONE_VERIFIED.",
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:22:09.399Z",
       "startedAt": "2026-10-10T20:22:45.059Z",
       "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedAt": "2026-10-12T12:04:58Z",
+      "completionCommitSha": "e9b9bc41cbb5f71a31bd937299a17948047a6047",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -194,6 +192,11 @@
           "status": "BLOCKED",
           "at": "2026-10-10T20:26:11.795Z",
           "reason": "Source-only evidence committed in f56b844, but no user product decision, proven consumer status, live schema, PostgreSQL run or CI evidence."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T12:04:58Z",
+          "reason": "User explicitly excluded historical Smrithi admissions from vNext; product scope and source ledger now approved, native executable exclusion regression pending. User-directed completion; no Chat 6 execution attribution."
         }
       ]
     },
