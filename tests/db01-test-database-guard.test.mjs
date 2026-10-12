@@ -48,6 +48,19 @@ test("DB01 guard permits only confirmed remote test host/name", () => {
     DB01_REMOTE_TEST_DATABASE_CONFIRM:"RESET:pg.internal/lms_vnext_test"
   }), {host:"pg.internal",database:"lms_vnext_test",mode:"explicit-remote"});
 });
+test("DB01 guard rejects query parameters that can redirect the PostgreSQL target", () => {
+  for (const key of ["host", "hostaddr", "port", "database", "dbname"]) {
+    assert.throws(
+      () =>
+        assertSafeDb01TestTarget({
+          TEST_DATABASE_URL:
+            `postgresql://test_user:secret@127.0.0.1:5432/lms_vnext_test?${key}=pg.internal`,
+        }),
+      new RegExp(`query parameter "\\${key}" may redirect the destructive target`),
+    );
+  }
+});
+
 test("DB01 guard redacts secrets and rejects multiple path segments", () => {
   assert.throws(() => assertSafeDb01TestTarget({
     TEST_DATABASE_URL:"postgres://p:secret@localhost/lms_vnext_test/schema"
