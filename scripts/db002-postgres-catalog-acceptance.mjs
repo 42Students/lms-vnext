@@ -2,17 +2,15 @@
 // Read-only PostgreSQL replay catalog proof for DB-002. Does NOT prove full domain parity.
 import {readFileSync} from "node:fs";
 import pg from "pg";
+import {assertSafeDb01TestTarget} from "./db01-test-database-guard.mjs";
 export const requiredTables=["organizations","colleges","users","college_memberships","courses","course_section_deliveries","quiz_attempts","assignment_submissions"];
-export function validateTarget(raw){
+export function validateTarget(raw, env=process.env){
  if(!raw)throw Error("TEST_DATABASE_URL required");
- const u=new URL(raw);
- if(!["postgres:","postgresql:"].includes(u.protocol) ||
-    !["127.0.0.1","localhost","[::1]"].includes(u.hostname) || u.search || u.hash)
-   throw Error("DB002 catalog inspection requires a local disposable PostgreSQL URL without target overrides");
- const name=decodeURIComponent(u.pathname.replace(/^\//,""));
- if(!/^(?:(?:test|e2e)_[a-z0-9_]+|[a-z0-9_]+_(?:test|e2e)(?:_[a-z0-9]+)*)$/i.test(name))
-   throw Error("DB002 catalog inspection refuses non-test database");
- return name;
+ const target=assertSafeDb01TestTarget({
+  TEST_DATABASE_URL:raw,
+  DB01_REMOTE_TEST_DATABASE_CONFIRM:env.DB01_REMOTE_TEST_DATABASE_CONFIRM,
+ });
+ return target.database;
 }
 export function assess({expected,migrations,version,tables,foreignKeys,checks,uniques,indexes,missing}){
  const errors=[];
