@@ -356,4 +356,40 @@ describe("Placement P4 eligibility", () => {
       code: "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
     });
   });
+
+  it("rejects unknown and foreign-college academic policy scopes before persisting", async () => {
+    const job = await createJob();
+    const foreignProgram = await pool.query<{ id: string }>(
+      `insert into programs (department_id, name, code, duration_terms)
+       values ($1, $2, $3, 8) returning id`,
+      [SEED_IDS.departmentB, "Foreign policy guard", "P4-FGN"],
+    );
+    const foreignProgramId = foreignProgram.rows[0]!.id;
+    try {
+      await expect(
+        upsertJobEligibilityPolicy(tpo, job.id, {
+          allowedProgramIds: [foreignProgramId],
+          missingEvidencePolicy: "REQUIRE_COMPLETE",
+        }),
+      ).rejects.toMatchObject({
+        code: "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      });
+      await expect(
+        upsertJobEligibilityPolicy(tpo, job.id, {
+          allowedCohortIds: ["90000000-0000-4000-8000-000000000099"],
+          missingEvidencePolicy: "REQUIRE_COMPLETE",
+        }),
+      ).rejects.toMatchObject({
+        code: "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      });
+      const stored = await pool.query(
+        "select job_id from placement_job_eligibility_policies where job_id = $1",
+        [job.id],
+      );
+      expect(stored.rows).toHaveLength(0);
+    } finally {
+      await pool.query("delete from programs where id = $1", [foreignProgramId]);
+    }
+  });
+
 });
