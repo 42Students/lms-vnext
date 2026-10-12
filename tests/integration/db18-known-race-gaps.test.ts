@@ -124,12 +124,14 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
     try {
       await blocker.query("BEGIN");
       blockerOpen = true;
-      // createLearnerProgramEnrollment does not query this table before its
-      // write transaction. The ACCESS EXCLUSIVE lock therefore lets all
-      // program/cohort/membership prechecks finish, then deterministically
-      // pauses the insert at the exact stale-check window.
+      // An in-flight cohort completion holds the row UPDATE lock. The
+      // enrollment's initial unlocked source precheck may still see ACTIVE,
+      // but its in-transaction FOR SHARE recheck MUST await this commit and
+      // reject the newly COMPLETED cohort. This avoids the table-lock
+      // deadlock that would prevent a correct FOR SHARE implementation.
       await blocker.query(
-        "lock table learner_program_enrollments in access exclusive mode",
+        "update cohorts set status = 'COMPLETED', updated_at = now() where id = $1",
+        [cohortId],
       );
 
       const pending = createLearnerProgramEnrollment(collegeAdmin, {
@@ -141,13 +143,9 @@ describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)"
         (error: unknown) => ({ kind: "rejected" as const, error }),
       );
 
-      await waitForBlockedQuery("learner_program_enrollments");
+      await waitForBlockedQuery("cohorts");
 
-      await pool.query(
-        "update cohorts set status = 'COMPLETED', updated_at = now() where id = $1",
-        [cohortId],
-      );
-
+      // The cohort completion wins; the learner insert must now fail closed.
       await blocker.query("COMMIT");
       blockerOpen = false;
 
