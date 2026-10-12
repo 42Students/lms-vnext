@@ -4715,6 +4715,50 @@
         }
       ],
       "completionNote": "SOURCE/STAGING IMPLEMENTATION COMPLETED: 2 fail-closed review/evaluation→project submission composite FKs, exact project_id/id parent unique target, read-only dirty-data preflight+DO abort, source contract. 12 Node source tests and 6 opt-in PG cases authored; 15 exact GitHub content V8 assertions executed PASS. Node/Vitest/PG actual runner NOT EXECUTED. Await Chat1 registered migration and disposable PostgreSQL replay before DONE_VERIFIED."
+    },
+    {
+      "id": "DB-075",
+      "phase": "DATABASE",
+      "title": "Enforce DB07 meeting-linked sprint and task ancestry",
+      "scope": "Stage independent DB07 meeting project/sprint/task composite FKs, plus conditional same-sprint task pairing, with source and opt-in PostgreSQL witnesses; Chat1 retains migration integration.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db07-meeting-linked-ancestry-staging.sql",
+        "docs/planning/db075-meeting-ancestry-integrity-contract.md",
+        "tests/db075-meeting-ancestry-source.test.mjs",
+        "tests/integration/db075-meeting-ancestry.test.ts"
+      ],
+      "status": "IN_PROGRESS",
+      "pickedBy": 2,
+      "pickedAt": "2026-10-12T14:26:00.000Z",
+      "startedAt": "2026-10-12T14:26:00.000Z",
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "pickHistory": [
+        {
+          "chatNumber": 2,
+          "pickedAt": "2026-10-12T14:26:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T14:26:00.000Z",
+          "reason": "Chat2 claims uncovered meeting linked sprint/task cross-project and cross-sprint integrity hole."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T14:26:00.000Z",
+          "reason": "Implement independent candidate SQL and negative tests under current DATABASE phase."
+        }
+      ]
     }
   ],
   "eventModel": {
