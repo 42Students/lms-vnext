@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
+  beforeAll,
   beforeEach,
   describe,
   expect,
@@ -84,15 +86,19 @@ const faculty: RequestContext = {
   },
 };
 
+// Give this suite its own learner; the seed learner already has an ACTIVE
+// program enrollment and must not be reused for unrelated course fixtures.
+const learnerUserId = randomUUID();
+const learnerMembershipId = randomUUID();
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
+    id: learnerUserId,
+    identityUid: `c2-fixture-${learnerUserId}`,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: learnerMembershipId,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -305,7 +311,7 @@ async function createStructure() {
       collegeAdmin,
       {
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          learnerMembershipId,
         programId: program.id,
         cohortId: cohort.id,
       },
@@ -332,12 +338,29 @@ async function createStructure() {
   };
 }
 
+beforeAll(async () => {
+  await pool.query(
+    "insert into users (id, identity_uid, display_name) values ($1,$2,$3)",
+    [learnerUserId, `c2-fixture-${learnerUserId}`, "C2 learner fixture"],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id) values ($1,$2,$3)",
+    [learnerMembershipId, learnerUserId, SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "insert into membership_roles (membership_id, role) values ($1,'LEARNER')",
+    [learnerMembershipId],
+  );
+});
+
 beforeEach(async () => {
   await cleanupC2();
 });
 
 afterAll(async () => {
   await cleanupC2();
+  // Keep the ephemeral identity rows on this disposable database: immutable
+  // audit events may still reference their actor IDs. The DB is discarded.
   await pool.end();
   await closeDatabaseConnection();
 });
