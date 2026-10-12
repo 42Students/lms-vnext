@@ -9,6 +9,7 @@ const schema = read("src/db/schema/projects.ts");
 const sql = read("docs/planning/sql/db07-template-version-append-only-staging.sql");
 const contract = read("docs/planning/db07-template-version-append-only-contract.md");
 const pg = read("tests/integration/db07-template-version-append-only.test.ts");
+const templateP2 = read("tests/integration/projects-p2-templates.test.ts");
 
 test("DB070 version lifecycle creates immutable snapshots as new rows", () => {
   assert.equal((service.match(/\.insert\(projectTemplateVersions\)/g) ?? []).length, 3);
@@ -90,6 +91,16 @@ test("DB070 PG acceptance isolates writes and refuses to assert execution in thi
   assert.match(pg, /client\.query\("BEGIN"\)/);
   assert.match(pg, /client\.query\("ROLLBACK"\)/);
   assert.match(contract, /not yet run/);
+});
+
+test("DB070 existing project template integration suite never erases immutable revisions", () => {
+  assert.match(templateP2, /from pg_trigger|select exists \(select 1 from pg_trigger/);
+  assert.match(templateP2, /tgname = 'db07_project_template_versions_append_only'/);
+  assert.match(templateP2, /if \(status\.rows\[0\]\?\.immutable\) return/);
+  assert.match(templateP2, /fixtureSlug = \(label: string\)/);
+  assert.match(templateP2, /fixtureSuffix = randomUUID\(\)/);
+  assert.match(templateP2, /getAssignedProjectTemplateDetail/);
+  assert.match(templateP2, /finally\s*\{[\s\S]*?set template_version_id = \$1/);
 });
 
 test("DB070 contract explicitly preserves same-template assignment reissue", () => {
