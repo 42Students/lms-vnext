@@ -1200,4 +1200,59 @@ describe("Projects adversarial isolation", () => {
     ).toBe(false);
   });
 
+
+  it("uses recent meeting persistence as project activity even without a shared activity event", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "meeting-activity",
+    );
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+
+    await startProjectSprint(
+      mentor,
+      project.id,
+      workspace.sprints[0]!.id,
+    );
+    await pool.query(
+      `update project_instances
+          set updated_at = now() - interval '8 days'
+        where id = $1`,
+      [project.id],
+    );
+
+    await scheduleProjectMeeting(
+      mentor,
+      project.id,
+      null,
+      {
+        title: "Recent planning touchpoint",
+        startsAt:
+          "2026-11-01T10:00:00+05:30",
+        endsAt:
+          "2026-11-01T10:30:00+05:30",
+        timeZone: "Asia/Kolkata",
+        meetingUrl:
+          "https://meet.example.com/recent-activity",
+      },
+    );
+
+    const alerts =
+      await listMyMentorProjectAttention(
+        mentor,
+        new Date(),
+      );
+    expect(
+      alerts.some(
+        (alert) =>
+          alert.projectId === project.id &&
+          alert.kind === "STALLED",
+      ),
+    ).toBe(false);
+  });
+
 });
