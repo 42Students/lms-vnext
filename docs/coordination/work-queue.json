@@ -4996,6 +4996,50 @@
           "reason": "Building forward-only 0046 principal row-lock and append-only TRUNCATE hardening."
         }
       ]
+    },
+    {
+      "id": "DB-080",
+      "phase": "DATABASE",
+      "title": "Finalize DB04 active student-image normalized persistence contract",
+      "scope": "Classify legacy student_image as active current-product state and freeze its normalized vNext mapping to receipt-backed learner_profile_images, including deactivation and ownership semantics, without editing DB-007 owned migration files.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db04-chat05-student-image-final-contract-2026-10-12.json",
+        "tests/db080-db04-student-image-contract.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-12T14:29:00.000Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-12T14:29:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T14:29:00.000Z",
+          "reason": "Created as an independent DB04 active-classification/mapping blocker-removal task after resolving the two historical tables."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T14:29:00.000Z",
+          "reason": "Chat 5 atomically created and reserved the student_image source-contract task; DB-007 ownership remains Chat 3."
+        }
+      ]
     }
   ],
   "eventModel": {
