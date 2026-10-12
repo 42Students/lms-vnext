@@ -12,13 +12,13 @@
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB002_CI_PARALLELIZATION_AND_PG_REPLAY_IN_PROGRESS",
-    "updatedOn": "2026-10-12T12:25:36.007Z",
-    "observedMainSha": "901c72c007ce7869f13182c6bf58292b7ab59a31",
+    "checkpointKind": "DB002_NATIVE_PG17_REPLAY_CATALOG_PASS_SCHEMA_DRIFT_OPEN",
+    "updatedOn": "2026-10-12T12:47:08.107Z",
+    "observedMainSha": "9d2c71d9e15eb41f5bb23964a7f90114edd14135",
     "lastWorkerMergedSha": "e3858810c0bbde30d567f741676faa44da8b2e9e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "User-directed closure-first claim in available Chat1 integrator lane, targeting parallel CI and disposable PostgreSQL replay. No PostgreSQL acceptance claimed yet."
+    "summary": "On GitHub Actions public runner, 43/43 registered migration replay, rerun idempotence and PG17 read-only catalog 90 tables/211 FK/201 CHECK/92 unique+PK/314 indexes pass; global PG tests 99 red due unregistered staged changes; in progress on 0043 schema drift. DB003 DONE_VERIFIED."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
