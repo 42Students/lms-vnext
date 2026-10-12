@@ -217,6 +217,10 @@ const expectedOwnActors = {
     "learner",
     "faculty",
   ],
+  "profile-verification.review": [
+    "superadmin",
+    "collegeAdmin",
+  ],
   "system-role.manage": [
     "superadmin",
   ],
@@ -239,6 +243,22 @@ const permissions =
   ) as PlatformPermission[];
 
 describe("platform permission matrix", () => {
+  it("grants TPO profile review only when verification is enabled and admin delegated", () => {
+    expect(can(contexts.tpo,"profile-verification.review",ownResource)).toBe(false);
+    expect(can(contexts.tpo,"profile-verification.review",{
+      ...ownResource,tpoVerificationEnabled:true,
+    })).toBe(false);
+    expect(can(contexts.tpo,"profile-verification.review",{
+      ...ownResource,tpoVerificationAdministrator:true,
+    })).toBe(false);
+    expect(can(contexts.tpo,"profile-verification.review",{
+      ...ownResource,tpoVerificationEnabled:true,tpoVerificationAdministrator:true,
+    })).toBe(true);
+    expect(can(contexts.tpo,"profile-verification.review",{
+      ...otherResource,tpoVerificationEnabled:true,tpoVerificationAdministrator:true,
+    })).toBe(false);
+  });
+
   it("locks every declared permission to an explicit actor set", () => {
     for (const permission of permissions) {
       const allowed =
