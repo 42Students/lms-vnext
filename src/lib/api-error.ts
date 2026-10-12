@@ -137,6 +137,14 @@ export function apiErrorResponse(error: unknown) {
     // explicit access-denied codes map to HTTP 403.
     const forbidden = new Set(["ACADEMICS_ACCESS_DENIED", "FACULTY_ACCESS_DENIED"]);
 
+    const forbidden = new Set([
+      "LEARNER_SCHEDULE_ACCESS_DENIED",
+      "LEARNER_ROLE_REQUIRED",
+      "FACULTY_ROLE_REQUIRED",
+      "MEMBERSHIP_NOT_ACTIVE",
+      "MEMBERSHIP_COLLEGE_MISMATCH",
+    ]);
+
     return NextResponse.json(
       { error: error.code },
       {
