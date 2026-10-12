@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "phase": "DATABASE",
   "updatedOn": "2026-10-12T14:31:00.000Z",
-  "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
+  "queuePolicy": "RETIRED. DO NOT PICK/CLAIM/COMPLETE TASKS HERE. Read and update only docs/tracker.json with binary done:true/false and executed acceptance evidence.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
     "READY",
@@ -5138,5 +5138,10 @@
     "verified": "DONE_VERIFIED plus verifiedAt/verifiedBy/executed verificationEvidence: rigorous acceptance; only this closes an active required task for phase advancement.",
     "blocked": "BLOCKED: task temporarily cannot proceed; preserve picked/completion history and next unblock condition. Can later return to READY by evidence-backed explicit change.",
     "reassignment": "Do not erase pickHistory/completion fields. Historical picked counts report unique task IDs per worker, NOT how many are currently active. Any review/failure re-open preserves events."
+  },
+  "archivedCoordination": {
+    "retiredOn": "2026-10-12",
+    "reason": "Explicit user retired six-chat tracking. This file is frozen historical evidence; NOT active work status.",
+    "soleLiveTracker": "docs/tracker.json"
   }
 }
