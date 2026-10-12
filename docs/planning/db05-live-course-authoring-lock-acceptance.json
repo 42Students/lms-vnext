@@ -9,7 +9,8 @@
     "a8aa245e16215486987f47de41ff0f0914177f4b",
     "ebdb0d1825ab2569c64055afc57741d5c964bc76",
     "881f1e6e341492f16a2d694bffee2fb68bde6741",
-    "1aa4d663c2700cc620333889e76af1e44c9bc4f2"
+    "1aa4d663c2700cc620333889e76af1e44c9bc4f2",
+    "83c9edc2d33d8d9b4ee876ac819d336ef9ca1678"
   ],
   "sourceFiles": [
     "src/modules/courses/offering-service.ts",
@@ -216,6 +217,16 @@
       "interleaving": "Concurrent membership role removal and role grant; no stale FACULTY assignment",
       "expectedOutcome": "VERIFY_ONLY",
       "expectedMarker": "NO_INVALID_ROLE",
+      "environment": "READ_COMMITTED_2_SESSION",
+      "executed": false,
+      "passed": false
+    },
+    {
+      "id": "LC-21",
+      "operation": "Offering update",
+      "interleaving": "Course or department college changes after initial authorization but before ancestor course SHARE lock",
+      "expectedOutcome": "REJECT",
+      "expectedMarker": "COURSE_COLLEGE_MISMATCH",
       "environment": "READ_COMMITTED_2_SESSION",
       "executed": false,
       "passed": false
