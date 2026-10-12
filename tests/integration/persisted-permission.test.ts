@@ -80,7 +80,7 @@ async function restoreActors() {
   await pool.query(
     `update users
        set platform_status = 'ACTIVE'
-     where id in ($1, $2)`,
+     where id in ($1, $2, $3)`,
     [
       SEED_IDS.collegeAdminUser,
       SEED_IDS.superAdminUser,
