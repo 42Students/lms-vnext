@@ -207,11 +207,13 @@ export const assignmentSubmissions = pgTable(
         (${table.submissionType} = 'LINK'
           and ${table.submissionUrl} is not null
           and ${table.textContent} is null)
-        or
-        (${table.submissionType} = 'FILE'
-          and ${table.submissionUrl} is null
-          and ${table.textContent} is null)
       )`,
+    ),
+    // DB-017 / DB053 fail-closed bridge: the PostgreSQL enum may know FILE so
+    // application types compile, but direct FILE persistence remains rejected
+    // until course_upload_receipts + assignment_submission_files and their
+    // deferred completeness/tenant guards are registered and verified. DB053
+    // removes/expands this payload gate atomically with that migration.
     ),
     check(
       "assignment_submissions_points_ck",
