@@ -300,7 +300,7 @@ export function LearnerAssessmentOverview({
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
-                ? assignmentState(item)
+                ? { ...assignmentState(item), review: false }
                 : quizOverviewActionState(item);
             const href =
               item.kind === "QUIZ"
