@@ -85,13 +85,14 @@ function createIdentityDirectory(
         : null;
     },
     async createUser(input) {
-      user = {
+      const created: IdentityDirectoryUser = {
         uid: identityUid,
         phoneNumber: input.phoneNumber ?? null,
         email: input.email ?? null,
         displayName: input.displayName,
       };
-      return user;
+      user = created;
+      return created;
     },
     async updateUser(uid, input) {
       if (!user || user.uid !== uid) {
