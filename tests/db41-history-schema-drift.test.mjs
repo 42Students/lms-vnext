@@ -23,7 +23,9 @@ test("DB41 grade and attendance history sources are structurally aligned but unv
 
 test("DB41 repaired staged TypeScript has no malformed sql.raw literals",()=>{
   assert.deepEqual(original().malformedRawSqlLiterals,[]);
-  assert.ok((staged.match(new RegExp("sql\\.raw\\("+String.fromCharCode(96),"g"))||[]).length>=14);
+  // The current staged contract has 13 SQL CHECK expressions; require at least
+  // that complete set, but do not freeze a superseded count of 14.
+  assert.ok((staged.match(new RegExp("sql\\.raw\\("+String.fromCharCode(96),"g"))||[]).length>=13);
   assert.doesNotMatch(staged,/sql\.raw\(""/);
 });
 
@@ -212,10 +214,13 @@ test("DB45 semantic preflight requires marker snapshots and marked_at versioning
     /version guard ignores marked_at/,
   );
 
-  const noPreviousMarker=sql.replace(
-    "      AND e.previous_marked_by_user_id = OLD.marked_by_user_id",
-    "      AND true /* removed previous marker witness */",
-  );
+  const attendanceTriggerStart = sql.indexOf("CREATE FUNCTION db06_require_attendance_event()");
+  assert.ok(attendanceTriggerStart >= 0);
+  const noPreviousMarker = sql.slice(0, attendanceTriggerStart) +
+    sql.slice(attendanceTriggerStart).replaceAll(
+      "previous_marked_by_user_id", "removed_marker_snapshot"
+    );
+  assert.notEqual(noPreviousMarker, sql, "Mutation must actually modify the trigger");
   assert.match(
     auditDb41(staged,noPreviousMarker).errors.join("\n"),
     /ignores marker snapshot: previous_marked_by_user_id/,
