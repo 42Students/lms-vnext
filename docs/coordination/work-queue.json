@@ -4811,6 +4811,50 @@
           "reason": "Adding exact-checkout Drizzle generation/no-drift and DB002 catalog witness to CI-independent verifier."
         }
       ]
+    },
+    {
+      "id": "DB-077",
+      "phase": "DATABASE",
+      "title": "Finalize DB04 historical registration and approver-card source dispositions",
+      "scope": "Resolve student_registration and approver_id_card as current-product active, redesigned, or retired using pinned backend/frontend history, removal commits and connected-repository evidence; do not edit DB-007 owned implementation.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db04-chat05-historical-final-disposition-2026-10-12.json",
+        "tests/db077-db04-historical-final-disposition.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-12T14:06:00.000Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-12T14:06:00.000Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T14:06:00.000Z",
+          "reason": "Created as an independent non-overlapping DB04 source-disposition blocker-removal task after DB-004 completion."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T14:06:00.000Z",
+          "reason": "Chat 5 atomically created and reserved the source-only historical disposition task; DB-007 ownership remains with Chat 3."
+        }
+      ]
     }
   ],
   "eventModel": {
