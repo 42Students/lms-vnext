@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_DISCUSSION_RESTORE_AND_READONLY_TOMBSTONE_PREFLIGHT_MERGED",
+    "checkpointKind": "DB008_LIVE_COURSE_AUTHORING_21_CASE_PG_ACCEPTANCE_OPEN",
     "updatedOn": "2026-10-12",
     "observedMainSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
-    "lastWorkerMergedSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
+    "lastWorkerMergedSha": "294ddbca5045d6a0af4056dc6443afb928b887fe",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Three merged Chat6 DB008 PRs #97/#98/#99: staged unregistered discussion acyclic + content reparent guard; fixed unregistered course-soft-delete guard for in-place deleted lesson RESTORE; added aggregate read-only tombstone ancestry violation preflight. Native exact-blob Node tests 11+10+6=27/27 PASS; 16+12 connector source structure assertions passed. No PostgreSQL service/runtime, so migrations and 20 DG /12 LR race tests, proof of 0 mismatches, lint/typecheck/API/browser not executed. Seven main draft migrations/12 companions remain unregistered; manifest now 74 gates, 0/92 formal DB05 fields verified. DATABASE active, DB008 IN_PROGRESS. W01 solely owns numbered journal and barrel."
+    "summary": "Direct-main service implementation strengthened five source paths: delivery create rechecks locked offering/section college/cohort/term, teaching assignment rechecks membership status/college and FACULTY role under locks, offering updates recheck locked offering, course, cohort/period for stale authorization and mutability. 11 new Node regression tests authored NOT_EXECUTED; LC01..21 two-connection PG acceptance NOT_RUN; 27/27 exact GitHub blob structural assertions true at main 3bfc3be source snapshot; evidence 294ddbca5. DB008 IN_PROGRESS; DB05 journal unregistered, overall DATABASE phase active."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -242,9 +242,15 @@
       "kind": "DB05_TOMBSTONE_ANCESTOR_ZERO_DRIFT_PREFLIGHT",
       "commitSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
       "message": "PR #99 adds read-only 3-count tombstone ancestor probe; Node source tests 6/6 PASS exact blob, not SQL output. Execute only on disposable PG after W01 registers course/lesson/content tombstone columns. Require zero counts and separate actual two-session race acceptance; leave 74th manifest gate NOT_RUN. DB05 formal runtime 0/92."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB008_LIVE_COURSE_AUTHORING_SCOPE_LOCKS_21_PG_SCENARIOS",
+      "commitSha": "294ddbca5045d6a0af4056dc6443afb928b887fe",
+      "message": "Five direct-main service scope lock changes in delivery-create, teacher-create, and offering-update; exact source structural inspection 27/27 PASS, evidence docs/coordination/evidence/chat-06-db008-live-authoring-source-2026-10-12.md. 11 new authored source tests, NOT executed; 21 two-session PostgreSQL LC-01..21 NOT_RUN; manifest gate NOT_RUN, W01 sole migrator. 0 formally DB05-verified field claims."
     }
   ],
-  "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.\n2026-10-12 handoff: run native Node/TS and two-session PG HL-01..20, LC-01..12, register trigger once only after W01 clean replay. Current live normal-service paired locks do not replace tenant/reparent/direct SQL DB acceptance.",
+  "nextAction": "Execute native Node/TS and disposable two-session PostgreSQL cases LC01..21, HL01..20, CA/TV and DB02 parent races. W01 integrates seven canonical DB05 drafts plus companions exactly once; protect active root/role ancestor invariants and revisit 25 source semantic decisions. Do not prematurely promote DB008 or global DATABASE phase.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -401,7 +407,17 @@
     "https://github.com/42Students/lms-vnext/commit/52c9fea17068e1f12b1e58fda92b1ab957f872ed",
     "https://github.com/42Students/lms-vnext/commit/85132267d53953f7fbb3dd45a14cc2989d8d6bb9",
     "https://github.com/42Students/lms-vnext/commit/cadfd9888db079276098cd7b3b35e06f7a44894d",
-    "https://github.com/42Students/lms-vnext/commit/d68eab03f14b28167e3c94b30fcb68063d34c45f"
+    "https://github.com/42Students/lms-vnext/commit/d68eab03f14b28167e3c94b30fcb68063d34c45f",
+    "https://github.com/42Students/lms-vnext/commit/a8aa245e16215486987f47de41ff0f0914177f4b",
+    "https://github.com/42Students/lms-vnext/commit/ebdb0d1825ab2569c64055afc57741d5c964bc76",
+    "https://github.com/42Students/lms-vnext/commit/881f1e6e341492f16a2d694bffee2fb68bde6741",
+    "https://github.com/42Students/lms-vnext/commit/1aa4d663c2700cc620333889e76af1e44c9bc4f2",
+    "https://github.com/42Students/lms-vnext/commit/83c9edc2d33d8d9b4ee876ac819d336ef9ca1678",
+    "https://github.com/42Students/lms-vnext/commit/20a7e46f45f69c49c755230a59ab3f95af4138a6",
+    "https://github.com/42Students/lms-vnext/commit/d7adfed8b93340902b721444cb440a0b29ec70aa",
+    "https://github.com/42Students/lms-vnext/commit/ff41aad9df485977a736e42a731dba67735ca46e",
+    "https://github.com/42Students/lms-vnext/commit/c3525e14118cdcd292ca4b9c8e2c4502c94c7217",
+    "https://github.com/42Students/lms-vnext/commit/294ddbca5045d6a0af4056dc6443afb928b887fe"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
