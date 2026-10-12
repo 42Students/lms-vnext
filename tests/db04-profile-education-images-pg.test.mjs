@@ -13,6 +13,7 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const source = readFileSync(
@@ -36,6 +37,13 @@ if (!optIn) {
     () => {},
   );
 } else {
+  // Separate URLs and a magic opt-in alone cannot make an arbitrary DB safe.
+  // Validate the target *before opening a connection or creating a schema*.
+  assertSafeDb01TestTarget({
+    TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
+    DATABASE_URL: process.env.DATABASE_URL,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: process.env.DB01_REMOTE_TEST_DATABASE_CONFIRM,
+  });
   test(
     "DB04 private receipts, education and profile images fail closed at the DB boundary",
     { timeout: 60000 },
