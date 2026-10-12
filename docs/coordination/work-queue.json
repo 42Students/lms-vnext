@@ -4759,6 +4759,43 @@
           "reason": "Implement independent candidate SQL and negative tests under current DATABASE phase."
         }
       ]
+    },
+    {
+      "id": "DB-076",
+      "phase": "DATABASE",
+      "title": "Harden independent verifier with schema-drift and catalog gates",
+      "scope": "Make the CI-independent disposable PostgreSQL verifier fail closed on unregistered canonical Drizzle drift and missing catalog acceptance by running generation/no-drift plus read-only DB002 catalog witness on the exact checkout before broad DB integration.",
+      "priority": 1,
+      "dependsOn": [
+        "DB-002"
+      ],
+      "restriction": "CORE_INFRA",
+      "paths": [
+        "scripts/db-independent-verify.mjs",
+        "tests/db-independent-verifier.test.mjs",
+        "docs/planning/db076-independent-verifier-schema-drift.md"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12",
+          "reason": "Fresh core verification gap found during DB-017: independent verifier replayed migrations/tests but did not execute db:generate no-drift or DB002 catalog acceptance."
+        }
+      ]
     }
   ],
   "eventModel": {
