@@ -10,6 +10,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   projectEvaluationItems,
   projectEvaluations,
+  projectInstances,
   projectSubmissions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -38,46 +39,6 @@ function mapEvaluationConstraint(error: unknown) {
   }
 
   return error;
-}
-
-async function loadApprovedSubmission(
-  projectId: string,
-  submissionIdInput: string,
-) {
-  const submissionId =
-    projectSubmissionIdSchema.parse(
-      submissionIdInput,
-    );
-  const [submission] = await getDb()
-    .select()
-    .from(projectSubmissions)
-    .where(
-      and(
-        eq(
-          projectSubmissions.id,
-          submissionId,
-        ),
-        eq(
-          projectSubmissions.projectId,
-          projectId,
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (!submission) {
-    throw new ProjectsServiceError(
-      "PROJECT_SUBMISSION_NOT_FOUND",
-    );
-  }
-
-  if (submission.status !== "APPROVED") {
-    throw new ProjectsServiceError(
-      "PROJECT_EVALUATION_INVALID_STATE",
-    );
-  }
-
-  return submission;
 }
 
 export async function createProjectEvaluation(
@@ -113,6 +74,76 @@ export async function createProjectEvaluation(
 
   try {
     return await db.transaction(async (tx) => {
+      const [eexport async function createProjectEvaluation(
+  context: RequestContext,
+  projectIdInput: string,
+  submissionIdInput: string,
+  rawInput: CreateProjectEvaluationInput,
+) {
+  const scope =
+    await requireProjectLifecycleAccess(
+      context,
+      projectIdInput,
+    );
+  const input =
+    createProjectEvaluationInputSchema.parse(
+      rawInput,
+    );
+  const submissionId =
+    projectSubmissionIdSchema.parse(
+      submissionIdInput,
+    );
+  const totalScore = input.items.reduce(
+    (sum, item) => sum + item.score,
+    0,
+  );
+  const maxScore = input.items.reduce(
+    (sum, item) => sum + item.maxScore,
+    0,
+  );
+  const db = getDb();
+
+  try {
+    return await db.transaction(async (tx) => {
+      const [project] = await tx
+        .select({ status: projectInstances.status })
+        .from(projectInstances)
+        .where(eq(projectInstances.id, scope.project.id))
+        .for("update")
+        .limit(1);
+
+      if (!project || project.status === "ARCHIVED") {
+        throw new ProjectsServiceError(
+          "PROJECT_EVALUATION_INVALID_STATE",
+        );
+      }
+
+      const [submission] = await tx
+        .select({
+          id: projectSubmissions.id,
+          status: projectSubmissions.status,
+        })
+        .from(projectSubmissions)
+        .where(
+          and(
+            eq(projectSubmissions.id, submissionId),
+            eq(projectSubmissions.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!submission) {
+        throw new ProjectsServiceError(
+          "PROJECT_SUBMISSION_NOT_FOUND",
+        );
+      }
+      if (submission.status !== "APPROVED") {
+        throw new ProjectsServiceError(
+          "PROJECT_EVALUATION_INVALID_STATE",
+        );
+      }
+
       const [evaluation] = await tx
         .insert(projectEvaluations)
         .values({
@@ -182,6 +213,7 @@ export async function createProjectEvaluation(
       return { evaluation, items };
     });
   } catch (error) {
+    if (error instanceof ProjectsServiceError) throw error;
     throw mapEvaluationConstraint(error);
   }
 }
