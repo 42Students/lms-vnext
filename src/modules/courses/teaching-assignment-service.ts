@@ -98,6 +98,14 @@ export async function listCourseTeachingAssignments(
     })
     .from(courseTeachingAssignments)
     .innerJoin(
+      courseSectionDeliveries,
+      eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId),
+    )
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .innerJoin(
       collegeMemberships,
       eq(
         collegeMemberships.id,
@@ -108,7 +116,16 @@ export async function listCourseTeachingAssignments(
       users,
       eq(users.id, collegeMemberships.userId),
     )
-    .where(and(...conditions))
+    // Scope again in the SELECT itself: delivery parents may have changed
+    // after the pre-query authorization check. A stale grant must not
+    // list faculty identities for another college or reassigned section.
+    .where(and(
+      ...conditions,
+      eq(departments.collegeId, delivery.collegeId),
+      eq(colleges.organizationId, delivery.organizationId),
+      eq(courseSectionDeliveries.offeringId, delivery.offeringId),
+      eq(courseSectionDeliveries.sectionId, delivery.sectionId),
+    ))
     .orderBy(
       asc(courseTeachingAssignments.role),
       asc(users.displayName),
