@@ -4672,17 +4672,20 @@
         "tests/db074-review-evaluation-source.test.mjs",
         "tests/integration/db074-review-evaluation-parent-fks.test.ts"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 2,
       "pickedAt": "2026-10-12T14:12:00.000Z",
       "startedAt": "2026-10-12T14:12:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-12T14:22:00.000Z",
+      "completionCommitSha": "5624a861df042693770aa12369273340abf833f3",
       "verifiedBy": null,
       "verifiedAt": null,
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "Chat1 must register generated Drizzle schema/migration; 2 FKs staged only.",
+        "6 opt-in PostgreSQL review/evaluation tests not executed; service and tenant authorization regressions pending."
+      ],
       "pickHistory": [
         {
           "chatNumber": 2,
@@ -4699,8 +4702,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T14:12:00.000Z",
           "reason": "Chat 2 starts isolated SQL, source tests and opt-in PG witness batch."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:22:00.000Z",
+          "reason": "Source staging + two composite FKs and 18 authored tests on main; source V8 assertions pass, PG not run."
         }
-      ]
+      ],
+      "completionNote": "SOURCE/STAGING IMPLEMENTATION COMPLETED: 2 fail-closed review/evaluation→project submission composite FKs, exact project_id/id parent unique target, read-only dirty-data preflight+DO abort, source contract. 12 Node source tests and 6 opt-in PG cases authored; 15 exact GitHub content V8 assertions executed PASS. Node/Vitest/PG actual runner NOT EXECUTED. Await Chat1 registered migration and disposable PostgreSQL replay before DONE_VERIFIED."
     }
   ],
   "eventModel": {
