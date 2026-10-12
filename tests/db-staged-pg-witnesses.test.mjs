@@ -20,6 +20,25 @@ test("non-test db name is rejected even at localhost",()=>denied({...base(),TEST
 test("URL without user is rejected",()=>denied({...base(),TEST_DATABASE_URL:"postgresql://localhost/lms_test"},"user"));
 test("redirectable query parameters are rejected",()=>denied({...base(),TEST_DATABASE_URL:local+"?host=prod"},"parameters"));
 test("a production DATABASE_URL on exactly the same DB is rejected",()=>denied({...base(),DATABASE_URL:local},"Same"));
+test("percent-encoded database alias cannot bypass same-target protection",()=>{
+  denied({...base(),
+    TEST_DATABASE_URL:"postgresql://tester:demo@localhost:5432/lms_vnext_%74est",
+    DATABASE_URL:local
+  },"Same");
+});
+test("URL-encoded slash cannot disguise a destructive noncanonical database name",()=>{
+  denied({...base(),
+    TEST_DATABASE_URL:"postgresql://tester:demo@localhost/lms_test%2Fshadow",
+  },"Canonical disposable target refused");
+});
+test("disposable name is subject to the canonical test naming policy",()=>{
+  denied({...base(),
+    TEST_DATABASE_URL:"postgresql://tester:demo@localhost/lms_disposable",
+  },"Canonical disposable target refused");
+});
+test("canonical guard accepts a normal explicitly isolated witness",()=>{
+  assert.equal(validateTarget(base()).safe,true);
+});
 test("loopback aliases and differing passwords do not bypass same-db denial",()=>denied({...base(),DATABASE_URL:"postgresql://different:password@localhost:5432/lms_vnext_test"},"Same"));
 test("missing explicit destructive-temp-schema consent is rejected",()=>denied({...base(),DB_STAGED_WITNESSES:undefined},"opt-in"));
 test("remote database needs explicit second opt-in",()=>denied({...base(),TEST_DATABASE_URL:"postgresql://x@pg.example.net/lms_vnext_test"},"remote"));
