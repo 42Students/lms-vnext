@@ -23,8 +23,9 @@
       "sha": "31cabc702022145443987286a7d31eb1649f7137"
     }
   ],
-  "status": "FIELD_DISPOSITION_PROPOSALS_COMPLETE_ACTUAL_SCHEMA_AND_WORKFLOW_NOT_VERIFIED",
+  "status": "SUPPLEMENTARY_PEER_REVIEW_OPTIONS_NOT_CANONICAL_NOT_RUNTIME_VERIFIED",
   "caveats": [
+    "The canonical DB004 ledger is docs/planning/db01-chat05-final-field-disposition.json and has independently closed 312/312 source-accounting decisions. THIS FILE IS AN OPTIONAL ADVISORY PEER REVIEW, not a competing phase source of truth.",
     "Every non-registered candidate is a proposal, NOT an existing column; do not count proposed JSONB keys as persisted without validation and writer/reader tests.",
     "The role-based worker IDs do not own DB004 cross-domain DB007/DB012 follow-ups; source evidence must be accepted by task owners.",
     "Legacy credentials/password/token fields may retire only with negative consumer and approved provider-job proofs. No raw secret persistence.",
@@ -5439,5 +5440,9 @@
       "approvedRetirement": false,
       "liveRuntimeVerified": false
     }
-  ]
+  ],
+  "authority": {
+    "canonical": "docs/planning/db01-chat05-final-field-disposition.json",
+    "note": "DB004 authoritative 312-row source-disposition ledger takes precedence. This artifact preserves alternative unregistered target proposals and review challenges only. Its 14 null target entries are supplemental non-persistence options, not an authoritative open-source-denominator metric. Do not use this file for global DB19 completion counts."
+  }
 }
