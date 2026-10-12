@@ -6,7 +6,7 @@ const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
 const a=JSON.parse(readFileSync("drizzle/meta/0045_snapshot.json","utf8"));
 const b=JSON.parse(readFileSync("drizzle/meta/0046_snapshot.json","utf8"));
 test("0046 registered after 0045 and snapshot remains structurally unchanged",()=>{
- assert.equal(journal.entries.at(-1).tag,"0046_db09_recruiter_grant_company_integrity");
+ assert.equal(journal.entries.find((row)=>row.tag==="0046_db09_recruiter_grant_company_integrity")?.idx,46);
  assert.equal(b.prevId,a.id);assert.notEqual(b.id,a.id);assert.deepEqual(b.tables,a.tables);assert.deepEqual(b.enums,a.enums);
 });
 test("0046 exact three guard functions and triggers, independently split",()=>{
