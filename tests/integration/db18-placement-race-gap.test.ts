@@ -191,6 +191,9 @@ describe.skipIf(!enabled)("DB-054 placement application race regression", () => 
               and (
                 query ilike '%placement_applications%'
                 or query ilike '%module_access_rules%'
+                -- Membership is intentionally the first locked learner gate.
+                -- The application can wait here before it reaches the module row.
+                or query ilike '%college_memberships%'
               )
             limit 1`,
         );
