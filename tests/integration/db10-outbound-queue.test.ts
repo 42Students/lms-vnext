@@ -1,10 +1,10 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
-import { closeDatabaseConnection } from "@/db/client";
+import { drizzle } from "drizzle-orm/node-postgres";
 import type { RequestContext } from "@/modules/identity/context";
 import {
-  queueOutboundDelivery,
+  queueOutboundDeliveryInTransaction,
   outboundQueueRuntimeEnabled,
 } from "@/modules/operations/outbound-delivery-queue";
 import { sealOutboundDelivery } from "@/modules/operations/outbound-delivery-envelope";
@@ -36,6 +36,11 @@ if (process.env.DATABASE_URL) {
   }
 }
 const pool = new Pool({ connectionString: url, max: 2 });
+// Use the *same validated disposable Pool* for both the queue writer and
+// fixture cleanup: getDb() might otherwise use cached production DATABASE_URL.
+const isolatedDb = drizzle(pool);
+const queueInIsolatedDatabase = (context: RequestContext, raw: unknown) =>
+  queueOutboundDeliveryInTransaction(isolatedDb, context, raw);
 const key = Buffer.alloc(32, 77).toString("base64");
 const globalKey = Buffer.alloc(32, 78).toString("base64");
 const prevFlag = process.env.DB10_OUTBOUND_READY;
@@ -111,15 +116,14 @@ afterAll(async () => {
   if (prevGlobalKey === undefined) delete process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
   else process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = prevGlobalKey;
   await pool.end();
-  await closeDatabaseConnection();
 });
 
 describe("W06 transactional outbound queue security", () => {
   it("enqueues ciphertext, returns QUEUED not sent, deduplicates retries", async () => {
     const sourceEventId = issueId();
-    const result = await queueOutboundDelivery(adminA, intent(sourceEventId));
+    const result = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
     expect(result.status).toBe("QUEUED");
-    const repeat = await queueOutboundDelivery(adminA, intent(sourceEventId));
+    const repeat = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
     expect(repeat).toEqual({ status: "ALREADY_QUEUED", id: result.id });
     const rows = await pool.query<{
       ciphertext_base64: string; idempotency_key: string; status: string;
@@ -133,8 +137,8 @@ describe("W06 transactional outbound queue security", () => {
 
   it("rejects reissued token on same source-event idempotency key", async () => {
     const sourceEventId = issueId();
-    await queueOutboundDelivery(adminA, intent(sourceEventId));
-    await expect(queueOutboundDelivery(adminA, intent(sourceEventId, {
+    await queueInIsolatedDatabase(adminA, intent(sourceEventId));
+    await expect(queueInIsolatedDatabase(adminA, intent(sourceEventId, {
       variables: {
         companyName: "Private Employer", collegeName: "College A",
         invitationUrl: "https://invite.example.test/join?token=CHANGED",
@@ -144,7 +148,7 @@ describe("W06 transactional outbound queue security", () => {
 
   it("blocks cross-college send and persists no entry", async () => {
     const sourceEventId = issueId();
-    await expect(queueOutboundDelivery(adminA, intent(sourceEventId, {
+    await expect(queueInIsolatedDatabase(adminA, intent(sourceEventId, {
       collegeId: SEED_IDS.collegeB,
     }))).rejects.toBeTruthy();
     const rows = await pool.query(
@@ -161,7 +165,7 @@ describe("W06 transactional outbound queue security", () => {
       "insert into outbound_suppressions (organization_id,channel,recipient_hash,reason) values ($1,'EMAIL',$2,'UNSUBSCRIBED')",
       [SEED_IDS.organization, sealed.recipientHash],
     );
-    const queued = await queueOutboundDelivery(adminA, intent(sourceEventId));
+    const queued = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
     expect(queued).toEqual({ status: "SUPPRESSED", id: null });
   });
 
@@ -169,7 +173,7 @@ describe("W06 transactional outbound queue security", () => {
     const sourceEventId = issueId();
     delete process.env.DB10_OUTBOUND_READY;
     expect(outboundQueueRuntimeEnabled()).toBe(false);
-    await expect(queueOutboundDelivery(adminA, intent(sourceEventId)))
+    await expect(queueInIsolatedDatabase(adminA, intent(sourceEventId)))
       .rejects.toMatchObject({ code: "OUTBOUND_QUEUE_DISABLED" });
   });
 });
