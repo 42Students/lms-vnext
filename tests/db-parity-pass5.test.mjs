@@ -63,8 +63,8 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
 
   const count = state =>
     manifest.raceProbes.filter(p => p.state === state).length;
-  assert.equal(count("SOURCE_CONFIRMED_GAP"), 3);
-  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 1);
+  assert.equal(count("SOURCE_CONFIRMED_GAP"), 2);
+  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 2);
   assert.equal(count("SOURCE_PROTECTED_NEEDS_EXECUTION"), 13);
   assert.equal(count("SOURCE_PROTECTED_DRAFT_UNMIGRATED"), 3);
   assert.equal(count("PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP"), 1);
@@ -74,13 +74,13 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
     manifest.raceProbes
       .filter(p => p.state === "SOURCE_CONFIRMED_GAP")
       .map(p => p.id),
-    ["P5-R02", "P5-R11", "P5-R21"],
+    ["P5-R11", "P5-R21"],
   );
   assert.deepEqual(
     manifest.raceProbes
       .filter(p => p.state === "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION")
       .map(p => p.id),
-    ["P5-R01"],
+    ["P5-R01", "P5-R02"],
   );
   assert.equal(manifest.raceAudit.runtimeVerified, 0);
   assert.deepEqual(
@@ -134,8 +134,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
-  assert.equal(index.counts.knownRedRaceAuthored, 1);
-  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 1);
+  assert.equal(index.counts.knownRedRaceAuthored, 0);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 2);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
 
@@ -178,7 +178,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
 });
 
-test("DB18 stale-check source state tracks fixed placement and red academics", () => {
+test("DB18 stale-check source state tracks authored placement and academics fixes", () => {
   const placementSource = fs.readFileSync(
     "src/modules/placements/application-service.ts",
     "utf8",
@@ -206,8 +206,11 @@ test("DB18 stale-check source state tracks fixed placement and red academics", (
   const cohortPrecheck = createBody.indexOf('cohort.status !== "PLANNED"');
   assert.ok(cohortPrecheck > 0 && cohortPrecheck < academicTx);
   const academicTxBody = createBody.slice(academicTx);
-  assert.equal(academicTxBody.includes(".from(cohorts)"), false);
-  assert.equal(academicTxBody.includes("cohorts.status"), false);
+  assert.ok(academicTxBody.includes(".from(cohorts)"));
+  assert.ok(academicTxBody.includes("cohorts.status"));
+  assert.ok(academicTxBody.includes('.for("share")'));
+  assert.ok(academicTxBody.includes('liveCohort.status !== "PLANNED"'));
+  assert.ok(academicTxBody.includes('liveCohort.status !== "ACTIVE"'));
 
   const index = load("tests/integration/db18-witness-index.json");
   assert.deepEqual(
@@ -220,7 +223,7 @@ test("DB18 stale-check source state tracks fixed placement and red academics", (
   );
   assert.equal(
     index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R02")?.state,
-    "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+    "FIX_AUTHORED_RUNTIME_NOT_RUN",
   );
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
@@ -255,8 +258,8 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
   assert.match(coverage, /Direct negative SQL boundary tests \| 13 \| 0/);
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
-  assert.match(coverage, /Known-defect red concurrency witnesses \| 1 \| 0/);
-  assert.match(coverage, /Fix-authored race regression pending runtime \| 1 \| 0/);
+  assert.match(coverage, /Known-defect red concurrency witnesses \| 0 \| 0/);
+  assert.match(coverage, /Fix-authored race regression pending runtime \| 2 \| 0/);
   assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
 });
 
