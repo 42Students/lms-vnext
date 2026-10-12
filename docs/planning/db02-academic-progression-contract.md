@@ -405,12 +405,12 @@ After Chat 1 registers and replays the **numbered** DB02 migration onto a fresh,
 
 ```bash
 DB02_DISPOSABLE_ACCEPTANCE=YES \
-DB02_EXPECTED_DATABASE=db02_verify_fresh \
-DATABASE_URL='postgres://USER:REDACTED@HOST:5432/db02_verify_fresh' \
+DB02_EXPECTED_DATABASE=db02_verify_test \
+DATABASE_URL='postgres://USER:REDACTED@HOST:5432/db02_verify_test' \
 bash scripts/sql/db02-run-disposable-acceptance.sh
 ```
 
-The runner refuses execution without explicit disposable opt-in, an exact database name match and the five canonical DB02 trigger witnesses. It runs six source-test files, five rollback-only PostgreSQL acceptance scripts and three two-session concurrency harnesses. The two-session tests deliberately commit randomly tagged fixtures; **discard the disposable database after the run**. Capture the exact command with secrets redacted, main SHA, numbered journal SHA, PostgreSQL version and full output.
+Use a local disposable PostgreSQL database (127.0.0.1/localhost) for the example above. A remote test host additionally requires `DB01_REMOTE_TEST_DATABASE_CONFIRM=RESET:host/db02_verify_test`, exactly matching the URL target. `DB02_APP_DATABASE_URL` may be set to the configured app database URL to ensure the test target is distinct. A caller-chosen database name without the required test suffix is rejected before connection.\n\nThe runner refuses execution without explicit disposable opt-in, an exact database name match and the five canonical DB02 trigger witnesses. It runs six source-test files, five rollback-only PostgreSQL acceptance scripts and three two-session concurrency harnesses. The two-session tests deliberately commit randomly tagged fixtures; **discard the disposable database after the run**. Capture the exact command with secrets redacted, main SHA, numbered journal SHA, PostgreSQL version and full output.
 
 This script is **authored, NOT EXECUTED** here. The runner does not replace the separate *zero-to-current numbered migration replay* prerequisite or prove Cloud SQL extension permissions. CI billing/Actions are not part of this independent verification gate. DB-005 stays IN_PROGRESS until actual outputs can be reviewed.
 
