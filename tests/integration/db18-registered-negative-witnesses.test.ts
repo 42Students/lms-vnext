@@ -79,6 +79,8 @@ type AcademicFixture = {
   cohortId: string;
   sectionId: string;
   learnerEnrollmentId: string;
+  learnerUserId: string;
+  learnerMembershipId: string;
   courseAId: string;
   courseBId: string;
   offeringAId: string;
@@ -99,6 +101,8 @@ async function createAcademicFixture(
     cohortId: randomUUID(),
     sectionId: randomUUID(),
     learnerEnrollmentId: randomUUID(),
+    learnerUserId: randomUUID(),
+    learnerMembershipId: randomUUID(),
     courseAId: randomUUID(),
     courseBId: randomUUID(),
     offeringAId: randomUUID(),
@@ -159,13 +163,29 @@ async function createAcademicFixture(
     ],
   );
 
+  // The seeded learner already has an ACTIVE enrollment. Reusing it for
+  // this unrelated course fixture violates the canonical one-active-program
+  // invariant before our intended negative assessment witness is reached.
+  // Own a dedicated learner + membership inside the rollback-only transaction.
+  await client.query(
+    "insert into users (id, identity_uid, display_name) values ($1, $2, 'DB18 isolated learner')",
+    [ids.learnerUserId, "db18-" + ids.learnerUserId],
+  );
+  await client.query(
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    [ids.learnerMembershipId, ids.learnerUserId, SEED_IDS.collegeA],
+  );
+  await client.query(
+    "insert into membership_roles (membership_id, role) values ($1, 'LEARNER')",
+    [ids.learnerMembershipId],
+  );
   await client.query(
     `insert into learner_program_enrollments
        (id, membership_id, program_id, cohort_id, status)
      values ($1, $2, $3, $4, 'ACTIVE')`,
     [
       ids.learnerEnrollmentId,
-      SEED_IDS.learnerCollegeAMembership,
+      ids.learnerMembershipId,
       ids.programId,
       ids.cohortId,
     ],
@@ -373,7 +393,7 @@ describe("DB-018 registered negative PostgreSQL witnesses", () => {
         [
           quizId,
           fixture.deliveryBId,
-          SEED_IDS.learnerCollegeAMembership,
+          fixture.learnerMembershipId,
         ],
       );
     });
@@ -402,7 +422,7 @@ describe("DB-018 registered negative PostgreSQL witnesses", () => {
           attempt,
           quizA,
           fixture.deliveryAId,
-          SEED_IDS.learnerCollegeAMembership,
+          fixture.learnerMembershipId,
         ],
       );
 
@@ -449,7 +469,7 @@ describe("DB-018 registered negative PostgreSQL witnesses", () => {
         [
           assignmentId,
           fixture.deliveryAId,
-          SEED_IDS.learnerCollegeAMembership,
+          fixture.learnerMembershipId,
           SEED_IDS.collegeAdminUser,
         ],
       );
