@@ -1,6 +1,7 @@
 import {
   createCipheriv,
   createDecipheriv,
+  createHash,
   createHmac,
   hkdfSync,
   randomBytes,
@@ -154,6 +155,29 @@ export function deriveGlobalEmailSuppressionHash(
   // outbox AES encryption key rotates. Missing/malformed key fails closed.
   const { digestKey } = keyMaterial(globalEmailHmacKeyBase64);
   return digest(digestKey, "global-email-suppression-v1", intent.recipient);
+}
+
+/**
+ * Bind the EMAIL-global opt-out HMAC to this exact outbound row without
+ * persisting a reusable cross-organization recipient identifier.
+ *
+ * Unlike storing the global HMAC in every outbox row, this per-message SHA-256
+ * commitment cannot correlate two organizations' outgoing messages without
+ * already possessing the keyed recipient HMAC. The PostgreSQL pre-send guard
+ * recomputes this from the supplied HMAC and the locked message UUID.
+ */
+export function bindGlobalEmailSuppressionHashToOutbox(
+  messageId: string,
+  globalEmailHash: string | null,
+): string | null {
+  if (globalEmailHash === null) return null;
+  if (!/^[0-9a-f-]{36}$/.test(messageId) ||
+      !/^[0-9a-f]{64}$/.test(globalEmailHash)) {
+    throw new OutboundDeliveryError("OUTBOUND_ENVELOPE_INVALID");
+  }
+  return createHash("sha256")
+    .update(`db10-global-email-binding-v1:${messageId}:${globalEmailHash}`, "utf8")
+    .digest("hex");
 }
 
 /** Only a privileged background sender should ever decrypt this. */
