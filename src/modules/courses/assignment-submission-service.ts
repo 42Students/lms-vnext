@@ -347,6 +347,9 @@ export async function submitCourseAssignment(
           .values({
             assignmentSubmissionId:
               created!.id,
+            // Current FILE submissions accept one receipt; the staged schema
+            // requires an explicit per-submission ordinal.
+            sequence: 0,
             uploadReceiptId:
               lockedReceipt.id,
             objectKey:
