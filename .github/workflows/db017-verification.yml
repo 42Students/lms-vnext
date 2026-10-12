@@ -1,0 +1,77 @@
+name: DB017 Migration Verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db017-verification.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin verification SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          echo "DB017_VERIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "Verifying $(git rev-parse HEAD)"
+      - name: Static journal and registration contracts
+        run: |
+          npm run db:journal:verify
+          node --test \
+            tests/db017-integration-manifest.test.mjs \
+            tests/db017-db09-crm-guards-registration.test.mjs \
+            tests/db017-db09-recruiter-company-registration.test.mjs
+      - name: Fail-closed target preflight
+        run: env -u DATABASE_URL node scripts/db01-test-database-guard.mjs
+      - name: Zero-to-head reset migrate seed
+        run: env -u DATABASE_URL npm run db:test:prepare
+      - name: Idempotent registered migrate
+        run: npm run db:migrate
+      - name: Catalog witness
+        run: node scripts/db002-postgres-catalog-acceptance.mjs
+      - name: DB09 share defaults witness
+        run: node scripts/db017-share-defaults-pg-acceptance.mjs
+      - name: DB09 CRM and recruiter integrity witness
+        run: node scripts/db017-db09-crm-pg-acceptance.mjs
+      - name: Current exported schema has no unregistered drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          git diff --exit-code -- drizzle/
+          test -z "$(git ls-files --others --exclude-standard drizzle/)"
