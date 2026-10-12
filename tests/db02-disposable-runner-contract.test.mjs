@@ -29,31 +29,18 @@ test("runner is opt-in and verifies exact disposable database identity", () => {
   assert.match(runner, /MUST NOT be run against production\/shared DB/);
 });
 
-test("runner fails closed when canonical trigger witnesses are incomplete", () => {
-  for (const trigger of [
-    "db02_cohort_promotion_readiness_guard",
-    "db02_program_term_course_type_history_guard",
-    "db02_program_term_delete_history_guard",
-    "db02_cohort_status_lifecycle_guard",
-    "db02_academic_period_date_history_guard",
-    "db02_cohort_progression_history",
-    "db02_progression_state_no_truncate",
-    "db02_lecture_hall_archive_guard",
-    "db02_schedule_future_hall_lifecycle_guard",
-    "db02_historic_offering_parent_guard",
-    "db02_learner_program_enrollment_tenant",
-    "db02_section_enrollment_cohort_period",
-    "db02_course_pool_reactivation_role_guard",
-    "db02_section_faculty_reactivation_role_guard",
-    "db02_teaching_reactivation_role_guard",
-    "db02_program_enrollment_reactivation_role_guard",
-    "db02_section_enrollment_reactivation_role_guard",
-    "db02_program_exit_close_active_sections",
-  ]) {
-    assert.ok(runner.includes(trigger), "missing runner trigger witness: " + trigger);
-  }
-  assert.match(runner, /TRIGGER_WITNESSES/);
-  assert.match(runner, /!= "22"/);
+test("runner derives and compares the exact canonical DB02 trigger manifest", () => {
+  assert.match(runner, /EXPECTED_TRIGGER_NAMES/);
+  assert.match(
+    runner,
+    /grep -Eo '\^CREATE TRIGGER db02_\[a-z0-9_\]\+'/,
+  );
+  assert.match(runner, /REGISTERED_TRIGGER_NAMES/);
+  assert.match(runner, /tgname LIKE 'db02_%'/);
+  assert.match(runner, /ORDER BY tgname/);
+  assert.match(runner, /canonical migration trigger manifest mismatch/);
+  assert.match(runner, /EXPECTED_TRIGGER_COUNT/);
+  assert.doesNotMatch(runner, /required trigger witnesses: 22/);
 });
 
 test("runner verifies core DB02 tables, columns and INACTIVE enum registration", () => {
@@ -137,14 +124,12 @@ test("direct concurrency scripts fail closed to the explicitly named disposable 
   }
 });
 
-test("runner requires active-parent transition trigger registration", () => {
-  for (const trigger of [
-    "db02_course_archive_dependency_guard",
-    "db02_course_offering_archive_dependency_guard",
-    "db02_delivery_end_dependency_guard",
-    "db02_section_archive_dependency_guard",
-  ]) {
-    assert.ok(runner.includes(trigger), "missing trigger witness: " + trigger);
-  }
-  assert.match(runner, /required trigger witnesses: 22/);
+test("runner trigger preflight cannot drift behind later canonical hardening", () => {
+  assert.match(
+    runner,
+    /scripts\/sql\/db02-academic-progression-and-rooms-staging\.sql/,
+  );
+  assert.match(runner, /sort -u/);
+  assert.match(runner, /missing OR unexpected db02_\* trigger fails closed/i);
+  assert.match(runner, /trigger manifest preflight PASS/);
 });
