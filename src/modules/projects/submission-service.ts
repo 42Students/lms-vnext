@@ -85,29 +85,6 @@ export async function createProjectSubmissionDraft(
     );
   const input =
     projectSubmissionDraftInputSchema.parse(rawInput);
-
-  if (scope.project.status === "ARCHIVED") {
-    throw new ProjectsServiceError(
-      "PROJECT_SUBMISSION_INVALID_STATE",
-    );
-  }
-
-  const [open] = await getDb()
-    .select({ id: projectSubmissions.id })
-    .from(projectSubmissions)
-    .where(
- export async function createProjectSubmissionDraft(
-  context: RequestContext,
-  projectIdInput: string,
-  rawInput: ProjectSubmissionDraftInput,
-) {
-  const scope =
-    await requireLearnerSubmissionAccess(
-      context,
-      projectIdInput,
-    );
-  const input =
-    projectSubmissionDraftInputSchema.parse(rawInput);
   const db = getDb();
 
   try {
