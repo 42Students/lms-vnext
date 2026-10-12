@@ -6,15 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-004",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_PINNED_312_FIELD_TRIAGE_175_TARGET_PROPOSALS_PG_WITNESS_RUNNER_UNEXECUTED",
-    "updatedOn": "2026-10-11T21:12:16.499Z",
-    "observedMainSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
-    "lastWorkerMergedSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
-    "summary": "Reviewed exact frozen DB01 source: 312/312 source activity classified; 175 distinct unverified candidate targets across 312 legacy fields using 78 auth + 150 remaining supplement union; 137 fields still need target/disposition, 70 active fields lack direct consumer proof. 32/32 in-process V8 adversarial reconciliation callbacks PASS; full 11-domain source inventory PASS, 0 runtime verified. Added five-witness, opt-in, anti-skip non-Actions PostgreSQL runner and 22/22 in-process source safety callbacks; actual Node runner and PostgreSQL NOT RUN. DB004 remains IN_PROGRESS; no migration registration or falsely verified task."
+    "checkpointKind": "DB004_SOURCE_RECONCILIATION_COMPLETED_RUNTIME_UNVERIFIED",
+    "updatedOn": "2026-10-12",
+    "observedMainSha": "19078d08c73acafaeb6344d02b692e37cbdb6f8b",
+    "lastWorkerMergedSha": "a0a1643eab2d92762212dca4bea4362ac3450f4f",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "summary": "DB-004 source reconciliation COMPLETED, unverified: 312/312 legacy fields explicitly dispositioned; former 137 target gaps = 0; 70/70 previously evidence-less active rows now source-accounted; provider authority frozen to Firebase/Identity Platform plus canonical PostgreSQL tenant authorization/minimal keyed-digest sidecars. Disposable DB URL target-redirect preflight hardened. No PG/provider/API acceptance claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -55,7 +57,10 @@
     "tests/db-parity-db09-tracker.test.mjs (+2 DB09 delimiter cases, CI parity script)",
     "tests/db-parity-contracts.test.mjs (+2 cross-domain registered/staged SQL delimiter cases, CI parity script)",
     "tests/db19-db01-triage-crosscheck.test.mjs (32 source cases)",
-    "tests/db-staged-pg-witnesses.test.mjs (22 runner safety cases)"
+    "tests/db-staged-pg-witnesses.test.mjs (22 runner safety cases)",
+    "tests/db01-test-database-guard.test.mjs: redirecting PostgreSQL target query parameters are rejected before destructive test setup (authored, not executed)",
+    "tests/db01-final-field-disposition.test.mjs: 9 source-denominator and mutation guards for all 312 DB01 fields (authored, not executed)",
+    "tests/db01-source-closure.test.mjs: 5 closure guards across 312 dispositions, 70 consumer-evidence rows and 9 provider/persistence flows (authored, not executed)"
   ],
   "lastExecutedPassingTests": [
     "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547",
@@ -106,9 +111,11 @@
     "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval.",
     "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates.",
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
-    "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
+    "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed.",
+    "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
+    "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "DB004: close 137 legacy field target/disposition decisions with concrete source producer-consumer evidence and Identity Platform/provider decision; run exact five disposable PostgreSQL source witnesses via node scripts/db-staged-pg-witnesses.mjs --plan/--run with explicit separate TEST_DATABASE_URL; coordinate registered migrations with Chat1. Do NOT mark DONE_VERIFIED without PG.",
+  "nextAction": "Refresh the global DATABASE queue and select the next eligible task. DB-004 is COMPLETED awaiting PostgreSQL/provider/API acceptance, not DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -206,10 +213,11 @@
     "DB-054",
     "DB-058",
     "DB-065",
-    "DB-064"
+    "DB-064",
+    "DB-004"
   ],
   "lastPickedAt": "2026-10-12T00:42:19+05:30",
-  "lastCompletedAt": "2026-10-11T19:47:56.682Z",
+  "lastCompletedAt": "2026-10-12T14:01:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
   ],
@@ -234,7 +242,8 @@
     "DB-018",
     "DB-054",
     "DB-058",
-    "DB-064"
+    "DB-064",
+    "DB-004"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
