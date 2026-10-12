@@ -247,6 +247,7 @@ export async function buildModuleAccessChain(
       departmentId = program?.departmentId ?? null;
     }
 
+    let foreignOrMissingDepartment = false;
     if (departmentId) {
       const [department] = await db
         .select({ collegeId: departments.collegeId })
@@ -254,18 +255,17 @@ export async function buildModuleAccessChain(
         .where(eq(departments.id, departmentId))
         .limit(1);
 
-      if (department && department.collegeId !== membership.collegeId) {
-        sectionId = null;
-        cohortId = null;
-        programId = null;
-        departmentId = null;
-      }
+      foreignOrMissingDepartment =
+        !department || department.collegeId !== membership.collegeId;
     }
 
-    pushScope(chain, "SECTION", sectionId);
-    pushScope(chain, "COHORT", cohortId);
-    pushScope(chain, "PROGRAM", programId);
-    pushScope(chain, "DEPARTMENT", departmentId);
+    // Do not inherit foreign-college or orphaned academic scopes.
+    // Keeping the fallback at the scope boundary also avoids misleading
+    // type narrowing from attempted null assignments inside nested branches.
+    pushScope(chain, "SECTION", foreignOrMissingDepartment ? null : sectionId);
+    pushScope(chain, "COHORT", foreignOrMissingDepartment ? null : cohortId);
+    pushScope(chain, "PROGRAM", foreignOrMissingDepartment ? null : programId);
+    pushScope(chain, "DEPARTMENT", foreignOrMissingDepartment ? null : departmentId);
   }
 
   const collegeId =
