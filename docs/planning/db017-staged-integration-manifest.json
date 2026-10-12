@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-12",
+  "task": "DB-017",
+  "purpose": "Authoritative migration-integrator disposition of DB00–DB10 staged database inputs. This is not runtime certification.",
+  "registeredJournalBaseline": {
+    "verifiedThrough": "0043_db09_share_column_defaults",
+    "verifiedByTask": "DB-002",
+    "verifiedCommit": "c0468cc7c5dd42d603e643d8629191fd52f9e43e",
+    "postgresVersion": "17.11",
+    "currentStructuralRegistration": "0044_db09_policy_crm_structural",
+    "currentStructuralReplay": "PENDING_EXECUTION"
+  },
+  "domains": [
+    {
+      "domain": "DB00",
+      "state": "NO_MIGRATION_REQUIRED",
+      "decision": "Verified greenfield retirement/exclusion decisions; do not resurrect historical Smrithi tables.",
+      "dependsOn": [],
+      "registered": [
+        "DB-003 disposition only"
+      ],
+      "deferred": []
+    },
+    {
+      "domain": "DB01",
+      "state": "DEFER_DOMAIN_IN_PROGRESS",
+      "decision": "Do not register staged auth/tenant persistence until DB-004 provider/product and 137-field disposition work closes.",
+      "dependsOn": [
+        "DB-004"
+      ],
+      "registered": [],
+      "deferred": [
+        "DB-backed auth/OTP/session/global-policy proposals"
+      ]
+    },
+    {
+      "domain": "DB02",
+      "state": "DEFER_DOMAIN_IN_PROGRESS",
+      "decision": "Academic/schedule staged guards remain owned by DB-005; integrate only after source semantics and upstream ancestry are settled.",
+      "dependsOn": [
+        "DB-005"
+      ],
+      "registered": [],
+      "deferred": [
+        "scripts/sql/db02-*"
+      ]
+    },
+    {
+      "domain": "DB03",
+      "state": "REGISTERED_BASELINE",
+      "decision": "Groups/electives structural and core scope/history migrations already registered as 0037–0040. Avoid duplicate parent/scope constraints.",
+      "dependsOn": [],
+      "registered": [
+        "0037_db03_groups_electives",
+        "0038_project_team_group",
+        "0039_db03_scope_triggers",
+        "0040_db03_history_actor_types"
+      ],
+      "deferred": [
+        "remaining runtime acceptance only"
+      ]
+    },
+    {
+      "domain": "DB04",
+      "state": "DEFER_BLOCKED_DOMAIN",
+      "decision": "Use docs/planning/db04-proposed-migration.sql as canonical staged source; DB027 superseded duplicate receipt/media drafts. Registration waits for DB-007 product/producer and retirement decisions.",
+      "dependsOn": [
+        "DB-007"
+      ],
+      "registered": [],
+      "deferred": [
+        "docs/planning/db04-proposed-migration.sql"
+      ]
+    },
+    {
+      "domain": "DB05",
+      "state": "DEFER_DOMAIN_IN_PROGRESS",
+      "decision": "Do not promote seven+ course/content companion drafts while DB-008 is still reconciling tenant/ancestry/tombstone/version semantics.",
+      "dependsOn": [
+        "DB-008",
+        "DB-005"
+      ],
+      "registered": [],
+      "deferred": [
+        "scripts/sql/db05-*",
+        "docs/planning/sql/db05-*"
+      ]
+    },
+    {
+      "domain": "DB06",
+      "state": "PARTIALLY_REGISTERED_DEFER_PRODUCER_COUPLED",
+      "decision": "0041/0042 own current assessment parent/scope hardening. Later grade/attendance history, retention, shuffle, attendance scope, lifecycle and private receipt candidates require producer/API or upstream DB05 integration and PostgreSQL acceptance; do not concatenate blindly.",
+      "dependsOn": [
+        "DB-008"
+      ],
+      "registered": [
+        "0041_db06_assessment_parent_scope",
+        "0042_db06_assessment_scope_hardening"
+      ],
+      "deferred": [
+        "DB-035",
+        "DB-038",
+        "DB-041",
+        "DB-042",
+        "DB-045",
+        "DB-052",
+        "DB-053"
+      ]
+    },
+    {
+      "domain": "DB07",
+      "state": "DEFER_STAGED_SOURCE_COMPLETE",
+      "decision": "Project source reconciliation is complete, but staged relationship/task/history SQL needs one deduplicated migration after upstream group/course parents and PG acceptance. Keep all source gaps explicit.",
+      "dependsOn": [
+        "DB-006",
+        "DB-008"
+      ],
+      "registered": [],
+      "deferred": [
+        "docs/planning/sql/db07-*"
+      ]
+    },
+    {
+      "domain": "DB08",
+      "state": "DEFER_SOURCE_COMPLETE_SEMANTICS_UNVERIFIED",
+      "decision": "Placement-policy/outcome source ledger is complete but exact field/runtime semantics and offer/recruiter lifecycle candidates are not ready for blind registration.",
+      "dependsOn": [
+        "DB-011"
+      ],
+      "registered": [],
+      "deferred": [
+        "scripts/sql/db08-*",
+        "docs/planning/sql/db08-*"
+      ]
+    },
+    {
+      "domain": "DB09",
+      "state": "STRUCTURAL_PARTIAL_REGISTERED",
+      "decision": "0043 owns relationship share defaults and is PostgreSQL accepted under DB-002. 0044 registers canonical policy + recruiter CRM table structure. Stronger CRM/policy/collaboration/settings/scheduling/notification principal and lifecycle guards remain DB-012/DB-017 follow-up; superseded/reference SQL must never be registered.",
+      "dependsOn": [
+        "DB-012"
+      ],
+      "registered": [
+        "0043_db09_share_column_defaults",
+        "0044_db09_policy_crm_structural"
+      ],
+      "deferred": [
+        "db09-parent-composite-keys-candidate.sql",
+        "db09-tpo-crm-premerge.sql trigger/function portion",
+        "db09-collaboration-scoped-fk-candidate.sql",
+        "db09-tpo-settings-normalization-candidate.sql",
+        "db09-multicollege-drive-group-candidate.sql",
+        "db09-round-scheduling-candidate.sql",
+        "db09-prep-bell-read-state-candidate.sql",
+        "db09-notification-undo-digest-candidate.sql"
+      ]
+    },
+    {
+      "domain": "DB10",
+      "state": "DEFER_SOURCE_COMPLETE_STAGING_BROAD",
+      "decision": "Operational source ledger is complete but skills, alerts, notifications/outbox, privacy and provider persistence are still staged and coupled to API/security/provider decisions. Register only after the owning contracts are promotion-ready.",
+      "dependsOn": [
+        "DB-013"
+      ],
+      "registered": [],
+      "deferred": [
+        "src/db/schema/db10-*.draft.ts",
+        "scripts/sql/db10-*"
+      ]
+    }
+  ],
+  "explicitExclusions": [
+    "docs/planning/sql/db04-education-media-candidate.sql",
+    "docs/planning/sql/db04-private-receipt-hardening-candidate.sql",
+    "docs/planning/sql/db09-crm-scoped-fk-candidate.sql",
+    "docs/planning/sql/db09-crm-tenant-fk-candidate.sql",
+    "docs/planning/sql/db09-scheduling-premerge.sql",
+    "docs/planning/sql/db09-notification-intents-candidate.sql",
+    "docs/planning/sql/db09-final-recruiter-codes-candidate.sql",
+    "docs/planning/sql/db09-college-recruiter-settings-candidate.sql",
+    "docs/planning/sql/db09-company-export-preference-candidate.sql"
+  ],
+  "promotionOrder": [
+    "registered baseline 0000–0044",
+    "close DB01/DB02 parent identity+academic decisions before dependent DB04/DB05",
+    "DB04 private profile/storage structural migration",
+    "DB05 course/content ancestry/version/tombstone migration set",
+    "DB06 producer-coupled history/retention/private-file migrations with API-compatible rollout",
+    "DB07 deduplicated project relationship/history migration",
+    "DB08 placement lifecycle structures",
+    "DB09 parent composite keys then principal/lifecycle/collaboration/settings/scheduling/notification guards",
+    "DB10 operational/privacy/outbound structures after provider/recipient/retention contracts"
+  ],
+  "safetyRules": [
+    "Never auto-promote all staged SQL.",
+    "Superseded/reference-only files are exclusion evidence, not executable migrations.",
+    "A source-complete domain may still be unready for migration when producer/API or runtime semantics are unresolved.",
+    "Every newly registered batch requires fresh db:generate no-drift, zero-to-head replay, idempotence and targeted negative/race acceptance.",
+    "Do not mark DATABASE phase ready from this manifest alone."
+  ]
+}
