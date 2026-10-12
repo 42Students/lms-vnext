@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const script=fs.readFileSync("scripts/db-independent-verify.mjs","utf8");
+const catalog=fs.readFileSync("scripts/db002-postgres-catalog-acceptance.mjs","utf8");
 
 test("DB076 independent verifier contains all nine ordered database gates",()=>{
   const labels=[
@@ -55,4 +56,24 @@ test("DB076 evidence cannot pass when empty-output drift gate reported files",()
   );
   assert.match(script,/outputSha256/);
   assert.match(script,/gitSha = shellText\("git", \["rev-parse", "HEAD"\]\)/);
+});
+
+
+test("DB076 catalog target policy reuses the fail-closed DB01 disposable target guard",()=>{
+  assert.match(catalog,/assertSafeDb01TestTarget/);
+  assert.match(catalog,/DB01_REMOTE_TEST_DATABASE_CONFIRM/);
+  assert.doesNotMatch(
+    catalog,
+    /DB002 catalog inspection requires a local disposable PostgreSQL URL/,
+  );
+});
+
+test("DB076 catalog witness requires the newly registered 0044 DB09 tables",()=>{
+  for(const table of [
+    "placement_college_rules",
+    "placement_company_visibility_settings",
+    "placement_tpo_leads",
+    "placement_tpo_lead_activities",
+    "placement_tpo_followups",
+  ]) assert.ok(catalog.includes(`"${table}"`),table);
 });
