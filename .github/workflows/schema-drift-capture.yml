@@ -1,0 +1,46 @@
+name: Drizzle Drift Capture
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/schema-drift-capture.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Generate Drizzle delta
+        run: npm run db:generate
+      - name: Upload exact generated Drizzle state
+        uses: actions/upload-artifact@v4
+        with:
+          name: drizzle-drift-capture-${{ github.sha }}
+          path: drizzle/
+          if-no-files-found: error
+          retention-days: 3
+      - name: Report drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --short drizzle/
+          for candidate in drizzle/00[0-9][0-9]_*.sql; do
+            if test -f "$candidate" && ! git ls-files --error-unmatch "$candidate" >/dev/null 2>&1; then
+              echo "::group::UNREGISTERED GENERATED MIGRATION $candidate"
+              cat "$candidate"
+              echo "::endgroup::"
+            fi
+          done
+          git diff --exit-code -- drizzle/
+          test -z "$(git ls-files --others --exclude-standard drizzle/)"
