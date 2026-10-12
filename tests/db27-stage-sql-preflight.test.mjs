@@ -312,3 +312,75 @@ test("DB27 flags complex quoted table ancestry instead of accepting missing pare
     'ALTER TABLE ONLY "odd parent" ADD COLUMN active bool;',
   ]) assert.equal(inspect(candidate("quoted.sql",sql)).lexicalErrors.includes("UNSUPPORTED_QUOTED_DDL_IDENTIFIER"),true,sql);
 });
+
+
+test("DB27 rejects all temporary table CREATE variants rather than reporting no table", () => {
+  for (const sql of [
+    "CREATE TEMP TABLE work (id uuid);",
+    "CREATE TEMPORARY TABLE work (id uuid);",
+    "CREATE GLOBAL TEMPORARY TABLE work (id uuid);",
+    "CREATE LOCAL TEMP TABLE work (id uuid);",
+  ]) {
+    const r = analyze({ candidates: [candidate("temp.sql", sql)] });
+    assert.equal(r.hazards, true, sql);
+    assert.deepEqual(r.lexicalHazards,
+      [{ file: "temp.sql", errors: ["UNSUPPORTED_TEMP_TABLE_DDL"] }], sql);
+    assert.deepEqual(r.proposedSourceOrder, ["temp.sql"]);
+    assert.equal(r.safeForAutomaticPromotion, false);
+  }
+});
+
+test("DB27 rejects FOREIGN TABLE before migration integrator can miss its dependencies", () => {
+  const r = analyze({ candidates: [candidate("foreign.sql",
+    "CREATE FOREIGN TABLE cross_db (id uuid) SERVER external_db;")] });
+  assert.deepEqual(r.lexicalHazards,
+    [{ file: "foreign.sql", errors: ["UNSUPPORTED_FOREIGN_TABLE_DDL"] }]);
+  assert.equal(r.hazards, true);
+});
+
+test("DB27 fails closed on SELECT INTO table creation but ignores quoted SQL text", () => {
+  const risky = inspect(candidate("select-into.sql",
+    "SELECT id INTO TEMP TABLE created_from_select FROM users;"));
+  assert.deepEqual(risky.lexicalErrors, ["UNSUPPORTED_SELECT_INTO_DDL"]);
+  const harmless = inspect(candidate("quoted.sql",
+    "SELECT 'SELECT id INTO TEMP TABLE phantom'; CREATE TABLE live (id int);"));
+  assert.deepEqual(harmless.lexicalErrors, []);
+  assert.deepEqual(harmless.create, ["live"]);
+});
+
+test("DB27 does not misreport schema name public as CREATE target for unusual quoted DDL", () => {
+  const r = inspect(candidate("complex.sql", 'CREATE TABLE public."bad table" (id uuid);'));
+  assert.deepEqual(r.create, []);
+  assert.deepEqual(r.lexicalErrors, ["UNSUPPORTED_QUOTED_DDL_IDENTIFIER"]);
+});
+
+test("DB27 flags Unicode-escaped quoted DDL identifiers instead of inventing a U table", () => {
+  const r = inspect(candidate("unicode.sql", String.raw`CREATE TABLE U&"bad\0020name" (id int);`));
+  assert.deepEqual(r.create, []);
+  assert.ok(r.lexicalErrors.includes("UNSUPPORTED_UNICODE_DDL_IDENTIFIER"));
+  assert.equal(analyze({ candidates: [candidate("unicode.sql",
+    String.raw`CREATE TABLE U&"bad\0020name" (id int);`)] }).hazards, true);
+});
+
+test("DB27 still recognizes safe schema-qualified quoted create, alter and references", () => {
+  const r = inspect(candidate("qualified.sql",
+    'CREATE TABLE public."parent" (id uuid); ' +
+    'CREATE TABLE "child" (parent_id uuid REFERENCES public."parent"(id)); ' +
+    'ALTER TABLE public."child" ADD COLUMN active bool;'));
+  assert.deepEqual(r.lexicalErrors, []);
+  assert.deepEqual(r.create, ["parent", "child"]);
+  assert.deepEqual(r.alter, ["child"]);
+  assert.deepEqual(r.references, ["parent"]);
+});
+
+test("DB27 unsupported relation patterns inside comments/dollar bodies never invent hazards", () => {
+  const sql = [
+    "-- CREATE TEMP TABLE fake(id int);",
+    "/* CREATE FOREIGN TABLE fake(id int) SERVER x; */",
+    "DO $$ BEGIN RAISE NOTICE 'SELECT id INTO TEMP TABLE fake'; END $$;",
+    "CREATE TABLE persisted(id int);",
+  ].join("\n");
+  const r = inspect(candidate("safe.sql",sql));
+  assert.deepEqual(r.create, ["persisted"]);
+  assert.deepEqual(r.lexicalErrors, []);
+});
