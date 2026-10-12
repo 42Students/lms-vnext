@@ -23,6 +23,9 @@ import {
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
+  listMyMentorProjectAttention,
+} from "@/modules/projects/mentor-attention-service";
+import {
   listProjectMeetings,
   scheduleProjectMeeting,
 } from "@/modules/projects/meeting-service";
@@ -1145,6 +1148,56 @@ describe("Projects adversarial isolation", () => {
       [project.id, submitted.id],
     );
     expect(evaluations.rows).toHaveLength(1);
+  });
+
+
+  it("does not flag a project stalled when nested project activity is recent", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "nested-activity",
+    );
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+
+    await startProjectSprint(
+      mentor,
+      project.id,
+      workspace.sprints[0]!.id,
+    );
+
+    await pool.query(
+      `update project_instances
+          set updated_at = now() - interval '8 days'
+        where id = $1`,
+      [project.id],
+    );
+
+    await submitProjectTask(
+      learner,
+      project.id,
+      workspace.tasks[0]!.id,
+      {
+        submissionUrl:
+          "https://example.com/recent-task-activity",
+      },
+    );
+
+    const alerts =
+      await listMyMentorProjectAttention(
+        mentor,
+        new Date(),
+      );
+    expect(
+      alerts.some(
+        (alert) =>
+          alert.projectId === project.id &&
+          alert.kind === "STALLED",
+      ),
+    ).toBe(false);
   });
 
 });
