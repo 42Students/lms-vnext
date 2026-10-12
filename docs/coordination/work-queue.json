@@ -4617,17 +4617,20 @@
         "tests/db073-project-lineage-source.test.mjs",
         "tests/integration/db073-project-lineage-fks.test.ts"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 2,
       "pickedAt": "2026-10-12T13:57:00.000Z",
       "startedAt": "2026-10-12T13:57:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-12T14:08:00.000Z",
+      "completionCommitSha": "1d25dd4c97bc99bbcea5fb9aa9d7661f2e251937",
       "verifiedBy": null,
       "verifiedAt": null,
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "Only Chat 1 may register composite schema/numbered migration; run empty/latest PG replay.",
+        "7 PostgreSQL witnesses authored but not executed on disposable test DB; service regressions and catalog proof remain pending."
+      ],
       "pickHistory": [
         {
           "chatNumber": 2,
@@ -4644,8 +4647,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T13:57:00.000Z",
           "reason": "Begin bounded staging + executed source tests; do not touch shared migrations."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:08:00.000Z",
+          "reason": "Source staged SQL+contract+tests committed main; 16 source assertions executed; actual PG unverified."
         }
-      ]
+      ],
+      "completionNote": "SOURCE/STAGING COMPLETED on main: 3 fail-closed project release→sprint→task→task-submission composite FKs (unique parent indexes), 3 preflight scans+DO abort, explicit integrator handoff, 14 Node source tests and 7 opt-in PG acceptance tests authored. 16 exact-GitHub-content V8 assertions executed PASS (source structure only). No Node/Vitest runner, disposable PostgreSQL acceptance, Drizzle schema or numbered migration registration; NOT DONE_VERIFIED."
     }
   ],
   "eventModel": {
