@@ -105,7 +105,15 @@ test("DB018 witness runner is integrated safely but does not claim database acce
   assert.match(runtime, /BEGIN READ ONLY/);
   assert.match(runtime, /ROLLBACK/);
   assert.match(runtime, /joinedSamplesNonEmpty/);
-  assert.match(runtime, /nonEmpty\.length\)\.toBeGreaterThan\(0\)/);
+  // Observational zeros are no longer accepted from an entirely empty
+  // fixture: require three rollback-only academic joins to be populated.
+  assert.match(runtime, /academicFixtureProbes = new Set/);
+  for (const id of ["P5-17", "P5-18", "P5-19"]) {
+    assert.ok(runtime.includes('"' + id + '"'), id + ": fixture ID missing");
+  }
+  assert.match(runtime, /insertAcademicWitnessFixture\(client, probe\.id\)/);
+  assert.match(runtime, /expect\(nonEmpty\)\.toContain\(id\)/);
+  assert.match(runtime, /!academicFixtureProbes\.has\(probe\.id\)/);
   assert.match(runtime, /expect\(n, \`\$\{probe\.id\} has relational mismatch rows\`\)\.toBe\(0\)/);
   assert.match(runtime, /"23503"/);
   assert.match(runtime, /"23505"/);
