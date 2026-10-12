@@ -589,7 +589,7 @@ DROP TYPE cohort_status_pre_db02;
 -- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
 -- ACTIVE/INACTIVE cohorts behind the service state machine, or resurrect an archived cohort.
 CREATE FUNCTION db02_guard_cohort_status_lifecycle()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_status program_status;
 BEGIN
@@ -634,7 +634,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
 -- cohort still depends on it. The cohort insert/status guards acquire a
 -- SHARE lock on this same program row to serialize both commit orders.
 CREATE FUNCTION db02_guard_program_archive_with_live_cohorts()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED'
      AND EXISTS (
@@ -647,7 +647,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_archive_cohort_dependency_guard
 BEFORE UPDATE OF status ON programs
