@@ -130,6 +130,19 @@ async function lockLearnerApplicationGateInputs(
     throw new AuthorizationError("placements.read");
   }
 
+  // A cached request context can still say ACTIVE after platform disablement.
+  // Lock the persisted account for the remainder of this application write;
+  // otherwise disable can commit between the gate read and INSERT.
+  const [account] = await tx
+    .select({ platformStatus: users.platformStatus })
+    .from(users)
+    .where(eq(users.id, context.user.id))
+    .for("share")
+    .limit(1);
+  if (!account || account.platformStatus !== "ACTIVE") {
+    throw new AuthorizationError("placements.read");
+  }
+
   const [learnerRole] = await tx
     .select({ id: membershipRoles.id })
     .from(membershipRoles)
