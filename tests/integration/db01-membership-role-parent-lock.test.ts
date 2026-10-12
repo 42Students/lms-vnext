@@ -23,7 +23,7 @@ if (!testUrl || process.env.DATABASE_URL !== testUrl) {
 // This suite mutates and deletes fixture rows, so matching two URLs alone
 // must never authorize execution against a production-looking database.
 const target = new URL(testUrl);
-const database = decodeURIComponent(target.pathname.replace(/^\\//, ""));
+const database = decodeURIComponent(target.pathname.replace(/^\//, ""));
 const testDatabaseName = /^(?:test_[a-z0-9_]+|[a-z0-9_]+_test(?:_[a-z0-9]+)*)$/i;
 if (
   !["postgresql:", "postgres:"].includes(target.protocol) ||
