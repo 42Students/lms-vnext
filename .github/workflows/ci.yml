@@ -375,6 +375,52 @@ jobs:
           node --test tests/db04-profile-education-images-pg.test.mjs
           node --test tests/db04-candidate-sql-integrity.test.mjs tests/db04-profile-education-images-staged.test.mjs
 
+
+  # DB-012 partial live PG witness. DB09 policy tables are still staged:
+  # this job cannot certify the entire recruiter/TPO field ledger.
+  db09-staged-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify currently registered journal
+        run: npm run db:journal:verify
+      - name: Reset and seed disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Apply UNREGISTERED DB09 college policy to throwaway fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db09-policy-visibility-premerge.sql
+      - name: DB-012 live recruiter CRM and tenant policy negative integration
+        run: npm run test:db09:pg
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
