@@ -43,7 +43,7 @@ class FakeIdentityDirectory implements IdentityDirectory {
   async createUser(input: IdentityDirectoryCreateInput) {
     const user: IdentityDirectoryUser = {
       uid: `uid-${this.users.size + 1}`,
-      phoneNumber: input.phoneNumber,
+      phoneNumber: input.phoneNumber ?? null,
       email: input.email ?? null,
       displayName: input.displayName,
     };
