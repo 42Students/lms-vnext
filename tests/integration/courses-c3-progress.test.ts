@@ -744,7 +744,9 @@ describe("courses C3 learner progress against PostgreSQL", () => {
 
     await pool.query(
       `update section_enrollments
-       set status = 'COMPLETED'
+       set status = 'COMPLETED',
+           ended_at = now(),
+           updated_at = now()
        where id = $1`,
       [structure.sectionEnrollment.id],
     );
