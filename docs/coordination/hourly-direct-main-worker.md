@@ -1,40 +1,17 @@
-# Hourly LMS vNext worker — direct-to-main execution contract
+# LMS vNext main engineering continuation (single tracker)
 
-**User directive:** 2026-10-11 (Asia/Kolkata)  
-**Scope:** This recurring ChatGPT engineering worker. Other parallel worker journals, claims and Chat 1's migration integration authority remain in effect.  
-**Repository:** `42Students/lms-vnext`, target `main`.
+**Current direction (2026-10-12):** This scheduled workflow works from **one** tracker: [docs/tracker.json](../../docs/tracker.json). The earlier six-chat model, six task claims, lane checkpoint files, per-worker issue updates and Chat-1-only ownership are retired. This file is a continuation runbook, not a separate progress tracker.
 
-## North star
+When invoked:
 
-Use every scheduled invocation for the **largest safe, substantive engineering batch available**. When one task, GitHub Actions, provider or write attempt is blocked, move to non-overlapping active-phase database engineering instead of repeatedly diagnosing the same blocker.
+1. Fetch latest `main`, read `AGENTS.md`, `docs/tracker.json`, and current domain contracts/test evidence. Run `node scripts/tracker.mjs --check` where available.
+2. Select a substantive, relevant `done:false` task in the current shared phase (DATABASE first). The original eleven closure tasks take priority. Do not create cosmetic new queue entries to increase the denominator.
+3. Implement and test safely against disposable data. Shared numbered migrations/CI/root changes require serialized review; do not overwrite parallel edits.
+4. Commit directly to fresh `main` with optimistic GitHub blob SHAs; verify commit ancestry. No force-push, no ordinary PR/branch churn.
+5. Set `done:true` **only** when all task acceptance evidence is actually executed and passed on an identified SHA, and required policy approval exists. Otherwise it remains `done:false`, regardless of how much code has been written.
+6. Report DONE / NOT DONE totals, original eleven progress, exact commits, executed versus skipped tests and concrete remaining verification requirements.
+7. Keep currentPhase DATABASE until all database prerequisites and independent phase gates pass. The one tracker replaces phase-state.json and work-queue.json as operating authority.
 
-The user requested an hourly continuation as a safety net. A scheduled invocation **does not guarantee a full one-hour execution window or continuous execution between invocations**. It resumes only when the scheduler actually starts it; never claim unattended time or progress that did not occur.
+A recurring scheduler runs only when triggered. Do not promise continuous hour-long execution or infer that a future task ran. GitHub Actions may be used as an available test runner, but CI failures and missing PostgreSQL proof must be reported honestly, not ignored.
 
-## No new branches or PRs for this worker
-
-Two preexisting review PRs were consolidated **once**: [#79](https://github.com/42Students/lms-vnext/pull/79) (DB23 log-alert parser) and [#80](https://github.com/42Students/lms-vnext/pull/80) (DB22 usage-key semantics). All corresponding five file blobs are present on `main`. For subsequent work by this worker:
-
-1. Read fresh `main` SHA, `AGENTS.md`, `docs/coordination/six-chat-operating-system.md`, `phase-state.json`, `work-queue.json`, all worker checkpoints and relevant issues.
-2. Follow current globally **ACTIVE** phase only: DATABASE → API → UI → RELEASE. No advancement without all global gates.
-3. Select only unclaimed / authorized non-overlapping work. If no eligible task exists, independently verify a COMPLETED task or strengthen a missing source-backed contract without stealing completion credit or editing an active owner's paths.
-4. Fetch the **latest file blob SHA immediately before every GitHub contents API write**, update directly on `main` against that SHA, then verify the committed content. A write conflict means refresh/reconcile, **never force push or overwrite**.
-5. Do **not** create a branch, PR or merge. In case a change cannot safely be committed to `main`, stage a clearly labeled local patch/findings and try another independent task instead.
-6. Respect Chat 1's exclusive `drizzle/**`, schema barrel, shared CI/root package and global infrastructure writer role. No risky writes to production databases, no legacy user data migration, no deletion or irreversible schema change without evidence.
-7. Treat GitHub Actions billing as deliberately unavailable, **not** as a blocker. Execute independently available Node/source checks and, when actually accessible, a disposable PostgreSQL test. Mark tests **authored**, **executed**, and **passing** separately; never infer runtime correctness from a SQL comment, diff or regex.
-8. Keep task statuses distinct: PICKED / IN_PROGRESS / COMPLETED (code committed) / DONE_VERIFIED (acceptance actually passed). Do not mark a global phase certified without PostgreSQL and other required proof.
-9. Finish each invocation with precise `main` commit URLs, executed command/output, open blockers and the next current-phase target. Commit substantial coherent batches, not cosmetic status churn.
-
-## Direct-main consolidation evidence (2026-10-11)
-
-- DB23 PR #79 → `main` [ed145273](https://github.com/42Students/lms-vnext/commit/ed145273837ce790664cbf2a7396701336cc9869)
-- DB22 PR #80 → `main` [6672c7a1](https://github.com/42Students/lms-vnext/commit/6672c7a11daa88b40af1d3edbf44bd5286e4a4d7)
-- DB24 role-aware general-notification uniqueness, scoped role-row locking, source regression guards and DB24-13/14 unexecuted acceptance witnesses were subsequently committed directly to `main`.
-- A new `tests/db10-draft-schema-parser.test.mjs` guard inventories and parses all staged DB10 Drizzle files without registering migrations.
-
-**Verification caution:** The above source and authored guard changes do not claim a fresh migration replay, PostgreSQL negative tests, production sender, or global phase completion.
-
-## Additional read-only global-phase evidence check (2026-10-12)
-
-Alongside the existing \`node scripts/db065-database-phase-gate.mjs\` six-worker claim validator, run \`node scripts/db066-transition-evidence.mjs\` from the current checkout when Node is available. DB-066 is an independent, read-only companion with 12 executed local Node tests; it flags (a) future-phase task entries inside the active-phase queue, (b) \`RETIRED_APPROVED\` without explicit and traceable USER approval, (c) \`DONE_VERIFIED\` backed only by authored/failing/noncommand evidence, and (d) missing executed passing evidence for every named prior-phase gate. Details: [DB-066 evidence review](../planning/db066-phase-transition-evidence-review.md).
-
-Both guard CLIs are *structural and metadata checks*, **not PostgreSQL acceptance or authorization to promote DATABASE**. Do not adjust any worker's status just to silence a finding: document it with source evidence, reconcile with the owning worker, and keep working on non-overlapping active-phase engineering. If a test runner is inaccessible, record NOT_RUN, never PASSED.
+Historical evidence and old per-worker documents remain readable through Git history. This runbook supersedes their execution policy.
