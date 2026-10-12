@@ -327,6 +327,54 @@ jobs:
         shell: bash
         run: bash scripts/sql/db02-run-disposable-acceptance.sh
 
+
+  # DB-007 pre-promotion PostgreSQL evidence for the DB04 privacy and
+  # education/image proposal. SQL is applied ONLY to this throwaway runner's
+  # database. It remains unregistered and must not be called DB-007 closure.
+  db04-staged-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB04_PROFILE_DISPOSABLE: I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify journal without promoting DB04
+        run: npm run db:journal:verify
+      - name: Safely reset and seed isolated baseline PostgreSQL 17
+        run: npm run db:test:prepare
+      - name: Execute DB04 unregistered DDL and faculty-profile proposals on isolated DB
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/db04-proposed-migration.sql
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db04-faculty-profile-document-staging.sql
+      - name: DB-007 profile private-receipt, GPA, owner and image negative witnesses
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/db04-profile-education-images-pg.test.mjs
+          node --test tests/db04-candidate-sql-integrity.test.mjs tests/db04-profile-education-images-staged.test.mjs
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
