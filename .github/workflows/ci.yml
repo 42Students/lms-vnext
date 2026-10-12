@@ -69,6 +69,8 @@ jobs:
           node scripts/db19-db00-disposition-crosscheck.mjs
       - name: DB025 destructive database reset fail-closed native tests
         run: node --test tests/db01-test-database-guard.test.mjs tests/db-independent-verifier.test.mjs
+      - name: DB058 negative-witness no-connect target guards
+        run: node --test tests/db058-witness-target-safety.test.mjs
   source-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
