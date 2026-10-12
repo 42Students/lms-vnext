@@ -110,7 +110,7 @@ test("DB043 retains truthful publication status and claims instead of false prov
   assert.match(sql, /status <> 'PUBLISHED' OR \(published_at IS NOT NULL/);
   assert.match(sql, /status <> 'PUBLISHING' OR \(claim_token IS NOT NULL/);
   assert.match(sql, /status <> 'FAILED' OR last_failure_code IS NOT NULL/);
-  assert.match(contract, /No provider email\\/SMS send is implied/);
+  assert.match(contract, /No provider email\/SMS send is implied/);
 });
 
 test("DB043 drafts stay unregistered and require independent Postgres proof", () => {
