@@ -12,11 +12,13 @@
   "counts": {
     "candidateTables": 39,
     "candidateFields": 732,
-    "tableDispositionsClosed": 32,
-    "fieldCandidatesDispositionedByTableDecision": 641,
-    "pendingProductDecisionTables": 7,
-    "pendingProductDecisionFields": 91,
-    "runtimeSemanticVerifiedFields": 0
+    "tableDispositionsClosed": 39,
+    "fieldCandidatesDispositionedByTableDecision": 732,
+    "pendingProductDecisionTables": 0,
+    "pendingProductDecisionFields": 0,
+    "runtimeSemanticVerifiedFields": 0,
+    "approvedProductRetiredTables": 7,
+    "approvedProductRetiredFields": 91
   },
   "tables": [
     {
@@ -311,64 +313,71 @@
       "table": "smrithi_application",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 28,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_college",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 7,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_college_keywords",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 2,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_education_type",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 9,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_notification_template",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 28,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_program",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 9,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     },
     {
       "table": "smrithi_specialization",
       "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
       "sourceFieldCount": 8,
-      "disposition": "PENDING_PRODUCT_DECISION",
+      "disposition": "RETIRE_VNEXT_USER_APPROVED",
       "target": null,
-      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
-      "runtimeSemanticVerified": false
+      "rationale": "Explicit 2026-10-12 user product decision excludes historical Smrithi admissions subsystem from greenfield LMS vNext. Do not infer old production consumers are absent or delete legacy data. No new vNext Smrithi table or workflow is required.",
+      "runtimeSemanticVerified": false,
+      "productApprovalId": "DB003-SMRITHI-VNEXT-EXCLUSION-2026-10-12"
     }
   ]
 }
