@@ -18,9 +18,9 @@ test("all 312 original identity source fields have a distinct disposition", () =
   assert.equal(r.totals.fieldDispositions, 312);
 });
 
-test("original 137 gaps are distinguished from 111 NEW proposed destinations and 26 decision holdouts", () => {
+test("original 137 gaps are distinguished from 123 explicit target proposals and 14 non-persistence decisions", () => {
   const r = inspectDb004(source, ledger);
-  assert.deepEqual([r.totals.priorNoTarget, r.totals.newUnverifiedProposals, r.totals.noPersistedTargetDecision],[137,111,26]);
+  assert.deepEqual([r.totals.priorNoTarget, r.totals.newUnverifiedProposals, r.totals.noPersistedTargetDecision],[137,123,14]);
 });
 
 test("source-only success never masquerades as PostgreSQL or release verification", () => {
