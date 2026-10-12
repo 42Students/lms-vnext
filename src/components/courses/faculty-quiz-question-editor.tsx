@@ -371,6 +371,7 @@ export function FacultyQuizQuestionEditor({
                 }),
               ),
           }),
+        },
       );
       if (!response.ok) {
         setError(
