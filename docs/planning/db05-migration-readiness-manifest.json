@@ -661,6 +661,24 @@
       ],
       "postgresExecuted": false,
       "scenarioCount": 21
+    },
+    {
+      "id": "DB05_AUTHORING_COURSE_COHORT_PERIOD_LOCKED_REREAD",
+      "status": "NOT_RUN",
+      "owner": 6,
+      "evidence": "main 80f8411/fb8b39f and 2515d62: course INSERT locks authorized department/college/org; offering INSERT locks current course, active cohort/program, chosen/start/end periods, compares college and date bounds. tests/db05-authoring-tenant-snapshot-tx.test.mjs source assertions executed in V8 harness, native Node and PostgreSQL races NOT RUN."
+    },
+    {
+      "id": "DB05_PARENT_SCOPE_CHANGE_BETWEEN_PERMISSION_AND_MUTATION",
+      "status": "NOT_RUN",
+      "owner": 6,
+      "evidence": "main 4b13cc1/73f3953/305883a/42afcd4/e7dc607: edit/archive/end/publish compares exact preauthorized course department, offering course/cohort/period, delivery offering/section, lesson learning path and content lesson/delivery/type in final SQL predicates. Real 2-session ancestor reparent and tenant negative tests NOT RUN."
+    },
+    {
+      "id": "DB05_FOUR_POSTGRES_AUTHORING_RACE_REGRESSIONS",
+      "status": "NOT_RUN",
+      "owner": 6,
+      "evidence": "tests/integration/db05-course-authorization-races.test.ts authored: department archived vs course create; period CLOSED vs offering create; section archived vs delivery create; FACULTY role DELETE vs teaching assignment. Strict TEST_DATABASE_URL=DATABASE_URL and DB01 test-target preflight required before cleanup. Disposable seeded PostgreSQL and native Vitest execution NOT RUN."
     }
   ],
   "sourceReview": {
