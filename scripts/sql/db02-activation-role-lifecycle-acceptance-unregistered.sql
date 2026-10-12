@@ -109,7 +109,12 @@ BEGIN
     UPDATE section_faculty_assignments SET ended_at=NULL WHERE id=v_section_faculty;
   EXCEPTION WHEN check_violation THEN
     GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
-    v_rejected := (v_error = 'Cannot reactivate faculty assignment without FACULTY role');
+    -- The earlier alphabetical section-scope guard may reject first.
+    -- Both SQLSTATE 23514 paths deny the same forbidden reactivation.
+    v_rejected := (v_error IN (
+      'Cannot reactivate faculty assignment without FACULTY role',
+      'Section faculty assignment requires FACULTY role'
+    ));
   END;
   IF NOT v_rejected THEN RAISE EXCEPTION 'revoked FACULTY reopened section assignment'; END IF;
 
@@ -136,7 +141,12 @@ BEGIN
        SET ended_at=NULL WHERE id=v_section_faculty;
   EXCEPTION WHEN check_violation THEN
     GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
-    v_rejected := (v_error = 'Cannot reactivate faculty assignment without ACTIVE membership');
+    -- Either the section-scope guard or the generic reactivation guard
+    -- may fire first; both must fail closed for ENDED membership.
+    v_rejected := (v_error IN (
+      'Cannot reactivate faculty assignment without ACTIVE membership',
+      'Active section faculty assignment requires ACTIVE section and membership'
+    ));
   END;
   IF NOT v_rejected THEN
     RAISE EXCEPTION 'ENDED membership reopened section faculty assignment';
