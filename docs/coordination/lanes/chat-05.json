@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-081",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB080_DB04_STUDENT_IMAGE_CONTRACT_COMPLETED",
+    "checkpointKind": "DB081_PICKED_DB04_QUALIFICATION_CROSSWALK",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "b97ff52f75b89f1025aeffdf8a8aea1ba2dd2b08",
-    "lastWorkerMergedSha": "000a5efd7b5211e1b4b06f92d709fac85ab3c723",
+    "observedMainSha": "67a73254e9116a365c8261eb51bdd8aadfb93358",
+    "lastWorkerMergedSha": "67a73254e9116a365c8261eb51bdd8aadfb93358",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-080 COMPLETED source-only: legacy student_image is active current-product state and all 3 fields plus embedded image entry semantics are mapped to receipt-backed normalized learner_profile_images. Migration/runtime acceptance remains open."
+    "summary": "DB-081 started to close all 24 active legacy qualification fields against staged normalized education/document persistence."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -118,7 +118,7 @@
     "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
     "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "Continue independent DATABASE blocker removal; DB-007 owner can consume DB-077 and DB-080 without ownership transfer.",
+  "nextAction": "Build exact 24-field source-to-vNext crosswalk from frozen DB04 inventory and staged learnerProfileEducationEntries/Documents; author guards.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -194,7 +194,8 @@
     "DB-004",
     "DB-077",
     "DB-078",
-    "DB-080"
+    "DB-080",
+    "DB-081"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -225,7 +226,7 @@
     "DB-078",
     "DB-080"
   ],
-  "lastPickedAt": "2026-10-12T14:29:00.000Z",
+  "lastPickedAt": "2026-10-12T14:40:00.000Z",
   "lastCompletedAt": "2026-10-12T14:36:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
