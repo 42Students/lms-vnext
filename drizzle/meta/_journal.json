@@ -323,6 +323,13 @@
       "when": 1791840600000,
       "tag": "0045_db09_crm_scope_history_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1791844200000,
+      "tag": "0046_db09_recruiter_grant_company_integrity",
+      "breakpoints": true
     }
   ]
 }
