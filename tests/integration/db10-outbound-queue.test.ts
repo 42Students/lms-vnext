@@ -17,12 +17,30 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 if (process.env.DB10_ISOLATED_TEST_DATABASE !== "1") {
   throw new Error("DB10 outbound integration requires an isolated PostgreSQL database");
 }
-const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!url) throw new Error("DB10 outbound integration requires TEST_DATABASE_URL");
+// These tests INSERT and DELETE rows. Never fall back to the application DB,
+// including when the opt-in flag was enabled accidentally.
+const url = process.env.TEST_DATABASE_URL;
+if (!url) throw new Error("DB10 outbound integration requires explicit TEST_DATABASE_URL");
+const target = new URL(url);
+if (!["postgres:", "postgresql:"].includes(target.protocol) ||
+    !decodeURIComponent(target.pathname.slice(1)).toLowerCase().endsWith("_test") ||
+    !target.username || !target.hostname || target.search || target.hash) {
+  throw new Error("DB10 integration refuses a non-disposable PostgreSQL target");
+}
+if (process.env.DATABASE_URL) {
+  const app = new URL(process.env.DATABASE_URL);
+  const canonical = (u: URL) =>
+    `${u.hostname.toLowerCase()}:${u.port || "5432"}:${decodeURIComponent(u.pathname)}`;
+  if (canonical(app) === canonical(target)) {
+    throw new Error("DB10 integration refuses the application database target");
+  }
+}
 const pool = new Pool({ connectionString: url, max: 2 });
 const key = Buffer.alloc(32, 77).toString("base64");
+const globalKey = Buffer.alloc(32, 78).toString("base64");
 const prevFlag = process.env.DB10_OUTBOUND_READY;
 const prevKey = process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64;
+const prevGlobalKey = process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
 const issuedEventIds: string[] = [];
 const suppressionHashes: string[] = [];
 
@@ -65,6 +83,7 @@ function issueId() {
 beforeEach(async () => {
   process.env.DB10_OUTBOUND_READY = "DB10_VERIFIED";
   process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 = key;
+  process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = globalKey;
   if (suppressionHashes.length) {
     await pool.query(
       "delete from outbound_suppressions where organization_id=$1 and recipient_hash=any($2::varchar[])",
@@ -89,6 +108,8 @@ afterAll(async () => {
   else process.env.DB10_OUTBOUND_READY = prevFlag;
   if (prevKey === undefined) delete process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64;
   else process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 = prevKey;
+  if (prevGlobalKey === undefined) delete process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
+  else process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = prevGlobalKey;
   await pool.end();
   await closeDatabaseConnection();
 });
