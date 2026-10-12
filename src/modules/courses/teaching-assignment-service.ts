@@ -10,6 +10,11 @@ import {
   membershipRoles,
   courseSectionDeliveries,
   courseTeachingAssignments,
+  courseOfferings,
+  courses,
+  departments,
+  colleges,
+  organizations,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -235,31 +240,73 @@ export async function endCourseTeachingAssignment(
     collegeId: current.collegeId,
   });
 
-  const now = new Date();
-  const [updated] = await getDb()
-    .update(courseTeachingAssignments)
-    .set({
-      endedAt: now,
-      updatedAt: now,
-    })
-    .where(
-      and(
-        eq(
-          courseTeachingAssignments.id,
-          assignmentId,
-        ),
-        isNull(
-          courseTeachingAssignments.endedAt,
-        ),
-      ),
-    )
-    .returning();
+  return getDb().transaction(async (tx) => {
+    const [lockedAssignment] = await tx
+      .select({ id: courseTeachingAssignments.id })
+      .from(courseTeachingAssignments)
+      .where(and(
+        eq(courseTeachingAssignments.id, assignmentId),
+        eq(courseTeachingAssignments.deliveryId, current.deliveryId),
+        eq(courseTeachingAssignments.membershipId, current.membershipId),
+        isNull(courseTeachingAssignments.endedAt),
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "TEACHING_ASSIGNMENT_NOT_FOUND",
-    );
-  }
+    if (!lockedAssignment) {
+      throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+    }
 
-  return updated;
+    // The authorization above used the delivery's previous college. Hold
+    // SHARE locks on its course/department/college chain and recheck that
+    // neither tenant nor organization has moved before ending this role.
+    const [liveScope] = await tx
+      .select({
+        collegeId: departments.collegeId,
+        organizationId: colleges.organizationId,
+      })
+      .from(courseSectionDeliveries)
+      .innerJoin(
+        courseOfferings,
+        eq(courseOfferings.id, courseSectionDeliveries.offeringId),
+      )
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(
+        eq(courseSectionDeliveries.id, current.deliveryId),
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
+      ))
+      .for("share")
+      .limit(1);
+
+    if (!liveScope ||
+        liveScope.collegeId !== current.collegeId ||
+        liveScope.organizationId !== current.organizationId) {
+      throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+    }
+
+    const now = new Date();
+    const [updated] = await tx
+      .update(courseTeachingAssignments)
+      .set({
+        endedAt: now,
+        updatedAt: now,
+      })
+      .where(and(
+        eq(courseTeachingAssignments.id, assignmentId),
+        eq(courseTeachingAssignments.deliveryId, current.deliveryId),
+        eq(courseTeachingAssignments.membershipId, current.membershipId),
+        isNull(courseTeachingAssignments.endedAt),
+      ))
+      .returning();
+
+    if (!updated) {
+      throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+    }
+
+    return updated;
+  });
 }
