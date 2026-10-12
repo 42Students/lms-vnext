@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "PICKED",
+  "activeTaskId": "DB-077",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_SOURCE_RECONCILIATION_COMPLETED_RUNTIME_UNVERIFIED",
+    "checkpointKind": "DB077_PICKED_DB04_HISTORICAL_DISPOSITION",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "19078d08c73acafaeb6344d02b692e37cbdb6f8b",
-    "lastWorkerMergedSha": "a0a1643eab2d92762212dca4bea4362ac3450f4f",
+    "observedMainSha": "531d510cd74987486cc83f903e09473bc91e36c4",
+    "lastWorkerMergedSha": "531d510cd74987486cc83f903e09473bc91e36c4",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 source reconciliation COMPLETED, unverified: 312/312 legacy fields explicitly dispositioned; former 137 target gaps = 0; 70/70 previously evidence-less active rows now source-accounted; provider authority frozen to Firebase/Identity Platform plus canonical PostgreSQL tenant authorization/minimal keyed-digest sidecars. Disposable DB URL target-redirect preflight hardened. No PG/provider/API acceptance claimed."
+    "summary": "DB-077 reserved to resolve DB04 student_registration and approver_id_card historical source dispositions without editing Chat 3 DB-007 implementation."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -115,7 +115,7 @@
     "Chat 1 migration integrator: review/register only approved DB01 staged sidecars in dependency order; preserve external identity authority and never introduce raw password/access/refresh/session-cookie persistence.",
     "DB-007/DB-005/DB-012 owners: final DB01 field ledger contains explicit cross-domain profile/academic/recruiter handoffs; close their runtime semantics in their own tasks without duplicating DB01 identity columns."
   ],
-  "nextAction": "Refresh the global DATABASE queue and select the next eligible task. DB-004 is COMPLETED awaiting PostgreSQL/provider/API acceptance, not DONE_VERIFIED.",
+  "nextAction": "Independently freeze source dispositions for student_registration and approver_id_card using current-source absence, historical removal, migration history and connected-repository evidence; author regression guards.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -188,7 +188,8 @@
     "DB-058",
     "DB-065",
     "DB-064",
-    "DB-004"
+    "DB-004",
+    "DB-077"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -216,7 +217,7 @@
     "DB-064",
     "DB-004"
   ],
-  "lastPickedAt": "2026-10-12T00:42:19+05:30",
+  "lastPickedAt": "2026-10-12T14:06:00.000Z",
   "lastCompletedAt": "2026-10-12T14:01:00.000Z",
   "verifiedTaskIds": [
     "DB-065"
