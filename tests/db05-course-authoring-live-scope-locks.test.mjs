@@ -85,3 +85,33 @@ test("DB05 authoring checks are source guards, not executed PostgreSQL acceptanc
   assert.equal(manifest.status, "SOURCE_STAGED_BLOCKED");
   assert.ok(manifest.gates.some(g => g.id === "DB05_ACTIVE_CHILD_ARCHIVE_SERIALIZATION_PG_NEGATIVE" && g.status === "NOT_RUN"));
 });
+
+const offering = read("../src/modules/courses/offering-service.ts");
+const offeringUpdate = offering.slice(
+  offering.indexOf("export async function updateCourseOffering("),
+  offering.indexOf("export async function archiveCourseOffering("),
+);
+
+test("DB05 offering update rechecks mutable cohort and period under transaction locks", () => {
+  assert.match(offeringUpdate, /return getDb\(\)\.transaction\(async \(tx\) => \{/);
+  const parent = offeringUpdate.indexOf(".from(courseOfferings)");
+  const cohort = offeringUpdate.indexOf(".from(cohorts)");
+  const period = offeringUpdate.indexOf(".from(academicPeriods)");
+  const mutation = offeringUpdate.indexOf(".update(courseOfferings)");
+  assert.ok(parent >= 0 && parent < cohort && cohort < period && period < mutation);
+  assert.match(offeringUpdate, /\.for\("update"\)/);
+  assert.equal((offeringUpdate.match(/\.for\("share"\)/g) || []).length, 2);
+  assert.match(offeringUpdate, /lockedPeriod\.status === "CLOSED"/);
+  assert.match(offeringUpdate, /lockedCohort\.status !== "PLANNED"/);
+  assert.match(offeringUpdate, /lockedCohort\.status !== "ACTIVE"/);
+});
+
+test("DB05 offering update fails closed on stale cross-college reparent", () => {
+  assert.match(offeringUpdate, /lockedCohort\.collegeId !== current\.collegeId/);
+  assert.match(offeringUpdate, /lockedPeriod\.collegeId !== current\.collegeId/);
+  assert.match(offeringUpdate, /throw new CoursesServiceError\("COURSE_COLLEGE_MISMATCH"\)/);
+  assert.match(offeringUpdate, /\.innerJoin\(programs, eq\(programs\.id, cohorts\.programId\)\)/);
+  assert.match(offeringUpdate, /\.innerJoin\(departments, eq\(departments\.id, programs\.departmentId\)\)/);
+  const error = offeringUpdate.indexOf('throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH")');
+  assert.ok(error > 0 && error < offeringUpdate.indexOf(".update(courseOfferings)"));
+});
