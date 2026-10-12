@@ -756,7 +756,7 @@ describe("courses C4C assessment aggregation", () => {
     });
   });
 
-  it("marks expired unsubmitted assessments missed and skips impossible Continue Learning actions", async () => {
+  it("keeps overdue assignments actionable while expired quizzes are MISSED", async () => {
     const structure = await createStructure();
 
     await updateCourseAssignment(
@@ -792,21 +792,26 @@ describe("courses C4C assessment aggregation", () => {
 
     expect(workspace.summary).toMatchObject({
       overallPercent: 33,
-      assignmentsMissed: 1,
+      assignmentsMissed: 0,
       quizzesMissed: 1,
       itemsCompleted: 1,
-      itemsMissed: 2,
+      itemsMissed: 1,
       itemsTotal: 3,
     });
     expect(
       workspace.lessons[0]?.assignments[0]
         ?.progress.status,
-    ).toBe("MISSED");
+    ).toBe("NOT_STARTED");
     expect(
       workspace.lessons[0]?.quizzes[0]
         ?.progress.status,
     ).toBe("MISSED");
-    expect(workspace.nextItem).toBeNull();
+    // Late assignment submission remains legal in the legacy LMS and this
+    // must stay a valid Continue Learning action, unlike an expired quiz.
+    expect(workspace.nextItem).toMatchObject({
+      kind: "ASSIGNMENT",
+      itemId: structure.assignment.id,
+    });
     expect(
       workspace.summary.lessonsCompleted,
     ).toBe(0);
