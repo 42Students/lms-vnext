@@ -42,3 +42,26 @@ test("DB05 assignment ending keeps original permission check and no role escalat
   assert.match(body, /requirePermission\(context, "courses\.manage"/);
   assert.doesNotMatch(body, /\.insert\(membershipRoles\)|\.update\(membershipRoles\)/);
 });
+
+const listingStart = source.indexOf("export async function listCourseTeachingAssignments(");
+const listingEnd = source.indexOf("export async function createCourseTeachingAssignment(", listingStart);
+const listing = source.slice(listingStart, listingEnd);
+
+test("DB05 teaching roster SELECT filters scoped college and exact authorized section at query time", () => {
+  for (const table of ["courseSectionDeliveries", "courseOfferings", "courses", "departments", "colleges"]) {
+    assert.ok(listing.includes(".innerJoin(" + table) || listing.includes(".innerJoin(\n      " + table), table);
+  }
+  assert.match(listing, /eq\(departments\.collegeId, delivery\.collegeId\)/);
+  assert.match(listing, /eq\(colleges\.organizationId, delivery\.organizationId\)/);
+  assert.match(listing, /eq\(courseSectionDeliveries\.offeringId, delivery\.offeringId\)/);
+  assert.match(listing, /eq\(courseSectionDeliveries\.sectionId, delivery\.sectionId\)/);
+  assert.match(listing, /requirePermission\(context, "courses\.read"/);
+});
+
+test("DB05 historic ended-teacher listing remains scoped, without expanding unauthorized access", () => {
+  assert.match(listing, /includeEnded\s*=\s*false/);
+  assert.match(listing, /!includeEnded/);
+  assert.match(listing, /isNull\(courseTeachingAssignments\.endedAt\)/);
+  assert.match(listing, /asc\(courseTeachingAssignments\.role\)/);
+  assert.doesNotMatch(listing, /hasFacultyDeliveryAccess/);
+});
