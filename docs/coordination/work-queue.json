@@ -4793,17 +4793,17 @@
         "tests/db-independent-verifier.test.mjs",
         "docs/planning/db076-independent-verifier-schema-drift.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "131f45d5a37f133055e81ccda337c5179c124e40",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Independent verifier hardening complete: exact checkout now runs 9 ordered gates including canonical Drizzle generation, tracked+untracked drift rejection and DB002 read-only catalog witness before broad DB tests. Catalog target validation reuses DB01 disposable-target safety (including exact remote confirmation) and explicitly requires all 0044 DB09 structural tables. Dedicated regression is registered in test:db:parity. Source reconciliation passed; the nine-step verifier itself is not claimed executed in this task.",
       "pickedBy": 1,
       "pickedAt": "2026-10-12T14:17:29.368Z",
       "startedAt": "2026-10-12T14:17:29.368Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-12T14:22:54.096Z",
+      "completionCommitSha": "131f45d5a37f133055e81ccda337c5179c124e40",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4827,6 +4827,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T14:17:29.368Z",
           "reason": "Adding exact-checkout Drizzle generation/no-drift and DB002 catalog witness to CI-independent verifier."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:22:54.096Z",
+          "reason": "DB-076 verification mechanism implemented and source-reconciled; actual nine-step current-main execution remains downstream evidence."
         }
       ]
     },
