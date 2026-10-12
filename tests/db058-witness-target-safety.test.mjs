@@ -153,3 +153,21 @@ test("DB030 negative witness helpers accept independent learner identities", () 
   assert.match(source,
     /async function submission\(db:Sql,a:string,d:string,m:string=SEED_IDS\.learnerCollegeAMembership\)/);
 });
+
+
+test("DB10 log-alert integration never uses the app URL as a test-target fallback", () => {
+  const source = readFileSync(
+    "tests/integration/db10-log-alert-admin.test.ts", "utf8",
+  );
+  const importAt = source.indexOf('from "../support/db018-test-target.mjs"');
+  const testOnly = source.indexOf("const databaseUrl = process.env.TEST_DATABASE_URL;");
+  const optIn = source.indexOf('process.env.DB10_DISPOSABLE_TEST_DATABASE !== "true"');
+  const bound = source.indexOf("process.env.DATABASE_URL !== databaseUrl");
+  const preflight = source.indexOf("assertDb018DisposableTarget(process.env, { serviceBound: true })");
+  const poolAt = source.indexOf("new Pool(");
+  assert.ok(importAt >= 0 && testOnly > importAt && optIn > testOnly,
+    "DB10 must require explicit TEST_DATABASE_URL and DB10 opt-in");
+  assert.ok(bound > optIn && preflight > bound && poolAt > preflight,
+    "DB10 must verify service target and preflight before opening a pool");
+  assert.doesNotMatch(source, /TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
+});
