@@ -1,5 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createProgram } from "@/modules/academics/program-service";
@@ -14,10 +16,28 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 
 // Requires a disposable, seeded PostgreSQL test DB. Never run against
 // production. This suite is authored, NOT claimed executed by Chat 6.
-const connectionString =
-  process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error("A disposable TEST_DATABASE_URL is required for DB05 race tests");
+const connectionString = process.env.TEST_DATABASE_URL;
+if (!connectionString || process.env.DATABASE_URL !== connectionString) {
+  // getDb() writes to DATABASE_URL while the PG pool uses TEST_DATABASE_URL.
+  // Refuse a split destination even if ONE of the URLs looks disposable.
+  throw new Error("Set identical DATABASE_URL and TEST_DATABASE_URL for DB05 race tests");
+}
+
+// The shared DB01 preflight validates the explicit test DB name, localhost
+// policy and opt-in confirmation for a remote disposable test target. Omit
+// DATABASE_URL for this preflight only: equality was required above, while
+// DB01's destructive-reset guard rejects equality for reset operations.
+const guard = spawnSync(
+  process.execPath,
+  [fileURLToPath(new URL("../../scripts/db01-test-database-guard.mjs", import.meta.url))],
+  {
+    env: { ...process.env, DATABASE_URL: "" },
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  },
+);
+if (guard.error || guard.status !== 0) {
+  throw new Error("DB05 test target preflight refused the database; no writes performed");
 }
 const pool = new Pool({ connectionString, max: 2 });
 const prefix = "S6LK-";
@@ -68,7 +88,7 @@ async function cleanup() {
   )`);
   await pool.query("DELETE FROM programs WHERE code LIKE 'S6LK-%'");
   await pool.query("DELETE FROM academic_periods WHERE code LIKE 'S6LK-%'");
-  await pool.query("DELETE FROM departments WHERE name = 'S6LK Locked Department'");
+  await pool.query("DELETE FROM departments WHERE name=$1 AND college_id=$2", ["S6LK Locked Department", SEED_IDS.collegeA]);
   await pool.query("DELETE FROM membership_roles WHERE membership_id=$1", [facultyIds.membership]);
   await pool.query("DELETE FROM college_memberships WHERE id=$1", [facultyIds.membership]);
   await pool.query("DELETE FROM users WHERE id=$1", [facultyIds.user]);
