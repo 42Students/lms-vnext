@@ -81,46 +81,57 @@ fi
 EXPECTED_TRIGGER_COUNT="$(printf '%s\n' "$EXPECTED_TRIGGER_NAMES" | sed '/^$/d' | wc -l | tr -d ' ')"
 echo "DB02 trigger manifest preflight PASS ($EXPECTED_TRIGGER_COUNT canonical triggers registered)"
 
-TABLE_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
-SELECT count(*)::integer
-FROM information_schema.tables
-WHERE table_schema = current_schema()
-  AND table_name IN (
-    'program_terms',
-    'program_term_courses',
-    'cohort_progression_state',
-    'cohort_progression_events',
-    'lecture_halls',
-    'faculty_course_associations'
-  );
-SQL
+EXPECTED_TABLE_NAMES="$(
+  grep -Eo '^CREATE TABLE (IF NOT EXISTS )?[a-z0-9_]+'     scripts/sql/db02-academic-progression-and-rooms-staging.sql     | awk '{print $NF}'     | sort -u
 )"
-if [[ "$TABLE_WITNESSES" != "6" ]]; then
-  echo "DB02 canonical migration is missing staged tables (required: 6, found: $TABLE_WITNESSES)" >&2
+if [[ -z "$EXPECTED_TABLE_NAMES" ]]; then
+  echo "DB02 canonical staging exposes no created-table manifest" >&2
   exit 2
 fi
+for table in $EXPECTED_TABLE_NAMES; do
+  if [[ ! "$table" =~ ^[a-z0-9_]+$ ]]; then
+    echo "Invalid canonical DB02 table identifier: $table" >&2
+    exit 2
+  fi
+  witness="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1     -c "SELECT count(*)::integer FROM information_schema.tables WHERE table_schema=current_schema() AND table_name='$table'")"
+  if [[ "$witness" != "1" ]]; then
+    echo "DB02 canonical migration is missing staged table: $table" >&2
+    exit 2
+  fi
+done
+EXPECTED_TABLE_COUNT="$(printf '%s\n' "$EXPECTED_TABLE_NAMES" | sed '/^$/d' | wc -l | tr -d ' ')"
+echo "DB02 table manifest preflight PASS ($EXPECTED_TABLE_COUNT canonical tables registered)"
 
-COLUMN_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
-SELECT count(*)::integer
-FROM information_schema.columns
-WHERE table_schema = current_schema()
-  AND (table_name, column_name) IN (
-    ('course_offerings','program_term_id'),
-    ('course_offerings','program_term_course_id'),
-    ('cohorts','start_date'),
-    ('cohorts','end_date'),
-    ('sections','description'),
-    ('sections','minimum_capacity'),
-    ('sections','start_date'),
-    ('sections','end_date'),
-    ('section_schedule_events','lecture_hall_id')
-  );
-SQL
+EXPECTED_COLUMN_PAIRS="$(
+  awk '
+    /^ALTER TABLE [a-z0-9_]+/ { table=$3 }
+    /^[[:space:]]*ADD COLUMN / {
+      column=$3
+      if (column=="IF") column=$6
+      gsub(/[,;]/, "", column)
+      print table "." column
+    }
+  ' scripts/sql/db02-academic-progression-and-rooms-staging.sql     | sort -u
 )"
-if [[ "$COLUMN_WITNESSES" != "9" ]]; then
-  echo "DB02 canonical migration is missing staged columns (required: 9, found: $COLUMN_WITNESSES)" >&2
+if [[ -z "$EXPECTED_COLUMN_PAIRS" ]]; then
+  echo "DB02 canonical staging exposes no added-column manifest" >&2
   exit 2
 fi
+for pair in $EXPECTED_COLUMN_PAIRS; do
+  table="${pair%%.*}"
+  column="${pair#*.}"
+  if [[ ! "$table" =~ ^[a-z0-9_]+$ || ! "$column" =~ ^[a-z0-9_]+$ ]]; then
+    echo "Invalid canonical DB02 column identifier: $pair" >&2
+    exit 2
+  fi
+  witness="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1     -c "SELECT count(*)::integer FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='$table' AND column_name='$column'")"
+  if [[ "$witness" != "1" ]]; then
+    echo "DB02 canonical migration is missing staged column: $pair" >&2
+    exit 2
+  fi
+done
+EXPECTED_COLUMN_COUNT="$(printf '%s\n' "$EXPECTED_COLUMN_PAIRS" | sed '/^$/d' | wc -l | tr -d ' ')"
+echo "DB02 column manifest preflight PASS ($EXPECTED_COLUMN_COUNT canonical columns registered)"
 
 INACTIVE_ENUM_WITNESS="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
 SELECT count(*)::integer
