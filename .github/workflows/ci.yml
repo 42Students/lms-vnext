@@ -277,6 +277,56 @@ jobs:
           tests/integration/db01-tenant-routing-lifecycle.test.ts
           tests/integration/db01-membership-role-parent-lock.test.ts
 
+
+  # DB-005 staging probe: exercises the UNREGISTERED DB02 proposal on a
+  # disposable instance and executes its negative/concurrent SQL contracts.
+  # Success is NOT proof of numbered migration registration, production
+  # migration replay, or DB-005 task completion.
+  db02-staged-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB02_EXPECTED_DATABASE: lms_vnext_test
+      DB02_DISPOSABLE_ACCEPTANCE: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify currently registered journal
+        run: npm run db:journal:verify
+      - name: Safely reset and seed disposable PostgreSQL 17 baseline
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Apply UNREGISTERED DB02 staging to disposable database ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db02-academic-progression-and-rooms-staging.sql
+      - name: DB-005 staged schema, authorization and concurrent SQL acceptance
+        shell: bash
+        run: bash scripts/sql/db02-run-disposable-acceptance.sh
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
