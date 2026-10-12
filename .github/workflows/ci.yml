@@ -177,8 +177,11 @@ jobs:
         env:
           DB017_ISOLATED_TEST_DATABASE: "1"
         run: node scripts/db017-share-defaults-pg-acceptance.mjs
-      - name: PostgreSQL integration and tenant-negative tests
-        run: npm run test:db
+      # Registered-schema matrix runs ONLY against committed numbered Drizzle
+      # migrations. DB08/DB10 unregistered proposals run in their independent
+      # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.
+      - name: Registered-schema PostgreSQL integration and tenant-negative tests
+        run: npx vitest run --config vitest.db.registered.config.ts
   # Independent original-core DB-030 acceptance: a fresh, disposable PG17
   # fixture ensures failures in unrelated unregistered DB08/DB10 suites cannot
   # conceal the exact assessment lineage/tenant/roster/race witness result.
