@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T14:09:00.000Z",
+  "updatedOn": "2026-10-12T14:31:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1176,9 +1176,29 @@
         "drizzle/**",
         "src/db/schema/index.ts"
       ],
-      "status": "COMPLETED",
-      "latestEvidenceSha": "dcf72f224da3e35b6af81ed0892306532f92e896",
-      "verificationEvidence": [],
+      "status": "DONE_VERIFIED",
+      "latestEvidenceSha": "adecad2e324389e50961bdc3264a80fc93511c81",
+      "verificationEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "result": "PASS",
+          "commitSha": "adecad2e324389e50961bdc3264a80fc93511c81",
+          "runner": "GitHub Actions ubuntu-24.04 + PostgreSQL 17-alpine",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/38263376010",
+          "jobId": 114859309056,
+          "evidence": [
+            "49 registered migrations through 0048_db09_crm_principal_race_hardening passed journal preflight",
+            "15/15 DB017 static registration/manifest contracts passed",
+            "fail-closed disposable target preflight passed",
+            "zero-to-head reset/migrate/seed passed",
+            "registered migrate idempotence passed",
+            "DB002 catalog witness passed",
+            "DB09 share-default positive/negative/two-college isolation witness passed",
+            "DB09 CRM/recruiter same-company/actor/append-only/terminal-followup witness passed",
+            "db:generate produced no tracked or untracked Drizzle drift"
+          ]
+        }
+      ],
       "blockers": [],
       "completionNote": "Migration-integration control complete: DB00–DB10 staged inputs dispositioned in authoritative JSON/MD manifest; known superseded/reference-only SQL excluded; registered baseline mapped; DB09 0043 share-default ownership recorded and 0044 structural policy/CRM baseline registered exactly once with a 95-table snapshot and static guards. Remaining DB01/02/04/05/06/07/08/09/10 promotions are explicitly deferred to domain/product/API/runtime prerequisites instead of blind draft concatenation. 0044 itself still requires fresh zero-to-head replay/schema-generation/targeted PostgreSQL evidence before DONE_VERIFIED.",
       "pickedBy": 1,
@@ -1187,8 +1207,8 @@
       "completedBy": 1,
       "completedAt": "2026-10-12T14:16:31.096Z",
       "completionCommitSha": "dcf72f224da3e35b6af81ed0892306532f92e896",
-      "verifiedBy": null,
-      "verifiedAt": null,
+      "verifiedBy": 1,
+      "verifiedAt": "2026-10-12T14:31:00.000Z",
       "pickHistory": [
         {
           "chatNumber": 1,
@@ -1215,6 +1235,11 @@
           "status": "COMPLETED",
           "at": "2026-10-12T14:16:31.096Z",
           "reason": "DB-017 integration ownership/order ambiguity closed; 0044 structural registration and all DB00–DB10 staged dispositions committed. Fresh 0044 PostgreSQL replay remains verification work."
+        },
+        {
+          "status": "DONE_VERIFIED",
+          "at": "2026-10-12T14:31:00.000Z",
+          "reason": "Run 38263376010 job 114859309056 passed DB017 static + PostgreSQL replay/idempotence/catalog/DB09 negative witnesses and final no-drift generation at adecad2e."
         }
       ]
     },
