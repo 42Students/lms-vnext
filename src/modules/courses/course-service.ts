@@ -298,6 +298,9 @@ export async function updateCourse(
         and(
           eq(courses.id, courseId),
           eq(courses.status, "ACTIVE"),
+          // A course moved to a different department since permission lookup
+          // must not be edited with stale tenant authorization.
+          eq(courses.departmentId, scope.departmentId),
         ),
       )
       .returning();
@@ -340,6 +343,8 @@ export async function archiveCourse(
       .where(and(
         eq(courses.id, courseId),
         eq(courses.status, "ACTIVE"),
+        // Require the same owning department used for authorization.
+        eq(courses.departmentId, scope.departmentId),
       ))
       .for("update")
       .limit(1);
@@ -370,6 +375,8 @@ export async function archiveCourse(
       .where(and(
         eq(courses.id, courseId),
         eq(courses.status, "ACTIVE"),
+        // Require the same owning department used for authorization.
+        eq(courses.departmentId, scope.departmentId),
       ))
       .returning();
 
