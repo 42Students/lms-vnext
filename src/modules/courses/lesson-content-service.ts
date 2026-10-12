@@ -241,6 +241,7 @@ export async function listLessonContents(
       context,
       lesson.offeringId,
       deliveryId,
+      { includeHistorical: includeArchived },
     );
 
   if (
