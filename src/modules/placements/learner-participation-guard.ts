@@ -4,6 +4,7 @@ import {
   cohorts,
   collegeMemberships,
   departments,
+  users,
   learnerProgramEnrollments,
   membershipRoles,
   programs,
@@ -62,7 +63,9 @@ export async function requireLearnerPlacementAccess(
     collegeId: collegeMemberships.collegeId,
     userId: collegeMemberships.userId,
     status: collegeMemberships.status,
+    platformStatus: users.platformStatus,
   }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
     .innerJoin(membershipRoles, and(
       eq(membershipRoles.membershipId, collegeMemberships.id),
       eq(membershipRoles.role, "LEARNER"),
@@ -70,6 +73,9 @@ export async function requireLearnerPlacementAccess(
     .where(eq(collegeMemberships.id, membership.id))
     .limit(1);
   if (!authorized || authorized.status !== "ACTIVE" ||
+      // An otherwise valid request context may outlive account disablement.
+      // Check the current persisted user, not just its original JWT/context.
+      authorized.platformStatus !== "ACTIVE" ||
       authorized.userId !== context.user.id ||
       authorized.collegeId !== membership.collegeId) {
     throw new AuthorizationError("placements.read");
