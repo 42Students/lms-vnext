@@ -56,9 +56,19 @@ test("DB070 trigger/function names and dollar quote are well formed", () => {
   assert.equal((sql.match(/\$db07_template_revision_guard\$/g) ?? []).length, 2);
 });
 
+test("DB070 TRUNCATE CASCADE cannot evade row-level revision immutability", () => {
+  const statement = /CREATE TRIGGER db07_project_template_versions_no_truncate\s+BEFORE TRUNCATE ON project_template_versions\s+FOR EACH STATEMENT\s+EXECUTE FUNCTION db07_deny_template_version_mutation\(\);/;
+  assert.match(sql, statement);
+  assert.match(sql, /IF TG_OP = 'TRUNCATE' THEN\s+RAISE EXCEPTION[\s\S]*?USING ERRCODE = '23514';/);
+  assert.ok(sql.indexOf("IF TG_OP = 'TRUNCATE'") < sql.indexOf("OLD.id"),
+    "statement triggers must not dereference missing OLD rows");
+  const mutant = sql.replace(/CREATE TRIGGER db07_project_template_versions_no_truncate[\s\S]*?;/, "");
+  assert.doesNotMatch(mutant, statement, "source guard must catch removed TRUNCATE protection");
+});
+
 test("DB070 source proposal is nondestructive and does not mutate schema barrel", () => {
   assert.doesNotMatch(sql, /\bDROP\s+(?:TABLE|SCHEMA|INDEX)\b/i);
-  assert.doesNotMatch(sql, /\bTRUNCATE\b/i);
+  assert.doesNotMatch(sql, /(?:^|\n)\s*TRUNCATE\s+(?:TABLE\s+)?project_template_versions\b/im);
   assert.doesNotMatch(sql, /\bALTER TABLE project_templates\b/i);
 });
 
