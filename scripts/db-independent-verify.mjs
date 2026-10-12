@@ -40,6 +40,46 @@ function outputTail(value, maxLines = 80) {
   return lines.slice(-maxLines).join("\n");
 }
 
+function runEmptyOutputStep(name, command, args, env) {
+  const startedAt = new Date().toISOString();
+  process.stdout.write(
+    `\n=== ${name} ===\n$ ${command} ${args.join(" ")}\n`,
+  );
+  const result = spawnSync(command, args, {
+    encoding: "utf8",
+    env,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const stdout = result.stdout ?? "";
+  const stderr = result.stderr ?? "";
+  process.stdout.write(stdout);
+  process.stderr.write(stderr);
+  const combined = `${stdout}\n${stderr}`;
+  const unexpectedOutput = stdout.trim();
+  const record = {
+    name,
+    command: [command, ...args],
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    exitCode: result.status,
+    signal: result.signal ?? null,
+    outputSha256: createHash("sha256").update(combined).digest("hex"),
+    outputTail: outputTail(combined),
+    expectedEmptyStdout: true,
+    stdoutWasEmpty: unexpectedOutput.length === 0,
+  };
+  results.push(record);
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(`${name} failed with exit code ${result.status}`);
+  }
+  if (unexpectedOutput) {
+    throw new Error(
+      `${name} found unregistered files:\n${unexpectedOutput}`,
+    );
+  }
+}
+
 function runStep(name, command, args, env) {
   const startedAt = new Date().toISOString();
   process.stdout.write(
@@ -247,6 +287,24 @@ async function main() {
       env,
     );
     runStep(
+      "Canonical Drizzle generation",
+      "npm",
+      ["run", "db:generate"],
+      env,
+    );
+    runStep(
+      "Tracked Drizzle schema drift",
+      "git",
+      ["diff", "--exit-code", "--", "drizzle/"],
+      env,
+    );
+    runEmptyOutputStep(
+      "Untracked Drizzle schema drift",
+      "git",
+      ["ls-files", "--others", "--exclude-standard", "drizzle/"],
+      env,
+    );
+    runStep(
       "Disposable database reset + zero-to-head migration + seed",
       "npm",
       ["run", "db:test:prepare"],
@@ -256,6 +314,12 @@ async function main() {
       "Migration idempotence smoke",
       "npm",
       ["run", "db:migrate"],
+      env,
+    );
+    runStep(
+      "Read-only PostgreSQL migration/catalog witness",
+      "node",
+      ["scripts/db002-postgres-catalog-acceptance.mjs"],
       env,
     );
     runStep(
@@ -292,8 +356,12 @@ async function main() {
       passed:
         failure === null &&
         provider !== null &&
-        results.length === 5 &&
-        results.every((step) => step.exitCode === 0),
+        results.length === 9 &&
+        results.every(
+          (step) =>
+            step.exitCode === 0 &&
+            (step.expectedEmptyStdout !== true || step.stdoutWasEmpty === true),
+        ),
       failure,
     };
     mkdirSync(dirname(evidencePath), { recursive: true });
