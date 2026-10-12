@@ -88,3 +88,16 @@ test("staging stays unregistered; deployment requires migration and real Postgre
   assert.match(queue, /DB10_OUTBOUND_READY === "DB10_VERIFIED"/);
   assert.doesNotMatch(sql, /GRANT\s+EXECUTE[^;]+TO\s+PUBLIC/i);
 });
+
+test("DB10 integration writer and cleanup share a validated isolated Pool", () => {
+  const suite = read("tests/integration/db10-outbound-queue.test.ts");
+  assert.match(suite, /const url = process\.env\.TEST_DATABASE_URL;/);
+  assert.doesNotMatch(suite, /TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
+  assert.match(suite, /\.endsWith\("_test"\)/);
+  assert.match(suite, /if \(canonical\(app\) === canonical\(target\)\)/);
+  assert.match(suite, /const isolatedDb = drizzle\(pool\)/);
+  assert.match(suite, /queueOutboundDeliveryInTransaction\(isolatedDb, context, raw\)/);
+  assert.doesNotMatch(suite, /queueOutboundDelivery\(adminA,/);
+  assert.doesNotMatch(suite, /getDb\(/);
+  assert.match(suite, /DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = globalKey/);
+});
