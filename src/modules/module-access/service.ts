@@ -197,8 +197,8 @@ export async function buildModuleAccessChain(
       .limit(1);
 
     let sectionId: string | null = null;
-    let cohortId = enrollment?.cohortId ?? null;
-    let programId = enrollment?.programId ?? null;
+    let cohortId: string | null = enrollment?.cohortId ?? null;
+    let programId: string | null = enrollment?.programId ?? null;
 
     if (enrollment) {
       const [section] = await db
