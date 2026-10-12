@@ -422,6 +422,55 @@ jobs:
       - name: DB-012 live recruiter CRM and tenant policy negative integration
         run: npm run test:db09:pg
 
+
+  # DB-022: preserve the legacy two-counter and non-unique synonym semantics.
+  # The canonical SQL remains UNREGISTERED; this exercises real SQL and the
+  # production read service on an isolated PostgreSQL fixture, not deployment.
+  db10-skills-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered journal integrity
+        run: npm run db:journal:verify
+      - name: Prepare isolated disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Apply DB10 unregistered skill staging to disposable fixture ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-skills-catalog-staging.sql
+      - name: DB-022 real catalog search, independent usage and synonym acceptance
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db10-skills-catalog.test.ts
+
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 45
