@@ -1,19 +1,16 @@
 # LMS vNext engineering rules
 
-## CI billing policy — do not block engineering (2026-10-11)
+## Single tracker and direct-main engineering (2026-10-12 — current authority)
 
-**Explicit user directive:** GitHub Actions CI is stopped/unavailable because of billing. Treat it as **intentionally disabled**, not as an engineering or task blocker. Do not keep reopening billing diagnosis, require Actions jobs as prerequisites, wait for Actions to recover, or mark an implementation task BLOCKED solely because the CI runner did not start. Do not burn time repeatedly polling known pre-step failures.
+**User directive:** The six-chat system is retired. There are no Chat 1–6 assignments, claims, lane checkpoints, picked/in-progress/completed/blocked statuses, or chat-specific migration/CI ownership. **The sole live tracker is [docs/tracker.json](docs/tracker.json)**. All older files under docs/coordination/ (including work-queue.json, phase-state.json, lanes/ and six-chat-operating-system.md) are historical evidence, not instructions or a second progress tracker. Issues #21–#26 are historical journals.
 
-**Verification is still mandatory but CI-provider-agnostic.** Keep developing and committing bounded changes with source checks and authored tests. For executable proof use an independently available runner (local/ephemeral Node, an approved disposable PostgreSQL instance or equivalent environment), record the exact commands, revisions, outputs and configuration with secrets redacted. Never claim an authored but unexecuted test passed, a migration replay occurred, or a database/domain is DONE_VERIFIED unless that test actually ran successfully. Missing PostgreSQL acceptance is a separate **verification gap**, not a GitHub Actions billing blocker. Keep DATABASE globally active until the real gate evidence exists.
-
-**All six chats must follow this rule** when reading AGENTS.md, six-chat-operating-system.md and the shared queue. Chat 1 remains sole shared migration/schema-barrel integrator; this policy does not transfer file ownership or waive database safety gates.
-
-## Six-chat shared-phase coordination (2026-10-11)
-
-When using six parallel ChatGPT chats, follow `docs/coordination/six-chat-operating-system.md`, `docs/coordination/phase-state.json` and `docs/coordination/work-queue.json`. The **entire LMS shares one current phase**: DATABASE → API → UI → RELEASE. All chats may claim non-overlapping temporary work packages across all domains within that same phase; no permanent per-domain chat owner exists. Chats 1–6 are worker IDs, and issue #21–#26 are worker journals. Previous domain-scoped assignment documents are historical, not current work authority. Chat 1 remains the sole shared Drizzle numbered migration/schema-barrel/CI integrator as a collision-prevention exception, not a permanent domain owner. A worker with no tasks claims the next eligible current-phase task; global phase transition needs complete executed gate evidence, never personal completion.
-
-
-This repository is optimized for a solo developer working heavily with AI coding agents.
+- Every task has exactly one Boolean: done = true (**DONE**) or done = false (**NOT DONE**). There is no intermediate task status. An implementation can be committed and useful while the task is still NOT DONE.
+- Only mark DONE when the full task's required behavior has independently executed, passing acceptance evidence at the specified source commit and any necessary product/privacy disposition is approved. Source-only scans, PRs, schema drafts, authored-but-unrun tests, and partial passing jobs do **not** qualify. Keep the acceptance evidence attached to that task in the same tracker.
+- Read docs/tracker.json first. Validate with `node scripts/tracker.mjs --check`, report with `node scripts/tracker.mjs`, and maintain the 11 original core DATABASE task IDs as a fixed denominator. No more task inflation to game completion statistics.
+- The current phase is **DATABASE**. API, UI and RELEASE cannot be declared ready until all database tasks, required real PostgreSQL tenant/FK/state/history/concurrency gates, field dispositions, and independent phase certification are satisfied. The tracker validator is only structural; it NEVER certifies a phase.
+- Work directly on fresh `main` in substantial safe batches. Fetch latest Git file blob SHA before each write; reject/reconcile conflicts and verify resulting commits. Never force-push or silently clobber concurrent changes; no new PRs/branches for the ordinary worker.
+- There is no chat-specific file ownership. Changes to numbered migrations, Drizzle journal, schema barrel, CI and root infrastructure still require **single-writer serialization for each change**, explicit dependency review, migration replay and tests; no two simultaneous authors should modify those shared files.
+- Use only disposable/test PostgreSQL; never operate on production/shared databases. GitHub Actions now allocates public-repository runners in practice, although multiple jobs still fail; use available execution paths and report executed/passed/failed/skipped steps truthfully. Missing CI provider is not a reason to fake runtime evidence.
 
 ## Non-negotiable architecture rules
 
@@ -38,7 +35,7 @@ This repository is optimized for a solo developer working heavily with AI coding
 
 ## Quality gates
 
-Before merging meaningful changes:
+Before committing or accepting meaningful changes:
 
 1. lint
 2. typecheck
