@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdtempSync,mkdirSync,writeFileSync,rmSync,readFileSync} from 'node:fs';
+import {mkdtempSync,mkdirSync,writeFileSync,rmSync,symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join,dirname} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -64,4 +64,15 @@ test('refuses incorrectly preapproved retirements or changed table census',()=>{
 test('rejects missing evidence and missing source roots',()=>{
   assert.throws(()=>validateEvidence({tables:[]}),/Invalid/);
   assert.throws(()=>scanCheckout({name:'backend',root:'/not-a-real-checkout',expectedSha:'a'.repeat(40)}),/git rev-parse failed/);
+});
+
+test('scans script and dynamic source extensions rather than omitting native SQL clients',()=>{
+  const r=repo({'scripts/db_client.py':'query = "SELECT * FROM smrithi_college"', 'ops/setup.sh':'echo SmrithiProgram'});
+  try{const result=scanCheckout({name:'backend',root:r.root,expectedSha:r.sha});assert.equal(result.matchLines,2);assert.equal(result.runtimeCandidateLines,2);}
+  finally{r.dispose();}
+});
+test('rejects tracked symlinks rather than disclosing or omitting outside content',()=>{
+  const r=repo({'src/client.java':'class Safe {}'});
+  try{symlinkSync('/etc/hosts',join(r.root,'refs.sql'));cmd(r.root,'add','refs.sql');cmd(r.root,'commit','-qm','add-symlink');const head=cmd(r.root,'rev-parse','HEAD');assert.throws(()=>scanCheckout({name:'backend',root:r.root,expectedSha:head}),/tracked symlink/);}
+  finally{r.dispose();}
 });
