@@ -412,6 +412,30 @@ export async function updateCourseOffering(
       throw new CoursesServiceError("OFFERING_NOT_FOUND");
     }
 
+    // Guard against an ancestor course/department move invalidating the
+    // college used for the original authorization decision. SHARE locks
+    // both rows for this transaction; it does not replace DB02 upstream
+    // guards or direct-SQL PostgreSQL race acceptance.
+    const [lockedCourse] = await tx
+      .select({
+        id: courses.id,
+        status: courses.status,
+        collegeId: departments.collegeId,
+      })
+      .from(courses)
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .where(eq(courses.id, current.courseId))
+      .for("share")
+      .limit(1);
+
+    if (
+      !lockedCourse ||
+      lockedCourse.status !== "ACTIVE" ||
+      lockedCourse.collegeId !== current.collegeId
+    ) {
+      throw new CoursesServiceError("COURSE_COLLEGE_MISMATCH");
+    }
+
     const [lockedCohort] = await tx
       .select({
         id: cohorts.id,
