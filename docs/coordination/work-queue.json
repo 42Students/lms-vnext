@@ -4739,17 +4739,20 @@
         "tests/db075-meeting-ancestry-source.test.mjs",
         "tests/integration/db075-meeting-ancestry.test.ts"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 2,
       "pickedAt": "2026-10-12T14:26:00.000Z",
       "startedAt": "2026-10-12T14:26:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-12T14:39:00.000Z",
+      "completionCommitSha": "c43fa7fd707c35d07432c31f07c766ac9070f2ad",
       "verifiedBy": null,
       "verifiedAt": null,
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "Chat1 must register DB073 and DB075 shared target indexes once; add 3 composite meeting FKs with clean PG replay.",
+        "9 opt-in PostgreSQL meeting ancestry tests require actual disposable PG and service/race acceptance; no executed SQL evidence."
+      ],
       "pickHistory": [
         {
           "chatNumber": 2,
@@ -4766,8 +4769,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T14:26:00.000Z",
           "reason": "Implement independent candidate SQL and negative tests under current DATABASE phase."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T14:39:00.000Z",
+          "reason": "Three-meeting-FK source staging and 9 opt-in PG tests authored main; 12 source tests passed V8 exact-content; PostgreSQL unverified."
         }
-      ]
+      ],
+      "completionNote": "SOURCE/STAGING COMPLETE on main: 3 composite FKs to protect optional meeting project→sprint/task links and same-sprint task when both given; 3 zero-mismatch preflights+abort; 3 unique parent targets (2 shared with DB073); 12 authored source tests, 9 opt-in PG cases. 38/38 authored source tests across DB073–075 executed PASS in standalone JS V8 harness using exact GitHub contents; Node/Vitest/PG runner and migration replay NOT executed. DB075's test scope is source-complete, NOT DONE_VERIFIED."
     },
     {
       "id": "DB-076",
