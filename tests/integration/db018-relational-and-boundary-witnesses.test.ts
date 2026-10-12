@@ -127,15 +127,26 @@ const populatedFixtureProbes = new Set([
 async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
   if (!placementFixtureProbes.has(id)) throw new Error("Unreviewed fixture");
   const suffix = randomUUID().replaceAll("-", "").slice(0, 12);
-  const season = randomUUID();
   const company = randomUUID();
   const relationship = randomUUID();
   const job = randomUUID();
   const role = randomUUID();
-  await client.query(
-    "INSERT INTO placement_seasons (id,college_id,name,code,start_date,end_date,status,created_by_user_id) VALUES ($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE',$5)",
-    [season,SEED_IDS.collegeA,"DB018 isolated season "+suffix,"P5-"+suffix,SEED_IDS.collegeAdminUser],
+  // The seeded fixture already owns the college's one permitted ACTIVE
+  // season. Reuse that real FK parent instead of creating a second ACTIVE
+  // season, which the unique index correctly prohibits. A fully empty
+  // fixture can create a season, entirely within this rollback transaction.
+  const existingSeason = await client.query<{ id: string }>(
+    "SELECT id FROM placement_seasons WHERE college_id=$1 AND status='ACTIVE' ORDER BY created_at,id LIMIT 1",
+    [SEED_IDS.collegeA],
   );
+  let season = existingSeason.rows[0]?.id;
+  if (!season) {
+    season = randomUUID();
+    await client.query(
+      "INSERT INTO placement_seasons (id,college_id,name,code,start_date,end_date,status,created_by_user_id) VALUES ($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE',$5)",
+      [season,SEED_IDS.collegeA,"DB018 isolated season "+suffix,"P5-"+suffix,SEED_IDS.collegeAdminUser],
+    );
+  }
   await client.query(
     "INSERT INTO placement_companies (id,name,status,created_by_user_id) VALUES ($1,$2,'ACTIVE',$3)",
     [company,"DB018 isolated company "+suffix,SEED_IDS.collegeAdminUser],
