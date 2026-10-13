@@ -211,12 +211,12 @@ Legacy group landing: `/college-admin/projects`.
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Workspaces list | `/college-admin/projects/workspaces` | `/college/projects` | Core list exists; exact list actions pending. | PARTIAL |
-| At Risk | `/college-admin/projects/at-risk` | none | Missing cross-project operational aggregate. | MISSING |
-| Readiness | `/college-admin/projects/readiness` | none | Missing aggregate. | MISSING |
-| Submissions | `/college-admin/projects/submissions` | none | Missing aggregate. | MISSING |
+| At Risk | `/college-admin/projects/at-risk` | `/college/projects/at-risk` | Source-authored read-only cross-project at-risk aggregate scoped to the College Admin's college (landed earlier; audited here only for existence). Legacy parity, browser and real-database acceptance remain open. | PARTIAL |
+| Readiness | `/college-admin/projects/readiness` | `/college/projects/readiness` | Source-authored read-only readiness aggregate (landed earlier). Legacy parity, browser and real-database acceptance remain open. | PARTIAL |
+| Submissions | `/college-admin/projects/submissions` | `/college/projects/submissions` | Source-authored read-only submissions aggregate (landed earlier). Legacy parity, browser and real-database acceptance remain open. | PARTIAL |
 | Templates catalogue | `/college-admin/projects/templates` | templates available during create | Dedicated catalogue missing. | PARTIAL |
 | Template detail | `/college-admin/projects/templates/[templateId]` | no dedicated detail | Missing/partial read-only detail. | PARTIAL |
-| Project Audit | `/college-admin/projects/audit` | none | Missing cross-project audit. | MISSING |
+| Project Audit | `/college-admin/projects/audit` | `/college/projects/audit` | Source-authored read-only cross-project audit view (landed earlier). Legacy parity, browser and real-database acceptance remain open. | PARTIAL |
 | Create Workspace | `/college-admin/projects/workspaces/new` | creation control/dialog | User job exists; route form may later be REDESIGNED after exact action audit. | PARTIAL |
 | Reassign Mentor | `/college-admin/projects/workspaces/reassign-mentor` | team controls | Bulk reassign workflow missing. | PARTIAL |
 | Deleted Workspaces | `/college-admin/projects/workspaces/deleted` | none | Explicit product decision required; previous legacy audit questioned this UX. | VERIFY |
@@ -296,7 +296,7 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | Batch Promotion | `/superadmin/batch-promotion` | PARTIAL |
 | Lecture Halls | `/superadmin/lecture-halls` | PARTIAL |
 | Electives | `/superadmin/electives` | PARTIAL |
-| Attendance | `/superadmin/attendance` | MISSING |
+| Attendance | `/superadmin/attendance` | PARTIAL — `/admin/attendance` exists on main (Super Admin attendance oversight). Exact legacy parity and browser acceptance remain open. |
 | Courses | `/superadmin/courses` | PARTIAL |
 | Lessons | `/superadmin/lessons` | PARTIAL |
 | Video / Resources / Live Classes | `/superadmin/lesson-content` | PARTIAL |
@@ -324,9 +324,9 @@ Projects landing route: `/superadmin/projects`.
 
 | Surface | Legacy | Status |
 | --- | --- | --- |
-| Templates list | `/superadmin/projects/templates` | MISSING |
+| Templates list | `/superadmin/projects/templates` | PARTIAL — `/admin/projects/templates` exists with the catalogue and lifecycle controls. Exact legacy parity and browser acceptance remain open. |
 | New Template | `/superadmin/projects/templates/new` | MISSING |
-| Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | MISSING |
+| Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | PARTIAL — `/admin/projects/templates/[templateId]` exists with tabs for the read-only sub-views. Exact legacy parity and browser acceptance remain open. |
 | Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | PARTIAL |
 | Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | PARTIAL |
 | Template Resources | `/superadmin/projects/templates/[templateId]/resources` | PARTIAL |
@@ -495,8 +495,8 @@ Detailed page contract: `docs/parity/hr.md`.
 | --- | --- | --- |
 | Recruiter Calendar | `/hr/calendar` | PARTIAL — Read-only Week, Month and Agenda views use persisted scheduled/completed hiring rounds and application deadlines restricted to the recruiter's authorized job portfolio through `placements.recruiter.read` and exact college/company-relationship grants. Server-rendered IST dates, navigation, event links, no-access/empty states, loading and retry UI are implemented at source level. Legacy SLOT and RESULTS_DUE events, exact styling, browser verification and executed integration/permission tests remain open. |
 | Recruiter Messages inbox | `/hr/messages` | MISSING |
-| Company tab | `/hr/company?tab=company` | MISSING |
-| Team tab | `/hr/company?tab=team` | MISSING |
+| Company tab | `/hr/company?tab=company` | PARTIAL — `/hr/company` exists on main with company and team tabs. Exact legacy parity and browser acceptance remain open. |
+| Team tab | `/hr/company?tab=team` | PARTIAL — the Team tab of `/hr/company` exists on main. Exact legacy parity and browser acceptance remain open. |
 | Reports tab | `/hr/company?tab=reports` | PARTIAL — Read-only `/hr/company/reports` reports persisted hiring-drive, application and current offer-status counts for one recruiter-authorized college/company relationship at a time. The legacy-style `?tab=reports` destination redirects to the dedicated page, with additive Company & Team navigation. Uses registered `placement_jobs`, `placement_applications`, `placement_offers` and recruiter-grant persistence only. Central `placements.recruiter.read` authorization, persisted active recruiter/company relationship validation, college and relationship scoping, status filters, bounded pagination, summary, loading/error/empty states and pure-helper unit tests are included. Only PUBLISHED/CLOSED recruiter-visible jobs are counted; applications are records rather than unique learners, and current ISSUED/ACCEPTED offer counts are not lifetime issuance or joining outcomes. Legacy reporting taxonomy, visualizations, saved filters, exports, exact tab presentation, executed database tests and browser parity remain open. |
 | Recruiter self Profile | `/hr/profile` | MISSING |
 | Leave college access | Profile action | MISSING |
