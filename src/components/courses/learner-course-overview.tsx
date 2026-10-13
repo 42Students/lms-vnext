@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ExpandableCourseDescription } from "./expandable-course-description";
+import { ExpandableCourseUpdate } from "./expandable-course-update";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -218,29 +220,21 @@ export function LearnerCourseOverview({
                 {meta.introductionText}
               </p>
             ) : null}
-            {meta.bodyHtml ? (
-              <div
-                className="mt-3 space-y-2 text-sm leading-6 text-body [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_strong]:font-semibold"
-                // The DB05 service sanitizes on write and again on read,
-                // reconstructing only attribute-free formatting tags.
-                dangerouslySetInnerHTML={{
-                  __html: meta.bodyHtml,
-                }}
-              />
-            ) : (
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
-                {meta.courseDescription?.trim() ||
-                  workspace.learningPath?.description?.trim() ||
-                  "Course description has not been added yet."}
-              </p>
-            )}
-            {!meta.bodyHtml &&
-            workspace.learningPath?.description?.trim() &&
-            workspace.learningPath.description.trim() !== meta.courseDescription?.trim() ? (
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
-                {workspace.learningPath.description}
-              </p>
-            ) : null}
+            <ExpandableCourseDescription
+              safeBodyHtml={meta.bodyHtml}
+              fallbackDescription={
+                meta.courseDescription?.trim() ||
+                workspace.learningPath?.description?.trim() ||
+                "Course description has not been added yet."
+              }
+              secondaryDescription={
+                !meta.bodyHtml &&
+                workspace.learningPath?.description?.trim() &&
+                workspace.learningPath.description.trim() !== meta.courseDescription?.trim()
+                  ? workspace.learningPath.description
+                  : null
+              }
+            />
             {learningTakeaways.length > 0 ? (
               <div className="mt-4">
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
@@ -372,30 +366,20 @@ export function LearnerCourseOverview({
           </div>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
-              <Link
-                key={update.key}
-                href={update.href}
-                className="block py-3 first:pt-0 last:pb-0"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="m-0 truncate text-sm font-semibold text-foreground">
+              <article key={update.key} className="py-3 first:pt-0 last:pb-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text">
                       {update.title}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {update.detail}
-                    </p>
-                    {update.body ? (
-                      <p className="mt-1 line-clamp-2 text-sm leading-6 text-body">
-                        {update.body}
-                      </p>
-                    ) : null}
+                    </Link>
+                    <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
+                    {update.body ? <ExpandableCourseUpdate body={update.body} /> : null}
                   </div>
-                  <span aria-hidden="true" className="shrink-0 text-primary-text">
+                  <Link href={update.href} aria-label={`Open ${update.title}`} className="shrink-0 text-primary-text">
                     →
-                  </span>
+                  </Link>
                 </div>
-              </Link>
+              </article>
             ))}
           </div>
         </section>

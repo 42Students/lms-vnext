@@ -156,11 +156,9 @@ const facultyItems: ShellNavItem[] = [
 ];
 
 const mentorItems: ShellNavItem[] = [
-  {
-    label: "Mentoring Projects",
-    href: "/mentor/projects",
-    shortLabel: "P",
-  },
+  { label: "Projects", href: "/mentor/projects", shortLabel: "P", icon: "/assets/images/common/folder.svg", group: "learning" },
+  { label: "Meetings", href: "/mentor/calendar", shortLabel: "M", icon: "/assets/images/common/calender.svg", group: "tracking" },
+  { label: "Notifications", href: "/mentor/notifications", shortLabel: "N", icon: "/assets/images/common/notification.svg", group: "account" },
 ];
 
 const tpoItems: ShellNavItem[] = [
@@ -301,6 +299,16 @@ export function getShellNavigation(
     !hasActiveRecruiter(context)
   ) {
     return getLearnerItems(learnerAccess);
+  }
+
+  // Mentor-only accounts use their legacy three-surface sidebar without a generic Dashboard.
+  if (
+    context.membership &&
+    context.membership.roles.length === 1 &&
+    hasMembershipRole(context, "MENTOR") &&
+    !hasActiveRecruiter(context)
+  ) {
+    return mentorItems;
   }
 
   const items: ShellNavItem[] = [dashboard];
