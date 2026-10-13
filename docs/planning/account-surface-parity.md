@@ -147,7 +147,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Dashboard | `/college-admin/dashboard` | dashboard workspace | Exact command-center cards/actions parity pending. | PARTIAL |
 | Activity Log | `/college-admin/audit` | `/activity` | Activity Center exists; exact filtering/detail/noise-reduction parity pending. | PARTIAL |
 | Self Profile | `/college-admin/profile` | `/college/profile` | Read-only account summary (name, mobile, email, college, organization, roles) keyed only by the signed-in user, role-guarded, linked to signed-in devices. Editing contacts and the legacy About sections are not built. Real-DB tested. | PARTIAL |
-| Placement Interview Calendar | `/college-admin/calendar` | none | This is placement/interview calendar, not academic class schedule. | MISSING |
+| Placement Interview Calendar | `/college-admin/calendar` | `/college/placements/calendar` | Source-authored college-scoped placement-round calendar with Month/Week/Agenda, company/job/date and round-kind filters, IST grouping and job/round deep links. Defaults to INTERVIEW; other round kinds can be selected. Exact legacy calendar behavior, application drill-in, browser and database verification remain open. | PARTIAL |
 
 ## 4.2 Academic Setup
 
@@ -414,11 +414,11 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Surface | Legacy | Audit note | Status |
 | --- | --- | --- | --- |
 | Global Requests inbox | `/tpo/requests` | Per-job request handling exists; global decision inbox missing. | PARTIAL |
-| Calendar — Week | `/tpo/calendar` | Missing. | MISSING |
-| Calendar — Month | same | Missing. | MISSING |
-| Calendar — Agenda | same | Missing. | MISSING |
-| Calendar filters/summary | same | Rounds/deadlines/follow-ups/company filters missing. | MISSING |
-| Calendar create/move follow-up | same | Missing. | MISSING |
+| Calendar — Week | `/tpo/calendar` | Source-authored Monday-first seven-day grid with period navigation, event counts, job/round/lead links and IST times. Exact legacy display and browser verification remain open. | PARTIAL |
+| Calendar — Month | same | Source-authored 42-day month grid with adjacent-month events, event links and navigation. Month-only metric semantics, responsive browser behavior and legacy parity remain unverified. | PARTIAL |
+| Calendar — Agenda | same | Source-authored chronological day groups, event details, status, venue and deep links. Legacy popovers, detail parity and browser verification remain open. | PARTIAL |
+| Calendar filters/summary | same | Shared authorized college read service supplies scheduled/completed rounds, published/closed job deadlines and recruiter follow-ups. Company text, kind/date filters, counts and next event are source-authored. Partial-source failure recovery, exact filter UX and executed DB/browser evidence remain open. | PARTIAL |
+| Calendar create/move follow-up | same | Existing recruiter-lead follow-up mutations are not exposed from the calendar; create/move calendar modals remain missing. | MISSING |
 | Reports gallery | `/tpo/reports` | Missing. | MISSING |
 | Placement summary | `/tpo/reports/placement-summary` | Missing. | MISSING |
 | By branch | `.../by-branch` | Missing. | MISSING |

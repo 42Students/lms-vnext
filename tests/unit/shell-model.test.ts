@@ -285,12 +285,29 @@ describe("authenticated shell model", () => {
       "Courses",
       "Recruiter Leads",
       "Placement Operations",
+      "Calendar",
     ]);
     expect(hrefs(shellContext)).toContain("/teacher/courses");
+    expect(hrefs(shellContext)).toContain("/tpo/calendar");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
     );
+  });
+
+  it("exposes the placement calendar only to the matching college roles", () => {
+    const tpoNavigation = hrefs(context(["TPO"]));
+    const collegeNavigation = hrefs(context(["COLLEGE_ADMIN"]));
+    const learnerNavigation = hrefs(context(["LEARNER"]));
+
+    expect(tpoNavigation).toContain("/tpo/calendar");
+    expect(tpoNavigation).not.toContain("/college/placements/calendar");
+
+    expect(collegeNavigation).toContain("/college/placements/calendar");
+    expect(collegeNavigation).not.toContain("/tpo/calendar");
+
+    expect(learnerNavigation).not.toContain("/tpo/calendar");
+    expect(learnerNavigation).not.toContain("/college/placements/calendar");
   });
 
   it("never shows two sidebar entries with the same label, for any role mix", () => {
