@@ -46,6 +46,22 @@ CREATE TRIGGER db02_program_term_bounds_guard
 BEFORE INSERT OR UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_bounds();
 
+-- Already registered as migration 0050; refresh function/trigger on the
+-- disposable DB02 overlay so the canonical trigger manifest stays exact.
+CREATE OR REPLACE FUNCTION db02_guard_program_duration_term_floor()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+ IF NEW.duration_terms < OLD.duration_terms AND EXISTS
+  (SELECT 1 FROM program_terms WHERE program_id=OLD.id AND term_number>NEW.duration_terms) THEN
+  RAISE EXCEPTION 'Cannot shorten program below existing term number' USING ERRCODE='23514';
+ END IF;
+ RETURN NEW;
+END;
+$;
+DROP TRIGGER IF EXISTS db02_program_duration_term_floor ON programs;
+CREATE TRIGGER db02_program_duration_term_floor BEFORE UPDATE OF duration_terms ON programs
+ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_term_floor();
+
 CREATE TABLE IF NOT EXISTS program_term_courses (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   program_term_id uuid NOT NULL REFERENCES program_terms(id) ON DELETE RESTRICT,
@@ -75,12 +91,12 @@ BEGIN
     FROM program_terms pt
     JOIN programs p ON p.id = pt.program_id
     JOIN departments d ON d.id = p.department_id
-   WHERE pt.id = NEW.program_term_id;
+   WHERE pt.id = NEW.program_term_id FOR SHARE OF pt,p,d;
 
   SELECT d.college_id INTO course_college
     FROM courses c
     JOIN departments d ON d.id = c.department_id
-   WHERE c.id = NEW.course_id;
+   WHERE c.id = NEW.course_id FOR SHARE OF c,d;
 
   IF program_college IS NULL OR course_college IS NULL THEN
     RAISE EXCEPTION 'Unknown program term or course' USING ERRCODE='23503';
