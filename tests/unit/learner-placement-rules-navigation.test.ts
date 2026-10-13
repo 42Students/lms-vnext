@@ -1,0 +1,21 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+const source = (path: string) =>
+  readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
+
+describe("Learner Placement Rules working editor navigation", () => {
+  it("links academic evidence to its actual Learner placement editor", () => {
+    const rules = source("src/app/(authenticated)/learn/my-placements/rules/page.tsx");
+    const target = source("src/components/placements/learner-placement-academic-evidence.tsx");
+    expect(rules).toContain('href="/learn/my-placements#placement-academic-evidence"');
+    expect(target).toContain('id="placement-academic-evidence"');
+    expect(rules).not.toContain("/learn/profile#academic-record");
+  });
+  it("links job preferences to the live Learner settings instead of a removed profile tab", () => {
+    const rules = source("src/app/(authenticated)/learn/my-placements/rules/page.tsx");
+    const target = source("src/components/placements/learner-placement-preferences.tsx");
+    expect(rules).toContain('href="/learn/my-placements#placement-job-preferences"');
+    expect(target).toContain('id="placement-job-preferences"');
+    expect(rules).not.toContain("/learn/profile#job-preferences");
+  });
+});

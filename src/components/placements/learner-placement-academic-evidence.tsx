@@ -171,7 +171,7 @@ export function LearnerPlacementAcademicEvidence({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section id="placement-academic-evidence" className="scroll-mt-24 rounded-xl border border-border bg-surface">
       <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">

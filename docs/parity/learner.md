@@ -539,6 +539,12 @@ Legacy contract audited from `PlacementCellContent`:
 - [ ] Loading/error/empty states are verified.
 
 ## Page: Placement Rules
+
+**Learner navigation correction (2026-10-14):** academic evidence and job
+preferences links now lead to anchored, working editors on the Learner
+Placements workspace, rather than removed Learner Profile panels. The
+college-authored policy remains database/product dependent.
+
 **Legacy:** `/learn/my-placements/rules`
 
 - [ ] Back action works.
