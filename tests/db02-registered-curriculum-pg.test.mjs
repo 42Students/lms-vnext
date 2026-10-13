@@ -79,7 +79,7 @@ test("curriculum accepts same college, zero credits, and rejects foreign college
    "INSERT INTO program_term_courses(program_term_id,course_id,display_order) VALUES($1,$2,2)",
    [term,course],"23505","program_term_courses_term_course_uq");
   await rejectSql(c,"UPDATE program_term_courses SET course_id=$1 WHERE id=$2",
-   [foreignCourse,m],"23514","must belong to the same college");
+   [foreignCourse,m],"23514","identity is immutable");
   await rejectSql(c,"UPDATE program_term_courses SET display_order=0 WHERE id=$1",
    [m],"23514");
   const val=await c.query("SELECT credits,display_order FROM program_term_courses WHERE id=$1",[m]);
