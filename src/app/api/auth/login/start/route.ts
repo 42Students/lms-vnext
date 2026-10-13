@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
   guardLoginRequest,
+  auditLogin,
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { startLoginWithRuntime } from "@/modules/auth/runtime";
@@ -28,8 +29,12 @@ export async function POST(request: Request) {
       contact: guarded.body.contact,
       tenantCollegeId: guarded.tenantCollegeId,
     });
+    auditLogin("auth.login_started", { route: "login-start", ip: guarded.ip }, {
+      channel: result.channel,
+      requiresSecondFactor: result.requiresSecondFactor,
+    });
     return NextResponse.json(result);
   } catch (error) {
-    return loginErrorResponse(error);
+    return loginErrorResponse(error, { route: "login-start", ip: guarded.ip });
   }
 }
