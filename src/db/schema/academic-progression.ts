@@ -1,4 +1,4 @@
-import { desc, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { bigint, check, index, integer, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { academicPeriods, cohorts } from "./academics";
 import { users } from "./users";
@@ -33,7 +33,7 @@ export const cohortProgressionEvents = pgTable("cohort_progression_events", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   unique("cohort_progression_events_cohort_version_uq").on(t.cohortId, t.stateVersion),
-  index("cohort_progression_events_cohort_time_idx").on(t.cohortId, desc(t.createdAt)),
+  index("cohort_progression_events_cohort_time_idx").on(t.cohortId, t.createdAt),
   check("cohort_progression_events_kind_ck", sql`${t.eventKind} in ('PROMOTION','CORRECTION')`),
   check("cohort_progression_events_transition_ck", sql`(${t.eventKind} = 'PROMOTION' and ${t.toTermNumber} = ${t.fromTermNumber} + 1) or (${t.eventKind} = 'CORRECTION' and ${t.toTermNumber} = ${t.fromTermNumber})`),
   check("cohort_progression_events_version_ck", sql`${t.stateVersion} >= 1`),
