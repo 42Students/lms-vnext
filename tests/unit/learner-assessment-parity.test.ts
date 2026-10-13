@@ -86,7 +86,13 @@ describe("learner assessment parity pages", () => {
       "utf8",
     );
 
-    expect(overview).toContain("Submitted late");
+    // Assignment status was extracted to an independently tested domain policy.
+    const assignmentState = fs.readFileSync(
+      path.join(process.cwd(), "src/modules/courses/learner-assignment-display.ts"),
+      "utf8",
+    );
+    expect(overview).toContain("assignmentOverviewState");
+    expect(assignmentState).toContain("Submitted late");
     expect(overview).toContain("PAGE_SIZE = 20");
     expect(overview).toContain("Page {currentPage} of {totalPages}");
     expect(overview).toContain("filter=assessments");
