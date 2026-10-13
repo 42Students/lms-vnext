@@ -439,9 +439,9 @@ Detailed page contract: `docs/parity/tpo.md`.
 | --- | --- | --- |
 | Placement Season | `season` | PARTIAL |
 | Placement Rules | `rules` | PARTIAL |
-| Placement Team + student coordinators | `team` | MISSING |
+| Placement Team + student coordinators | `team` | PARTIAL — Read-only `/tpo/settings/team` shows active college-scoped TPO memberships, persisted TPO Admin and Faculty Coordinator assignments when `placement_tpo_team_members` is registered, and dated student Drive Day coordinator assignments when their table is available. Member names, roles and active membership statuses are displayed without emails or phones. The dedicated team table remains migration-dependent; unavailable assignment evidence is not presented as zero. Add/search/assign/remove/reassign flows, removal-impact checks, legacy role parity, integration and browser verification remain open. |
 | Recruiter access | `recruiters` | MISSING |
-| Trusted Companies/domains | `trusted` | MISSING |
+| Trusted Companies/domains | `trusted` | PARTIAL — Read-only `/tpo/settings/trusted` lists active college-company relationships with persisted college-specific `isTrusted` flags and company primary-domain metadata. Explicit trusted-domain allowlist entries are read only from `placement_tpo_trusted_domains` when registered, with an unavailable-data warning otherwise. College website domains and company primary domains are not inferred to be trusted email domains. Add/normalize/remove trust actions, request-approval consequences, migration acceptance, integration tests and browser parity remain open. |
 | Communication Templates | `templates` | MISSING |
 | Student Notices + prep/readiness | `notices` | MISSING |
 | My Notifications preferences | `notifications` | MISSING |
