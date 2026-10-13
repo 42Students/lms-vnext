@@ -1,8 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  LearnerPlacementJobs,
-  type LearnerPlacementJobItem,
-} from "@/components/placements/learner-placement-jobs";
+import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
+import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
+import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 
@@ -58,7 +57,9 @@ export default async function LearnerPlacementJobsPage() {
         title="Drives"
         description="Placement drives and roles available to you."
       />
-      <LearnerPlacementJobs items={rows.map(toItem)} />
+      <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
+        <LearnerJobsBrowse items={rows.map(toItem)} />
+      </Suspense>
     </div>
   );
 }

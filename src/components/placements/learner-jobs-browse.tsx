@@ -1,0 +1,187 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
+import {
+  DEFAULT_LEARNER_JOB_FILTERS,
+  availableLearnerJobFacets,
+  filterLearnerPlacementJobs,
+  type LearnerJobBrowseFilters,
+} from "@/modules/placements/learner-jobs-browse-model";
+
+const PAGE_SIZE = 20;
+
+function humanize(value: string) {
+  return value.toLowerCase().replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function LearnerJobsBrowse({
+  items,
+}: {
+  items: readonly LearnerPlacementJobItem[];
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const [search, setSearch] = useState(() => params.get("q") ?? "");
+
+  const updateQuery = useCallback((changes: Record<string, string | null>) => {
+    const next = new URLSearchParams(params.toString());
+    for (const [key, value] of Object.entries(changes)) {
+      if (!value || value === "all") next.delete(key);
+      else next.set(key, value);
+    }
+    if (!Object.prototype.hasOwnProperty.call(changes, "page")) next.delete("page");
+    const query = next.toString();
+    router.replace(query ? pathname + "?" + query : pathname, { scroll: false });
+  }, [pathname, params, router]);
+
+  useEffect(() => {
+    // Browser back/forward must rehydrate the controlled search box.
+    const onPopState = () => {
+      setSearch(new URLSearchParams(window.location.search).get("q") ?? "");
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (search === (params.get("q") ?? "")) return;
+    const handle = window.setTimeout(() => updateQuery({ q: search.trim() || null }), 220);
+    return () => window.clearTimeout(handle);
+  }, [search, params, updateQuery]);
+
+  const validSort: LearnerJobBrowseFilters["sort"][] = ["deadline", "ctc", "title"];
+  const rawSort = params.get("sort") ?? "deadline";
+  const filters: LearnerJobBrowseFilters = {
+    ...DEFAULT_LEARNER_JOB_FILTERS,
+    search,
+    employmentType: params.get("type") ?? "all",
+    location: params.get("loc") ?? "all",
+    eligibleOnly: params.get("eligible") === "1",
+    sort: validSort.includes(rawSort as LearnerJobBrowseFilters["sort"])
+      ? rawSort as LearnerJobBrowseFilters["sort"] : "deadline",
+  };
+  const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
+  const visible = filterLearnerPlacementJobs(items, filters);
+  const parsedPage = Number(params.get("page") ?? "1");
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const page = Number.isInteger(parsedPage) && parsedPage > 0
+    ? Math.min(parsedPage, totalPages) : 1;
+  const paged = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
+  return (
+    <div className="space-y-5">
+      <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Find placement drives">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="text-xs font-semibold text-body sm:col-span-2">
+            Search drives, companies and roles
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search opportunities…"
+              className={selectClass}
+            />
+          </label>
+          <label className="text-xs font-semibold text-body">
+            Employment type
+            <select value={filters.employmentType}
+              onChange={(event) => updateQuery({ type: event.target.value })}
+              className={selectClass}>
+              <option value="all">All types</option>
+              {facets.types.map((type) => (
+                <option key={type} value={type}>{humanize(type)}</option>
+              ))}
+            </select>
+          </label>
+          <label className="text-xs font-semibold text-body">
+            Location
+            <select value={filters.location}
+              onChange={(event) => updateQuery({ loc: event.target.value })}
+              className={selectClass}>
+              <option value="all">All locations</option>
+              {facets.locations.map((location) => (
+                <option key={location} value={location}>{location}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
+            <input
+              type="checkbox"
+              checked={filters.eligibleOnly}
+              onChange={(event) => updateQuery({
+                eligible: event.target.checked ? "1" : null,
+              })}
+              className="h-4 w-4 accent-[var(--lms-primary)]"
+            />
+            Eligible to apply only
+          </label>
+          <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
+            Sort by
+            <select value={filters.sort}
+              aria-label="Sort placement drives"
+              onChange={(event) => updateQuery({ sort: event.target.value })}
+              className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="deadline">Deadline soonest</option>
+              <option value="ctc">Highest CTC</option>
+              <option value="title">Role A–Z</option>
+            </select>
+          </label>
+          <button type="button" onClick={() => {
+              setSearch("");
+              router.replace(pathname, { scroll: false });
+            }}
+            className="min-h-10 px-2 text-sm font-semibold text-primary-text hover:underline">
+            Clear filters
+          </button>
+        </div>
+      </section>
+
+      <p role="status" className="text-sm text-body">
+        {visible.length === 0
+          ? "No matching drives"
+          : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, visible.length)} of ${visible.length} matching roles`}
+      </p>
+
+      {items.length === 0 ? (
+        <EmptyState
+          title="No published drives yet"
+          description="Your placement team’s published opportunities will appear here."
+        />
+      ) : visible.length === 0 ? (
+        <div className="rounded-xl border border-border bg-surface p-6 text-center">
+          <p className="font-semibold text-foreground">No drives match these filters</p>
+          <p className="mt-2 text-sm text-body">Try a different keyword, location or eligibility filter.</p>
+          <button type="button" onClick={() => { setSearch(""); router.replace(pathname, {scroll: false}); }}
+            className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
+            View all drives
+          </button>
+        </div>
+      ) : (
+        <LearnerPlacementJobs items={paged} />
+      )}
+
+      {totalPages > 1 ? (
+        <nav aria-label="Drive results pages" className="flex items-center justify-between gap-4">
+          <button type="button" disabled={page <= 1}
+            onClick={() => updateQuery({ page: String(page - 1) })}
+            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            Previous
+          </button>
+          <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
+          <button type="button" disabled={page >= totalPages}
+            onClick={() => updateQuery({ page: String(page + 1) })}
+            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            Next
+          </button>
+        </nav>
+      ) : null}
+    </div>
+  );
+}
