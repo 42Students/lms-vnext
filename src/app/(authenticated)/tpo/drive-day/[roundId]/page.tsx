@@ -1,8 +1,11 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DriveDayRoster } from "@/components/placements/drive-day-roster";
+import { TpoRoundDriveDayReadOnly } from "@/components/placements/tpo-round-drive-day-read-only";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getDriveDayRoster } from "@/modules/placements/drive-day-coordinator-service";
+import { PlacementsServiceError } from "@/modules/placements/errors";
+import { getTpoRoundDriveDay } from "@/modules/placements/tpo-round-drive-day-service";
 
 export default async function DriveDayRoundPage({
   params,
@@ -13,12 +16,45 @@ export default async function DriveDayRoundPage({
     await getCurrentRequestContext();
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    (
+      !hasMembershipRole(context, "LEARNER") &&
+      !hasMembershipRole(context, "TPO")
+    )
   ) {
     redirect("/dashboard");
   }
 
   const { roundId } = await params;
+
+  // Preserve the existing learner-coordinator route for
+  // learner memberships, including mixed-role memberships.
+  // A TPO-only membership receives the new read-only view.
+  if (
+    hasMembershipRole(context, "TPO") &&
+    !hasMembershipRole(context, "LEARNER")
+  ) {
+    let data: Awaited<
+      ReturnType<typeof getTpoRoundDriveDay>
+    >;
+
+    try {
+      data = await getTpoRoundDriveDay(
+        context,
+        roundId,
+      );
+    } catch (error) {
+      if (
+        error instanceof PlacementsServiceError &&
+        error.code === "PLACEMENT_ROUND_NOT_FOUND"
+      ) {
+        notFound();
+      }
+      throw error;
+    }
+
+    return <TpoRoundDriveDayReadOnly data={data} />;
+  }
+
   let roster: Awaited<
     ReturnType<typeof getDriveDayRoster>
   >;
