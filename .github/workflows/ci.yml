@@ -183,6 +183,10 @@ jobs:
         env:
           DB02_REGISTERED_PARENT_GUARDS: "YES"
         run: node --test tests/db02-registered-parent-guards-pg.test.mjs
+      - name: DB-005 registered program curriculum mapping and term bounds
+        env:
+          DB02_REGISTERED_CURRICULUM: "YES"
+        run: node --test tests/db02-registered-curriculum-pg.test.mjs
       # Registered-schema matrix runs ONLY against committed numbered Drizzle
       # migrations. DB08/DB10 unregistered proposals run in their independent
       # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.
