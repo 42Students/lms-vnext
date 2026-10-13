@@ -3,8 +3,8 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 const pages = [
-  ["assessments", "LearnerCareerRounds"],
-  ["interviews", "LearnerCareerRounds"],
+  ["assessments", "LearnerCareerRoundsWorkspace"],
+  ["interviews", "LearnerCareerRoundsWorkspace"],
   ["calendar", "LearnerCareerCalendar"],
   ["placement", "LearnerPlacementOffers"],
   ["rules", "How eligibility works"],

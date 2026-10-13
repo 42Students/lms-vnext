@@ -51,9 +51,11 @@ function formatWhen(value: string | null) {
 export function LearnerCareerRounds({
   rounds,
   kind,
+  onSelect,
 }: {
   rounds: readonly LearnerCareerRound[];
   kind: "ASSESSMENT" | "INTERVIEW" | "CALENDAR";
+  onSelect?: (round: LearnerCareerRound) => void;
 }) {
   const filtered = rounds.filter((round) =>
     isCareerRoundVisible(kind, round.roundKind),
@@ -90,6 +92,15 @@ export function LearnerCareerRounds({
             </div>
             {round.exception ? <p className="mt-3 text-xs font-semibold text-warning">This schedule includes your approved reschedule request.</p> : null}
             <div className="mt-4 flex flex-wrap gap-3">
+              {onSelect ? (
+                <button
+                  type="button"
+                  onClick={() => onSelect(round)}
+                  className="min-h-10 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                >
+                  Round details
+                </button>
+              ) : null}
               {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open meeting ↗</a> : null}
               {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open employer assessment ↗</a> : null}
               <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="text-sm font-semibold text-primary-text">View application</Link>
