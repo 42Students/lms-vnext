@@ -333,10 +333,10 @@ Projects landing route: `/superadmin/projects`.
 | Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | MISSING |
 | Template Versions | `/superadmin/projects/templates/[templateId]/versions` | MISSING |
 | Workspaces list | `/superadmin/projects/workspaces` | PARTIAL |
-| At Risk | `/superadmin/projects/at-risk` | MISSING |
-| Readiness | `/superadmin/projects/readiness` | MISSING |
-| Submissions | `/superadmin/projects/submissions` | MISSING |
-| Project Audit | `/superadmin/projects/audit` | MISSING |
+| At Risk | `/superadmin/projects/at-risk` | PARTIAL |
+| Readiness | `/superadmin/projects/readiness` | PARTIAL |
+| Submissions | `/superadmin/projects/submissions` | PARTIAL |
+| Project Audit | `/superadmin/projects/audit` | PARTIAL |
 | Create Workspace | `/superadmin/projects/workspaces/new` | PARTIAL |
 | Reassign Mentor | `/superadmin/projects/workspaces/reassign-mentor` | PARTIAL |
 | Deleted Workspaces | `/superadmin/projects/workspaces/deleted` | VERIFY |
