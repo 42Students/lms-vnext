@@ -491,6 +491,15 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 # Notifications
 
 ## Page: Notifications
+
+**2026-10-13 implementation update:** Learner's two authorized inbox sources
+are now consolidated into one chronological feed, with legacy domain tabs
+All / Course / Projects / Announcements / Job. Counts and scope derive from
+the complete fetched set; announcements cannot receive personal read-state
+mutations. Typed module classification and pinned indicators have unit/source
+coverage. Detail modal, large-volume pagination and mobile/browser proof
+remain open.
+
 - [ ] Announcement feed behavior matches legacy.
 - [ ] Personal notification feed behavior matches legacy.
 - [ ] Unread/read semantics are defined and verified.

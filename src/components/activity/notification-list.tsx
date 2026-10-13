@@ -17,6 +17,9 @@ export type NotificationListItem = {
   createdAt: string;
   module: string;
   importance: string;
+  /** Announcement rows have their own visibility policy, no recipient read flag. */
+  source?: "ANNOUNCEMENT";
+  pinned?: boolean;
 };
 
 function formatWhen(value: string) {
@@ -92,8 +95,11 @@ export function NotificationList({
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge>{item.module}</StatusBadge>
-                    {!item.readAt ? <StatusBadge tone="info">Unread</StatusBadge> : null}
+                    <StatusBadge>{item.source === "ANNOUNCEMENT" ? "Announcement" : item.module}</StatusBadge>
+                    {item.source === "ANNOUNCEMENT" && item.pinned ? (
+                      <StatusBadge tone="warning">Pinned</StatusBadge>
+                    ) : null}
+                    {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
                   <h3 className="mt-3 text-base font-semibold text-foreground">
                     {item.title}
@@ -123,7 +129,7 @@ export function NotificationList({
                       </Button>
                     )
                   ) : null}
-                  {!item.readAt ? (
+                  {!item.readAt && item.source !== "ANNOUNCEMENT" ? (
                     <Button
                       size="sm"
                       variant="secondary"

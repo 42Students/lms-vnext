@@ -1,10 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  NotificationList,
-  type NotificationListItem,
-} from "@/components/activity/notification-list";
+import type { NotificationListItem } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
-import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
+import { LearnerNotificationsInbox } from "@/components/activity/learner-notifications-inbox";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnNotifications } from "@/modules/activity/notification-service";
@@ -56,9 +53,10 @@ export default async function NotificationsPage() {
         title="Notifications"
         description="Your course, project, placement and college notifications."
       />
-      <AnnouncementFeed
-        enabled={announcementsEnabled}
-        items={announcements.map((announcement) => ({
+      <LearnerNotificationsInbox
+        personal={items}
+        announcementsEnabled={announcementsEnabled}
+        announcements={announcements.map((announcement) => ({
           id: announcement.id,
           title: announcement.title,
           message: announcement.message,
@@ -68,18 +66,6 @@ export default async function NotificationsPage() {
           createdAt: announcement.createdAt,
         }))}
       />
-      <section
-        aria-labelledby="personal-notifications"
-        className="space-y-3"
-      >
-        <h2
-          id="personal-notifications"
-          className="text-lg font-semibold text-foreground"
-        >
-          Personal notifications
-        </h2>
-        <NotificationList items={items} />
-      </section>
     </div>
   );
 }
