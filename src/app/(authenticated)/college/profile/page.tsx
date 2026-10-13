@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnAccountSummary } from "@/modules/people/own-account-service";
 
 function roleLabel(role: string) {
@@ -29,7 +30,9 @@ function Field({ title, value }: { title: string; value: string | null }) {
 
 export default async function CollegeAdminProfilePage() {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  // The layout also redirects, but layouts and pages render in parallel, so
+  // the page enforces the role itself.
+  if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
 
   const account = await getOwnAccountSummary(context);
   if (!account) {
