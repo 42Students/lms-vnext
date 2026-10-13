@@ -206,6 +206,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "My College", href: "/college", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
   { label: "Academics", href: "/college/academics", shortLabel: "A" },
+  { label: "Lecture Halls", href: "/college/lecture-halls", shortLabel: "L" },
   { label: "Attendance", href: "/college/attendance", shortLabel: "T" },
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
   { label: "Projects", href: "/college/projects", shortLabel: "P" },
@@ -214,6 +215,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Student Groups", href: "/college/groups", shortLabel: "G" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
   { label: "Activity", href: "/activity", shortLabel: "A" },
+  { label: "My Profile", href: "/college/profile", shortLabel: "P" },
 ];
 
 function pushUnique(
