@@ -96,7 +96,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L1-016 | Filtered-empty state | Courses list | learner list | CLOSED |
 | L1-017 | Loading skeleton | Courses list | route loading | CLOSED |
 | L1-018 | Request/error state + retry/back | Courses list | route error | CLOSED |
-| L1-019 | Mobile card/filter behavior | Courses list responsive UI | learner list | UNCHECKED |
+| L1-019 | Mobile card/filter behavior | Courses list responsive UI | learner list | FIXED |
 | L1-020 | Instructor name on learner course card | CoursesContent learner card | learner course cards | FIXED |
 | L1-021 | Course thumbnail + fallback image | CoursesContent CourseImage | no canonical course-image field yet | GAP |
 | L1-022 | Electives group heading in mixed All view | CoursesContent | learner course list | FIXED |
