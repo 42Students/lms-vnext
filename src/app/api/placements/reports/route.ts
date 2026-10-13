@@ -8,6 +8,15 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { placementReportCsv } from "@/modules/placements/report-model";
 import {
+  getPlacementFailureReasonsReport,
+  getPlacementLeadsReport,
+} from "@/modules/placements/report-extra-service";
+import {
+  FAILURE_KIND_LABELS,
+  type PlacementFailureReport,
+  type PlacementLeadsReport,
+} from "@/modules/placements/report-extra-model";
+import {
   getPlacementReportDetails,
   getPlacementReportWorkspace,
 } from "@/modules/placements/report-service";
@@ -25,6 +34,8 @@ const exportQuerySchema = z
       "unplaced",
       "offers-acceptance",
       "joining-status",
+      "failure-reasons",
+      "leads",
     ]),
     seasonId: z.string().uuid().optional(),
     jobId: z.string().uuid().optional(),
@@ -394,6 +405,111 @@ function joiningStatusCsv(workspace: DetailedWorkspace) {
  * never from URL parameters. The placement report service independently
  * enforces the selected tenant, season and job scopes.
  */
+function failureReasonsCsv(report: PlacementFailureReport) {
+  const headings = [
+    "Group",
+    "Drive",
+    "Company",
+    "Outcome",
+    "Recorded reason",
+    "Count",
+  ];
+
+  const rows: CsvValue[][] = [
+    [
+      "Overall",
+      "",
+      "",
+      "Recorded adverse events and decisions",
+      "",
+      report.total,
+    ],
+  ];
+
+  for (const row of report.byReason) {
+    rows.push([
+      "Reason",
+      "",
+      "",
+      FAILURE_KIND_LABELS[row.kind],
+      row.reason,
+      row.count,
+    ]);
+  }
+
+  for (const row of report.byDrive) {
+    rows.push([
+      "Drive",
+      row.jobTitle,
+      row.companyName,
+      FAILURE_KIND_LABELS[row.kind],
+      row.reason,
+      row.count,
+    ]);
+  }
+
+  rows.push([
+    "Methodology",
+    "",
+    "",
+    "Counts represent persisted outcome records/events, not distinct learners",
+    "Current rejected screenings and applied failed rounds; recorded withdrawal/decline transitions",
+    "",
+  ]);
+
+  return placementReportCsv(headings, rows);
+}
+
+function leadsReportCsv(report: PlacementLeadsReport) {
+  const headings = [
+    "Group",
+    "Name",
+    "Leads",
+    "Invites sent",
+    "Invite clicks",
+    "Recruiter accounts linked",
+    "Company relationships linked",
+    "Recruiter linkage rate (%)",
+  ];
+
+  const row = (
+    group: string,
+    label: string,
+    values: PlacementLeadsReport["totals"],
+  ): CsvValue[] => [
+    group,
+    label,
+    values.leads,
+    values.invited,
+    values.inviteClicked,
+    values.recruiterAccountsLinked,
+    values.companyRelationshipsLinked,
+    values.recruiterLinkRatePercent,
+  ];
+
+  const rows: CsvValue[][] = [
+    row("Overall", "All college leads", report.totals),
+    ...report.byStage.map((item) =>
+      row("Manual stage", item.label, item),
+    ),
+    ...report.bySource.map((item) =>
+      row("Source", item.label, item),
+    ),
+    [
+      "Methodology",
+      "College-wide CRM; season/drive filters do not apply",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ],
+  ];
+
+  return placementReportCsv(headings, rows);
+}
+
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
@@ -436,6 +552,28 @@ export async function GET(request: Request) {
         csv = byCompanyCsv(workspace);
         filename = "tpo-placement-by-company.csv";
         break;
+      case "failure-reasons": {
+        const report = await getPlacementFailureReasonsReport(
+          context,
+          {
+            collegeId,
+            seasonId: query.seasonId,
+            jobId: query.jobId,
+          },
+        );
+        csv = failureReasonsCsv(report.failures);
+        filename = "tpo-placement-failure-reasons.csv";
+        break;
+      }
+      case "leads": {
+        const report = await getPlacementLeadsReport(
+          context,
+          collegeId,
+        );
+        csv = leadsReportCsv(report.leads);
+        filename = "tpo-recruiter-leads-report.csv";
+        break;
+      }
       default: {
         const detailed = await getPlacementReportDetails(
           context,

@@ -87,6 +87,12 @@ export default async function TpoReportsPage({
             "Joined, deferred, did-not-join and pending outcomes for accepted offers.",
           path: "/tpo/reports/joining-status",
         },
+        {
+          title: "Failure reasons",
+          description:
+            "Persisted rejection, round failure, withdrawal and offer-decline reasons, grouped by reason and drive.",
+          path: "/tpo/reports/failure-reasons",
+        },
       ],
     },
     {
@@ -99,6 +105,12 @@ export default async function TpoReportsPage({
           description:
             "Company-wise drives, offers, unique placed learners and accepted full-time packages.",
           path: "/tpo/reports/by-company",
+        },
+        {
+          title: "Leads report",
+          description:
+            "College-wide recruiter leads by manual stage and source, with observed invite and recruiter-account linkage counts.",
+          path: "/tpo/reports/leads",
         },
       ],
     },

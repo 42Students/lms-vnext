@@ -213,6 +213,8 @@ export function ReportNavigation({
       label: "Offers & acceptance",
     },
     { href: "/tpo/reports/joining-status", label: "Joining outcomes" },
+    { href: "/tpo/reports/failure-reasons", label: "Failure reasons" },
+    { href: "/tpo/reports/leads", label: "Leads report" },
   ];
 
   return (
@@ -242,7 +244,9 @@ export function ReportCsvLink({
     | "ctc"
     | "unplaced"
     | "offers-acceptance"
-    | "joining-status";
+    | "joining-status"
+    | "failure-reasons"
+    | "leads";
 }) {
   const params = new URLSearchParams({ kind });
 
