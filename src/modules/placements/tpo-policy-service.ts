@@ -14,14 +14,14 @@ import {
   type PlacementCompanyVisibilityPatch,
 } from "./tpo-policy-validation";
 
-const DEFAULT_RULES = {
+export const DEFAULT_RULES = {
   countsAsPlacedAt: "OFFER_RELEASED" as const,
   maxHeldOffers: 1,
   upliftPct: 40,
   minResponseHours: 48,
 };
 
-const DEFAULT_VISIBILITY = {
+export const DEFAULT_VISIBILITY = {
   showCgpaExact: false,
   showTenthTwelfth: true,
   showProjectLinks: true,

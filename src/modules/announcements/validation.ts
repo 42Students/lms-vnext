@@ -4,13 +4,24 @@ export const ANNOUNCEMENT_RECEIVER_TYPES = [
   "COLLEGE","PROGRAM","DEPARTMENT","LEARNER","FACULTY","CLASS",
 ] as const;
 
+/**
+ * Non-secret operational bounds shared by announcement
+ * validation and the read-only platform inventory.
+ */
+export const ANNOUNCEMENT_LIMITS = {
+  titleCharacters: 255,
+  messageCharacters: 10000,
+  defaultPageSize: 50,
+  maximumPageSize: 100,
+} as const;
+
 const instant = z.iso.datetime({ offset: true }).transform((v) => new Date(v));
 
 export const announcementCreateSchema = z.object({
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES),
   receiverId: z.string().uuid(),
-  title: z.string().trim().min(1).max(255),
-  message: z.string().trim().min(1).max(10000),
+  title: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.titleCharacters),
+  message: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.messageCharacters),
   scheduledAt: instant.nullable().optional(),
   expiresAt: instant.nullable().optional(),
   isPinned: z.boolean().default(false),
@@ -24,8 +35,8 @@ export const announcementUpdateSchema = z.object({
   expectedVersion: z.number().int().min(0),
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
   receiverId: z.string().uuid().optional(),
-  title: z.string().trim().min(1).max(255).optional(),
-  message: z.string().trim().min(1).max(10000).optional(),
+  title: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.titleCharacters).optional(),
+  message: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.messageCharacters).optional(),
   scheduledAt: instant.nullable().optional(),
   expiresAt: instant.nullable().optional(),
   isPinned: z.boolean().optional(),
@@ -47,7 +58,7 @@ const booleanQuery = z.union([
 
 export const announcementAdminListSchema = z.object({
   includeDeleted: booleanQuery.default(false),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: z.coerce.number().int().min(1).max(ANNOUNCEMENT_LIMITS.maximumPageSize).default(ANNOUNCEMENT_LIMITS.defaultPageSize),
   beforeCreatedAt: instant.optional(),
   beforeId: z.string().uuid().optional(),
 }).strict().superRefine((v, ctx) => {
