@@ -1,0 +1,62 @@
+# vNext web deployment for the dev namespace (zero new infrastructure: shares
+# the existing cluster). Apply with the deployed image tag:
+#   sed "s/IMAGE_TAG/<tag>/" deploy/k8s/dev/lms-vnext-deployment.yaml | kubectl apply -f -
+# Secrets vnext-db / vnext-integrations / vnext-auth are created out-of-band and
+# never committed. Never apply this file to a production namespace.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-vnext
+  namespace: lms-dev-2026
+  labels: { app: lms-vnext }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: lms-vnext }
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  template:
+    metadata:
+      labels: { app: lms-vnext }
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: web
+          image: asia-south1-docker.pkg.dev/students-384817/lms-vnext/web:IMAGE_TAG
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef: { name: vnext-db }
+            - secretRef: { name: vnext-integrations }
+            - secretRef: { name: vnext-auth }
+          env:
+            - { name: DB_POOL_MAX, value: "3" }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+            - { name: next-cache, mountPath: /app/.next/cache }
+          readinessProbe:
+            httpGet: { path: /ready, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: 500m, memory: 768Mi }
+      volumes:
+        - { name: tmp, emptyDir: {} }
+        - { name: next-cache, emptyDir: {} }

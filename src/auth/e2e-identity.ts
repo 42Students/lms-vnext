@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 export const E2E_IDENTITY_COOKIE_NAME =
   "lms_e2e_identity";
 export const E2E_SECRET_COOKIE_NAME =
@@ -29,7 +30,7 @@ export function resolveE2eIdentityUid(
   if (
     !configuredSecret ||
     configuredSecret.length < MIN_SECRET_LENGTH ||
-    input.cookieSecret !== configuredSecret
+    !secretsEqual(input.cookieSecret, configuredSecret)
   ) {
     return null;
   }
@@ -43,4 +44,11 @@ export function resolveE2eIdentityUid(
   }
 
   return identityUid;
+}
+
+function secretsEqual(provided: string | undefined, expected: string) {
+  if (!provided) return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
