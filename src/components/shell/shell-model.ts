@@ -153,6 +153,13 @@ const facultyItems: ShellNavItem[] = [
     activeIcon: "/assets/images/common/assignment-active.svg",
     group: "learning",
   },
+  {
+    label: "Profile",
+    href: "/teacher/profile",
+    shortLabel: "R",
+    icon: "/assets/images/common/myAccount.svg",
+    group: "account",
+  },
 ];
 
 const mentorItems: ShellNavItem[] = [
@@ -266,7 +273,14 @@ function getMembershipWorkspaces(
   }
 
   if (hasMembershipRole(context, "FACULTY")) {
-    pushUnique(items, facultyItems);
+    // Legacy Mentor/Admin profiles are distinct routes; do not render a
+    // Faculty-only profile link for those multi-role memberships.
+    pushUnique(
+      items,
+      hasMembershipRole(context, "MENTOR") || hasMembershipRole(context, "COLLEGE_ADMIN")
+        ? facultyItems.filter((item) => item.href !== "/teacher/profile")
+        : facultyItems,
+    );
   }
 
   if (hasMembershipRole(context, "MENTOR")) {

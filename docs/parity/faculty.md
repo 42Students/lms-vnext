@@ -151,6 +151,14 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [ ] College and role scoping.
 
 ## Page: Faculty Profile
+
+**Source-only partial implementation:** `/teacher/profile` now has Faculty-only
+membership-scoped reads, basic identity/teaching details, Faculty navigation and
+loading/error/retry states. It deliberately does **not** let Faculty edit
+college-owned academic title, employment type or department assignments.
+The legacy rich About sections, profile-document persistence, private uploads,
+verified browser parity and cross-role workflow remain open; do not mark DONE.
+
 Audited shared Faculty-profile sections:
 - user summary/profile image/completeness;
 - resume;

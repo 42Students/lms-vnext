@@ -104,7 +104,7 @@ Detailed page contract: `docs/parity/faculty.md`.
 | All Assignments | `/teacher/allAssignments` | `/teacher/allAssignments` | Aggregate Faculty teaching-section assignment page, course/status filters, 20-row pagination, review-submissions, grade/publish control and Section-specific Assignment Report links are authored. Create remains Course-contextual; direct edit/delete and missing-student reporting are source-authored. Exact legacy drawer/modal and DB/browser verification remain. | PARTIAL |
 | Assignment report | `/teacher/report/assignment/[contentId]` | same route | Section-scoped submitted/missing/late/graded metrics and learner lists are source-authored; distributions/export/drill-down and browser proof remain. | PARTIAL |
 | Quiz report | `/teacher/report/quiz/[quizId]` | same route | Section-scoped eligible/attempted/not-attempted counts, learner attempts, normalized score average and result-publish state are source-authored; response analytics/export/browser proof remain. | PARTIAL |
-| Self Profile | `/teacher/profile` | admin profile tooling only | Missing self-service profile. | MISSING |
+| Self Profile | `/teacher/profile` | `/teacher/profile` | Role-scoped read-only Faculty account details and navigation implemented, with loading/retry. Full legacy About sections and authorized editing await profile storage promotion and browser verification. | PARTIAL |
 | File Explorer | `/teacher/fileExplorer` | n/a | Legacy is only a redirect to Courses; not a real product surface. | RETIRED |
 | `/teacher` redirect | `/teacher` | n/a | Redirect-only legacy route. | RETIRED |
 

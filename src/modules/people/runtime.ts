@@ -15,6 +15,7 @@ import { drizzleProfileRepository } from "./profile-repository";
 import {
   getFacultyProfile,
   getLearnerProfile,
+  getOwnFacultyProfile,
   getOwnLearnerProfile,
   upsertFacultyProfile,
   upsertLearnerProfile,
@@ -175,6 +176,10 @@ export function upsertFacultyProfileWithRuntime(
   );
 }
 
+
+export function getOwnFacultyProfileWithRuntime(context: RequestContext) {
+  return getOwnFacultyProfile(context, drizzleProfileRepository);
+}
 
 export function getOwnLearnerProfileWithRuntime(
   context: RequestContext,
