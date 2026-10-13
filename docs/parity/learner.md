@@ -328,6 +328,15 @@ Legacy contract audited from `ApplicationsContent`:
 - [ ] Loading/error/first-run/filtered-empty states are verified.
 
 ## Page: Assessments
+
+**Learner schedule browser update (2026-10-13):** dedicated Assessment rounds
+now support employer/round search, Upcoming/Past/Awaiting schedule buckets,
+Today/7-day urgency filters, sorting, empty/filter states and a details drawer.
+Only existing learner-authorized scheduled rounds are listed; no provider
+submission or employer result is inferred from the calendar time. Approved
+reschedules replace the original start. Mark-submitted reminder persistence,
+provider completion, and browser acceptance remain open.
+
 **Legacy:** `/learn/my-placements/assessments`
 
 Legacy contract:
@@ -353,6 +362,14 @@ Legacy contract:
 - [ ] Loading/error/empty states match.
 
 ## Page: Interviews
+
+**Learner schedule browser update (2026-10-13):** dedicated Interview/GD
+rounds now support company/round search, honest Upcoming/Past/Awaiting
+schedule buckets, urgency filtering, sorting and a details drawer with
+approved reschedule details and sanitized meeting links. A scheduled time
+is not treated as confirmed attendance; learner confirmation,
+request workflows, and browser acceptance remain open.
+
 **Legacy:** `/learn/my-placements/interviews`
 
 Legacy contract audited from `InterviewsContent`:

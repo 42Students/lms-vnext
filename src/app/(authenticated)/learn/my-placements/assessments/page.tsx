@@ -1,5 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { LearnerCareerRounds } from "@/components/placements/learner-career-rounds";
+import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
@@ -37,7 +37,11 @@ export default async function LearnerPlacementAssessmentsPage() {
           instructions. The recruiter controls official submission and results.
         </p>
       </aside>
-      <LearnerCareerRounds kind="ASSESSMENT" rounds={rounds} />
+      <LearnerCareerRoundsWorkspace
+        kind="ASSESSMENT"
+        rounds={rounds}
+        snapshotNowIso={new Date().toISOString()}
+      />
     </div>
   );
 }
