@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyQuizReview } from "@/components/courses/faculty-quiz-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -178,35 +179,15 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-foreground">Submitted attempts</h2>
-        {latestAttempts.length === 0 ? (
-          <p className="mt-3 text-sm text-body">No learners have attempted this Quiz.</p>
-        ) : (
-          <table className="mt-3 w-full min-w-[40rem] text-left text-sm">
-            <thead className="border-b border-border text-muted-foreground">
-              <tr>
-                <th className="py-2 pr-3">Learner</th>
-                <th className="py-2 pr-3">Attempt</th>
-                <th className="py-2 pr-3">Score</th>
-                <th className="py-2 pr-3">Submitted</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {latestAttempts.map((attempt) => (
-                <tr key={attempt.id}>
-                  <td className="py-3 pr-3 text-foreground">
-                    {attempt.learnerDisplayName || attempt.learnerEmail || "Learner"}
-                  </td>
-                  <td className="py-3 pr-3">{attempt.attemptNumber}</td>
-                  <td className="py-3 pr-3">{attempt.score}/{attempt.maxScore}</td>
-                  <td className="py-3 pr-3">{formatDate(attempt.submittedAt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      <FacultyReportStudentTable title="Submitted attempts" rows={latestAttempts.map((attempt) => ({
+        id: attempt.id,
+        name: attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
+        email: attempt.learnerEmail,
+        score: attempt.score + "/" + attempt.maxScore,
+        percent: attempt.maxScore > 0 ? Math.round(attempt.score / attempt.maxScore * 100) : null,
+        submittedAt: attempt.submittedAt.toISOString(),
+        note: "Attempt " + attempt.attemptNumber,
+      }))} />
 
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">

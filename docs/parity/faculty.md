@@ -239,3 +239,5 @@ Reference: `docs/planning/w02-learning-assessment-closure-ledger.md` and issue #
 ## Faculty report parity improvement (2026-10-13)
 
 Against legacy FE `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2` and BE `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, both Faculty assessment report pages now expose a direct, client-generated multi-page PDF of the authorized Section's summary, per-learner scores, missing learners, score buckets and (for quizzes) question accuracy. Both reports embed the existing server-authorized review/grading panels for drill-in. The export uses standard PDF fonts; non-Latin glyph fidelity is NOT certified and remains a known parity limitation. Full browser/keyboard/mobile, live database, privacy and user-facing visual parity acceptance remains OPEN. No page/family marked DONE here.
+
+The report score tables now implement best-score-first ordering, case-insensitive name/email search, 20-student paging and responsive mobile cards. Browser tests and end-to-end parity acceptance remain OPEN; the source additions are not checkbox closure evidence by themselves.
