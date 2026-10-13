@@ -310,6 +310,13 @@ describe("authenticated shell model", () => {
         shortLabel: "H",
       },
       {
+        label: "Calendar",
+        href: "/hr/calendar",
+        shortLabel: "C",
+        icon: "/assets/images/common/calender.svg",
+        group: "tracking",
+      },
+      {
         label: "Company & Team",
         href: "/hr/company",
         shortLabel: "C",
