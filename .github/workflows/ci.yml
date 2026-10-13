@@ -195,6 +195,10 @@ jobs:
         env:
           DB02_REGISTERED_HALLS: "YES"
         run: node --test tests/db02-registered-lecture-halls-pg.test.mjs
+      - name: DB-005 registered academic parent and calendar integrity
+        env:
+          DB02_REGISTERED_PARENT_PERIODS: "YES"
+        run: node --test tests/db02-registered-parent-periods-pg.test.mjs
       # Registered-schema matrix runs ONLY against committed numbered Drizzle
       # migrations. DB08/DB10 unregistered proposals run in their independent
       # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.

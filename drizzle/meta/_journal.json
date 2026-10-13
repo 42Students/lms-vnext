@@ -379,6 +379,13 @@
       "when": 1791865800000,
       "tag": "0053_db02_faculty_course_associations",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1791869400000,
+      "tag": "0054_db02_academic_parent_period_boundaries",
+      "breakpoints": true
     }
   ]
 }

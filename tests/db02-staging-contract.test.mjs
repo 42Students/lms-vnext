@@ -87,7 +87,7 @@ test("term-bound course offerings are tenant and program scoped", () => {
 });
 
 test("faculty course pool is persisted and tenant scoped", () => {
-  assert.match(sql, /CREATE TABLE faculty_course_associations\s*\(/);
+  assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?faculty_course_associations\s*\(/);
   assert.match(sql, /db02_faculty_course_association_scope_guard/);
   assert.match(sql, /membership_college <> course_college/);
   assert.match(sql, /ended_at timestamptz/);
