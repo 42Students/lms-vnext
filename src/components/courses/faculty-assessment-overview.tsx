@@ -9,6 +9,7 @@ import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
+import { FacultyAssessmentCreate } from "./faculty-assessment-create";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
@@ -56,15 +57,19 @@ export function FacultyAssessmentOverview({
 
   if (items.length === 0) {
     return (
-      <EmptyState
-        title={kind === "QUIZ" ? "No quizzes in your teaching sections" : "No assignments in your teaching sections"}
-        description="Your learning-path assessments appear here after your Section teaching assignment is active. Open a Course to create or publish assessments."
-      />
+      <div className="space-y-5">
+        <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
+        <EmptyState
+          title={kind === "QUIZ" ? "No quizzes in your teaching sections" : "No assignments in your teaching sections"}
+          description="Choose a teaching lesson above to create a private assessment draft."
+        />
+      </div>
     );
   }
 
   return (
     <div className="space-y-5">
+      <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           { label: kind === "QUIZ" ? "Quizzes" : "Assignments", value: items.length },
