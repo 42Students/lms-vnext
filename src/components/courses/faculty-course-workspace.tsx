@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -216,6 +217,12 @@ function AssignmentItem({
         </div>
       ) : null}
 
+      <Link
+        href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
+        className="mt-3 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+      >
+        Assignment Report
+      </Link>
       <FacultyAssignmentReview
         assignmentId={item.id}
         deliveryId={deliveryId}
@@ -317,6 +324,12 @@ function QuizItem({
         </div>
       ) : null}
 
+      <Link
+        href={`/teacher/report/quiz/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
+        className="mt-3 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+      >
+        Quiz Report
+      </Link>
       <FacultyQuizReview
         quizId={item.id}
         deliveryId={deliveryId}

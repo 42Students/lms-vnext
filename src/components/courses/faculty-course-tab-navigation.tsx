@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 
@@ -23,6 +24,20 @@ export function FacultyCourseTabNavigation({
   const pathname = usePathname();
   const router = useRouter();
   const activeTab = facultyCourseTabFromPath(pathname);
+  useEffect(() => {
+    // Revalidate current persisted Faculty assignment on tab return.
+    const onReturn = () => {
+      if (document.visibilityState === "visible") router.refresh();
+    };
+    window.addEventListener("focus", onReturn);
+    document.addEventListener("visibilitychange", onReturn);
+    const interval = window.setInterval(onReturn, 60000);
+    return () => {
+      window.removeEventListener("focus", onReturn);
+      document.removeEventListener("visibilitychange", onReturn);
+      window.clearInterval(interval);
+    };
+  }, [router]);
 
   return (
     <div className="space-y-3">
