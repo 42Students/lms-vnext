@@ -32,6 +32,7 @@ import {
   requirePlacementManageScope,
 } from "./scope";
 import { PlacementsServiceError } from "./errors";
+import { placementTableExists } from "./staged-tables";
 import {
   summarizePlacementReports,
   type PlacementReportApplication,
@@ -214,6 +215,10 @@ export async function getPlacementReportWorkspace(
     selectedJobCondition,
   );
 
+  const registrationsAvailable = await placementTableExists(
+    "placement_batch_registrations",
+  );
+
   const [applicationRows, offerRows, registrationRows, branchRows] =
     await Promise.all([
       db
@@ -288,27 +293,29 @@ export async function getPlacementReportWorkspace(
         )
         .where(selectedJobFilters),
 
-      db
-        .select({
-          membershipId: placementBatchRegistrations.membershipId,
-        })
-        .from(placementBatchRegistrations)
-        .innerJoin(
-          collegeMemberships,
-          and(
-            eq(
-              collegeMemberships.id,
-              placementBatchRegistrations.membershipId,
+      registrationsAvailable
+        ? db
+          .select({
+            membershipId: placementBatchRegistrations.membershipId,
+          })
+          .from(placementBatchRegistrations)
+          .innerJoin(
+            collegeMemberships,
+            and(
+              eq(
+                collegeMemberships.id,
+                placementBatchRegistrations.membershipId,
+              ),
+              eq(collegeMemberships.collegeId, college.id),
             ),
-            eq(collegeMemberships.collegeId, college.id),
-          ),
-        )
-        .where(
-          and(
-            eq(placementBatchRegistrations.collegeId, college.id),
-            eq(placementBatchRegistrations.choice, "PLACEMENTS"),
-          ),
-        ),
+          )
+          .where(
+            and(
+              eq(placementBatchRegistrations.collegeId, college.id),
+              eq(placementBatchRegistrations.choice, "PLACEMENTS"),
+            ),
+          )
+        : Promise.resolve([] as { membershipId: string }[]),
 
       db
         .select({
@@ -422,8 +429,9 @@ export async function getPlacementReportWorkspace(
     jobs: jobRows,
     report,
     noSeason: false,
-    registrationScopeNote:
-      "Registrations are current batch-level choices, not season snapshots. " +
+    registrationScopeNote: !registrationsAvailable
+      ? "Placement registration data is not available in this environment yet, so the registered pool and placement rate are shown as empty rather than estimated."
+      : "Registrations are current batch-level choices, not season snapshots. " +
       "The placement-rate denominator can therefore differ from historical " +
       "legacy season reports. A drive filter narrows outcomes, not the " +
       "registered cohort denominator.",
