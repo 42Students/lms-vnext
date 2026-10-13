@@ -283,3 +283,7 @@ Compared with legacy `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2` Contacts
 ## Faculty Contacts cross-college verification (2026-10-14)
 
 The registered database integration test now checks page-size 10, exact college-A membership visibility, exclusion of the same user in college B, and a separate active Faculty membership's college-B-only directory. It retains Learner access-denial and role-specific search assertions. The shared-calendar regression checks both Learner and Faculty canonical course tabs after the route repair. Source-authored negative tests still require a successful exact-SHA disposable PostgreSQL job before marking College scoping verified.
+
+## Faculty Contacts pagination/search edge acceptance (2026-10-14)
+
+Directory pagination now derives the last valid page from an authoritative same-college SQL COUNT before applying OFFSET; deleting/revoking rows cannot strand Faculty on a misleading blank stale page. SQL LIKE metacharacters are treated as literal search text and search length is capped before Zod validation. Disposable PostgreSQL tests now cover stale page clamping, literal wildcard search and exact membership/college scoping. These remain conditional on executed exact-SHA CI before checklist closure.

@@ -1057,6 +1057,17 @@ describe("courses UI2A faculty read model", () => {
     expect(allCollegeB.items.map((item) => item.membershipId))
       .not.toContain(SEED_IDS.learnerCollegeAMembership);
 
+    const stalePage = await listFacultyContacts(faculty, {
+      tab: "ALL", page: 99999, pageSize: 10,
+    });
+    expect(stalePage.page).toBe(stalePage.totalPages);
+    expect(stalePage.items.length).toBeGreaterThan(0);
+    const literalWildcard = await listFacultyContacts(faculty, {
+      tab: "ALL", search: "%", page: 1, pageSize: 10,
+    });
+    expect(literalWildcard.total).toBe(0);
+    expect(literalWildcard.items).toHaveLength(0);
+
     await expect(
       listFacultyContacts(learner, {
         tab: "ALL",

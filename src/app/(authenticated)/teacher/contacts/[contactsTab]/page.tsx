@@ -52,7 +52,7 @@ export default async function FacultyContactsPage({
     context,
     {
       tab: selected.value,
-      search: query.q ?? "",
+      search: typeof query.q === "string" ? query.q.slice(0, 200) : "",
       page,
       pageSize,
     },
@@ -118,6 +118,7 @@ export default async function FacultyContactsPage({
               <Input
                 className="mt-1.5"
                 name="q"
+                maxLength={200}
                 defaultValue={result.search}
                 placeholder="Name, email or phone"
               />
