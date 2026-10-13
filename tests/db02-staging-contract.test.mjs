@@ -47,9 +47,9 @@ test("DB02 draft persists canonical cohort term, period, year, and history", () 
 });
 
 test("DB02 draft preserves program-scoped term curriculum and same-college courses", () => {
-  assert.match(sql, /CREATE TABLE program_terms\s*\(/);
+  assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?program_terms\s*\(/);
   assert.match(sql, /UNIQUE \(program_id, term_number\)/);
-  assert.match(sql, /CREATE TABLE program_term_courses\s*\(/);
+  assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?program_term_courses\s*\(/);
   assert.match(sql, /UNIQUE \(program_term_id, course_id\)/);
   assert.match(sql, /db02_program_term_bounds_guard/);
   assert.match(sql, /db02_program_term_course_tenant/);
@@ -297,8 +297,8 @@ test("history-free cohort hard delete cascades only initializer state", () => {
 
 
 test("curriculum display order remains non-unique for legacy parity", () => {
-  const start = sql.indexOf("CREATE TABLE program_term_courses");
-  const end = sql.indexOf("CREATE INDEX program_term_courses_course_idx", start);
+  const start = sql.indexOf("CREATE TABLE IF NOT EXISTS program_term_courses");
+  const end = sql.indexOf("CREATE INDEX IF NOT EXISTS program_term_courses_course_idx", start);
   assert.ok(start !== -1 && end > start);
   const table = sql.slice(start, end);
   assert.match(table, /UNIQUE \(program_term_id, course_id\)/);
