@@ -132,6 +132,8 @@ export function presignUrl(config: S3Config, input: SignInput) {
 
 export type S3ObjectHead = {
   etag: string;
+  /** Last-Modified as epoch milliseconds; changes on every overwrite or metadata replace. */
+  lastModifiedMs: number;
   sizeBytes: number;
   contentType: string;
   metadata: Record<string, string>;
@@ -162,14 +164,24 @@ export async function headObject(
   });
   return {
     etag: (response.headers.get("etag") ?? "").replaceAll('"', ""),
+    lastModifiedMs: Date.parse(response.headers.get("last-modified") ?? "") || 0,
     sizeBytes: Number(response.headers.get("content-length") ?? 0),
     contentType: response.headers.get("content-type") ?? "",
     metadata,
   };
 }
 
-export async function getObjectStream(config: S3Config, key: string) {
-  const response = await send(config, "GET", key);
+export async function getObjectStream(
+  config: S3Config,
+  key: string,
+  range?: { start: number; end: number },
+) {
+  const url = presignUrl(config, { method: "GET", key, expiresSeconds: 60 });
+  const response = await fetch(url, {
+    method: "GET",
+    cache: "no-store",
+    headers: range ? { range: `bytes=${range.start}-${range.end}` } : undefined,
+  });
   if (response.status === 404) return null;
   if (!response.ok || !response.body) {
     throw new Error(`S3_GET_${response.status}`);
@@ -186,4 +198,97 @@ export async function deleteObject(config: S3Config, key: string) {
   if (!response.ok && response.status !== 404) {
     throw new Error(`S3_DELETE_${response.status}`);
   }
+}
+
+/**
+ * Header-authenticated request (Authorization header). Needed for bucket-level
+ * operations and CopyObject, which R2 does not accept as presigned URLs.
+ * `path` is the full request path including the bucket, for example "/bucket".
+ */
+export async function signedFetch(
+  config: S3Config,
+  input: {
+    method: "GET" | "PUT" | "DELETE" | "HEAD";
+    path: string;
+    headers?: Record<string, string>;
+    now?: Date;
+  },
+) {
+  const region = config.region ?? "auto";
+  const now = input.now ?? new Date();
+  const stamp = amzDate(now);
+  const dateStamp = stamp.slice(0, 8);
+  const scope = `${dateStamp}/${region}/${SERVICE}/aws4_request`;
+  const url = new URL(config.endpoint);
+  const payloadHash = sha256Hex("");
+
+  const headers: Record<string, string> = {
+    host: url.host,
+    "x-amz-content-sha256": payloadHash,
+    "x-amz-date": stamp,
+    ...Object.fromEntries(
+      Object.entries(input.headers ?? {}).map(([name, value]) => [
+        name.toLowerCase(),
+        value.trim(),
+      ]),
+    ),
+  };
+  const headerNames = Object.keys(headers).sort();
+  const signedHeaders = headerNames.join(";");
+  const canonicalRequest = [
+    input.method,
+    encodePath(input.path),
+    "",
+    headerNames.map((name) => `${name}:${headers[name]}\n`).join(""),
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    stamp,
+    scope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+  const signature = createHmac(
+    "sha256",
+    signingKey(config.secretAccessKey, dateStamp, region),
+  )
+    .update(stringToSign)
+    .digest("hex");
+
+  const { host: _host, ...sendHeaders } = headers;
+  void _host;
+  return fetch(`${url.origin}${encodePath(input.path)}`, {
+    method: input.method,
+    cache: "no-store",
+    headers: {
+      ...sendHeaders,
+      authorization: `AWS4-HMAC-SHA256 Credential=${config.accessKeyId}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+    },
+  });
+}
+
+/** Server-side copy onto itself to replace metadata (R2 has no metadata PATCH). */
+export async function replaceObjectMetadata(
+  config: S3Config,
+  key: string,
+  metadata: Record<string, string>,
+  contentType: string,
+) {
+  const response = await signedFetch(config, {
+    method: "PUT",
+    path: `/${config.bucket}/${key}`,
+    headers: {
+      "x-amz-copy-source": `/${config.bucket}/${encodePath(key)}`,
+      "x-amz-metadata-directive": "REPLACE",
+      "content-type": contentType,
+      ...Object.fromEntries(
+        Object.entries(metadata).map(([name, value]) => [
+          `x-amz-meta-${name}`,
+          value,
+        ]),
+      ),
+    },
+  });
+  if (!response.ok) throw new Error(`S3_COPY_${response.status}`);
 }

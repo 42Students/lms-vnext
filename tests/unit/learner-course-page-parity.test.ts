@@ -65,7 +65,7 @@ describe("learner Course page parity contract", () => {
     );
 
     expect(route).toContain("getLearnerCourseWorkspace");
-    expect(route).toContain("getAdminStorageBucket");
+    expect(route).toContain("getPrivateR2Config");
     expect(route).toContain('"Accept-Ranges": "bytes"');
     expect(route).toContain('status: 206');
     expect(route).toContain('download');

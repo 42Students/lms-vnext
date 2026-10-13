@@ -21,8 +21,9 @@ function read(relative) {
 const schema = read("src/db/schema/profile-verification.ts");
 const index = read("src/db/schema/index.ts");
 const candidate = read("docs/planning/db04-proposed-migration.sql");
-const storage = read("src/modules/storage/private-object-storage.ts");
-const verifier = read("src/modules/profile-verification/gcs-private-receipts.ts");
+const storage = read("src/modules/storage/private-object-storage.ts") +
+  read("src/modules/storage/storage-errors.ts");
+const verifier = read("src/modules/profile-verification/private-receipts.ts");
 const profiles = read("src/db/schema/profiles.ts");
 const facultyDocument = read("src/modules/people/faculty-profile-document.ts");
 const facultyAdapter = read("src/modules/people/faculty-profile-self.staged.ts");
@@ -114,20 +115,18 @@ for (const token of [
 
 for (const token of [
   "PRIVATE_STORAGE_BUCKET_UNSAFE",
-  "publicAccessPrevention",
-  "malware_scan_status",
-  "scan_attested_by",
+  "malware-scan-status",
+  "scan-attested-by",
 ]) {
   if (!storage.includes(token)) errors.push("Private storage invariant missing: " + token);
 }
 
 for (const token of [
-  "uniformBucketLevelAccess",
-  "publicAccessPrevention",
   "lms-vnext-privileged-scanner",
   "objectGeneration",
+  "malware-scan-status",
 ]) {
-  if (!verifier.includes(token)) errors.push("GCS receipt invariant missing: " + token);
+  if (!verifier.includes(token)) errors.push("Private receipt invariant missing: " + token);
 }
 
 const exported =

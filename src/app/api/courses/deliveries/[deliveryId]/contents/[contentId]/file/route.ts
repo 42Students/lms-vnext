@@ -1,6 +1,6 @@
-import { Readable } from "node:stream";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { getAdminStorageBucket } from "@/auth/firebase-admin";
+import { getPrivateR2Config } from "@/modules/storage/r2-config";
+import { getObjectStream, headObject } from "@/modules/storage/s3-client";
 import { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 export const runtime = "nodejs";
@@ -82,13 +82,17 @@ export async function GET(
     );
   }
 
-  let metadata;
-  let file;
+  let metadata: Awaited<ReturnType<typeof headObject>>;
+  const r2 = (() => {
+    try {
+      return getPrivateR2Config();
+    } catch {
+      return null;
+    }
+  })();
   try {
-    file = getAdminStorageBucket().file(
-      content.storageKey,
-    );
-    [metadata] = await file.getMetadata();
+    if (!r2) throw new Error("STORAGE_NOT_CONFIGURED");
+    metadata = await headObject(r2, content.storageKey);
   } catch {
     return Response.json(
       {
@@ -100,7 +104,7 @@ export async function GET(
     );
   }
 
-  const size = Number(metadata.size ?? 0);
+  const size = Number(metadata?.sizeBytes ?? 0);
   if (!Number.isFinite(size) || size <= 0) {
     return Response.json(
       { error: "COURSE_FILE_NOT_FOUND" },
@@ -131,7 +135,7 @@ export async function GET(
     "Accept-Ranges": "bytes",
     "Cache-Control": "private, no-store",
     "Content-Type":
-      metadata.contentType ||
+      metadata?.contentType ||
       "application/octet-stream",
     "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name}"`,
   });
@@ -144,12 +148,14 @@ export async function GET(
     );
     headers.set("Content-Length", String(length));
 
-    const stream = Readable.toWeb(
-      file.createReadStream({
-        start: range.start,
-        end: range.end,
-      }),
-    ) as ReadableStream<Uint8Array>;
+    const object = await getObjectStream(r2!, content.storageKey, {
+      start: range.start,
+      end: range.end,
+    });
+    if (!object) {
+      return Response.json({ error: "COURSE_FILE_NOT_FOUND" }, { status: 404 });
+    }
+    const stream = object.body;
 
     return new Response(stream, {
       status: 206,
@@ -158,9 +164,11 @@ export async function GET(
   }
 
   headers.set("Content-Length", String(size));
-  const stream = Readable.toWeb(
-    file.createReadStream(),
-  ) as ReadableStream<Uint8Array>;
+  const object = await getObjectStream(r2!, content.storageKey);
+  if (!object) {
+    return Response.json({ error: "COURSE_FILE_NOT_FOUND" }, { status: 404 });
+  }
+  const stream = object.body;
 
   return new Response(stream, {
     status: 200,

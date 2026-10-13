@@ -31,7 +31,6 @@ const serverEnvSchema = z
       .default(5),
     GOOGLE_CLOUD_PROJECT: optionalNonEmpty,
     GCP_REGION: optionalNonEmpty,
-    GCS_BUCKET: optionalNonEmpty,
   })
   .superRefine((value, context) => {
     const socketFields = [
@@ -141,7 +140,6 @@ export function getServerEnv(): ServerEnv {
     DB_POOL_MAX: process.env.DB_POOL_MAX,
     GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
     GCP_REGION: process.env.GCP_REGION,
-    GCS_BUCKET: process.env.GCS_BUCKET,
   });
 
   return cachedEnv;
