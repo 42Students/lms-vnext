@@ -20,7 +20,7 @@ export default async function FacultyCourseStudentsPage({
   return (
     <div className="space-y-5">
       <Link
-        href={`/teach/courses/${deliveryId}`}
+        href={`/teacher/courses/${deliveryId}/home`}
         className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
       >
         ← Course workspace
