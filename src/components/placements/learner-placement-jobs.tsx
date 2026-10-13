@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail-model";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -297,8 +298,9 @@ function JobActions({
     );
   }
 
+  const safeExternalUrl = safeLearnerPlacementUrl(job.externalApplicationUrl);
   const externalAvailable =
-    Boolean(job.externalApplicationUrl) &&
+    Boolean(safeExternalUrl) &&
     (job.applicationMode === "HYBRID" ||
       job.applicationMode === "EXTERNAL_ONLY");
   const internalAvailable =
@@ -321,9 +323,9 @@ function JobActions({
       {externalAvailable ? (
         <>
           <a
-            href={job.externalApplicationUrl!}
+            href={safeExternalUrl!}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open employer form

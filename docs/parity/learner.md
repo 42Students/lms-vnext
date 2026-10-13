@@ -479,6 +479,16 @@ Legacy contract:
 - [ ] Loading/partial-failure/empty states are verified.
 
 ## Page: Job Detail
+
+**Learner detail implementation (2026-10-14):** dedicated role-aware
+published-drive detail replaces the generic full-page job cards. Breadcrumb
+navigation, company/description/location/work/deadline facts, scoped eligibility
+breakdowns (rule pass/fail/missing with actual/required), applicant status and
+real role-specific apply/withdrawal actions are composed from the existing
+authorized Learner job service. Safe external URLs reject non-web schemes.
+Legacy resume attachment/preview, rich employer company facts, receipts and
+browser acceptance remain open.
+
 **Legacy:** `/learn/my-placements/jobs/[jobId]`
 
 Legacy contract:
