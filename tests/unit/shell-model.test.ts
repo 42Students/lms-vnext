@@ -270,6 +270,82 @@ describe("authenticated shell model", () => {
     );
   });
 
+  it("never shows two sidebar entries with the same label, for any role mix", () => {
+    const roles: MembershipRole[] = [
+      "LEARNER",
+      "FACULTY",
+      "MENTOR",
+      "TPO",
+      "COLLEGE_ADMIN",
+    ];
+    // every non-empty combination of roles (31 of them)
+    for (let mask = 1; mask < 1 << roles.length; mask += 1) {
+      const combo = roles.filter((_, bit) => mask & (1 << bit));
+      const names = labels(context(combo));
+      expect(
+        new Set(names).size,
+        `duplicate labels for [${combo.join(", ")}]: ${names.join(" | ")}`,
+      ).toBe(names.length);
+    }
+  });
+
+  it("qualifies a repeated label by the area it opens and keeps both destinations", () => {
+    const dual = getShellNavigation(context(["LEARNER", "FACULTY"]));
+
+    const courses = dual.filter((item) =>
+      item.label.startsWith("Courses"),
+    );
+    expect(courses.map((item) => [item.label, item.href])).toEqual([
+      ["Courses · Learning", "/learn/courses"],
+      ["Courses · Teaching", "/teach/courses"],
+    ]);
+
+    const admin = getShellNavigation(
+      context(["COLLEGE_ADMIN", "FACULTY", "MENTOR"]),
+    );
+    expect(
+      admin.find((item) => item.href === "/college/courses")?.label,
+    ).toBe("Courses · College");
+    expect(
+      admin.find((item) => item.href === "/mentor/projects")?.label,
+    ).toBe("Projects · Mentoring");
+    expect(
+      admin.find((item) => item.href === "/college/projects")?.label,
+    ).toBe("Projects · College");
+  });
+
+  it("leaves labels alone when they are not repeated", () => {
+    expect(labels(context(["COLLEGE_ADMIN"]))).not.toContainEqual(
+      expect.stringContaining("·"),
+    );
+    expect(labels(context(["LEARNER"]))).not.toContainEqual(
+      expect.stringContaining("·"),
+    );
+    expect(labels(context(["FACULTY", "TPO"]))).toContain("Courses");
+  });
+
+  it("does not drop any destination when it qualifies labels", () => {
+    const all = context([
+      "LEARNER",
+      "FACULTY",
+      "MENTOR",
+      "TPO",
+      "COLLEGE_ADMIN",
+    ]);
+    const destinations = hrefs(all);
+    expect(new Set(destinations).size).toBe(destinations.length);
+    for (const href of [
+      "/learn/courses",
+      "/teach/courses",
+      "/college/courses",
+      "/learn/notifications",
+      "/teacher/notifications",
+      "/mentor/notifications",
+    ]) {
+      expect(destinations).toContain(href);
+    }
+  });
+
   it("keeps nested learner routes under the canonical sidebar entry", () => {
     const learnerNav = getShellNavigation(context(["LEARNER"]));
     const learnerHrefs = learnerNav.map((item) => item.href);

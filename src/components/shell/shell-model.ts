@@ -343,7 +343,51 @@ export function getShellNavigation(
     pushUnique(items, collegeAdminItems);
   }
 
-  return items;
+  return qualifyDuplicateLabels(items);
+}
+
+const PORTAL_QUALIFIERS: readonly (readonly [string, string])[] = [
+  ["/learn", "Learning"],
+  ["/teach", "Teaching"],
+  ["/teacher", "Teaching"],
+  ["/mentor", "Mentoring"],
+  ["/college", "College"],
+  ["/admin", "Admin"],
+  ["/tpo", "Placements"],
+  ["/hr", "Recruiting"],
+];
+
+function portalQualifier(href: string) {
+  return (
+    PORTAL_QUALIFIERS.find(
+      ([prefix]) =>
+        href === prefix || href.startsWith(`${prefix}/`),
+    )?.[1] ?? null
+  );
+}
+
+/**
+ * A person with several roles gets every role's sidebar entries, so labels
+ * like "Courses" or "Notifications" can appear twice with different
+ * destinations. Only labels that actually collide are qualified by the area
+ * they open ("Courses · Teaching"); everything else, and every single-role
+ * sidebar, keeps its legacy label.
+ */
+export function qualifyDuplicateLabels(
+  items: readonly ShellNavItem[],
+): ShellNavItem[] {
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    counts.set(item.label, (counts.get(item.label) ?? 0) + 1);
+  }
+
+  return items.map((item) => {
+    if ((counts.get(item.label) ?? 0) < 2) return item;
+    const qualifier = portalQualifier(item.href);
+    return qualifier
+      ? { ...item, label: `${item.label} · ${qualifier}` }
+      : item;
+  });
 }
 
 export function getShellRoleLabel(context: RequestContext) {
