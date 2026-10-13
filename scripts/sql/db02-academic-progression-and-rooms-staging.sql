@@ -49,7 +49,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_bounds();
 -- Already registered as migration 0050; refresh function/trigger on the
 -- disposable DB02 overlay so the canonical trigger manifest stays exact.
 CREATE OR REPLACE FUNCTION db02_guard_program_duration_term_floor()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
  IF NEW.duration_terms < OLD.duration_terms AND EXISTS
   (SELECT 1 FROM program_terms WHERE program_id=OLD.id AND term_number>NEW.duration_terms) THEN
@@ -57,7 +57,7 @@ BEGIN
  END IF;
  RETURN NEW;
 END;
-$;
+$$;
 DROP TRIGGER IF EXISTS db02_program_duration_term_floor ON programs;
 CREATE TRIGGER db02_program_duration_term_floor BEFORE UPDATE OF duration_terms ON programs
  FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_term_floor();
