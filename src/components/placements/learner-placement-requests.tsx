@@ -122,17 +122,24 @@ export function LearnerPlacementRequests({
   requests,
   rounds,
   offers,
+  initialRoundId = null,
 }: {
   requests: readonly RequestItem[];
   rounds: readonly RoundOption[];
   offers: readonly OfferOption[];
+  initialRoundId?: string | null;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [pendingKey, setPendingKey] =
     useState<string | null>(null);
+  // Only preselect a round that exists in this Learner's authorized workspace.
+  const firstRound =
+    rounds.find((round) => round.roundId === initialRoundId) ??
+    rounds[0] ??
+    null;
   const [roundId, setRoundId] = useState(
-    rounds[0]?.roundId ?? "",
+    firstRound?.roundId ?? "",
   );
   const selectedRound = useMemo(
     () =>
@@ -143,15 +150,15 @@ export function LearnerPlacementRequests({
   );
   const [roundAt, setRoundAt] = useState(
     localInput(
-      rounds[0]?.exception?.scheduledAt ??
-        rounds[0]?.scheduledAt ??
+      firstRound?.exception?.scheduledAt ??
+        firstRound?.scheduledAt ??
         null,
     ),
   );
   const [roundMode, setRoundMode] = useState<
     "ON_CAMPUS" | "VIRTUAL"
   >(
-    rounds[0]?.mode === "VIRTUAL"
+    firstRound?.mode === "VIRTUAL"
       ? "VIRTUAL"
       : "ON_CAMPUS",
   );
@@ -337,7 +344,7 @@ export function LearnerPlacementRequests({
       </div>
 
       <div className="grid gap-5 p-5 xl:grid-cols-2">
-        <div className="rounded-lg border border-border bg-muted p-4">
+        <div id="round-reschedule" className="scroll-mt-24 rounded-lg border border-border bg-muted p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Round reschedule
           </h3>
