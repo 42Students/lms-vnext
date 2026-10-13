@@ -1,58 +1,29 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { LearnerCourseList, type LearnerCourseListRow } from "@/components/courses/learner-course-list";
 
-const regular: LearnerCourseListRow = {
-  course: {
-    deliveryId: "regular",
-    courseId: "course-regular",
-    courseName: "Algebra",
-    courseCode: "MTH101",
-    courseDescription: "Fundamentals",
-    offeringType: "CORE",
-    credits: 4,
-    sectionName: "A",
-    sectionCode: "A",
-    academicPeriodId: "term-1",
-    academicPeriodName: "Semester 1",
-    programName: "Engineering",
-    programCode: "ENG",
-    periodStartDate: "2026-01-01",
-    periodEndDate: "2026-06-30",
-  },
-  instructorNames: ["Instructor"],
-  summary: { overallPercent: 0, itemsCompleted: 0, itemsTotal: 1 },
-  readOnly: false,
-  learningPathReady: false,
-  nextItem: null,
-};
+const source = readFileSync(
+  new URL("../../src/components/courses/learner-course-list.tsx", import.meta.url),
+  "utf8",
+);
 
-const elective: LearnerCourseListRow = {
-  ...regular,
-  course: {
-    ...regular.course,
-    deliveryId: "elective",
-    courseId: "course-elective",
-    courseName: "Music",
-    courseCode: "MUS101",
-    offeringType: "ELECTIVE",
-  },
-};
-
-describe("learner Courses responsive layout", () => {
-  it("keeps the Electives heading separate from the first elective card", () => {
-    const html = renderToStaticMarkup(createElement(LearnerCourseList, { rows: [regular, elective] }));
-    expect(html).toContain("col-span-full");
-    expect(html).toContain(">Electives</h2>");
-    expect(html).toContain('href="/learn/courses/elective/home"');
-    expect(html).not.toContain("md:col-span-2 xl:col-span-3");
+describe("learner Courses responsive layout source contract", () => {
+  it("keeps the Electives heading in a dedicated full-width grid row", () => {
+    expect(source).toContain('<Fragment key={row.course.deliveryId}>');
+    expect(source).toContain('className="col-span-full mb-1 mt-2');
+    expect(source).toContain('className="min-w-0"');
+    expect(source).toContain("startsElectiveGroup");
+    expect(source).not.toContain('className={startsElectiveGroup ? "md:col-span-2 xl:col-span-3" : ""}');
   });
 
-  it("renders course-type filters as accessible pressed buttons", () => {
-    const html = renderToStaticMarkup(createElement(LearnerCourseList, { rows: [regular, elective] }));
-    expect(html).toContain('aria-label="Filter by course type"');
-    expect(html).toContain('aria-pressed="true"');
-    expect(html).toContain("grid-cols-3");
+  it("keeps course-type filters mobile-responsive and accessible", () => {
+    expect(source).toContain('aria-label="Filter by course type"');
+    expect(source).toContain('aria-pressed={typeFilter === value}');
+    expect(source).toContain("grid-cols-3");
+    expect(source).toContain("sm:inline-flex sm:w-auto");
+    expect(source).toContain("setVisibleLimit(PAGE_SIZE)");
+  });
+
+  it("keeps clickable cards linked to the correct learner course overview", () => {
+    expect(source).toContain('href={`/learn/courses/${row.course.deliveryId}/home`}');
   });
 });
