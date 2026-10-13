@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -458,7 +459,13 @@ export function LearnerPlacementJobs({
                   {item.company.name}
                 </p>
                 <h2 className="mt-1 text-xl font-semibold text-foreground">
-                  {item.roleOption.title}
+                  <Link
+                    href={`/learn/my-placements/jobs/${encodeURIComponent(item.job.id)}`}
+                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                    aria-label={`View ${item.roleOption.title} drive details at ${item.company.name}`}
+                  >
+                    {item.roleOption.title}
+                  </Link>
                 </h2>
                 {item.roleOption.title !==
                 item.job.title ? (
