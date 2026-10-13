@@ -138,6 +138,24 @@ export async function listActiveSessions(userId: string) {
   return rowsOf(result);
 }
 
+/** Ends every live session of the user except the one making the request. */
+export async function revokeOtherSessions(
+  userId: string,
+  currentSessionId: string,
+) {
+  const result = await getDb().execute(sql`
+    UPDATE identity_device_sessions
+    SET revoked_at = now(),
+        revoked_by_user_id = ${userId},
+        revocation_reason = 'USER_SIGNED_OUT_OTHER_DEVICES'
+    WHERE user_id = ${userId}
+      AND id <> ${currentSessionId}
+      AND revoked_at IS NULL
+    RETURNING id
+  `);
+  return rowsOf(result).length;
+}
+
 /**
  * Revokes one device session. Ownership is the persisted user id of the
  * session itself; there is no role-name bypass (the legacy LMS treated any

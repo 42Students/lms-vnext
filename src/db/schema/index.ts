@@ -35,3 +35,5 @@ export * from "./tpo-crm";
 
 export * from "./identity-auth-attempts";
 export * from "./identity-device-sessions";
+
+export * from "./college-branding";
