@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import { FacultyContentEditor } from "./faculty-content-editor";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
@@ -126,10 +127,27 @@ function ContentItem({
         </p>
       ) : null}
       {item.deliveryId ? (
-        <FacultyItemActions
-          transitionUrl={`/api/courses/lesson-contents/${item.id}/transition`}
-          actions={available}
-        />
+        <div className="mt-3 flex flex-wrap items-start gap-2">
+          {item.contentType !== "VIDEO" ? (
+            <FacultyContentEditor
+              item={{
+                id: item.id,
+                contentType: item.contentType,
+                title: item.title,
+                notes: item.notes,
+                externalUrl: item.externalUrl,
+                storageKey: item.storageKey,
+                durationSeconds: item.durationSeconds,
+                startsAt: item.startsAt,
+                endsAt: item.endsAt,
+              }}
+            />
+          ) : null}
+          <FacultyItemActions
+            transitionUrl={`/api/courses/lesson-contents/${item.id}/transition`}
+            actions={available}
+          />
+        </div>
       ) : null}
     </article>
   );
