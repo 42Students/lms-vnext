@@ -32,6 +32,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
+  { label: "Lecture Halls", href: "/admin/lecture-halls", shortLabel: "L" },
   { label: "Attendance", href: "/admin/attendance", shortLabel: "T" },
   { label: "Courses", href: "/admin/courses", shortLabel: "C" },
   { label: "Projects", href: "/admin/projects", shortLabel: "P" },

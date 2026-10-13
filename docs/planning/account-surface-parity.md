@@ -294,7 +294,7 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | Batches | `/superadmin/batches` | PARTIAL |
 | Classes | `/superadmin/classes` | PARTIAL |
 | Batch Promotion | `/superadmin/batch-promotion` | PARTIAL |
-| Lecture Halls | `/superadmin/lecture-halls` | MISSING |
+| Lecture Halls | `/superadmin/lecture-halls` | PARTIAL |
 | Electives | `/superadmin/electives` | PARTIAL |
 | Attendance | `/superadmin/attendance` | MISSING |
 | Courses | `/superadmin/courses` | PARTIAL |
@@ -315,6 +315,8 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | Companies | `/superadmin/companies` | PARTIAL |
 | Placement Interview Calendar | `/superadmin/calendar` | MISSING |
 | Hiring Analytics | `/superadmin/hiring-dashboard` | PARTIAL |
+
+**Lecture Halls (`/admin/lecture-halls`):** selected-college page reuses the College Admin hall table, create/edit/archive/restore actions, department options, and schedule-conflict guard. Lecture-hall service requires the selected Super Admin college for API reads and writes. Legacy search/filter parity, executed Super Admin database evidence and browser checks are pending; this is PARTIAL, not closed.
 
 ## 5.4 Projects — aggregate/template
 
