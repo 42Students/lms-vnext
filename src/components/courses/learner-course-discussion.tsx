@@ -77,13 +77,17 @@ export function LearnerCourseDiscussion({
   }, [deliveryId]);
 
   useEffect(() => {
-    void load();
+    // Defer initial fetch to avoid synchronous cascading state updates.
+    const first = window.setTimeout(() => void load(), 0);
     const interval = window.setInterval(() => {
       if (document.visibilityState === "visible") {
         void load(true);
       }
     }, 15000);
-    return () => window.clearInterval(interval);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(interval);
+    };
   }, [load]);
 
   const pinnedMessages = useMemo(

@@ -26,6 +26,7 @@ function byDueDateThenTitle<
 export async function getLearnerAssessmentOverview(
   context: RequestContext,
 ) {
+  const snapshotNowMs = Date.now();
   const deliveries =
     await listLearnerCourseDeliveries(context);
   const rows = await Promise.all(
@@ -96,6 +97,7 @@ export async function getLearnerAssessmentOverview(
   );
 
   return {
+    snapshotNowMs,
     courses,
     assignments,
     quizzes,

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LearnerCoursesError({
   reset,
@@ -18,12 +19,12 @@ export default function LearnerCoursesError({
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
         <Button onClick={reset}>Try again</Button>
-        <a
+        <Link
           href="/learn/courses"
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
         >
           Back to Courses
-        </a>
+        </Link>
       </div>
     </div>
   );

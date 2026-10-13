@@ -82,6 +82,12 @@ Legacy behavior:
 - [ ] Empty/loading/error states.
 
 ## Page: Meetings
+
+**2026-10-13 implementation improvement:** viewer-time initialization is
+deferred until the browser is mounted, retaining server-safe initial state
+and a minute refresh without synchronous cascading React state updates.
+Browser verification is still required.
+
 **Legacy:** `/mentor/calendar`
 
 Audited behavior:

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 type QuizPayload = {
@@ -84,6 +85,7 @@ export function LearnerQuizAttempt() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [step, setStep] = useState(0);
+  const [nowMs, setNowMs] = useState(0);
   const [review, setReview] = useState(reviewRequested);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -112,19 +114,35 @@ export function LearnerQuizAttempt() {
       if (!attemptsResponse.ok) throw new Error(await messageFrom(attemptsResponse, "Unable to load your attempts."));
       const quizBody = await quizResponse.json();
       const attemptsBody = await attemptsResponse.json();
-      setQuiz(quizBody.quiz);
-      setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
+      const loadedAtMs = Date.now();
       const deadlinePassed = quizBody.quiz?.quiz?.dueAt
-        ? new Date(quizBody.quiz.quiz.dueAt).getTime() < Date.now()
+        ? new Date(quizBody.quiz.quiz.dueAt).getTime() < loadedAtMs
         : false;
-      if (
+      const mustReview =
         reviewRequested ||
         quizBody.quiz?.quiz?.status === "CLOSED" ||
         deadlinePassed ||
-        Number(quizBody.quiz?.attemptsRemaining ?? 0) <= 0
-      ) {
-        setReview(true);
+        Number(quizBody.quiz?.attemptsRemaining ?? 0) <= 0;
+      let rawDraft: string | null = null;
+      if (!mustReview && storageKey && typeof window !== "undefined") {
+        try {
+          rawDraft = window.sessionStorage.getItem(storageKey);
+        } catch {
+          // A blocked sessionStorage API must not prevent loading the quiz.
+        }
       }
+      const draft = parseLearnerQuizDraft(
+        rawDraft,
+        Array.isArray(quizBody.quiz?.questions) ? quizBody.quiz.questions.length : 0,
+      );
+      // Restore before enabling autosave. The old mount effects wrote an
+      // empty draft before this state was restored from sessionStorage.
+      setAnswers(draft.answers);
+      setStep(draft.step);
+      setReview(mustReview);
+      setNowMs(loadedAtMs);
+      setQuiz(quizBody.quiz);
+      setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
     } finally {
@@ -133,34 +151,26 @@ export function LearnerQuizAttempt() {
   }
 
   useEffect(() => {
-    void load();
+    // Defer the load callback outside the effect's synchronous phase.
+    const handle = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(handle);
     // quiz/delivery identify a fresh attempt surface.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId, deliveryId]);
 
   useEffect(() => {
-    if (!storageKey || review || typeof window === "undefined") return;
-    try {
-      const saved = window.sessionStorage.getItem(storageKey);
-      if (!saved) return;
-      const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === "object") {
-        setAnswers(parsed.answers ?? {});
-        setStep(Number.isInteger(parsed.step) ? parsed.step : 0);
-      }
-    } catch {
-      // Corrupt transient state should not block the quiz.
-    }
-  }, [storageKey, review]);
+    const handle = window.setInterval(() => setNowMs(Date.now()), 30_000);
+    return () => window.clearInterval(handle);
+  }, []);
 
   useEffect(() => {
-    if (!storageKey || review || typeof window === "undefined") return;
+    if (!storageKey || review || loading || typeof window === "undefined") return;
     try {
       window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step }));
     } catch {
       // Private browsing/quota should not block the attempt.
     }
-  }, [answers, step, storageKey, review]);
+  }, [answers, step, storageKey, review, loading]);
 
   const questions = quiz?.questions ?? [];
   const current = questions[step] ?? null;
@@ -169,8 +179,8 @@ export function LearnerQuizAttempt() {
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
     [latestAttempt],
   );
-  const duePassed = quiz?.quiz.dueAt
-    ? new Date(quiz.quiz.dueAt).getTime() < Date.now()
+  const duePassed = quiz?.quiz.dueAt && nowMs > 0
+    ? new Date(quiz.quiz.dueAt).getTime() < nowMs
     : false;
   const attemptable = Boolean(
     quiz &&

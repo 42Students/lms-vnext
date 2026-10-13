@@ -53,6 +53,7 @@ export default async function LearnerQuizzesPage() {
         courses={overview.courses}
         items={items}
         kind="QUIZ"
+        snapshotNowMs={overview.snapshotNowMs}
       />
     </div>
   );

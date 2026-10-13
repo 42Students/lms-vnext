@@ -135,6 +135,12 @@ Legacy contract:
 - [ ] Responsive/mobile discussion behavior still needs browser verification.
 
 ## Page: All Assignments
+
+**2026-10-13 implementation improvement:** aggregate assignment due/late
+labels now use an immutable service snapshot, with pure-model unit tests
+for overdue-but-submittable, due-soon, submitted-late and unpublished-grade
+states. Browser/file-backed submission parity remains open.
+
 **Legacy:** `/learn/allAssignments`  
 **vNext:** `/learn/allAssignments`
 
@@ -185,6 +191,13 @@ Legacy contract:
 - [ ] Mobile behavior is verified.
 
 ## Page: Standalone Quiz Attempt
+
+**2026-10-13 implementation improvement:** session-storage answers and
+question index are restored with validation after quiz data loads and before
+autosave begins. Missing/invalid drafts no longer block quiz loading, and
+the quiz deadline clock advances while the page stays open. Unit/browser
+reverification remains required, especially multi-tab and refresh races.
+
 **Legacy:** `/quiz`
 
 Legacy contract:

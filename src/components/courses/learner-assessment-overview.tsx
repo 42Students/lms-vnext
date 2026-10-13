@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
+import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
 
 type CourseChoice = {
   id: string;
@@ -78,66 +79,6 @@ function formatDate(value: string | null) {
   }).format(date);
 }
 
-function assignmentState(
-  item: LearnerAssignmentOverviewItem,
-) {
-  if (item.gradePublished) {
-    return {
-      label: `Graded · ${item.pointsAwarded ?? 0}/${item.maxPoints}`,
-      tone: "success" as const,
-      action: "View",
-    };
-  }
-
-  if (item.submittedAt) {
-    const due = item.dueAt ? new Date(item.dueAt).getTime() : null;
-    const submitted = new Date(item.submittedAt).getTime();
-    const submittedLate = Boolean(
-      due &&
-      Number.isFinite(submitted) &&
-      submitted > due,
-    );
-    return {
-      label: submittedLate
-        ? "Submitted late · awaiting grade"
-        : "Submitted · awaiting grade",
-      tone: "info" as const,
-      action: "View",
-    };
-  }
-
-  const due = item.dueAt
-    ? new Date(item.dueAt).getTime()
-    : null;
-
-  if (due && due < Date.now()) {
-    return {
-      label:
-        "Overdue · late submission allowed",
-      tone: "warning" as const,
-      action: "Submit",
-    };
-  }
-
-  if (
-    due &&
-    due - Date.now() <
-      48 * 60 * 60 * 1000
-  ) {
-    return {
-      label: "Due soon",
-      tone: "warning" as const,
-      action: "Submit",
-    };
-  }
-
-  return {
-    label: "Not submitted",
-    tone: "neutral" as const,
-    action: "Submit",
-  };
-}
-
 function Metric({
   label,
   value,
@@ -163,10 +104,12 @@ export function LearnerAssessmentOverview({
   courses,
   items,
   kind,
+  snapshotNowMs,
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
   kind: "ASSIGNMENT" | "QUIZ";
+  snapshotNowMs: number;
 }) {
   const [courseId, setCourseId] =
     useState("");
@@ -300,7 +243,7 @@ export function LearnerAssessmentOverview({
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
-                ? { ...assignmentState(item), review: false }
+                ? { ...assignmentOverviewState(item, snapshotNowMs), review: false }
                 : quizOverviewActionState(item);
             const href =
               item.kind === "QUIZ"
@@ -533,7 +476,7 @@ export function LearnerAssessmentOverview({
               <>
                 {selectedAssignment.dueAt &&
                 new Date(selectedAssignment.dueAt).getTime() <
-                  Date.now() ? (
+                  snapshotNowMs ? (
                   <div
                     role="status"
                     className="rounded-lg border border-warning bg-[var(--lms-warning-subtle)] p-4 text-sm text-body"
