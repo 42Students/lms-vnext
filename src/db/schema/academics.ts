@@ -12,6 +12,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
+import { lectureHalls } from "./lecture-halls";
 import { departments } from "./departments";
 import { collegeMemberships } from "./memberships";
 import {
@@ -445,6 +446,7 @@ export const sectionScheduleEvents = pgTable(
     ).references(() => collegeMemberships.id, {
       onDelete: "restrict",
     }),
+    lectureHallId: uuid("lecture_hall_id").references(() => lectureHalls.id, { onDelete: "restrict" }),
     title: text("title").notNull(),
     description: text("description"),
     startsAt: timestamp("starts_at", {
@@ -469,6 +471,8 @@ export const sectionScheduleEvents = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("section_schedule_events_hall_time_idx").on(table.lectureHallId, table.startsAt, table.endsAt)
+      .where(sql`${table.lectureHallId} is not null and ${table.status} = 'SCHEDULED'`),
     index("section_schedule_events_section_time_idx").on(
       table.sectionId,
       table.startsAt,
