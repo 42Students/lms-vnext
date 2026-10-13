@@ -70,6 +70,13 @@ const DEFAULTS: Record<OptionalModuleKey, boolean> = {
   electives: true,
 };
 
+/** Expose the actual resolver defaults for read-only explanations. */
+export function getOptionalModuleSourceDefault(
+  module: OptionalModuleKey,
+): boolean {
+  return DEFAULTS[module];
+}
+
 const BELOW_COLLEGE = new Set<ModuleAccessScopeType>([
   "MEMBERSHIP",
   "SECTION",
@@ -83,6 +90,14 @@ function levelIgnored(
   scopeType: ModuleAccessScopeType,
 ) {
   return module === "placements" && BELOW_COLLEGE.has(scopeType);
+}
+
+/** Share the resolver's scope applicability with trace presentation. */
+export function isModuleScopeIgnored(
+  module: OptionalModuleKey,
+  scopeType: ModuleAccessScopeType,
+): boolean {
+  return levelIgnored(module, scopeType);
 }
 
 function pairKey(

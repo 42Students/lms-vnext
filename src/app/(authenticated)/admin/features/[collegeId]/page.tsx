@@ -99,6 +99,27 @@ export default async function SuperAdminCollegeModuleAccessPage({
         description={`Read-only persisted module rules for college ${college.code}. Stored overrides may be inherited or masked by higher-priority locked rules.`}
       />
 
+      <section className="rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-base font-semibold text-foreground">
+              Why this learner sees a module
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-body">
+              Find an active learner in this college and trace the
+              module-access decision through membership, academic
+              scopes, college, organization, global rules and defaults.
+            </p>
+          </div>
+          <Link
+            href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          >
+            Open learner access trace →
+          </Link>
+        </div>
+      </section>
+
       <section className="grid gap-3 md:grid-cols-3">
         {modules.map((decision) => (
           <article
@@ -371,8 +392,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         no contact details are loaded. Missing academic
         nodes without stored overrides are not enumerated.
         Editing, bulk changes, override drawers and
-        learner access traces remain outside this partial
-        implementation.
+        exact legacy in-page access-trace interactions
+        remain outside this partial implementation.
       </p>
     </div>
   );
