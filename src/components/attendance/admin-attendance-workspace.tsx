@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -11,6 +12,15 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
+import {
+  adminAttendanceCellState,
+  adminAttendancePercent,
+  attendanceCsvCell,
+  attendanceIndiaDay,
+  groupAttendanceDays,
+  shiftAttendanceMonth,
+} from "@/modules/attendance/admin-grid-model";
 
 type DeliveryOption = {
   deliveryId: string;
@@ -23,6 +33,8 @@ type DeliveryOption = {
   academicPeriodId: string;
   academicPeriodName: string;
 };
+
+type CourseOption = { id: string; name: string; code: string };
 
 type Learner = {
   membershipId: string;
@@ -63,6 +75,10 @@ export type AdminAttendanceWorkspaceData = {
     correctionWindowHours: number;
   };
   deliveries: DeliveryOption[];
+  courses: CourseOption[];
+  selectedSectionId: string | null;
+  selectedCourseId: string | null;
+  showAllCourses: boolean;
   selectedDeliveryId: string | null;
   month: string;
   grid: null | {
@@ -87,74 +103,13 @@ function learnerName(learner: Learner) {
   );
 }
 
-function codeFor(
-  session: Session,
-  record: RecordRow | undefined,
-) {
-  if (
-    new Date(session.startsAt).getTime() >
-    Date.now()
-  ) {
-    return {
-      code: "S",
-      label: "Scheduled",
-      tone: "neutral" as const,
-      counted: false,
-      present: false,
-    };
-  }
-  const counted =
-    session.attendanceStatus === "MARKED" ||
-    Boolean(record);
-  if (!counted) {
-    return {
-      code: "—",
-      label: "Not marked",
-      tone: "warning" as const,
-      counted: false,
-      present: false,
-    };
-  }
-  if (!record) {
-    return {
-      code: "P",
-      label: "Present",
-      tone: "success" as const,
-      counted: true,
-      present: true,
-    };
-  }
-  const mapping: Record<
-    string,
-    { code: string; label: string }
-  > = {
-    PRESENT: {
-      code: "P",
-      label: "Present",
-    },
-    ABSENT: { code: "A", label: "Absent" },
-    EXCUSED: {
-      code: "E",
-      label: "Excused",
-    },
-    MEDICAL: {
-      code: "M",
-      label: "Medical",
-    },
-    LATE: { code: "L", label: "Late" },
-  };
-  const value = mapping[record.status] ?? {
-    code: "?",
-    label: record.status,
-  };
+function codeFor(session: Session, record: RecordRow | undefined) {
+  const state = adminAttendanceCellState(session, record);
   return {
-    ...value,
-    tone:
-      record.status === "PRESENT"
-        ? ("success" as const)
-        : ("error" as const),
-    counted: true,
-    present: record.status === "PRESENT",
+    ...state,
+    tone: state.code === "P" ? ("success" as const) :
+      state.code === "S" ? ("neutral" as const) :
+      state.code === "—" ? ("warning" as const) : ("error" as const),
   };
 }
 
@@ -180,6 +135,46 @@ export function AdminAttendanceWorkspace({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
+  const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
+  const [showAllCourses, setShowAllCourses] = useState(data.showAllCourses);
+  const [chooser, setChooser] = useState<{
+    learner: Learner; sessions: Session[];
+  } | null>(null);
+
+  // Keep the controls aligned with URL changes (month navigation/back/forward).
+  useEffect(() => {
+    setSectionId(data.selectedSectionId ?? "");
+    setCourseId(data.selectedCourseId ?? "");
+    setShowAllCourses(data.showAllCourses);
+    setTarget(null);
+    setChooser(null);
+  }, [data.selectedSectionId, data.selectedCourseId, data.showAllCourses, data.month]);
+
+  const classes = useMemo(() =>
+    [...new Map(data.deliveries.map((item) => [item.sectionId, item])).values()],
+    [data.deliveries],
+  );
+  const offeredCourses = useMemo(() => {
+    const ids = new Set(
+      data.deliveries.filter((delivery) => delivery.sectionId === sectionId)
+        .map((delivery) => delivery.courseId),
+    );
+    return data.courses.filter((course) => ids.has(course.id));
+  }, [data.courses, data.deliveries, sectionId]);
+  const visibleCourses = showAllCourses ? data.courses : offeredCourses;
+  const sessionDays = useMemo(() =>
+    groupAttendanceDays(data.grid?.sessions ?? []),
+    [data.grid?.sessions],
+  );
+
+  function navigate(month = data.month) {
+    const params = new URLSearchParams({ month });
+    if (sectionId) params.set("sectionId", sectionId);
+    if (courseId) params.set("courseId", courseId);
+    if (showAllCourses) params.set("allCourses", "1");
+    router.push(basePath + "?" + params.toString());
+  }
 
   const recordMap = useMemo(
     () =>
@@ -206,24 +201,9 @@ export function AdminAttendanceWorkspace({
   );
 
   function learnerPercent(learner: Learner) {
-    let counted = 0;
-    let present = 0;
-    for (const session of heldSessions) {
-      const state = codeFor(
-        session,
-        recordMap.get(
-          `${session.id}:${learner.membershipId}`,
-        ),
-      );
-      if (!state.counted) continue;
-      counted += 1;
-      if (state.present) present += 1;
-    }
-    return counted === 0
-      ? null
-      : Math.round(
-          (present / counted) * 100,
-        );
+    return adminAttendancePercent(
+      learner.membershipId, data.grid?.sessions ?? [], data.grid?.records ?? [],
+    );
   }
 
   async function correct(
@@ -241,6 +221,22 @@ export function AdminAttendanceWorkspace({
     ) {
       return;
     }
+    const state = facultyAttendanceMarkingWindow({
+      startsAt: new Date(target.session.startsAt),
+      endsAt: new Date(target.session.endsAt),
+      correctionWindowHours: data.policy.correctionWindowHours,
+      now: new Date(),
+    });
+    if (state !== "OPEN") {
+      setError(state === "NOT_STARTED"
+        ? "The session has not started."
+        : "The correction window has expired.");
+      return;
+    }
+    if (!window.confirm(
+      "Mark " + learnerName(target.learner) + " " + status.toLowerCase() +
+      " for " + target.session.title + "? This change is recorded."
+    )) return;
     setError(null);
     setCorrecting(true);
     try {
@@ -293,9 +289,12 @@ export function AdminAttendanceWorkspace({
       "Roll",
       ...data.grid.sessions.map(
         (session) =>
-          new Date(session.startsAt)
-            .toISOString()
-            .slice(0, 10),
+          attendanceIndiaDay(session.startsAt) + " " +
+            new Intl.DateTimeFormat("en-IN", {
+              timeZone: "Asia/Kolkata",
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(new Date(session.startsAt)),
       ),
       "Attendance %",
     ];
@@ -316,18 +315,8 @@ export function AdminAttendanceWorkspace({
       ],
     );
     const csv = [header, ...rows]
-      .map((row) =>
-        row
-          .map(
-            (value) =>
-              `"${String(value).replaceAll(
-                '"',
-                '""',
-              )}"`,
-          )
-          .join(","),
-      )
-      .join("\n");
+      .map((row) => row.map(attendanceCsvCell).join(","))
+      .join("\r\n");
     const blob = new Blob([csv], {
       type: "text/csv;charset=utf-8",
     });
@@ -350,7 +339,7 @@ export function AdminAttendanceWorkspace({
             {data.policy.correctionWindowHours} hours
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Read-only policy. Admin corrections are oversight actions and are not blocked by the Faculty window.
+            Read-only policy. Corrections are allowed from session start until this many hours after session end.
           </p>
         </div>
         <div className="rounded-xl border border-border bg-surface p-4">
@@ -367,56 +356,93 @@ export function AdminAttendanceWorkspace({
       </section>
 
       <form
-        action={basePath}
-        className="grid gap-3 rounded-xl border border-border bg-surface p-4 lg:grid-cols-[1fr_12rem_auto]"
+        onSubmit={(event) => {
+          event.preventDefault();
+          navigate();
+        }}
+        className="grid gap-3 rounded-xl border border-border bg-surface p-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
       >
         <label className="text-xs font-semibold text-body">
-          Class and Course
-          <Select
-            className="mt-1.5"
-            name="deliveryId"
-            defaultValue={
-              data.selectedDeliveryId ?? ""
-            }
-          >
-            <option value="">
-              Select class and course
-            </option>
-            {data.deliveries.map(
-              (delivery) => (
-                <option
-                  key={delivery.deliveryId}
-                  value={delivery.deliveryId}
-                >
-                  {delivery.sectionName} ·{" "}
-                  {delivery.courseCode} ·{" "}
-                  {delivery.courseName}
-                </option>
-              ),
-            )}
+          Class
+          <Select className="mt-1.5" value={sectionId}
+            onChange={(event) => {
+              setSectionId(event.target.value);
+              setCourseId("");
+            }}>
+            <option value="">Select class</option>
+            {classes.map((item) => (
+              <option key={item.sectionId} value={item.sectionId}>
+                {item.sectionName} · {item.sectionCode}
+              </option>
+            ))}
           </Select>
         </label>
         <label className="text-xs font-semibold text-body">
-          Month
-          <Input
-            className="mt-1.5"
-            type="month"
-            name="month"
-            defaultValue={data.month}
-          />
+          Course
+          <Select className="mt-1.5" value={courseId}
+            disabled={!sectionId}
+            onChange={(event) => setCourseId(event.target.value)}>
+            <option value="">Select course</option>
+            {visibleCourses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.code} · {course.name}
+                {!offeredCourses.some((item) => item.id === course.id)
+                  ? " (not taught to this class)" : ""}
+              </option>
+            ))}
+          </Select>
         </label>
-        <button
-          type="submit"
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
-        >
+        <Button className="self-end" type="submit" disabled={!sectionId || !courseId}>
           View attendance
-        </button>
+        </Button>
+        <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
+          <input
+            type="checkbox"
+            checked={showAllCourses}
+            onChange={(event) => {
+              setShowAllCourses(event.target.checked);
+              if (!event.target.checked && !offeredCourses.some((item) => item.id === courseId)) {
+                setCourseId("");
+              }
+            }}
+          />
+          Show all college courses (including courses not taught to this class)
+        </label>
+        <div className="flex flex-wrap items-center gap-2 md:col-span-2 xl:col-span-3">
+          <Button size="sm" variant="secondary"
+            aria-label="Previous month"
+            onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
+            Previous
+          </Button>
+          <Input className="max-w-40" type="month" aria-label="Attendance month"
+            value={data.month}
+            onChange={(event) => {
+              if (event.target.value) navigate(event.target.value);
+            }} />
+          <Button size="sm" variant="secondary"
+            aria-label="Next month"
+            onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
+            Next
+          </Button>
+        </div>
       </form>
 
-      {!data.grid ? (
+      {data.deliveries.length === 0 ? (
         <EmptyState
-          title="Select a class and course"
-          description="Choose an exact Course delivery and month to review marked, unmarked and future attendance."
+          title="No assigned class courses"
+          description="There are no active class/course deliveries for this college yet."
+        />
+      ) : !data.grid ? (
+        <EmptyState
+          title={sectionId && courseId ? "Course is not taught to this class" : "Select a class and course"}
+          description={sectionId && courseId
+            ? "Choose a course taught to this class to view attendance records."
+            : "Choose a class, an offered course, and a month to review attendance."}
+        />
+      ) : data.grid.roster.length === 0 ? (
+        <EmptyState
+          title="No active learners in this class"
+          description="Attendance records require an active learner roster for this delivery."
         />
       ) : data.grid.sessions.length === 0 ? (
         <EmptyState
@@ -462,29 +488,19 @@ export function AdminAttendanceWorkspace({
                   <th className="sticky left-0 z-20 bg-surface-subtle px-4 py-3">
                     Learner
                   </th>
-                  {data.grid.sessions.map(
-                    (session) => (
-                      <th
-                        key={session.id}
-                        className="min-w-24 px-3 py-3 text-center"
-                        title={formatDateTime(
-                          session.startsAt,
-                        )}
-                      >
-                        {new Intl.DateTimeFormat(
-                          "en-IN",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                          },
-                        ).format(
-                          new Date(
-                            session.startsAt,
-                          ),
-                        )}
-                      </th>
-                    ),
-                  )}
+                  {sessionDays.map(({ day, sessions }) => (
+                    <th key={day} className="min-w-24 px-3 py-3 text-center"
+                      title={String(sessions.length) + " session(s)"}>
+                      {new Intl.DateTimeFormat("en-IN", {
+                        timeZone: "Asia/Kolkata", day: "2-digit", month: "short",
+                      }).format(new Date(sessions[0]!.startsAt))}
+                      {sessions.length > 1 ? (
+                        <span className="block text-[11px] normal-case">
+                          {sessions.length} sessions
+                        </span>
+                      ) : null}
+                    </th>
+                  ))}
                   <th className="px-4 py-3 text-center">
                     %
                   </th>
@@ -514,62 +530,32 @@ export function AdminAttendanceWorkspace({
                                 "Roll unavailable"}
                           </p>
                         </td>
-                        {(data.grid?.sessions ?? []).map(
-                          (session) => {
-                            const record =
-                              recordMap.get(
-                                `${session.id}:${learner.membershipId}`,
-                              );
-                            const state =
-                              codeFor(
-                                session,
-                                record,
-                              );
-                            const correctable =
-                              new Date(
-                                session.startsAt,
-                              ).getTime() <=
-                              Date.now();
-                            return (
-                              <td
-                                key={
-                                  session.id
-                                }
-                                className="px-3 py-3 text-center"
+                        {sessionDays.map(({ day, sessions }) => {
+                          const first = sessions[0]!;
+                          const record = recordMap.get(first.id + ":" + learner.membershipId);
+                          const state = codeFor(first, record);
+                          const multiple = sessions.length > 1;
+                          return (
+                            <td key={day} className="px-3 py-3 text-center">
+                              <button
+                                type="button"
+                                disabled={!multiple && new Date(first.startsAt).getTime() > Date.now()}
+                                aria-label={multiple
+                                  ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
+                                  : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
+                                onClick={() => {
+                                  if (multiple) setChooser({ learner, sessions });
+                                  else setTarget({ learner, session: first, record });
+                                }}
+                                className="disabled:cursor-default"
                               >
-                                <button
-                                  type="button"
-                                  disabled={
-                                    !correctable
-                                  }
-                                  aria-label={`${state.label} — ${learnerName(
-                                    learner,
-                                  )} — ${formatDateTime(
-                                    session.startsAt,
-                                  )}`}
-                                  onClick={() =>
-                                    setTarget({
-                                      learner,
-                                      session,
-                                      record,
-                                    })
-                                  }
-                                  className="disabled:cursor-default"
-                                >
-                                  <StatusBadge
-                                    tone={
-                                      state.tone
-                                    }
-                                  >
-                                    {
-                                      state.code
-                                    }
-                                  </StatusBadge>
-                                </button>
-                              </td>
-                            );
-                          },
-                        )}
+                                <StatusBadge tone={multiple ? "neutral" : state.tone}>
+                                  {multiple ? String(sessions.length) + " sessions" : state.code}
+                                </StatusBadge>
+                              </button>
+                            </td>
+                          );
+                        })}
                         <td className="px-4 py-3 text-center">
                           {percent === null ? (
                             <span className="text-muted-foreground">
@@ -604,7 +590,7 @@ export function AdminAttendanceWorkspace({
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
-            P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = not marked · S = future session. Select a held-session cell to inspect and correct it.
+            P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = not marked · S = future. Multiple sessions on a day open a session chooser. Only corrections inside the policy window are accepted.
           </p>
         </>
       )}
@@ -653,7 +639,12 @@ export function AdminAttendanceWorkspace({
                         ? "danger"
                         : "secondary"
                   }
-                  disabled={correcting}
+                  disabled={correcting || facultyAttendanceMarkingWindow({
+                    startsAt: new Date(target.session.startsAt),
+                    endsAt: new Date(target.session.endsAt),
+                    correctionWindowHours: data.policy.correctionWindowHours,
+                    now: new Date(),
+                  }) !== "OPEN"}
                   onClick={() =>
                     void correct(status)
                   }
@@ -685,6 +676,13 @@ export function AdminAttendanceWorkspace({
                 }
               </p>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Corrections are accepted from session start through {data.policy.correctionWindowHours}
+              {" "}hours after session end. Present corrections remove the absence exception.
+            </p>
+            {target.record?.note ? (
+              <p className="text-sm text-body">Note: {target.record.note}</p>
+            ) : null}
             <dl className="grid gap-3">
               <div>
                 <dt className="text-xs font-semibold uppercase text-muted-foreground">
@@ -722,6 +720,33 @@ export function AdminAttendanceWorkspace({
             ) : null}
           </div>
         ) : null}
+      </Drawer>
+      <Drawer
+        open={Boolean(chooser)}
+        onOpenChange={(open) => { if (!open) setChooser(null); }}
+        title="Choose attendance session"
+        description={chooser ? learnerName(chooser.learner) : undefined}
+      >
+        <div className="space-y-3">
+          {chooser?.sessions.map((session) => {
+            const record = recordMap.get(session.id + ":" + chooser.learner.membershipId);
+            const state = codeFor(session, record);
+            return (
+              <Button
+                key={session.id}
+                variant="secondary"
+                className="w-full justify-between"
+                onClick={() => {
+                  setTarget({ learner: chooser.learner, session, record });
+                  setChooser(null);
+                }}
+              >
+                <span>{session.title} · {formatDateTime(session.startsAt)}</span>
+                <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
+              </Button>
+            );
+          })}
+        </div>
       </Drawer>
     </div>
   );

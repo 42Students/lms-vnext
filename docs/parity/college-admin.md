@@ -274,6 +274,8 @@ Legacy contract audited:
 - CSV export;
 - empty/error/prerequisite states.
 
+Implementation note (2026-10-14): `/college/attendance` has a policy card, Class/Course filters and all-college catalogue toggle, monthly grid/day chooser, record drawer, status corrections and escaped CSV export. Existing Faculty-compatible PRESENT-as-no-record semantics and super-admin acting-college scope are retained. These checks remain open pending disposable-PostgreSQL test execution, exact legacy oracle/source comparison, and desktop/mobile browser verification.
+
 - [ ] Attendance policy values are visible/authoritative.
 - [ ] Class/Course selectors and class-course narrowing match.
 - [ ] Show-all-courses toggle matches.
