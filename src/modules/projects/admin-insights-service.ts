@@ -28,6 +28,11 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { deriveProjectExecutionReadiness } from "./execution-readiness";
+import {
+  deriveProjectRiskReasons,
+  latestProjectSubmission,
+} from "./risk-signals";
 import { loadProjectCollegeScope } from "./scope";
 
 const projectAdminQuerySchema = z.object({
@@ -275,7 +280,7 @@ export async function listProjectAdminSnapshots(
         (row) => row.projectId === project.id,
       );
     const latestSubmission =
-      projectSubmissionRows[0] ?? null;
+      latestProjectSubmission(projectSubmissionRows);
     const projectMembersRows = members.filter(
       (row) => row.projectId === project.id,
     );
@@ -290,20 +295,27 @@ export async function listProjectAdminSnapshots(
       ) ??
       null;
 
-    const doneTasks = projectTasksRows.filter(
-      (row) => row.status === "DONE",
-    ).length;
+    const execution =
+      deriveProjectExecutionReadiness({
+        projectStatus: project.status,
+        releaseStatuses: projectReleaseRows.map(
+          (row) => row.status,
+        ),
+        sprintStatuses: projectSprintRows.map(
+          (row) => row.status,
+        ),
+        taskStatuses: projectTasksRows.map(
+          (row) => row.status,
+        ),
+      });
+    const doneTasks = execution.tasks.done;
     const completedSprints =
-      projectSprintRows.filter(
-        (row) => row.status === "COMPLETED",
-      ).length;
+      execution.sprints.completed;
     const shippedReleases =
-      projectReleaseRows.filter(
-        (row) => row.status === "SHIPPED",
-      ).length;
+      execution.releases.shipped;
     const executionDenominator =
-      projectTasksRows.length +
-      projectSprintRows.length;
+      execution.tasks.total +
+      execution.sprints.total;
     const progressPercent =
       executionDenominator > 0
         ? Math.round(
@@ -391,34 +403,15 @@ export async function listProjectAdminSnapshots(
           (24 * 60 * 60 * 1000),
       ),
     );
-    const terminal =
-      project.status === "ARCHIVED" ||
-      project.status === "COMPLETED";
-    const riskReasons: string[] = [];
-    if (!terminal && ageDays >= 7) {
-      riskReasons.push(
-        `No activity in ${ageDays} day${
-          ageDays === 1 ? "" : "s"
-        }`,
-      );
-    }
-    if (
-      !terminal &&
-      latestSubmission?.status === "SUBMITTED"
-    ) {
-      riskReasons.push("Pending review");
-    }
+    const riskReasons =
+      deriveProjectRiskReasons({
+        projectStatus: project.status,
+        inactiveDays: ageDays,
+        latestSubmissionStatus:
+          latestSubmission?.status ?? null,
+      });
 
-    const executionComplete =
-      projectReleaseRows.length > 0 &&
-      projectSprintRows.length > 0 &&
-      projectTasksRows.length > 0 &&
-      shippedReleases ===
-        projectReleaseRows.length &&
-      completedSprints ===
-        projectSprintRows.length &&
-      doneTasks === projectTasksRows.length &&
-      project.status === "COMPLETED";
+    const executionComplete = execution.complete;
 
     return {
       ...project,
@@ -492,12 +485,16 @@ export async function listProjectAdminRiskQueue(
     coalesce((select max(pres.updated_at) from project_resources pres where pres.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
     coalesce((select max(pmem.updated_at) from project_members pmem where pmem.project_id = ${projectInstances.id}), 'epoch'::timestamptz)
   )`;
-  const pendingReview = sql<boolean>`exists (
-    select 1
-    from project_submissions pending
-    where pending.project_id = ${projectInstances.id}
-      and pending.status = 'SUBMITTED'
-  )`;
+  // Only the latest submission version can be awaiting review.
+  // The unique (project_id, version) constraint makes this
+  // ordering deterministic. No submission means false.
+  const pendingReview = sql<boolean>`coalesce((
+    select latest.status = 'SUBMITTED'
+    from project_submissions latest
+    where latest.project_id = ${projectInstances.id}
+    order by latest.version desc
+    limit 1
+  ), false)`;
   const staleCutoff =
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
@@ -599,17 +596,15 @@ export async function listProjectAdminRiskQueue(
             (24 * 60 * 60 * 1000),
         ),
       );
-      const reasons: string[] = [];
-      if (inactivityDays >= 7) {
-        reasons.push(
-          `No activity in ${inactivityDays} day${
-            inactivityDays === 1 ? "" : "s"
-          }`,
-        );
-      }
-      if (project.pendingReview) {
-        reasons.push("Pending review");
-      }
+      const reasons =
+        deriveProjectRiskReasons({
+          projectStatus: project.status,
+          inactiveDays: inactivityDays,
+          latestSubmissionStatus:
+            project.pendingReview
+              ? "SUBMITTED"
+              : null,
+        });
       const projectMentors =
         mentors.filter(
           (mentor) =>
