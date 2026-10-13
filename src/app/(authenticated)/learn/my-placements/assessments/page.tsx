@@ -41,6 +41,7 @@ export default async function LearnerPlacementAssessmentsPage() {
         kind="ASSESSMENT"
         rounds={rounds}
         snapshotNowIso={new Date().toISOString()}
+        membershipId={context.membership?.id ?? null}
       />
     </div>
   );

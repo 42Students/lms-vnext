@@ -334,8 +334,10 @@ now support employer/round search, Upcoming/Past/Awaiting schedule buckets,
 Today/7-day urgency filters, sorting, empty/filter states and a details drawer.
 Only existing learner-authorized scheduled rounds are listed; no provider
 submission or employer result is inferred from the calendar time. Approved
-reschedules replace the original start. Mark-submitted reminder persistence,
-provider completion, and browser acceptance remain open.
+reschedules replace the original start. A local, membership-scoped mark-submitted reminder with undo is now available
+inside Assessment round details. It explicitly does not submit the assessment
+or record employer completion; validated browser storage and corruption
+fallback are tested. Provider completion and browser acceptance remain open.
 
 **Legacy:** `/learn/my-placements/assessments`
 
