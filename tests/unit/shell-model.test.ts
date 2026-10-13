@@ -73,6 +73,7 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "Organizations",
       "Colleges",
+      "Feature Controls",
       "Departments",
       "Academics",
       "Courses",

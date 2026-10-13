@@ -30,6 +30,7 @@ const superAdminItems: ShellNavItem[] = [
   dashboard,
   { label: "Organizations", href: "/admin/organizations", shortLabel: "O" },
   { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
+  { label: "Feature Controls", href: "/admin/features", shortLabel: "F" },
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
   { label: "Lecture Halls", href: "/admin/lecture-halls", shortLabel: "L" },

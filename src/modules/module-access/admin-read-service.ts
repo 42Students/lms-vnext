@@ -1,0 +1,523 @@
+import "server-only";
+
+import {
+  and,
+  asc,
+  count,
+  eq,
+  inArray,
+  isNull,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm";
+import { z } from "zod";
+
+import { getDb } from "@/db/client";
+import {
+  colleges,
+  moduleAccessRules,
+} from "@/db/schema";
+import {
+  isSuperAdmin,
+  type RequestContext,
+} from "@/modules/identity/context";
+import {
+  AuthorizationError,
+  requirePermission,
+} from "@/modules/permissions/policy";
+import {
+  collegeIdSchema,
+} from "@/modules/colleges/validation";
+
+import {
+  resolveCollegeModuleDecisions,
+} from "./admin-read-model";
+import type {
+  ModuleAccessRule,
+} from "./service";
+
+export const adminFeatureQuerySchema =
+  z.object({
+    q: z
+      .string()
+      .trim()
+      .max(100)
+      .default(""),
+    page: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(10000)
+      .default(1),
+  }).strict();
+
+const detailQuerySchema = z.object({
+  page: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(10000)
+    .default(1),
+}).strict();
+
+const COLLEGE_PAGE_SIZE = 20;
+const OVERRIDE_PAGE_SIZE = 30;
+
+function requireSuperAdmin(
+  context: RequestContext,
+) {
+  if (!isSuperAdmin(context)) {
+    throw new AuthorizationError(
+      "admin-scope.select",
+    );
+  }
+
+  requirePermission(
+    context,
+    "admin-scope.select",
+  );
+}
+
+type CollegeForAccess = {
+  id: string;
+  organizationId: string;
+  name: string;
+  code: string;
+  status: string;
+};
+
+/**
+ * Return ONLY rules relevant to the selected
+ * colleges, their organizations, or GLOBAL scope.
+ * The resolver consumes exact scope-type / scope-ID
+ * pairs, so it cannot mistake a foreign scope ID
+ * for a selected college's rule.
+ */
+async function loadCollegeAncestorRules(
+  collegeRows: readonly CollegeForAccess[],
+): Promise<ModuleAccessRule[]> {
+  if (collegeRows.length === 0) {
+    return [];
+  }
+
+  const collegeIds = collegeRows.map(
+    (college) => college.id,
+  );
+  const organizationIds = [
+    ...new Set(
+      collegeRows.map(
+        (college) => college.organizationId,
+      ),
+    ),
+  ];
+
+  return getDb()
+    .select({
+      scopeType: moduleAccessRules.scopeType,
+      scopeId: moduleAccessRules.scopeId,
+      module: moduleAccessRules.module,
+      enabled: moduleAccessRules.enabled,
+      locked: moduleAccessRules.locked,
+    })
+    .from(moduleAccessRules)
+    .where(
+      or(
+        and(
+          eq(moduleAccessRules.scopeType, "COLLEGE"),
+          inArray(
+            moduleAccessRules.scopeId,
+            collegeIds,
+          ),
+        ),
+        and(
+          eq(
+            moduleAccessRules.scopeType,
+            "ORGANIZATION",
+          ),
+          inArray(
+            moduleAccessRules.scopeId,
+            organizationIds,
+          ),
+        ),
+        and(
+          eq(moduleAccessRules.scopeType, "GLOBAL"),
+          isNull(moduleAccessRules.scopeId),
+        ),
+      ),
+    );
+}
+
+/**
+ * Search and pagination are applied at the database,
+ * always inside the selected Super Admin safety scope.
+ * No caller-provided college or organization override
+ * is accepted.
+ */
+export async function listSuperAdminFeatureControls(
+  context: RequestContext,
+  rawQuery: unknown = {},
+) {
+  requireSuperAdmin(context);
+
+  const query =
+    adminFeatureQuerySchema.parse(rawQuery);
+
+  const conditions: SQL[] = [
+    eq(colleges.status, "ACTIVE"),
+  ];
+
+  if (context.adminScope?.collegeId) {
+    conditions.push(
+      eq(
+        colleges.id,
+        context.adminScope.collegeId,
+      ),
+    );
+  }
+
+  if (context.adminScope?.organizationId) {
+    conditions.push(
+      eq(
+        colleges.organizationId,
+        context.adminScope.organizationId,
+      ),
+    );
+  }
+
+  if (query.q) {
+    conditions.push(
+      sql`(
+        position(
+          lower(${query.q}) in lower(${colleges.name})
+        ) > 0
+        or position(
+          lower(${query.q}) in lower(${colleges.code})
+        ) > 0
+      )`,
+    );
+  }
+
+  const where = and(...conditions);
+  const db = getDb();
+
+  const [totals, collegeRows] = await Promise.all([
+    db
+      .select({
+        total: count(),
+      })
+      .from(colleges)
+      .where(where),
+    db
+      .select({
+        id: colleges.id,
+        organizationId: colleges.organizationId,
+        name: colleges.name,
+        code: colleges.code,
+        status: colleges.status,
+      })
+      .from(colleges)
+      .where(where)
+      .orderBy(
+        asc(colleges.name),
+        asc(colleges.id),
+      )
+      .limit(COLLEGE_PAGE_SIZE)
+      .offset(
+        (query.page - 1) * COLLEGE_PAGE_SIZE,
+      ),
+  ]);
+
+  for (const college of collegeRows) {
+    requirePermission(context, "college.read", {
+      organizationId: college.organizationId,
+      collegeId: college.id,
+    });
+  }
+
+  const rules =
+    await loadCollegeAncestorRules(collegeRows);
+
+  const total = totals[0]?.total ?? 0;
+
+  return {
+    items: collegeRows.map((college) => ({
+      id: college.id,
+      name: college.name,
+      code: college.code,
+      modules: resolveCollegeModuleDecisions(
+        college.id,
+        college.organizationId,
+        rules,
+      ),
+    })),
+    q: query.q,
+    page: query.page,
+    pageSize: COLLEGE_PAGE_SIZE,
+    total,
+    totalPages: Math.max(
+      1,
+      Math.ceil(total / COLLEGE_PAGE_SIZE),
+    ),
+  };
+}
+
+export type StoredModuleOverride = {
+  scopeType: string;
+  scopeId: string;
+  scopeLabel: string;
+  module: string;
+  enabled: boolean;
+  locked: boolean;
+};
+
+/**
+ * Stored descendant rules only. These are deliberately
+ * not called "effective learner access" because that
+ * additionally depends on the learner's current
+ * enrollment, ancestor locks, participation gate and
+ * the resolved runtime chain.
+ *
+ * Each UNION arm joins through its own tenant hierarchy.
+ * No bare scope UUID is accepted as proof of college
+ * ownership.
+ */
+function scopedDescendantRules(
+  collegeId: string,
+): SQL {
+  return sql`
+    select
+      'DEPARTMENT'::text as scope_type,
+      department.id::text as scope_id,
+      department.name::text as scope_label,
+      rule.module::text as module,
+      rule.enabled as enabled,
+      rule.locked as locked
+    from module_access_rules rule
+    inner join departments department
+      on rule.scope_type = 'DEPARTMENT'
+      and rule.scope_id = department.id
+    where department.college_id = ${collegeId}
+
+    union all
+
+    select
+      'PROGRAM'::text,
+      program.id::text,
+      concat(
+        department.name,
+        ' / ',
+        program.name
+      )::text,
+      rule.module::text,
+      rule.enabled,
+      rule.locked
+    from module_access_rules rule
+    inner join programs program
+      on rule.scope_type = 'PROGRAM'
+      and rule.scope_id = program.id
+    inner join departments department
+      on department.id = program.department_id
+    where department.college_id = ${collegeId}
+
+    union all
+
+    select
+      'COHORT'::text,
+      cohort.id::text,
+      concat(
+        department.name,
+        ' / ',
+        program.name,
+        ' / ',
+        cohort.name
+      )::text,
+      rule.module::text,
+      rule.enabled,
+      rule.locked
+    from module_access_rules rule
+    inner join cohorts cohort
+      on rule.scope_type = 'COHORT'
+      and rule.scope_id = cohort.id
+    inner join programs program
+      on program.id = cohort.program_id
+    inner join departments department
+      on department.id = program.department_id
+    where department.college_id = ${collegeId}
+
+    union all
+
+    select
+      'SECTION'::text,
+      section.id::text,
+      concat(
+        department.name,
+        ' / ',
+        program.name,
+        ' / ',
+        cohort.name,
+        ' / ',
+        section.name
+      )::text,
+      rule.module::text,
+      rule.enabled,
+      rule.locked
+    from module_access_rules rule
+    inner join sections section
+      on rule.scope_type = 'SECTION'
+      and rule.scope_id = section.id
+    inner join cohorts cohort
+      on cohort.id = section.cohort_id
+    inner join programs program
+      on program.id = cohort.program_id
+    inner join departments department
+      on department.id = program.department_id
+    where department.college_id = ${collegeId}
+
+    union all
+
+    select
+      'MEMBERSHIP'::text,
+      membership.id::text,
+      concat(
+        'Membership ending ',
+        right(membership.id::text, 8)
+      )::text,
+      rule.module::text,
+      rule.enabled,
+      rule.locked
+    from module_access_rules rule
+    inner join college_memberships membership
+      on rule.scope_type = 'MEMBERSHIP'
+      and rule.scope_id = membership.id
+    where membership.college_id = ${collegeId}
+  `;
+}
+
+type OverrideCountRow = {
+  total: number | string;
+};
+
+type OverrideQueryRow = {
+  scopeType: string;
+  scopeId: string;
+  scopeLabel: string;
+  module: string;
+  enabled: boolean;
+  locked: boolean;
+};
+
+export async function getSuperAdminCollegeModuleAccess(
+  context: RequestContext,
+  rawCollegeId: string,
+  rawQuery: unknown = {},
+) {
+  requireSuperAdmin(context);
+
+  const collegeId =
+    collegeIdSchema.parse(rawCollegeId);
+  const query = detailQuerySchema.parse(
+    rawQuery,
+  );
+
+  const db = getDb();
+
+  const [college] = await db
+    .select({
+      id: colleges.id,
+      organizationId: colleges.organizationId,
+      name: colleges.name,
+      code: colleges.code,
+      status: colleges.status,
+    })
+    .from(colleges)
+    .where(eq(colleges.id, collegeId))
+    .limit(1);
+
+  if (!college) {
+    return null;
+  }
+
+  requirePermission(context, "college.read", {
+    organizationId: college.organizationId,
+    collegeId: college.id,
+  });
+
+  const ancestors =
+    await loadCollegeAncestorRules([college]);
+
+  const descendantSql =
+    scopedDescendantRules(college.id);
+
+  const [countResult, overrideResult] =
+    await Promise.all([
+      db.execute<OverrideCountRow>(sql`
+        with scoped as (${descendantSql})
+        select count(*)::int as total
+        from scoped
+      `),
+      db.execute<OverrideQueryRow>(sql`
+        with scoped as (${descendantSql})
+        select
+          scope_type as "scopeType",
+          scope_id as "scopeId",
+          scope_label as "scopeLabel",
+          module,
+          enabled,
+          locked
+        from scoped
+        order by
+          case scope_type
+            when 'DEPARTMENT' then 1
+            when 'PROGRAM' then 2
+            when 'COHORT' then 3
+            when 'SECTION' then 4
+            when 'MEMBERSHIP' then 5
+            else 6
+          end,
+          scope_label,
+          scope_id,
+          module
+        limit ${OVERRIDE_PAGE_SIZE}
+        offset ${
+          (query.page - 1) * OVERRIDE_PAGE_SIZE
+        }
+      `),
+    ]);
+
+  const total = Number(
+    countResult.rows[0]?.total ?? 0,
+  );
+
+  return {
+    college: {
+      id: college.id,
+      name: college.name,
+      code: college.code,
+      status: college.status,
+    },
+    modules: resolveCollegeModuleDecisions(
+      college.id,
+      college.organizationId,
+      ancestors,
+    ),
+    ancestors: ancestors.filter(
+      (rule) =>
+        (rule.scopeType === "GLOBAL" &&
+          rule.scopeId === null) ||
+        (rule.scopeType === "ORGANIZATION" &&
+          rule.scopeId === college.organizationId) ||
+        (rule.scopeType === "COLLEGE" &&
+          rule.scopeId === college.id),
+    ),
+    descendants:
+      overrideResult.rows as StoredModuleOverride[],
+    page: query.page,
+    pageSize: OVERRIDE_PAGE_SIZE,
+    total,
+    totalPages: Math.max(
+      1,
+      Math.ceil(total / OVERRIDE_PAGE_SIZE),
+    ),
+  };
+}
