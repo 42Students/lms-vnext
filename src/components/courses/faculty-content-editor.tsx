@@ -41,6 +41,19 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  function openEditor() {
+    // Each RSC refresh can change the persisted item while this Client
+    // Component remains mounted. Rebase only when opening, not mid-edit.
+    setTitle(item.title);
+    setNotes(item.notes ?? "");
+    setUrl(item.externalUrl ?? "");
+    setDuration(String(item.durationSeconds ?? 300));
+    setStarts(toLocalTime(item.startsAt));
+    setEnds(toLocalTime(item.endsAt));
+    setError(null);
+    setOpen(true);
+  }
+
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
@@ -77,7 +90,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
 
   return (
     <>
-      <Button size="sm" variant="secondary" onClick={() => { setError(null); setOpen(true); }}>
+      <Button size="sm" variant="secondary" onClick={openEditor}>
         Edit content
       </Button>
       <Drawer
