@@ -708,6 +708,7 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           # First-party sign-in keys (login codes, sessions). Ephemeral, per run.
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Playwright browser E2E
         run: npm run test:e2e
   build:

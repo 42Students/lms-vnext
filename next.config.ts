@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: [...BASE_SECURITY_HEADERS],
       },
+      {
+        source: "/api/auth/:path*",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
     ];
   },
 };

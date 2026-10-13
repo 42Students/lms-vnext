@@ -66,9 +66,7 @@ export function readAuthConfig(
     testOtp,
     testPhones: testOtp ? list(env.AUTH_TEST_PHONES) : new Set(),
     testEmails: testOtp ? list(env.AUTH_TEST_EMAILS) : new Set(),
-    platformHosts: list(
-      env.PLATFORM_HOSTS ?? "localhost,127.0.0.1",
-    ),
+    platformHosts: getPlatformHosts(env),
     sessionMaxAgeSeconds: SESSION_MAX_AGE_SECONDS,
   };
 }
@@ -81,7 +79,12 @@ export function readAuthConfig(
 export function getPlatformHosts(
   env: Record<string, string | undefined> = process.env,
 ): ReadonlySet<string> {
-  return list(env.PLATFORM_HOSTS ?? "localhost,127.0.0.1");
+  // Host is client-controlled, so production never treats localhost as the
+  // platform unless PLATFORM_HOSTS says so explicitly.
+  return list(
+    env.PLATFORM_HOSTS ??
+      (env.NODE_ENV === "production" ? "" : "localhost,127.0.0.1"),
+  );
 }
 
 let cached: AuthConfig | null = null;

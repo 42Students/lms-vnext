@@ -136,7 +136,9 @@ export interface LoginRepository {
     contactFingerprint: string;
     smsCodeMac: string | null;
     emailCodeMac: string | null;
-  }): Promise<void>;
+    /** Re-checked under a per-contact lock; false means the cap was hit. */
+    rateLimit: { max: number; windowMinutes: number };
+  }): Promise<boolean>;
   loadAttempt(id: string): Promise<AttemptRecord | null>;
   /**
    * Replaces the email code when at least EMAIL_RESEND_GAP_SECONDS passed
@@ -288,14 +290,18 @@ export async function startLogin(
   const sms = phoneContact ? pick(deps.config.testPhones, phoneContact) : null;
   const mail = emailContact ? pick(deps.config.testEmails, emailContact) : null;
 
-  await deps.repository.createAttempt({
+  const created = await deps.repository.createAttempt({
     id: attemptId,
     userId: user.id,
     collegeId: input.tenantCollegeId,
     contactFingerprint: fingerprint,
     smsCodeMac: sms ? codeMac(deps.config.secret, "sms", attemptId, sms.code) : null,
     emailCodeMac: mail ? codeMac(deps.config.secret, "email", attemptId, mail.code) : null,
+    rateLimit: { max: MAX_SENDS_PER_CONTACT, windowMinutes: SEND_WINDOW_MINUTES },
   });
+  if (!created) {
+    throw new LoginError("TOO_MANY_REQUESTS", SEND_WINDOW_MINUTES * 60);
+  }
 
   if (sms && phoneContact && !sms.isTest) {
     if (!(await deps.sms.sendOtp(phoneContact, sms.code))) {

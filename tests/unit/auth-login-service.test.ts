@@ -67,7 +67,12 @@ class FakeRepository implements LoginRepository {
     contactFingerprint: string;
     smsCodeMac: string | null;
     emailCodeMac: string | null;
+    rateLimit: { max: number; windowMinutes: number };
   }) {
+    const recent = [...this.attempts.values()].filter(
+      (a) => a.fingerprint === input.contactFingerprint,
+    ).length;
+    if (recent >= input.rateLimit.max) return false;
     const expires = new Date(this.now.getTime() + 300_000);
     this.attempts.set(input.id, {
       id: input.id,
@@ -83,6 +88,7 @@ class FakeRepository implements LoginRepository {
       fingerprint: input.contactFingerprint,
       emailSentAt: input.emailCodeMac ? this.now : null,
     });
+    return true;
   }
   async loadAttempt(id: string) {
     const a = this.attempts.get(id);

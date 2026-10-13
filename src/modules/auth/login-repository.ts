@@ -119,7 +119,22 @@ export const drizzleLoginRepository: LoginRepository = {
   },
 
   async createAttempt(input) {
-    await getDb().execute(sql`
+    // Serialize concurrent starts for one contact so the send cap cannot be
+    // exceeded by a burst of parallel requests.
+    return getDb().transaction(async (tx) => {
+      await tx.execute(
+        sql`SELECT pg_advisory_xact_lock(hashtext(${input.contactFingerprint}))`,
+      );
+      const counted = await tx.execute(sql`
+        SELECT count(*)::int AS n
+        FROM identity_auth_attempts
+        WHERE contact_fingerprint = ${input.contactFingerprint}
+          AND created_at > now() - make_interval(mins => ${input.rateLimit.windowMinutes})
+      `);
+      if (Number(rowsOf(counted)[0]?.n ?? 0) >= input.rateLimit.max) {
+        return false;
+      }
+      await tx.execute(sql`
       INSERT INTO identity_auth_attempts (
         id, user_id, college_id, target_role, contact_fingerprint,
         sms_code_mac, sms_code_expires_at,
@@ -136,6 +151,8 @@ export const drizzleLoginRepository: LoginRepository = {
         now(), now() + interval '5 minutes'
       )
     `);
+      return true;
+    });
   },
 
   async loadAttempt(id) {
