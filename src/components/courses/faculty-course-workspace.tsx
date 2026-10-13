@@ -332,12 +332,14 @@ export function FacultyCourseWorkspace({
   workspace,
   homeSignals,
   display,
+  view = "ALL",
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
     ReturnType<typeof getFacultyCourseHomeSignals>
   >;
   display: CourseDisplayContentView | null;
+  view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -350,6 +352,8 @@ export function FacultyCourseWorkspace({
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
       />
 
+      {view !== "BLUEPRINT" ? (
+        <>
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
@@ -428,6 +432,11 @@ export function FacultyCourseWorkspace({
         />
       </div>
 
+        </>
+      ) : null}
+
+      {view !== "OVERVIEW" ? (
+        <>
       {!learningPath ? (
         <EmptyState
           title="No current learning path"
@@ -582,6 +591,8 @@ export function FacultyCourseWorkspace({
           )}
         </>
       )}
+        </>
+      ) : null}
     </div>
   );
 }
