@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -11,7 +11,7 @@ type Item = {
   title: string;
 };
 
-export function FacultyContentOrderEditor({
+function FacultyContentOrderEditorInner({
   lessonId,
   deliveryId,
   items,
@@ -29,9 +29,8 @@ export function FacultyContentOrderEditor({
   const [pending, startTransition] =
     useTransition();
 
-  useEffect(() => {
-    setOrder(items.map((item) => item.id));
-  }, [items]);
+  // The parent keys this editor by the persisted source order. A new
+  // lesson/delivery/content list remounts it, resetting unsaved local order.
 
   if (items.length <= 1) return null;
 
@@ -182,4 +181,20 @@ export function FacultyContentOrderEditor({
       </ol>
     </section>
   );
+}
+
+/**
+ * Separate editor identity by course delivery, lesson and persisted items.
+ * This resets local unsaved order on server refresh or lesson switches
+ * without a cascading setState inside an effect.
+ */
+export function FacultyContentOrderEditor(
+  props: Parameters<typeof FacultyContentOrderEditorInner>[0],
+) {
+  const identity = [
+    props.deliveryId,
+    props.lessonId,
+    ...props.items.map((item) => item.id),
+  ].join(":");
+  return <FacultyContentOrderEditorInner key={identity} {...props} />;
 }

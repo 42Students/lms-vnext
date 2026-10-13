@@ -73,6 +73,12 @@ Tabs: All Contacts, Teachers, Students.
 - [ ] College scoping is enforced.
 
 ## Page: All Assignments
+
+**2026-10-13 implementation improvement:** the Faculty content-order editor
+now remounts when lesson, delivery, or persisted item order changes, rather
+than synchronously overwriting an unsaved order from a React effect.
+Persistence and browser/reorder acceptance remain open.
+
 Legacy `AssignmentsContent` runs in Faculty mode.
 
 Legacy contract:

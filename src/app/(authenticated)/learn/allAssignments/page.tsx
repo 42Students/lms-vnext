@@ -70,6 +70,7 @@ export default async function LearnerAssignmentsPage() {
         courses={overview.courses}
         items={items}
         kind="ASSIGNMENT"
+        snapshotNowMs={overview.snapshotNowMs}
       />
     </div>
   );

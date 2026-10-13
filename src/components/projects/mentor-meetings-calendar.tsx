@@ -71,10 +71,17 @@ export function MentorMeetingsCalendar({
   const [viewerReady, setViewerReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
   useEffect(() => {
-    setViewerReady(true);
-    setNow(new Date().toISOString());
+    // Hydrate the viewer's timezone after the initial UTC-compatible render.
+    // A queued callback avoids synchronous state updates in an effect.
+    const frame = window.requestAnimationFrame(() => {
+      setViewerReady(true);
+      setNow(new Date().toISOString());
+    });
     const tick = window.setInterval(() => setNow(new Date().toISOString()), 60_000);
-    return () => window.clearInterval(tick);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearInterval(tick);
+    };
   }, []);
   const instant = useMemo(() => new Date(now), [now]);
   const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
