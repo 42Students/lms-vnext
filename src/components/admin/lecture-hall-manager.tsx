@@ -1,0 +1,308 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { DataTable } from "@/components/ui/data-table";
+import { Dialog } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useToast } from "@/components/ui/toast";
+
+export const ROOM_TYPE_LABELS: Record<string, string> = {
+  CLASSROOM: "Classroom",
+  LECTURE_HALL: "Lecture hall",
+  LAB: "Lab",
+  SEMINAR_HALL: "Seminar hall",
+  AUDITORIUM: "Auditorium",
+  CONFERENCE_ROOM: "Conference room",
+};
+
+export type HallRow = {
+  id: string;
+  name: string;
+  capacity: number;
+  roomType: string;
+  description: string | null;
+  status: string;
+  departmentId: string | null;
+  departmentName: string | null;
+  upcomingClasses: number;
+};
+
+type Draft = {
+  name: string;
+  capacity: string;
+  roomType: string;
+  departmentId: string;
+  description: string;
+};
+
+const EMPTY: Draft = {
+  name: "",
+  capacity: "",
+  roomType: "CLASSROOM",
+  departmentId: "",
+  description: "",
+};
+
+function toDraft(hall: HallRow): Draft {
+  return {
+    name: hall.name,
+    capacity: String(hall.capacity),
+    roomType: hall.roomType,
+    departmentId: hall.departmentId ?? "",
+    description: hall.description ?? "",
+  };
+}
+
+function errorText(payload: {
+  error?: string;
+  upcomingClasses?: number;
+  issues?: { message?: string }[];
+} | null) {
+  switch (payload?.error) {
+    case "HALL_NAME_TAKEN":
+      return "Another active hall in this college already has that name.";
+    case "HALL_IN_USE":
+      return `It has ${payload.upcomingClasses ?? "some"} upcoming class(es). Move or cancel them first.`;
+    case "DEPARTMENT_NOT_FOUND":
+      return "That department isn't an active department of this college.";
+    case "INVALID_REQUEST":
+      return payload.issues?.[0]?.message ?? "Check the fields and try again.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+}
+
+export function LectureHallManager({
+  collegeId,
+  halls,
+  departments,
+}: {
+  collegeId: string;
+  halls: readonly HallRow[];
+  departments: readonly { id: string; name: string }[];
+}) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState<HallRow | "new" | null>(null);
+  const [draft, setDraft] = useState<Draft>(EMPTY);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState<HallRow | null>(null);
+
+  function open(target: HallRow | "new") {
+    setDraft(target === "new" ? EMPTY : toDraft(target));
+    setFormError(null);
+    setEditing(target);
+  }
+
+  function save() {
+    const capacity = Number.parseInt(draft.capacity, 10);
+    if (!draft.name.trim()) return setFormError("Enter a name.");
+    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 5000) {
+      return setFormError("Capacity must be between 1 and 5000.");
+    }
+
+    startTransition(async () => {
+      const body = {
+        name: draft.name,
+        capacity,
+        roomType: draft.roomType,
+        description: draft.description || null,
+        departmentId: draft.departmentId || null,
+      };
+      const isNew = editing === "new";
+      const response = await fetch(
+        isNew ? "/api/lecture-halls" : `/api/lecture-halls/${(editing as HallRow).id}`,
+        {
+          method: isNew ? "POST" : "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(isNew ? { collegeId, ...body } : body),
+        },
+      );
+
+      if (!response.ok) {
+        setFormError(errorText(await response.json().catch(() => null)));
+        return;
+      }
+
+      setEditing(null);
+      showToast({
+        tone: "success",
+        title: isNew ? "Hall added" : "Hall updated",
+      });
+      router.refresh();
+    });
+  }
+
+  function setStatus(hall: HallRow, status: "ARCHIVED" | "ACTIVE") {
+    startTransition(async () => {
+      const response = await fetch(`/api/lecture-halls/${hall.id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        showToast({
+          tone: "error",
+          title: status === "ARCHIVED" ? "Archive blocked" : "Restore failed",
+          description: errorText(await response.json().catch(() => null)),
+        });
+        setArchiving(null);
+        return;
+      }
+
+      setArchiving(null);
+      showToast({
+        tone: "success",
+        title: status === "ARCHIVED" ? "Hall archived" : "Hall restored",
+      });
+      router.refresh();
+    });
+  }
+
+  const field = "mb-1.5 block text-xs font-semibold text-body";
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={() => open("new")}>Add lecture hall</Button>
+      </div>
+
+      {halls.length === 0 ? (
+        <EmptyState
+          title="No lecture halls yet"
+          description="Add the rooms your college teaches in, so classes can be scheduled into them."
+        />
+      ) : (
+        <DataTable
+          columns={[
+            { key: "name", header: "Name", cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
+            { key: "type", header: "Type", cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
+            { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
+            { key: "dept", header: "Department", cell: (hall) => hall.departmentName ?? "—" },
+            {
+              key: "upcoming",
+              header: "Upcoming classes",
+              cell: (hall) => (hall.upcomingClasses ? hall.upcomingClasses : "—"),
+            },
+            {
+              key: "status",
+              header: "Status",
+              cell: (hall) => (
+                <StatusBadge tone={hall.status === "ACTIVE" ? "success" : "neutral"}>
+                  {hall.status === "ACTIVE" ? "Active" : "Archived"}
+                </StatusBadge>
+              ),
+            },
+            {
+              key: "actions",
+              header: "",
+              className: "text-right",
+              cell: (hall) => (
+                <div className="flex justify-end gap-2">
+                  <Button variant="secondary" size="sm" onClick={() => open(hall)}>
+                    Edit
+                  </Button>
+                  {hall.status === "ACTIVE" ? (
+                    <Button variant="danger" size="sm" onClick={() => setArchiving(hall)}>
+                      Archive
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={pending}
+                      onClick={() => setStatus(hall, "ACTIVE")}
+                    >
+                      Restore
+                    </Button>
+                  )}
+                </div>
+              ),
+            },
+          ]}
+          rows={halls}
+          getRowKey={(hall) => hall.id}
+        />
+      )}
+
+      <Dialog
+        open={editing !== null}
+        onOpenChange={(value) => !value && setEditing(null)}
+        title={editing === "new" ? "Add lecture hall" : "Edit lecture hall"}
+        description="Hall names stay unique among the college's active halls."
+        footer={
+          <>
+            <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
+            <Button disabled={pending} onClick={save}>
+              {pending ? "Saving…" : "Save hall"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          {formError ? (
+            <p role="alert" className="m-0 rounded-md bg-[var(--lms-error-subtle)] p-2 text-sm text-error">
+              {formError}
+            </p>
+          ) : null}
+          <div>
+            <label className={field} htmlFor="hall-name">Name</label>
+            <Input id="hall-name" value={draft.name} maxLength={255}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={field} htmlFor="hall-capacity">Capacity</label>
+              <Input id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
+                onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
+            </div>
+            <div>
+              <label className={field} htmlFor="hall-type">Type</label>
+              <Select id="hall-type" value={draft.roomType}
+                onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
+                {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </Select>
+            </div>
+          </div>
+          <div>
+            <label className={field} htmlFor="hall-dept">Department (optional)</label>
+            <Select id="hall-dept" value={draft.departmentId}
+              onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
+              <option value="">Shared by all departments</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <label className={field} htmlFor="hall-desc">Description (optional)</label>
+            <Input id="hall-desc" value={draft.description} maxLength={255}
+              onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
+          </div>
+        </div>
+      </Dialog>
+
+      <ConfirmDialog
+        open={archiving !== null}
+        onOpenChange={(value) => !value && setArchiving(null)}
+        title="Archive lecture hall"
+        description={`Archive ${archiving?.name ?? "this hall"}? It can't be archived while it has upcoming classes.`}
+        confirmLabel="Archive hall"
+        pending={pending}
+        onConfirm={() => archiving && setStatus(archiving, "ARCHIVED")}
+      />
+    </div>
+  );
+}

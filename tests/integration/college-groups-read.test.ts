@@ -103,8 +103,6 @@ let adminA: Actor;
 let adminB: Actor;
 let learnerA: Actor;
 let alpha: string;
-let beta: string;
-let archived: string;
 let removedGroup: string;
 let otherCollege: string;
 let platform: string;
@@ -117,8 +115,8 @@ beforeAll(async () => {
   const learner3 = await actor(SEED_IDS.collegeA, "LEARNER", `Cara-${RUN}`);
 
   alpha = await group(SEED_IDS.collegeA, { name: `Alpha ${RUN}`, kind: "STUDY_GROUP" }, adminA.userId);
-  beta = await group(SEED_IDS.collegeA, { name: `Beta ${RUN}`, kind: "PROJECT_TEAM" }, adminA.userId);
-  archived = await group(SEED_IDS.collegeA, { name: `Old ${RUN}`, status: "ARCHIVED" }, adminA.userId);
+  await group(SEED_IDS.collegeA, { name: `Beta ${RUN}`, kind: "PROJECT_TEAM" }, adminA.userId);
+  await group(SEED_IDS.collegeA, { name: `Old ${RUN}`, status: "ARCHIVED" }, adminA.userId);
   removedGroup = await group(SEED_IDS.collegeA, { name: `Gone ${RUN}`, deleted: true }, adminA.userId);
   otherCollege = await group(SEED_IDS.collegeB, { name: `OtherCollege ${RUN}` }, adminB.userId);
   platform = await group(null, { name: `Platform ${RUN}` }, adminA.userId);
