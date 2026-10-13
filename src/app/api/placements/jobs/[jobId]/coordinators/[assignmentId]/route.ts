@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { removeDriveDayCoordinator } from "@/modules/placements/drive-day-coordinator-service";
 
@@ -13,9 +14,16 @@ type RouteContext = {
 };
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: RouteContext,
 ) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json(
+      { error: "INVALID_ORIGIN" },
+      { status: 403 },
+    );
+  }
+
   try {
     const context =
       await getCurrentRequestContext();
