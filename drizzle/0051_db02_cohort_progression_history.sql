@@ -46,7 +46,7 @@ CREATE TABLE cohort_progression_events (
 
 --> statement-breakpoint
 CREATE INDEX cohort_progression_events_cohort_time_idx
-  ON cohort_progression_events(cohort_id, created_at DESC);
+  ON cohort_progression_events(cohort_id, created_at);
 
 --> statement-breakpoint
 INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id,version)

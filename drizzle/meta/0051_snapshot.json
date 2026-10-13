@@ -16710,8 +16710,8 @@
             {
               "expression": "created_at",
               "isExpression": false,
-              "asc": false,
-              "nulls": "first"
+              "asc": true,
+              "nulls": "last"
             }
           ],
           "isUnique": false,

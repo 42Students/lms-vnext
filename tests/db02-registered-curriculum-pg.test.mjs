@@ -60,7 +60,7 @@ test("semester term respects program duration and stable parent identity",async(
   await rejectSql(c,"UPDATE program_terms SET term_number=2 WHERE id=$1",[term],"23514","identity is immutable");
   await rejectSql(c,"UPDATE programs SET duration_terms=0 WHERE id=$1",[program],"23514");
   await c.query("INSERT INTO program_terms(program_id,term_number,name) VALUES($1,4,'Semester 4')",[program]);
-  await rejectSql(c,"UPDATE programs SET duration_terms=2 WHERE id=$1",[program],"23514","Cannot shorten program");
+  await rejectSql(c,"UPDATE programs SET duration_terms=2 WHERE id=$1",[program],"23514","Program duration cannot exclude configured terms or promoted cohorts");
  });
 });
 test("curriculum accepts same college, zero credits, and rejects foreign college",async()=>{
