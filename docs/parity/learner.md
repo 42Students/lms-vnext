@@ -486,6 +486,10 @@ navigation, company/description/location/work/deadline facts, scoped eligibility
 breakdowns (rule pass/fail/missing with actual/required), applicant status and
 real role-specific apply/withdrawal actions are composed from the existing
 authorized Learner job service. Safe external URLs reject non-web schemes.
+Learner job cards now link to the authorized dedicated Drive Detail
+route, so details are discoverable from Browse Drives and the placements
+dashboard rather than direct URL navigation only.
+
 Job action confirmations now use explicit learner withdrawal request and external
 submission dialogs instead of `window.prompt` or an immediate declaration.
 Withdrawal text follows the 3–2000-character API contract and does not

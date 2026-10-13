@@ -19,6 +19,9 @@ describe("Learner published placement Job Detail", () => {
     expect(source).toContain("check.actual");
     expect(source).toContain("check.required");
     expect(source).toContain("LearnerPlacementJobs items={items}");
+    const cards = read("src/components/placements/learner-placement-jobs.tsx");
+    expect(cards).toContain("/learn/my-placements/jobs/");
+    expect(cards).toContain("encodeURIComponent(item.job.id)");
   });
   it("preserves existing application API actions but guards employer URLs", () => {
     const source = read("src/components/placements/learner-placement-jobs.tsx");
