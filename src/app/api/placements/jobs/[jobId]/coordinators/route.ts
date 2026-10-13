@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   assignDriveDayCoordinator,
@@ -37,11 +38,29 @@ export async function POST(
   request: Request,
   { params }: RouteContext,
 ) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json(
+      { error: "INVALID_ORIGIN" },
+      { status: 403 },
+    );
+  }
+
   try {
     const context =
       await getCurrentRequestContext();
     const { jobId } = await params;
-    const body = await request.json();
+
+    // Same shape the handler used before (request.json()); the service validates it.
+    let body: Awaited<ReturnType<Request["json"]>>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "INVALID_REQUEST" },
+        { status: 400 },
+      );
+    }
+
     const assignment =
       await assignDriveDayCoordinator(
         context,
