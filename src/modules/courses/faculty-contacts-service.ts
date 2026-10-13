@@ -69,11 +69,14 @@ export async function listFacultyContacts(
 
   const role =
     input.tab === "ALL" ? null : input.tab;
-  const searchCondition = input.search
+  // Wildcard metacharacters are literal user text, never a SQL pattern.
+  const escapedSearch = input.search.replace(/[%_\\]/g, "\\  const searchCondition = input.search
+    ? or(");
+  const searchCondition = escapedSearch
     ? or(
-        ilike(users.displayName, `%${input.search}%`),
-        ilike(users.email, `%${input.search}%`),
-        ilike(users.phoneE164, `%${input.search}%`),
+        ilike(users.displayName, `%${escapedSearch}%`),
+        ilike(users.email, `%${escapedSearch}%`),
+        ilike(users.phoneE164, `%${escapedSearch}%`),
       )
     : null;
 
@@ -103,7 +106,13 @@ export async function listFacultyContacts(
         .innerJoin(users, eq(users.id, collegeMemberships.userId))
         .where(and(...conditions));
 
-  const offset = (input.page - 1) * input.pageSize;
+  // Count first so a stale URL cannot render a false empty directory when
+  // the last visible page disappears due to status/role changes.
+  const [totalRow] = await totalQuery;
+  const total = Number(totalRow?.total ?? 0);
+  const totalPages = Math.max(1, Math.ceil(total / input.pageSize));
+  const page = Math.min(input.page, totalPages);
+  const offset = (page - 1) * input.pageSize;
   const pageQuery = role
     ? db
         .select({
@@ -139,10 +148,7 @@ export async function listFacultyContacts(
         .limit(input.pageSize)
         .offset(offset);
 
-  const [[totalRow], items] = await Promise.all([
-    totalQuery,
-    pageQuery,
-  ]);
+  const items = await pageQuery;
 
   const ids = items.map((item) => item.membershipId);
   const roleRows =
@@ -173,14 +179,13 @@ export async function listFacultyContacts(
     rolesByMembership.set(row.membershipId, bucket);
   }
 
-  const total = Number(totalRow?.total ?? 0);
   return {
     tab: input.tab,
     search: input.search,
-    page: input.page,
+    page,
     pageSize: input.pageSize,
     total,
-    totalPages: Math.max(1, Math.ceil(total / input.pageSize)),
+    totalPages,
     items: items.map((item) => ({
       ...item,
       roles: rolesByMembership.get(item.membershipId) ?? [],
