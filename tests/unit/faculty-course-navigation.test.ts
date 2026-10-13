@@ -12,6 +12,8 @@ describe("Faculty course legacy tab navigation contract", () => {
   });
 
   it("constructs exact Section-scoped destinations without retaining another Section", () => {
+    expect(facultyCourseTabHref("delivery-two", "blueprint"))
+      .toBe("/teacher/courses/delivery-two/blueprint");
     expect(facultyCourseTabHref("delivery-two", "attendanceDetail"))
       .toBe("/teacher/courses/delivery-two/attendanceDetail");
     expect(facultyCourseTabHref("delivery /#2", "students"))
