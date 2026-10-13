@@ -1,0 +1,11 @@
+.git
+.next
+node_modules
+.claude
+sticky-notes
+*.log
+coverage
+playwright-report
+test-results
+.env*
+tsconfig.tsbuildinfo
