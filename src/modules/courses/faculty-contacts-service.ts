@@ -71,8 +71,6 @@ export async function listFacultyContacts(
     input.tab === "ALL" ? null : input.tab;
   // Wildcard metacharacters are literal user text, never a SQL pattern.
   const escapedSearch = input.search.replace(/[%_\\]/g, "\\$&");
-  const searchCondition = input.search
-    ? or(");
   const searchCondition = escapedSearch
     ? or(
         ilike(users.displayName, `%${escapedSearch}%`),
