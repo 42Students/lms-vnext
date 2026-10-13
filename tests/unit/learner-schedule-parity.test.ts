@@ -53,10 +53,19 @@ describe("learner class schedule parity surface", () => {
     expect(component).toContain(
       "${courseBasePath}/${event.deliveryId}",
     );
-    // Only the learner base path appends the course /home tab.
+    // Both legacy daily-use Learner and Faculty course links resolve their
+    // distinct Overview tabs, not the compatibility workspace.
     expect(component).toContain(
-      'courseBasePath === "/learn/courses" ? "/home" : ""',
+      'courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""',
     );
+    const facultyPage = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "src/app/(authenticated)/teacher/calendar/page.tsx",
+      ),
+      "utf8",
+    );
+    expect(facultyPage).toContain('courseBasePath="/teacher/courses"');
     expect(component).toContain(
       'aria-label="Next upcoming classes"',
     );

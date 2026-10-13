@@ -1030,6 +1030,33 @@ describe("courses UI2A faculty read model", () => {
       ),
     ).toBe(true);
 
+    // College A cannot see the same human's second Faculty membership
+    // in college B. The persisted college scope is applied before search,
+    // pagination, and any role-filter joins.
+    const allCollegeA = await listFacultyContacts(faculty, {
+      tab: "ALL", page: 1, pageSize: 10,
+    });
+    expect(allCollegeA.pageSize).toBe(10);
+    expect(allCollegeA.items.map((item) => item.membershipId))
+      .toContain(SEED_IDS.learnerCollegeAMembership);
+    expect(allCollegeA.items.map((item) => item.membershipId))
+      .not.toContain(SEED_IDS.facultyCollegeBMembership);
+    const facultyInCollegeB = {
+      ...faculty,
+      membership: {
+        ...faculty.membership!,
+        id: SEED_IDS.facultyCollegeBMembership,
+        collegeId: SEED_IDS.collegeB,
+      },
+    };
+    const allCollegeB = await listFacultyContacts(facultyInCollegeB, {
+      tab: "ALL", page: 1, pageSize: 10,
+    });
+    expect(allCollegeB.items.map((item) => item.membershipId))
+      .toContain(SEED_IDS.facultyCollegeBMembership);
+    expect(allCollegeB.items.map((item) => item.membershipId))
+      .not.toContain(SEED_IDS.learnerCollegeAMembership);
+
     await expect(
       listFacultyContacts(learner, {
         tab: "ALL",
