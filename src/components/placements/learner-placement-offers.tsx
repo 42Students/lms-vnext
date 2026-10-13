@@ -148,7 +148,7 @@ export function LearnerPlacementOffers({
   }
 
   return (
-    <section className="space-y-3">
+    <section id="my-offers" className="scroll-mt-24 space-y-3">
       <div>
         <h2 className="m-0 text-base font-semibold text-foreground">
           Offers

@@ -255,6 +255,18 @@ Legacy contract:
 # My Placements
 
 ## Page: Placements Home
+
+**2026-10-13 source parity expansion:** a real learner-scoped dashboard
+now summarizes distinct open drives, active applications, scheduled
+assessments/interviews and issued offers. Its next action prefers assessments
+in the coming seven days, then interviews, then the next real scheduled event,
+then Browse Drives. The same timeline powers a chronological seven-day
+preview and actionable alerts. Effective approved reschedules override the
+original slot. A first-run browse hero appears when no applications exist.
+A source-independent, testable model covers ordering, counts, and edge cases.
+Legacy funnel/status segmentation, partial-source failures, responsive/browser
+evidence and all cross-route workflows remain open; do not count this page DONE.
+
 **Legacy:** `/learn/my-placements`
 
 Legacy contract includes:
