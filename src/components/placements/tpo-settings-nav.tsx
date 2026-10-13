@@ -26,12 +26,23 @@ const SETTINGS_LINKS = [
     label: "Trusted Companies",
     href: "/tpo/settings/trusted",
   },
+  {
+    id: "notifications",
+    label: "My Notifications",
+    href: "/tpo/settings/notifications",
+  },
 ] as const;
 
 export function TpoSettingsNav({
   active,
 }: {
-  active: "season" | "rules" | "see" | "team" | "trusted";
+  active:
+    | "season"
+    | "rules"
+    | "see"
+    | "team"
+    | "trusted"
+    | "notifications";
 }) {
   return (
     <nav
