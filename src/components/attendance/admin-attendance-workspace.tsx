@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -142,14 +141,23 @@ export function AdminAttendanceWorkspace({
     learner: Learner; sessions: Session[];
   } | null>(null);
 
-  // Keep the controls aligned with URL changes (month navigation/back/forward).
-  useEffect(() => {
+  // Keep the controls aligned with URL changes (month navigation/back/forward)
+  // by adjusting state while rendering, the supported alternative to an effect.
+  const syncKey = [
+    data.selectedSectionId,
+    data.selectedCourseId,
+    data.showAllCourses,
+    data.month,
+  ].join("|");
+  const [syncedKey, setSyncedKey] = useState(syncKey);
+  if (syncKey !== syncedKey) {
+    setSyncedKey(syncKey);
     setSectionId(data.selectedSectionId ?? "");
     setCourseId(data.selectedCourseId ?? "");
     setShowAllCourses(data.showAllCourses);
     setTarget(null);
     setChooser(null);
-  }, [data.selectedSectionId, data.selectedCourseId, data.showAllCourses, data.month]);
+  }
 
   const classes = useMemo(() =>
     [...new Map(data.deliveries.map((item) => [item.sectionId, item])).values()],
@@ -189,15 +197,14 @@ export function AdminAttendanceWorkspace({
     [data.grid?.records],
   );
 
+  // Captured once per mount: "held" only needs to be accurate to the page load.
+  const [loadedAt] = useState(() => Date.now());
   const heldSessions = useMemo(
     () =>
       (data.grid?.sessions ?? []).filter(
-        (session) =>
-          new Date(
-            session.startsAt,
-          ).getTime() <= Date.now(),
+        (session) => new Date(session.startsAt).getTime() <= loadedAt,
       ),
-    [data.grid?.sessions],
+    [data.grid?.sessions, loadedAt],
   );
 
   function learnerPercent(learner: Learner) {

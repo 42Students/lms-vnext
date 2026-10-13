@@ -23,6 +23,9 @@ export default async function SuperAdminAttendancePage({
 }: {
   searchParams: Promise<{
     deliveryId?: string;
+    sectionId?: string;
+    courseId?: string;
+    allCourses?: string;
     month?: string;
   }>;
 }) {
@@ -53,10 +56,23 @@ export default async function SuperAdminAttendancePage({
       context,
       collegeId,
     );
-  const grid = query.deliveryId
+  const requestedDelivery = options.deliveries.find(
+    (entry) => entry.deliveryId === query.deliveryId,
+  );
+  const selectedSectionId =
+    query.sectionId ?? requestedDelivery?.sectionId ?? null;
+  const selectedCourseId =
+    query.courseId ?? requestedDelivery?.courseId ?? null;
+  const delivery =
+    options.deliveries.find(
+      (entry) =>
+        entry.sectionId === selectedSectionId &&
+        entry.courseId === selectedCourseId,
+    ) ?? requestedDelivery ?? null;
+  const grid = delivery
     ? await getAdminAttendanceGrid(context, {
         collegeId,
-        deliveryId: query.deliveryId,
+        deliveryId: delivery.deliveryId,
         month,
       })
     : null;
@@ -66,8 +82,11 @@ export default async function SuperAdminAttendancePage({
     collegeName: options.college.name,
     policy: options.policy,
     deliveries: options.deliveries,
-    selectedDeliveryId:
-      query.deliveryId ?? null,
+    courses: options.courses,
+    selectedSectionId,
+    selectedCourseId,
+    showAllCourses: query.allCourses === "1",
+    selectedDeliveryId: delivery?.deliveryId ?? null,
     month,
     grid: grid
       ? {
