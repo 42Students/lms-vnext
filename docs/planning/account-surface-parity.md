@@ -116,7 +116,7 @@ Detailed page contract: `docs/parity/mentor.md`.
 
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
-| Mentor landing / Projects-disabled state | `/mentor` | no equivalent landing | Legacy conditionally opens Projects or explains Projects is unavailable and links Notifications. | MISSING |
+| Mentor landing / Projects-disabled state | `/mentor` | `/mentor` | Implemented projects-on redirect and projects-off notice; browser and tenant-policy verification remain. | PARTIAL |
 | Projects list | `/mentor/projects` | same | Exists. | DONE |
 | Project Overview | project detail | vNext project workspace | Exact role behavior pending. | PARTIAL |
 | Project Team | project detail | vNext project workspace | Exact role behavior pending. | PARTIAL |
@@ -126,7 +126,7 @@ Detailed page contract: `docs/parity/mentor.md`.
 | Project Meetings | project detail | vNext project workspace | Project-level lifecycle exists; exact parity pending. | PARTIAL |
 | Project Delivery / review | project detail | vNext project workspace | Core review exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify activity/history parity. | PARTIAL |
-| Global Meetings calendar | `/mentor/calendar` | none | Missing global meeting/calendar surface. | MISSING |
+| Global Meetings calendar | `/mentor/calendar` | `/mentor/calendar` | Authorized cross-project meeting calendar exists; exact UI and interaction verification remain. | PARTIAL |
 | Mentor Notifications | `/mentor/notifications` | shared notifications | Legacy includes pending reviews, stalled projects, upcoming/requested meetings plus broad announcements; not yet proven by shared vNext feed. | PARTIAL |
 | Mentor Courses routes | `/mentor/courses/*` | n/a | Legacy redirect stubs to mentor Projects. | RETIRED |
 | Mentor Contacts routes | `/mentor/contacts/*` | n/a | Legacy redirect stubs. | RETIRED |

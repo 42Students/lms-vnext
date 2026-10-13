@@ -3,6 +3,9 @@
 Legacy primary navigation: Projects, Meetings, Notifications.
 
 ## Page: Mentor landing
+
+**Source-only implementation update:** Mentor-only navigation now exposes Projects, Meetings, and Notifications in legacy order. The Mentor landing and Meetings calendar already exist in vNext; full browser, upstream and tenant-policy verification remains.
+
 **Legacy:** `/mentor`
 
 Legacy behavior:

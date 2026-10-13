@@ -49,6 +49,9 @@ Closure checklist:
 **Legacy tabs:** Overview, Learning Path, Attendance, Discussions.
 
 ### Overview
+
+**Source-only implementation update:** sanitized course descriptions use legacy 350-character Read more / Show less, and long discussion-backed course updates can independently expand. Full browser and family acceptance remain outstanding.
+
 Legacy contract:
 - course identity/teacher/class context;
 - course summary and learner progress;

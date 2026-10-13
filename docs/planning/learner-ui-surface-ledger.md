@@ -134,9 +134,9 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-023 | Authored introduction content | InThisCourseSection introduction_content | Course domain has description only | GAP |
 | L2-024 | Authored rich HTML overview + sanitization | InThisCourseSection html_content | Course domain has no rich overview field | GAP |
 | L2-025 | Authored takeaways list | InThisCourseSection takeaways | vNext currently derives lesson names | GAP |
-| L2-026 | Long overview Read more / Show less | InThisCourseSection | Overview | GAP |
+| L2-026 | Long overview Read more / Show less | InThisCourseSection | Overview | FIXED |
 | L2-027 | Partial course-details/progress widget warning state | Home | Overview | GAP |
-| L2-028 | Announcement body preview + Read more / Show less | UnifiedActivityList | discussion-backed update feed | GAP |
+| L2-028 | Announcement body preview + Read more / Show less | UnifiedActivityList | discussion-backed update feed | FIXED |
 
 ## L3 — Learning Path
 
