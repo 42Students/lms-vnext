@@ -1,0 +1,442 @@
+import { describe, expect, it } from "vitest";
+import { readAuthConfig } from "@/modules/auth/config";
+import {
+  LoginError,
+  normalizeEmail,
+  normalizePhone,
+  sendEmailFallback,
+  startLogin,
+  verifyLogin,
+  type AttemptRecord,
+  type LoginDependencies,
+  type LoginMembership,
+  type LoginRepository,
+  type LoginUser,
+} from "@/modules/auth/login-service";
+
+const SECRET = "x".repeat(40);
+const COLLEGE_A = "college-a";
+const COLLEGE_B = "college-b";
+
+const learner: LoginUser = {
+  id: "user-1",
+  identityUid: "uid-1",
+  phoneE164: "+919100060001",
+  email: "learner@example.test",
+  displayName: "Test Learner",
+  platformStatus: "ACTIVE",
+};
+
+class FakeRepository implements LoginRepository {
+  users: LoginUser[] = [learner];
+  memberships: Record<string, LoginMembership[]> = {
+    "user-1": [{ id: "m-1", collegeId: COLLEGE_A, status: "ACTIVE" }],
+  };
+  superAdmins = new Set<string>();
+  recruiterGrants = new Set<string>();
+  attempts = new Map<string, AttemptRecord & { fingerprint: string; emailSentAt: Date | null }>();
+  now = new Date("2026-10-13T10:00:00Z");
+
+  async findUserByPhone(phone: string) {
+    return this.users.find((u) => u.phoneE164 === phone) ?? null;
+  }
+  async findUserByEmail(email: string) {
+    return this.users.find((u) => u.email?.toLowerCase() === email) ?? null;
+  }
+  async findUserById(id: string) {
+    return this.users.find((u) => u.id === id) ?? null;
+  }
+  async listMemberships(userId: string) {
+    return this.memberships[userId] ?? [];
+  }
+  async isSuperAdmin(userId: string) {
+    return this.superAdmins.has(userId);
+  }
+  async hasRecruiterGrantAtCollege(userId: string, collegeId: string) {
+    return this.recruiterGrants.has(`${userId}:${collegeId}`);
+  }
+  async countRecentAttempts(fingerprint: string) {
+    return [...this.attempts.values()].filter(
+      (a) => a.fingerprint === fingerprint,
+    ).length;
+  }
+  async createAttempt(input: {
+    id: string;
+    userId: string;
+    collegeId: string | null;
+    contactFingerprint: string;
+    smsCodeMac: string | null;
+    emailCodeMac: string | null;
+  }) {
+    const expires = new Date(this.now.getTime() + 300_000);
+    this.attempts.set(input.id, {
+      id: input.id,
+      userId: input.userId,
+      collegeId: input.collegeId,
+      smsCodeMac: input.smsCodeMac,
+      smsCodeExpiresAt: input.smsCodeMac ? expires : null,
+      emailCodeMac: input.emailCodeMac,
+      emailCodeExpiresAt: input.emailCodeMac ? expires : null,
+      verificationAttempts: 0,
+      expiresAt: expires,
+      usedAt: null,
+      fingerprint: input.contactFingerprint,
+      emailSentAt: input.emailCodeMac ? this.now : null,
+    });
+  }
+  async loadAttempt(id: string) {
+    const a = this.attempts.get(id);
+    return a ? { ...a } : null;
+  }
+  async setEmailCode(id: string, mac: string, gapSeconds: number) {
+    const a = this.attempts.get(id);
+    if (!a || a.usedAt || a.expiresAt <= this.now) return false;
+    if (
+      a.emailSentAt &&
+      this.now.getTime() - a.emailSentAt.getTime() < gapSeconds * 1000
+    ) {
+      return false;
+    }
+    a.emailCodeMac = mac;
+    a.emailCodeExpiresAt = a.expiresAt;
+    a.emailSentAt = this.now;
+    return true;
+  }
+  async reserveVerification(id: string) {
+    const a = this.attempts.get(id);
+    if (!a || a.usedAt || a.expiresAt <= this.now || a.verificationAttempts >= 5) {
+      return false;
+    }
+    a.verificationAttempts += 1;
+    return true;
+  }
+  async consumeAttempt(id: string) {
+    const a = this.attempts.get(id);
+    if (!a || a.usedAt || a.expiresAt <= this.now) return false;
+    a.usedAt = this.now;
+    a.smsCodeMac = a.emailCodeMac = null;
+    a.smsCodeExpiresAt = a.emailCodeExpiresAt = null;
+    return true;
+  }
+}
+
+function setup(env: Record<string, string> = {}) {
+  const repository = new FakeRepository();
+  const sent: { channel: string; to: string; code: string }[] = [];
+  let ids = 0;
+  const deps: LoginDependencies = {
+    repository,
+    sms: {
+      async sendOtp(phone, code) {
+        sent.push({ channel: "sms", to: phone, code });
+        return true;
+      },
+    },
+    email: {
+      async sendOtpEmail(message) {
+        sent.push({ channel: "email", to: message.toEmail, code: message.code });
+        return true;
+      },
+    },
+    config: readAuthConfig({ AUTH_SECRET: SECRET, ...env }),
+    newId: () => `00000000-0000-4000-8000-${String(++ids).padStart(12, "0")}`,
+    now: () => repository.now,
+  };
+  return { repository, deps, sent };
+}
+
+async function code(promise: Promise<unknown>) {
+  try {
+    await promise;
+    return "OK";
+  } catch (error) {
+    return error instanceof LoginError ? error.code : `OTHER:${String(error)}`;
+  }
+}
+
+describe("contact normalization", () => {
+  it("normalizes Indian and E.164 phones and rejects junk", () => {
+    expect(normalizePhone("91000 60001")).toBe("+919100060001");
+    expect(normalizePhone("9100060001")).toBe("+919100060001");
+    expect(normalizePhone("+91 91000-60001")).toBe("+919100060001");
+    expect(normalizePhone("919100060001")).toBe("+919100060001");
+    expect(normalizePhone("12345")).toBeNull();
+  });
+
+  it("lowercases emails and rejects invalid ones", () => {
+    expect(normalizeEmail("  Learner@Example.TEST ")).toBe("learner@example.test");
+    expect(normalizeEmail("not-an-email")).toBeNull();
+  });
+});
+
+describe("auth config", () => {
+  it("requires a long secret", () => {
+    expect(() => readAuthConfig({ AUTH_SECRET: "short" })).toThrow();
+  });
+
+  it("never enables test codes outside APP_ENV=development", () => {
+    const production = readAuthConfig({
+      AUTH_SECRET: SECRET,
+      APP_ENV: "production",
+      AUTH_TEST_OTP: "123456",
+      AUTH_TEST_PHONES: "+919100060001",
+    });
+    expect(production.testOtp).toBeNull();
+    expect(production.testPhones.size).toBe(0);
+
+    const unset = readAuthConfig({
+      AUTH_SECRET: SECRET,
+      AUTH_TEST_OTP: "123456",
+      AUTH_TEST_PHONES: "+919100060001",
+    });
+    expect(unset.testOtp).toBeNull();
+
+    const dev = readAuthConfig({
+      AUTH_SECRET: SECRET,
+      APP_ENV: "development",
+      AUTH_TEST_OTP: "123456",
+      AUTH_TEST_PHONES: "+919100060001",
+    });
+    expect(dev.testOtp).toBe("123456");
+    expect(dev.testPhones.has("+919100060001")).toBe(true);
+  });
+});
+
+describe("startLogin", () => {
+  it("sends an SMS code and never stores the raw code", async () => {
+    const { deps, sent, repository } = setup();
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: null },
+      deps,
+    );
+
+    expect(sent).toHaveLength(1);
+    expect(sent[0]).toMatchObject({ channel: "sms", to: "+919100060001" });
+    expect(sent[0].code).toMatch(/^[0-9]{6}$/);
+
+    const stored = repository.attempts.get(result.attemptId)!;
+    expect(stored.smsCodeMac).toMatch(/^[0-9a-f]{64}$/);
+    expect(JSON.stringify(stored)).not.toContain(sent[0].code);
+    expect(result.maskedContact.endsWith("0001")).toBe(true);
+    expect(result.emailFallbackAvailable).toBe(true);
+  });
+
+  it("starts with email as the only channel", async () => {
+    const { deps, sent } = setup();
+    const result = await startLogin(
+      { channel: "EMAIL", contact: "LEARNER@example.test", tenantCollegeId: null },
+      deps,
+    );
+    expect(sent[0]).toMatchObject({ channel: "email", to: "learner@example.test" });
+    expect(result.channel).toBe("EMAIL");
+  });
+
+  it("rejects invalid, unknown and disabled accounts", async () => {
+    const { deps, repository } = setup();
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "abc", tenantCollegeId: null }, deps)),
+    ).toBe("INVALID_CONTACT");
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9999999999", tenantCollegeId: null }, deps)),
+    ).toBe("NOT_REGISTERED");
+    repository.users[0] = { ...learner, platformStatus: "DISABLED" };
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps)),
+    ).toBe("ACCOUNT_DISABLED");
+  });
+
+  it("limits sign-in to the college of a college host", async () => {
+    const { deps, repository } = setup();
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("OK");
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_B }, deps)),
+    ).toBe("NO_ACCOUNT_FOR_DOMAIN");
+
+    repository.memberships["user-1"] = [
+      { id: "m-1", collegeId: COLLEGE_B, status: "SUSPENDED" },
+    ];
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_B }, deps)),
+    ).toBe("ACCOUNT_SUSPENDED");
+  });
+
+  it("lets a recruiter with a grant sign in on that college host", async () => {
+    const { deps, repository } = setup();
+    repository.memberships["user-1"] = [];
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    repository.recruiterGrants.add(`user-1:${COLLEGE_A}`);
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("OK");
+  });
+
+  it("allows five sends per contact then throttles", async () => {
+    const { deps } = setup();
+    for (let i = 0; i < 5; i += 1) {
+      expect(
+        await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps)),
+      ).toBe("OK");
+    }
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps)),
+    ).toBe("TOO_MANY_REQUESTS");
+  });
+
+  it("reports delivery failure when the provider refuses", async () => {
+    const { deps } = setup();
+    deps.sms = { async sendOtp() { return false; } };
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps)),
+    ).toBe("OTP_DELIVERY_FAILED");
+  });
+
+  it("uses the fixed code and sends nothing for listed dev test contacts", async () => {
+    const { deps, sent } = setup({
+      APP_ENV: "development",
+      AUTH_TEST_OTP: "424242",
+      AUTH_TEST_PHONES: "+919100060001",
+    });
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: null },
+      deps,
+    );
+    expect(sent).toHaveLength(0);
+    const verified = await verifyLogin(
+      { attemptId: result.attemptId, code: "424242", tenantCollegeId: null },
+      deps,
+    );
+    expect(verified.user.id).toBe("user-1");
+  });
+
+  it("really sends in production even if a test code is configured", async () => {
+    const { deps, sent } = setup({
+      APP_ENV: "production",
+      AUTH_TEST_OTP: "424242",
+      AUTH_TEST_PHONES: "+919100060001",
+    });
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: null },
+      deps,
+    );
+    expect(sent).toHaveLength(1);
+    expect(
+      await code(
+        verifyLogin({ attemptId: result.attemptId, code: "424242", tenantCollegeId: null }, deps),
+      ),
+    ).toBe("INCORRECT_OTP");
+  });
+});
+
+describe("verifyLogin", () => {
+  async function started(tenantCollegeId: string | null = null) {
+    const ctx = setup();
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId },
+      ctx.deps,
+    );
+    return { ...ctx, attemptId: result.attemptId, sentCode: ctx.sent[0].code };
+  }
+
+  it("accepts the right code once and selects the college host membership", async () => {
+    const { deps, attemptId, sentCode } = await started(COLLEGE_A);
+    const verified = await verifyLogin(
+      { attemptId, code: sentCode, tenantCollegeId: COLLEGE_A },
+      deps,
+    );
+    expect(verified.tenantMembershipId).toBe("m-1");
+    expect(verified.isSuperAdmin).toBe(false);
+
+    // Replay after success fails.
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("INVALID_ATTEMPT");
+  });
+
+  it("rejects a wrong code and spends the shared budget", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    for (let i = 0; i < 5; i += 1) {
+      expect(
+        await code(verifyLogin({ attemptId, code: "000000", tenantCollegeId: null }, deps)),
+      ).toBe("INCORRECT_OTP");
+    }
+    // Budget exhausted: even the correct code is refused.
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("OTP_ATTEMPTS_EXCEEDED");
+    expect(repository.attempts.get(attemptId)!.verificationAttempts).toBe(5);
+  });
+
+  it("shares the budget between SMS and the email fallback", async () => {
+    const { deps, attemptId, repository } = await started();
+    repository.now = new Date(repository.now.getTime() + 31_000);
+    await sendEmailFallback({ attemptId, tenantCollegeId: null }, deps);
+    for (let i = 0; i < 5; i += 1) {
+      await code(verifyLogin({ attemptId, code: "111111", tenantCollegeId: null }, deps));
+    }
+    expect(repository.attempts.get(attemptId)!.verificationAttempts).toBe(5);
+  });
+
+  it("accepts the emailed fallback code", async () => {
+    const { deps, attemptId, sent, repository } = await started();
+    repository.now = new Date(repository.now.getTime() + 31_000);
+    await sendEmailFallback({ attemptId, tenantCollegeId: null }, deps);
+    const emailed = sent.find((s) => s.channel === "email")!;
+    expect(emailed.to).toBe("learner@example.test");
+    const verified = await verifyLogin(
+      { attemptId, code: emailed.code, tenantCollegeId: null },
+      deps,
+    );
+    expect(verified.user.id).toBe("user-1");
+  });
+
+  it("throttles repeated email fallback requests", async () => {
+    const { deps, attemptId } = await started();
+    const first = await code(sendEmailFallback({ attemptId, tenantCollegeId: null }, deps));
+    // The attempt has no email code yet, so the first send is allowed.
+    expect(first).toBe("OK");
+    expect(
+      await code(sendEmailFallback({ attemptId, tenantCollegeId: null }, deps)),
+    ).toBe("TOO_SOON");
+  });
+
+  it("refuses a challenge used on a different college host", async () => {
+    const { deps, attemptId, sentCode } = await started(COLLEGE_A);
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: COLLEGE_B }, deps)),
+    ).toBe("WRONG_TENANT");
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("WRONG_TENANT");
+  });
+
+  it("refuses an expired challenge", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    repository.now = new Date(repository.now.getTime() + 301_000);
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("OTP_EXPIRED");
+  });
+
+  it("re-checks authorization when the code is consumed", async () => {
+    const { deps, attemptId, sentCode, repository } = await started(COLLEGE_A);
+    repository.memberships["user-1"] = [
+      { id: "m-1", collegeId: COLLEGE_A, status: "SUSPENDED" },
+    ];
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("ACCOUNT_SUSPENDED");
+    // Nothing was consumed, so no session can have been minted from it.
+    expect(repository.attempts.get(attemptId)!.usedAt).toBeNull();
+  });
+
+  it("rejects an unknown attempt id", async () => {
+    const { deps } = setup();
+    expect(
+      await code(verifyLogin({ attemptId: "nope", code: "123456", tenantCollegeId: null }, deps)),
+    ).toBe("INVALID_ATTEMPT");
+  });
+});
