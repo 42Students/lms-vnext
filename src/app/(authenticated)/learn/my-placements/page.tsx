@@ -11,6 +11,8 @@ import {
 } from "@/components/placements/learner-placement-journey";
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
+import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
+import { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -125,6 +127,35 @@ export default async function LearnerPlacementsPage() {
       ),
     }));
 
+  const dashboard = learnerPlacementDashboard({
+    jobs: rows.map((row) => ({
+      jobId: row.job.id,
+      deadlinePassed: row.deadlinePassed,
+      canApply: row.canApply,
+    })),
+    applications: journeyRows.map((row) => ({
+      applicationId: row.applicationId,
+      applicationStatus: row.applicationStatus,
+      screeningStatus: row.screening.status,
+    })),
+    rounds: requestWorkspace.rounds.map((row) => ({
+      applicationId: row.applicationId,
+      roundId: row.roundId,
+      roundKind: row.roundKind,
+      roundName: row.roundName,
+      companyName: row.companyName,
+      roleTitle: row.roleTitle,
+      scheduledAt: row.scheduledAt,
+      exception: row.exception
+        ? { scheduledAt: row.exception.scheduledAt }
+        : null,
+    })),
+    offers: offerRows.map((row) => ({
+      status: row.offer.status,
+      expiresAt: row.offer.expiresAt,
+    })),
+  });
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -132,6 +163,8 @@ export default async function LearnerPlacementsPage() {
         title="My Placements"
         description="Your placement dashboard, applications, assessments, interviews and career activity."
       />
+
+      <LearnerPlacementsDashboard snapshot={dashboard} />
 
       <LearnerPlacementOffers
         offers={offerRows.map((row) => ({
