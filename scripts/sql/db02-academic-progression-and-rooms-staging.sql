@@ -597,6 +597,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
 -- PostgreSQL does not permit a value introduced by ALTER TYPE ... ADD VALUE to be used
 -- until that transaction commits. cohort_status is isolated to cohorts.status in the
 -- current snapshot, so recreate the enum transactionally and preserve existing values.
+DROP TRIGGER IF EXISTS db02_cohort_status_lifecycle_guard ON cohorts;
 ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT;
 ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02;
 CREATE TYPE cohort_status AS ENUM (
@@ -616,7 +617,7 @@ DROP TYPE cohort_status_pre_db02;
 -- Preserve the editable legacy ACTIVE/INACTIVE/COMPLETED states while protecting vNext's
 -- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
 -- ACTIVE/INACTIVE cohorts behind the service state machine, or resurrect an archived cohort.
-CREATE FUNCTION db02_guard_cohort_status_lifecycle()
+CREATE OR REPLACE FUNCTION db02_guard_cohort_status_lifecycle()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_status program_status;
@@ -653,6 +654,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_cohort_status_lifecycle_guard ON cohorts;
 CREATE TRIGGER db02_cohort_status_lifecycle_guard
 BEFORE INSERT OR UPDATE OF status ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
@@ -661,7 +663,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
 -- a college could archive the program while a PLANNED/ACTIVE/COMPLETED
 -- cohort still depends on it. The cohort insert/status guards acquire a
 -- SHARE lock on this same program row to serialize both commit orders.
-CREATE FUNCTION db02_guard_program_archive_with_live_cohorts()
+CREATE OR REPLACE FUNCTION db02_guard_program_archive_with_live_cohorts()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED'
@@ -677,6 +679,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_archive_cohort_dependency_guard ON programs;
 CREATE TRIGGER db02_program_archive_cohort_dependency_guard
 BEFORE UPDATE OF status ON programs
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_archive_with_live_cohorts();

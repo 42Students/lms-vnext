@@ -202,6 +202,10 @@ jobs:
       # Registered-schema matrix runs ONLY against committed numbered Drizzle
       # migrations. DB08/DB10 unregistered proposals run in their independent
       # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.
+      - name: DB-005 registered program/cohort archive lifecycle and concurrent insert
+        env:
+          DB02_REGISTERED_PROGRAM_ARCHIVE: "YES"
+        run: node --test tests/db02-registered-program-archive-pg.test.mjs
       - name: Registered-schema PostgreSQL integration and tenant-negative tests
         run: npx vitest run --config vitest.db.registered.config.ts
   # Independent original-core DB-030 acceptance: a fresh, disposable PG17

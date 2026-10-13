@@ -13,7 +13,7 @@ const acceptance = readFileSync(
 );
 
 test("DB02 prevents program archive while live academic cohorts remain", () => {
-  assert.match(sql, /CREATE FUNCTION db02_guard_program_archive_with_live_cohorts\(\)/);
+  assert.match(sql, /CREATE (?:OR REPLACE )?FUNCTION db02_guard_program_archive_with_live_cohorts\(\)/);
   assert.match(sql, /OLD\.status = 'ACTIVE' AND NEW\.status = 'ARCHIVED'/);
   assert.match(sql, /c\.program_id = OLD\.id\s+AND c\.status <> 'ARCHIVED'/);
   assert.match(sql, /Cannot archive program with nonarchived cohorts/);
