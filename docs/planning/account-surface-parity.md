@@ -327,11 +327,11 @@ Projects landing route: `/superadmin/projects`.
 | Templates list | `/superadmin/projects/templates` | MISSING |
 | New Template | `/superadmin/projects/templates/new` | MISSING |
 | Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | MISSING |
-| Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | MISSING |
-| Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | MISSING |
-| Template Resources | `/superadmin/projects/templates/[templateId]/resources` | MISSING |
-| Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | MISSING |
-| Template Versions | `/superadmin/projects/templates/[templateId]/versions` | MISSING |
+| Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | PARTIAL |
+| Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | PARTIAL |
+| Template Resources | `/superadmin/projects/templates/[templateId]/resources` | PARTIAL |
+| Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | PARTIAL |
+| Template Versions | `/superadmin/projects/templates/[templateId]/versions` | PARTIAL |
 | Workspaces list | `/superadmin/projects/workspaces` | PARTIAL |
 | At Risk | `/superadmin/projects/at-risk` | PARTIAL |
 | Readiness | `/superadmin/projects/readiness` | PARTIAL |
