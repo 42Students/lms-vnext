@@ -68,7 +68,7 @@ test("DB02 draft scopes schedule faculty even without any lecture hall", () => {
 });
 
 test("DB02 draft prevents overlapping faculty, section, and room bookings", () => {
-  assert.match(sql, /CREATE TABLE lecture_halls\s*\(/);
+  assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?lecture_halls\s*\(/);
   assert.match(sql, /ADD COLUMN lecture_hall_id uuid REFERENCES lecture_halls/);
   assert.match(sql, /CREATE EXTENSION IF NOT EXISTS btree_gist/);
   for (const resource of ["section", "faculty", "hall"]) {
