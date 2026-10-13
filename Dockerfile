@@ -12,6 +12,7 @@ COPY drizzle ./drizzle
 COPY scripts ./scripts
 COPY src/lib ./src/lib
 COPY src/observability ./src/observability
+COPY src/modules/auth/retention.ts ./src/modules/auth/retention.ts
 CMD ["npm", "run", "db:migrate"]
 
 FROM node:22-alpine AS builder

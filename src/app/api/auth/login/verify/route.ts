@@ -17,6 +17,10 @@ export const runtime = "nodejs";
 const schema = z.object({
   attemptId: z.string().uuid(),
   code: z.string().regex(/^[0-9]{4,8}$/),
+  secondCode: z
+    .string()
+    .regex(/^[0-9]{4,8}$/)
+    .optional(),
 });
 
 export async function POST(request: Request) {
@@ -32,6 +36,7 @@ export async function POST(request: Request) {
     const verified = await verifyLoginWithRuntime({
       attemptId: guarded.body.attemptId,
       code: guarded.body.code,
+      secondCode: guarded.body.secondCode,
       tenantCollegeId: guarded.tenantCollegeId,
     });
 

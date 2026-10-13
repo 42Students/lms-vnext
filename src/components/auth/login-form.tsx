@@ -13,6 +13,8 @@ type StartResult = {
   expiresInSeconds: number;
   emailFallbackAvailable: boolean;
   maskedEmail: string | null;
+  requiresSecondFactor?: boolean;
+  maskedPhone?: string | null;
 };
 
 const RESEND_SECONDS = 30;
@@ -39,6 +41,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   WRONG_TENANT: "This code was requested on a different site. Start again.",
   UNKNOWN_TENANT_HOST: "This address is not set up for sign-in.",
   EMAIL_NOT_AVAILABLE: "This account has no email address on file.",
+  SECOND_FACTOR_REQUIRED: "Enter both codes to continue.",
+  SECOND_FACTOR_UNAVAILABLE:
+    "This administrator account needs both a verified phone number and email address.",
   AUTH_NOT_CONFIGURED:
     "Sign-in is temporarily unavailable. Please try again shortly.",
 };
@@ -70,6 +75,7 @@ export function LoginForm({
   const [channel, setChannel] = useState<Channel>("PHONE");
   const [contact, setContact] = useState("");
   const [code, setCode] = useState("");
+  const [secondCode, setSecondCode] = useState("");
   const [attempt, setAttempt] = useState<StartResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +94,7 @@ export function LoginForm({
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
       setAttempt(null);
       setCode("");
+      setSecondCode("");
     }
   }
 
@@ -105,6 +112,7 @@ export function LoginForm({
       if (!result.ok) return fail(result.data.error);
       setAttempt(result.data);
       setCode("");
+      setSecondCode("");
       setCooldown(RESEND_SECONDS);
     } catch {
       setError("Network problem. Check your connection and try again.");
@@ -121,7 +129,13 @@ export function LoginForm({
     try {
       const result = await post<{ next?: string }>(
         "/api/auth/login/verify",
-        { attemptId: attempt.attemptId, code: code.trim() },
+        {
+          attemptId: attempt.attemptId,
+          code: code.trim(),
+          ...(attempt.requiresSecondFactor
+            ? { secondCode: secondCode.trim() }
+            : {}),
+        },
       );
       if (!result.ok) return fail((result.data as { error?: string }).error);
       window.location.assign(result.data.next ?? "/dashboard");
@@ -155,6 +169,7 @@ export function LoginForm({
   function reset() {
     setAttempt(null);
     setCode("");
+    setSecondCode("");
     setError(null);
     setNotice(null);
   }
@@ -245,18 +260,35 @@ export function LoginForm({
         </form>
       ) : (
         <form onSubmit={verify} className="mt-5 space-y-4" noValidate>
-          <p className="m-0 text-sm text-body">
-            We sent a 6-digit code to{" "}
-            <strong className="text-foreground">
-              {attempt.maskedContact}
-            </strong>
-            . It expires in {Math.round(attempt.expiresInSeconds / 60)}{" "}
-            minutes.
-          </p>
+          {attempt.requiresSecondFactor ? (
+            <p className="m-0 text-sm text-body">
+              Administrator sign-in needs two codes. We texted one to{" "}
+              <strong className="text-foreground">
+                {attempt.maskedPhone}
+              </strong>{" "}
+              and emailed one to{" "}
+              <strong className="text-foreground">
+                {attempt.maskedEmail}
+              </strong>
+              . They expire in{" "}
+              {Math.round(attempt.expiresInSeconds / 60)} minutes.
+            </p>
+          ) : (
+            <p className="m-0 text-sm text-body">
+              We sent a 6-digit code to{" "}
+              <strong className="text-foreground">
+                {attempt.maskedContact}
+              </strong>
+              . It expires in {Math.round(attempt.expiresInSeconds / 60)}{" "}
+              minutes.
+            </p>
+          )}
 
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
-              Verification code
+              {attempt.requiresSecondFactor
+                ? "Code from the text message"
+                : "Verification code"}
             </span>
             <Input
               name="code"
@@ -274,10 +306,37 @@ export function LoginForm({
             />
           </label>
 
+          {attempt.requiresSecondFactor ? (
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-foreground">
+                Code from the email
+              </span>
+              <Input
+                name="secondCode"
+                value={secondCode}
+                onChange={(event) =>
+                  setSecondCode(
+                    event.target.value.replace(/\D/g, "").slice(0, 6),
+                  )
+                }
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="123456"
+                maxLength={6}
+                className="text-center text-lg tracking-[0.4em]"
+                required
+              />
+            </label>
+          ) : null}
+
           <Button
             type="submit"
             className="w-full"
-            disabled={busy || code.length < 6}
+            disabled={
+              busy ||
+              code.length < 6 ||
+              (attempt.requiresSecondFactor === true && secondCode.length < 6)
+            }
           >
             {busy ? "Verifying…" : "Verify and continue"}
           </Button>
@@ -291,7 +350,7 @@ export function LoginForm({
             >
               {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
             </button>
-            {attempt.emailFallbackAvailable ? (
+            {attempt.emailFallbackAvailable && !attempt.requiresSecondFactor ? (
               <button
                 type="button"
                 onClick={() => void sendEmailCode()}

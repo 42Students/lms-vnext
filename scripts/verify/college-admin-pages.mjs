@@ -59,7 +59,7 @@ const check = (n, ok, d = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${n}${o
 async function login(phone, host) {
   await sleep(PACE);
   const s = await call("POST", "/api/auth/login/start", { host, body: { channel: "PHONE", contact: phone } });
-  const v = await call("POST", "/api/auth/login/verify", { host, body: { attemptId: s.json?.attemptId, code: CODE } });
+  const v = await call("POST", "/api/auth/login/verify", { host, body: { attemptId: s.json?.attemptId, code: CODE, secondCode: CODE } });
   return jar(v.setCookie);
 }
 

@@ -44,7 +44,7 @@ async function login(phone) {
   await sleep(PACE_MS);
   const s = await call("POST", "/api/auth/login/start", { body: { channel: "PHONE", contact: phone } });
   if (s.status !== 200) return { fail: `start ${s.status} ${JSON.stringify(s.json)}` };
-  const v = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE } });
+  const v = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
   if (v.status !== 200) return { fail: `verify ${v.status} ${JSON.stringify(v.json)}` };
   return { cookie: jar(v.setCookie), verify: v };
 }

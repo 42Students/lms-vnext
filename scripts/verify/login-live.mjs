@@ -62,7 +62,7 @@ async function login(contact, opts = {}) {
   if (s.status !== 200) return { start: s };
   const v = await call("POST", "/api/auth/login/verify", {
     host: opts.host,
-    body: { attemptId: s.json.attemptId, code: opts.code ?? CODE },
+    body: { attemptId: s.json.attemptId, code: opts.code ?? CODE, secondCode: opts.code ?? CODE },
   });
   return { start: s, verify: v, cookie: jar(v.setCookie) };
 }
@@ -111,13 +111,13 @@ for (const [label, phone] of [
     codes.push(`${r.status}:${r.json?.error}`);
   }
   check("5 wrong codes -> 401 INCORRECT_OTP", codes.every((c) => c === "401:INCORRECT_OTP"), codes.join(","));
-  const sixth = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE } });
+  const sixth = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
   check("budget spent: right code refused (429)", sixth.status === 429 && sixth.json?.error === "OTP_ATTEMPTS_EXCEEDED", JSON.stringify(sixth.json));
 }
 {
   const s = await start("9100061203");
-  const ok = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE } });
-  const replay = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE } });
+  const ok = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
+  const replay = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
   check("code works once", ok.status === 200, String(ok.status));
   check("replay fails (401 INVALID_ATTEMPT)", replay.status === 401 && replay.json?.error === "INVALID_ATTEMPT", JSON.stringify(replay.json));
 }
@@ -158,9 +158,9 @@ for (const [label, phone] of [
   check("host B: shared faculty signs in and membership is fixed", r.verify?.status === 200 && picked, JSON.stringify(r.verify?.json));
 
   const s = await start("9100061103", { host: A });
-  const onB = await call("POST", "/api/auth/login/verify", { host: B, body: { attemptId: s.json.attemptId, code: CODE } });
+  const onB = await call("POST", "/api/auth/login/verify", { host: B, body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
   check("challenge from host A rejected on host B (WRONG_TENANT)", onB.status === 403 && onB.json?.error === "WRONG_TENANT", JSON.stringify(onB.json));
-  const onP = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE } });
+  const onP = await call("POST", "/api/auth/login/verify", { body: { attemptId: s.json.attemptId, code: CODE, secondCode: CODE } });
   check("challenge from host A rejected on platform host", onP.status === 403, String(onP.status));
 }
 
