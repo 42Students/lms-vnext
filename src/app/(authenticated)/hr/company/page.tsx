@@ -23,6 +23,16 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const query = await searchParams;
   const requestedCollegeId = one(query.collegeId) ?? null;
   const requestedTab = one(query.tab);
+
+  if (requestedTab === "reports") {
+    redirect(
+      "/hr/company/reports" +
+        (requestedCollegeId
+          ? "?collegeId=" + encodeURIComponent(requestedCollegeId)
+          : ""),
+    );
+  }
+
   const tab = requestedTab === "team" ? "team" : "company";
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
 
@@ -110,6 +120,12 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             : "px-3 py-2 text-sm text-muted-foreground"}
         >
           Team
+        </Link>
+        <Link
+          href={"/hr/company/reports?collegeId=" + encodeURIComponent(result.grant.collegeId)}
+          className="px-3 py-2 text-sm text-muted-foreground hover:text-primary-text"
+        >
+          Reports
         </Link>
       </nav>
 

@@ -497,7 +497,7 @@ Detailed page contract: `docs/parity/hr.md`.
 | Recruiter Messages inbox | `/hr/messages` | MISSING |
 | Company tab | `/hr/company?tab=company` | MISSING |
 | Team tab | `/hr/company?tab=team` | MISSING |
-| Reports tab | `/hr/company?tab=reports` | MISSING |
+| Reports tab | `/hr/company?tab=reports` | PARTIAL — Read-only `/hr/company/reports` reports persisted hiring-drive, application and current offer-status counts for one recruiter-authorized college/company relationship at a time. The legacy-style `?tab=reports` destination redirects to the dedicated page, with additive Company & Team navigation. Uses registered `placement_jobs`, `placement_applications`, `placement_offers` and recruiter-grant persistence only. Central `placements.recruiter.read` authorization, persisted active recruiter/company relationship validation, college and relationship scoping, status filters, bounded pagination, summary, loading/error/empty states and pure-helper unit tests are included. Only PUBLISHED/CLOSED recruiter-visible jobs are counted; applications are records rather than unique learners, and current ISSUED/ACCEPTED offer counts are not lifetime issuance or joining outcomes. Legacy reporting taxonomy, visualizations, saved filters, exports, exact tab presentation, executed database tests and browser parity remain open. |
 | Recruiter self Profile | `/hr/profile` | MISSING |
 | Leave college access | Profile action | MISSING |
 | `/hr/colleges` | retired redirect to Home | Legacy explicitly retired this route; chooser belongs on Home. | RETIRED |
