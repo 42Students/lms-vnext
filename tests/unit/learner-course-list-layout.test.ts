@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { LearnerCourseList, type LearnerCourseListRow } from "@/components/courses/learner-course-list";
 
@@ -41,7 +42,7 @@ const elective: LearnerCourseListRow = {
 
 describe("learner Courses responsive layout", () => {
   it("keeps the Electives heading separate from the first elective card", () => {
-    const html = renderToStaticMarkup(<LearnerCourseList rows={[regular, elective]} />);
+    const html = renderToStaticMarkup(createElement(LearnerCourseList, { rows: [regular, elective] }));
     expect(html).toContain("col-span-full");
     expect(html).toContain(">Electives</h2>");
     expect(html).toContain('href="/learn/courses/elective/home"');
@@ -49,7 +50,7 @@ describe("learner Courses responsive layout", () => {
   });
 
   it("renders course-type filters as accessible pressed buttons", () => {
-    const html = renderToStaticMarkup(<LearnerCourseList rows={[regular, elective]} />);
+    const html = renderToStaticMarkup(createElement(LearnerCourseList, { rows: [regular, elective] }));
     expect(html).toContain('aria-label="Filter by course type"');
     expect(html).toContain('aria-pressed="true"');
     expect(html).toContain("grid-cols-3");

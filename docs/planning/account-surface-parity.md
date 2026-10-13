@@ -518,8 +518,8 @@ These were absent from matrix v1 and are now explicit.
 | Standalone AI Grading | `/ai-grading` | AI tools only | Legacy has exam/rubric form+JSON, PDF grading, extraction evidence, confidence/review queue and report generation. | MISSING |
 | Standalone learner quiz | `/quiz` | inline quiz UI | Tracked under Learner; exact full-screen behavior pending. | PARTIAL |
 | Privacy Policy | `/privacy-policy` | none | Decide whether vNext owns legal/public site or separate deployment retains it. | VERIFY |
-| Custom 404 | `/404` | framework default | Explicit product/error UX decision needed. | VERIFY |
-| Custom 500 | `/500` | framework error handling | Explicit product/error UX decision needed. | VERIFY |
+| Custom 404 | `/404` | `src/app/not-found.tsx` | Legacy copy, Go back and Home recovery authored with brand tokens; public/mobile/browser parity remains unverified. | PARTIAL |
+| Custom 500 | `/500` | `src/app/global-error.tsx` | Root fatal boundary uses legacy copy, Go back, Home and retry; browser/session/error-observability proof remains. | PARTIAL |
 
 ---
 
