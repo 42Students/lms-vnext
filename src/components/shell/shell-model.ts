@@ -113,8 +113,10 @@ const learnerItems: ShellNavItem[] = [
 const facultyItems: ShellNavItem[] = [
   {
     label: "Courses",
-    href: "/teach/courses",
+    href: "/teacher/courses",
     shortLabel: "C",
+    icon: "/assets/images/common/courses.svg",
+    activeIcon: "/assets/images/common/course.svg",
     group: "learning",
   },
   {
