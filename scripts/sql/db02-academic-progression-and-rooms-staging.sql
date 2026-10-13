@@ -808,7 +808,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_event_delivery_scope();
 -- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
-CREATE TABLE cohort_progression_state (
+CREATE TABLE IF NOT EXISTS cohort_progression_state (
   -- Initializer state is lifecycle-owned by the cohort. A history-free/child-free cohort may
   -- be hard-deleted for legacy batch-delete compatibility; progression EVENTS remain RESTRICT
   -- and therefore preserve any cohort that has actual academic history.
@@ -826,7 +826,7 @@ CREATE TABLE cohort_progression_state (
   CONSTRAINT cohort_progression_version_ck CHECK (version >= 0)
 );
 
-CREATE TABLE cohort_progression_events (
+CREATE TABLE IF NOT EXISTS cohort_progression_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   cohort_id uuid NOT NULL REFERENCES cohorts(id) ON DELETE RESTRICT,
   from_term_number integer NOT NULL,
@@ -850,8 +850,23 @@ CREATE TABLE cohort_progression_events (
   CONSTRAINT cohort_progression_events_cohort_version_uq UNIQUE (cohort_id, state_version)
 );
 
-CREATE INDEX cohort_progression_events_cohort_time_idx
+CREATE INDEX IF NOT EXISTS cohort_progression_events_cohort_time_idx
   ON cohort_progression_events(cohort_id, created_at DESC);
+
+-- Reapply unregistered DB02 overlay on top of the registered 0051 parents.
+DROP TRIGGER IF EXISTS db02_cohort_progression_state_guard ON cohort_progression_state;
+DROP TRIGGER IF EXISTS db02_cohort_promotion_readiness_guard ON cohort_progression_state;
+DROP TRIGGER IF EXISTS db02_cohort_progression_history ON cohort_progression_state;
+DROP TRIGGER IF EXISTS db02_cohort_progression_events_immutable ON cohort_progression_events;
+DROP TRIGGER IF EXISTS db02_cohort_progression_events_no_truncate ON cohort_progression_events;
+DROP TRIGGER IF EXISTS db02_cohort_progression_initialize ON cohorts;
+DROP TRIGGER IF EXISTS db02_program_duration_reduction_guard ON programs;
+DROP FUNCTION IF EXISTS db02_guard_cohort_progression_state();
+DROP FUNCTION IF EXISTS db02_guard_cohort_promotion_readiness();
+DROP FUNCTION IF EXISTS db02_record_cohort_progression_event();
+DROP FUNCTION IF EXISTS db02_guard_progression_event_immutability();
+DROP FUNCTION IF EXISTS db02_initialize_cohort_progression_state();
+DROP FUNCTION IF EXISTS db02_guard_program_duration_reduction();
 
 CREATE FUNCTION db02_guard_cohort_progression_state()
 RETURNS trigger LANGUAGE plpgsql AS $$
