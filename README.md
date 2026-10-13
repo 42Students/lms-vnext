@@ -23,9 +23,9 @@ Each engineering batch should integrate or repair a concrete runnable capability
 - Zod
 - Drizzle ORM
 - PostgreSQL on Google Cloud SQL
-- Google Cloud Identity Platform
-- Google Cloud Storage
-- Google Cloud Run
+- First-party phone/email one-time-code sign-in (Exotel SMS, ZeptoMail email)
+- Cloudflare R2 private object storage
+- Google Kubernetes Engine (dev) / Cloud Run workflow
 
 ## Architecture principle
 
