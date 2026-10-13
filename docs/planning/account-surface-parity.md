@@ -445,7 +445,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Communication Templates | `templates` | MISSING |
 | Student Notices + prep/readiness | `notices` | MISSING |
 | My Notifications preferences | `notifications` | MISSING |
-| What Companies See | `see` | MISSING |
+| What Companies See | `see` | PARTIAL — Read-only `/tpo/settings/see` displays all five effective recruiter-sharing flags for the signed-in TPO's own college: exact CGPA, Class 10/12 percentages, project links, assessment scores and attendance. The existing `getCompanyVisibilitySettings` reader applies central `placements.manage` college scope and returns the persisted `placement_company_visibility_settings` row or `DEFAULT_VISIBILITY` when absent. Each field is labelled Persisted or Source default, with a plain-language explanation. The shared Settings navigation links to this page; no edit/save behavior, database changes or unrelated data reads are introduced. Legacy editing, field-level enforcement across recruiter previews/shares/exports, privacy integration tests and browser parity remain open. |
 | Placement Branding | `branding` | MISSING |
 
 Settings parity includes unsaved-change protection and all create/edit/remove/reassign/revoke flows represented by these sections.
