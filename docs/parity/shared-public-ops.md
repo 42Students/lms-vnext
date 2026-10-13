@@ -251,11 +251,24 @@ Legacy includes:
 # Error surfaces
 
 ## Page: 404
+
+**Implementation checkpoint (2026-10-13):** `src/app/not-found.tsx` supplies
+public custom 404 copy and brand-matched Go back/Home actions without surfacing
+internal route errors. Source-contract unit tests were authored.
+Still requires desktop/mobile and authenticated-shell browser evidence before DONE.
+
 - [ ] vNext custom/not-found experience decision recorded.
 - [ ] authenticated pages preserve shell/helpful navigation where appropriate.
 - [ ] public page does not expose internals.
 
 ## Page: 500 / fatal error
+
+**Implementation checkpoint (2026-10-13):** `src/app/global-error.tsx`
+provides the App Router root fatal boundary with required html/body, sanitized
+public copy, a Retry callback, Go back and Home. App Router's authenticated
+subtree retains its own error boundary. Error ingestion/session-preservation and
+browser acceptance remain outstanding; source code is not closure evidence.
+
 - [ ] fatal error experience decision recorded.
 - [ ] retry/recovery path exists.
 - [ ] errors are observable without leaking secrets.
