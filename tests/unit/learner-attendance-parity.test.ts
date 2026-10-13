@@ -22,10 +22,12 @@ describe("learner attendance parity surface", () => {
       ),
       "utf8",
     );
-    const course = fs.readFileSync(
+    // Course attendance now lives inside the course as its own
+    // `attendanceDetail` tab instead of a link out to /learn/attendance.
+    const courseTabs = fs.readFileSync(
       path.join(
         process.cwd(),
-        "src/components/courses/learner-course-workspace.tsx",
+        "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
       ),
       "utf8",
     );
@@ -36,9 +38,8 @@ describe("learner attendance parity surface", () => {
     expect(page).toContain(
       'title="Attendance"',
     );
-    expect(course).toContain(
-      "/learn/attendance?deliveryId=",
-    );
+    expect(courseTabs).toContain('"attendanceDetail"');
+    expect(courseTabs).toContain("LearnerCourseAttendance");
   });
   it("keeps server-loaded course identity and explicit loading/error recovery", () => {
     const workspace = fs.readFileSync(
