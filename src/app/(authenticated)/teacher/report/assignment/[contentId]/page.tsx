@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -134,45 +135,21 @@ export default async function FacultyAssignmentReportPage({
         </div>
       </section>
 
-      <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-foreground">Learner submissions</h2>
-        {submissions.length === 0 ? (
-          <p className="mt-3 text-sm text-body">No submissions yet.</p>
-        ) : (
-          <table className="mt-3 w-full min-w-[40rem] text-left text-sm">
-            <thead className="border-b border-border text-muted-foreground">
-              <tr>
-                <th className="py-2 pr-3">Learner</th>
-                <th className="py-2 pr-3">Submitted</th>
-                <th className="py-2 pr-3">Timing</th>
-                <th className="py-2 pr-3">Grade</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {submissions.map((submission) => (
-                <tr key={submission.id}>
-                  <td className="py-3 pr-3 text-foreground">
-                    {submission.learnerDisplayName || submission.learnerEmail || "Learner"}
-                  </td>
-                  <td className="py-3 pr-3">{formatDate(submission.submittedAt)}</td>
-                  <td className="py-3 pr-3">
-                    {assignment.dueAt && submission.submittedAt > assignment.dueAt
-                      ? "Late"
-                      : "On time"}
-                  </td>
-                  <td className="py-3 pr-3">
-                    <StatusBadge tone={submission.gradePublished ? "success" : "warning"}>
-                      {submission.gradePublished
-                        ? `${submission.pointsAwarded ?? 0}/${assignment.maxPoints}`
-                        : submission.gradingStatus === "GRADED" ? "Unpublished" : "Not graded"}
-                    </StatusBadge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      <FacultyReportStudentTable title="Learner submissions" rows={submissions.map((submission) => {
+        const scored = submission.gradingStatus === "GRADED" &&
+          submission.pointsAwarded !== null &&
+          assignment.maxPoints > 0;
+        return {
+          id: submission.id,
+          name: submission.learnerDisplayName || submission.learnerEmail || "Learner",
+          email: submission.learnerEmail,
+          score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
+          percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
+          submittedAt: submission.submittedAt.toISOString(),
+          note: (assignment.dueAt && submission.submittedAt > assignment.dueAt ? "Late" : "On time") +
+            (submission.gradePublished ? " · Published" : " · Private"),
+        };
+      })} />
 
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
