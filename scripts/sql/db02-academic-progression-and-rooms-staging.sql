@@ -1200,7 +1200,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_reduction();
 -- ---------------------------------------------------------------------------
 -- 3) Lecture halls as tenant-owned resources
 -- ---------------------------------------------------------------------------
-CREATE TABLE lecture_halls (
+CREATE TABLE IF NOT EXISTS lecture_halls (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   department_id uuid REFERENCES departments(id) ON DELETE RESTRICT,
@@ -1217,12 +1217,24 @@ CREATE TABLE lecture_halls (
   CONSTRAINT lecture_halls_status_ck CHECK (status IN ('ACTIVE','ARCHIVED'))
 );
 
-CREATE UNIQUE INDEX lecture_halls_active_college_name_uq
+CREATE UNIQUE INDEX IF NOT EXISTS lecture_halls_active_college_name_uq
   ON lecture_halls(college_id, lower(name))
   WHERE status = 'ACTIVE';
 
-CREATE INDEX lecture_halls_department_idx
+CREATE INDEX IF NOT EXISTS lecture_halls_department_idx
   ON lecture_halls(department_id, status);
+
+-- Refresh registered lecture-hall and faculty guards in disposable staging only.
+DROP TRIGGER IF EXISTS db02_lecture_hall_department_guard ON lecture_halls;
+DROP TRIGGER IF EXISTS db02_schedule_hall_tenant_guard ON section_schedule_events;
+DROP TRIGGER IF EXISTS db02_lecture_hall_archive_guard ON lecture_halls;
+DROP TRIGGER IF EXISTS db02_section_faculty_assignment_scope_guard ON section_faculty_assignments;
+DROP TRIGGER IF EXISTS db02_course_teaching_assignment_scope_guard ON course_teaching_assignments;
+DROP FUNCTION IF EXISTS db02_guard_lecture_hall_department();
+DROP FUNCTION IF EXISTS db02_guard_schedule_hall_tenant();
+DROP FUNCTION IF EXISTS db02_guard_lecture_hall_archive();
+DROP FUNCTION IF EXISTS db02_guard_section_faculty_assignment_scope();
+DROP FUNCTION IF EXISTS db02_guard_course_teaching_assignment_scope();
 
 CREATE FUNCTION db02_guard_lecture_hall_department()
 RETURNS trigger LANGUAGE plpgsql AS $$
@@ -1249,9 +1261,9 @@ BEFORE INSERT OR UPDATE OF college_id, department_id ON lecture_halls
 FOR EACH ROW EXECUTE FUNCTION db02_guard_lecture_hall_department();
 
 ALTER TABLE section_schedule_events
-  ADD COLUMN lecture_hall_id uuid REFERENCES lecture_halls(id) ON DELETE RESTRICT;
+  ADD COLUMN IF NOT EXISTS lecture_hall_id uuid REFERENCES lecture_halls(id) ON DELETE RESTRICT;
 
-CREATE INDEX section_schedule_events_hall_time_idx
+CREATE INDEX IF NOT EXISTS section_schedule_events_hall_time_idx
   ON section_schedule_events(lecture_hall_id, starts_at, ends_at)
   WHERE lecture_hall_id IS NOT NULL AND status = 'SCHEDULED';
 
@@ -1355,6 +1367,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_lecture_hall_archive();
 -- PostgreSQL overlap invariants. Chat 1 must confirm btree_gist is available in the
 -- target Cloud SQL/PostgreSQL environment before registering this section.
 CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+ALTER TABLE section_schedule_events DROP CONSTRAINT IF EXISTS section_schedule_events_section_no_overlap_excl;
+ALTER TABLE section_schedule_events DROP CONSTRAINT IF EXISTS section_schedule_events_faculty_no_overlap_excl;
+ALTER TABLE section_schedule_events DROP CONSTRAINT IF EXISTS section_schedule_events_hall_no_overlap_excl;
 
 ALTER TABLE section_schedule_events
   ADD CONSTRAINT section_schedule_events_section_no_overlap_excl

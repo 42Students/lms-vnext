@@ -365,6 +365,13 @@
       "when": 1791858600000,
       "tag": "0051_db02_cohort_progression_history",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1791862200000,
+      "tag": "0052_db02_lecture_hall_timetable_integrity",
+      "breakpoints": true
     }
   ]
 }
