@@ -372,6 +372,13 @@
       "when": 1791862200000,
       "tag": "0052_db02_lecture_hall_timetable_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1791865800000,
+      "tag": "0053_db02_faculty_course_associations",
+      "breakpoints": true
     }
   ]
 }

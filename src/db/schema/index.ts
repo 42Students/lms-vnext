@@ -11,6 +11,7 @@ export * from "./academics";
 export * from "./academic-terms";
 export * from "./academic-progression";
 export * from "./lecture-halls";
+export * from "./faculty-course-associations";
 export * from "./courses";
 export * from "./assessments";
 export * from "./quizzes";
