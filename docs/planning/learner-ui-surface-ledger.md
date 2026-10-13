@@ -119,7 +119,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-008 | Faculty/teacher context | Home | Overview | CLOSED |
 | L2-009 | Section + semester context | Home | Overview | CLOSED |
 | L2-010 | Credits/elective context | Home | Overview | CLOSED |
-| L2-011 | Next action priority: due assessment → live session → continue lesson | Home widgets | Overview | GAP |
+| L2-011 | Next action priority: due assessment → live session → continue lesson | Home widgets | Overview | FIXED |
 | L2-012 | Overall progress metric | Home | Overview | FIXED |
 | L2-013 | Lesson progress metric | Home | Overview | FIXED |
 | L2-014 | Assignment progress metric | Home | Overview | FIXED |

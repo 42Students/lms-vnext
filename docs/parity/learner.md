@@ -53,6 +53,13 @@ Closure checklist:
 
 ### Overview
 
+**Priority correction (2026-10-13):** Upcoming due assignments/quizzes
+take precedence over live sessions even when the live session is earlier,
+and a due assessment cannot be hidden by the six-item activity-feed limit.
+Within a type, choose the earliest deadline. Next published content is
+the fallback, linked to the exact lesson and item. Source/unit implementation
+is FIXED pending cross-role/browser verification.
+
 **Time-consistency fix:** Upcoming activity uses the course-service load
 snapshot for content availability and quiz deadlines, instead of an impure
 React-render-time clock call. Regression and browser proof remain outstanding.

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ExpandableCourseDescription } from "./expandable-course-description";
 import { ExpandableCourseUpdate } from "./expandable-course-update";
+import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overview-priority";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -89,6 +90,7 @@ export function LearnerCourseOverview({
 }) {
   const summary = workspace.summary;
   const next = workspace.nextItem;
+  const nextContent = workspace.nextContent;
   const now = workspace.snapshotNowMs;
   const activityCutoff = now + 14 * 24 * 60 * 60 * 1000;
 
@@ -98,7 +100,7 @@ export function LearnerCourseOverview({
   const learningTakeaways =
     meta.takeaways;
 
-  const activity = workspace.lessons
+  const allUpcomingActivity = workspace.lessons
     .flatMap((lesson) => [
       ...lesson.assignments
         .filter(
@@ -112,7 +114,7 @@ export function LearnerCourseOverview({
           id: item.id,
           lessonId: lesson.id,
           title: item.title,
-          type: "Assignment",
+          type: "Assignment" as const,
           when: item.dueAt,
           filter: "assessments",
           priority: item.dueAt?.getTime() ?? Number.MAX_SAFE_INTEGER,
@@ -129,7 +131,7 @@ export function LearnerCourseOverview({
           id: item.id,
           lessonId: lesson.id,
           title: item.title,
-          type: "Quiz",
+          type: "Quiz" as const,
           when: item.dueAt,
           filter: "assessments",
           priority: item.dueAt?.getTime() ?? Number.MAX_SAFE_INTEGER,
@@ -147,23 +149,32 @@ export function LearnerCourseOverview({
           id: item.id,
           lessonId: lesson.id,
           title: item.title,
-          type: "Live Session",
+          type: "Live Session" as const,
           when: item.startsAt,
           filter: "live-sessions",
           priority: item.startsAt?.getTime() ?? Number.MAX_SAFE_INTEGER,
         })),
     ])
-    .sort((left, right) => left.priority - right.priority)
-    .slice(0, 6);
-
-  const priorityActivity = activity[0] ?? null;
+    .sort((left, right) => left.priority - right.priority);
+  // Keep the update feed time-ordered, but never allow its six-item display
+  // cap to hide an assessment when picking the next action.
+  const activity = allUpcomingActivity.slice(0, 6);
+  const priorityActivity = readOnly
+    ? null
+    : selectPriorityLearnerActivity(allUpcomingActivity);
   const nextAction = priorityActivity
     ? {
         title: priorityActivity.title,
         detail: `${priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
         href: `/learn/courses/${deliveryId}/roadmap?filter=${priorityActivity.filter}&lesson=${encodeURIComponent(priorityActivity.lessonId)}&content=${encodeURIComponent(priorityActivity.id)}`,
       }
-    : next
+    : nextContent
+      ? {
+          title: nextContent.contentTitle,
+          detail: `${nextContent.lessonName} · Continue from your next pending item.`,
+          href: `/learn/courses/${deliveryId}/roadmap?filter=${nextContent.contentType === "RESOURCE" ? "resources" : nextContent.contentType === "LIVE_CLASS" ? "live-sessions" : "lectures"}&lesson=${encodeURIComponent(nextContent.lessonId)}&content=${encodeURIComponent(nextContent.contentId)}`,
+        }
+      : next
       ? {
           title: next.title,
           detail: `${next.lessonName} · Continue from your next pending item.`,
@@ -293,7 +304,9 @@ export function LearnerCourseOverview({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-              {nextAction ? "Next up" : summary.itemsTotal > 0 ? "All clear" : "Start here"}
+              {priorityActivity
+                ? priorityActivity.type === "Live Session" ? "Upcoming live session" : "Due soon"
+                : nextAction ? "Next up" : summary.itemsTotal > 0 ? "All clear" : "Start here"}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
               {nextAction
@@ -316,9 +329,11 @@ export function LearnerCourseOverview({
           >
             {readOnly
               ? "View Learning Path"
-              : nextAction
-                ? "Continue"
-                : "Open Learning Path"}
+              : priorityActivity
+                ? priorityActivity.type === "Live Session" ? "View session" : "Open task"
+                : nextAction
+                  ? "Continue"
+                  : "Open Learning Path"}
           </Link>
         </div>
       </section>
