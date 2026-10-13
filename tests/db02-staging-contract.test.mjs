@@ -309,7 +309,7 @@ test("curriculum display order remains non-unique for legacy parity", () => {
 
 
 test("cohort archive lifecycle stays separate from reversible legacy statuses", () => {
-  assert.match(sql, /CREATE FUNCTION db02_guard_cohort_status_lifecycle\(\)/);
+  assert.match(sql, /CREATE (?:OR REPLACE )?FUNCTION db02_guard_cohort_status_lifecycle\(\)/);
   assert.match(sql, /CREATE TRIGGER db02_cohort_status_lifecycle_guard/);
   assert.match(sql, /Cohort cannot be created already archived/);
   assert.match(sql, /Archived cohort status is terminal/);
