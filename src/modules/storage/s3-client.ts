@@ -1,0 +1,189 @@
+import { createHash, createHmac } from "node:crypto";
+
+/**
+ * Minimal S3-compatible client (Cloudflare R2) using AWS Signature V4 with
+ * node:crypto only. Covers exactly what private storage needs: presigned
+ * PUT/GET URLs and server-side HEAD/GET/DELETE. No SDK dependency.
+ */
+export type S3Config = {
+  endpoint: string; // https://<account>.r2.cloudflarestorage.com
+  /** Path-style bucket. Leave empty when the endpoint host already names the bucket. */
+  bucket: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  region?: string; // R2 uses "auto"
+};
+
+const SERVICE = "s3";
+
+function sha256Hex(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function hmac(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest();
+}
+
+/** RFC 3986 encoding as required by SigV4 (encodeURIComponent plus !'()*). */
+export function awsEncode(value: string) {
+  return encodeURIComponent(value).replace(
+    /[!'()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+}
+
+function encodePath(path: string) {
+  return path.split("/").map(awsEncode).join("/");
+}
+
+function amzDate(date: Date) {
+  return date.toISOString().replace(/[:-]|\.\d{3}/g, "");
+}
+
+export function signingKey(
+  secretAccessKey: string,
+  dateStamp: string,
+  region: string,
+  service = SERVICE,
+) {
+  const kDate = hmac(`AWS4${secretAccessKey}`, dateStamp);
+  const kRegion = hmac(kDate, region);
+  const kService = hmac(kRegion, service);
+  return hmac(kService, "aws4_request");
+}
+
+type SignInput = {
+  method: "GET" | "PUT" | "HEAD" | "DELETE";
+  key: string;
+  now?: Date;
+  expiresSeconds?: number;
+  /** Extra headers that must be sent by the caller and are bound to the signature. */
+  headers?: Record<string, string>;
+  query?: Record<string, string>;
+};
+
+function objectLocation(config: S3Config, key: string) {
+  const url = new URL(config.endpoint);
+  return {
+    host: url.host,
+    origin: url.origin,
+    path: config.bucket ? `/${config.bucket}/${key}` : `/${key}`,
+  };
+}
+
+/** Builds a presigned URL (query-string authentication). */
+export function presignUrl(config: S3Config, input: SignInput) {
+  const region = config.region ?? "auto";
+  const now = input.now ?? new Date();
+  const stamp = amzDate(now);
+  const dateStamp = stamp.slice(0, 8);
+  const scope = `${dateStamp}/${region}/${SERVICE}/aws4_request`;
+  const { host, origin, path } = objectLocation(config, input.key);
+
+  const headers: Record<string, string> = {
+    host,
+    ...Object.fromEntries(
+      Object.entries(input.headers ?? {}).map(([name, value]) => [
+        name.toLowerCase(),
+        value.trim(),
+      ]),
+    ),
+  };
+  const headerNames = Object.keys(headers).sort();
+  const signedHeaders = headerNames.join(";");
+
+  const query: Record<string, string> = {
+    ...input.query,
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": `${config.accessKeyId}/${scope}`,
+    "X-Amz-Date": stamp,
+    "X-Amz-Expires": String(input.expiresSeconds ?? 300),
+    "X-Amz-SignedHeaders": signedHeaders,
+  };
+  const canonicalQuery = Object.keys(query)
+    .sort()
+    .map((name) => `${awsEncode(name)}=${awsEncode(query[name]!)}`)
+    .join("&");
+
+  const canonicalRequest = [
+    input.method,
+    encodePath(path),
+    canonicalQuery,
+    headerNames.map((name) => `${name}:${headers[name]}\n`).join(""),
+    signedHeaders,
+    "UNSIGNED-PAYLOAD",
+  ].join("\n");
+
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    stamp,
+    scope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+  const signature = createHmac(
+    "sha256",
+    signingKey(config.secretAccessKey, dateStamp, region),
+  )
+    .update(stringToSign)
+    .digest("hex");
+
+  return `${origin}${encodePath(path)}?${canonicalQuery}&X-Amz-Signature=${signature}`;
+}
+
+export type S3ObjectHead = {
+  etag: string;
+  sizeBytes: number;
+  contentType: string;
+  metadata: Record<string, string>;
+};
+
+/** Signed server-side request (short-lived presign, then plain fetch). */
+async function send(
+  config: S3Config,
+  method: "GET" | "HEAD" | "DELETE",
+  key: string,
+) {
+  const url = presignUrl(config, { method, key, expiresSeconds: 60 });
+  return fetch(url, { method, cache: "no-store" });
+}
+
+export async function headObject(
+  config: S3Config,
+  key: string,
+): Promise<S3ObjectHead | null> {
+  const response = await send(config, "HEAD", key);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`S3_HEAD_${response.status}`);
+  const metadata: Record<string, string> = {};
+  response.headers.forEach((value, name) => {
+    if (name.startsWith("x-amz-meta-")) {
+      metadata[name.slice("x-amz-meta-".length)] = value;
+    }
+  });
+  return {
+    etag: (response.headers.get("etag") ?? "").replaceAll('"', ""),
+    sizeBytes: Number(response.headers.get("content-length") ?? 0),
+    contentType: response.headers.get("content-type") ?? "",
+    metadata,
+  };
+}
+
+export async function getObjectStream(config: S3Config, key: string) {
+  const response = await send(config, "GET", key);
+  if (response.status === 404) return null;
+  if (!response.ok || !response.body) {
+    throw new Error(`S3_GET_${response.status}`);
+  }
+  return {
+    body: response.body,
+    contentType: response.headers.get("content-type") ?? "",
+    sizeBytes: Number(response.headers.get("content-length") ?? 0),
+  };
+}
+
+export async function deleteObject(config: S3Config, key: string) {
+  const response = await send(config, "DELETE", key);
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`S3_DELETE_${response.status}`);
+  }
+}
