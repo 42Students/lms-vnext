@@ -1,0 +1,19 @@
+# Only Google's load balancer and its health checkers may reach the vNext pod.
+# Other workloads in the shared cluster (including the legacy apps) cannot call
+# it directly, so Host / X-Forwarded-For can only be set by the trusted proxy.
+# Egress is left open (database, SMS, email and storage providers).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lms-vnext-ingress-from-lb-only
+  namespace: lms-dev-2026
+spec:
+  podSelector:
+    matchLabels: { app: lms-vnext }
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - ipBlock: { cidr: 130.211.0.0/22 }
+        - ipBlock: { cidr: 35.191.0.0/16 }
+      ports:
+        - { protocol: TCP, port: 8080 }
