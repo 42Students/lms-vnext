@@ -419,9 +419,9 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Calendar — Agenda | same | Source-authored chronological day groups, event details, status, venue and deep links. Legacy popovers, detail parity and browser verification remain open. | PARTIAL |
 | Calendar filters/summary | same | Shared authorized college read service supplies scheduled/completed rounds, published/closed job deadlines and recruiter follow-ups. Company text, kind/date filters, counts and next event are source-authored. Partial-source failure recovery, exact filter UX and executed DB/browser evidence remain open. | PARTIAL |
 | Calendar create/move follow-up | same | Existing recruiter-lead follow-up mutations are not exposed from the calendar; create/move calendar modals remain missing. | MISSING |
-| Reports gallery | `/tpo/reports` | Missing. | MISSING |
-| Placement summary | `/tpo/reports/placement-summary` | Missing. | MISSING |
-| By branch | `.../by-branch` | Missing. | MISSING |
+| Reports gallery | `/tpo/reports` | Read-only gallery with overview/student-outcome/relationship groups, headline metrics, season/drive filters and live links to Placement Summary and By Branch. Other report cards are intentionally not linked. Exact legacy card set, semantics and browser parity unverified. | PARTIAL |
+| Placement summary | `/tpo/reports/placement-summary` | Scoped server report with headline KPIs, distinct placed/offer counts, drive funnel, company table, season/drive filters, batch-registration caveat and authorized CSV download. Legacy presentation, saved views, historical denominator semantics and browser parity remain open. | PARTIAL |
+| By branch | `.../by-branch` | Scoped department-attributed branch breakdown with registered/applicant/application/offer/placed counts, full-time package metrics, season/drive filters and authorized CSV download. Branch history snapshots, legacy chart/drill-ins and browser parity remain open. | PARTIAL |
 | By company | `.../by-company` | Missing. | MISSING |
 | CTC | `.../ctc` | Missing. | MISSING |
 | Unplaced students | `.../unplaced` | Missing. | MISSING |
@@ -430,7 +430,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Failure reasons | `.../failure-reasons` | Missing. | MISSING |
 | Leads report | `.../leads` | Missing. | MISSING |
 | Accreditation export | `.../accreditation` | Missing. | MISSING |
-| Report filters/saved views/export/presentation | report detail | Missing. | MISSING |
+| Report filters/saved views/export/presentation | report detail | Season and drive filtering plus formula-neutralized CSV exports implemented for Placement Summary and By Branch only. Saved views, charts, presentation mode, other report types and exact legacy export columns remain missing. | PARTIAL |
 | Messages inbox | `/tpo/messages` | Missing. | MISSING |
 
 ## 6.4 Settings — explicit ten sections
