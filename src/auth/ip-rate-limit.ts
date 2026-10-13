@@ -26,11 +26,21 @@ export function allowRequest(
   return current.count <= limit;
 }
 
-/** First hop of X-Forwarded-For (set by the load balancer), else unknown. */
+/**
+ * The caller IP behind the Google load balancer. The balancer appends
+ * "<client ip>, <balancer ip>" to whatever X-Forwarded-For the caller sent,
+ * so the leading entries are attacker-controlled and the trustworthy client
+ * address is the second-to-last one. With a single entry (no balancer, as in
+ * local development) that entry is used.
+ */
 export function clientIp(request: Request) {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const first = forwarded?.split(",")[0]?.trim();
-  return first || "unknown";
+  const parts = (request.headers.get("x-forwarded-for") ?? "")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length >= 2) return parts[parts.length - 2];
+  return parts[0] || "unknown";
 }
 
 /** For tests only. */
