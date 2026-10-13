@@ -187,6 +187,53 @@ export async function upsertFacultyProfile(
 }
 
 
+/**
+ * The legacy Faculty profile belongs to a teaching Faculty account, not a
+ * Mentor or College Admin alias. This read never uses people.manage.
+ */
+function requireOwnFacultyMembership(context: RequestContext) {
+  const membership = context.membership;
+  if (
+    !membership ||
+    !hasMembershipRole(context, "FACULTY") ||
+    hasMembershipRole(context, "MENTOR") ||
+    hasMembershipRole(context, "COLLEGE_ADMIN")
+  ) {
+    throw new AuthorizationError("profile.self.manage");
+  }
+  requirePermission(context, "profile.self.manage", {
+    organizationId: membership.organizationId,
+    collegeId: membership.collegeId,
+  });
+  return membership;
+}
+
+export async function getOwnFacultyProfile(
+  context: RequestContext,
+  repository: ProfileRepository,
+) {
+  const membership = requireOwnFacultyMembership(context);
+  const person = await repository.loadMembershipDetail(membership.id);
+  if (
+    !person ||
+    person.user.id !== context.user.id ||
+    person.membership.id !== membership.id ||
+    person.membership.collegeId !== membership.collegeId ||
+    person.organizationId !== membership.organizationId ||
+    person.membership.status !== "ACTIVE" ||
+    !person.membership.roles.includes("FACULTY") ||
+    person.membership.roles.includes("MENTOR") ||
+    person.membership.roles.includes("COLLEGE_ADMIN")
+  ) {
+    throw new AuthorizationError("profile.self.manage");
+  }
+
+  return {
+    person,
+    profile: await repository.loadFacultyProfile(membership.id),
+  };
+}
+
 function requireOwnLearnerMembership(
   context: RequestContext,
 ) {
