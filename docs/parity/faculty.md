@@ -43,7 +43,7 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [ ] Search/filter behavior matches.
 - [ ] Learner detail/profile drill-in behavior is accounted for.
 - [ ] Empty/loading/error states.
-- [ ] Roster cannot expose another class.
+- [x] Roster cannot expose another class.
 
 ### Attendance
 
@@ -66,7 +66,7 @@ remain open.
 - [ ] Feed/read behavior matches.
 - [ ] Faculty post/reply/moderation actions match.
 - [ ] Empty/loading/error states.
-- [ ] Course/class isolation.
+- [x] Course/class isolation.
 
 ## Page: Contacts
 **Legacy:** `/teacher/contacts/[contactsTab]`  
@@ -78,7 +78,7 @@ Tabs: All Contacts, Teachers, Students.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
 - [ ] Contact actions/deep links are matched.
 - [ ] Empty/loading/error states are verified.
-- [ ] College scoping is enforced.
+- [x] College scoping is enforced.
 
 ## Page: All Assignments
 
@@ -287,3 +287,7 @@ The registered database integration test now checks page-size 10, exact college-
 ## Faculty Contacts pagination/search edge acceptance (2026-10-14)
 
 Directory pagination now derives the last valid page from an authoritative same-college SQL COUNT before applying OFFSET; deleting/revoking rows cannot strand Faculty on a misleading blank stale page. SQL LIKE metacharacters are treated as literal search text and search length is capped before Zod validation. Disposable PostgreSQL tests now cover stale page clamping, literal wildcard search and exact membership/college scoping. These remain conditional on executed exact-SHA CI before checklist closure.
+
+## Faculty independently executed, scope-specific closures (2026-10-14)
+
+**Executed evidence:** `lms-vnext@e13c0f8b85447e758ff26a993104b5afbe6e716c`, [GitHub Actions database run 38455771397](https://github.com/42Students/lms-vnext/actions/runs/38455771397), database job `115498438882`; `tests/integration/courses-ui2a-faculty.test.ts` **10/10 passing** and registered database run **413 passed / 98 skipped**. Verified negative tests enforce: (1) a Faculty roster lookup for another delivery rejects with `FACULTY_TEACHING_SCOPE_REQUIRED`; (2) Faculty discussion access and moderation remain restricted to the exact teaching delivery; (3) Contacts contain only active same-college memberships, including distinct College A/B memberships of the same person, with Learner role rejected. These three narrow checklist invariants are marked checked; the parent Students/Discussions/Contacts pages remain PARTIAL pending full visual, field and browser acceptance. This evidence does not certify the newer wildcard/paging service correction, profile storage, registered DB07 privacy or the global DATABASE phase.
