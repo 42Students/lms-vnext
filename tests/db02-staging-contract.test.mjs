@@ -29,7 +29,7 @@ test("DB02 draft has paired PL/pgSQL dollar-quoted function bodies", () => {
 });
 
 test("DB02 draft persists canonical cohort term, period, year, and history", () => {
-  assert.match(sql, /CREATE TABLE cohort_progression_state\s*\(/);
+  assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?cohort_progression_state\s*\(/);
   assert.match(sql, /current_term_number integer NOT NULL DEFAULT 1/);
   assert.match(sql, /current_academic_year_start integer/);
   assert.match(sql, /current_period_id uuid REFERENCES academic_periods/);
