@@ -386,6 +386,13 @@
       "when": 1791869400000,
       "tag": "0054_db02_academic_parent_period_boundaries",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1791873000000,
+      "tag": "0055_db02_program_cohort_archive_guards",
+      "breakpoints": true
     }
   ]
 }
