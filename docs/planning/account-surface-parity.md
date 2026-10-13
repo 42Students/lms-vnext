@@ -313,7 +313,7 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | Drive Shortlisted | `/superadmin/jobs/[jobId]/shortlisted` | PARTIAL |
 | Drive Settings | `/superadmin/jobs/[jobId]/settings` | PARTIAL |
 | Companies | `/superadmin/companies` | PARTIAL |
-| Placement Interview Calendar | `/superadmin/calendar` | MISSING |
+| Placement Interview Calendar | `/superadmin/calendar` | PARTIAL |
 | Hiring Analytics | `/superadmin/hiring-dashboard` | PARTIAL |
 
 **Lecture Halls (`/admin/lecture-halls`):** selected-college page reuses the College Admin hall table, create/edit/archive/restore actions, department options, and schedule-conflict guard. Lecture-hall service requires the selected Super Admin college for API reads and writes. Legacy search/filter parity, executed Super Admin database evidence and browser checks are pending; this is PARTIAL, not closed.

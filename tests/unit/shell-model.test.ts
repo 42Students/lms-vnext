@@ -85,6 +85,56 @@ describe("authenticated shell model", () => {
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });
 
+  it("exposes a distinct Super Admin placement interview calendar without changing other roles", () => {
+    const superAdminContext = context(null, ["SUPER_ADMIN"]);
+    const superAdminNavigation = getShellNavigation(superAdminContext);
+    const superAdminHrefs = superAdminNavigation.map((item) => item.href);
+
+    expectInOrder(superAdminHrefs, [
+      "/admin/placements",
+      "/admin/placements/calendar",
+      "/admin/hr",
+    ]);
+
+    expect(
+      superAdminNavigation.find(
+        (item) => item.href === "/admin/placements/calendar",
+      ),
+    ).toMatchObject({
+      label: "Placement Interview Calendar",
+      href: "/admin/placements/calendar",
+      icon: "/assets/images/common/calender.svg",
+    });
+
+    expect(superAdminHrefs).not.toContain("/tpo/calendar");
+    expect(superAdminHrefs).not.toContain("/college/placements/calendar");
+
+    const scopedSuperAdmin: RequestContext = {
+      ...superAdminContext,
+      adminScope: {
+        organizationId: "organization-1",
+        collegeId: "college-1",
+      },
+    };
+
+    expect(hrefs(scopedSuperAdmin)).toContain(
+      "/admin/placements/calendar",
+    );
+
+    const tpoHrefs = hrefs(context(["TPO"]));
+    expect(tpoHrefs).toContain("/tpo/calendar");
+    expect(tpoHrefs).not.toContain("/admin/placements/calendar");
+
+    const collegeHrefs = hrefs(context(["COLLEGE_ADMIN"]));
+    expect(collegeHrefs).toContain("/college/placements/calendar");
+    expect(collegeHrefs).not.toContain("/admin/placements/calendar");
+
+    const learnerHrefs = hrefs(context(["LEARNER"]));
+    expect(learnerHrefs).not.toContain("/admin/placements/calendar");
+    expect(learnerHrefs).not.toContain("/tpo/calendar");
+    expect(learnerHrefs).not.toContain("/college/placements/calendar");
+  });
+
   it("keeps College Admin navigation tenant-focused", () => {
     const shellContext = context(["COLLEGE_ADMIN"]);
 

@@ -24,7 +24,7 @@ import {
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
-type CalendarAudience = "TPO" | "COLLEGE_ADMIN";
+type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
 type CalendarSearchParams = {
   date?: string | string[];
@@ -125,7 +125,7 @@ function normalizedState(
   );
 
   const roundKind =
-    audience === "COLLEGE_ADMIN"
+    audience !== "TPO"
       ? requestedRoundKind === ""
         ? undefined
         : placementRoundKinds.find(
@@ -150,7 +150,7 @@ function normalizedState(
         : "ROUND",
     roundKind,
     job:
-      audience === "COLLEGE_ADMIN"
+      audience !== "TPO"
         ? first(searchParams.job)
             ?.trim()
             .slice(0, 150) ?? ""
@@ -208,7 +208,9 @@ function eventHref(
     const base =
       audience === "TPO"
         ? "/tpo/placements/jobs/"
-        : "/college/placements/jobs/";
+        : audience === "SUPER_ADMIN"
+          ? "/admin/placements/jobs/"
+          : "/college/placements/jobs/";
 
     const jobHref =
       base + encodeURIComponent(event.jobId);
@@ -410,7 +412,9 @@ export async function PlacementCalendarWorkspace({
   const basePath =
     audience === "TPO"
       ? "/tpo/calendar"
-      : "/college/placements/calendar";
+      : audience === "SUPER_ADMIN"
+        ? "/admin/placements/calendar"
+        : "/college/placements/calendar";
 
   const window = placementCalendarWindow(
     state.anchor,
@@ -431,10 +435,11 @@ export async function PlacementCalendarWorkspace({
     );
 
   // The shared read service supports event-kind and
-  // company filtering. The college-only job-name filter
-  // is a view-level refinement of the authorized rows.
+  // company filtering. The College Admin and Super Admin
+  // job-name filter is a view-level refinement of
+  // already authorized rows.
   const events =
-    audience === "COLLEGE_ADMIN" && state.job
+    audience !== "TPO" && state.job
       ? response.events.filter((event) =>
           event.jobTitle
             ?.toLocaleLowerCase("en-IN")
@@ -486,7 +491,9 @@ export async function PlacementCalendarWorkspace({
         eyebrow={
           isTpo
             ? "TPO"
-            : "College Admin · Placements"
+            : audience === "SUPER_ADMIN"
+              ? "Super Admin · Placements"
+              : "College Admin · Placements"
         }
         title={
           isTpo
@@ -496,14 +503,18 @@ export async function PlacementCalendarWorkspace({
         description={
           isTpo
             ? "College-wide rounds, application deadlines and recruiter follow-ups. Dates and times are shown in Indian Standard Time."
-            : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
+            : audience === "SUPER_ADMIN"
+              ? "Interview rounds and other employer events in the selected college, with company and job filters. Dates and times are shown in Indian Standard Time."
+              : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
         }
         actions={
           <Link
             href={
               isTpo
                 ? "/tpo/placements"
-                : "/college/placements"
+                : audience === "SUPER_ADMIN"
+                  ? "/admin/placements"
+                  : "/college/placements"
             }
             className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
