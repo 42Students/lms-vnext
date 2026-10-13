@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LearnerCareerRounds, type LearnerCareerRound } from "./learner-career-rounds";
+import {
+  learnerAssessmentReminderId,
+  learnerAssessmentReminderStorageKey,
+  parseLearnerAssessmentReminders,
+  toggleLearnerAssessmentReminder,
+  type LearnerAssessmentReminders,
+} from "@/modules/placements/learner-assessment-reminders";
 import {
   browseLearnerCareerRounds,
   learnerRoundScheduledInstant,
@@ -39,14 +46,52 @@ export function LearnerCareerRoundsWorkspace({
   kind,
   rounds,
   snapshotNowIso,
+  membershipId = null,
 }: {
   kind: Kind;
   rounds: readonly LearnerCareerRound[];
   snapshotNowIso: string;
+  membershipId?: string | null;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(defaults);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
+  const [reminderError, setReminderError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (kind !== "ASSESSMENT" || !membershipId) return;
+    // Hydrate after the server-safe first render; never trust malformed storage.
+    const handle = window.setTimeout(() => {
+      try {
+        setReminders(parseLearnerAssessmentReminders(
+          window.localStorage.getItem(learnerAssessmentReminderStorageKey(membershipId)),
+        ));
+      } catch {
+        setReminderError("Local reminders are unavailable in this browser.");
+      }
+    }, 0);
+    return () => window.clearTimeout(handle);
+  }, [kind, membershipId]);
+
+  function toggleReminder(applicationId: string, roundId: string) {
+    if (!membershipId) {
+      setReminderError("Sign in as a Learner to save personal reminders.");
+      return;
+    }
+    try {
+      const key = learnerAssessmentReminderStorageKey(membershipId);
+      // Re-read at click time so an initial slow hydration cannot erase a saved reminder.
+      const stored = parseLearnerAssessmentReminders(window.localStorage.getItem(key));
+      const id = learnerAssessmentReminderId(applicationId, roundId);
+      const next = toggleLearnerAssessmentReminder(stored, id, new Date().toISOString());
+      window.localStorage.setItem(key, JSON.stringify(next));
+      setReminders(next);
+      setReminderError(null);
+    } catch {
+      setReminderError("Unable to save this personal reminder. No employer status was changed.");
+    }
+  }
   const setFilter = <K extends keyof LearnerRoundBrowseFilters,>(
     key: K, value: LearnerRoundBrowseFilters[K],
   ) => setFilters((current) => ({ ...current, [key]: value }));
@@ -70,6 +115,10 @@ export function LearnerCareerRoundsWorkspace({
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const employerTest = kind === "ASSESSMENT"
     ? externalLink(selected?.testUrl ?? null) : null;
+  const selectedReminderId = selected && kind === "ASSESSMENT"
+    ? learnerAssessmentReminderId(selected.applicationId, selected.roundId)
+    : null;
+  const personalReminderAt = selectedReminderId ? reminders[selectedReminderId] ?? null : null;
 
   return (
     <div className="space-y-5">
@@ -203,10 +252,29 @@ export function LearnerCareerRoundsWorkspace({
               ) : null}
             </div>
             {kind === "ASSESSMENT" ? (
-              <p role="note" className="text-sm leading-6 text-body">
-                Opening an employer assessment link does not submit or confirm completion.
-                The employer controls official results.
-              </p>
+              <section className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+                <h3 className="m-0 text-sm font-semibold text-foreground">Personal submission reminder</h3>
+                <p className="text-sm leading-6 text-body">
+                  This is only a reminder on this device. It is not sent to your employer or placement team
+                  and does not confirm assessment completion, submission or a result.
+                </p>
+                {personalReminderAt ? (
+                  <p role="status" className="text-xs font-semibold text-primary-text">
+                    Personal reminder marked · {new Intl.DateTimeFormat("en-IN", {
+                      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+                    }).format(new Date(personalReminderAt))}
+                  </p>
+                ) : null}
+                <Button
+                  variant="secondary"
+                  onClick={() => toggleReminder(selected.applicationId, selected.roundId)}
+                >
+                  {personalReminderAt ? "Undo personal reminder" : "Mark submitted (personal reminder only)"}
+                </Button>
+                {reminderError ? (
+                  <p role="alert" className="text-sm text-warning">{reminderError}</p>
+                ) : null}
+              </section>
             ) : (
               <p role="note" className="text-sm leading-6 text-body">
                 Scheduled time alone does not confirm attendance or an interview outcome.
