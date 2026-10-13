@@ -1,0 +1,1220 @@
+import {
+  and,
+  asc,
+  count,
+  eq,
+  exists,
+  ilike,
+  inArray,
+  or,
+} from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  colleges,
+  organizations,
+  placementCompanies,
+  placementCompanyRelationships,
+  placementRecruiterCollegeGrants,
+  placementRecruiterProfiles,
+  users,
+} from "@/db/schema";
+import type { RequestContext } from "@/modules/identity/context";
+import {
+  requirePermission,
+} from "@/modules/permissions/policy";
+import {
+  assertPersistedPlatformPermission,
+} from "@/modules/permissions/persisted-actor";
+import {
+  provisionPlatformIdentityWithRuntime,
+} from "@/modules/people/runtime";
+import { PeopleServiceError } from "@/modules/people/errors";
+import { PlacementsServiceError } from "./errors";
+import {
+  assertSuperAdminHrCompanyMatch,
+  createSuperAdminHrInputSchema,
+  effectiveSuperAdminHrStatus,
+  grantSuperAdminHrCollegeInputSchema,
+  superAdminHrGrantIdSchema,
+  superAdminHrListQuerySchema,
+  superAdminHrRelationshipIdSchema,
+  superAdminHrUserIdSchema,
+  updateSuperAdminHrInputSchema,
+} from "./super-admin-hr-validation";
+
+function requireHrAdmin(context: RequestContext) {
+  // This centrally defined permission is available only
+  // to an active SUPER_ADMIN, including one using a
+  // selected administrative college scope.
+  requirePermission(
+    context,
+    "admin-scope.select",
+  );
+}
+
+function requireHrCollege(
+  context: RequestContext,
+  organizationId: string,
+  collegeId: string,
+) {
+  requireHrAdmin(context);
+
+  requirePermission(
+    context,
+    "placements.manage",
+    {
+      organizationId,
+      collegeId,
+    },
+  );
+}
+
+function visibilityClause(context: RequestContext) {
+  const scope = context.adminScope;
+
+  if (!scope?.collegeId && !scope?.organizationId) {
+    return undefined;
+  }
+
+  const db = getDb();
+
+  const scopedGrants = db
+    .select({
+      id: placementRecruiterCollegeGrants.id,
+    })
+    .from(placementRecruiterCollegeGrants)
+    .innerJoin(
+      placementCompanyRelationships,
+      eq(
+        placementCompanyRelationships.id,
+        placementRecruiterCollegeGrants.companyRelationshipId,
+      ),
+    )
+    .innerJoin(
+      colleges,
+      eq(
+        colleges.id,
+        placementCompanyRelationships.collegeId,
+      ),
+    )
+    .where(
+      and(
+        eq(
+          placementRecruiterCollegeGrants.recruiterUserId,
+          placementRecruiterProfiles.userId,
+        ),
+        eq(
+          placementRecruiterCollegeGrants.status,
+          "ACTIVE",
+        ),
+        eq(
+          placementCompanyRelationships.status,
+          "ACTIVE",
+        ),
+        eq(
+          colleges.status,
+          "ACTIVE",
+        ),
+        eq(
+          placementCompanyRelationships.companyId,
+          placementRecruiterProfiles.companyId,
+        ),
+        scope.collegeId
+          ? eq(
+              colleges.id,
+              scope.collegeId,
+            )
+          : eq(
+              colleges.organizationId,
+              scope.organizationId!,
+            ),
+      ),
+    );
+
+  return exists(scopedGrants);
+}
+
+function grantScopeClause(context: RequestContext) {
+  const scope = context.adminScope;
+
+  if (scope?.collegeId) {
+    return eq(colleges.id, scope.collegeId);
+  }
+
+  if (scope?.organizationId) {
+    return eq(
+      colleges.organizationId,
+      scope.organizationId,
+    );
+  }
+
+  return undefined;
+}
+
+const accountColumns = {
+  userId: users.id,
+  displayName: users.displayName,
+  phoneE164: users.phoneE164,
+  email: users.email,
+  platformStatus: users.platformStatus,
+  companyId: placementCompanies.id,
+  companyName: placementCompanies.name,
+  title: placementRecruiterProfiles.title,
+  recruiterStatus: placementRecruiterProfiles.status,
+  createdAt: placementRecruiterProfiles.createdAt,
+  updatedAt: placementRecruiterProfiles.updatedAt,
+};
+
+type AccountRow = {
+  userId: string;
+  displayName: string | null;
+  phoneE164: string | null;
+  email: string | null;
+  platformStatus: "ACTIVE" | "DISABLED";
+  companyId: string;
+  companyName: string;
+  title: string | null;
+  recruiterStatus: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+function toAccount(row: AccountRow) {
+  return {
+    ...row,
+    status: effectiveSuperAdminHrStatus(
+      row.platformStatus,
+      row.recruiterStatus,
+    ),
+  };
+}
+
+async function loadAccountGrants(
+  context: RequestContext,
+  userIds: string[],
+) {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  return getDb()
+    .select({
+      id: placementRecruiterCollegeGrants.id,
+      recruiterUserId:
+        placementRecruiterCollegeGrants.recruiterUserId,
+      companyRelationshipId:
+        placementCompanyRelationships.id,
+      companyId:
+        placementCompanyRelationships.companyId,
+      collegeId: colleges.id,
+      collegeName: colleges.name,
+      organizationId: colleges.organizationId,
+      status: placementRecruiterCollegeGrants.status,
+      createdAt: placementRecruiterCollegeGrants.createdAt,
+    })
+    .from(placementRecruiterCollegeGrants)
+    .innerJoin(
+      placementCompanyRelationships,
+      eq(
+        placementCompanyRelationships.id,
+        placementRecruiterCollegeGrants.companyRelationshipId,
+      ),
+    )
+    .innerJoin(
+      colleges,
+      eq(
+        colleges.id,
+        placementCompanyRelationships.collegeId,
+      ),
+    )
+    .where(
+      and(
+        inArray(
+          placementRecruiterCollegeGrants.recruiterUserId,
+          userIds,
+        ),
+        eq(
+          placementRecruiterCollegeGrants.status,
+          "ACTIVE",
+        ),
+        grantScopeClause(context),
+      ),
+    )
+    .orderBy(
+      asc(colleges.name),
+      asc(placementRecruiterCollegeGrants.id),
+    );
+}
+
+export async function listSuperAdminHrAccounts(
+  context: RequestContext,
+  rawQuery: unknown = {},
+) {
+  requireHrAdmin(context);
+
+  const query =
+    superAdminHrListQuerySchema.parse(rawQuery);
+
+  const search = query.q
+    ? or(
+        ilike(
+          users.displayName,
+          `%${query.q}%`,
+        ),
+        ilike(
+          users.phoneE164,
+          `%${query.q}%`,
+        ),
+        ilike(
+          users.email,
+          `%${query.q}%`,
+        ),
+        ilike(
+          placementCompanies.name,
+          `%${query.q}%`,
+        ),
+      )
+    : undefined;
+
+  const statusCondition =
+    query.status === "DISABLED"
+      ? eq(
+          users.platformStatus,
+          "DISABLED",
+        )
+      : query.status === "ARCHIVED"
+        ? and(
+            eq(
+              users.platformStatus,
+              "ACTIVE",
+            ),
+            eq(
+              placementRecruiterProfiles.status,
+              "ARCHIVED",
+            ),
+          )
+        : query.status === "ACTIVE"
+          ? and(
+              eq(
+                users.platformStatus,
+                "ACTIVE",
+              ),
+              eq(
+                placementRecruiterProfiles.status,
+                "ACTIVE",
+              ),
+            )
+          : undefined;
+
+  const where = and(
+    search,
+    statusCondition,
+    visibilityClause(context),
+  );
+
+  const db = getDb();
+
+  const [totalRows, rows] = await Promise.all([
+    db
+      .select({
+        value: count(),
+      })
+      .from(placementRecruiterProfiles)
+      .innerJoin(
+        users,
+        eq(
+          users.id,
+          placementRecruiterProfiles.userId,
+        ),
+      )
+      .innerJoin(
+        placementCompanies,
+        eq(
+          placementCompanies.id,
+          placementRecruiterProfiles.companyId,
+        ),
+      )
+      .where(where),
+    db
+      .select(accountColumns)
+      .from(placementRecruiterProfiles)
+      .innerJoin(
+        users,
+        eq(
+          users.id,
+          placementRecruiterProfiles.userId,
+        ),
+      )
+      .innerJoin(
+        placementCompanies,
+        eq(
+          placementCompanies.id,
+          placementRecruiterProfiles.companyId,
+        ),
+      )
+      .where(where)
+      .orderBy(
+        asc(users.displayName),
+        asc(users.id),
+      )
+      .limit(query.pageSize)
+      .offset(
+        (query.page - 1) * query.pageSize,
+      ),
+  ]);
+
+  const grants = await loadAccountGrants(
+    context,
+    rows.map((row) => row.userId),
+  );
+
+  const total = Number(
+    totalRows[0]?.value ?? 0,
+  );
+
+  return {
+    items: rows.map((row) => ({
+      ...toAccount(row),
+      grants: grants.filter(
+        (grant) =>
+          grant.recruiterUserId === row.userId &&
+          grant.companyId === row.companyId,
+      ),
+    })),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(
+      1,
+      Math.ceil(total / query.pageSize),
+    ),
+  };
+}
+
+export async function getSuperAdminHrAccount(
+  context: RequestContext,
+  rawUserId: string,
+) {
+  requireHrAdmin(context);
+
+  const userId =
+    superAdminHrUserIdSchema.parse(rawUserId);
+
+  const [row] = await getDb()
+    .select(accountColumns)
+    .from(placementRecruiterProfiles)
+    .innerJoin(
+      users,
+      eq(
+        users.id,
+        placementRecruiterProfiles.userId,
+      ),
+    )
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementRecruiterProfiles.companyId,
+      ),
+    )
+    .where(
+      and(
+        eq(
+          placementRecruiterProfiles.userId,
+          userId,
+        ),
+        visibilityClause(context),
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RECRUITER_USER_NOT_FOUND",
+    );
+  }
+
+  const grants = await loadAccountGrants(
+    context,
+    [userId],
+  );
+
+  return {
+    ...toAccount(row),
+    grants: grants.filter(
+      (grant) =>
+        grant.companyId === row.companyId,
+    ),
+  };
+}
+
+export async function listSuperAdminHrRelationshipOptions(
+  context: RequestContext,
+  rawCollegeId?: string,
+) {
+  requireHrAdmin(context);
+
+  const collegeId = rawCollegeId
+    ? superAdminHrRelationshipIdSchema.parse(
+        rawCollegeId,
+      )
+    : undefined;
+
+  return getDb()
+    .select({
+      companyRelationshipId:
+        placementCompanyRelationships.id,
+      companyId: placementCompanies.id,
+      companyName: placementCompanies.name,
+      collegeId: colleges.id,
+      collegeName: colleges.name,
+      organizationId: colleges.organizationId,
+    })
+    .from(placementCompanyRelationships)
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .innerJoin(
+      colleges,
+      eq(
+        colleges.id,
+        placementCompanyRelationships.collegeId,
+      ),
+    )
+    .innerJoin(
+      organizations,
+      eq(
+        organizations.id,
+        colleges.organizationId,
+      ),
+    )
+    .where(
+      and(
+        eq(
+          placementCompanyRelationships.status,
+          "ACTIVE",
+        ),
+        eq(
+          placementCompanies.status,
+          "ACTIVE",
+        ),
+        eq(
+          colleges.status,
+          "ACTIVE",
+        ),
+        eq(
+          organizations.status,
+          "ACTIVE",
+        ),
+        collegeId
+          ? eq(colleges.id, collegeId)
+          : undefined,
+        grantScopeClause(context),
+      ),
+    )
+    .orderBy(
+      asc(colleges.name),
+      asc(placementCompanies.name),
+    )
+    .limit(200);
+}
+
+async function loadActiveRelationship(
+  relationshipId: string,
+) {
+  const [row] = await getDb()
+    .select({
+      relationshipId:
+        placementCompanyRelationships.id,
+      companyId:
+        placementCompanyRelationships.companyId,
+      companyStatus: placementCompanies.status,
+      relationshipStatus:
+        placementCompanyRelationships.status,
+      collegeId: colleges.id,
+      collegeStatus: colleges.status,
+      organizationId: colleges.organizationId,
+      organizationStatus: organizations.status,
+    })
+    .from(placementCompanyRelationships)
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .innerJoin(
+      colleges,
+      eq(
+        colleges.id,
+        placementCompanyRelationships.collegeId,
+      ),
+    )
+    .innerJoin(
+      organizations,
+      eq(
+        organizations.id,
+        colleges.organizationId,
+      ),
+    )
+    .where(
+      eq(
+        placementCompanyRelationships.id,
+        relationshipId,
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
+    );
+  }
+
+  if (
+    row.relationshipStatus !== "ACTIVE" ||
+    row.companyStatus !== "ACTIVE" ||
+    row.collegeStatus !== "ACTIVE" ||
+    row.organizationStatus !== "ACTIVE"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
+    );
+  }
+
+  return row;
+}
+
+function isUniqueViolation(error: unknown) {
+  return Boolean(
+    error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code?: unknown }).code ===
+        "23505",
+  );
+}
+
+export async function createSuperAdminHrAccount(
+  context: RequestContext,
+  rawInput: unknown,
+) {
+  requireHrAdmin(context);
+
+  const input =
+    createSuperAdminHrInputSchema.parse(rawInput);
+
+  const relationship =
+    await loadActiveRelationship(
+      input.companyRelationshipId,
+    );
+
+  requireHrCollege(
+    context,
+    relationship.organizationId,
+    relationship.collegeId,
+  );
+
+  // Resolve and persist the canonical platform user
+  // through the established first-party people path.
+  // A recruiter does not require an academic membership.
+  const identity =
+    await provisionPlatformIdentityWithRuntime({
+      displayName: input.displayName,
+      phoneE164: input.phoneE164,
+      email: input.email,
+    });
+
+  if (identity.platformStatus !== "ACTIVE") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
+    );
+  }
+
+  const db = getDb();
+
+  try {
+    await db.transaction(async (tx) => {
+      await assertPersistedPlatformPermission(
+        tx,
+        context,
+        "admin-scope.select",
+      );
+
+      const [lockedRelationship] = await tx
+        .select({
+          id: placementCompanyRelationships.id,
+          companyId:
+            placementCompanyRelationships.companyId,
+          collegeId:
+            placementCompanyRelationships.collegeId,
+          status:
+            placementCompanyRelationships.status,
+        })
+        .from(placementCompanyRelationships)
+        .where(
+          eq(
+            placementCompanyRelationships.id,
+            relationship.relationshipId,
+          ),
+        )
+        .for("share")
+        .limit(1);
+
+      if (
+        !lockedRelationship ||
+        lockedRelationship.status !== "ACTIVE" ||
+        lockedRelationship.companyId !==
+          relationship.companyId ||
+        lockedRelationship.collegeId !==
+          relationship.collegeId
+      ) {
+        throw new PlacementsServiceError(
+          "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
+        );
+      }
+
+      requireHrCollege(
+        context,
+        relationship.organizationId,
+        relationship.collegeId,
+      );
+
+      const [currentUser] = await tx
+        .select({
+          id: users.id,
+          status: users.platformStatus,
+        })
+        .from(users)
+        .where(
+          eq(
+            users.id,
+            identity.userId,
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (
+        !currentUser ||
+        currentUser.status !== "ACTIVE"
+      ) {
+        throw new PlacementsServiceError(
+          "PLACEMENT_RECRUITER_USER_NOT_FOUND",
+        );
+      }
+
+      const [profile] = await tx
+        .insert(placementRecruiterProfiles)
+        .values({
+          userId: identity.userId,
+          companyId: relationship.companyId,
+          title: input.title ?? null,
+          createdByUserId: context.user.id,
+        })
+        .onConflictDoNothing()
+        .returning({
+          userId: placementRecruiterProfiles.userId,
+        });
+
+      if (!profile) {
+        throw new PlacementsServiceError(
+          "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
+        );
+      }
+
+      await tx
+        .insert(placementRecruiterCollegeGrants)
+        .values({
+          recruiterUserId: identity.userId,
+          companyRelationshipId:
+            relationship.relationshipId,
+          grantedByUserId: context.user.id,
+        });
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw new PeopleServiceError(
+        "IDENTITY_COLLISION",
+      );
+    }
+    throw error;
+  }
+
+  return getSuperAdminHrAccount(
+    context,
+    identity.userId,
+  );
+}
+
+export async function updateSuperAdminHrAccount(
+  context: RequestContext,
+  rawUserId: string,
+  rawInput: unknown,
+) {
+  requireHrAdmin(context);
+
+  const userId =
+    superAdminHrUserIdSchema.parse(rawUserId);
+  const input =
+    updateSuperAdminHrInputSchema.parse(
+      rawInput,
+    );
+
+  const db = getDb();
+
+  try {
+    await db.transaction(async (tx) => {
+      await assertPersistedPlatformPermission(
+        tx,
+        context,
+        "admin-scope.select",
+      );
+
+      const [current] = await tx
+        .select({
+          userId: placementRecruiterProfiles.userId,
+          status: placementRecruiterProfiles.status,
+          archivedAt:
+            placementRecruiterProfiles.archivedAt,
+        })
+        .from(placementRecruiterProfiles)
+        .where(
+          and(
+            eq(
+              placementRecruiterProfiles.userId,
+              userId,
+            ),
+            visibilityClause(context),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!current) {
+        throw new PlacementsServiceError(
+          "PLACEMENT_RECRUITER_USER_NOT_FOUND",
+        );
+      }
+
+      const now = new Date();
+
+      if (
+        input.displayName !== undefined ||
+        input.phoneE164 !== undefined ||
+        input.email !== undefined
+      ) {
+        await tx
+          .update(users)
+          .set({
+            ...(input.displayName === undefined
+              ? {}
+              : {
+                  displayName:
+                    input.displayName,
+                }),
+            ...(input.phoneE164 === undefined
+              ? {}
+              : {
+                  phoneE164:
+                    input.phoneE164,
+                }),
+            ...(input.email === undefined
+              ? {}
+              : {
+                  email:
+                    input.email,
+                }),
+            updatedAt: now,
+          })
+          .where(
+            eq(users.id, userId),
+          );
+      }
+
+      if (
+        input.title !== undefined ||
+        input.status !== undefined
+      ) {
+        await tx
+          .update(placementRecruiterProfiles)
+          .set({
+            ...(input.title === undefined
+              ? {}
+              : {
+                  title: input.title,
+                }),
+            ...(input.status === undefined
+              ? {}
+              : {
+                  status: input.status,
+                  archivedAt:
+                    input.status === "ARCHIVED"
+                      ? current.archivedAt ?? now
+                      : null,
+                }),
+            updatedAt: now,
+          })
+          .where(
+            eq(
+              placementRecruiterProfiles.userId,
+              userId,
+            ),
+          );
+      }
+
+      if (input.status === "ARCHIVED") {
+        await tx
+          .update(placementRecruiterCollegeGrants)
+          .set({
+            status: "REVOKED",
+            revokedByUserId:
+              context.user.id,
+            revokedAt: now,
+            updatedAt: now,
+          })
+          .where(
+            and(
+              eq(
+                placementRecruiterCollegeGrants.recruiterUserId,
+                userId,
+              ),
+              eq(
+                placementRecruiterCollegeGrants.status,
+                "ACTIVE",
+              ),
+            ),
+          );
+      }
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw new PeopleServiceError(
+        "IDENTITY_COLLISION",
+      );
+    }
+    throw error;
+  }
+
+  // The profile is globally archived with its grants
+  // revoked. A selected college scope will no longer
+  // include it; fetch it again after clearing that scope.
+  if (
+    input.status === "ARCHIVED" &&
+    (context.adminScope?.collegeId ||
+      context.adminScope?.organizationId)
+  ) {
+    return {
+      userId,
+      status: "ARCHIVED" as const,
+    };
+  }
+
+  return getSuperAdminHrAccount(
+    context,
+    userId,
+  );
+}
+
+export async function grantSuperAdminHrCollegeAccess(
+  context: RequestContext,
+  rawUserId: string,
+  rawInput: unknown,
+) {
+  requireHrAdmin(context);
+
+  const userId =
+    superAdminHrUserIdSchema.parse(rawUserId);
+  const input =
+    grantSuperAdminHrCollegeInputSchema.parse(
+      rawInput,
+    );
+
+  const relationship =
+    await loadActiveRelationship(
+      input.companyRelationshipId,
+    );
+
+  requireHrCollege(
+    context,
+    relationship.organizationId,
+    relationship.collegeId,
+  );
+
+  return getDb().transaction(async (tx) => {
+    await assertPersistedPlatformPermission(
+      tx,
+      context,
+      "admin-scope.select",
+    );
+
+    const [profile] = await tx
+      .select({
+        companyId:
+          placementRecruiterProfiles.companyId,
+        status:
+          placementRecruiterProfiles.status,
+        platformStatus:
+          users.platformStatus,
+      })
+      .from(placementRecruiterProfiles)
+      .innerJoin(
+        users,
+        eq(
+          users.id,
+          placementRecruiterProfiles.userId,
+        ),
+      )
+      .where(
+        eq(
+          placementRecruiterProfiles.userId,
+          userId,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!profile) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_USER_NOT_FOUND",
+      );
+    }
+
+    if (
+      profile.status !== "ACTIVE" ||
+      profile.platformStatus !== "ACTIVE"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
+      );
+    }
+
+    if (
+      !assertSuperAdminHrCompanyMatch(
+        profile.companyId,
+        relationship.companyId,
+      )
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
+      );
+    }
+
+    const [activeRelationship] = await tx
+      .select({
+        id:
+          placementCompanyRelationships.id,
+        status:
+          placementCompanyRelationships.status,
+        companyId:
+          placementCompanyRelationships.companyId,
+      })
+      .from(placementCompanyRelationships)
+      .where(
+        eq(
+          placementCompanyRelationships.id,
+          relationship.relationshipId,
+        ),
+      )
+      .for("share")
+      .limit(1);
+
+    if (
+      !activeRelationship ||
+      activeRelationship.status !== "ACTIVE" ||
+      activeRelationship.companyId !==
+        profile.companyId
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
+      );
+    }
+
+    const [created] = await tx
+      .insert(placementRecruiterCollegeGrants)
+      .values({
+        recruiterUserId: userId,
+        companyRelationshipId:
+          relationship.relationshipId,
+        grantedByUserId: context.user.id,
+      })
+      .onConflictDoNothing()
+      .returning();
+
+    if (created) {
+      return created;
+    }
+
+    const [existing] = await tx
+      .select()
+      .from(placementRecruiterCollegeGrants)
+      .where(
+        and(
+          eq(
+            placementRecruiterCollegeGrants.recruiterUserId,
+            userId,
+          ),
+          eq(
+            placementRecruiterCollegeGrants.companyRelationshipId,
+            relationship.relationshipId,
+          ),
+          eq(
+            placementRecruiterCollegeGrants.status,
+            "ACTIVE",
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!existing) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
+      );
+    }
+
+    return existing;
+  });
+}
+
+export async function revokeSuperAdminHrCollegeAccess(
+  context: RequestContext,
+  rawUserId: string,
+  rawGrantId: string,
+) {
+  requireHrAdmin(context);
+
+  const userId =
+    superAdminHrUserIdSchema.parse(rawUserId);
+  const grantId =
+    superAdminHrGrantIdSchema.parse(rawGrantId);
+
+  return getDb().transaction(async (tx) => {
+    await assertPersistedPlatformPermission(
+      tx,
+      context,
+      "admin-scope.select",
+    );
+
+    const [current] = await tx
+      .select({
+        grant: placementRecruiterCollegeGrants,
+        collegeId:
+          placementCompanyRelationships.collegeId,
+        organizationId: colleges.organizationId,
+      })
+      .from(placementRecruiterCollegeGrants)
+      .innerJoin(
+        placementCompanyRelationships,
+        eq(
+          placementCompanyRelationships.id,
+          placementRecruiterCollegeGrants.companyRelationshipId,
+        ),
+      )
+      .innerJoin(
+        colleges,
+        eq(
+          colleges.id,
+          placementCompanyRelationships.collegeId,
+        ),
+      )
+      .where(
+        and(
+          eq(
+            placementRecruiterCollegeGrants.id,
+            grantId,
+          ),
+          eq(
+            placementRecruiterCollegeGrants.recruiterUserId,
+            userId,
+          ),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!current) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_GRANT_NOT_FOUND",
+      );
+    }
+
+    requireHrCollege(
+      context,
+      current.organizationId,
+      current.collegeId,
+    );
+
+    if (current.grant.status === "REVOKED") {
+      return current.grant;
+    }
+
+    const now = new Date();
+
+    const [revoked] = await tx
+      .update(placementRecruiterCollegeGrants)
+      .set({
+        status: "REVOKED",
+        revokedByUserId: context.user.id,
+        revokedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(
+            placementRecruiterCollegeGrants.id,
+            grantId,
+          ),
+          eq(
+            placementRecruiterCollegeGrants.recruiterUserId,
+            userId,
+          ),
+          eq(
+            placementRecruiterCollegeGrants.status,
+            "ACTIVE",
+          ),
+        ),
+      )
+      .returning();
+
+    return revoked ?? current.grant;
+  });
+}
+
+export async function terminateSuperAdminHrSessions(
+  context: RequestContext,
+  rawUserId: string,
+) {
+  requireHrAdmin(context);
+
+  const userId =
+    superAdminHrUserIdSchema.parse(rawUserId);
+
+  // The target must be an actual recruiter account
+  // visible in the active administrative scope.
+  await getSuperAdminHrAccount(
+    context,
+    userId,
+  );
+
+  const {
+    revokeAllSessionsForUser,
+  } = await import(
+    "@/modules/auth/session-service"
+  );
+
+  await revokeAllSessionsForUser(
+    userId,
+    context.user.id,
+    "SUPER_ADMIN_HR_TERMINATE_ALL",
+  );
+
+  return {
+    userId,
+    terminated: true,
+  };
+}
