@@ -5,10 +5,12 @@ import { LearnerNotificationsInbox } from "@/components/activity/learner-notific
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnNotifications } from "@/modules/activity/notification-service";
+import { requireLearnerNotificationsAccess } from "@/modules/activity/learner-notifications-access";
 
 export default async function NotificationsPage() {
   const context =
     await getCurrentRequestContext();
+  requireLearnerNotificationsAccess(context);
   const announcementsEnabled =
     announcementsRuntimeEnabled();
   const [rows, announcements] =

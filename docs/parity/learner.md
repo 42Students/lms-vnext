@@ -492,6 +492,14 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 
 ## Page: Notifications
 
+**Learner-only access and recovery:** `/learn/notifications` now checks
+the active Learner membership and existing central tenant permission before
+fetching personal notifications or scoped announcements. A dedicated loading
+skeleton and retryable error boundary distinguish request failure from an
+empty inbox. Role/disabled-account negative unit checks are authored.
+Browser validation and notification pagination still remain.
+
+
 **2026-10-13 implementation update:** Learner's two authorized inbox sources
 are now consolidated into one chronological feed, with legacy domain tabs
 All / Course / Projects / Announcements / Job. Counts and scope derive from
