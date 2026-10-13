@@ -208,6 +208,15 @@ export function LearnerCareerRoundsWorkspace({
               : "/learn/my-placements/applications"}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
           >View application</Link>
+          {kind === "INTERVIEW" && selected ? (
+            <Link
+              href={"/learn/my-placements?requestRoundId=" +
+                encodeURIComponent(selected.roundId) + "#round-reschedule"}
+              className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text"
+            >
+              Request reschedule
+            </Link>
+          ) : null}
           <Button onClick={() => setSelectedKey(null)}>Close</Button>
         </>}
       >

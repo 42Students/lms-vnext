@@ -23,7 +23,15 @@ import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-servi
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
-export default async function LearnerPlacementsPage() {
+export default async function LearnerPlacementsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ requestRoundId?: string | string[] }>;
+}) {
+  const query = await searchParams;
+  const requestRoundId = typeof query.requestRoundId === "string"
+    ? query.requestRoundId
+    : null;
   const context =
     await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) {
@@ -209,6 +217,7 @@ export default async function LearnerPlacementsPage() {
       />
 
       <LearnerPlacementRequests
+        initialRoundId={requestRoundId}
         requests={requestWorkspace.requests.map(
           (row) => ({
             id: row.request.id,

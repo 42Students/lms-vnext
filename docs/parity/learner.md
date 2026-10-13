@@ -369,8 +369,10 @@ Legacy contract:
 rounds now support company/round search, honest Upcoming/Past/Awaiting
 schedule buckets, urgency filtering, sorting and a details drawer with
 approved reschedule details and sanitized meeting links. A scheduled time
-is not treated as confirmed attendance; learner confirmation,
-request workflows, and browser acceptance remain open.
+is not treated as confirmed attendance; learner confirmation and browser acceptance remain open. The Interview
+detail drawer now deep-links to the existing real placement request workflow,
+preselecting only a round already authorized in the Learner's request workspace.
+Creating a request never changes the shared schedule until approved.
 
 **Legacy:** `/learn/my-placements/interviews`
 
