@@ -46,6 +46,14 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [ ] Roster cannot expose another class.
 
 ### Attendance
+
+**2026-10-13 editor correction:** the selected session's persisted absence
+membership IDs are restored as initial editor state and recomputed explicitly
+when the Faculty member changes sessions. This preserves absent/present behavior
+without a synchronous state reset effect. The absence model and session
+switch are regression tested; full browser and correction-policy acceptance
+remain open.
+
 - [ ] Calendar/grid and session selection match.
 - [ ] Present/absent marking flow matches.
 - [ ] Retroactive correction policy is enforced.

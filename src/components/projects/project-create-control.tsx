@@ -51,6 +51,8 @@ export function CreateProjectControl({
     setSummary("");
     setMentorMembershipId("");
     setMentorsError(null);
+    setMentorsLoading(true);
+    setMentors([]);
     setError(null);
     setOpen(true);
   }
@@ -58,8 +60,6 @@ export function CreateProjectControl({
   useEffect(() => {
     if (!open) return;
     const controller = new AbortController();
-    setMentorsLoading(true);
-    setMentorsError(null);
 
     void fetch(
       "/api/projects/mentor-candidates?collegeId=" +

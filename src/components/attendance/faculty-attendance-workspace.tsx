@@ -2,7 +2,6 @@
 
 import {
   type FormEvent,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,6 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
@@ -138,9 +138,13 @@ export function FacultyAttendanceWorkspace({
   const [selectedSessionId, setSelectedSessionId] =
     useState(workspace.sessions[0]?.id ?? "");
   const [search, setSearch] = useState("");
-  const [absent, setAbsent] = useState<
-    Set<string>
-  >(new Set());
+  const [absent, setAbsent] = useState<Set<string>>(() =>
+    initialAbsencesForSession(
+      workspace.roster,
+      workspace.records,
+      workspace.sessions[0]?.id ?? "",
+    ),
+  );
   const [submitting, setSubmitting] =
     useState(false);
   const submitLock = useRef(false);
@@ -198,30 +202,6 @@ export function FacultyAttendanceWorkspace({
       (session) => session.id === selectedSessionId,
     ) ?? null;
 
-  useEffect(() => {
-    if (!selectedSession) {
-      setAbsent(new Set());
-      return;
-    }
-    setAbsent(
-      new Set(
-        workspace.roster
-          .filter((learner) =>
-            Boolean(
-              recordsByKey.get(
-                `${selectedSession.id}:${learner.membershipId}`,
-              ),
-            ),
-          )
-          .map((learner) => learner.membershipId),
-      ),
-    );
-  }, [
-    selectedSession,
-    recordsByKey,
-    workspace.roster,
-  ]);
-
   const visibleRoster = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return workspace.roster;
@@ -254,6 +234,7 @@ export function FacultyAttendanceWorkspace({
 
   function chooseSession(id: string) {
     setSelectedSessionId(id);
+    setAbsent(initialAbsencesForSession(workspace.roster, workspace.records, id));
     setSearch("");
     setError(null);
   }
