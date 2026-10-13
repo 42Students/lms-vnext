@@ -146,7 +146,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | --- | --- | --- | --- | --- |
 | Dashboard | `/college-admin/dashboard` | dashboard workspace | Exact command-center cards/actions parity pending. | PARTIAL |
 | Activity Log | `/college-admin/audit` | `/activity` | Activity Center exists; exact filtering/detail/noise-reduction parity pending. | PARTIAL |
-| Self Profile | `/college-admin/profile` | none | Missing. | MISSING |
+| Self Profile | `/college-admin/profile` | `/college/profile` | Read-only account summary (name, mobile, email, college, organization, roles) keyed only by the signed-in user, role-guarded, linked to signed-in devices. Editing contacts and the legacy About sections are not built. Real-DB tested. | PARTIAL |
 | Placement Interview Calendar | `/college-admin/calendar` | none | This is placement/interview calendar, not academic class schedule. | MISSING |
 
 ## 4.2 Academic Setup
@@ -160,7 +160,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Batches | `/college-admin/batches` | Cohorts | Dedicated operational surface pending. | PARTIAL |
 | Classes | `/college-admin/classes` | Sections | Dedicated operational surface pending. | PARTIAL |
 | Batch Promotion | `/college-admin/batch-promotion` | individual progression | Bulk promotion workflow missing. | PARTIAL |
-| Lecture Halls | `/college-admin/lecture-halls` | none | Missing. | MISSING |
+| Lecture Halls | `/college-admin/lecture-halls` | `/college/lecture-halls` | Table (type, capacity, department, upcoming classes, status), add/edit dialog, archive (blocked while classes are scheduled) and restore, unique active names, same-college department check; sidebar entry. 10 real-DB tests, API/page/dialog verified. Not yet compared field-by-field with the legacy page; no bulk import. | PARTIAL |
 | Electives | `/college-admin/electives` | ELECTIVE offerings | Dedicated lifecycle surface pending. | PARTIAL |
 | Attendance | `/college-admin/attendance` | none | Missing admin attendance center. | MISSING |
 | Section operations / schedules | class/section flows | Academics section workspace | Core vNext structure exists; exact legacy actions need audit. | PARTIAL |
@@ -187,8 +187,8 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Faculty Assignment | `/college-admin/faculty-assignment` | section/course assignments | Dedicated assignment workflow parity pending. | PARTIAL |
 | Students | `/college-admin/students` | People | Dedicated learner surface parity pending. | PARTIAL |
 | People Directory | `/college-admin/people` | `/college/people` | Core directory exists. | DONE |
-| Student Groups list | `/college-admin/student-groups` | none | Missing. | MISSING |
-| Student Group detail | `/college-admin/student-groups/[id]` | none | Missing. | MISSING |
+| Student Groups list | `/college-admin/student-groups` | `/college/groups` | Read-only filterable, paged list (type, status, members, waitlist/requests, term). Creating/editing groups, CSV import and rules UI are not built (service has create/join/leave/transition, no screens). | PARTIAL |
+| Student Group detail | `/college-admin/student-groups/[id]` | `/college/groups/[groupId]` | Read-only: counts, members ordered by state with waitlist position, self-join window, rule status, recent activity. No member add/remove/lock actions yet. 9 real-DB tests. | PARTIAL |
 
 ## 4.5 Placements
 
@@ -510,9 +510,9 @@ These were absent from matrix v1 and are now explicit.
 
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
-| Tenant-aware login entry | `/` | auth shell/provider prep | Actual Identity Platform browser login not configured. | BLOCKED |
-| Login | `/login` | no complete browser provider UI | Identity Platform dependency. | BLOCKED |
-| Separate Super Admin login | `/superadmin-login` | no separate route | Decide whether unified Identity Platform login intentionally replaces it. | VERIFY |
+| Tenant-aware login entry | `/` | `/` (college host shows college name, logo, colour, support links) | First-party phone/email OTP; college hosts admit only their members/granted recruiters; unknown hosts fail closed. Verified live 2026-10-13 (scripts/verify/login-live.mjs). See docs/architecture/first-party-login.md. | DONE |
+| Login | `/login` | `/` sign-in (`/login` redirects) | Phone or email one-time code via Exotel SMS / ZeptoMail, resend timer, email fallback; real SMS and email delivery proven with a real device. No Firebase. | DONE |
+| Separate Super Admin login | `/superadmin-login` | unified sign-in on a platform host | Intentional: one login; a college host refuses super admins, they sign in on the platform host. **Production must add a second factor for SUPER_ADMIN (docs/architecture/privileged-authentication.md); phone/email OTP alone is not enough.** | REDESIGNED |
 | Cross-domain/account auth handoff | `/auth/handoff` | membership chooser/switcher only | Same-origin membership switching exists; token handoff across hosts is not equivalent. | PARTIAL |
 | Company applicant share | `/company-share/[token]` | none | Code-gated external applicant list, expiry/revocation, CSV/resume ZIP/download audit is missing. | MISSING |
 | Standalone AI Grading | `/ai-grading` | AI tools only | Legacy has exam/rubric form+JSON, PDF grading, extraction evidence, confidence/review queue and report generation. | MISSING |
@@ -570,8 +570,8 @@ Important rules:
 
 | Capability | Note | Status |
 | --- | --- | --- |
-| Identity Platform browser login | GCP project/provider configuration required. | BLOCKED |
-| Live session restoration | Harness exists; live provider validation pending. | BLOCKED |
+| Browser login | Replaced by first-party Exotel/ZeptoMail OTP (no Identity Platform project needed). | DONE |
+| Live session restoration | Opaque device sessions (digest stored, revocable per device); verified live: session survives requests, logout/revocation ends it, signed-in devices page. | DONE |
 | Assignment file upload | Cloud Storage upload receipt/signing required. | BLOCKED |
 | Signed VIDEO playback | Cloud Storage signed delivery required. | BLOCKED |
 | Project file resource uploads | Same Cloud Storage dependency. | BLOCKED |
