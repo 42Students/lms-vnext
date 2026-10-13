@@ -162,7 +162,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Batch Promotion | `/college-admin/batch-promotion` | individual progression | Bulk promotion workflow missing. | PARTIAL |
 | Lecture Halls | `/college-admin/lecture-halls` | `/college/lecture-halls` | Table (type, capacity, department, upcoming classes, status), add/edit dialog, archive (blocked while classes are scheduled) and restore, unique active names, same-college department check; sidebar entry. 10 real-DB tests, API/page/dialog verified. Not yet compared field-by-field with the legacy page; no bulk import. | PARTIAL |
 | Electives | `/college-admin/electives` | ELECTIVE offerings | Dedicated lifecycle surface pending. | PARTIAL |
-| Attendance | `/college-admin/attendance` | none | Missing admin attendance center. | MISSING |
+| Attendance | `/college-admin/attendance` | `/college/attendance` | Policy card, college-scoped Class/Course filters (including show-all-courses), India-local monthly grid, multiple-session chooser, record drawer, corrections with confirmation/window guards, and CSV export implemented. Real-DB, browser and exact legacy behavior verification still pending; no parity closure claimed. | PARTIAL |
 | Section operations / schedules | class/section flows | Academics section workspace | Core vNext structure exists; exact legacy actions need audit. | PARTIAL |
 
 ## 4.3 Courses & Content

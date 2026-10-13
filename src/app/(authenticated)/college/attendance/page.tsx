@@ -1,4 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { z } from "zod";
 import {
   AdminAttendanceWorkspace,
   type AdminAttendanceWorkspaceData,
@@ -22,25 +24,43 @@ export default async function CollegeAttendancePage({
 }: {
   searchParams: Promise<{
     deliveryId?: string;
+    sectionId?: string;
+    courseId?: string;
+    allCourses?: string;
     month?: string;
   }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) {
-    throw new Error("College attendance requires an active membership.");
+  const collegeId =
+    context.membership?.collegeId ??
+    (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
+  if (!collegeId) {
+    throw new Error("Select an active college to view attendance.");
   }
-  const query = await searchParams;
-  const month = query.month || currentMonth();
-  const collegeId = context.membership.collegeId;
-  const options =
-    await getAdminAttendanceOptions(
-      context,
-      collegeId,
-    );
-  const grid = query.deliveryId
+  const query = z.object({
+    deliveryId: z.uuid().optional(),
+    sectionId: z.uuid().optional(),
+    courseId: z.uuid().optional(),
+    allCourses: z.enum(["1"]).optional(),
+    month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
+  }).parse(await searchParams);
+  const month = query.month ?? currentMonth();
+  const options = await getAdminAttendanceOptions(context, collegeId);
+  const requestedDelivery = options.deliveries.find(
+    (entry) => entry.deliveryId === query.deliveryId,
+  );
+  const selectedSectionId =
+    query.sectionId ?? requestedDelivery?.sectionId ?? null;
+  const selectedCourseId =
+    query.courseId ?? requestedDelivery?.courseId ?? null;
+  const delivery = options.deliveries.find(
+    (entry) => entry.sectionId === selectedSectionId &&
+      entry.courseId === selectedCourseId,
+  ) ?? requestedDelivery ?? null;
+  const grid = delivery
     ? await getAdminAttendanceGrid(context, {
         collegeId,
-        deliveryId: query.deliveryId,
+        deliveryId: delivery.deliveryId,
         month,
       })
     : null;
@@ -50,8 +70,11 @@ export default async function CollegeAttendancePage({
     collegeName: options.college.name,
     policy: options.policy,
     deliveries: options.deliveries,
-    selectedDeliveryId:
-      query.deliveryId ?? null,
+    courses: options.courses,
+    selectedSectionId,
+    selectedCourseId,
+    showAllCourses: query.allCourses === "1",
+    selectedDeliveryId: delivery?.deliveryId ?? null,
     month,
     grid: grid
       ? {

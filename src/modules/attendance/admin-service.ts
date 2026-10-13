@@ -17,6 +17,7 @@ import {
   attendanceRecords,
   attendanceSessions,
   colleges,
+  collegeMemberships,
   courseOfferings,
   courseSectionDeliveries,
   courses,
@@ -39,9 +40,10 @@ import {
   listActiveDeliveryLearners,
 } from "@/modules/courses/delivery-roster";
 import { indiaAttendanceMonthWindow } from "./month-window";
+import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
 
 const uuid = z.string().uuid();
-const correctionSchema = z.object({
+const correctionSchema = z.strictObject({
   collegeId: uuid,
   deliveryId: uuid,
   membershipId: uuid,
@@ -126,7 +128,7 @@ export async function getAdminAttendanceOptions(
       collegeIdInput,
     );
 
-  const [policyRows, deliveries] =
+  const [policyRows, deliveries, allCourses] =
     await Promise.all([
       getDb()
         .select({
@@ -208,6 +210,8 @@ export async function getAdminAttendanceOptions(
             eq(courseOfferings.status, "ACTIVE"),
             eq(courses.status, "ACTIVE"),
             eq(sections.status, "ACTIVE"),
+            eq(academicPeriods.collegeId, college.id),
+            eq(sections.academicPeriodId, academicPeriods.id),
           ),
         )
         .orderBy(
@@ -215,6 +219,19 @@ export async function getAdminAttendanceOptions(
           asc(courses.name),
           asc(courseSectionDeliveries.id),
         ),
+      getDb()
+        .select({
+          id: courses.id,
+          code: courses.code,
+          name: courses.name,
+        })
+        .from(courses)
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .where(and(
+          eq(departments.collegeId, college.id),
+          eq(courses.status, "ACTIVE"),
+        ))
+        .orderBy(asc(courses.name), asc(courses.id)),
     ]);
 
   return {
@@ -225,6 +242,7 @@ export async function getAdminAttendanceOptions(
         correctionWindowHours: 24,
       },
     deliveries,
+    courses: allCourses,
   };
 }
 
@@ -351,7 +369,7 @@ export async function getAdminAttendanceGrid(
     });
 
   const records =
-    sessions.length === 0
+    sessions.length === 0 || roster.length === 0
       ? []
       : await getDb()
           .select({
@@ -371,22 +389,27 @@ export async function getAdminAttendanceGrid(
           })
           .from(attendanceRecords)
           .innerJoin(
+            collegeMemberships,
+            eq(collegeMemberships.id, attendanceRecords.membershipId),
+          )
+          .innerJoin(
             users,
             eq(
               users.id,
               attendanceRecords.markedByUserId,
             ),
           )
-          .where(
-            // The unique delivery/Section session list is tenant-authorized
-            // above; constrain records to those exact sessions.
+          .where(and(
+            eq(collegeMemberships.collegeId, college.id),
             inArray(
               attendanceRecords.scheduleEventId,
-              sessions.map(
-                (session) => session.id,
-              ),
+              sessions.map((session) => session.id),
             ),
-          );
+            inArray(
+              attendanceRecords.membershipId,
+              roster.map((learner) => learner.membershipId),
+            ),
+          ));
 
   return {
     college,
@@ -446,6 +469,8 @@ export async function correctAdminAttendance(
             sectionScheduleEventCourses.deliveryId,
           status:
             sectionScheduleEvents.status,
+          startsAt: sectionScheduleEvents.startsAt,
+          endsAt: sectionScheduleEvents.endsAt,
         })
         .from(sectionScheduleEvents)
         .innerJoin(
@@ -455,12 +480,11 @@ export async function correctAdminAttendance(
             sectionScheduleEvents.id,
           ),
         )
-        .where(
-          eq(
-            sectionScheduleEvents.id,
-            scheduleEventId,
-          ),
-        )
+        .where(and(
+          eq(sectionScheduleEvents.id, scheduleEventId),
+          eq(sectionScheduleEventCourses.deliveryId, delivery.deliveryId),
+          eq(sectionScheduleEvents.sectionId, delivery.sectionId),
+        ))
         .for("update")
         .limit(1);
 
@@ -478,7 +502,44 @@ export async function correctAdminAttendance(
       }
 
       const now = new Date();
+      const [policy] = await tx
+        .select({
+          correctionWindowHours: attendancePolicies.correctionWindowHours,
+        })
+        .from(attendancePolicies)
+        .where(eq(attendancePolicies.collegeId, college.id))
+        .limit(1);
+      const correctionState = facultyAttendanceMarkingWindow({
+        startsAt: event.startsAt,
+        endsAt: event.endsAt,
+        correctionWindowHours: policy?.correctionWindowHours ?? 24,
+        now,
+      });
+      if (correctionState !== "OPEN") {
+        throw new CoursesServiceError(
+          correctionState === "NOT_STARTED"
+            ? "ATTENDANCE_NOT_STARTED"
+            : "ATTENDANCE_CORRECTION_WINDOW_EXPIRED",
+        );
+      }
 
+      // Lock and recheck active same-college membership at mutation time.
+      const [activeMember] = await tx
+        .select({ id: collegeMemberships.id })
+        .from(collegeMemberships)
+        .where(and(
+          eq(collegeMemberships.id, input.membershipId),
+          eq(collegeMemberships.collegeId, college.id),
+          eq(collegeMemberships.status, "ACTIVE"),
+        ))
+        .for("update")
+        .limit(1);
+      if (!activeMember) {
+        throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+      }
+
+      // Preserve Faculty/Learner semantics: PRESENT is an absent
+      // exception row, not a stored PRESENT record.
       if (input.status === "PRESENT") {
         await tx
           .delete(attendanceRecords)
