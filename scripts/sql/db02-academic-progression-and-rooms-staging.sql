@@ -1536,7 +1536,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_teaching_assignment_scope();
 -- ---------------------------------------------------------------------------
 -- Distinct from course_teaching_assignments: legacy admins can associate faculty with a
 -- course before a class/delivery assignment exists, and course-scoped flows query this pool.
-CREATE TABLE faculty_course_associations (
+CREATE TABLE IF NOT EXISTS faculty_course_associations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   membership_id uuid NOT NULL REFERENCES college_memberships(id) ON DELETE RESTRICT,
   course_id uuid NOT NULL REFERENCES courses(id) ON DELETE RESTRICT,
@@ -1548,13 +1548,23 @@ CREATE TABLE faculty_course_associations (
     CHECK (ended_at IS NULL OR ended_at >= started_at)
 );
 
-CREATE UNIQUE INDEX faculty_course_associations_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS faculty_course_associations_active_uq
   ON faculty_course_associations(membership_id, course_id)
   WHERE ended_at IS NULL;
 
-CREATE INDEX faculty_course_associations_course_active_idx
+CREATE INDEX IF NOT EXISTS faculty_course_associations_course_active_idx
   ON faculty_course_associations(course_id, membership_id)
   WHERE ended_at IS NULL;
+
+-- Registered in 0053; refresh only in disposable staging overlay.
+DROP TRIGGER IF EXISTS db02_faculty_course_association_scope_guard ON faculty_course_associations;
+DROP TRIGGER IF EXISTS db02_faculty_course_associations_role_removal ON membership_roles;
+DROP TRIGGER IF EXISTS db02_faculty_course_associations_membership_inactive ON college_memberships;
+DROP TRIGGER IF EXISTS db02_faculty_course_associations_course_archive ON courses;
+DROP FUNCTION IF EXISTS db02_guard_faculty_course_association_scope();
+DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_role_removal();
+DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_membership_inactive();
+DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_course_archive();
 
 CREATE FUNCTION db02_guard_faculty_course_association_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
