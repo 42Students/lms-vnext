@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -232,6 +233,12 @@ export function LearnerPlacementJourney({
                 )}
               </p>
             ) : null}
+            <Link
+              href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
+              className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+            >
+              View application details →
+            </Link>
           </article>
         ))}
       </div>

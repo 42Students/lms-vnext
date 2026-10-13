@@ -1,8 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  LearnerPlacementJourney,
-  type LearnerPlacementJourneyItem,
-} from "@/components/placements/learner-placement-journey";
+import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
+import { LearnerApplicationsBrowse } from "@/components/placements/learner-applications-browse";
+import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 
@@ -37,7 +36,9 @@ export default async function LearnerPlacementApplicationsPage() {
         title="Applications"
         description="Your placement applications and their current journey."
       />
-      <LearnerPlacementJourney items={items} />
+      <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
+        <LearnerApplicationsBrowse items={items} />
+      </Suspense>
     </div>
   );
 }

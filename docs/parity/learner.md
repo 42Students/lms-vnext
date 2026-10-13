@@ -287,6 +287,17 @@ Legacy contract includes:
 - [ ] Every dashboard CTA lands on the intended filtered subpage.
 
 ## Page: Applications
+
+**2026-10-13 implementation update:** learner's application list now has
+URL-aware search, All/In Progress/Completed views, stage filters,
+recent-activity/company/oldest sort and 20-row pages. Each Journey
+card offers an explicit application-ID link that opens a detail drawer,
+including screening feedback, confirmed round history and routes to
+assessment/interview workspaces. The labels derive only from persisted
+journey status, with deterministic unit tests. Full legacy history modal,
+employer company preview, withdrawal-request dialog, offer confirmations,
+and browser/edge-state verification remain open.
+
 **Legacy:** `/learn/my-placements/applications`
 
 Legacy contract audited from `ApplicationsContent`:
