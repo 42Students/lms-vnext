@@ -181,6 +181,11 @@ const mentorItems: ShellNavItem[] = [
 const tpoItems: ShellNavItem[] = [
   { label: "Recruiter Leads", href: "/tpo/recruiters", shortLabel: "R" },
   {
+    label: "Companies",
+    href: "/tpo/companies",
+    shortLabel: "C",
+  },
+  {
     label: "Placement Operations",
     href: "/tpo/placements",
     shortLabel: "P",

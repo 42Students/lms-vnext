@@ -1,0 +1,422 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  getTpoCompanyDetailView,
+  tpoCompanyDetailQuerySchema,
+} from "@/modules/placements/tpo-companies-view-service";
+
+function dateLabel(value: Date | null) {
+  if (!value) return "—";
+
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(value);
+}
+
+function currency(value: number | null) {
+  return value === null
+    ? "Not recorded"
+    : new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0,
+      }).format(value);
+}
+
+export default async function TpoCompanyDetailPage({
+  params,
+}: {
+  params: Promise<{ companyId: string }>;
+}) {
+  const context = await getCurrentRequestContext();
+
+  if (
+    !context.membership ||
+    !hasMembershipRole(context, "TPO")
+  ) {
+    redirect("/dashboard");
+  }
+
+  const route = await params;
+
+  const parsed = tpoCompanyDetailQuerySchema.safeParse({
+    collegeId: context.membership.collegeId,
+    companyId: route.companyId,
+  });
+
+  if (!parsed.success) notFound();
+
+  const detail = await getTpoCompanyDetailView(
+    context,
+    parsed.data,
+  );
+
+  if (!detail) notFound();
+
+  const {
+    company,
+    contacts,
+    drives,
+    hiringHistory,
+    timeline,
+    contactsAvailable,
+    activitiesAvailable,
+  } = detail;
+
+  return (
+    <div className="space-y-6">
+      <Link
+        href="/tpo/companies"
+        className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+      >
+        ← All companies
+      </Link>
+
+      <PageHeader
+        eyebrow="TPO · Company detail"
+        title={company.name}
+        description="College-linked contacts, placement drives, hiring records and a timeline drawn from persisted events only."
+        actions={
+          <Link
+            href={`/tpo/recruiters?add=1&company=${encodeURIComponent(
+              company.name,
+            )}`}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            Add recruiter contact
+          </Link>
+        }
+      />
+
+      {!contactsAvailable ? (
+        <section
+          role="status"
+          className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-body"
+        >
+          Recruiter CRM data is unavailable in this database.
+          Contact counts and interaction history cannot be
+          verified; the drive and hiring sections remain sourced
+          from persisted placement records.
+        </section>
+      ) : null}
+
+      {contactsAvailable && !activitiesAvailable ? (
+        <section
+          role="status"
+          className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-body"
+        >
+          Recruiter contact activity storage is unavailable.
+          The timeline below contains only available drive,
+          offer and joining events.
+        </section>
+      ) : null}
+
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        {[
+          ["Contacts", company.contacts ?? "Unavailable"],
+          ["Drives", company.drives],
+          ["Offers", company.offers],
+          ["Accepted offers", company.acceptedOffers],
+          ["Confirmed joined learners", company.confirmedJoinedLearners],
+        ].map(([label, value]) => (
+          <div
+            key={label}
+            className="rounded-xl border border-border bg-surface p-4"
+          >
+            <p className="text-xs font-semibold text-muted-foreground">
+              {label}
+            </p>
+            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+              {value}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <section className="rounded-xl border border-border bg-surface">
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="text-lg font-semibold text-foreground">
+              Recruiter contacts
+            </h2>
+            <p className="mt-1 text-sm text-body">
+              Contacts explicitly linked to this college-company
+              relationship.
+            </p>
+          </div>
+
+          {!contactsAvailable ? (
+            <p className="p-5 text-sm text-body">
+              Contact data is unavailable.
+            </p>
+          ) : contacts.length === 0 ? (
+            <p className="p-5 text-sm text-body">
+              No recruiter contacts are linked to this
+              company relationship.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {contacts.map((contact) => (
+                <li key={contact.id} className="px-5 py-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <Link
+                        href={`/tpo/recruiters/${encodeURIComponent(contact.id)}`}
+                        className="font-semibold text-primary-text hover:underline"
+                      >
+                        {contact.name}
+                      </Link>
+                      {contact.designation ? (
+                        <p className="mt-1 text-sm text-body">
+                          {contact.designation}
+                        </p>
+                      ) : null}
+                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                        {[contact.email, contact.phone]
+                          .filter(Boolean)
+                          .join(" · ") || "No contact details"}
+                      </p>
+                      {contact.source ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Source: {contact.source}
+                        </p>
+                      ) : null}
+                    </div>
+                    <StatusBadge
+                      tone={
+                        contact.stage === "NOT_NOW"
+                          ? "warning"
+                          : "neutral"
+                      }
+                    >
+                      {contact.stage.replaceAll("_", " ")}
+                    </StatusBadge>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="rounded-xl border border-border bg-surface">
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="text-lg font-semibold text-foreground">
+              Placement drives
+            </h2>
+            <p className="mt-1 text-sm text-body">
+              All persisted jobs associated with this
+              company relationship, including archived history.
+            </p>
+          </div>
+
+          {drives.length === 0 ? (
+            <p className="p-5 text-sm text-body">
+              No placement drives are recorded for this company.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[34rem] text-left text-sm">
+                <thead className="bg-muted text-muted-foreground">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Drive</th>
+                    <th scope="col" className="px-4 py-3">Status</th>
+                    <th scope="col" className="px-4 py-3">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {drives.map((drive) => (
+                    <tr
+                      key={drive.id}
+                      className="border-t border-border"
+                    >
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/tpo/placements/jobs/${encodeURIComponent(
+                            drive.id,
+                          )}`}
+                          className="font-semibold text-primary-text hover:underline"
+                        >
+                          {drive.title}
+                        </Link>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {drive.employmentType.replaceAll("_", " ")}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge
+                          tone={
+                            drive.status === "PUBLISHED"
+                              ? "success"
+                              : "neutral"
+                          }
+                        >
+                          {drive.status}
+                        </StatusBadge>
+                      </td>
+                      <td className="px-4 py-3">
+                        {dateLabel(drive.createdAt)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <section className="rounded-xl border border-border bg-surface">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            Hiring history
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Recorded offers and joining outcomes across this
+            company&apos;s placement drives. An accepted offer
+            does not automatically mean the learner joined.
+          </p>
+        </div>
+
+        {hiringHistory.length === 0 ? (
+          <p className="p-5 text-sm text-body">
+            No placement offers are recorded for this company.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[65rem] text-left text-sm">
+              <thead className="bg-muted text-muted-foreground">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Learner</th>
+                  <th scope="col" className="px-4 py-3">Role</th>
+                  <th scope="col" className="px-4 py-3">Annual CTC</th>
+                  <th scope="col" className="px-4 py-3">Offer</th>
+                  <th scope="col" className="px-4 py-3">Joining</th>
+                  <th scope="col" className="px-4 py-3">Issued</th>
+                  <th scope="col" className="px-4 py-3">Drive</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hiringHistory.map((offer) => (
+                  <tr
+                    key={offer.id}
+                    className="border-t border-border align-top"
+                  >
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {offer.candidateName || "Unnamed learner"}
+                    </td>
+                    <td className="px-4 py-3 text-body">
+                      {offer.roleTitle}
+                    </td>
+                    <td className="px-4 py-3 tabular-nums text-body">
+                      {currency(offer.annualCtcInr)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <StatusBadge
+                        tone={
+                          offer.status === "ACCEPTED"
+                            ? "success"
+                            : offer.status === "DECLINED"
+                              ? "warning"
+                              : "neutral"
+                        }
+                      >
+                        {offer.status}
+                      </StatusBadge>
+                    </td>
+                    <td className="px-4 py-3">
+                      {offer.joiningStatus ?? "Not recorded"}
+                    </td>
+                    <td className="px-4 py-3 text-body">
+                      {dateLabel(offer.issuedAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/tpo/placements/jobs/${encodeURIComponent(
+                          offer.jobId,
+                        )}`}
+                        className="font-semibold text-primary-text hover:underline"
+                      >
+                        Open drive
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <p className="px-5 py-4 text-xs leading-5 text-muted-foreground">
+          Hiring history represents persisted offer records,
+          including versions and non-accepted statuses. Confirmed
+          joins require an explicit JOINED outcome. No external
+          offers or unregistered placement tables are queried.
+        </p>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            Company timeline
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Most recent 100 recorded contact, drive,
+            offer and joining events.
+          </p>
+        </div>
+
+        {timeline.length === 0 ? (
+          <p className="p-5 text-sm text-body">
+            No persisted timeline events are available.
+          </p>
+        ) : (
+          <ol className="divide-y divide-border">
+            {timeline.map((event) => (
+              <li key={event.id} className="px-5 py-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">
+                      {event.type.replaceAll("_", " ")}
+                    </p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-body">
+                      {event.description}
+                    </p>
+                    {event.href ? (
+                      <Link
+                        href={event.href}
+                        className="mt-2 inline-block text-sm font-semibold text-primary-text hover:underline"
+                      >
+                        Open related record →
+                      </Link>
+                    ) : null}
+                  </div>
+                  <time
+                    dateTime={event.at.toISOString()}
+                    className="text-xs text-muted-foreground"
+                  >
+                    {dateLabel(event.at)} IST
+                  </time>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <p className="text-xs leading-5 text-muted-foreground">
+        Only canonical company relationships and explicitly
+        linked recruiter contacts contribute to this page.
+        Unlinked CRM names are shown separately in the companies
+        directory. Company documents and the legacy interaction
+        workflow remain outside this read-only implementation.
+      </p>
+    </div>
+  );
+}
