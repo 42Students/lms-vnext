@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
-import { firebaseIdentityDirectory } from "@/modules/people/firebase-identity-directory";
+import { localIdentityDirectory } from "@/modules/people/local-identity-directory";
 import { drizzleSystemRoleRepository } from "./repository";
 import {
   assignSystemRole,
@@ -10,7 +10,7 @@ import {
 
 export function bootstrapSuperAdminWithRuntime(rawInput: unknown) {
   return bootstrapSuperAdmin(rawInput, {
-    identityDirectory: firebaseIdentityDirectory,
+    identityDirectory: localIdentityDirectory,
     repository: drizzleSystemRoleRepository,
   });
 }

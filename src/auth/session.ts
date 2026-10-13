@@ -1,12 +1,16 @@
 import "server-only";
 
-import { getIdentityAdminAuth } from "./firebase-admin";
-import { classifySessionVerificationError } from "./session-error";
+import { sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { SESSION_MAX_AGE_SECONDS as MAX_AGE } from "@/modules/auth/config";
+import {
+  resolveSession,
+  revokeAllSessionsForUser,
+} from "@/modules/auth/session-service";
 
 export const SESSION_COOKIE_NAME = "lms_session";
 export const MEMBERSHIP_COOKIE_NAME = "lms_membership";
-export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 5;
-const RECENT_SIGN_IN_SECONDS = 5 * 60;
+export const SESSION_MAX_AGE_SECONDS = MAX_AGE;
 
 export class SessionAuthenticationError extends Error {
   constructor(
@@ -22,37 +26,39 @@ export class SessionAuthenticationError extends Error {
   }
 }
 
-export async function createIdentitySessionCookie(idToken: string) {
-  const auth = getIdentityAdminAuth();
-
-  const decoded = await auth.verifyIdToken(idToken);
-  const nowSeconds = Math.floor(Date.now() / 1000);
-
-  if (
-    typeof decoded.auth_time !== "number" ||
-    nowSeconds - decoded.auth_time > RECENT_SIGN_IN_SECONDS
-  ) {
-    throw new SessionAuthenticationError("RECENT_SIGN_IN_REQUIRED");
-  }
-
-  return auth.createSessionCookie(idToken, {
-    expiresIn: SESSION_MAX_AGE_SECONDS * 1000,
-  });
-}
-
+/**
+ * Verifies the opaque `lms_session` token against the device-session table.
+ * Fails closed: an unknown, expired or revoked token, a disabled user, or any
+ * database error all reject; there is no cached or bypass path.
+ */
 export async function verifyIdentitySessionCookie(sessionCookie: string) {
-  try {
-    return await getIdentityAdminAuth().verifySessionCookie(
-      sessionCookie,
-      true,
-    );
-  } catch (error) {
-    throw new SessionAuthenticationError(
-      classifySessionVerificationError(error),
-    );
+  const resolved = await resolveSession(sessionCookie);
+
+  if (!resolved.ok) {
+    throw new SessionAuthenticationError(resolved.reason);
   }
+
+  if (resolved.session.platformStatus !== "ACTIVE") {
+    throw new SessionAuthenticationError("SESSION_REVOKED");
+  }
+
+  return {
+    uid: resolved.session.identityUid,
+    sessionId: resolved.session.sessionId,
+  };
 }
 
-export async function revokeIdentitySessions(identityUid: string) {
-  await getIdentityAdminAuth().revokeRefreshTokens(identityUid);
+/** Ends every session of the person with this identity UID. */
+export async function revokeIdentitySessions(
+  identityUid: string,
+  reason = "REVOKED_BY_SYSTEM",
+) {
+  const result = await getDb().execute(sql`
+    SELECT id FROM users WHERE identity_uid = ${identityUid} LIMIT 1
+  `);
+  const userId = result.rows[0]?.id as string | undefined;
+
+  if (userId) {
+    await revokeAllSessionsForUser(userId, userId, reason);
+  }
 }

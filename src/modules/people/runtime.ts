@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
-import { firebaseIdentityDirectory } from "./firebase-identity-directory";
+import { localIdentityDirectory } from "./local-identity-directory";
 import { provisionPlatformIdentity } from "./identity-provisioning";
 import { drizzleIdentityProvisioningRepository } from "./identity-provisioning-repository";
 import { e2eIdentityDirectory } from "./e2e-identity-directory";
@@ -35,7 +35,7 @@ function runtimeIdentityDirectory() {
     return e2eIdentityDirectory;
   }
 
-  return firebaseIdentityDirectory;
+  return localIdentityDirectory;
 }
 
 export function provisionPlatformIdentityWithRuntime(

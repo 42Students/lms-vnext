@@ -1,3 +1,19 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { LoginForm } from "@/components/auth/login-form";
+import { resolveRequestTenant } from "@/modules/auth/request-tenant";
+import { getCollegeSignInName } from "@/modules/auth/tenant-branding";
+
+async function isSignedIn() {
+  try {
+    await getCurrentRequestContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 type AuthMessage = {
   title: string;
   description: string;
@@ -52,6 +68,16 @@ export default async function HomePage({
     ? messages[authValue] ?? null
     : null;
 
+  if (await isSignedIn()) redirect("/dashboard");
+
+  const tenant = await resolveRequestTenant(
+    (await headers()).get("host"),
+  );
+  const collegeName =
+    tenant.kind === "college"
+      ? await getCollegeSignInName(tenant.collegeId)
+      : null;
+
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl items-center px-6 py-16">
       <section className="w-full rounded-2xl border border-border bg-surface p-8 shadow-sm">
@@ -62,9 +88,8 @@ export default async function HomePage({
           LMS vNext
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-body">
-          Secure server sessions, canonical identities, and
-          college-scoped access are active in the vNext core
-          platform.
+          Sign in with the phone number or email registered with your
+          college. One account works across every college you belong to.
         </p>
 
         {message ? (
@@ -91,10 +116,15 @@ export default async function HomePage({
           </div>
         ) : null}
 
-        <div className="mt-8 rounded-xl bg-primary-subtle p-4 text-sm text-body">
-          Browser sign-in will connect here when the live
-          Identity Platform project and provider configuration
-          are supplied. No project credentials are hard-coded.
+        <div className="mt-8">
+          {tenant.kind === "unknown" ? (
+            <div className="rounded-xl bg-primary-subtle p-4 text-sm text-body">
+              This address is not set up for sign-in. Use your
+              college&apos;s LMS address.
+            </div>
+          ) : (
+            <LoginForm collegeName={collegeName} />
+          )}
         </div>
       </section>
     </main>
