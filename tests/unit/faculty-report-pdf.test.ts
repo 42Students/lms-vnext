@@ -15,7 +15,7 @@ describe("Faculty PDF reports", () => {
     const pdf = buildFacultyReportPdf(base);
     expect(pdf.startsWith("%PDF-1.4\n")).toBe(true);
     expect(pdf.endsWith("%%EOF\n")).toBe(true);
-    expect(pdf).toContain("(Week 2 \\(Java\\) \\\\\\\\ Homework)");
+    expect(pdf).toContain("(Week 2 \\(Java\\) \\\\ Homework)");
     expect(pdf).toContain("(Submitted: 2/3)");
     const start = Number(pdf.match(/startxref\n(\d+)\n/)?.[1]);
     expect(pdf.slice(start, start + 5)).toBe("xref\n");

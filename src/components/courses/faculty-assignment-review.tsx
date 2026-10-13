@@ -500,18 +500,15 @@ export function FacultyAssignmentReview({
                 key={submission.id}
                 submission={submission}
                 maxPoints={maxPoints}
-                onUpdated={(updated) =>
-                  setSubmissions(
-                    (current) =>
-                      current?.map(
-                        (item) =>
-                          item.id ===
-                          updated.id
-                            ? updated
-                            : item,
-                      ) ?? null,
-                  )
-                }
+                onUpdated={(updated) => {
+                  setSubmissions((current) =>
+                    current?.map((item) =>
+                      item.id === updated.id ? updated : item,
+                    ) ?? null,
+                  );
+                  // Keep server-rendered report aggregates in sync after grade/publish.
+                  router.refresh();
+                }}
               />
             ),
           )}
