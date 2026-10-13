@@ -2,6 +2,7 @@
 
 import {
   type FormEvent,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
@@ -132,6 +134,11 @@ export function FacultyAttendanceWorkspace({
   const [mode, setMode] = useState<
     "REPORT" | "MARK"
   >("REPORT");
+  const [clock, setClock] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(new Date()), 60000);
+    return () => window.clearInterval(timer);
+  }, []);
   const [month, setMonth] = useState(
     () => monthKey(new Date()),
   );
@@ -201,6 +208,14 @@ export function FacultyAttendanceWorkspace({
     workspace.sessions.find(
       (session) => session.id === selectedSessionId,
     ) ?? null;
+  const markingWindow = selectedSession
+    ? facultyAttendanceMarkingWindow({
+        startsAt: new Date(selectedSession.startsAt),
+        endsAt: new Date(selectedSession.endsAt),
+        correctionWindowHours: workspace.policy.correctionWindowHours,
+        now: clock,
+      })
+    : null;
 
   const visibleRoster = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -254,6 +269,7 @@ export function FacultyAttendanceWorkspace({
   async function submitAttendance() {
     if (
       !selectedSession ||
+      markingWindow !== "OPEN" ||
       submitting ||
       submitLock.current
     ) {
@@ -642,6 +658,13 @@ export function FacultyAttendanceWorkspace({
                         ? ` · ${selectedSession.location}`
                         : ""}
                     </p>
+                    {markingWindow !== "OPEN" ? (
+                      <p role="status" className="mt-2 text-xs font-semibold text-warning">
+                        {markingWindow === "NOT_STARTED"
+                          ? "Attendance opens when this class begins."
+                          : "Faculty correction window expired. Ask your College Admin to correct this session."}
+                      </p>
+                    ) : null}
                     <p className="mt-1 text-xs text-muted-foreground">
                       {selectedSession.attendanceStatus ===
                       "MARKED"
@@ -798,6 +821,7 @@ export function FacultyAttendanceWorkspace({
                   disabled={
                     submitting ||
                     !selectedSession ||
+                    markingWindow !== "OPEN" ||
                     workspace.roster.length === 0
                   }
                   onClick={submitAttendance}
