@@ -130,6 +130,16 @@ describe("authenticated shell model", () => {
     ).toBe(false);
   });
 
+  it("gives a Faculty-only membership the exact legacy Courses entry point and icon", () => {
+    const navigation = getShellNavigation(context(["FACULTY"]));
+    expect(navigation[0]).toMatchObject({
+      label: "Courses",
+      href: "/teacher/courses",
+      icon: "/assets/images/common/courses.svg",
+      activeIcon: "/assets/images/common/course.svg",
+    });
+  });
+
   it("gives faculty teaching navigation without admin navigation", () => {
     const shellContext = context(["FACULTY", "MENTOR"]);
 
@@ -142,7 +152,7 @@ describe("authenticated shell model", () => {
       "Projects",
       "Meetings",
     ]);
-    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expect(hrefs(shellContext)).toContain("/teacher/courses");
     expect(hrefs(shellContext)).toContain("/mentor/projects");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
@@ -160,7 +170,7 @@ describe("authenticated shell model", () => {
     // Teaching and mentoring come first, the admin workspace is added after.
     expectInOrder(hrefs(shellContext), [
       "/dashboard",
-      "/teach/courses",
+      "/teacher/courses",
       "/mentor/projects",
       "/college",
       "/college/departments",
@@ -186,7 +196,7 @@ describe("authenticated shell model", () => {
     ]);
 
     expect(hrefs(shellContext)).toContain("/learn/courses");
-    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expect(hrefs(shellContext)).toContain("/teacher/courses");
     expectInOrder(labels(shellContext), [
       "Dashboard",
       "Quizzes",
@@ -263,7 +273,7 @@ describe("authenticated shell model", () => {
       "Recruiter Leads",
       "Placement Operations",
     ]);
-    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expect(hrefs(shellContext)).toContain("/teacher/courses");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
@@ -297,7 +307,7 @@ describe("authenticated shell model", () => {
     );
     expect(courses.map((item) => [item.label, item.href])).toEqual([
       ["Courses · Learning", "/learn/courses"],
-      ["Courses · Teaching", "/teach/courses"],
+      ["Courses · Teaching", "/teacher/courses"],
     ]);
 
     const admin = getShellNavigation(
@@ -336,7 +346,7 @@ describe("authenticated shell model", () => {
     expect(new Set(destinations).size).toBe(destinations.length);
     for (const href of [
       "/learn/courses",
-      "/teach/courses",
+      "/teacher/courses",
       "/college/courses",
       "/learn/notifications",
       "/teacher/notifications",
@@ -394,7 +404,7 @@ describe("authenticated shell model", () => {
     expect(
       navigation.map((item) => item.label),
     ).not.toContain("My Placements");
-    expect(navHrefs).toContain("/teach/courses");
+    expect(navHrefs).toContain("/teacher/courses");
   });
 
   it("adds Drive Day only for a learner with a current coordinator assignment", () => {
