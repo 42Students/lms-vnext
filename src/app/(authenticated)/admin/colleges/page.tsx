@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
 import { CollegeArchiveButton } from "@/components/admin/college-archive-button";
@@ -49,6 +50,12 @@ const columns: DataTableColumn<CollegeRow>[] = [
     className: "text-right",
     cell: (college) => (
       <div className="flex justify-end gap-2">
+        <Link
+          href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        >
+          Readiness
+        </Link>
         <CollegeEditDialog
           college={college}
         />
