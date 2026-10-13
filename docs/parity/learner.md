@@ -19,6 +19,9 @@ The legacy learner information architecture is canonical in vNext. Use the exact
 Layer-0/Layer-1 shell parity materializes the sidebar, legacy route tree and nested Course/Placement/Project navigation. It does **not** close the deeper checklists below; each page still needs section/action/modal/state/backend verification.
 
 ## Page: Courses list
+
+**Mobile/source parity pass:** course-type filters use equal responsive columns on narrow screens, with pressed-state semantics. The mixed All view renders the Electives heading as a separate full-grid-width row rather than widening the first elective card. Browser/mobile acceptance and course thumbnail mapping are still open.
+
 **Legacy route:** `/learn/courses`  
 **vNext:** `/learn/courses`
 

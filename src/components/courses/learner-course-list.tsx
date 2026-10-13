@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -187,7 +187,7 @@ export function LearnerCourseList({
 
           {electiveCount > 0 ? (
             <div
-              className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-subtle p-1"
+              className="grid min-h-11 w-full grid-cols-3 gap-1 rounded-lg border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
               aria-label="Filter by course type"
             >
               {[
@@ -198,14 +198,15 @@ export function LearnerCourseList({
                 <button
                   key={value}
                   type="button"
+                  aria-pressed={typeFilter === value}
                   onClick={() => {
                     setTypeFilter(value as "all" | "core" | "elective");
                     setVisibleLimit(PAGE_SIZE);
                   }}
                   className={
                     typeFilter === value
-                      ? "rounded-md bg-surface px-3 py-2 text-sm font-semibold text-primary-text shadow-sm"
-                      : "rounded-md px-3 py-2 text-sm font-semibold text-body hover:text-primary-text"
+                      ? "min-w-0 rounded-md bg-surface px-2 py-2 text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
+                      : "min-w-0 rounded-md px-2 py-2 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                   }
                 >
                   {label}
@@ -266,16 +267,14 @@ export function LearnerCourseList({
                 coreCount > 0;
 
               return (
-                <div
-                  key={row.course.deliveryId}
-                  className={startsElectiveGroup ? "md:col-span-2 xl:col-span-3" : ""}
-                >
+                <Fragment key={row.course.deliveryId}>
                   {startsElectiveGroup ? (
-                    <h2 className="mb-3 mt-2 text-base font-semibold text-foreground">
+                    <h2 className="col-span-full mb-1 mt-2 text-base font-semibold text-foreground">
                       Electives
                     </h2>
                   ) : null}
-                  <Link
+                  <div className="min-w-0">
+                    <Link
                     href={`/learn/courses/${row.course.deliveryId}/home`}
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
@@ -355,8 +354,9 @@ export function LearnerCourseList({
                         </div>
                       </div>
                     </div>
-                  </Link>
-                </div>
+                    </Link>
+                  </div>
+                </Fragment>
               );
             })}
           </div>
