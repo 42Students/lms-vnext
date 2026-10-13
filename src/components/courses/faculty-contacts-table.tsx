@@ -28,6 +28,8 @@ function initials(name: string) {
 }
 
 function roleLabel(value: string) {
+  if (value === "LEARNER") return "Student";
+  if (value === "COLLEGE_ADMIN") return "College Admin";
   return value
     .toLowerCase()
     .split("_")
@@ -196,17 +198,20 @@ export function FacultyContactsPagination({
   totalPages,
   baseHref,
   search,
+  pageSize,
 }: {
   page: number;
   totalPages: number;
   baseHref: string;
   search: string;
+  pageSize: number;
 }) {
   if (totalPages <= 1) return null;
 
   const href = (nextPage: number) => {
     const params = new URLSearchParams();
     if (search) params.set("q", search);
+    params.set("pageSize", String(pageSize));
     params.set("page", String(nextPage));
     return `${baseHref}?${params.toString()}`;
   };

@@ -157,7 +157,7 @@ function EventCard({
 
   return event.deliveryId ? (
     <Link
-      href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" ? "/home" : ""}`}
+      href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
       className="block rounded-lg outline-none transition hover:-translate-y-px hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       {content}

@@ -108,6 +108,38 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
   await expect(quizzes.getByRole("button", { name: "Create draft" })).toBeVisible();
 });
 
+test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/contacts/allContacts");
+  await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
+  const tabs = page.getByRole("navigation", { name: "Contact types" });
+  for (const label of ["All Contacts", "Teachers", "Students"]) {
+    await expect(tabs.getByRole("link", { name: label })).toBeVisible();
+  }
+  await expect(page.getByRole("columnheader", { name: "Role" })).toBeVisible();
+  await page.getByLabel("Search contacts").fill("learner.seed@example.com");
+  await page.getByLabel("Contacts per page").selectOption("50");
+  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await expect(page).toHaveURL(/q=learner.seed%40example.com/);
+  await expect(page).toHaveURL(/pageSize=50/);
+  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toBeVisible();
+  await expect(page.getByRole("table").getByText("Student")).toBeVisible();
+  await tabs.getByRole("link", { name: "Teachers" }).click();
+  await expect(page.getByRole("columnheader", { name: "Role" })).toHaveCount(0);
+  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toHaveCount(0);
+  await tabs.getByRole("link", { name: "Students" }).click();
+  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toBeVisible();
+});
+
+test("Faculty Contacts renders accessible mobile cards", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/teacher/contacts/students?q=learner.seed%40example.com&pageSize=10");
+  await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText:"learner.seed@example.com" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Students" })).toHaveAttribute("aria-current","page");
+});
+
 test("Faculty mobile tabs remain navigable without a desktop-only action", async ({ page, context }) => {
   await facultyLogin(context);
   await page.setViewportSize({ width: 390, height: 844 });

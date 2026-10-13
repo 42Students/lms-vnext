@@ -32,6 +32,7 @@ export default async function FacultyContactsPage({
   searchParams: Promise<{
     q?: string;
     page?: string;
+    pageSize?: string;
   }>;
 }) {
   const { contactsTab } = await params;
@@ -42,14 +43,18 @@ export default async function FacultyContactsPage({
   const selected =
     tabs[contactsTab as keyof typeof tabs];
   const query = await searchParams;
+  const pageSize = query.pageSize === "20" ? 20 : query.pageSize === "50" ? 50 : 10;
+  const page = /^\d{1,5}$/.test(query.page ?? "1")
+    ? Math.max(1, Number(query.page ?? "1"))
+    : 1;
   const context = await getCurrentRequestContext();
   const result = await listFacultyContacts(
     context,
     {
       tab: selected.value,
       search: query.q ?? "",
-      page: query.page ?? "1",
-      pageSize: 20,
+      page,
+      pageSize,
     },
   );
 
@@ -106,7 +111,7 @@ export default async function FacultyContactsPage({
           </div>
           <form
             action={baseHref}
-            className="flex w-full max-w-md gap-2"
+            className="flex w-full max-w-2xl flex-wrap items-end gap-2"
           >
             <label className="min-w-0 flex-1 text-xs font-semibold text-body">
               Search contacts
@@ -117,9 +122,19 @@ export default async function FacultyContactsPage({
                 placeholder="Name, email or phone"
               />
             </label>
+            <label className="text-xs font-semibold text-body">
+              Contacts per page
+              <select name="pageSize" aria-label="Contacts per page"
+                defaultValue={String(result.pageSize)}
+                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </label>
             <button
               type="submit"
-              className="mt-6 inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
             >
               Search
             </button>
@@ -149,6 +164,7 @@ export default async function FacultyContactsPage({
         totalPages={result.totalPages}
         baseHref={baseHref}
         search={result.search}
+        pageSize={result.pageSize}
       />
     </div>
   );

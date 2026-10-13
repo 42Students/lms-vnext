@@ -46,7 +46,7 @@ export function FacultyCourseHomeSignals({
     signals.pendingSubmissions[0] ?? null;
   const reviewHref = firstPending
     ? `/teacher/report/assignment/${firstPending.assignmentId}?deliveryId=${encodeURIComponent(deliveryId)}`
-    : `/teach/courses/${deliveryId}#learning-path`;
+    : `/teacher/courses/${deliveryId}/blueprint#learning-path`;
 
   return (
     <div className="space-y-5">

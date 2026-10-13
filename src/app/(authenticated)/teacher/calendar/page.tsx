@@ -35,7 +35,7 @@ export default async function FacultyCalendarPage() {
         sections={schedule.sections}
         courses={schedule.courses}
         events={events}
-        courseBasePath="/teach/courses"
+        courseBasePath="/teacher/courses"
       />
     </div>
   );
