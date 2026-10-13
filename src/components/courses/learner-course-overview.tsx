@@ -89,7 +89,7 @@ export function LearnerCourseOverview({
 }) {
   const summary = workspace.summary;
   const next = workspace.nextItem;
-  const now = Date.now();
+  const now = workspace.snapshotNowMs;
   const activityCutoff = now + 14 * 24 * 60 * 60 * 1000;
 
   // Legacy parity: takeaways are explicitly authored Course Home metadata.
