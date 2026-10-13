@@ -75,6 +75,8 @@ export function FacultyLessonAuthoring({
   nextContentSequence,
   nextAssignmentSequence,
   nextQuizSequence,
+  initialMode = null,
+  availableModes,
 }: {
   lessonId: string;
   deliveryId: string | null;
@@ -82,10 +84,12 @@ export function FacultyLessonAuthoring({
   nextContentSequence: number;
   nextAssignmentSequence: number;
   nextQuizSequence: number;
+  initialMode?: Mode | null;
+  availableModes?: readonly Mode[];
 }) {
   const router = useRouter();
   const [mode, setMode] =
-    useState<Mode | null>(null);
+    useState<Mode | null>(initialMode);
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [url, setUrl] = useState("");
@@ -576,6 +580,7 @@ export function FacultyLessonAuthoring({
 
       {!mode ? (
         <div className="mt-3 flex flex-wrap gap-2">
+          {(!availableModes || availableModes.includes("RESOURCE")) ? (
           <Button
             size="sm"
             variant="secondary"
@@ -585,6 +590,8 @@ export function FacultyLessonAuthoring({
           >
             + Resource
           </Button>
+          ) : null}
+          {(!availableModes || availableModes.includes("YOUTUBE")) ? (
           <Button
             size="sm"
             variant="secondary"
@@ -594,6 +601,8 @@ export function FacultyLessonAuthoring({
           >
             + YouTube
           </Button>
+          ) : null}
+          {(!availableModes || availableModes.includes("LIVE_CLASS")) ? (
           <Button
             size="sm"
             variant="secondary"
@@ -603,6 +612,8 @@ export function FacultyLessonAuthoring({
           >
             + Live class
           </Button>
+          ) : null}
+          {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           <Button
             size="sm"
             variant="secondary"
@@ -612,6 +623,8 @@ export function FacultyLessonAuthoring({
           >
             + Assignment
           </Button>
+          ) : null}
+          {(!availableModes || availableModes.includes("QUIZ")) ? (
           <Button
             size="sm"
             variant="secondary"
@@ -621,6 +634,7 @@ export function FacultyLessonAuthoring({
           >
             + Quiz
           </Button>
+          ) : null}
         </div>
       ) : (
         <form
@@ -1105,7 +1119,7 @@ export function FacultyLessonAuthoring({
         </form>
       )}
 
-      {!mode ? (
+      {!mode && (!availableModes || availableModes.some((choice) => choice === "RESOURCE" || choice === "YOUTUBE" || choice === "LIVE_CLASS")) ? (
         <p className="mt-3 text-xs text-muted-foreground">
           File/video upload authoring is hidden
           until signed Cloud Storage upload receipts
