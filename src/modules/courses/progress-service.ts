@@ -24,6 +24,9 @@ import {
   type SaveLearnerContentProgressInput,
 } from "./validation";
 
+/** Persisted-position threshold required to finish timed content. */
+export const TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT = 90;
+
 const TIMED_TYPES = new Set([
   "VIDEO",
   "YOUTUBE",
@@ -314,7 +317,8 @@ export async function saveLearnerContentProgress(
     );
     shouldComplete =
       positionSeconds * 100 >=
-      content.durationSeconds * 90;
+      content.durationSeconds *
+        TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT;
   } else {
     if (
       input.positionSeconds !== undefined &&

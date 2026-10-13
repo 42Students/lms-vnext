@@ -46,6 +46,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "HR Accounts", href: "/admin/hr", shortLabel: "H" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
+  { label: "Settings", href: "/admin/settings", shortLabel: "S" },
   { label: "Activity", href: "/activity", shortLabel: "A" },
 ];
 

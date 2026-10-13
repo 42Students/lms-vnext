@@ -1,0 +1,146 @@
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import {
+  formatPlatformSettingValue,
+  platformSettingOriginLabel,
+} from "@/modules/platform-settings/model";
+import {
+  getSuperAdminPlatformSettings,
+} from "@/modules/platform-settings/service";
+
+export const dynamic = "force-dynamic";
+
+export default async function SuperAdminSettingsPage() {
+  const context =
+    await getCurrentRequestContext();
+
+  const { selectedCollegeName, sections } =
+    await getSuperAdminPlatformSettings(context);
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Super Admin · Platform"
+        title="Platform settings"
+        description="Read-only inventory of selected effective source limits and college policy values. No settings can be changed from this page."
+      />
+
+      <section
+        role="status"
+        aria-label="Settings scope"
+        className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+      >
+        <p className="font-semibold text-foreground">
+          {selectedCollegeName
+            ? `Selected college: ${selectedCollegeName}`
+            : "No college selected"}
+        </p>
+        <p className="mt-1">
+          {selectedCollegeName
+            ? "Per-college rows show persisted policy values where available, otherwise their established source defaults."
+            : "Fixed platform values are shown. Per-college rows show fallback defaults only; select a college using the Super Admin scope selector to see its effective policy overrides."}
+        </p>
+      </section>
+
+      <nav
+        aria-label="Settings sections"
+        className="flex flex-wrap gap-2"
+      >
+        {sections.map((section) => (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          >
+            {section.title}
+          </a>
+        ))}
+      </nav>
+
+      {sections.map((section) => (
+        <section
+          id={section.id}
+          key={section.id}
+          aria-labelledby={`${section.id}-heading`}
+          className="space-y-4 scroll-mt-8"
+        >
+          <div>
+            <h2
+              id={`${section.id}-heading`}
+              className="text-lg font-semibold text-foreground"
+            >
+              {section.title}
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-body">
+              {section.description}
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
+              <thead className="bg-surface-subtle">
+                <tr>
+                  {[
+                    "Setting",
+                    "Value",
+                    "Origin",
+                    "Source file or table",
+                  ].map((heading) => (
+                    <th
+                      key={heading}
+                      scope="col"
+                      className="border-b border-border px-4 py-3 font-semibold text-foreground"
+                    >
+                      {heading}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {section.items.map((setting) => (
+                  <tr
+                    key={`${section.id}:${setting.label}`}
+                    className="border-b border-border last:border-0"
+                  >
+                    <th
+                      scope="row"
+                      className="px-4 py-3 font-semibold text-foreground"
+                    >
+                      {setting.label}
+                    </th>
+                    <td className="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-foreground">
+                      {formatPlatformSettingValue(setting)}
+                    </td>
+                    <td className="px-4 py-3 text-body">
+                      {platformSettingOriginLabel(
+                        setting.origin,
+                      )}
+                    </td>
+                    <td className="break-all px-4 py-3 font-mono text-xs text-muted-foreground">
+                      {setting.source}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {section.note ? (
+            <p className="rounded-lg bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
+              {section.note}
+            </p>
+          ) : null}
+        </section>
+      ))}
+
+      <p className="text-xs leading-6 text-muted-foreground">
+        Inventory scope is intentionally limited to
+        non-secret numeric and boolean values.
+        Environment variables, credentials, API keys,
+        tokens, connection details and custom
+        configuration blobs are neither read nor
+        displayed. This is not a global settings editor.
+      </p>
+    </div>
+  );
+}
