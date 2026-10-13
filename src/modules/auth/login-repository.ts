@@ -108,41 +108,55 @@ export const drizzleLoginRepository: LoginRepository = {
     return Boolean(row);
   },
 
-  async countRecentAttempts(fingerprint, windowMinutes) {
-    const result = await getDb().execute(sql`
-      SELECT count(*)::int AS n
-      FROM identity_auth_attempts
-      WHERE contact_fingerprint = ${fingerprint}
-        AND created_at > now() - make_interval(mins => ${windowMinutes})
-    `);
-    return Number(rowsOf(result)[0]?.n ?? 0);
-  },
-
   async createAttempt(input) {
     // Serialize concurrent starts for one contact so the send cap cannot be
     // exceeded by a burst of parallel requests.
     return getDb().transaction(async (tx) => {
+      // Always contact first, then address, so concurrent starts cannot deadlock.
       await tx.execute(
         sql`SELECT pg_advisory_xact_lock(hashtext(${input.contactFingerprint}))`,
       );
+      if (input.ipTag) {
+        await tx.execute(
+          sql`SELECT pg_advisory_xact_lock(hashtext(${"ip:" + input.ipTag}))`,
+        );
+      }
       const counted = await tx.execute(sql`
-        SELECT count(*)::int AS n
+        SELECT
+          count(*) FILTER (
+            WHERE contact_fingerprint = ${input.contactFingerprint}
+              AND ip_tag IS NOT DISTINCT FROM ${input.ipTag}
+          )::int AS contact_and_address,
+          count(*) FILTER (
+            WHERE contact_fingerprint = ${input.contactFingerprint}
+          )::int AS contact_total,
+          count(*) FILTER (
+            WHERE ${input.ipTag}::text IS NOT NULL AND ip_tag = ${input.ipTag}
+          )::int AS address_total
         FROM identity_auth_attempts
-        WHERE contact_fingerprint = ${input.contactFingerprint}
-          AND created_at > now() - make_interval(mins => ${input.rateLimit.windowMinutes})
+        WHERE created_at > now() - make_interval(mins => ${input.rateLimit.windowMinutes})
+          AND (contact_fingerprint = ${input.contactFingerprint}
+               OR (${input.ipTag}::text IS NOT NULL AND ip_tag = ${input.ipTag}))
       `);
-      if (Number(rowsOf(counted)[0]?.n ?? 0) >= input.rateLimit.max) {
+      const row = rowsOf(counted)[0] as
+        | { contact_and_address: number; contact_total: number; address_total: number }
+        | undefined;
+      if (
+        Number(row?.contact_and_address ?? 0) >= input.rateLimit.perContactAndAddress ||
+        Number(row?.contact_total ?? 0) >= input.rateLimit.perContact ||
+        Number(row?.address_total ?? 0) >= input.rateLimit.perAddress
+      ) {
         return false;
       }
       await tx.execute(sql`
       INSERT INTO identity_auth_attempts (
-        id, user_id, college_id, target_role, contact_fingerprint,
+        id, user_id, college_id, target_role, contact_fingerprint, ip_tag,
         sms_code_mac, sms_code_expires_at,
         email_code_mac, email_code_expires_at, email_code_sent_at,
         created_at, expires_at
       ) VALUES (
         ${input.id}, ${input.userId}, ${input.collegeId}, 'LOGIN',
-        ${input.contactFingerprint},
+        ${input.contactFingerprint}, ${input.ipTag},
         ${input.smsCodeMac},
         ${input.smsCodeMac ? sql`now() + interval '5 minutes'` : null},
         ${input.emailCodeMac},

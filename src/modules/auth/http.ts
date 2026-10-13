@@ -11,7 +11,7 @@ import { LoginError } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
 
 /** Short one-way tag so repeated activity can be correlated without storing the address. */
-function ipTag(ip: string) {
+export function ipTag(ip: string) {
   return createHash("sha256").update(ip).digest("hex").slice(0, 12);
 }
 

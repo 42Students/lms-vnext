@@ -33,6 +33,9 @@ export const identityAuthAttempts = pgTable(
     targetRole: varchar("target_role", { length: 24 }).notNull(),
     contactFingerprint: varchar("contact_fingerprint", { length: 64 })
       .notNull(),
+    // Short one-way tag of the requesting address; lets the send cap count
+    // per contact AND per requester so one caller cannot lock a person out.
+    ipTag: varchar("ip_tag", { length: 24 }),
     smsCodeMac: varchar("sms_code_mac", { length: 64 }),
     smsCodeExpiresAt: timestamp("sms_code_expires_at", { withTimezone: true }),
     emailCodeMac: varchar("email_code_mac", { length: 64 }),
@@ -72,6 +75,15 @@ export const identityAuthAttempts = pgTable(
       table.createdAt,
     ),
     index("identity_auth_attempts_expiry_idx").on(table.expiresAt),
+    index("identity_auth_attempts_contact_ip_idx").on(
+      table.contactFingerprint,
+      table.ipTag,
+      table.createdAt,
+    ),
+    index("identity_auth_attempts_ip_rate_idx").on(
+      table.ipTag,
+      table.createdAt,
+    ),
     check(
       "identity_auth_attempts_expiry_ck",
       sql`${table.expiresAt} > ${table.createdAt}`,
