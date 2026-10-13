@@ -450,3 +450,76 @@ describe("verifyLogin", () => {
     ).toBe("INVALID_ATTEMPT");
   });
 });
+
+describe("platform administrator second factor", () => {
+  async function adminStart(channel: "PHONE" | "EMAIL" = "PHONE") {
+    const ctx = setup();
+    ctx.repository.superAdmins.add("user-1");
+    const result = await startLogin(
+      {
+        channel,
+        contact: channel === "PHONE" ? "9100060001" : "learner@example.test",
+        tenantCollegeId: null,
+      },
+      ctx.deps,
+    );
+    const sms = ctx.sent.find((m) => m.channel === "sms")!.code;
+    const mail = ctx.sent.find((m) => m.channel === "email")!.code;
+    return { ...ctx, result, sms, mail };
+  }
+
+  it("sends a code to both the phone and the email whichever the entry point", async () => {
+    for (const channel of ["PHONE", "EMAIL"] as const) {
+      const { result, sent } = await adminStart(channel);
+      expect(result.requiresSecondFactor).toBe(true);
+      expect(sent.map((m) => m.channel).sort()).toEqual(["email", "sms"]);
+    }
+  });
+
+  it("does not require a second factor from ordinary users", async () => {
+    const ctx = setup();
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: null },
+      ctx.deps,
+    );
+    expect(result.requiresSecondFactor).toBe(false);
+    expect(ctx.sent).toHaveLength(1);
+  });
+
+  it("signs in only when both codes match their own channel", async () => {
+    const { deps, result, sms, mail } = await adminStart();
+    const base = { attemptId: result.attemptId, tenantCollegeId: null };
+
+    // The phone code alone, the same code twice and swapped codes all fail.
+    expect(await code(verifyLogin({ ...base, code: sms }, deps))).toBe(
+      "SECOND_FACTOR_REQUIRED",
+    );
+    expect(
+      await code(verifyLogin({ ...base, code: sms, secondCode: sms }, deps)),
+    ).toBe("INCORRECT_OTP");
+    expect(
+      await code(verifyLogin({ ...base, code: mail, secondCode: sms }, deps)),
+    ).toBe("INCORRECT_OTP");
+
+    const verified = await verifyLogin(
+      { ...base, code: sms, secondCode: mail },
+      deps,
+    );
+    expect(verified.isSuperAdmin).toBe(true);
+  });
+
+  it("refuses an administrator without both a phone and an email on file", async () => {
+    const ctx = setup();
+    ctx.repository.superAdmins.add("user-1");
+    ctx.repository.users[0] = { ...learner, email: null };
+    expect(
+      await code(
+        startLogin(
+          { channel: "PHONE", contact: "9100060001", tenantCollegeId: null },
+          ctx.deps,
+        ),
+      ),
+    ).toBe("SECOND_FACTOR_UNAVAILABLE");
+    expect(ctx.sent).toHaveLength(0);
+  });
+});

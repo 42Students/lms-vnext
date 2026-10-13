@@ -46,7 +46,9 @@ export type LoginErrorCode =
   | "OTP_ATTEMPTS_EXCEEDED"
   | "INCORRECT_OTP"
   | "WRONG_TENANT"
-  | "EMAIL_NOT_AVAILABLE";
+  | "EMAIL_NOT_AVAILABLE"
+  | "SECOND_FACTOR_REQUIRED"
+  | "SECOND_FACTOR_UNAVAILABLE";
 
 const STATUS: Record<LoginErrorCode, number> = {
   INVALID_CONTACT: 400,
@@ -63,6 +65,8 @@ const STATUS: Record<LoginErrorCode, number> = {
   INCORRECT_OTP: 401,
   WRONG_TENANT: 403,
   EMAIL_NOT_AVAILABLE: 400,
+  SECOND_FACTOR_REQUIRED: 401,
+  SECOND_FACTOR_UNAVAILABLE: 403,
 };
 
 export class LoginError extends Error {
@@ -187,6 +191,12 @@ export type StartLoginResult = {
   expiresInSeconds: number;
   emailFallbackAvailable: boolean;
   maskedEmail: string | null;
+  /**
+   * Platform administrators must prove both their phone and their email:
+   * the challenge sent one code to each and sign-in needs both.
+   */
+  requiresSecondFactor: boolean;
+  maskedPhone: string | null;
 };
 
 async function assertCanSignInHere(
@@ -257,53 +267,61 @@ export async function startLogin(
     throw new LoginError("TOO_MANY_REQUESTS", SEND_WINDOW_MINUTES * 60);
   }
 
-  const isTestContact = isPhone
-    ? deps.config.testPhones.has(normalized)
-    : deps.config.testEmails.has(normalized);
-  const code =
-    isTestContact && deps.config.testOtp
-      ? deps.config.testOtp
-      : generateCode();
+  const strong = await deps.repository.isSuperAdmin(user.id);
+  if (strong && (!user.phoneE164 || !user.email)) {
+    // Policy: a platform administrator needs two independently verified
+    // contacts. Never fall back to a single factor.
+    throw new LoginError("SECOND_FACTOR_UNAVAILABLE");
+  }
+
+  const pick = (testSet: ReadonlySet<string>, contact: string) => {
+    const isTest = testSet.has(contact);
+    return {
+      isTest,
+      code: isTest && deps.config.testOtp ? deps.config.testOtp : generateCode(),
+    };
+  };
 
   const attemptId = deps.newId();
-  const mac = codeMac(
-    deps.config.secret,
-    isPhone ? "sms" : "email",
-    attemptId,
-    code,
-  );
+  const phoneContact = strong ? user.phoneE164! : isPhone ? normalized : null;
+  const emailContact = strong ? user.email!.toLowerCase() : isPhone ? null : normalized;
+  const sms = phoneContact ? pick(deps.config.testPhones, phoneContact) : null;
+  const mail = emailContact ? pick(deps.config.testEmails, emailContact) : null;
 
   await deps.repository.createAttempt({
     id: attemptId,
     userId: user.id,
     collegeId: input.tenantCollegeId,
     contactFingerprint: fingerprint,
-    smsCodeMac: isPhone ? mac : null,
-    emailCodeMac: isPhone ? null : mac,
+    smsCodeMac: sms ? codeMac(deps.config.secret, "sms", attemptId, sms.code) : null,
+    emailCodeMac: mail ? codeMac(deps.config.secret, "email", attemptId, mail.code) : null,
   });
 
-  if (!isTestContact) {
-    const accepted = isPhone
-      ? await deps.sms.sendOtp(normalized, code)
-      : await deps.email.sendOtpEmail({
-          toEmail: normalized,
-          displayName: user.displayName ?? "there",
-          code,
-          phoneE164: user.phoneE164,
-        });
-
+  if (sms && phoneContact && !sms.isTest) {
+    if (!(await deps.sms.sendOtp(phoneContact, sms.code))) {
+      throw new LoginError("OTP_DELIVERY_FAILED");
+    }
+  }
+  if (mail && emailContact && !mail.isTest) {
+    const accepted = await deps.email.sendOtpEmail({
+      toEmail: emailContact,
+      displayName: user.displayName ?? "there",
+      code: mail.code,
+      phoneE164: user.phoneE164,
+    });
     if (!accepted) throw new LoginError("OTP_DELIVERY_FAILED");
   }
 
   return {
     attemptId,
     channel: input.channel,
-    maskedContact: isPhone
-      ? maskPhone(normalized)
-      : maskEmail(normalized),
+    maskedContact: isPhone ? maskPhone(normalized) : maskEmail(normalized),
     expiresInSeconds: ATTEMPT_LIFETIME_SECONDS,
     emailFallbackAvailable: isPhone && Boolean(user.email),
-    maskedEmail: isPhone && user.email ? maskEmail(user.email) : null,
+    maskedEmail:
+      (isPhone || strong) && user.email ? maskEmail(user.email) : null,
+    requiresSecondFactor: strong,
+    maskedPhone: user.phoneE164 ? maskPhone(user.phoneE164) : null,
   };
 }
 
@@ -387,6 +405,8 @@ export async function verifyLogin(
   input: {
     attemptId: string;
     code: string;
+    /** Email code; required when the account is a platform administrator. */
+    secondCode?: string;
     tenantCollegeId: string | null;
   },
   deps: LoginDependencies,
@@ -402,37 +422,38 @@ export async function verifyLogin(
   if (!reserved) throw new LoginError("OTP_ATTEMPTS_EXCEEDED");
 
   const now = deps.now().getTime();
-  const candidates: string[] = [];
-  if (
-    attempt.smsCodeMac &&
-    attempt.smsCodeExpiresAt &&
-    attempt.smsCodeExpiresAt.getTime() > now
-  ) {
-    candidates.push(attempt.smsCodeMac);
-  }
-  if (
-    attempt.emailCodeMac &&
-    attempt.emailCodeExpiresAt &&
-    attempt.emailCodeExpiresAt.getTime() > now
-  ) {
-    candidates.push(attempt.emailCodeMac);
-  }
+  const live = (mac: string | null, expiresAt: Date | null) =>
+    mac !== null && expiresAt !== null && expiresAt.getTime() > now
+      ? mac
+      : null;
+  const smsMac = live(attempt.smsCodeMac, attempt.smsCodeExpiresAt);
+  const emailMac = live(attempt.emailCodeMac, attempt.emailCodeExpiresAt);
 
-  const submitted = input.code.trim();
-  let matched = false;
-  for (const stored of candidates) {
-    const channel = stored === attempt.smsCodeMac ? "sms" : "email";
-    const attemptMac = codeMac(
-      deps.config.secret,
-      channel,
-      attempt.id,
-      submitted,
+  const matches = (
+    channel: "sms" | "email",
+    stored: string | null,
+    submittedCode: string,
+  ) =>
+    stored !== null &&
+    safeEqualHex(
+      codeMac(deps.config.secret, channel, attempt.id, submittedCode.trim()),
+      stored,
     );
-    // Evaluate every candidate so timing does not reveal which matched.
-    if (safeEqualHex(attemptMac, stored)) matched = true;
-  }
 
-  if (!matched) throw new LoginError("INCORRECT_OTP");
+  const strong = await deps.repository.isSuperAdmin(attempt.userId);
+  if (strong) {
+    // Both factors must match, each against its own channel.
+    if (!input.secondCode) throw new LoginError("SECOND_FACTOR_REQUIRED");
+    // Evaluate both so timing does not reveal which failed.
+    const smsOk = matches("sms", smsMac, input.code);
+    const emailOk = matches("email", emailMac, input.secondCode);
+    if (!(smsOk && emailOk)) throw new LoginError("INCORRECT_OTP");
+  } else {
+    // Either channel's code is enough for everyone else.
+    const smsOk = matches("sms", smsMac, input.code);
+    const emailOk = matches("email", emailMac, input.code);
+    if (!(smsOk || emailOk)) throw new LoginError("INCORRECT_OTP");
+  }
 
   // Authorization is checked at consume time, not just at issue time.
   const user = await deps.repository.findUserById(attempt.userId);

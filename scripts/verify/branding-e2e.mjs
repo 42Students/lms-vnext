@@ -23,7 +23,7 @@ let pass = 0, fail = 0; const check = (n, ok, d = "") => { console.log(`${ok ? "
 async function login(phone, host) {
   await sleep(LIVE ? 7000 : 0);
   const s = await call("POST", "/api/auth/login/start", { host, body: { channel: "PHONE", contact: phone } });
-  const v = await call("POST", "/api/auth/login/verify", { host, body: { attemptId: s.json?.attemptId, code: "135790" } });
+  const v = await call("POST", "/api/auth/login/verify", { host, body: { attemptId: s.json?.attemptId, code: "135790", secondCode: "135790" } });
   return jar(v.setCookie);
 }
 const adminA = await login("9100061104", A);

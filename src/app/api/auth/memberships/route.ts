@@ -6,9 +6,12 @@ import {
   SESSION_MAX_AGE_SECONDS,
   SessionAuthenticationError,
 } from "@/auth/session";
+import { headers } from "next/headers";
 import {
   getCurrentIdentityUid,
 } from "@/auth/request-context";
+import { resolveRequestTenant } from "@/modules/auth/request-tenant";
+import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
   ContextResolutionError,
   listMembershipChoices,
@@ -48,10 +51,33 @@ function authErrorResponse(error: unknown) {
   );
 }
 
+/**
+ * A college host serves only that college: the list and the switch are limited
+ * to it, and an unknown host serves nothing (same rule as every other
+ * authenticated request).
+ */
+async function hostCollegeScope(identityUid: string) {
+  const tenant = await resolveRequestTenant(
+    (await headers()).get("host"),
+  );
+  const context = await resolveRequestContext({
+    identityUid,
+    activeMembershipId: null,
+  });
+  if (!isTenantAccessAllowed(context, tenant)) {
+    throw new SessionAuthenticationError("SESSION_INVALID");
+  }
+  return tenant.kind === "college" ? tenant.collegeId : null;
+}
+
 export async function GET() {
   try {
     const identityUid = await getCurrentIdentityUid();
-    const memberships = await listMembershipChoices(identityUid);
+    const collegeScope = await hostCollegeScope(identityUid);
+    const choices = await listMembershipChoices(identityUid);
+    const memberships = collegeScope
+      ? choices.filter((choice) => choice.collegeId === collegeScope)
+      : choices;
 
     return NextResponse.json({ memberships });
   } catch (error) {
@@ -69,6 +95,7 @@ export async function POST(request: Request) {
 
   try {
     const identityUid = await getCurrentIdentityUid();
+    const collegeScope = await hostCollegeScope(identityUid);
 
     let body: unknown;
     try {
@@ -96,6 +123,9 @@ export async function POST(request: Request) {
 
     const membership = context.membership;
     if (!membership) {
+      throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
+    }
+    if (collegeScope && membership.collegeId !== collegeScope) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
 
