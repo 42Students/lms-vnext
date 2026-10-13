@@ -255,3 +255,7 @@ Faculty Blueprint items now link to exact Section-scoped Assignment/Quiz Reports
 ## 2026-10-13 Faculty Blueprint metadata editing
 
 The Faculty Blueprint now provides an Edit content drawer for Section-owned Resource, YouTube, and Live Class items. The existing PATCH service rechecks exact Section teaching authorization and parent lifecycle. The UI checks HTTPS URLs, YouTube host/duration and Live Class chronology. Shared Offering items remain read-only for Faculty; VIDEO edits remain blocked pending private-file capabilities. Unit and browser/DB acceptance must pass before parity closure.
+
+## Faculty independent browser verification and route recovery (2026-10-13)
+
+Added a standalone Faculty-only Playwright suite covering authenticated Course search, Section-isolated Blueprint resources, metadata editor, all five legacy tabs, mobile navigation, and aggregate Assessment draft drawers. It is separate from the serial Learner course suite so unrelated learner regressions cannot silently skip Faculty assertions. Faculty course list and detail routes now have retry/error and skeleton loading surfaces. All checks remain OPEN until the new suite executes at a known commit; the broader clone gate and Faculty Profile remain blocked independently.
