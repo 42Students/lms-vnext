@@ -31,3 +31,33 @@ describe("baseline HTTP security headers", () => {
     );
   });
 });
+
+describe("content security policy and transport security", () => {
+  const values = new Map(
+    BASE_SECURITY_HEADERS.map((header) => [
+      header.key,
+      header.value,
+    ]),
+  );
+  const csp = String(values.get("Content-Security-Policy"));
+
+  it("locks down framing, plugins, base URI and form targets", () => {
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("object-src 'none'");
+    expect(csp).toContain("base-uri 'self'");
+    expect(csp).toContain("form-action 'self'");
+    expect(csp).toContain("default-src 'self'");
+  });
+
+  it("only allows scripts from this origin and never plain http", () => {
+    expect(csp).toMatch(/script-src 'self'/);
+    expect(csp).not.toContain("http:");
+    expect(csp).not.toMatch(/script-src[^;]*\*/);
+  });
+
+  it("sends HSTS", () => {
+    expect(values.get("Strict-Transport-Security")).toMatch(
+      /max-age=\d{7,}/,
+    );
+  });
+});
