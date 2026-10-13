@@ -186,6 +186,11 @@ const tpoItems: ShellNavItem[] = [
     shortLabel: "P",
   },
   {
+    label: "Students",
+    href: "/tpo/students",
+    shortLabel: "S",
+  },
+  {
     label: "Calendar",
     href: "/tpo/calendar",
     shortLabel: "C",
