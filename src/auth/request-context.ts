@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import {
   MEMBERSHIP_COOKIE_NAME,
   SESSION_COOKIE_NAME,
@@ -13,6 +13,8 @@ import {
   resolveE2eIdentityUid,
 } from "./e2e-identity";
 import { resolveRequestContext } from "@/modules/identity/context-service";
+import { resolveRequestTenant } from "@/modules/auth/request-tenant";
+import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   decodeAdminScopeCookie,
@@ -59,11 +61,21 @@ export async function getCurrentRequestContext() {
     cookieStore.get(ADMIN_SCOPE_COOKIE_NAME)?.value,
   );
 
-  return resolveRequestContext({
+  const context = await resolveRequestContext({
     identityUid,
     activeMembershipId,
     adminScope,
   });
+
+  // A college host serves only that college, whatever cookies are presented.
+  const tenant = await resolveRequestTenant(
+    (await headers()).get("host"),
+  );
+  if (!isTenantAccessAllowed(context, tenant)) {
+    throw new SessionAuthenticationError("SESSION_INVALID");
+  }
+
+  return context;
 }
 
 export async function getCurrentIdentityUid() {
