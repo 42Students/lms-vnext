@@ -161,6 +161,7 @@ function decisionView(
 export async function getTpoStudentsIntelligence(
   context: RequestContext,
   rawInput: unknown,
+  options: { includeExportRows?: boolean } = {},
 ) {
   const input =
     tpoStudentsQuerySchema.parse(rawInput);
@@ -302,8 +303,11 @@ export async function getTpoStudentsIntelligence(
     );
 
   const registrationChoiceByLearner = new Map<string, string>();
+  const registrationsAvailable = await placementTableExists(
+    "placement_batch_registrations",
+  );
 
-  if (await placementTableExists("placement_batch_registrations")) {
+  if (registrationsAvailable) {
     const registrations = await db
       .select({
         membershipId: placementBatchRegistrations.membershipId,
@@ -338,7 +342,12 @@ export async function getTpoStudentsIntelligence(
         [],
         input,
       ),
+      // Server-only export option: avoids repeated full-college queries
+      // for each CSV page. Never serialize this field into client props.
+      exportRows: options.includeExportRows ? [] : null,
       definitions: {
+        registrationsAvailable,
+        externalOffersAvailable,
         registrationScope: "ACTIVE_COHORT",
         applicationScope: "ACTIVE_SEASON",
         readinessVerified: false,
@@ -809,7 +818,19 @@ export async function getTpoStudentsIntelligence(
       studentRows,
       input,
     ),
+    // Filtering here uses the same pure derivation as the visible roster.
+    // Page size is deliberately unrestricted only inside this trusted,
+    // authorized service operation; public input remains Zod-bounded.
+    exportRows: options.includeExportRows
+      ? filterTpoStudentRoster(studentRows, {
+          ...input,
+          page: 1,
+          pageSize: Math.max(1, studentRows.length),
+        }).items
+      : null,
     definitions: {
+      registrationsAvailable,
+      externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",
       applicationScope: "ACTIVE_SEASON",
       readinessVerified: false,

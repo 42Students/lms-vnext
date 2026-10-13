@@ -335,10 +335,12 @@ describe("authenticated shell model", () => {
       "Courses",
       "Recruiter Leads",
       "Placement Operations",
+      "Students",
       "Calendar",
     ]);
     expect(hrefs(shellContext)).toContain("/teacher/courses");
     expect(hrefs(shellContext)).toContain("/tpo/calendar");
+    expect(hrefs(shellContext)).toContain("/tpo/students");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
