@@ -6,7 +6,7 @@
 -- ---------------------------------------------------------------------------
 -- 1) Program-scoped term identity + ordered curriculum
 -- ---------------------------------------------------------------------------
-CREATE TABLE program_terms (
+CREATE TABLE IF NOT EXISTS program_terms (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   program_id uuid NOT NULL REFERENCES programs(id) ON DELETE RESTRICT,
   term_number integer NOT NULL,
@@ -21,10 +21,10 @@ CREATE TABLE program_terms (
   CONSTRAINT program_terms_program_number_uq UNIQUE (program_id, term_number)
 );
 
-CREATE INDEX program_terms_program_active_idx
+CREATE INDEX IF NOT EXISTS program_terms_program_active_idx
   ON program_terms(program_id, is_active, term_number);
 
-CREATE FUNCTION db02_guard_program_term_bounds()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_bounds()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   max_terms integer;
@@ -41,11 +41,12 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_term_bounds_guard ON program_terms;
 CREATE TRIGGER db02_program_term_bounds_guard
 BEFORE INSERT OR UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_bounds();
 
-CREATE TABLE program_term_courses (
+CREATE TABLE IF NOT EXISTS program_term_courses (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   program_term_id uuid NOT NULL REFERENCES program_terms(id) ON DELETE RESTRICT,
   course_id uuid NOT NULL REFERENCES courses(id) ON DELETE RESTRICT,
@@ -59,12 +60,12 @@ CREATE TABLE program_term_courses (
   CONSTRAINT program_term_courses_term_course_uq UNIQUE (program_term_id, course_id)
 );
 
-CREATE INDEX program_term_courses_course_idx
+CREATE INDEX IF NOT EXISTS program_term_courses_course_idx
   ON program_term_courses(course_id, program_term_id);
 
 -- Keep curriculum links within one college. A course from another department/college
 -- must never be attached to a program term by direct SQL.
-CREATE FUNCTION db02_guard_program_term_course_tenant()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_course_tenant()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   program_college uuid;
@@ -92,13 +93,14 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_term_course_tenant ON program_term_courses;
 CREATE TRIGGER db02_program_term_course_tenant
 BEFORE INSERT OR UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 
 -- Semester-course parent identity is immutable in the active legacy service: only
 -- mandatory/type, credits and display order are editable. Keep the normalized pair stable.
-CREATE FUNCTION db02_guard_program_term_course_identity()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_course_identity()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_term_id IS DISTINCT FROM OLD.program_term_id
@@ -110,6 +112,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_term_course_identity_guard ON program_term_courses;
 CREATE TRIGGER db02_program_term_course_identity_guard
 BEFORE UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_identity();
@@ -1743,7 +1746,7 @@ CREATE TRIGGER db02_cohort_program_immutable
 BEFORE UPDATE OF program_id, start_period_id ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_parent_immutable();
 
-CREATE FUNCTION db02_guard_program_term_identity_immutable()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_identity_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_id IS DISTINCT FROM OLD.program_id
@@ -1756,6 +1759,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS db02_program_term_identity_immutable ON program_terms;
 CREATE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();

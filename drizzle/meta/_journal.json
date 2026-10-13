@@ -351,6 +351,13 @@
       "when": 1791851400000,
       "tag": "0049_db02_academic_tenant_parent_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1791855000000,
+      "tag": "0050_db02_program_terms_curriculum",
+      "breakpoints": true
     }
   ]
 }

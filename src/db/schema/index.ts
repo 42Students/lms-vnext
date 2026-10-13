@@ -8,6 +8,7 @@ export * from "./profiles";
 export * from "./tenant-domains";
 export * from "./legacy-id-map";
 export * from "./academics";
+export * from "./academic-terms";
 export * from "./courses";
 export * from "./assessments";
 export * from "./quizzes";
