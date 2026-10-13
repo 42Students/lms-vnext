@@ -114,7 +114,7 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
     assert.deepEqual(duplicates, [], `Duplicate ${label}: ${duplicates.join(", ")}`);
   };
 
-  uniqueNames(/\bCREATE TABLE\s+([a-z_][a-z0-9_]*)/gi, "tables");
+  uniqueNames(/\bCREATE TABLE\s+(?:IF NOT EXISTS\s+)?([a-z_][a-z0-9_]*)/gi, "tables");
   uniqueNames(/\bCREATE (?:OR REPLACE )?FUNCTION\s+([a-z_][a-z0-9_]*)\s*\(/gi, "functions");
   uniqueNames(/\bCREATE TRIGGER\s+([a-z_][a-z0-9_]*)/gi, "triggers");
 
