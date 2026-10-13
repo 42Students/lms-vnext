@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  LearnerPlacementJobs,
-  type LearnerPlacementJobItem,
-} from "@/components/placements/learner-placement-jobs";
-import { PageHeader } from "@/components/ui/page-header";
+import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
+import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
@@ -61,14 +58,5 @@ export default async function LearnerPlacementJobDetailPage({
     notFound();
   }
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow={rows[0].company.name}
-        title={rows[0].job.title}
-        description="Drive details and eligibility."
-      />
-      <LearnerPlacementJobs items={rows.map(toItem)} />
-    </div>
-  );
+  return <LearnerPlacementJobDetail items={rows.map(toItem)} />;
 }
