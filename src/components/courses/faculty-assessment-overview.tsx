@@ -11,6 +11,7 @@ import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyAssessmentCreate } from "./faculty-assessment-create";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
+import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
@@ -186,7 +187,7 @@ export function FacultyAssessmentOverview({
                     View Report
                   </Link>
                   <Link
-                    href={`/teach/courses/${item.deliveryId}`}
+                    href={facultyCourseTabHref(item.deliveryId, "blueprint")}
                     className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary"
                   >
                     Open Course
