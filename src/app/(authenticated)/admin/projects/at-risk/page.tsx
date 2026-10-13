@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectAdminAtRiskPage } from "@/components/projects/project-admin-at-risk-page";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -16,7 +17,7 @@ export default async function SuperAdminProjectAtRiskRoute({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId =
-    context.adminScope?.collegeId ?? null;
+    getProjectAdminCollegeId(context);
 
   if (!collegeId) {
     return (

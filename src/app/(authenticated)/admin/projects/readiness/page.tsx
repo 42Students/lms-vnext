@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectAdminReadinessPage } from "@/components/projects/project-admin-readiness-page";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -16,7 +17,7 @@ export default async function SuperAdminProjectReadinessRoute({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId =
-    context.adminScope?.collegeId ?? null;
+    getProjectAdminCollegeId(context);
 
   if (!collegeId) {
     return (
