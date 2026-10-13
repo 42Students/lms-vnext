@@ -437,8 +437,8 @@ Detailed page contract: `docs/parity/tpo.md`.
 
 | Surface | Legacy `/tpo/settings?tab=` | Status |
 | --- | --- | --- |
-| Placement Season | `season` | MISSING |
-| Placement Rules | `rules` | MISSING |
+| Placement Season | `season` | PARTIAL |
+| Placement Rules | `rules` | PARTIAL |
 | Placement Team + student coordinators | `team` | MISSING |
 | Recruiter access | `recruiters` | MISSING |
 | Trusted Companies/domains | `trusted` | MISSING |
@@ -449,6 +449,8 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Placement Branding | `branding` | MISSING |
 
 Settings parity includes unsaved-change protection and all create/edit/remove/reassign/revoke flows represented by these sections.
+
+**W20 — PARTIAL; read-only source implementation:** `/tpo/settings` redirects to `/tpo/settings/season` (or `/rules` for the legacy `?tab=rules` bookmark). Season shows the active/closed statuses and dates actually persisted for the TPO's college; it does not infer registration availability from season dates. Rules displays effective college-wide offer policy, explicitly distinguishing the persisted `placement_college_rules` row from the established source defaults, together with fixed participation behavior and paginated job-specific eligibility thresholds from `placement_job_eligibility_policies`. Every database read is protected by an active TPO role and central `placements.manage` college scope. No mutation behavior, save validation, dirty-state protection, registration management or blocked-date management is claimed. Real PostgreSQL, cross-tenant negative, and browser acceptance for W20 remain pending.
 
 ## 6.5 Audit / Notifications / Account
 
