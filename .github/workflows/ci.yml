@@ -187,6 +187,10 @@ jobs:
         env:
           DB02_REGISTERED_CURRICULUM: "YES"
         run: node --test tests/db02-registered-curriculum-pg.test.mjs
+      - name: DB-005 registered cohort progression, CAS and history acceptance
+        env:
+          DB02_REGISTERED_PROGRESSION: "YES"
+        run: node --test tests/db02-registered-progression-pg.test.mjs
       # Registered-schema matrix runs ONLY against committed numbered Drizzle
       # migrations. DB08/DB10 unregistered proposals run in their independent
       # DB08, DB10-skills and DB10-outbound jobs above with explicit PG fixtures.
