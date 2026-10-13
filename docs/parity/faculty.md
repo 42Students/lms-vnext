@@ -263,3 +263,5 @@ Added a standalone Faculty-only Playwright suite covering authenticated Course s
 ## Faculty attendance session timing guard (2026-10-13)
 
 A Faculty member can no longer mark attendance before the assigned session begins or past the persisted college's correction window after class end (default 24 hours). The check runs in the exact-delivery marking transaction before any record changes. Admin corrections retain their separate permission policy. Test fixtures use in-window time and include negative future/expired cases; full DB06 history migration remains unregistered and NOT DONE. Do not mark Attendance parity closed before browser/DB acceptance.
+
+Faculty Attendance UI now uses the same session-window evaluator as the server to prevent premature or expired submissions and display an explicit administrative-correction path. A one-minute client clock refresh keeps an open tab's disabled Submit state current. The server transaction remains authoritative, including for stale browser sessions. Full browser and DB06 history completion gates remain open.
