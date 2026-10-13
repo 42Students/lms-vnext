@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPrivateR2Config } from "@/modules/storage/r2-config";
 import { getObjectStream, headObject } from "@/modules/storage/s3-client";
+import { apiErrorResponse } from "@/lib/api-error";
 import { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 export const runtime = "nodejs";
@@ -65,11 +66,13 @@ export async function GET(
   { params }: RouteContext,
 ) {
   const { deliveryId, contentId } = await params;
-  const context = await getCurrentRequestContext();
-  const workspace = await getLearnerCourseWorkspace(
-    context,
-    deliveryId,
-  );
+  let workspace: Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
+  try {
+    const context = await getCurrentRequestContext();
+    workspace = await getLearnerCourseWorkspace(context, deliveryId);
+  } catch (error) {
+    return apiErrorResponse(error);
+  }
 
   const content = workspace.lessons
     .flatMap((lesson) => lesson.contents)
