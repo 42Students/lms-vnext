@@ -104,6 +104,9 @@ for (const [label, phone] of [
 
 // 4 wrong codes, budget, replay
 {
+  // This block makes ~9 verify calls in a burst; let the per-IP minute window
+  // (10 verifies/min) reset so the limiter does not mask the OTP rules.
+  await sleep(65000);
   const s = await start("9100061202");
   const codes = [];
   for (let i = 0; i < 5; i++) {
