@@ -32,3 +32,6 @@ export * from "./groups";
 export * from "./electives";
 export * from "./tpo-policy";
 export * from "./tpo-crm";
+
+export * from "./identity-auth-attempts";
+export * from "./identity-device-sessions";
