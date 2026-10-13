@@ -50,7 +50,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Courses list | `/learn/courses` | `/learn/courses` | Semester/history, filters, instructor context, progress, responsive course-type controls, correct Electives grid separation and large-list behavior implemented; course thumbnail and mobile/browser evidence remain open. | PARTIAL |
-| Course Overview | course `home` tab | same legacy tab route | About/takeaways, faculty/class context, next action, progress and recent course updates are implemented; authoring-side parity is tracked with Faculty. | DONE |
+| Course Overview | course `home` tab | same legacy tab route | Due assessment → upcoming live session → next content priority now implemented independently of the six-item updates feed; rich authored content depends on Faculty producer, and browser/legacy-parity checks remain. | PARTIAL |
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
 | Course Attendance | course `attendanceDetail` | same legacy tab route | Month-scoped read-only attendance, future Scheduled rows, held/marked math, threshold headroom/recovery guidance and session detail now match the audited learner contract; mobile/browser verification remains. | PARTIAL |
 | Course Discussions | course `discussions` | same legacy tab route | Delivery-scoped feed, post/delete-own, pinned display, polling and explicit loading/empty/error states are implemented. | DONE |
