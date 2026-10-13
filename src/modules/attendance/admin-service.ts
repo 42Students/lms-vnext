@@ -56,7 +56,7 @@ const correctionSchema = z.strictObject({
   ]),
 });
 
-async function requireAttendanceCollege(
+export async function requireAttendanceCollege(
   context: RequestContext,
   collegeIdInput: string,
 ) {
