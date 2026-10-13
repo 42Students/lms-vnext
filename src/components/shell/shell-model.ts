@@ -320,6 +320,17 @@ export function getShellNavigation(
     return getLearnerItems(learnerAccess);
   }
 
+  // A teaching-only Faculty account uses the legacy seven-entry sidebar,
+  // without a generic Dashboard. Mixed-role memberships stay additive.
+  if (
+    context.membership &&
+    context.membership.roles.length === 1 &&
+    hasMembershipRole(context, "FACULTY") &&
+    !hasActiveRecruiter(context)
+  ) {
+    return facultyItems;
+  }
+
   // Mentor-only accounts use their legacy three-surface sidebar without a generic Dashboard.
   if (
     context.membership &&

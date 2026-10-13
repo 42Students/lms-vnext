@@ -267,3 +267,7 @@ A Faculty member can no longer mark attendance before the assigned session begin
 Faculty Attendance UI now uses the same session-window evaluator as the server to prevent premature or expired submissions and display an explicit administrative-correction path. A one-minute client clock refresh keeps an open tab's disabled Submit state current. The server transaction remains authoritative, including for stale browser sessions. Full browser and DB06 history completion gates remain open.
 
 The Faculty sidebar Courses link now opens the exact legacy `/teacher/courses` listing (rather than the temporary `/teach/courses` compatibility workspace), using the shared LMS Course icon. Dual-role Faculty and admin/learner sidebar regression expectations were updated; old `/teach/courses` URLs remain operational for existing callers until downstream source links are migrated.
+
+## Faculty-only navigation CI regression (2026-10-14)
+
+After the canonical `/teacher/courses` sidebar switch, the Faculty-only account was still falling back to a generic Dashboard shell and one stale multi-role test checked `/teach/courses`. This batch restores the exact seven-entry Faculty-only sidebar and updates the cross-role regression to the actual destination. No database tracker checkbox changes; CI evidence required at the committed SHA.
