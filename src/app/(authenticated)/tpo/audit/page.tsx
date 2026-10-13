@@ -1,0 +1,476 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  TPO_AUDIT_KINDS,
+  TPO_AUDIT_KIND_LABELS,
+  formatTpoAuditEventType,
+  tpoAuditHref,
+} from "@/modules/placements/tpo-audit-model";
+import {
+  getTpoAuditLog,
+  tpoAuditQuerySchema,
+} from "@/modules/placements/tpo-audit-service";
+
+type SearchParams = {
+  kind?: string | string[];
+  from?: string | string[];
+  to?: string | string[];
+  q?: string | string[];
+  page?: string | string[];
+  pageSize?: string | string[];
+};
+
+function first(
+  value: string | string[] | undefined,
+) {
+  return Array.isArray(value)
+    ? value[0]
+    : value;
+}
+
+function auditDateTime(
+  value: string,
+) {
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(new Date(value));
+}
+
+export default async function TpoAuditPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const context =
+    await getCurrentRequestContext();
+
+  if (
+    !context.membership ||
+    !hasMembershipRole(context, "TPO")
+  ) {
+    redirect("/dashboard");
+  }
+
+  const params = await searchParams;
+
+  const parsed =
+    tpoAuditQuerySchema.safeParse({
+      kind: first(params.kind) || undefined,
+      from: first(params.from) || undefined,
+      to: first(params.to) || undefined,
+      q: first(params.q) || undefined,
+      page: first(params.page) || undefined,
+      pageSize:
+        first(params.pageSize) || undefined,
+    });
+
+  if (!parsed.success) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="TPO · Oversight"
+          title="Audit Log"
+          description="College-scoped history of persisted placement activity."
+        />
+        <ErrorState
+          title="Invalid audit filters"
+          description="Check the selected category, date range, search text and page number. No audit data was loaded."
+          action={
+            <Link
+              href="/tpo/audit"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              Clear filters
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
+
+  const result = await getTpoAuditLog(
+    context,
+    parsed.data,
+  );
+
+  const {
+    query,
+    summary,
+    items,
+    page,
+    pageSize,
+    totalPages,
+  } = result;
+
+  const firstItem =
+    summary.total === 0
+      ? 0
+      : (page - 1) * pageSize + 1;
+
+  const lastItem = Math.min(
+    summary.total,
+    page * pageSize,
+  );
+
+  const paginationFilters = {
+    kind: query.kind,
+    from: query.from,
+    to: query.to,
+    q: query.q,
+    pageSize,
+  };
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="TPO · Oversight"
+        title="Audit Log"
+        description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
+      />
+
+      <section
+        aria-label="Audit summary"
+        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        {[
+          {
+            label: "Matching records",
+            count: summary.total,
+          },
+          {
+            label: "Decisions and changes",
+            count: summary.decisionsAndChanges,
+          },
+          {
+            label: "Share activity",
+            count: summary.shares,
+          },
+          {
+            label: "Canonical activity",
+            count: summary.canonicalEvents,
+          },
+        ].map((metric) => (
+          <article
+            key={metric.label}
+            className="rounded-xl border border-border bg-surface p-4"
+          >
+            <p className="m-0 text-xs font-semibold text-muted-foreground">
+              {metric.label}
+            </p>
+            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+              {metric.count}
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="m-0 text-base font-semibold text-foreground">
+          Audit filters
+        </h2>
+
+        <form
+          method="get"
+          action="/tpo/audit"
+          className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+        >
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Event kind
+            <select
+              name="kind"
+              defaultValue={query.kind}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            >
+              <option value="ALL">
+                All events
+              </option>
+              {TPO_AUDIT_KINDS.map((kind) => (
+                <option
+                  key={kind}
+                  value={kind}
+                >
+                  {TPO_AUDIT_KIND_LABELS[kind]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            From (IST)
+            <input
+              type="date"
+              name="from"
+              defaultValue={query.from ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            />
+          </label>
+
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            To (IST)
+            <input
+              type="date"
+              name="to"
+              defaultValue={query.to ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            />
+          </label>
+
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Search
+            <input
+              type="search"
+              name="q"
+              maxLength={120}
+              defaultValue={query.q}
+              placeholder="Job, action or status"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            />
+          </label>
+
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Rows per page
+            <select
+              name="pageSize"
+              defaultValue={String(pageSize)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            >
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+
+          <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-5">
+            <button
+              type="submit"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            >
+              Apply filters
+            </button>
+            <Link
+              href="/tpo/audit"
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              Clear filters
+            </Link>
+          </div>
+        </form>
+      </section>
+
+      {result.unavailableSources.length > 0 ? (
+        <section
+          role="status"
+          className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        >
+          Share-event history is unavailable in
+          the current database. Share counts
+          exclude this source and must not be
+          interpreted as evidence that no
+          shares occurred.
+        </section>
+      ) : null}
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-lg font-semibold text-foreground">
+              Event history
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {summary.total === 0
+                ? "No matching persisted records"
+                : firstItem > summary.total
+                  ? `Page ${page} is beyond the available records`
+                  : `Showing ${firstItem}–${lastItem} of ${summary.total} records`}
+            </p>
+          </div>
+          <p className="m-0 text-xs text-muted-foreground">
+            Most recent first · IST
+          </p>
+        </div>
+
+        {items.length === 0 ? (
+          <EmptyState
+            title={
+              summary.total === 0
+                ? "No matching audit records"
+                : "No records on this page"
+            }
+            description={
+              summary.total === 0
+                ? "No persisted audit events match this college, date range, category and search. Try other filters. This does not certify that every legacy action has an audit writer."
+                : "This page number is outside the available result range. Return to the first page or adjust the filters."
+            }
+          />
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
+              <thead className="bg-muted text-body">
+                <tr>
+                  <th
+                    scope="col"
+                    className="border-b border-border px-4 py-3"
+                  >
+                    When
+                  </th>
+                  <th
+                    scope="col"
+                    className="border-b border-border px-4 py-3"
+                  >
+                    Kind
+                  </th>
+                  <th
+                    scope="col"
+                    className="border-b border-border px-4 py-3"
+                  >
+                    Action
+                  </th>
+                  <th
+                    scope="col"
+                    className="border-b border-border px-4 py-3"
+                  >
+                    Context
+                  </th>
+                  <th
+                    scope="col"
+                    className="border-b border-border px-4 py-3"
+                  >
+                    Job
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((event) => (
+                  <tr
+                    key={`${event.kind}:${event.id}`}
+                    className="border-b border-border last:border-b-0"
+                  >
+                    <td className="whitespace-nowrap px-4 py-3 align-top">
+                      <time
+                        dateTime={event.occurredAt}
+                      >
+                        {auditDateTime(
+                          event.occurredAt,
+                        )}
+                      </time>
+                    </td>
+
+                    <td className="px-4 py-3 align-top">
+                      <StatusBadge tone="neutral">
+                        {TPO_AUDIT_KIND_LABELS[
+                          event.kind
+                        ]}
+                      </StatusBadge>
+                    </td>
+
+                    <td className="px-4 py-3 align-top font-semibold text-foreground">
+                      {formatTpoAuditEventType(
+                        event.eventType,
+                      )}
+                    </td>
+
+                    <td className="px-4 py-3 align-top text-body">
+                      <p className="m-0">
+                        {event.title}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {event.detail}
+                      </p>
+                    </td>
+
+                    <td className="px-4 py-3 align-top">
+                      {event.jobId ? (
+                        <Link
+                          href={
+                            "/tpo/placements/jobs/" +
+                            encodeURIComponent(
+                              event.jobId,
+                            )
+                          }
+                          className="font-semibold text-primary-text hover:underline"
+                        >
+                          Open job →
+                        </Link>
+                      ) : (
+                        <span className="text-muted-foreground">
+                          —
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <nav
+          aria-label="Audit pagination"
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
+          <p className="m-0 text-sm text-muted-foreground">
+            Page {page} of {totalPages}
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {page > 1 ? (
+              <Link
+                href={tpoAuditHref({
+                  ...paginationFilters,
+                  page: page - 1,
+                })}
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              >
+                ← Previous
+              </Link>
+            ) : null}
+
+            {page > 1 ? (
+              <Link
+                href={tpoAuditHref({
+                  ...paginationFilters,
+                  page: 1,
+                })}
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              >
+                First page
+              </Link>
+            ) : null}
+
+            {page < totalPages ? (
+              <Link
+                href={tpoAuditHref({
+                  ...paginationFilters,
+                  page: page + 1,
+                })}
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              >
+                Next →
+              </Link>
+            ) : null}
+          </div>
+        </nav>
+      </section>
+
+      <p className="text-xs leading-5 text-muted-foreground">
+        Audit coverage includes existing placement activity,
+        application and screening history, round changes,
+        recorded result versions, offer and joining transitions,
+        and available share-access events. This view omits
+        personal identifiers, raw audit metadata, messages,
+        rejection reasons and recipient details. Historical
+        settings changes without persisted event records
+        cannot be reconstructed.
+      </p>
+    </div>
+  );
+}

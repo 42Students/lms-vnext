@@ -454,7 +454,7 @@ Settings parity includes unsaved-change protection and all create/edit/remove/re
 
 | Surface | Legacy | Audit note | Status |
 | --- | --- | --- | --- |
-| TPO Audit Log | `/tpo/audit` | Decision/change/share/settings history + filters/summary missing. | MISSING |
+| TPO Audit Log | `/tpo/audit` | Read-only, college-scoped TPO audit page joins persisted PLACEMENTS activity events with application status history, screening decisions, round change events, recorded result versions, offer transitions, joining history and available TPO share/download events. Event-kind/IST date/search filters, summary counts, pagination and loading/error/empty states are implemented without exposing actors' contacts, recipient emails, IPs, raw metadata or free-text reasons. Canonical activity and domain history can both record an action, so counts are records rather than deduplicated user actions. No historical settings-change audit is inferred without persisted records. Exact legacy event detail, actor/entity filters, settings coverage, export, cross-tenant/database verification and browser parity remain open. | PARTIAL |
 | TPO Notifications | `/tpo/notifications` | Shared vNext Notifications exists, but legacy has All/Unread, mark-all-read, time grouping and linked notifications; exact event coverage unproven. | PARTIAL |
 | TPO Profile | `/tpo/profile` | Faculty-backed TPO self profile missing. | MISSING |
 | More utility | `/tpo/more` | Real secondary/mobile navigation for Requests, Calendar, Messages, Reports, Notifications, Settings, Audit and Profile; not a stub. | MISSING |

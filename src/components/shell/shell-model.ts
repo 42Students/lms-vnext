@@ -202,6 +202,12 @@ const tpoItems: ShellNavItem[] = [
     shortLabel: "R",
     group: "tracking",
   },
+  {
+    label: "Audit Log",
+    href: "/tpo/audit",
+    shortLabel: "A",
+    group: "tracking",
+  },
 ];
 
 const recruiterItems: ShellNavItem[] = [
