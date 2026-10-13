@@ -63,7 +63,7 @@ export function learnerPlacementDashboard(
     const effective = row.exception?.scheduledAt ?? row.scheduledAt;
     const whenMs = effective?.getTime() ?? Number.NaN;
     if (!Number.isFinite(whenMs) || whenMs < nowMs) return [];
-    const kind = isCareerRoundVisible("ASSESSMENT", row.roundKind)
+    const kind: PlacementDashboardEvent["kind"] = isCareerRoundVisible("ASSESSMENT", row.roundKind)
       ? "ASSESSMENT"
       : isCareerRoundVisible("INTERVIEW", row.roundKind) ? "INTERVIEW" : "OTHER";
     const href = kind === "ASSESSMENT"

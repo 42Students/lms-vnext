@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 const pages = [
   ["assessments", "LearnerCareerRounds"],
   ["interviews", "LearnerCareerRounds"],
-  ["calendar", "LearnerCareerRounds"],
+  ["calendar", "LearnerCareerCalendar"],
   ["placement", "LearnerPlacementOffers"],
   ["rules", "How eligibility works"],
 ] as const;
