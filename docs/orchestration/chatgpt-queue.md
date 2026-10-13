@@ -30,3 +30,7 @@ Claude orchestrates several ChatGPT chats (browser pane tabs). Each chat gets on
 ## Lessons
 - New chats can pick up other chats' tasks through ChatGPT memory; every message must restate that this conversation's first message is the only source, or use a temporary chat.
 - ChatGPT cannot run tools (no GitHub DNS in its container): it must grep all consumers of anything it changes; Claude verifies tsc/eslint/tests after every commit and repairs.
+
+## Progress log (2026-10-14 overnight)
+Done and verified on main: 1 attendance, 5 SA lecture halls, 2+8 project aggregates (College and Super Admin), 4+9 placement calendars (TPO, College Admin, Super Admin), 3 SA HR accounts, 6 TPO reports (gallery, placement summary, by branch, CSV). In progress: 7 TPO students (read side committed, pages requested), 10 more TPO reports, 11 SA project templates (list/overview), 12 College Admin programs/semesters lists. Not applied yet: tests/integration/project-admin-aggregate-isolation.test.ts (chat 2 reply), tests/unit/super-admin-hr-validation.test.ts (chat 3 reply), the 672-line calendar service test (chat 4 reply).
+Pitfall found: staged tables (placement_batch_registrations, placement_external_offers) are not migrated; guard with placementTableExists.
