@@ -27,11 +27,6 @@ export default async function FacultyQuizReportPage({
     metrics,
   } = report;
 
-  const formatDate = (value: Date) =>
-    new Intl.DateTimeFormat("en-IN", {
-      dateStyle: "medium", timeStyle: "short",
-    }).format(value);
-
   return (
     <div className="space-y-6">
       <Link href="/teacher/allQuizzes" className="text-sm font-semibold text-primary-text">
