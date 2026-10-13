@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminReadinessPage } from "@/components/projects/project-admin-readiness-page";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 
 export default async function CollegeProjectReadinessRoute({
   searchParams,
@@ -13,13 +14,16 @@ export default async function CollegeProjectReadinessRoute({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) {
+  const collegeId =
+    getProjectAdminCollegeId(context);
+
+  if (!collegeId) {
     redirect("/dashboard");
   }
 
   return (
     <ProjectAdminReadinessPage
-      collegeId={context.membership.collegeId}
+      collegeId={collegeId}
       basePath="/college/projects"
       eyebrow="College Admin Projects"
       searchParams={await searchParams}
