@@ -12,6 +12,11 @@ const SETTINGS_LINKS = [
     href: "/tpo/settings/rules",
   },
   {
+    id: "see",
+    label: "What Companies See",
+    href: "/tpo/settings/see",
+  },
+  {
     id: "team",
     label: "Placement Team",
     href: "/tpo/settings/team",
@@ -26,7 +31,7 @@ const SETTINGS_LINKS = [
 export function TpoSettingsNav({
   active,
 }: {
-  active: "season" | "rules" | "team" | "trusted";
+  active: "season" | "rules" | "see" | "team" | "trusted";
 }) {
   return (
     <nav
