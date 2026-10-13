@@ -41,6 +41,12 @@ export function AccountActions({
           Notifications
         </Link>
       ) : null}
+      <Link
+        href="/account/security"
+        className="inline-flex min-h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+      >
+        Security
+      </Link>
       <Button
         variant="ghost"
         size="sm"

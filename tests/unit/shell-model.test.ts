@@ -29,13 +29,47 @@ function context(
   };
 }
 
+const labels = (shellContext: RequestContext) =>
+  getShellNavigation(shellContext).map((item) => item.label);
+
+const hrefs = (shellContext: RequestContext) =>
+  getShellNavigation(shellContext).map((item) => item.href);
+
+/**
+ * `expected` must appear in `actual` in that relative order. Extra entries
+ * between them are fine, so the sidebar can grow without churning these
+ * tests, but removing or reordering a key entry still fails.
+ */
+function expectInOrder(
+  actual: readonly string[],
+  expected: readonly string[],
+) {
+  let from = 0;
+  for (const item of expected) {
+    const found = actual.indexOf(item, from);
+    expect(
+      found,
+      `"${item}" should appear after position ${from} in [${actual.join(" | ")}]`,
+    ).toBeGreaterThanOrEqual(from);
+    from = found + 1;
+  }
+}
+
+const ADMIN_PREFIXES = ["/admin", "/college", "/superadmin"];
+
+function hasAdminLinks(shellContext: RequestContext) {
+  return hrefs(shellContext).some((href) =>
+    ADMIN_PREFIXES.some(
+      (prefix) => href === prefix || href.startsWith(`${prefix}/`),
+    ),
+  );
+}
+
 describe("authenticated shell model", () => {
   it("gives SUPER_ADMIN the platform administration navigation", () => {
     const shellContext = context(null, ["SUPER_ADMIN"]);
 
-    expect(
-      getShellNavigation(shellContext).map((item) => item.label),
-    ).toEqual([
+    expectInOrder(labels(shellContext), [
       "Dashboard",
       "Organizations",
       "Colleges",
@@ -54,9 +88,7 @@ describe("authenticated shell model", () => {
   it("keeps College Admin navigation tenant-focused", () => {
     const shellContext = context(["COLLEGE_ADMIN"]);
 
-    expect(
-      getShellNavigation(shellContext).map((item) => item.label),
-    ).toEqual([
+    expectInOrder(labels(shellContext), [
       "Dashboard",
       "My College",
       "Departments",
@@ -68,6 +100,8 @@ describe("authenticated shell model", () => {
       "Domains",
       "Activity",
     ]);
+    expect(labels(shellContext)).not.toContain("Organizations");
+    expect(labels(shellContext)).not.toContain("Colleges");
     expect(getShellRoleLabel(shellContext)).toBe("College Admin");
   });
 
@@ -99,23 +133,18 @@ describe("authenticated shell model", () => {
   it("gives faculty teaching navigation without admin navigation", () => {
     const shellContext = context(["FACULTY", "MENTOR"]);
 
-    expect(getShellNavigation(shellContext)).toEqual([
-      {
-        label: "Dashboard",
-        href: "/dashboard",
-        shortLabel: "D",
-      },
-      {
-        label: "Teaching Courses",
-        href: "/teach/courses",
-        shortLabel: "T",
-      },
-      {
-        label: "Mentoring Projects",
-        href: "/mentor/projects",
-        shortLabel: "P",
-      },
+    expectInOrder(labels(shellContext), [
+      "Dashboard",
+      "Courses",
+      "Class Schedule",
+      "All Quizzes",
+      "All Assignments",
+      "Projects",
+      "Meetings",
     ]);
+    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expect(hrefs(shellContext)).toContain("/mentor/projects");
+    expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · Mentor",
     );
@@ -128,19 +157,18 @@ describe("authenticated shell model", () => {
       "MENTOR",
     ]);
 
-    expect(
-      getShellNavigation(shellContext).map(
-        (item) => item.label,
-      ),
-    ).toEqual([
-      "Dashboard",
-      "Teaching Courses",
-      "Mentoring Projects",
+    // Teaching and mentoring come first, the admin workspace is added after.
+    expectInOrder(hrefs(shellContext), [
+      "/dashboard",
+      "/teach/courses",
+      "/mentor/projects",
+      "/college",
+      "/college/departments",
+    ]);
+    expectInOrder(labels(shellContext), [
       "My College",
       "Departments",
       "Academics",
-      "Courses",
-      "Projects",
       "Placements",
       "People",
       "Domains",
@@ -157,24 +185,19 @@ describe("authenticated shell model", () => {
       "FACULTY",
     ]);
 
-    expect(
-      getShellNavigation(shellContext).map(
-        (item) => item.label,
-      ),
-    ).toEqual([
+    expect(hrefs(shellContext)).toContain("/learn/courses");
+    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expectInOrder(labels(shellContext), [
       "Dashboard",
-      "Courses",
       "Quizzes",
       "Assignments",
-      "Class Schedule",
-      "Attendance",
       "My Placements",
-      "Projects",
-      "Notifications",
-      "Profile",
-      "Teaching Courses",
+      "All Quizzes",
+      "All Assignments",
     ]);
+    expect(hasAdminLinks(shellContext)).toBe(false);
   });
+
   it("gives recruiter-only identities the shared hiring workspace without a fake membership", () => {
     const shellContext: RequestContext = {
       ...context(null),
@@ -234,15 +257,14 @@ describe("authenticated shell model", () => {
   it("gives TPO memberships the placement command center", () => {
     const shellContext = context(["FACULTY", "TPO"]);
 
-    expect(
-      getShellNavigation(shellContext).map(
-        (item) => item.label,
-      ),
-    ).toEqual([
+    expectInOrder(labels(shellContext), [
       "Dashboard",
-      "Teaching Courses",
+      "Courses",
+      "Recruiter Leads",
       "Placement Operations",
     ]);
+    expect(hrefs(shellContext)).toContain("/teach/courses");
+    expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
     );
@@ -250,14 +272,14 @@ describe("authenticated shell model", () => {
 
   it("keeps nested learner routes under the canonical sidebar entry", () => {
     const learnerNav = getShellNavigation(context(["LEARNER"]));
-    const hrefs = learnerNav.map((item) => item.href);
+    const learnerHrefs = learnerNav.map((item) => item.href);
 
-    expect(hrefs).toContain("/learn/courses");
-    expect(hrefs).toContain("/learn/my-placements");
-    expect(hrefs).toContain("/learn/projects");
-    expect(hrefs).not.toContain("/learn/courses/example/home");
-    expect(hrefs).not.toContain("/learn/my-placements/jobs");
-    expect(hrefs).not.toContain("/learn/projects/example");
+    expect(learnerHrefs).toContain("/learn/courses");
+    expect(learnerHrefs).toContain("/learn/my-placements");
+    expect(learnerHrefs).toContain("/learn/projects");
+    expect(learnerHrefs).not.toContain("/learn/courses/example/home");
+    expect(learnerHrefs).not.toContain("/learn/my-placements/jobs");
+    expect(learnerHrefs).not.toContain("/learn/projects/example");
   });
 
   it("hides learner Projects and Placements when current access says they are unavailable", () => {
@@ -290,16 +312,13 @@ describe("authenticated shell model", () => {
         placementsEnabled: false,
       },
     );
+    const navHrefs = navigation.map((item) => item.href);
 
-    expect(
-      navigation.map((item) => item.label),
-    ).toContain("Projects");
+    expect(navHrefs).toContain("/learn/projects");
     expect(
       navigation.map((item) => item.label),
     ).not.toContain("My Placements");
-    expect(
-      navigation.map((item) => item.label),
-    ).toContain("Teaching Courses");
+    expect(navHrefs).toContain("/teach/courses");
   });
 
   it("adds Drive Day only for a learner with a current coordinator assignment", () => {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
@@ -38,6 +39,12 @@ export default async function CollegeOverviewPage() {
         actions={
           <>
             <StatusBadge tone="success">Active</StatusBadge>
+            <Link
+              href="/college/branding"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            >
+              Branding
+            </Link>
             <CollegeEditDialog
               college={college}
               triggerLabel="Edit college"

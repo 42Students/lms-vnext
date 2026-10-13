@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
-import { getCollegeSignInName } from "@/modules/auth/tenant-branding";
+import { brandStyleVariables } from "@/modules/colleges/branding";
+import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 
 async function isSignedIn() {
   try {
@@ -73,19 +74,53 @@ export default async function HomePage({
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
   );
-  const collegeName =
+  const branding =
     tenant.kind === "college"
-      ? await getCollegeSignInName(tenant.collegeId)
+      ? await getPublicCollegeBranding(tenant.collegeId)
       : null;
+  const themeStyle = brandStyleVariables(
+    branding?.primaryColor,
+  ) as React.CSSProperties;
+  const desktopBackground = branding?.loginBackgroundUrl ?? null;
+  const mobileBackground =
+    branding?.loginBackgroundUrlMobile ?? desktopBackground;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl items-center px-6 py-16">
+    <main
+      style={themeStyle}
+      className="relative isolate mx-auto flex min-h-screen max-w-5xl items-center px-6 py-16"
+    >
+      {desktopBackground ? (
+        <div
+          aria-hidden
+          className="fixed inset-0 -z-10 hidden bg-cover bg-center sm:block"
+          style={{ backgroundImage: cssUrl(desktopBackground) }}
+        />
+      ) : null}
+      {mobileBackground ? (
+        <div
+          aria-hidden
+          className="fixed inset-0 -z-10 bg-cover bg-center sm:hidden"
+          style={{ backgroundImage: cssUrl(mobileBackground) }}
+        />
+      ) : null}
+
       <section className="w-full rounded-2xl border border-border bg-surface p-8 shadow-sm">
-        <p className="text-sm font-medium text-muted-foreground">
-          42Students
-        </p>
+        {branding?.logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={branding.logoUrl}
+            alt={branding.collegeName}
+            referrerPolicy="no-referrer"
+            className="h-14 w-auto max-w-[240px] object-contain"
+          />
+        ) : (
+          <p className="text-sm font-medium text-muted-foreground">
+            42Students
+          </p>
+        )}
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
-          LMS vNext
+          {branding?.collegeName ?? "LMS vNext"}
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-body">
           Sign in with the phone number or email registered with your
@@ -123,10 +158,58 @@ export default async function HomePage({
               college&apos;s LMS address.
             </div>
           ) : (
-            <LoginForm collegeName={collegeName} />
+            <LoginForm collegeName={branding?.collegeName ?? null} />
           )}
         </div>
+
+        {branding &&
+        (branding.supportEmail ||
+          branding.supportPhone ||
+          branding.termsUrl ||
+          branding.privacyUrl) ? (
+          <footer className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
+            {branding.supportEmail ? (
+              <a
+                className="hover:text-primary-text"
+                href={`mailto:${branding.supportEmail}`}
+              >
+                {branding.supportEmail}
+              </a>
+            ) : null}
+            {branding.supportPhone ? (
+              <a
+                className="hover:text-primary-text"
+                href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}
+              >
+                {branding.supportPhone}
+              </a>
+            ) : null}
+            {branding.termsUrl ? (
+              <a
+                className="hover:text-primary-text"
+                href={branding.termsUrl}
+                rel="noopener noreferrer"
+              >
+                Terms
+              </a>
+            ) : null}
+            {branding.privacyUrl ? (
+              <a
+                className="hover:text-primary-text"
+                href={branding.privacyUrl}
+                rel="noopener noreferrer"
+              >
+                Privacy
+              </a>
+            ) : null}
+          </footer>
+        ) : null}
       </section>
     </main>
   );
+}
+
+/** Escapes a validated https URL for use inside CSS url("..."). */
+function cssUrl(value: string) {
+  return `url("${value.replace(/["\\()\s]/g, (c) => encodeURIComponent(c))}")`;
 }
