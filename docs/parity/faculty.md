@@ -271,3 +271,7 @@ The Faculty sidebar Courses link now opens the exact legacy `/teacher/courses` l
 ## Faculty-only navigation CI regression (2026-10-14)
 
 After the canonical `/teacher/courses` sidebar switch, the Faculty-only account was still falling back to a generic Dashboard shell and one stale multi-role test checked `/teach/courses`. This batch restores the exact seven-entry Faculty-only sidebar and updates the cross-role regression to the actual destination. No database tracker checkbox changes; CI evidence required at the committed SHA.
+
+## Faculty Resource edit persisted end-to-end (2026-10-14)
+
+A dedicated authenticated Faculty browser regression now submits the Section-owned Resource PATCH, performs a full page reload, asserts the edited persisted notes and exact sibling-Section isolation, then restores the seeded Resource. The editor also resets its draft from latest server props on reopening after a router refresh, avoiding stale edits. Authored tests are not acceptance evidence until executed on an exact SHA; full Faculty parity and DATABASE phase remain open.
