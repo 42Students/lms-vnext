@@ -2,7 +2,7 @@ import "server-only";
 
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import { resolveTenantFromHost } from "@/modules/tenant-domains/service";
-import { getAuthConfig } from "./config";
+import { getPlatformHosts } from "./config";
 
 /**
  * Maps the request `Host` to a tenant.
@@ -39,7 +39,7 @@ export async function resolveRequestTenant(
 
   if (!host) return { kind: "unknown", host };
 
-  if (getAuthConfig().platformHosts.has(host)) {
+  if (getPlatformHosts().has(host)) {
     return { kind: "platform", host };
   }
 
