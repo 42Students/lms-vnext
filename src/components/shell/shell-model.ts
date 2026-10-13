@@ -208,6 +208,12 @@ const tpoItems: ShellNavItem[] = [
     group: "tracking",
   },
   {
+    label: "Settings",
+    href: "/tpo/settings",
+    shortLabel: "S",
+    group: "account",
+  },
+  {
     label: "Audit Log",
     href: "/tpo/audit",
     shortLabel: "A",
