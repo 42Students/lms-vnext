@@ -433,6 +433,8 @@ export async function getLearnerCourseWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
 ) {
+  // Capture once for consistent deadline/availability and UI-activity decisions.
+  const snapshotNowMs = Date.now();
   const membership =
     requireLearnerMembership(context);
   const deliveryId =
@@ -518,6 +520,7 @@ export async function getLearnerCourseWorkspace(
         sectionId: delivery.sectionId,
       },
       learningPath: null,
+      snapshotNowMs,
       summary: {
         overallPercent: 0,
         lessonsCompleted: 0,
@@ -706,7 +709,7 @@ export async function getLearnerCourseWorkspace(
     string,
     LessonItem
   >();
-  const now = Date.now();
+  const now = snapshotNowMs;
 
   for (const row of rows) {
     let lesson = lessons.get(row.lessonId);
@@ -1233,6 +1236,7 @@ export async function getLearnerCourseWorkspace(
       title: path.title,
       description: path.description,
     },
+    snapshotNowMs,
     summary: {
       overallPercent:
         allItems.length > 0

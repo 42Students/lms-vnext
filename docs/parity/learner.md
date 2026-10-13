@@ -53,6 +53,10 @@ Closure checklist:
 
 ### Overview
 
+**Time-consistency fix:** Upcoming activity uses the course-service load
+snapshot for content availability and quiz deadlines, instead of an impure
+React-render-time clock call. Regression and browser proof remain outstanding.
+
 **Source-only implementation update:** sanitized course descriptions use legacy 350-character Read more / Show less, and long discussion-backed course updates can independently expand. Full browser and family acceptance remain outstanding.
 
 Legacy contract:
