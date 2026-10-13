@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   guardLoginRequest,
   auditLogin,
+  ipTag,
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { startLoginWithRuntime } from "@/modules/auth/runtime";
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
       channel: guarded.body.channel,
       contact: guarded.body.contact,
       tenantCollegeId: guarded.tenantCollegeId,
+      ipTag: ipTag(guarded.ip),
     });
     auditLogin("auth.login_started", { route: "login-start", ip: guarded.ip }, {
       channel: result.channel,

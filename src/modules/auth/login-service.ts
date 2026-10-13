@@ -28,7 +28,12 @@ import {
  */
 
 export const ATTEMPT_LIFETIME_SECONDS = 300;
+/** Per contact and requesting address: a person always keeps their own budget. */
 export const MAX_SENDS_PER_CONTACT = 5;
+/** Per contact across all addresses: bounds SMS cost and OTP guessing. */
+export const MAX_SENDS_PER_CONTACT_TOTAL = 8;
+/** Per requesting address across all contacts: bounds SMS pumping. */
+export const MAX_SENDS_PER_ADDRESS = 20;
 export const SEND_WINDOW_MINUTES = 10;
 export const EMAIL_RESEND_GAP_SECONDS = 30;
 
@@ -120,10 +125,6 @@ export interface LoginRepository {
     userId: string,
     collegeId: string,
   ): Promise<boolean>;
-  countRecentAttempts(
-    fingerprint: string,
-    windowMinutes: number,
-  ): Promise<number>;
   /**
    * Inserts the challenge with created_at = now() and
    * expires_at = now() + 5 minutes evaluated by the database, so the
@@ -136,8 +137,14 @@ export interface LoginRepository {
     contactFingerprint: string;
     smsCodeMac: string | null;
     emailCodeMac: string | null;
-    /** Re-checked under a per-contact lock; false means the cap was hit. */
-    rateLimit: { max: number; windowMinutes: number };
+    /** Re-checked under locks; false means a cap was hit. */
+    ipTag: string | null;
+    rateLimit: {
+      windowMinutes: number;
+      perContactAndAddress: number;
+      perContact: number;
+      perAddress: number;
+    };
   }): Promise<boolean>;
   loadAttempt(id: string): Promise<AttemptRecord | null>;
   /**
@@ -184,6 +191,8 @@ export type StartLoginInput = {
   contact: string;
   /** College implied by the request host, or null on the platform host. */
   tenantCollegeId: string | null;
+  /** One-way tag of the requesting address, for the per-requester send caps. */
+  ipTag?: string | null;
 };
 
 export type StartLoginResult = {
@@ -261,14 +270,6 @@ export async function startLogin(
     normalized,
   );
 
-  const recent = await deps.repository.countRecentAttempts(
-    fingerprint,
-    SEND_WINDOW_MINUTES,
-  );
-  if (recent >= MAX_SENDS_PER_CONTACT) {
-    throw new LoginError("TOO_MANY_REQUESTS", SEND_WINDOW_MINUTES * 60);
-  }
-
   const strong = await deps.repository.isSuperAdmin(user.id);
   if (strong && (!user.phoneE164 || !user.email)) {
     // Policy: a platform administrator needs two independently verified
@@ -297,7 +298,13 @@ export async function startLogin(
     contactFingerprint: fingerprint,
     smsCodeMac: sms ? codeMac(deps.config.secret, "sms", attemptId, sms.code) : null,
     emailCodeMac: mail ? codeMac(deps.config.secret, "email", attemptId, mail.code) : null,
-    rateLimit: { max: MAX_SENDS_PER_CONTACT, windowMinutes: SEND_WINDOW_MINUTES },
+    ipTag: input.ipTag ?? null,
+    rateLimit: {
+      windowMinutes: SEND_WINDOW_MINUTES,
+      perContactAndAddress: MAX_SENDS_PER_CONTACT,
+      perContact: MAX_SENDS_PER_CONTACT_TOTAL,
+      perAddress: MAX_SENDS_PER_ADDRESS,
+    },
   });
   if (!created) {
     throw new LoginError("TOO_MANY_REQUESTS", SEND_WINDOW_MINUTES * 60);

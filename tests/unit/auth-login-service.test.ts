@@ -34,7 +34,7 @@ class FakeRepository implements LoginRepository {
   };
   superAdmins = new Set<string>();
   recruiterGrants = new Set<string>();
-  attempts = new Map<string, AttemptRecord & { fingerprint: string; emailSentAt: Date | null }>();
+  attempts = new Map<string, AttemptRecord & { fingerprint: string; ipTag: string | null; emailSentAt: Date | null }>();
   now = new Date("2026-10-13T10:00:00Z");
 
   async findUserByPhone(phone: string) {
@@ -55,11 +55,6 @@ class FakeRepository implements LoginRepository {
   async hasRecruiterGrantAtCollege(userId: string, collegeId: string) {
     return this.recruiterGrants.has(`${userId}:${collegeId}`);
   }
-  async countRecentAttempts(fingerprint: string) {
-    return [...this.attempts.values()].filter(
-      (a) => a.fingerprint === fingerprint,
-    ).length;
-  }
   async createAttempt(input: {
     id: string;
     userId: string;
@@ -67,12 +62,26 @@ class FakeRepository implements LoginRepository {
     contactFingerprint: string;
     smsCodeMac: string | null;
     emailCodeMac: string | null;
-    rateLimit: { max: number; windowMinutes: number };
+    ipTag: string | null;
+    rateLimit: {
+      windowMinutes: number;
+      perContactAndAddress: number;
+      perContact: number;
+      perAddress: number;
+    };
   }) {
-    const recent = [...this.attempts.values()].filter(
-      (a) => a.fingerprint === input.contactFingerprint,
-    ).length;
-    if (recent >= input.rateLimit.max) return false;
+    const all = [...this.attempts.values()];
+    const forContact = all.filter((a) => a.fingerprint === input.contactFingerprint);
+    if (
+      forContact.filter((a) => a.ipTag === input.ipTag).length >=
+        input.rateLimit.perContactAndAddress ||
+      forContact.length >= input.rateLimit.perContact ||
+      (input.ipTag !== null &&
+        all.filter((a) => a.ipTag === input.ipTag).length >=
+          input.rateLimit.perAddress)
+    ) {
+      return false;
+    }
     const expires = new Date(this.now.getTime() + 300_000);
     this.attempts.set(input.id, {
       id: input.id,
@@ -86,6 +95,7 @@ class FakeRepository implements LoginRepository {
       expiresAt: expires,
       usedAt: null,
       fingerprint: input.contactFingerprint,
+      ipTag: input.ipTag,
       emailSentAt: input.emailCodeMac ? this.now : null,
     });
     return true;
@@ -527,5 +537,43 @@ describe("platform administrator second factor", () => {
       ),
     ).toBe("SECOND_FACTOR_UNAVAILABLE");
     expect(ctx.sent).toHaveLength(0);
+  });
+});
+
+describe("send caps per requester", () => {
+  const start = (deps: LoginDependencies, ipTag: string | null, contact = "9100060001") =>
+    code(
+      startLogin(
+        { channel: "PHONE", contact, tenantCollegeId: null, ipTag },
+        deps,
+      ),
+    );
+
+  it("an attacker exhausting their own budget does not lock out the real user", async () => {
+    const { deps } = setup();
+    for (let i = 0; i < 5; i += 1) expect(await start(deps, "attacker")).toBe("OK");
+    expect(await start(deps, "attacker")).toBe("TOO_MANY_REQUESTS");
+    // The legitimate user, from a different address, still gets a code.
+    expect(await start(deps, "victim")).toBe("OK");
+  });
+
+  it("many addresses together still cannot exceed the per-contact total", async () => {
+    const { deps } = setup();
+    for (let i = 0; i < 8; i += 1) expect(await start(deps, `ip-${i}`)).toBe("OK");
+    expect(await start(deps, "ip-late")).toBe("TOO_MANY_REQUESTS");
+  });
+
+  it("one address cannot pump codes to many different contacts", async () => {
+    const { deps, repository } = setup();
+    repository.users = Array.from({ length: 21 }, (_, i) => ({
+      ...learner,
+      id: `u-${i}`,
+      phoneE164: `+9191000700${String(i).padStart(2, "0")}`,
+      email: `u${i}@example.test`,
+    }));
+    for (let i = 0; i < 20; i += 1) {
+      expect(await start(deps, "pumper", `91000700${String(i).padStart(2, "0")}`)).toBe("OK");
+    }
+    expect(await start(deps, "pumper", "9100070020")).toBe("TOO_MANY_REQUESTS");
   });
 });
