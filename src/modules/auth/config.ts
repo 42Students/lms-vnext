@@ -73,6 +73,17 @@ export function readAuthConfig(
   };
 }
 
+/**
+ * Hosts that mean "the platform itself". Deliberately independent of
+ * AUTH_SECRET: resolving which tenant a request belongs to must keep working
+ * (and keep failing closed) even where sign-in is not configured.
+ */
+export function getPlatformHosts(
+  env: Record<string, string | undefined> = process.env,
+): ReadonlySet<string> {
+  return list(env.PLATFORM_HOSTS ?? "localhost,127.0.0.1");
+}
+
 let cached: AuthConfig | null = null;
 
 export function getAuthConfig() {

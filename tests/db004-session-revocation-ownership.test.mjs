@@ -6,6 +6,7 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const ledger = JSON.parse(readFileSync(resolve(root, "docs/planning/db01-chat05-final-field-disposition.json"), "utf8"));
 const session = readFileSync(resolve(root, "src/auth/session.ts"), "utf8");
+const sessionService = readFileSync(resolve(root, "src/modules/auth/session-service.ts"), "utf8");
 const fields = ["faculty.token_version", "learner.token_version", "recruiter.token_version"];
 const pick = id => ledger.rows.find(row => row.legacyField === id);
 
@@ -28,12 +29,18 @@ test("source review cannot masquerade as executed provider or Postgres proof", (
   }
 });
 
-test("verified session cookies explicitly perform Firebase revocation checks", () => {
-  assert.match(session, /verifySessionCookie\(\s*sessionCookie,\s*true/);
+test("verified session tokens are checked against the device-session table, including revocation and expiry", () => {
+  // First-party sessions: the opaque cookie is looked up by keyed digest and
+  // is rejected when the row is revoked or expired, or the user is disabled.
+  assert.match(session, /resolveSession\(sessionCookie\)/);
+  assert.match(session, /SESSION_REVOKED/);
+  assert.match(sessionService, /revoked_at IS NOT NULL/);
+  assert.match(sessionService, /expires_at <= now\(\)/);
 });
 
-test("revocation issues provider-wide refresh-token cutoff", () => {
-  assert.match(session, /revokeRefreshTokens\(identityUid\)/);
+test("revoking a person ends every live device session of that user", () => {
+  assert.match(session, /revokeAllSessionsForUser\(userId, userId, reason\)/);
+  assert.match(sessionService, /WHERE user_id = \$\{userId\} AND revoked_at IS NULL/);
 });
 
 test("three normalized external-provider fields are counted in the canonical ledger", () => {
