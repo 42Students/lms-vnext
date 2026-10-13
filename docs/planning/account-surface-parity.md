@@ -493,7 +493,7 @@ Detailed page contract: `docs/parity/hr.md`.
 
 | Surface | Legacy | Status |
 | --- | --- | --- |
-| Recruiter Calendar | `/hr/calendar` | MISSING |
+| Recruiter Calendar | `/hr/calendar` | PARTIAL — Read-only Week, Month and Agenda views use persisted scheduled/completed hiring rounds and application deadlines restricted to the recruiter's authorized job portfolio through `placements.recruiter.read` and exact college/company-relationship grants. Server-rendered IST dates, navigation, event links, no-access/empty states, loading and retry UI are implemented at source level. Legacy SLOT and RESULTS_DUE events, exact styling, browser verification and executed integration/permission tests remain open. |
 | Recruiter Messages inbox | `/hr/messages` | MISSING |
 | Company tab | `/hr/company?tab=company` | MISSING |
 | Team tab | `/hr/company?tab=team` | MISSING |
