@@ -88,3 +88,23 @@ test("staged SQL delimiter detector rejects broken opener and closing quote", ()
     "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $valid_tag$\nBEGIN RETURN NEW; END; $valid_tag$;",
   ), []);
 });
+
+
+test("DB05 browser fixture avoids eager server-only ordering imports while feature is disabled", () => {
+  const service = fs.readFileSync(
+    path.join(root, "src/modules/courses/lesson-content-service.ts"),
+    "utf8",
+  );
+  const writer = fs.readFileSync(
+    path.join(root, "src/modules/courses/lesson-content-order-service.ts"),
+    "utf8",
+  );
+  assert.match(writer, /^import "server-only";/m, "Server-only boundary must remain intact");
+  assert.doesNotMatch(
+    service,
+    /^import[^;]*["']\.\/lesson-content-order-service["'];/m,
+    "Do not load the staged, server-only writer in ordinary lesson-service module initialization",
+  );
+  assert.match(service, /!deliveryId\s*\|\|\s*rows\.length\s*<=\s*1\s*\|\|\s*!lessonContentOrderRuntimeEnabled\(\)/);
+  assert.match(service, /return rows;[\s\S]*await import\("\.\/lesson-content-order-service"\)/);
+});

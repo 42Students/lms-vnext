@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
-import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
+import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readiness";
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -367,10 +367,16 @@ export async function listLessonContents(
       asc(lessonContents.id),
     );
 
-  return applyDeliveryContentOrderIfReady(
-    rows,
-    deliveryId,
-  );
+  // Until the DB05 ordering migration is certified, reading ordinary lesson
+  // content must not eagerly load its server-only, staged-schema writer.
+  // This also keeps disposable browser fixture setup on the registered path.
+  if (!deliveryId || rows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
+    return rows;
+  }
+
+  const { applyDeliveryContentOrderIfReady } =
+    await import("./lesson-content-order-service");
+  return applyDeliveryContentOrderIfReady(rows, deliveryId);
 }
 
 export async function createLessonContent(
