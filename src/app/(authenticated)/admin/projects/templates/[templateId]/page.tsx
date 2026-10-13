@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -72,6 +73,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
             />
           </div>
         }
+      />
+      <SuperAdminTemplateTabs
+        templateId={detail.template.id}
+        active="overview"
       />
       {detail.currentVersion ? (
         <ProjectTemplateView
