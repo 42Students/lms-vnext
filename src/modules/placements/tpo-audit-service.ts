@@ -1,0 +1,522 @@
+import "server-only";
+
+import {
+  sql,
+  type SQL,
+} from "drizzle-orm";
+import { z } from "zod";
+
+import { getDb } from "@/db/client";
+import {
+  parseActivityDateBoundary,
+} from "@/modules/activity/date-boundary";
+import {
+  hasMembershipRole,
+  type RequestContext,
+} from "@/modules/identity/context";
+import {
+  AuthorizationError,
+} from "@/modules/permissions/policy";
+
+import {
+  TPO_AUDIT_KINDS,
+  summarizeTpoAuditKinds,
+  type TpoAuditKind,
+} from "./tpo-audit-model";
+import { requirePlacementManageScope } from "./scope";
+import { placementTableExists } from "./staged-tables";
+
+const dateSchema = z.iso.date();
+
+export const tpoAuditQuerySchema = z
+  .object({
+    kind: z
+      .enum(["ALL", ...TPO_AUDIT_KINDS])
+      .default("ALL"),
+    from: dateSchema.optional(),
+    to: dateSchema.optional(),
+    q: z.string().trim().max(120).default(""),
+    page: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(10000)
+      .default(1),
+    pageSize: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(25),
+  })
+  .strict()
+  .superRefine((query, ctx) => {
+    if (
+      query.from &&
+      query.to &&
+      query.from > query.to
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["to"],
+        message:
+          "The end date must not precede the start date",
+      });
+    }
+  });
+
+export type TpoAuditQuery = z.infer<
+  typeof tpoAuditQuerySchema
+>;
+
+export type TpoAuditRow = {
+  id: string;
+  kind: TpoAuditKind;
+  eventType: string;
+  title: string;
+  detail: string;
+  occurredAt: string;
+  jobId: string | null;
+};
+
+type AuditSource = {
+  kind: TpoAuditKind;
+  statement: SQL;
+};
+
+type CountRow = {
+  kind: TpoAuditKind;
+  total: number | string;
+};
+
+type AuditDbRow = {
+  id: string;
+  kind: TpoAuditKind;
+  eventType: string;
+  title: string;
+  detail: string;
+  occurredAt: Date | string;
+  jobId: string | null;
+};
+
+/**
+ * Every UNION arm independently restricts its source
+ * to the current TPO college. The outer filters never
+ * determine tenant authorization.
+ *
+ * Only allowlisted operational values are projected:
+ * category, status/action, placement job title, time
+ * and an optional job ID.
+ *
+ * Deliberately excluded:
+ * - actors' names, emails, phones and identifiers;
+ * - recipient emails and share secrets;
+ * - IP addresses and activity metadata;
+ * - free-text rejection reasons, comments and notes;
+ * - applicant, recruiter and learner identifiers.
+ *
+ * Canonical activity rows and domain history rows may
+ * represent the same action. They are retained as
+ * separately attributed source records, not silently
+ * deduplicated or presented as unique user actions.
+ */
+function auditSources(
+  collegeId: string,
+  shareAvailable: boolean,
+): AuditSource[] {
+  const sources: AuditSource[] = [
+    {
+      kind: "ACTIVITY",
+      statement: sql`
+        select
+          ae.id as event_id,
+          'ACTIVITY'::text as kind,
+          ae.event_type::text as event_type,
+          'Placement activity'::text as title,
+          'Recorded placement event'::text as detail,
+          ae.occurred_at as occurred_at,
+          null::uuid as job_id
+        from activity_events ae
+        where ae.college_id = ${collegeId}
+          and ae.module = 'PLACEMENTS'
+      `,
+    },
+    {
+      kind: "APPLICATION",
+      statement: sql`
+        select
+          history.id as event_id,
+          'APPLICATION'::text as kind,
+          history.to_status::text as event_type,
+          job.title::text as title,
+          concat(
+            coalesce(history.from_status, 'START'),
+            ' → ',
+            history.to_status
+          )::text as detail,
+          history.created_at as occurred_at,
+          job.id as job_id
+        from placement_application_status_history history
+        inner join placement_applications application
+          on application.id = history.application_id
+        inner join placement_jobs job
+          on job.id = application.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+    {
+      kind: "SCREENING",
+      statement: sql`
+        select
+          history.id as event_id,
+          'SCREENING'::text as kind,
+          history.to_status::text as event_type,
+          job.title::text as title,
+          concat(
+            history.from_status,
+            ' → ',
+            history.to_status
+          )::text as detail,
+          history.created_at as occurred_at,
+          job.id as job_id
+        from placement_application_screening_history history
+        inner join placement_applications application
+          on application.id = history.application_id
+        inner join placement_jobs job
+          on job.id = application.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+    {
+      kind: "ROUND",
+      statement: sql`
+        select
+          event.id as event_id,
+          'ROUND'::text as kind,
+          event.event_type::text as event_type,
+          job.title::text as title,
+          'Placement round change'::text as detail,
+          event.created_at as occurred_at,
+          job.id as job_id
+        from placement_job_round_events event
+        inner join placement_job_rounds round_record
+          on round_record.id = event.round_id
+        inner join placement_jobs job
+          on job.id = round_record.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+    {
+      kind: "RESULT",
+      statement: sql`
+        select
+          result.id as event_id,
+          'RESULT'::text as kind,
+          result.status::text as event_type,
+          job.title::text as title,
+          concat(
+            'Outcome ',
+            result.outcome,
+            ' · version ',
+            result.version
+          )::text as detail,
+          result.submitted_at as occurred_at,
+          job.id as job_id
+        from placement_round_results result
+        inner join placement_job_rounds round_record
+          on round_record.id = result.round_id
+        inner join placement_jobs job
+          on job.id = round_record.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+    {
+      kind: "OFFER",
+      statement: sql`
+        select
+          history.id as event_id,
+          'OFFER'::text as kind,
+          history.to_status::text as event_type,
+          job.title::text as title,
+          concat(
+            coalesce(history.from_status, 'START'),
+            ' → ',
+            history.to_status
+          )::text as detail,
+          history.created_at as occurred_at,
+          job.id as job_id
+        from placement_offer_status_history history
+        inner join placement_offers offer_record
+          on offer_record.id = history.offer_id
+        inner join placement_applications application
+          on application.id = offer_record.application_id
+        inner join placement_jobs job
+          on job.id = application.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+    {
+      kind: "JOINING",
+      statement: sql`
+        select
+          history.id as event_id,
+          'JOINING'::text as kind,
+          history.to_status::text as event_type,
+          job.title::text as title,
+          concat(
+            history.from_status,
+            ' → ',
+            history.to_status
+          )::text as detail,
+          history.created_at as occurred_at,
+          job.id as job_id
+        from placement_joining_history history
+        inner join placement_offers offer_record
+          on offer_record.id = history.offer_id
+        inner join placement_applications application
+          on application.id = offer_record.application_id
+        inner join placement_jobs job
+          on job.id = application.job_id
+        where job.college_id = ${collegeId}
+      `,
+    },
+  ];
+
+  if (shareAvailable) {
+    sources.push({
+      kind: "SHARE",
+      statement: sql`
+        select
+          event.id as event_id,
+          'SHARE'::text as kind,
+          event.action::text as event_type,
+          job.title::text as title,
+          'Recruiter share access event'::text as detail,
+          event.created_at as occurred_at,
+          job.id as job_id
+        from placement_tpo_share_events event
+        inner join placement_tpo_share_links share_record
+          on share_record.id = event.share_id
+        inner join placement_jobs job
+          on job.id = share_record.job_id
+        where share_record.college_id = ${collegeId}
+          and job.college_id = ${collegeId}
+      `,
+    });
+  }
+
+  return sources;
+}
+
+function auditDateFilters(
+  query: TpoAuditQuery,
+): SQL {
+  const conditions: SQL[] = [];
+
+  if (query.from) {
+    conditions.push(
+      sql`record.occurred_at >= ${
+        parseActivityDateBoundary(
+          query.from,
+          "from",
+        )
+      }`,
+    );
+  }
+
+  if (query.to) {
+    conditions.push(
+      sql`record.occurred_at <= ${
+        parseActivityDateBoundary(
+          query.to,
+          "to",
+        )
+      }`,
+    );
+  }
+
+  if (query.q) {
+    conditions.push(sql`
+      (
+        position(
+          lower(${query.q}) in lower(record.title)
+        ) > 0
+        or position(
+          lower(${query.q}) in lower(record.event_type)
+        ) > 0
+        or position(
+          lower(${query.q}) in lower(record.detail)
+        ) > 0
+        or position(
+          lower(${query.q}) in lower(record.kind)
+        ) > 0
+      )
+    `);
+  }
+
+  return conditions.length
+    ? sql`where ${sql.join(
+        conditions,
+        sql` and `,
+      )}`
+    : sql``;
+}
+
+/**
+ * Authenticated, read-only TPO audit feed.
+ *
+ * The college ID comes exclusively from the active TPO
+ * membership, never from query parameters or a caller-
+ * supplied college ID.
+ */
+export async function getTpoAuditLog(
+  context: RequestContext,
+  rawQuery: unknown = {},
+) {
+  if (
+    !context.membership ||
+    !hasMembershipRole(context, "TPO")
+  ) {
+    throw new AuthorizationError(
+      "placements.manage",
+    );
+  }
+
+  const query =
+    tpoAuditQuerySchema.parse(rawQuery);
+
+  const collegeId =
+    context.membership.collegeId;
+
+  await requirePlacementManageScope(
+    context,
+    collegeId,
+  );
+
+  const [shareEventsExists, shareLinksExist] =
+    await Promise.all([
+      placementTableExists(
+        "placement_tpo_share_events",
+      ),
+      placementTableExists(
+        "placement_tpo_share_links",
+      ),
+    ]);
+
+  const shareAvailable =
+    shareEventsExists && shareLinksExist;
+
+  const allSources = auditSources(
+    collegeId,
+    shareAvailable,
+  );
+
+  const selectedSources =
+    query.kind === "ALL"
+      ? allSources
+      : allSources.filter(
+          (source) =>
+            source.kind === query.kind,
+        );
+
+  const unavailableSources =
+    shareAvailable
+      ? []
+      : (["SHARE"] as const);
+
+  if (selectedSources.length === 0) {
+    return {
+      query,
+      items: [] as TpoAuditRow[],
+      summary: summarizeTpoAuditKinds([]),
+      page: query.page,
+      pageSize: query.pageSize,
+      totalPages: 1,
+      unavailableSources,
+    };
+  }
+
+  const union = sql.join(
+    selectedSources.map(
+      (source) => source.statement,
+    ),
+    sql` union all `,
+  );
+
+  const where = auditDateFilters(query);
+  const offset =
+    (query.page - 1) * query.pageSize;
+
+  const db = getDb();
+
+  const [countsResult, eventsResult] =
+    await Promise.all([
+      db.execute<CountRow>(sql`
+        with audit as (${union})
+        select
+          record.kind as kind,
+          count(*)::int as total
+        from audit record
+        ${where}
+        group by record.kind
+      `),
+      db.execute<AuditDbRow>(sql`
+        with audit as (${union})
+        select
+          record.event_id::text as id,
+          record.kind as kind,
+          record.event_type as "eventType",
+          record.title as title,
+          record.detail as detail,
+          record.occurred_at as "occurredAt",
+          record.job_id::text as "jobId"
+        from audit record
+        ${where}
+        order by
+          record.occurred_at desc,
+          record.event_id desc,
+          record.kind asc
+        limit ${query.pageSize}
+        offset ${offset}
+      `),
+    ]);
+
+  const summary =
+    summarizeTpoAuditKinds(
+      countsResult.rows.map((row) => ({
+        kind: row.kind,
+        total: Number(row.total),
+      })),
+    );
+
+  const items: TpoAuditRow[] =
+    eventsResult.rows.map((row) => ({
+      id: row.id,
+      kind: row.kind,
+      eventType: row.eventType,
+      title: row.title,
+      detail: row.detail,
+      occurredAt:
+        row.occurredAt instanceof Date
+          ? row.occurredAt.toISOString()
+          : new Date(
+              row.occurredAt,
+            ).toISOString(),
+      jobId: row.jobId,
+    }));
+
+  return {
+    query,
+    items,
+    summary,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(
+      1,
+      Math.ceil(
+        summary.total / query.pageSize,
+      ),
+    ),
+    unavailableSources,
+  };
+}
