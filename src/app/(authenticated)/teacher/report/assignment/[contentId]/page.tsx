@@ -4,7 +4,6 @@ import { FacultyReportDownload } from "@/components/courses/faculty-report-downl
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 
 export default async function FacultyAssignmentReportPage({
@@ -25,11 +24,6 @@ export default async function FacultyAssignmentReportPage({
     distribution,
     metrics,
   } = report;
-  const formatDate = (value: Date) =>
-    new Intl.DateTimeFormat("en-IN", {
-      dateStyle: "medium", timeStyle: "short",
-    }).format(value);
-
   return (
     <div className="space-y-6">
       <Link href="/teacher/allAssignments" className="text-sm font-semibold text-primary-text">
