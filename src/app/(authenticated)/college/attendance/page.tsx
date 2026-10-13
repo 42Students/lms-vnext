@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { z } from "zod";
@@ -109,6 +110,14 @@ export default async function CollegeAttendancePage({
         eyebrow="College Admin · Academics"
         title="Attendance"
         description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
+        actions={
+          <Link
+            href="/college/attendance/settings"
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          >
+            Attendance policy
+          </Link>
+        }
       />
       <AdminAttendanceWorkspace
         data={data}
