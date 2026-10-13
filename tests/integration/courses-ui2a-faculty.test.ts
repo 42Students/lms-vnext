@@ -665,8 +665,8 @@ describe("courses UI2A faculty read model", () => {
       {
         deliveryId: structure.deliveryA.id,
         title: "FUI2A Attendance Lab",
-        startsAt: "2026-10-01T09:00:00.000Z",
-        endsAt: "2026-10-01T10:00:00.000Z",
+        startsAt: new Date(Date.now() - 90 * 60_000).toISOString(),
+        endsAt: new Date(Date.now() - 30 * 60_000).toISOString(),
         location: "Lab 1",
       },
     );
@@ -773,6 +773,34 @@ describe("courses UI2A faculty read model", () => {
         [session.id],
       );
     expect(exceptionRows.rows).toHaveLength(0);
+
+    const future = await createFacultyAttendanceSession(faculty, {
+      deliveryId: structure.deliveryA.id,
+      title: "FUI2A Future Attendance",
+      startsAt: new Date(Date.now() + 60 * 60_000).toISOString(),
+      endsAt: new Date(Date.now() + 120 * 60_000).toISOString(),
+    });
+    await expect(markFacultyAttendance(faculty, future.id, {
+      deliveryId: structure.deliveryA.id,
+      absentMembershipIds: [SEED_IDS.learnerCollegeAMembership],
+      presentMembershipIds: [],
+    })).rejects.toMatchObject({ code: "ATTENDANCE_NOT_STARTED" });
+
+    const expired = await createFacultyAttendanceSession(faculty, {
+      deliveryId: structure.deliveryA.id,
+      title: "FUI2A Expired Attendance",
+      startsAt: new Date(Date.now() - 72 * 60 * 60_000).toISOString(),
+      endsAt: new Date(Date.now() - 71 * 60 * 60_000).toISOString(),
+    });
+    await expect(markFacultyAttendance(faculty, expired.id, {
+      deliveryId: structure.deliveryA.id,
+      absentMembershipIds: [SEED_IDS.learnerCollegeAMembership],
+      presentMembershipIds: [],
+    })).rejects.toMatchObject({ code: "ATTENDANCE_CORRECTION_WINDOW_EXPIRED" });
+
+    const state = await getFacultyAttendanceWorkspace(faculty, structure.deliveryA.id);
+    expect(state.sessions.filter((session) => [future.id, expired.id].includes(session.id))
+      .every((session) => session.attendanceStatus === null)).toBe(true);
   });
 
   it("keeps Faculty attendance scheduling and marking inside exact teaching scope", async () => {

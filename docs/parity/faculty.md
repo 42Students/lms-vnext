@@ -259,3 +259,7 @@ The Faculty Blueprint now provides an Edit content drawer for Section-owned Reso
 ## Faculty independent browser verification and route recovery (2026-10-13)
 
 Added a standalone Faculty-only Playwright suite covering authenticated Course search, Section-isolated Blueprint resources, metadata editor, all five legacy tabs, mobile navigation, and aggregate Assessment draft drawers. It is separate from the serial Learner course suite so unrelated learner regressions cannot silently skip Faculty assertions. Faculty course list and detail routes now have retry/error and skeleton loading surfaces. All checks remain OPEN until the new suite executes at a known commit; the broader clone gate and Faculty Profile remain blocked independently.
+
+## Faculty attendance session timing guard (2026-10-13)
+
+A Faculty member can no longer mark attendance before the assigned session begins or past the persisted college's correction window after class end (default 24 hours). The check runs in the exact-delivery marking transaction before any record changes. Admin corrections retain their separate permission policy. Test fixtures use in-window time and include negative future/expired cases; full DB06 history migration remains unregistered and NOT DONE. Do not mark Attendance parity closed before browser/DB acceptance.

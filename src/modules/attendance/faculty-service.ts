@@ -26,6 +26,7 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
+import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -446,6 +447,8 @@ export async function markFacultyAttendance(
         id: sectionScheduleEvents.id,
         sectionId: sectionScheduleEvents.sectionId,
         status: sectionScheduleEvents.status,
+        startsAt: sectionScheduleEvents.startsAt,
+        endsAt: sectionScheduleEvents.endsAt,
         deliveryId:
           sectionScheduleEventCourses.deliveryId,
       })
@@ -477,7 +480,22 @@ export async function markFacultyAttendance(
       );
     }
 
+    const [policy] = await tx.select({
+      correctionWindowHours: attendancePolicies.correctionWindowHours,
+    }).from(attendancePolicies).where(
+      eq(attendancePolicies.collegeId, context.membership!.collegeId),
+    ).limit(1);
     const now = new Date();
+    const window = facultyAttendanceMarkingWindow({
+      startsAt: event.startsAt,
+      endsAt: event.endsAt,
+      correctionWindowHours: policy?.correctionWindowHours ?? DEFAULT_POLICY.correctionWindowHours,
+      now,
+    });
+    if (window !== "OPEN") {
+      throw new CoursesServiceError(window === "NOT_STARTED"
+        ? "ATTENDANCE_NOT_STARTED" : "ATTENDANCE_CORRECTION_WINDOW_EXPIRED");
+    }
 
     if (input.presentMembershipIds.length > 0) {
       await tx
