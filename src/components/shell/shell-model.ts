@@ -178,6 +178,12 @@ const tpoItems: ShellNavItem[] = [
     href: "/tpo/placements",
     shortLabel: "P",
   },
+  {
+    label: "Calendar",
+    href: "/tpo/calendar",
+    shortLabel: "C",
+    icon: "/assets/images/common/calender.svg",
+  },
 ];
 
 const recruiterItems: ShellNavItem[] = [
@@ -214,6 +220,12 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
   { label: "Projects", href: "/college/projects", shortLabel: "P" },
   { label: "Placements", href: "/college/placements", shortLabel: "P" },
+  {
+    label: "Placement Calendar",
+    href: "/college/placements/calendar",
+    shortLabel: "C",
+    icon: "/assets/images/common/calender.svg",
+  },
   { label: "People", href: "/college/people", shortLabel: "P" },
   { label: "Student Groups", href: "/college/groups", shortLabel: "G" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },

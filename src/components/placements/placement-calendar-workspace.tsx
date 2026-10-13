@@ -1,0 +1,941 @@
+import Link from "next/link";
+
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+
+import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
+import type { RequestContext } from "@/modules/identity/context";
+
+import {
+  initialCareerCalendarDay,
+  shiftCareerCalendarDay,
+} from "@/modules/placements/learner-career-calendar-model";
+
+import {
+  groupPlacementCalendarEvents,
+  placementCalendarDayKey,
+  placementCalendarWindow,
+  summarizePlacementCalendar,
+  type PlacementCalendarEvent,
+  type PlacementCalendarKind,
+  type PlacementCalendarView,
+} from "@/modules/placements/placement-calendar-model";
+
+import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
+import { placementRoundKinds } from "@/modules/placements/validation";
+
+type CalendarAudience = "TPO" | "COLLEGE_ADMIN";
+
+type CalendarSearchParams = {
+  date?: string | string[];
+  view?: string | string[];
+  company?: string | string[];
+  kind?: string | string[];
+  roundKind?: string | string[];
+  job?: string | string[];
+};
+
+type CalendarState = {
+  anchor: string;
+  view: PlacementCalendarView;
+  company: string;
+  kind: PlacementCalendarKind | undefined;
+  roundKind: (typeof placementRoundKinds)[number] | undefined;
+  job: string;
+};
+
+const VIEWS: readonly PlacementCalendarView[] = [
+  "week",
+  "month",
+  "agenda",
+];
+
+const EVENT_FILTERS: ReadonlyArray<{
+  value: PlacementCalendarKind | "";
+  label: string;
+}> = [
+  { value: "", label: "All events" },
+  { value: "ROUND", label: "Rounds and talks" },
+  {
+    value: "APPLICATION_DEADLINE",
+    label: "Application deadlines",
+  },
+  {
+    value: "FOLLOW_UP",
+    label: "Recruiter follow-ups",
+  },
+];
+
+const ROUND_FILTERS: ReadonlyArray<{
+  value: (typeof placementRoundKinds)[number] | "";
+  label: string;
+}> = [
+  { value: "", label: "All rounds" },
+  { value: "INTERVIEW", label: "Interviews" },
+  { value: "GD", label: "Group discussions" },
+  { value: "TALK", label: "Talks" },
+  { value: "TEST", label: "Tests" },
+  { value: "VENDOR_TEST", label: "Vendor tests" },
+];
+
+function first(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value)
+    ? value[0]
+    : value;
+}
+
+function validDay(
+  value: string | undefined,
+  fallback: string,
+): string {
+  if (!value) return fallback;
+
+  try {
+    parseActivityDateBoundary(value, "from");
+    return value;
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizedState(
+  searchParams: CalendarSearchParams,
+  audience: CalendarAudience,
+  today: string,
+): CalendarState {
+  const requestedView = first(searchParams.view);
+
+  const view: PlacementCalendarView =
+    VIEWS.find((candidate) => candidate === requestedView) ??
+    "month";
+
+  const requestedKind = first(searchParams.kind);
+
+  const kind =
+    EVENT_FILTERS.find(
+      (option) =>
+        option.value !== "" &&
+        option.value === requestedKind,
+    )?.value || undefined;
+
+  const requestedRoundKind = first(
+    searchParams.roundKind,
+  );
+
+  const roundKind =
+    audience === "COLLEGE_ADMIN"
+      ? requestedRoundKind === ""
+        ? undefined
+        : placementRoundKinds.find(
+            (candidate) =>
+              candidate === requestedRoundKind,
+          ) ?? "INTERVIEW"
+      : undefined;
+
+  return {
+    anchor: validDay(
+      first(searchParams.date),
+      today,
+    ),
+    view,
+    company:
+      first(searchParams.company)
+        ?.trim()
+        .slice(0, 150) ?? "",
+    kind:
+      audience === "TPO"
+        ? kind
+        : "ROUND",
+    roundKind,
+    job:
+      audience === "COLLEGE_ADMIN"
+        ? first(searchParams.job)
+            ?.trim()
+            .slice(0, 150) ?? ""
+        : "",
+  };
+}
+
+function calendarHref(
+  basePath: string,
+  audience: CalendarAudience,
+  state: CalendarState,
+  overrides: Partial<
+    Pick<CalendarState, "anchor" | "view">
+  > = {},
+): string {
+  const params = new URLSearchParams();
+
+  params.set(
+    "date",
+    overrides.anchor ?? state.anchor,
+  );
+
+  params.set(
+    "view",
+    overrides.view ?? state.view,
+  );
+
+  if (state.company) {
+    params.set("company", state.company);
+  }
+
+  if (audience === "TPO") {
+    if (state.kind) {
+      params.set("kind", state.kind);
+    }
+  } else {
+    params.set(
+      "roundKind",
+      state.roundKind ?? "",
+    );
+
+    if (state.job) {
+      params.set("job", state.job);
+    }
+  }
+
+  return `${basePath}?${params.toString()}`;
+}
+
+function eventHref(
+  event: PlacementCalendarEvent,
+  audience: CalendarAudience,
+): string | null {
+  if (event.jobId) {
+    const base =
+      audience === "TPO"
+        ? "/tpo/placements/jobs/"
+        : "/college/placements/jobs/";
+
+    const jobHref =
+      base + encodeURIComponent(event.jobId);
+
+    return event.roundId
+      ? `${jobHref}#round-${event.roundId}`
+      : jobHref;
+  }
+
+  if (
+    audience === "TPO" &&
+    event.leadId
+  ) {
+    return (
+      "/tpo/recruiters/" +
+      encodeURIComponent(event.leadId)
+    );
+  }
+
+  return null;
+}
+
+function dayLabel(day: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    weekday: "short",
+    timeZone: "UTC",
+  }).format(
+    new Date(`${day}T12:00:00.000Z`),
+  );
+}
+
+function dateLabel(day: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(
+    new Date(`${day}T12:00:00.000Z`),
+  );
+}
+
+function monthLabel(day: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(
+    new Date(`${day}T12:00:00.000Z`),
+  );
+}
+
+function eventTime(value: Date): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+  }).format(value);
+}
+
+function eventDateTime(value: Date): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(value);
+}
+
+function eventTypeLabel(
+  event: PlacementCalendarEvent,
+): string {
+  if (event.kind === "APPLICATION_DEADLINE") {
+    return "Deadline";
+  }
+
+  if (event.kind === "FOLLOW_UP") {
+    return "Follow-up";
+  }
+
+  return event.roundKind
+    ? event.roundKind.replaceAll("_", " ")
+    : "Round";
+}
+
+function eventTone(
+  event: PlacementCalendarEvent,
+): "neutral" | "info" | "success" | "warning" {
+  if (
+    event.status === "DONE" ||
+    event.status === "COMPLETED"
+  ) {
+    return "success";
+  }
+
+  if (
+    event.kind === "APPLICATION_DEADLINE"
+  ) {
+    return "warning";
+  }
+
+  return "info";
+}
+
+function CalendarEventCard({
+  event,
+  audience,
+}: {
+  event: PlacementCalendarEvent;
+  audience: CalendarAudience;
+}) {
+  const href = eventHref(event, audience);
+
+  return (
+    <article className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="m-0 text-xs font-bold uppercase tracking-wide text-primary-text">
+            {event.companyName}
+          </p>
+          <h3 className="mt-1 text-base font-semibold text-foreground">
+            {event.title}
+          </h3>
+          {event.jobTitle ? (
+            <p className="mt-1 text-sm text-body">
+              {event.jobTitle}
+            </p>
+          ) : null}
+          <p className="mt-2 text-sm text-body">
+            <time dateTime={event.startsAt.toISOString()}>
+              {eventDateTime(event.startsAt)} IST
+            </time>
+          </p>
+          {event.venue ? (
+            <p className="mt-1 text-sm text-body">
+              Venue: {event.venue}
+            </p>
+          ) : null}
+          {event.note ? (
+            <p className="mt-1 whitespace-pre-wrap text-sm text-body">
+              {event.note}
+            </p>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge tone={eventTone(event)}>
+            {eventTypeLabel(event)}
+          </StatusBadge>
+          <StatusBadge
+            tone={
+              event.status === "DONE" ||
+              event.status === "COMPLETED"
+                ? "success"
+                : "neutral"
+            }
+          >
+            {event.status.replaceAll("_", " ")}
+          </StatusBadge>
+        </div>
+      </div>
+      {href ? (
+        <Link
+          href={href}
+          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+        >
+          {event.leadId
+            ? "Open recruiter lead"
+            : event.roundId
+              ? "Open round in job"
+              : "Open placement job"}{" "}
+          →
+        </Link>
+      ) : null}
+    </article>
+  );
+}
+
+export async function PlacementCalendarWorkspace({
+  context,
+  collegeId,
+  audience,
+  searchParams,
+}: {
+  context: RequestContext;
+  collegeId: string;
+  audience: CalendarAudience;
+  searchParams: CalendarSearchParams;
+}) {
+  const now = new Date();
+  const today = placementCalendarDayKey(now);
+  const state = normalizedState(
+    searchParams,
+    audience,
+    today || initialCareerCalendarDay(),
+  );
+
+  const basePath =
+    audience === "TPO"
+      ? "/tpo/calendar"
+      : "/college/placements/calendar";
+
+  const window = placementCalendarWindow(
+    state.anchor,
+    state.view,
+  );
+
+  const response =
+    await listPlacementCalendarEvents(
+      context,
+      {
+        collegeId,
+        from: window.from,
+        to: window.to,
+        company: state.company || undefined,
+        kind: state.kind,
+        roundKind: state.roundKind,
+      },
+    );
+
+  // The shared read service supports event-kind and
+  // company filtering. The college-only job-name filter
+  // is a view-level refinement of the authorized rows.
+  const events =
+    audience === "COLLEGE_ADMIN" && state.job
+      ? response.events.filter((event) =>
+          event.jobTitle
+            ?.toLocaleLowerCase("en-IN")
+            .includes(
+              state.job.toLocaleLowerCase("en-IN"),
+            ),
+        )
+      : response.events;
+
+  const groups =
+    groupPlacementCalendarEvents(events);
+
+  const byDay = new Map(
+    groups.map((group) => [
+      group.day,
+      group.events,
+    ]),
+  );
+
+  const summary =
+    summarizePlacementCalendar(
+      events,
+      now,
+    );
+
+  const previous =
+    shiftCareerCalendarDay(
+      state.anchor,
+      state.view === "week"
+        ? "week"
+        : "month",
+      -1,
+    );
+
+  const next =
+    shiftCareerCalendarDay(
+      state.anchor,
+      state.view === "week"
+        ? "week"
+        : "month",
+      1,
+    );
+
+  const isTpo = audience === "TPO";
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow={
+          isTpo
+            ? "TPO"
+            : "College Admin · Placements"
+        }
+        title={
+          isTpo
+            ? "Placement Calendar"
+            : "Placement Interview Calendar"
+        }
+        description={
+          isTpo
+            ? "College-wide rounds, application deadlines and recruiter follow-ups. Dates and times are shown in Indian Standard Time."
+            : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
+        }
+        actions={
+          <Link
+            href={
+              isTpo
+                ? "/tpo/placements"
+                : "/college/placements"
+            }
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            Placement operations →
+          </Link>
+        }
+      />
+
+      <section
+        aria-label="Calendar summary"
+        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        {(
+          isTpo
+            ? [
+                ["Rounds", summary.rounds],
+                ["Deadlines", summary.deadlines],
+                ["Follow-ups", summary.followups],
+                ["All events", summary.total],
+              ]
+            : [
+                ["College rounds", summary.rounds],
+                ["Matching events", summary.total],
+              ]
+        ).map(([label, count]) => (
+          <div
+            key={String(label)}
+            className="rounded-xl border border-border bg-surface p-4"
+          >
+            <p className="text-xs font-semibold text-muted-foreground">
+              {label}
+            </p>
+            <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
+              {count}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-base font-semibold text-foreground">
+              Calendar controls
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Showing {dateLabel(window.from)} –{" "}
+              {dateLabel(window.to)} · IST
+            </p>
+          </div>
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="Calendar view"
+          >
+            {VIEWS.map((view) => (
+              <Link
+                key={view}
+                href={calendarHref(
+                  basePath,
+                  audience,
+                  state,
+                  { view },
+                )}
+                aria-current={
+                  state.view === view
+                    ? "page"
+                    : undefined
+                }
+                className={
+                  state.view === view
+                    ? "inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-on-primary"
+                    : "inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-primary-text"
+                }
+              >
+                {view}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Link
+            href={calendarHref(
+              basePath,
+              audience,
+              state,
+              { anchor: previous },
+            )}
+            aria-label="Previous calendar period"
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            ←
+          </Link>
+          <Link
+            href={calendarHref(
+              basePath,
+              audience,
+              state,
+              { anchor: today },
+            )}
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            Today
+          </Link>
+          <Link
+            href={calendarHref(
+              basePath,
+              audience,
+              state,
+              { anchor: next },
+            )}
+            aria-label="Next calendar period"
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            →
+          </Link>
+          <span className="ml-2 text-sm font-semibold text-foreground">
+            {state.view === "week"
+              ? `${dateLabel(window.from)} – ${dateLabel(window.to)}`
+              : monthLabel(state.anchor)}
+          </span>
+        </div>
+
+        <form
+          key={[
+            state.anchor,
+            state.view,
+            state.company,
+            state.kind,
+            state.roundKind,
+            state.job,
+          ].join(":")}
+          action={basePath}
+          method="get"
+          className="mt-5 grid gap-3 border-t border-border pt-5 sm:grid-cols-2 xl:grid-cols-4"
+        >
+          <input
+            type="hidden"
+            name="view"
+            value={state.view}
+          />
+
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Date
+            <input
+              type="date"
+              name="date"
+              defaultValue={state.anchor}
+              required
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Company
+            <input
+              type="search"
+              name="company"
+              maxLength={150}
+              defaultValue={state.company}
+              placeholder="Search company name"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            />
+          </label>
+
+          {isTpo ? (
+            <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+              Event type
+              <select
+                name="kind"
+                defaultValue={state.kind ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              >
+                {EVENT_FILTERS.map((filter) => (
+                  <option
+                    key={filter.value}
+                    value={filter.value}
+                  >
+                    {filter.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : (
+            <>
+              <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+                Round type
+                <select
+                  name="roundKind"
+                  defaultValue={state.roundKind ?? ""}
+                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                >
+                  {ROUND_FILTERS.map((filter) => (
+                    <option
+                      key={filter.value}
+                      value={filter.value}
+                    >
+                      {filter.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+                Job
+                <input
+                  type="search"
+                  name="job"
+                  maxLength={150}
+                  defaultValue={state.job}
+                  placeholder="Search job title"
+                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                />
+              </label>
+            </>
+          )}
+
+          <div className="flex items-end">
+            <button
+              type="submit"
+              className="min-h-11 w-full rounded-md bg-primary px-4 text-sm font-semibold text-on-primary transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            >
+              Apply filters
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section
+        aria-label="Next scheduled calendar event"
+        className="rounded-xl border border-border bg-surface p-4 sm:p-5"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-base font-semibold text-foreground">
+              Next scheduled
+            </h2>
+            {summary.next ? (
+              <p className="mt-1 text-sm text-body">
+                {summary.next.companyName} ·{" "}
+                {summary.next.title} ·{" "}
+                {eventDateTime(
+                  summary.next.startsAt,
+                )}{" "}
+                IST
+              </p>
+            ) : (
+              <p className="mt-1 text-sm text-body">
+                No upcoming event matches this period and these filters.
+              </p>
+            )}
+          </div>
+          {summary.next &&
+          eventHref(summary.next, audience) ? (
+            <Link
+              href={eventHref(
+                summary.next,
+                audience,
+              )!}
+              className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+            >
+              Open event →
+            </Link>
+          ) : null}
+        </div>
+      </section>
+
+      {state.view !== "agenda" ? (
+        <section
+          aria-label={`${state.view} placement calendar`}
+          className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
+        >
+          <div className="grid min-w-[56rem] grid-cols-7 gap-1">
+            {[
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun",
+            ].map((label) => (
+              <div
+                key={label}
+                className="py-3 text-center text-xs font-bold uppercase text-muted-foreground"
+              >
+                {label}
+              </div>
+            ))}
+
+            {window.days.map((day) => {
+              const dayEvents =
+                byDay.get(day) ?? [];
+
+              const outsideMonth =
+                state.view === "month" &&
+                day.slice(0, 7) !==
+                  state.anchor.slice(0, 7);
+
+              const shown = dayEvents.slice(
+                0,
+                state.view === "month" ? 2 : 4,
+              );
+
+              return (
+                <div
+                  key={day}
+                  aria-label={`${dateLabel(day)}: ${dayEvents.length} events`}
+                  className={
+                    "min-h-32 rounded-lg border border-border p-2 " +
+                    (outsideMonth
+                      ? "bg-muted/40"
+                      : "bg-surface")
+                  }
+                >
+                  <p
+                    className={
+                      day === today
+                        ? "m-0 text-xs font-bold text-primary-text"
+                        : "m-0 text-xs font-semibold text-foreground"
+                    }
+                  >
+                    {dayLabel(day)}
+                    {day === today ? " · Today" : ""}
+                  </p>
+
+                  <div className="mt-2 space-y-1">
+                    {shown.map((event) => {
+                      const href = eventHref(
+                        event,
+                        audience,
+                      );
+
+                      return href ? (
+                        <Link
+                          key={event.id}
+                          href={href}
+                          title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
+                          className="block min-h-8 rounded-md bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        >
+                          <span className="block truncate">
+                            {eventTime(
+                              event.startsAt,
+                            )}
+                          </span>
+                          <span className="block truncate">
+                            {event.title}
+                          </span>
+                        </Link>
+                      ) : (
+                        <div
+                          key={event.id}
+                          className="rounded-md bg-muted px-2 py-1 text-xs text-body"
+                        >
+                          {event.title}
+                        </div>
+                      );
+                    })}
+
+                    {dayEvents.length > shown.length ? (
+                      <p className="text-xs font-semibold text-muted-foreground">
+                        +{dayEvents.length - shown.length} more
+                      </p>
+                    ) : null}
+
+                    {dayEvents.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">
+                        —
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      <section
+        aria-label="Calendar agenda"
+        className="space-y-4"
+      >
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-lg font-semibold text-foreground">
+              {state.view === "agenda"
+                ? "Agenda"
+                : "Events in visible period"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {events.length} matching event
+              {events.length === 1 ? "" : "s"} ·{" "}
+              {dateLabel(window.from)} –{" "}
+              {dateLabel(window.to)}
+            </p>
+          </div>
+          <p className="text-xs font-semibold text-muted-foreground">
+            All times IST
+          </p>
+        </div>
+
+        {groups.length === 0 ? (
+          <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
+            No calendar events match this date range and these filters.
+            Try another date, company or event type.
+          </div>
+        ) : (
+          groups.map((group) => (
+            <div
+              key={group.day}
+              className="space-y-3"
+            >
+              <h3 className="m-0 border-b border-border pb-2 text-sm font-semibold text-foreground">
+                {dateLabel(group.day)}
+                {group.day === today
+                  ? " · Today"
+                  : ""}
+              </h3>
+              <div className="grid gap-3 lg:grid-cols-2">
+                {group.events.map((event) => (
+                  <CalendarEventCard
+                    key={event.id}
+                    event={event}
+                    audience={audience}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+    </div>
+  );
+}
