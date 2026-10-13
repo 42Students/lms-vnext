@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
   guardLoginRequest,
+  auditLogin,
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { sendEmailFallbackWithRuntime } from "@/modules/auth/runtime";
@@ -24,8 +25,9 @@ export async function POST(request: Request) {
       attemptId: guarded.body.attemptId,
       tenantCollegeId: guarded.tenantCollegeId,
     });
+    auditLogin("auth.email_code_sent", { route: "login-email", ip: guarded.ip });
     return NextResponse.json(result);
   } catch (error) {
-    return loginErrorResponse(error);
+    return loginErrorResponse(error, { route: "login-email", ip: guarded.ip });
   }
 }

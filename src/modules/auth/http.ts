@@ -4,13 +4,46 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
-import { logError } from "@/observability/logger";
+import { createHash } from "node:crypto";
+import { logError, writeStructuredLog } from "@/observability/logger";
 import { AuthConfigError } from "./config";
 import { LoginError } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
 
-export function loginErrorResponse(error: unknown) {
+/** Short one-way tag so repeated activity can be correlated without storing the address. */
+function ipTag(ip: string) {
+  return createHash("sha256").update(ip).digest("hex").slice(0, 12);
+}
+
+type AuditContext = { route: string; ip: string };
+
+/** Sign-in audit event. Never carries contacts, codes or tokens. */
+export function auditLogin(
+  event: string,
+  context: AuditContext,
+  fields: Record<string, string | number | boolean | null> = {},
+) {
+  writeStructuredLog("INFO", event, {
+    component: "auth-audit",
+    route: context.route,
+    ipTag: ipTag(context.ip),
+    ...fields,
+  });
+}
+
+export function loginErrorResponse(
+  error: unknown,
+  audit?: AuditContext,
+) {
   if (error instanceof LoginError) {
+    if (audit) {
+      writeStructuredLog("WARNING", "auth.login_rejected", {
+        component: "auth-audit",
+        route: audit.route,
+        ipTag: ipTag(audit.ip),
+        code: error.code,
+      });
+    }
     return NextResponse.json(
       {
         error: error.code,

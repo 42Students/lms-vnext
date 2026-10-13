@@ -7,6 +7,7 @@ import {
 } from "@/auth/session";
 import {
   guardLoginRequest,
+  auditLogin,
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { verifyLoginWithRuntime } from "@/modules/auth/runtime";
@@ -40,6 +41,10 @@ export async function POST(request: Request) {
       tenantCollegeId: guarded.tenantCollegeId,
     });
 
+    auditLogin("auth.login_succeeded", { route: "login-verify", ip: guarded.ip }, {
+      userId: verified.user.id,
+      isSuperAdmin: verified.isSuperAdmin,
+    });
     const session = await createSession(verified.user.id, {
       userAgent: request.headers.get("user-agent"),
       ipAddress: guarded.ip,
@@ -87,6 +92,6 @@ export async function POST(request: Request) {
     );
     return response;
   } catch (error) {
-    return loginErrorResponse(error);
+    return loginErrorResponse(error, { route: "login-verify", ip: guarded.ip });
   }
 }
