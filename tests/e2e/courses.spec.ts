@@ -226,13 +226,13 @@ test.describe("Course browser regression", () => {
     );
     await expect(courseCard).toContainText("PRIMARY");
     await courseCard.click();
-
-    await expect(
-      page.getByRole("heading", {
-        level: 1,
-        name: "E2E Browser Course",
-      }),
-    ).toBeVisible();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/home$/);
+    await expect(page.getByRole("heading", { level: 1, name: "E2E Browser Course" })).toBeVisible();
+    for (const tab of ["Overview", "Blueprint", "Students", "Attendance", "Discussions"]) {
+      await expect(page.getByRole("link", { name: tab, exact: true })).toBeVisible();
+    }
+    await page.getByRole("link", { name: "Blueprint", exact: true }).click();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/blueprint$/);
     await expect(
       page.getByText("E2E Shared Notes", {
         exact: true,
@@ -248,6 +248,16 @@ test.describe("Course browser regression", () => {
         exact: true,
       }),
     ).toHaveCount(0);
+    await page.getByRole("link", { name: "Students", exact: true }).click();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/students$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Students" })).toBeVisible();
+    await page.getByRole("link", { name: "Attendance", exact: true }).click();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+    await page.getByRole("link", { name: "Discussions", exact: true }).click();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/discussions$/);
+    await expect(page.getByLabel("Write a message")).toBeVisible();
+    await page.getByRole("link", { name: "Overview", exact: true }).click();
+    await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/home$/);
   });
 
   test("College Admin shared authoring stays Offering-wide", async ({
