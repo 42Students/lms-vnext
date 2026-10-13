@@ -140,6 +140,19 @@ describe("authenticated shell model", () => {
     });
   });
 
+  it("never leaks generic Dashboard or other roles into a Faculty-only sidebar", () => {
+    const navigation = getShellNavigation(context(["FACULTY"]));
+    expect(navigation.map((item) => item.href)).toEqual([
+      "/teacher/courses",
+      "/teacher/contacts/allContacts",
+      "/teacher/notifications",
+      "/teacher/calendar",
+      "/teacher/allQuizzes",
+      "/teacher/allAssignments",
+      "/teacher/profile",
+    ]);
+  });
+
   it("gives faculty teaching navigation without admin navigation", () => {
     const shellContext = context(["FACULTY", "MENTOR"]);
 

@@ -33,7 +33,7 @@ describe("mentor legacy sidebar", () => {
       ...mentor,
       membership: { ...mentor.membership!, roles: ["MENTOR", "FACULTY"] },
     });
-    expect(nav.some((item) => item.href === "/teach/courses")).toBe(true);
+    expect(nav.some((item) => item.href === "/teacher/courses")).toBe(true);
     expect(nav.some((item) => item.href === "/mentor/calendar")).toBe(true);
   });
 });
