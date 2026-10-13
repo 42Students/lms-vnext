@@ -344,6 +344,7 @@ describe("authenticated shell model", () => {
     expect(hrefs(shellContext)).toContain("/tpo/students");
     expect(hrefs(shellContext)).toContain("/tpo/companies");
     expect(hrefs(shellContext)).toContain("/tpo/audit");
+    expect(hrefs(shellContext)).toContain("/tpo/more");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",

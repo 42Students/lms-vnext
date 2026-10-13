@@ -213,6 +213,12 @@ const tpoItems: ShellNavItem[] = [
     shortLabel: "A",
     group: "tracking",
   },
+  {
+    label: "More",
+    href: "/tpo/more",
+    shortLabel: "M",
+    group: "account",
+  },
 ];
 
 const recruiterItems: ShellNavItem[] = [
