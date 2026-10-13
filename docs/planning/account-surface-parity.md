@@ -401,7 +401,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Round-focused Drive Day | `/tpo/drive-day/[roundId]` | none | MISSING |
 | Approve + publish preflight | drive action | vNext lifecycle | PARTIAL |
 | Reject / send back request | drive action | vNext lifecycle | PARTIAL |
-| Export applicants | drive action | none/verify | MISSING |
+| Export applicants | drive action | `/tpo/placements/jobs/[jobId]` + `/api/placements/jobs/[jobId]/applicants/export` | PARTIAL |
 | Share with company | drive action + `/company-share/[token]` | none | Critical external-sharing workflow missing. | MISSING |
 | Extend deadline | drive action | vNext requests/lifecycle | PARTIAL |
 | Cancel drive + consequence preview | drive action | vNext lifecycle | PARTIAL |

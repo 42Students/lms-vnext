@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
@@ -180,6 +181,14 @@ export async function PlacementDriveWorkspace({
         description={
           driveDay.job.company.name +
           " · live placement workspace"
+        }
+        actions={
+          <Link
+            href={`/api/placements/jobs/${encodeURIComponent(jobId)}/applicants/export`}
+            className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+          >
+            Export applicants (CSV)
+          </Link>
         }
       />
       {job.status === "DRAFT" ? (
