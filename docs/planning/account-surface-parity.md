@@ -64,7 +64,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Assessments | `/learn/my-placements/assessments` | typed scheduled career rounds + employer test link | Search, pending/completed buckets, reminders and modal/browser parity remain. | PARTIAL |
 | Interviews | `/learn/my-placements/interviews` | typed scheduled interview/GD rounds | Confirm, reschedule, countdown, detail modal and browser parity remain. | PARTIAL |
 | Career Calendar | `/learn/my-placements/calendar` | dedicated Calendar | Month/Week/Day/Agenda navigation, event-kind filters, approved reschedules and .ics export are implemented for learner-visible scheduled rounds; legacy job important dates/TALK/BLOCKED sources, event drawer and browser parity remain. | PARTIAL |
-| Jobs list | `/learn/my-placements/jobs` | same legacy route + placements feed | Exact browse/filter surface incomplete. | PARTIAL |
+| Jobs list | `/learn/my-placements/jobs` | same legacy route + placements feed | Learner-authorized roles now have URL-aware search, employment/location/eligible filters, deadline/CTC/title sorting, 20-row pagination and filtered-empty states; saved/closing-soon features and browser acceptance remain. | PARTIAL |
 | Job detail | `/learn/my-placements/jobs/[jobId]` | role and eligibility cards for selected job | Exact legacy detail sections, actions and browser parity remain. | PARTIAL |
 | Placement Cell | `/learn/my-placements/placement` | offer/request workspace and rules link | Batch registration, consent, debarment and exact support behavior remain. | PARTIAL |
 | Placement Rules | `/learn/my-placements/rules` | evidence/preference guidance | College-authored policy and acknowledgement workflow remain. | PARTIAL |

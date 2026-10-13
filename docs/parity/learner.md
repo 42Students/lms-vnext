@@ -411,6 +411,16 @@ Legacy contract:
 - [ ] Mobile agenda fallback is verified.
 
 ## Page: Jobs
+
+**2026-10-13 browse update:** the dedicated Learner Drives page now
+filters the persisted role-option feed by search text, employment type,
+location and ability to apply, sorts by deadline/CTC/role title,
+and paginates at 20 rows. Filter/search/page values use query parameters
+and rehydrate the search field on browser Back/Forward; filtering does
+not alter eligibility decisions or application submissions. Source/pure
+regression tests were authored. Saved drives, closing-soon facet,
+full legacy tab composition and browser acceptance remain open.
+
 **Legacy:** `/learn/my-placements/jobs`
 
 Legacy contract:
