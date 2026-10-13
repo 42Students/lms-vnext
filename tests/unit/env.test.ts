@@ -16,7 +16,6 @@ describe("server environment", () => {
       INSTANCE_UNIX_SOCKET: "",
       GOOGLE_CLOUD_PROJECT: "",
       GCP_REGION: "",
-      GCS_BUCKET: "",
     });
 
     expect(getDatabaseConnectionConfig(env)).toEqual({

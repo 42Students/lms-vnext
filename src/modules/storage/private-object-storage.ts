@@ -1,7 +1,15 @@
 import "server-only";
 
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { getAdminStorageBucket } from "@/auth/firebase-admin";
+import { getPrivateR2Config } from "./r2-config";
+import {
+  headObject,
+  presignUrl,
+  replaceObjectMetadata,
+} from "./s3-client";
+import { PrivateObjectStorageError } from "./storage-errors";
+
+export { PrivateObjectStorageError };
 
 export const PRIVATE_OBJECT_NAMESPACES = [
   "profile-verification",
@@ -18,21 +26,6 @@ const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const mimePattern =
   /^[a-z0-9][a-z0-9!#$&^_.+-]*\/[a-z0-9][a-z0-9!#$&^_.+-]*$/i;
-
-export class PrivateObjectStorageError extends Error {
-  constructor(
-    public readonly code:
-      | "PRIVATE_STORAGE_INVALID_SCOPE"
-      | "PRIVATE_STORAGE_INVALID_NAMESPACE"
-      | "PRIVATE_STORAGE_INVALID_MIME"
-      | "PRIVATE_STORAGE_INVALID_SIZE"
-      | "PRIVATE_STORAGE_BUCKET_UNSAFE"
-      | "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED",
-  ) {
-    super(code);
-    this.name = "PrivateObjectStorageError";
-  }
-}
 
 export type PrivateUploadRequest = {
   collegeId: string;
@@ -132,64 +125,66 @@ export function buildPrivateObjectKey(
   return ["private", input.collegeId, input.ownerMembershipId, input.namespace, objectId].join("/");
 }
 
-async function privateBucket() {
-  const bucket = getAdminStorageBucket();
-  const [meta] = await bucket.getMetadata();
-  const iam = meta.iamConfiguration as
-    | { uniformBucketLevelAccess?: { enabled?: boolean }; publicAccessPrevention?: string }
-    | undefined;
-  if (
-    iam?.uniformBucketLevelAccess?.enabled !== true ||
-    iam.publicAccessPrevention !== "enforced"
-  ) {
-    throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
-  }
-  return bucket;
-}
+const SCANNER_ID = "lms-vnext-privileged-scanner";
 
 export async function createPrivateUploadGrant(raw: PrivateUploadRequest) {
   const input = validatePrivateUploadRequest(raw);
-  const bucket = await privateBucket();
+  const config = getPrivateR2Config();
   const objectKey = buildPrivateObjectKey(input);
   const uploadToken = randomBytes(32).toString("hex");
   const uploadTokenHash = createHash("sha256").update(uploadToken).digest("hex");
   const expiresAt = new Date(Date.now() + input.expiresInMs);
   const requiredHeaders = {
     "content-type": input.contentType,
-    "x-goog-meta-upload_token": uploadToken,
-    "x-goog-meta-owner_membership_id": input.ownerMembershipId,
-    "x-goog-meta-college_id": input.collegeId,
-    "x-goog-meta-expected_size": String(input.expectedSizeBytes),
-    "x-goog-meta-malware_scan_status": "PENDING",
+    "x-amz-meta-upload-token": uploadToken,
+    "x-amz-meta-owner-membership-id": input.ownerMembershipId,
+    "x-amz-meta-college-id": input.collegeId,
+    "x-amz-meta-expected-size": String(input.expectedSizeBytes),
+    "x-amz-meta-malware-scan-status": "PENDING",
   } as const;
-  const [uploadUrl] = await bucket.file(objectKey).getSignedUrl({
-    version: "v4",
-    action: "write",
-    expires: expiresAt,
-    contentType: input.contentType,
-    extensionHeaders: requiredHeaders,
+  const uploadUrl = presignUrl(config, {
+    method: "PUT",
+    key: objectKey,
+    expiresSeconds: Math.floor(input.expiresInMs / 1000),
+    headers: requiredHeaders,
   });
   return { objectKey, uploadUrl, method: "PUT" as const, expiresAt, requiredHeaders, uploadTokenHash };
+}
+
+function assertScopedKey(
+  objectKey: string,
+  expected: { collegeId: string; ownerMembershipId: string },
+) {
+  requireUuid(expected.collegeId);
+  requireUuid(expected.ownerMembershipId);
+  const prefix = `private/${expected.collegeId}/${expected.ownerMembershipId}/`;
+  if (
+    !objectKey.startsWith(prefix) ||
+    objectKey.includes("..") ||
+    objectKey.includes("://") ||
+    objectKey.includes("\\")
+  ) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SCOPE");
+  }
 }
 
 export async function readPrivateObjectAttestation(
   objectKey: string,
   expected: { collegeId: string; ownerMembershipId: string; uploadTokenHash?: string },
 ) {
-  requireUuid(expected.collegeId);
-  requireUuid(expected.ownerMembershipId);
-  const prefix = `private/${expected.collegeId}/${expected.ownerMembershipId}/`;
-  if (!objectKey.startsWith(prefix) || objectKey.includes("..") || objectKey.includes("://")) {
-    throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SCOPE");
+  assertScopedKey(objectKey, expected);
+  const head = await headObject(getPrivateR2Config(), objectKey);
+  if (!head) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_OBJECT_NOT_ATTESTED");
   }
-  const bucket = await privateBucket();
-  const [meta] = await bucket.file(objectKey).getMetadata();
-  const annotation = (meta.metadata ?? {}) as Record<string, string>;
-  const generation = String(meta.generation ?? "");
-  const sizeBytes = Number(meta.size ?? 0);
-  const contentType = String(meta.contentType ?? "");
-  const sha256Hex = String(annotation.sha256 ?? "").toLowerCase();
-  const uploadToken = String(annotation.upload_token ?? "");
+  const annotation = head.metadata;
+  // Last-Modified in epoch ms is the object "generation": numeric, and it
+  // changes whenever the object or its metadata is rewritten.
+  const generation = String(head.lastModifiedMs || "");
+  const sizeBytes = head.sizeBytes;
+  const contentType = head.contentType;
+  const sha256Hex = String(annotation["sha256"] ?? "").toLowerCase();
+  const uploadToken = String(annotation["upload-token"] ?? "");
   const tokenMatches =
     expected.uploadTokenHash === undefined ||
     (uploadToken.length > 0 &&
@@ -198,10 +193,10 @@ export async function readPrivateObjectAttestation(
     !generation ||
     !Number.isSafeInteger(sizeBytes) ||
     sizeBytes <= 0 ||
-    annotation.owner_membership_id !== expected.ownerMembershipId ||
-    annotation.college_id !== expected.collegeId ||
-    annotation.malware_scan_status !== "CLEAN" ||
-    annotation.scan_attested_by !== "lms-vnext-privileged-scanner" ||
+    annotation["owner-membership-id"] !== expected.ownerMembershipId ||
+    annotation["college-id"] !== expected.collegeId ||
+    annotation["malware-scan-status"] !== "CLEAN" ||
+    annotation["scan-attested-by"] !== SCANNER_ID ||
     !/^[0-9a-f]{64}$/.test(sha256Hex) ||
     !mimePattern.test(contentType) ||
     !tokenMatches
@@ -215,45 +210,69 @@ export async function readPrivateObjectAttestation(
     contentType,
     sha256Hex,
     scanStatus: "CLEAN" as const,
-    scanner: "lms-vnext-privileged-scanner" as const,
+    scanner: SCANNER_ID,
   };
 }
 
+/**
+ * Scanner-only: records the scan verdict on the object. R2 has no metadata
+ * patch, so this is a server-side copy onto itself with replaced metadata,
+ * which also advances the generation. Never call this from a request that
+ * carries client-supplied scan claims.
+ */
+export async function recordPrivateObjectScanVerdict(
+  objectKey: string,
+  input: {
+    collegeId: string;
+    ownerMembershipId: string;
+    sha256Hex: string;
+    verdict: "CLEAN" | "INFECTED";
+  },
+) {
+  assertScopedKey(objectKey, input);
+  if (!/^[0-9a-f]{64}$/.test(input.sha256Hex)) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_OBJECT_NOT_ATTESTED");
+  }
+  const config = getPrivateR2Config();
+  const head = await headObject(config, objectKey);
+  if (
+    !head ||
+    head.metadata["owner-membership-id"] !== input.ownerMembershipId ||
+    head.metadata["college-id"] !== input.collegeId
+  ) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_OBJECT_NOT_ATTESTED");
+  }
+  await replaceObjectMetadata(
+    config,
+    objectKey,
+    {
+      ...head.metadata,
+      sha256: input.sha256Hex,
+      "malware-scan-status": input.verdict,
+      "scan-attested-by": SCANNER_ID,
+    },
+    head.contentType,
+  );
+}
 
 /**
- * Produces a short-lived, generation-bound read URL after the caller has
- * already authorized access to the owning membership.
- *
- * The object must still pass the same tenant scope, malware scan and checksum
- * attestation as a profile-verification receipt. Public bucket URLs are never
+ * Produces a short-lived read URL after the caller has already authorized
+ * access to the owning membership. The object must still pass the same tenant
+ * scope, malware scan and checksum attestation. Public bucket URLs are never
  * returned or persisted.
  */
-export async function createPrivateReadGrant(
-  raw: PrivateReadRequest,
-) {
+export async function createPrivateReadGrant(raw: PrivateReadRequest) {
   const input = validatePrivateReadRequest(raw);
-  const attestation =
-    await readPrivateObjectAttestation(
-      input.objectKey,
-      {
-        collegeId: input.collegeId,
-        ownerMembershipId:
-          input.ownerMembershipId,
-      },
-    );
-  const bucket = await privateBucket();
-  const expiresAt = new Date(
-    Date.now() + input.expiresInMs,
-  );
-  const [readUrl] = await bucket
-    .file(input.objectKey, {
-      generation: attestation.generation,
-    })
-    .getSignedUrl({
-      version: "v4",
-      action: "read",
-      expires: expiresAt,
-    });
+  const attestation = await readPrivateObjectAttestation(input.objectKey, {
+    collegeId: input.collegeId,
+    ownerMembershipId: input.ownerMembershipId,
+  });
+  const expiresAt = new Date(Date.now() + input.expiresInMs);
+  const readUrl = presignUrl(getPrivateR2Config(), {
+    method: "GET",
+    key: input.objectKey,
+    expiresSeconds: Math.floor(input.expiresInMs / 1000),
+  });
 
   return {
     objectKey: input.objectKey,
