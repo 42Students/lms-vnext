@@ -398,7 +398,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Offers tab | drive detail | vNext job workspace | PARTIAL |
 | Drive Day tab | drive detail | vNext job workspace | PARTIAL |
 | Global Drive Day | `/tpo/drive-day` | embedded per job | PARTIAL |
-| Round-focused Drive Day | `/tpo/drive-day/[roundId]` | none | MISSING |
+| Round-focused Drive Day | `/tpo/drive-day/[roundId]` | Existing learner-coordinator route preserved; TPO-only membership now receives a read-only, centrally authorized, college-scoped round overview with job/company header, IST scheduling, attendance/result counts, shortlisted progression roster, application/result states and job workspace backlink. Malformed, unknown and cross-college round IDs return not-found. Attendance/result mutations, mixed-role TPO view selection, exact legacy controls, executed database/security tests and browser parity remain open. | PARTIAL |
 | Approve + publish preflight | drive action | vNext lifecycle | PARTIAL |
 | Reject / send back request | drive action | vNext lifecycle | PARTIAL |
 | Export applicants | drive action | `/tpo/placements/jobs/[jobId]` + `/api/placements/jobs/[jobId]/applicants/export` | PARTIAL |
