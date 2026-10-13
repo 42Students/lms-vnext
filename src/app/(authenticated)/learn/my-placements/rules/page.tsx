@@ -24,13 +24,13 @@ export default async function LearnerPlacementRulesPage() {
             <div><dt className="text-muted-foreground">Gap years</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.gapYears ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Source</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.source ?? "Not recorded"}</dd></div>
           </dl>
-          <Link href="/learn/profile#academic-record" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Open academic record →</Link>
+          <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Open academic record →</Link>
         </section>
         <section className="rounded-xl border border-border bg-surface p-5">
           <h2 className="m-0 text-base font-semibold text-foreground">Your job preferences</h2>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
-          <Link href="/learn/profile#job-preferences" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Edit job preferences →</Link>
+          <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Edit job preferences →</Link>
         </section>
       </div>
       <section className="rounded-xl border border-warning/40 bg-surface p-5">

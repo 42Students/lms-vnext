@@ -150,7 +150,7 @@ export function LearnerPlacementPreferences({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section id="placement-job-preferences" className="scroll-mt-24 rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Opportunity preferences
