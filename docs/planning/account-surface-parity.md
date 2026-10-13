@@ -77,7 +77,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Project Meetings | project detail | vNext project workspace | Request/read behavior exists; exact parity pending. | PARTIAL |
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
-| Notifications feed | `/learn/notifications` | `/learn/notifications` | Merged personal and authorized college announcements now appear in one date-grouped Learner inbox with legacy All/Course/Projects/Announcements/Job tabs, counts, and a full-body detail dialog with optional deep links. Browser and long-feed pagination parity remain. | PARTIAL |
+| Notifications feed | `/learn/notifications` | `/learn/notifications` | Tenant-scoped Learner-only access, combined announcements/personal inbox, legacy domain tabs and counts, detail dialog, route loading and error/retry implemented. Browser and long-feed pagination parity remain. | PARTIAL |
 | Self Profile | `/learn/profile` | `/learn/profile` | Current-oracle removed Job Preferences/Placement Academic Record are now also absent in vNext. Education/Identity Profile Verification, marksheets/private documents, send-back/update-pending states and verified badge metadata remain open and storage-dependent. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
 
