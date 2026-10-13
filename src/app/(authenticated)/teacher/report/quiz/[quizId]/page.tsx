@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
+import { FacultyQuizReview } from "@/components/courses/faculty-quiz-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -38,6 +40,32 @@ export default async function FacultyQuizReportPage({
         eyebrow="Faculty · Quiz Report"
         title={quiz.title}
         description={`${quiz.courseName} · ${quiz.sectionName} · ${quiz.lessonName}`}
+      />
+      <FacultyReportDownload
+        kind="quiz"
+        title={quiz.title}
+        subtitle={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
+        summary={[
+          "Submitted: " + metrics.submittedLearners + "/" + metrics.eligibleLearners,
+          "Average score: " + (metrics.averagePercent === null ? "Unknown" : metrics.averagePercent + "%"),
+          "Total attempts: " + metrics.totalAttempts,
+          "Question count: " + metrics.questionCount + "; Total points: " + quiz.totalPoints,
+          "Results: " + (quiz.resultsPublished ? "Published" : "Private"),
+          "Due: " + (quiz.dueAt ? quiz.dueAt.toISOString() : "No due date"),
+        ]}
+        sections={[
+          { title: "Score distribution", rows: distribution.map((bucket) => bucket.label + ": " + bucket.count) },
+          { title: "Question accuracy", rows: questions.map((question) =>
+            question.prompt + " | " + question.correctCount + "/" + question.answeredCount +
+            " correct | " + (question.accuracyPercent === null ? "Not answered" : question.accuracyPercent + "%")
+          ) },
+          { title: "Student scores", rows: latestAttempts.map((attempt) =>
+            (attempt.learnerDisplayName || attempt.learnerEmail || "Learner") +
+            " | Attempt " + attempt.attemptNumber + " | " + attempt.score + "/" +
+            attempt.maxScore + " | " + attempt.submittedAt.toISOString()
+          ) },
+          { title: "Not attempted", rows: notAttemptedLearners.map((learner) => learner.displayName || learner.email || "Learner") },
+        ]}
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
@@ -207,9 +235,17 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <p className="text-sm text-muted-foreground">
-        This report is Section-scoped. PDF/export parity and browser verification remain open.
-      </p>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Review individual attempts</h2>
+        <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
+        <FacultyQuizReview
+          quizId={quiz.id}
+          deliveryId={quiz.deliveryId}
+          status={quiz.status}
+          resultsPublished={quiz.resultsPublished}
+          deliveryOwned={quiz.facultyOwned}
+        />
+      </section>
     </div>
   );
 }

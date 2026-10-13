@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
+import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -36,6 +38,30 @@ export default async function FacultyAssignmentReportPage({
         eyebrow="Faculty · Assignment Report"
         title={assignment.title}
         description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
+      />
+      <FacultyReportDownload
+        kind="assignment"
+        title={assignment.title}
+        subtitle={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
+        summary={[
+          "Submitted: " + metrics.submitted + "/" + metrics.eligibleLearners,
+          "Average score: " + (metrics.averagePercent === null ? "Unknown" : metrics.averagePercent + "%"),
+          "Graded: " + metrics.graded + "/" + metrics.submitted,
+          "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + metrics.missing,
+          "Total possible points: " + assignment.maxPoints,
+          "Due: " + (assignment.dueAt ? assignment.dueAt.toISOString() : "No due date"),
+        ]}
+        sections={[
+          { title: "Score distribution", rows: distribution.map((bucket) => bucket.label + ": " + bucket.count) },
+          { title: "Student scores and submission timing", rows: submissions.map((submission) =>
+            (submission.learnerDisplayName || submission.learnerEmail || "Learner") +
+            " | " + (submission.gradingStatus === "GRADED" ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded") +
+            (submission.gradePublished ? " (published)" : " (private)") +
+            " | " + submission.submittedAt.toISOString() +
+            (assignment.dueAt && submission.submittedAt > assignment.dueAt ? " (late)" : " (on time)")
+          ) },
+          { title: "Not submitted", rows: missingLearners.map((learner) => learner.displayName || learner.email || "Learner") },
+        ]}
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
@@ -175,9 +201,16 @@ export default async function FacultyAssignmentReportPage({
         )}
       </section>
 
-      <p className="text-sm text-muted-foreground">
-        PDF/export and interactive grading drill-down remain open parity items.
-      </p>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Review and grade submissions</h2>
+        <p className="mt-1 text-sm text-body">Open a learner submission to grade, regrade or publish feedback.</p>
+        <FacultyAssignmentReview
+          assignmentId={assignment.id}
+          deliveryId={assignment.deliveryId}
+          maxPoints={assignment.maxPoints}
+          status={assignment.status}
+        />
+      </section>
     </div>
   );
 }

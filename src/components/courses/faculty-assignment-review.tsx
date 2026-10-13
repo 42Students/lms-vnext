@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   type FormEvent,
   useState,
@@ -371,6 +372,7 @@ export function FacultyAssignmentReview({
     | "PUBLISHED"
     | "ARCHIVED";
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [submissions, setSubmissions] =
     useState<Submission[] | null>(null);
