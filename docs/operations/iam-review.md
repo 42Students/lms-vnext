@@ -1,5 +1,8 @@
 # LMS vNext IAM review
 
+> **Partly superseded (2026-10-14).** Sign-in is first-party (phone/email one-time codes through Exotel and ZeptoMail, opaque server sessions); Firebase / Identity Platform is no longer used and `firebase-admin` has been removed. Private files use Cloudflare R2, not Cloud Storage. See `docs/architecture/first-party-login.md`, `docs/architecture/private-object-storage.md` and `docs/operations/infrastructure-status.md`. Sections below that mention Firebase, Identity Platform or `GCS_BUCKET` are historical.
+
+
 This review records the minimum identity boundaries required by the committed vNext runtime and deployment workflow. It is intentionally account-agnostic: project IDs, service-account emails and resource names must come from the actual GCP environment.
 
 ## Reviewed implementation

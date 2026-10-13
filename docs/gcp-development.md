@@ -1,5 +1,8 @@
 # GCP development environment runbook
 
+> **Partly superseded (2026-10-14).** Sign-in is first-party (phone/email one-time codes through Exotel and ZeptoMail, opaque server sessions); Firebase / Identity Platform is no longer used and `firebase-admin` has been removed. Private files use Cloudflare R2, not Cloud Storage. See `docs/architecture/first-party-login.md`, `docs/architecture/private-object-storage.md` and `docs/operations/infrastructure-status.md`. Sections below that mention Firebase, Identity Platform or `GCS_BUCKET` are historical.
+
+
 This runbook captures the vNext GCP1 deployment decisions that can be made without inventing account-specific values.
 
 ## Current state

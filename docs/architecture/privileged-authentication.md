@@ -1,5 +1,7 @@
 # Privileged authentication policy
 
+> **Implemented (2026-10-14).** The Identity Platform wording below is historical. The policy is now enforced by the first-party login: a `SUPER_ADMIN` challenge sends a code to both the registered phone (SMS) and email, and sign-in succeeds only when both codes are submitted (`secondCode` on `/api/auth/login/verify`). An administrator without both a verified phone and email cannot sign in (`SECOND_FACTOR_UNAVAILABLE`); there is no single-factor fallback. Recovery of a lost phone or mailbox is an operator task (update the contact, then sign in again). Tests: `tests/unit/auth-login-service.test.ts` ("platform administrator second factor").
+
 This document locks the authentication policy for platform-level privileged access.
 
 ## Decision
