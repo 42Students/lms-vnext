@@ -27,6 +27,11 @@ const SETTINGS_LINKS = [
     href: "/tpo/settings/trusted",
   },
   {
+    id: "branding",
+    label: "Placement Branding",
+    href: "/tpo/settings/branding",
+  },
+  {
     id: "notifications",
     label: "My Notifications",
     href: "/tpo/settings/notifications",
@@ -42,6 +47,7 @@ export function TpoSettingsNav({
     | "see"
     | "team"
     | "trusted"
+    | "branding"
     | "notifications";
 }) {
   return (
