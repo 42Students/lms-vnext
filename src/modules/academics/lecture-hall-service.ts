@@ -7,8 +7,8 @@ import {
   lectureHalls,
   sectionScheduleEvents,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
 /**
  * Lecture halls (rooms) of a college. Managed by College Admin and scoped
@@ -116,6 +116,12 @@ function authorize(
   context: RequestContext,
   college: { id: string; organizationId: string },
 ) {
+  // Lecture halls are a college-level operation, even for Super Admin.
+  // Global or organization-only scope must not authorize a client-supplied
+  // collegeId; the exact selected college is required for reads and writes.
+  if (isSuperAdmin(context) && context.adminScope?.collegeId !== college.id) {
+    throw new AuthorizationError("academics.manage");
+  }
   requirePermission(context, "academics.manage", {
     organizationId: college.organizationId,
     collegeId: college.id,

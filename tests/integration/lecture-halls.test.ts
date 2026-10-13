@@ -324,3 +324,103 @@ describe("lecture halls: authorization", () => {
     expect(updated.departmentId).toBeNull();
   });
 });
+
+function scopedSuperAdmin(collegeId: string | null): RequestContext {
+  return {
+    user: {
+      id: SEED_IDS.superAdminUser,
+      identityUid: "seed-superadmin",
+      platformStatus: "ACTIVE",
+      systemRoles: ["SUPER_ADMIN"],
+    },
+    membership: null,
+    adminScope: {
+      organizationId: SEED_IDS.organization,
+      collegeId,
+    },
+  };
+}
+
+describe("lecture halls: Super Admin exact-college safety scope", () => {
+  it("lists, creates, and updates inside the selected college only", async () => {
+    const scoped = scopedSuperAdmin(SEED_IDS.collegeA);
+    const own = await createLectureHall(scoped, {
+      collegeId: SEED_IDS.collegeA,
+      name: `Super Admin Hall ${RUN}`,
+      roomType: "SEMINAR_HALL",
+      capacity: 55,
+      departmentId: SEED_IDS.departmentA,
+    });
+    hallIds.push(own.id);
+
+    const foreign = await createLectureHall(adminB.context, {
+      collegeId: SEED_IDS.collegeB,
+      name: `Other College Hall ${RUN}`,
+      roomType: "CLASSROOM",
+      capacity: 45,
+      departmentId: SEED_IDS.departmentB,
+    });
+    hallIds.push(foreign.id);
+
+    const list = await listLectureHalls(scoped, {
+      collegeId: SEED_IDS.collegeA,
+    });
+    expect(list.items.map((hall) => hall.id)).toContain(own.id);
+    expect(list.items.map((hall) => hall.id)).not.toContain(foreign.id);
+    expect(list.items.every((hall) => hall.id !== foreign.id)).toBe(true);
+    expect((await updateLectureHall(scoped, own.id, { capacity: 65 })).capacity)
+      .toBe(65);
+
+    await expect(
+      listLectureHalls(scoped, { collegeId: SEED_IDS.collegeB }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(
+      createLectureHall(scoped, {
+        collegeId: SEED_IDS.collegeB,
+        name: `Cross-College Hall ${RUN}`,
+        capacity: 20,
+        roomType: "CLASSROOM",
+      }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(
+      updateLectureHall(scoped, foreign.id, { capacity: 99 }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+
+    const foreignList = await listLectureHalls(adminB.context, {
+      collegeId: SEED_IDS.collegeB,
+    });
+    expect(foreignList.items.find((hall) => hall.id === foreign.id)?.capacity)
+      .toBe(45);
+  });
+
+  it("rejects unscoped or organization-only Super Admin API operations", async () => {
+    const organizationOnly = scopedSuperAdmin(null);
+    const global: RequestContext = {
+      ...organizationOnly,
+      adminScope: null,
+    };
+    const existingHall = await make("Super Admin Scope Guard");
+
+    for (const context of [organizationOnly, global]) {
+      await expect(
+        listLectureHalls(context, { collegeId: SEED_IDS.collegeA }),
+      ).rejects.toBeInstanceOf(AuthorizationError);
+      await expect(
+        createLectureHall(context, {
+          collegeId: SEED_IDS.collegeA,
+          name: `Disallowed Hall ${RUN}`,
+          roomType: "CLASSROOM",
+          capacity: 30,
+        }),
+      ).rejects.toBeInstanceOf(AuthorizationError);
+      await expect(
+        updateLectureHall(context, existingHall.id, { capacity: 20 }),
+      ).rejects.toBeInstanceOf(AuthorizationError);
+    }
+    const kept = await listLectureHalls(adminA.context, {
+      collegeId: SEED_IDS.collegeA,
+    });
+    expect(kept.items.find((hall) => hall.id === existingHall.id)?.capacity)
+      .toBe(60);
+  });
+});

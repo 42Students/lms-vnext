@@ -271,6 +271,7 @@ These user jobs are functionally similar to College Admin; detailed field/action
 - [ ] Scope is fixed throughout preview→commit.
 
 ## Page: Lecture Halls
+**vNext:** `/admin/lecture-halls` reuses the College Admin manager with an exact selected-college requirement. Room table and create/edit/archive/restore exist, but legacy search/filter and desktop/mobile parity still require comparison and executed evidence. Keep acceptance checks open.
 - [ ] Full CRUD/search/filter contract is present.
 - [ ] Scheduling conflicts remain selected-college scoped.
 
