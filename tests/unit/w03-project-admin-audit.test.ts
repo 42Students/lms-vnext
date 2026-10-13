@@ -45,7 +45,9 @@ describe("W03 project admin audit parity contract", () => {
   it("preserves cursor filters when loading older activity", () => {
     expect(audit).toContain('"beforeOccurredAt"');
     expect(audit).toContain('"beforeId"');
-    expect(audit).toContain('nextParams.set("action", eventType)');
-    expect(audit).toContain('nextParams.set("subjectType"');
+    // Compare ignoring whitespace so formatter line-wrapping cannot break it.
+    const flat = audit.replace(/\s+/g, "");
+    expect(flat).toContain('nextParams.set("action",eventType)');
+    expect(flat).toContain('nextParams.set("subjectType",subjectType');
   });
 });

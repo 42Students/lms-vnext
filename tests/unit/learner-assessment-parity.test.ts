@@ -92,7 +92,16 @@ describe("learner assessment parity pages", () => {
     expect(overview).toContain("filter=assessments");
     expect(overview).toContain("lesson=");
     expect(overview).toContain("Created ");
-    expect(overview).toContain("View Result");
+    // The per-state action labels live in the extracted quiz-overview-state.
+    const quizState = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "src/components/courses/quiz-overview-state.ts",
+      ),
+      "utf8",
+    );
+    expect(overview).toContain("quizOverviewActionState");
+    expect(quizState).toContain("View Result");
   });
 
   it("keeps explicit aggregate loading and error boundaries", () => {

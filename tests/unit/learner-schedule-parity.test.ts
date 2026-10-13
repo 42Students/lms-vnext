@@ -45,11 +45,17 @@ describe("learner class schedule parity surface", () => {
     expect(component).toContain(
       '"day"',
     );
+    // Event cards link to the course through a configurable base path whose
+    // learner default is /learn/courses.
     expect(component).toContain(
-      "/learn/courses/",
+      'courseBasePath = "/learn/courses"',
     );
     expect(component).toContain(
-      'event.deliveryId}/home',
+      "${courseBasePath}/${event.deliveryId}",
+    );
+    // Only the learner base path appends the course /home tab.
+    expect(component).toContain(
+      'courseBasePath === "/learn/courses" ? "/home" : ""',
     );
     expect(component).toContain(
       'aria-label="Next upcoming classes"',
