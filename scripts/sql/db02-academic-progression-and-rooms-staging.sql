@@ -274,6 +274,8 @@ CREATE TRIGGER db02_course_department_move_guard
 BEFORE UPDATE OF department_id ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_department_move();
 
+DROP TRIGGER IF EXISTS db02_cohort_period_scope_guard ON cohorts;
+DROP FUNCTION IF EXISTS db02_guard_cohort_period_scope();
 CREATE FUNCTION db02_guard_cohort_period_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
@@ -375,6 +377,8 @@ BEFORE INSERT OR UPDATE OF program_id, start_period_id, expected_end_period_id
 ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_period_scope();
 
+DROP TRIGGER IF EXISTS db02_section_period_scope_guard ON sections;
+DROP FUNCTION IF EXISTS db02_guard_section_period_scope();
 CREATE FUNCTION db02_guard_section_period_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
@@ -533,6 +537,8 @@ BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, progr
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
 
+DROP TRIGGER IF EXISTS db02_course_offering_period_window_guard ON course_offerings;
+DROP FUNCTION IF EXISTS db02_guard_course_offering_period_window();
 CREATE FUNCTION db02_guard_course_offering_period_window()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
@@ -1786,6 +1792,8 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 -- Legacy BatchService rejects moving an existing batch/cohort to another program.
 -- vNext also treats the start period as creation identity. A controlled transfer must
 -- create explicit history instead of rewriting the parent keys in place.
+DROP TRIGGER IF EXISTS db02_cohort_program_immutable ON cohorts;
+DROP FUNCTION IF EXISTS db02_guard_cohort_parent_immutable();
 CREATE FUNCTION db02_guard_cohort_parent_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
