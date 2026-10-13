@@ -33,9 +33,11 @@ function formatWhen(value: string) {
 export function NotificationList({
   items,
   emptyText = "You are all caught up.",
+  onSelect,
 }: {
   items: readonly NotificationListItem[];
   emptyText?: string;
+  onSelect?: (item: NotificationListItem) => void;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -102,7 +104,16 @@ export function NotificationList({
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
                   <h3 className="mt-3 text-base font-semibold text-foreground">
-                    {item.title}
+                    {onSelect ? (
+                      <button
+                        type="button"
+                        onClick={() => onSelect(item)}
+                        className="min-h-10 text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        aria-label={`View notification: ${item.title}`}
+                      >
+                        {item.title}
+                      </button>
+                    ) : item.title}
                   </h3>
                   <p className="mt-1 text-sm leading-6 text-body">{item.body}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
