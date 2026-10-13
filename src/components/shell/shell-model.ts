@@ -37,6 +37,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Courses", href: "/admin/courses", shortLabel: "C" },
   { label: "Projects", href: "/admin/projects", shortLabel: "P" },
   { label: "Placements", href: "/admin/placements", shortLabel: "P" },
+  { label: "HR Accounts", href: "/admin/hr", shortLabel: "H" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
   { label: "Activity", href: "/activity", shortLabel: "A" },

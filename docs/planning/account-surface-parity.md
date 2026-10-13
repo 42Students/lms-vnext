@@ -263,9 +263,9 @@ Super Admin must not inherit College Admin parity only by prose. Shared surfaces
 | Module Access student overrides/locks | drawers | none | Missing. | MISSING |
 | Module Access access trace | “Why this student sees…” | none | Missing explainability surface. | MISSING |
 | Activity Log | `/superadmin/audit` | `/activity` | Global/scoped exact parity pending. | PARTIAL |
-| HR Accounts list/create/edit | `/superadmin/hr` | recruiter backend/grants | Admin UI missing. | MISSING |
-| HR college-access grants/revoke | HR Accounts detail | backend grants | Admin UI missing. | MISSING |
-| HR terminate sessions | HR Accounts action | none | Missing. | MISSING |
+| HR Accounts list/create/edit | `/superadmin/hr` | `/admin/hr` plus `/api/admin/hr` | Super Admin-only account table, search, ACTIVE/ARCHIVED/DISABLED filter, server pagination, add/edit dialogs and detail drawer. Creation uses the first-party identity-provisioning path and requires an existing active company-college relationship; company reassignment is deliberately unsupported. Legacy exact fields and behaviour, disabled-user lifecycle, error recovery, responsiveness and browser tests still require verification. | PARTIAL |
+| HR college-access grants/revoke | HR Accounts detail | `/admin/hr` detail drawer and `/api/admin/hr/[userId]/grants` | Visible active grants, company-matched relationship selection, grant, explicit revoke confirmation and refreshed account state using existing recruiter grant services. Scope is enforced by the backend; when the last visible grant is revoked a scoped recruiter may disappear. Cross-college negative tests, large-option-list behaviour and exact legacy interaction parity are not certified. | PARTIAL |
+| HR terminate sessions | HR Accounts action | `/admin/hr` detail drawer and `/api/admin/hr/[userId]/terminate-sessions` | Explicit destructive confirmation calls the existing all-device session revocation for the canonical recruiter user; the effect extends to the user's other memberships. Executed session invalidation, audit-event coverage, concurrent revocation behaviour and browser acceptance remain unverified. | PARTIAL |
 
 ## 5.2 Tenant Settings groups
 
