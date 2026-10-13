@@ -486,6 +486,11 @@ navigation, company/description/location/work/deadline facts, scoped eligibility
 breakdowns (rule pass/fail/missing with actual/required), applicant status and
 real role-specific apply/withdrawal actions are composed from the existing
 authorized Learner job service. Safe external URLs reject non-web schemes.
+Job action confirmations now use explicit learner withdrawal request and external
+submission dialogs instead of `window.prompt` or an immediate declaration.
+Withdrawal text follows the 3–2000-character API contract and does not
+change application status until the placement team approves. External
+submission is explicitly learner-declared, not independently verified.
 Legacy resume attachment/preview, rich employer company facts, receipts and
 browser acceptance remain open.
 

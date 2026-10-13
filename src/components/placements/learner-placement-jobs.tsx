@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -162,7 +163,12 @@ function JobActions({
   const { showToast } = useToast();
   const [pendingAction, setPendingAction] =
     useState<string | null>(null);
+  const [confirmation, setConfirmation] =
+    useState<"WITHDRAW" | "EXTERNAL" | null>(null);
+  const [withdrawReason, setWithdrawReason] = useState("");
   const { job, roleOption, application } = item;
+  const reason = withdrawReason.trim();
+  const validWithdrawalReason = reason.length >= 3 && reason.length <= 2000;
 
   async function apply(
     channel: "INTERNAL" | "EXTERNAL",
@@ -186,6 +192,7 @@ function JobActions({
                 roleOptionId: roleOption.id,
               },
       );
+      if (channel === "EXTERNAL") setConfirmation(null);
       showToast({
         tone: "success",
         title:
@@ -213,12 +220,7 @@ function JobActions({
   }
 
   async function requestWithdrawal() {
-    if (!application) return;
-    const reason =
-      window.prompt(
-        "Why do you want to withdraw this application?",
-      )?.trim() ?? "";
-    if (reason.length < 3) return;
+    if (!application || !validWithdrawalReason || pendingAction !== null) return;
 
     setPendingAction("WITHDRAW");
     try {
@@ -231,6 +233,8 @@ function JobActions({
           reason,
         },
       );
+      setConfirmation(null);
+      setWithdrawReason("");
       showToast({
         tone: "success",
         title: "Withdrawal requested",
@@ -254,21 +258,67 @@ function JobActions({
 
   if (application?.status === "SUBMITTED") {
     return (
-      <div className="flex flex-wrap items-center gap-2">
-        <StatusBadge tone="success">
-          Applied · {humanize(application.channel)}
-        </StatusBadge>
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={pendingAction !== null}
-          onClick={requestWithdrawal}
+      <>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge tone="success">
+            Applied · {humanize(application.channel)}
+          </StatusBadge>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={pendingAction !== null}
+            onClick={() => setConfirmation("WITHDRAW")}
+          >
+            Request withdrawal
+          </Button>
+        </div>
+        <Dialog
+          open={confirmation === "WITHDRAW"}
+          onOpenChange={(open) => {
+            if (!open && pendingAction === null) setConfirmation(null);
+          }}
+          title="Request application withdrawal"
+          description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
+          footer={
+            <>
+              <Button variant="secondary" disabled={pendingAction !== null}
+                onClick={() => setConfirmation(null)}>
+                Keep application
+              </Button>
+              <Button
+                disabled={!validWithdrawalReason || pendingAction !== null}
+                onClick={() => void requestWithdrawal()}
+              >
+                {pendingAction === "WITHDRAW" ? "Submitting request…" : "Send withdrawal request"}
+              </Button>
+            </>
+          }
         >
-          {pendingAction === "WITHDRAW"
-            ? "Requesting…"
-            : "Request withdrawal"}
-        </Button>
-      </div>
+          <label htmlFor={`withdraw-reason-${roleOption.id}`}
+            className="block text-sm font-semibold text-foreground">
+            Reason for withdrawal
+          </label>
+          <textarea
+            id={`withdraw-reason-${roleOption.id}`}
+            value={withdrawReason}
+            onChange={(event) => setWithdrawReason(event.target.value)}
+            rows={4}
+            maxLength={2000}
+            disabled={pendingAction !== null}
+            placeholder="Explain why you want to withdraw this application…"
+            className="mt-2 min-h-28 w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            3–2000 characters. Requesting withdrawal does not immediately
+            remove your application or its results.
+          </p>
+          {reason.length > 0 && !validWithdrawalReason ? (
+            <p role="alert" className="mt-2 text-sm text-warning">
+              Enter at least three characters.
+            </p>
+          ) : null}
+        </Dialog>
+      </>
     );
   }
 
@@ -334,7 +384,7 @@ function JobActions({
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
-            onClick={() => apply("EXTERNAL")}
+            onClick={() => setConfirmation("EXTERNAL")}
           >
             {pendingAction === "EXTERNAL"
               ? "Recording…"
@@ -342,6 +392,31 @@ function JobActions({
           </Button>
         </>
       ) : null}
+      <Dialog
+        open={confirmation === "EXTERNAL"}
+        onOpenChange={(open) => {
+          if (!open && pendingAction === null) setConfirmation(null);
+        }}
+        title="Confirm your external application"
+        description={`Record your application for ${roleOption.title} at ${item.company.name} in your LMS journey.`}
+        footer={
+          <>
+            <Button variant="secondary" disabled={pendingAction !== null}
+              onClick={() => setConfirmation(null)}>
+              Not yet
+            </Button>
+            <Button disabled={pendingAction !== null}
+              onClick={() => void apply("EXTERNAL")}>
+              {pendingAction === "EXTERNAL" ? "Recording…" : "Yes, I submitted externally"}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm leading-6 text-body">
+          Only confirm after completing the employer's form. This records a
+          learner-declared external application, not an employer receipt or verified submission.
+        </p>
+      </Dialog>
     </div>
   );
 }
