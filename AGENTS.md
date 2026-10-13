@@ -136,3 +136,11 @@ Every coding chat working on Learner parity must:
 11. hand off the current row ID + next unresolved row when chat context is ending.
 
 Run `npm run parity:learner` for the machine-counted Learner ledger + family-evidence status. `FIXED` is not closed; `BLOCKED` and `STALE` are not release-ready.
+
+## Authentication rule
+
+- Sign-in is **first-party phone/email one-time codes**, as in the legacy LMS: Exotel SMS and ZeptoMail email, opaque per-device sessions. See `docs/architecture/first-party-login.md`.
+- Do **not** reintroduce Firebase / Google Identity Platform for sign-in, session cookies or user creation. Older handoff and checklist text that mentions Identity Platform is superseded by this rule.
+- A college host serves only that college, enforced at login and on every authenticated request (`src/modules/auth/tenant-access.ts`). Do not bypass it.
+- Test one-time codes exist only when `APP_ENV=development` and are never accepted in production. Never send a real SMS or email from tests; use the fakes.
+- Production SUPER_ADMIN access needs a second factor before launch (`docs/architecture/privileged-authentication.md`).
