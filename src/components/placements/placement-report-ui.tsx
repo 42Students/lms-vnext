@@ -1,0 +1,306 @@
+import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Select } from "@/components/ui/select";
+import type { PlacementReportMetrics } from "@/modules/placements/report-model";
+import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+
+export type PlacementReportWorkspace = Awaited<
+  ReturnType<typeof getPlacementReportWorkspace>
+>;
+
+const integerFormat = new Intl.NumberFormat("en-IN");
+
+export function reportNumber(value: number) {
+  return integerFormat.format(value);
+}
+
+export function reportPercent(value: number | null) {
+  return value === null ? "—" : `${value}%`;
+}
+
+export function reportCurrency(value: number | null) {
+  return value === null ? "—" : `₹${integerFormat.format(value)}`;
+}
+
+export function reportHref(
+  path: string,
+  workspace: PlacementReportWorkspace,
+) {
+  const params = new URLSearchParams();
+
+  if (workspace.selectedSeasonId) {
+    params.set("seasonId", workspace.selectedSeasonId);
+  }
+
+  if (workspace.selectedJobId) {
+    params.set("jobId", workspace.selectedJobId);
+  }
+
+  const query = params.toString();
+  return query ? `${path}?${query}` : path;
+}
+
+export function ReportFilters({
+  workspace,
+  path,
+}: {
+  workspace: PlacementReportWorkspace;
+  path: string;
+}) {
+  return (
+    <section
+      aria-label="Report filters"
+      className="grid gap-4 rounded-xl border border-border bg-surface p-4 lg:grid-cols-2"
+    >
+      <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+        <label className="min-w-48 flex-1 text-sm font-semibold text-body">
+          Placement season
+          <Select
+            name="seasonId"
+            className="mt-1.5"
+            defaultValue={workspace.selectedSeasonId ?? ""}
+            disabled={workspace.seasons.length === 0}
+          >
+            {workspace.seasons.length === 0 ? (
+              <option value="">No seasons available</option>
+            ) : null}
+            {workspace.seasons.map((season) => (
+              <option key={season.id} value={season.id}>
+                {season.name} · {season.code}
+                {season.status === "ACTIVE" ? " (active)" : ""}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <button
+          type="submit"
+          disabled={workspace.seasons.length === 0}
+          className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
+        >
+          Apply season
+        </button>
+      </form>
+
+      <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+        {workspace.selectedSeasonId ? (
+          <input
+            type="hidden"
+            name="seasonId"
+            value={workspace.selectedSeasonId}
+          />
+        ) : null}
+        <label className="min-w-48 flex-1 text-sm font-semibold text-body">
+          Drive
+          <Select
+            name="jobId"
+            className="mt-1.5"
+            defaultValue={workspace.selectedJobId ?? ""}
+            disabled={workspace.noSeason}
+          >
+            <option value="">All drives in selected season</option>
+            {workspace.jobs.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.companyName} · {job.title}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <button
+          type="submit"
+          disabled={workspace.noSeason}
+          className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
+        >
+          Apply drive
+        </button>
+      </form>
+      <p className="text-xs leading-5 text-muted-foreground lg:col-span-2">
+        Changing the season clears the drive filter. Changing the drive
+        preserves the selected season. Reports are read-only and restricted
+        to your college.
+      </p>
+    </section>
+  );
+}
+
+export function ReportScopeNote({
+  note,
+}: {
+  note: string;
+}) {
+  return (
+    <section
+      aria-label="Reporting methodology"
+      className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+    >
+      <p className="font-semibold text-foreground">Reporting methodology</p>
+      <p className="mt-1">{note}</p>
+      <p className="mt-2">
+        A placed student is counted once when holding a currently accepted
+        offer. Offer totals count individual offers, not unique students.
+        Package statistics use the highest known accepted full-time annual
+        CTC per learner; internships and unknown CTC values are excluded.
+      </p>
+    </section>
+  );
+}
+
+export function ReportMetrics({
+  metrics,
+}: {
+  metrics: PlacementReportMetrics;
+}) {
+  const cards = [
+    {
+      label: "Placement rate",
+      value: reportPercent(metrics.placementRatePercent),
+    },
+    {
+      label: "Students placed",
+      value: reportNumber(metrics.studentsPlaced),
+    },
+    {
+      label: "Offers",
+      value: reportNumber(metrics.offers),
+    },
+    {
+      label: "Students accepted",
+      value: reportNumber(metrics.studentsAccepted),
+    },
+  ];
+
+  return (
+    <section
+      aria-label="Placement headline metrics"
+      className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+    >
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className="rounded-xl border border-border bg-surface p-4"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-body">
+            {card.label}
+          </p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+            {card.value}
+          </p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function ReportNavigation({
+  workspace,
+}: {
+  workspace: PlacementReportWorkspace;
+}) {
+  const links = [
+    { href: "/tpo/reports", label: "All reports" },
+    {
+      href: "/tpo/reports/placement-summary",
+      label: "Placement summary",
+    },
+    {
+      href: "/tpo/reports/by-branch",
+      label: "By branch",
+    },
+  ];
+
+  return (
+    <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={reportHref(link.href, workspace)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+        >
+          {link.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function ReportCsvLink({
+  workspace,
+  kind,
+}: {
+  workspace: PlacementReportWorkspace;
+  kind: "placement-summary" | "by-branch";
+}) {
+  const params = new URLSearchParams({ kind });
+
+  if (workspace.selectedSeasonId) {
+    params.set("seasonId", workspace.selectedSeasonId);
+  }
+
+  if (workspace.selectedJobId) {
+    params.set("jobId", workspace.selectedJobId);
+  }
+
+  return (
+    <a
+      href={`/api/placements/reports?${params.toString()}`}
+      className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover"
+    >
+      Export CSV
+    </a>
+  );
+}
+
+export function ReportTable({
+  title,
+  headings,
+  rows,
+  emptyDescription,
+}: {
+  title: string;
+  headings: readonly string[];
+  rows: readonly (readonly (string | number | null)[])[];
+  emptyDescription: string;
+}) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+      {rows.length === 0 ? (
+        <EmptyState title="No report rows" description={emptyDescription} />
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <table className="w-full min-w-max border-collapse text-left text-sm">
+            <thead className="bg-surface-subtle">
+              <tr>
+                {headings.map((heading) => (
+                  <th
+                    key={heading}
+                    scope="col"
+                    className="border-b border-border px-4 py-3 font-semibold text-foreground"
+                  >
+                    {heading}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className="border-b border-border last:border-b-0"
+                >
+                  {row.map((value, columnIndex) => (
+                    <td
+                      key={columnIndex}
+                      className="px-4 py-3 text-body"
+                    >
+                      {value === null || value === "" ? "—" : value}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}

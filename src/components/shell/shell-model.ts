@@ -185,6 +185,12 @@ const tpoItems: ShellNavItem[] = [
     shortLabel: "C",
     icon: "/assets/images/common/calender.svg",
   },
+  {
+    label: "Reports",
+    href: "/tpo/reports",
+    shortLabel: "R",
+    group: "tracking",
+  },
 ];
 
 const recruiterItems: ShellNavItem[] = [

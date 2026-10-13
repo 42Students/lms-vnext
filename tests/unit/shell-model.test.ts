@@ -310,6 +310,36 @@ describe("authenticated shell model", () => {
     expect(learnerNavigation).not.toContain("/college/placements/calendar");
   });
 
+  it("exposes TPO reports only in TPO navigation and preserves report destinations", () => {
+    const tpoNavigation = getShellNavigation(context(["TPO"]));
+    const reports = tpoNavigation.filter((item) => item.href === "/tpo/reports");
+
+    expect(reports).toEqual([
+      {
+        label: "Reports",
+        href: "/tpo/reports",
+        shortLabel: "R",
+        group: "tracking",
+      },
+    ]);
+
+    const mixed = getShellNavigation(context(["FACULTY", "TPO"]));
+    expectInOrder(
+      mixed.map((item) => item.href),
+      [
+        "/tpo/recruiters",
+        "/tpo/placements",
+        "/tpo/calendar",
+        "/tpo/reports",
+      ],
+    );
+
+    expect(hrefs(context(["COLLEGE_ADMIN"]))).not.toContain("/tpo/reports");
+    expect(hrefs(context(["LEARNER"]))).not.toContain("/tpo/reports");
+    expect(hrefs(context(["FACULTY"]))).not.toContain("/tpo/reports");
+    expect(hrefs(context(null, ["SUPER_ADMIN"]))).not.toContain("/tpo/reports");
+  });
+
   it("never shows two sidebar entries with the same label, for any role mix", () => {
     const roles: MembershipRole[] = [
       "LEARNER",
