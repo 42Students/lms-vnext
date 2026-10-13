@@ -56,19 +56,51 @@ export default async function TpoReportsPage({
             "Compare registered students, applications, placements and packages across departments.",
           path: "/tpo/reports/by-branch",
         },
+        {
+          title: "CTC",
+          description:
+            "Explore annual compensation bands for accepted full-time offers.",
+          path: "/tpo/reports/ctc",
+        },
       ],
     },
     {
       heading: "Student outcomes",
       description:
-        "Unplaced students, offers, joining outcomes and compensation reporting.",
-      cards: [],
+        "Unplaced placement-pool learners, offer decisions and recorded joining outcomes.",
+      cards: [
+        {
+          title: "Unplaced students",
+          description:
+            "Current registered placement-pool learners without an accepted offer in the selected reporting scope.",
+          path: "/tpo/reports/unplaced",
+        },
+        {
+          title: "Offers & acceptance",
+          description:
+            "Current issued, accepted, declined, withdrawn and expiry-derived outstanding offers.",
+          path: "/tpo/reports/offers-acceptance",
+        },
+        {
+          title: "Joining outcomes",
+          description:
+            "Joined, deferred, did-not-join and pending outcomes for accepted offers.",
+          path: "/tpo/reports/joining-status",
+        },
+      ],
     },
     {
       heading: "Relationships and compliance",
       description:
-        "Company, recruiter and accreditation reporting.",
-      cards: [],
+        "Company-level placement outcomes and performance.",
+      cards: [
+        {
+          title: "By company",
+          description:
+            "Company-wise drives, offers, unique placed learners and accepted full-time packages.",
+          path: "/tpo/reports/by-company",
+        },
+      ],
     },
   ];
 

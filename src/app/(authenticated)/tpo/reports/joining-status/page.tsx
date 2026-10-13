@@ -1,0 +1,131 @@
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import {
+  ReportCsvLink,
+  ReportFilters,
+  ReportNavigation,
+  ReportScopeNote,
+  ReportTable,
+  reportNumber,
+} from "@/components/placements/placement-report-ui";
+import { hasMembershipRole } from "@/modules/identity/context";
+import { getPlacementReportDetails } from "@/modules/placements/report-service";
+
+type SearchParams = {
+  seasonId?: string | string[];
+  jobId?: string | string[];
+};
+
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function TpoJoiningStatusReportPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const context = await getCurrentRequestContext();
+
+  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    redirect("/dashboard");
+  }
+
+  const query = await searchParams;
+  const workspace = await getPlacementReportDetails(context, {
+    collegeId: context.membership.collegeId,
+    seasonId: first(query.seasonId) || undefined,
+    jobId: first(query.jobId) || undefined,
+  });
+
+  const { totals, byDrive, byCompany } = workspace.details.joining;
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="TPO · Reports"
+        title="Joining outcomes"
+        description="Recorded joining results for currently accepted offers, grouped by drive and company."
+        actions={<ReportCsvLink workspace={workspace} kind="joining-status" />}
+      />
+
+      <ReportNavigation workspace={workspace} />
+      <ReportFilters
+        workspace={workspace}
+        path="/tpo/reports/joining-status"
+      />
+
+      <section
+        aria-label="Joining outcome totals"
+        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+      >
+        {[
+          ["Accepted offers", totals.accepted],
+          ["Joined", totals.joined],
+          ["Deferred", totals.deferred],
+          ["Did not join", totals.didNotJoin],
+          ["Pending / unrecorded", totals.pending],
+        ].map(([label, value]) => (
+          <div
+            key={label}
+            className="rounded-xl border border-border bg-surface p-4"
+          >
+            <p className="text-xs font-semibold uppercase text-body">
+              {label}
+            </p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">
+              {reportNumber(Number(value))}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <ReportScopeNote note={workspace.detailScopeNote} />
+
+      <ReportTable
+        title="Joining outcomes by drive"
+        headings={[
+          "Drive",
+          "Company",
+          "Accepted offers",
+          "Joined",
+          "Deferred",
+          "Did not join",
+          "Pending / unrecorded",
+        ]}
+        rows={byDrive.map((row) => [
+          row.label,
+          row.companyName,
+          row.accepted,
+          row.joined,
+          row.deferred,
+          row.didNotJoin,
+          row.pending,
+        ])}
+        emptyDescription="No currently accepted offers have joining outcomes in this reporting scope."
+      />
+
+      <ReportTable
+        title="Joining outcomes by company"
+        headings={[
+          "Company",
+          "Accepted offers",
+          "Joined",
+          "Deferred",
+          "Did not join",
+          "Pending / unrecorded",
+        ]}
+        rows={byCompany.map((row) => [
+          row.label,
+          row.accepted,
+          row.joined,
+          row.deferred,
+          row.didNotJoin,
+          row.pending,
+        ])}
+        emptyDescription="No company joining outcomes match these filters."
+      />
+    </div>
+  );
+}

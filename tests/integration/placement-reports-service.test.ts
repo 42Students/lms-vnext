@@ -3,7 +3,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
-import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+import {
+  getPlacementReportDetails,
+  getPlacementReportWorkspace,
+} from "@/modules/placements/report-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -74,6 +77,18 @@ describe("placement report workspace against PostgreSQL", () => {
     expect(workspace.selectedSeasonId).toBe(seasonId);
     expect(workspace.report.metrics.drives).toBeGreaterThanOrEqual(0);
     expect(typeof workspace.registrationScopeNote).toBe("string");
+  });
+
+  it("builds the additional detail reports without the staged registration table", async () => {
+    const detailed = await getPlacementReportDetails(adminA, {
+      collegeId: SEED_IDS.collegeA,
+      seasonId,
+    });
+
+    expect(detailed.details.ctc.bands.length).toBeGreaterThan(0);
+    expect(Array.isArray(detailed.details.unplaced)).toBe(true);
+    expect(detailed.details.offers.totals.released).toBeGreaterThanOrEqual(0);
+    expect(typeof detailed.detailScopeNote).toBe("string");
   });
 
   it("does not expose another college's season", async () => {
