@@ -504,3 +504,367 @@ export function placementReportCsv(
     .map((row) => row.map(placementReportCsvCell).join(","))
     .join("\r\n");
 }
+
+/**
+ * Additional persisted-data reporting projections. These do not change the
+ * existing placement-summary semantics or its exported result shape.
+ */
+export type PlacementReportPoolLearner = {
+  membershipId: string;
+  displayName: string;
+  departmentId: string | null;
+  departmentName: string;
+};
+
+export type PlacementReportDetailedOffer = {
+  id: string;
+  membershipId: string;
+  jobId: string;
+  jobTitle: string;
+  companyId: string;
+  companyName: string;
+  employmentType: string;
+  status: string;
+  annualCtcInr: number | null;
+  expiresAt: string | null;
+  joiningStatus: string | null;
+};
+
+export type PlacementOfferFunnelCounts = {
+  released: number;
+  outstanding: number;
+  expiredOutstanding: number;
+  accepted: number;
+  declined: number;
+  withdrawn: number;
+};
+
+export type PlacementJoiningCounts = {
+  accepted: number;
+  pending: number;
+  joined: number;
+  deferred: number;
+  didNotJoin: number;
+};
+
+export type PlacementReportOfferFunnelRow = PlacementOfferFunnelCounts & {
+  id: string;
+  label: string;
+  companyName: string;
+};
+
+export type PlacementReportJoiningRow = PlacementJoiningCounts & {
+  id: string;
+  label: string;
+  companyName: string;
+};
+
+export type PlacementReportCtcBand = {
+  label: string;
+  minimumInr: number;
+  maximumExclusiveInr: number | null;
+  offers: number;
+};
+
+export type PlacementReportDetails = {
+  unplaced: PlacementReportPoolLearner[];
+  ctc: {
+    acceptedFullTimeOffers: number;
+    knownCtcOffers: number;
+    unknownCtcOffers: number;
+    averageInr: number | null;
+    medianInr: number | null;
+    highestInr: number | null;
+    bands: PlacementReportCtcBand[];
+  };
+  offers: {
+    totals: PlacementOfferFunnelCounts;
+    byDrive: PlacementReportOfferFunnelRow[];
+    byCompany: PlacementReportOfferFunnelRow[];
+  };
+  joining: {
+    totals: PlacementJoiningCounts;
+    byDrive: PlacementReportJoiningRow[];
+    byCompany: PlacementReportJoiningRow[];
+  };
+};
+
+function emptyOfferFunnel(): PlacementOfferFunnelCounts {
+  return {
+    released: 0,
+    outstanding: 0,
+    expiredOutstanding: 0,
+    accepted: 0,
+    declined: 0,
+    withdrawn: 0,
+  };
+}
+
+function emptyJoiningCounts(): PlacementJoiningCounts {
+  return {
+    accepted: 0,
+    pending: 0,
+    joined: 0,
+    deferred: 0,
+    didNotJoin: 0,
+  };
+}
+
+function countOffer(
+  target: PlacementOfferFunnelCounts,
+  offer: PlacementReportDetailedOffer,
+  asOfMs: number,
+) {
+  // A released offer remains a persisted offer after its final transition.
+  target.released += 1;
+
+  switch (offer.status) {
+    case "ACCEPTED":
+      target.accepted += 1;
+      break;
+    case "DECLINED":
+      target.declined += 1;
+      break;
+    case "WITHDRAWN":
+      target.withdrawn += 1;
+      break;
+    case "ISSUED": {
+      // Expired is a derived view of an outstanding ISSUED offer, not
+      // another persisted offer status. The reporting clock is supplied
+      // by the server; no clock is read during React rendering.
+      const expiryMs = offer.expiresAt
+        ? Date.parse(offer.expiresAt)
+        : Number.NaN;
+
+      if (Number.isFinite(expiryMs) && expiryMs <= asOfMs) {
+        target.expiredOutstanding += 1;
+      } else {
+        target.outstanding += 1;
+      }
+      break;
+    }
+  }
+}
+
+function countJoining(
+  target: PlacementJoiningCounts,
+  offer: PlacementReportDetailedOffer,
+) {
+  if (offer.status !== "ACCEPTED") return;
+
+  target.accepted += 1;
+
+  switch (offer.joiningStatus) {
+    case "JOINED":
+      target.joined += 1;
+      break;
+    case "DEFERRED":
+      target.deferred += 1;
+      break;
+    case "DID_NOT_JOIN":
+      target.didNotJoin += 1;
+      break;
+    default:
+      // A missing outcome row is not evidence of joining.
+      target.pending += 1;
+  }
+}
+
+export function summarizePlacementReportDetails(input: {
+  registeredLearners: readonly PlacementReportPoolLearner[];
+  offers: readonly PlacementReportDetailedOffer[];
+  asOf: string;
+}): PlacementReportDetails {
+  const asOfMs = Date.parse(input.asOf);
+
+  if (!Number.isFinite(asOfMs)) {
+    throw new Error("Invalid placement report as-of date");
+  }
+
+  const registeredLearners = [
+    ...new Map(
+      input.registeredLearners.map((learner) => [
+        learner.membershipId,
+        learner,
+      ]),
+    ).values(),
+  ];
+
+  const offers = [
+    ...new Map(
+      input.offers.map((offer) => [offer.id, offer]),
+    ).values(),
+  ];
+
+  const placedMemberships = new Set(
+    offers
+      .filter((offer) => offer.status === "ACCEPTED")
+      .map((offer) => offer.membershipId),
+  );
+
+  const unplaced = registeredLearners
+    .filter((learner) => !placedMemberships.has(learner.membershipId))
+    .sort(
+      (left, right) =>
+        left.departmentName.localeCompare(right.departmentName) ||
+        left.displayName.localeCompare(right.displayName) ||
+        left.membershipId.localeCompare(right.membershipId),
+    );
+
+  // This distribution counts accepted full-time OFFER records, not the
+  // best offer per learner used by the existing Placement Summary.
+  const acceptedFullTime = offers.filter(
+    (offer) =>
+      offer.status === "ACCEPTED" &&
+      offer.employmentType === "FULL_TIME",
+  );
+
+  const knownCtc = acceptedFullTime
+    .map((offer) => offer.annualCtcInr)
+    .filter(
+      (value): value is number =>
+        value !== null &&
+        Number.isFinite(value) &&
+        value >= 0,
+    );
+
+  const bands: PlacementReportCtcBand[] = [
+    {
+      label: "Below ₹3 lakh",
+      minimumInr: 0,
+      maximumExclusiveInr: 300_000,
+      offers: 0,
+    },
+    {
+      label: "₹3–6 lakh",
+      minimumInr: 300_000,
+      maximumExclusiveInr: 600_000,
+      offers: 0,
+    },
+    {
+      label: "₹6–10 lakh",
+      minimumInr: 600_000,
+      maximumExclusiveInr: 1_000_000,
+      offers: 0,
+    },
+    {
+      label: "₹10–20 lakh",
+      minimumInr: 1_000_000,
+      maximumExclusiveInr: 2_000_000,
+      offers: 0,
+    },
+    {
+      label: "₹20 lakh and above",
+      minimumInr: 2_000_000,
+      maximumExclusiveInr: null,
+      offers: 0,
+    },
+  ];
+
+  for (const amount of knownCtc) {
+    const band = bands.find(
+      (candidate) =>
+        amount >= candidate.minimumInr &&
+        (candidate.maximumExclusiveInr === null ||
+          amount < candidate.maximumExclusiveInr),
+    );
+
+    if (band) band.offers += 1;
+  }
+
+  const offerTotals = emptyOfferFunnel();
+  const joiningTotals = emptyJoiningCounts();
+
+  const offerByDrive = new Map<string, PlacementReportOfferFunnelRow>();
+  const offerByCompany = new Map<string, PlacementReportOfferFunnelRow>();
+  const joiningByDrive = new Map<string, PlacementReportJoiningRow>();
+  const joiningByCompany = new Map<string, PlacementReportJoiningRow>();
+
+  for (const offer of offers) {
+    countOffer(offerTotals, offer, asOfMs);
+    countJoining(joiningTotals, offer);
+
+    let driveOffers = offerByDrive.get(offer.jobId);
+    if (!driveOffers) {
+      driveOffers = {
+        id: offer.jobId,
+        label: offer.jobTitle,
+        companyName: offer.companyName,
+        ...emptyOfferFunnel(),
+      };
+      offerByDrive.set(offer.jobId, driveOffers);
+    }
+    countOffer(driveOffers, offer, asOfMs);
+
+    let companyOffers = offerByCompany.get(offer.companyId);
+    if (!companyOffers) {
+      companyOffers = {
+        id: offer.companyId,
+        label: offer.companyName,
+        companyName: offer.companyName,
+        ...emptyOfferFunnel(),
+      };
+      offerByCompany.set(offer.companyId, companyOffers);
+    }
+    countOffer(companyOffers, offer, asOfMs);
+
+    if (offer.status !== "ACCEPTED") continue;
+
+    let driveJoining = joiningByDrive.get(offer.jobId);
+    if (!driveJoining) {
+      driveJoining = {
+        id: offer.jobId,
+        label: offer.jobTitle,
+        companyName: offer.companyName,
+        ...emptyJoiningCounts(),
+      };
+      joiningByDrive.set(offer.jobId, driveJoining);
+    }
+    countJoining(driveJoining, offer);
+
+    let companyJoining = joiningByCompany.get(offer.companyId);
+    if (!companyJoining) {
+      companyJoining = {
+        id: offer.companyId,
+        label: offer.companyName,
+        companyName: offer.companyName,
+        ...emptyJoiningCounts(),
+      };
+      joiningByCompany.set(offer.companyId, companyJoining);
+    }
+    countJoining(companyJoining, offer);
+  }
+
+  const byLabel = <
+    T extends { label: string; id: string },
+  >(rows: Map<string, T>) =>
+    [...rows.values()].sort(
+      (left, right) =>
+        left.label.localeCompare(right.label) ||
+        left.id.localeCompare(right.id),
+    );
+
+  return {
+    unplaced,
+    ctc: {
+      acceptedFullTimeOffers: acceptedFullTime.length,
+      knownCtcOffers: knownCtc.length,
+      unknownCtcOffers: acceptedFullTime.length - knownCtc.length,
+      averageInr: roundAverage(knownCtc),
+      medianInr: median(knownCtc),
+      highestInr:
+        knownCtc.length > 0 ? Math.max(...knownCtc) : null,
+      bands,
+    },
+    offers: {
+      totals: offerTotals,
+      byDrive: byLabel(offerByDrive),
+      byCompany: byLabel(offerByCompany),
+    },
+    joining: {
+      totals: joiningTotals,
+      byDrive: byLabel(joiningByDrive),
+      byCompany: byLabel(joiningByCompany),
+    },
+  };
+}

@@ -205,6 +205,14 @@ export function ReportNavigation({
       href: "/tpo/reports/by-branch",
       label: "By branch",
     },
+    { href: "/tpo/reports/by-company", label: "By company" },
+    { href: "/tpo/reports/ctc", label: "CTC" },
+    { href: "/tpo/reports/unplaced", label: "Unplaced students" },
+    {
+      href: "/tpo/reports/offers-acceptance",
+      label: "Offers & acceptance",
+    },
+    { href: "/tpo/reports/joining-status", label: "Joining outcomes" },
   ];
 
   return (
@@ -227,7 +235,14 @@ export function ReportCsvLink({
   kind,
 }: {
   workspace: PlacementReportWorkspace;
-  kind: "placement-summary" | "by-branch";
+  kind:
+    | "placement-summary"
+    | "by-branch"
+    | "by-company"
+    | "ctc"
+    | "unplaced"
+    | "offers-acceptance"
+    | "joining-status";
 }) {
   const params = new URLSearchParams({ kind });
 

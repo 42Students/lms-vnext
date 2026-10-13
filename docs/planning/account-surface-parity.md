@@ -422,11 +422,11 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Reports gallery | `/tpo/reports` | Read-only gallery with overview/student-outcome/relationship groups, headline metrics, season/drive filters and live links to Placement Summary and By Branch. Other report cards are intentionally not linked. Exact legacy card set, semantics and browser parity unverified. | PARTIAL |
 | Placement summary | `/tpo/reports/placement-summary` | Scoped server report with headline KPIs, distinct placed/offer counts, drive funnel, company table, season/drive filters, batch-registration caveat and authorized CSV download. Legacy presentation, saved views, historical denominator semantics and browser parity remain open. | PARTIAL |
 | By branch | `.../by-branch` | Scoped department-attributed branch breakdown with registered/applicant/application/offer/placed counts, full-time package metrics, season/drive filters and authorized CSV download. Branch history snapshots, legacy chart/drill-ins and browser parity remain open. | PARTIAL |
-| By company | `.../by-company` | Missing. | MISSING |
-| CTC | `.../ctc` | Missing. | MISSING |
-| Unplaced students | `.../unplaced` | Missing. | MISSING |
-| Offers & acceptance | `.../offers-acceptance` | Missing. | MISSING |
-| Joining status | `.../joining-status` | Missing. | MISSING |
+| By company | `.../by-company` | `/tpo/reports/by-company` uses existing scoped company drive/applicant/offer/unique placed/best-accepted-full-time package aggregates and CSV. Legacy drill-ins and browser parity unverified. | PARTIAL |
+| CTC | `.../ctc` | `/tpo/reports/ctc` adds accepted full-time offer CTC histogram, average, median, highest and unknown-CTC counts with CSV. Histogram counts offer records; existing Placement Summary remains best-offer-per-learner. Exact legacy chart and browser parity open. | PARTIAL |
+| Unplaced students | `.../unplaced` | `/tpo/reports/unplaced` lists college-scoped current placement-pool registrations without an accepted offer in selected season/drive, with learner name, branch and CSV. This is not a historical season pool; legacy readiness, profile drill-ins and browser parity open. | PARTIAL |
+| Offers & acceptance | `.../offers-acceptance` | `/tpo/reports/offers-acceptance` shows stored offer statuses per drive/company; expired outstanding is derived from persisted ISSUED expiry timestamps. CSV implemented. Historical releases/acceptances, exact legacy funnel and browser parity open. | PARTIAL |
+| Joining status | `.../joining-status` | `/tpo/reports/joining-status` counts current accepted offers with JOINED, DEFERRED, DID_NOT_JOIN or pending/unrecorded joining outcomes by drive/company, plus CSV. Exact legacy history and browser parity open. | PARTIAL |
 | Failure reasons | `.../failure-reasons` | Missing. | MISSING |
 | Leads report | `.../leads` | Missing. | MISSING |
 | Accreditation export | `.../accreditation` | Missing. | MISSING |

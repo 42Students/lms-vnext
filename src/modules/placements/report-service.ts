@@ -21,6 +21,7 @@ import {
   placementOffers,
   placementSeasons,
   programs,
+  users,
 } from "@/db/schema";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import type { RequestContext } from "@/modules/identity/context";
@@ -35,6 +36,9 @@ import { PlacementsServiceError } from "./errors";
 import { placementTableExists } from "./staged-tables";
 import {
   summarizePlacementReports,
+  summarizePlacementReportDetails,
+  type PlacementReportPoolLearner,
+  type PlacementReportDetailedOffer,
   type PlacementReportApplication,
   type PlacementReportBranch,
   type PlacementReportFacts,
@@ -435,5 +439,272 @@ export async function getPlacementReportWorkspace(
       "The placement-rate denominator can therefore differ from historical " +
       "legacy season reports. A drive filter narrows outcomes, not the " +
       "registered cohort denominator.",
+  };
+}
+
+/**
+ * Additional TPO reporting projections.
+ *
+ * This entry point is additive. getPlacementReportWorkspace and its existing
+ * return shape remain unchanged for all current consumers.
+ *
+ * The caller can pass an already-authorized base workspace to avoid running
+ * its queries twice (used by the shared CSV route).
+ */
+export async function getPlacementReportDetails(
+  context: RequestContext,
+  rawQuery: unknown,
+  authorizedWorkspace?: Awaited<ReturnType<typeof getPlacementReportWorkspace>>,
+) {
+  const query = placementReportQuerySchema.parse(rawQuery);
+
+  const workspace =
+    authorizedWorkspace ??
+    (await getPlacementReportWorkspace(context, query));
+
+  // Always re-validate the supplied workspace's tenant and filter identity
+  // before using it as authorization evidence.
+  if (
+    workspace.collegeId !== query.collegeId ||
+    (query.seasonId !== undefined &&
+      workspace.selectedSeasonId !== query.seasonId) ||
+    workspace.selectedJobId !== (query.jobId ?? null)
+  ) {
+    throw new AuthorizationError("placements.manage");
+  }
+
+  // Do not bypass current user authorization when an existing workspace is
+  // provided by an internal caller.
+  if (
+    isSuperAdmin(context) &&
+    context.adminScope?.collegeId !== query.collegeId
+  ) {
+    throw new AuthorizationError("placements.manage");
+  }
+  await requirePlacementManageScope(context, query.collegeId);
+
+  if (!workspace.selectedSeasonId) {
+    return {
+      ...workspace,
+      details: summarizePlacementReportDetails({
+        registeredLearners: [],
+        offers: [],
+        asOf: new Date().toISOString(),
+      }),
+      detailScopeNote:
+        "No placement season exists. No season outcomes or unplaced-student list are inferred.",
+    };
+  }
+
+  const db = getDb();
+  const selectedSeasonId = workspace.selectedSeasonId;
+  const registrationsAvailable = await placementTableExists(
+    "placement_batch_registrations",
+  );
+
+  const [poolRows, enrollmentRows, offerRows] = await Promise.all([
+    registrationsAvailable
+      ? db
+          .select({
+            membershipId: placementBatchRegistrations.membershipId,
+            displayName: users.displayName,
+          })
+          .from(placementBatchRegistrations)
+          .innerJoin(
+            collegeMemberships,
+            and(
+              eq(
+                collegeMemberships.id,
+                placementBatchRegistrations.membershipId,
+              ),
+              eq(collegeMemberships.collegeId, query.collegeId),
+            ),
+          )
+          .innerJoin(
+            users,
+            eq(users.id, collegeMemberships.userId),
+          )
+          .where(
+            and(
+              eq(placementBatchRegistrations.collegeId, query.collegeId),
+              eq(placementBatchRegistrations.choice, "PLACEMENTS"),
+            ),
+          )
+      : Promise.resolve(
+          [] as { membershipId: string; displayName: string | null }[],
+        ),
+
+    db
+      .select({
+        membershipId: learnerProgramEnrollments.membershipId,
+        departmentId: departments.id,
+        departmentName: departments.name,
+        enrollmentStatus: learnerProgramEnrollments.status,
+        admittedAt: learnerProgramEnrollments.admittedAt,
+      })
+      .from(learnerProgramEnrollments)
+      .innerJoin(
+        collegeMemberships,
+        and(
+          eq(
+            collegeMemberships.id,
+            learnerProgramEnrollments.membershipId,
+          ),
+          eq(collegeMemberships.collegeId, query.collegeId),
+        ),
+      )
+      .innerJoin(
+        programs,
+        eq(programs.id, learnerProgramEnrollments.programId),
+      )
+      .innerJoin(
+        departments,
+        and(
+          eq(departments.id, programs.departmentId),
+          eq(departments.collegeId, query.collegeId),
+        ),
+      )
+      .orderBy(desc(learnerProgramEnrollments.admittedAt)),
+
+    db
+      .select({
+        id: placementOffers.id,
+        membershipId: placementApplications.membershipId,
+        jobId: placementJobs.id,
+        jobTitle: placementJobs.title,
+        companyId: placementCompanies.id,
+        companyName: placementCompanies.name,
+        employmentType: placementJobs.employmentType,
+        status: placementOffers.status,
+        annualCtcInr: placementOffers.annualCtcInr,
+        expiresAt: placementOffers.expiresAt,
+        joiningStatus: placementJoiningOutcomes.status,
+      })
+      .from(placementOffers)
+      .innerJoin(
+        placementApplications,
+        eq(placementApplications.id, placementOffers.applicationId),
+      )
+      .innerJoin(
+        placementJobs,
+        eq(placementJobs.id, placementApplications.jobId),
+      )
+      .innerJoin(
+        collegeMemberships,
+        and(
+          eq(
+            collegeMemberships.id,
+            placementApplications.membershipId,
+          ),
+          eq(collegeMemberships.collegeId, query.collegeId),
+        ),
+      )
+      .innerJoin(
+        placementCompanyRelationships,
+        and(
+          eq(
+            placementCompanyRelationships.id,
+            placementJobs.companyRelationshipId,
+          ),
+          eq(
+            placementCompanyRelationships.collegeId,
+            query.collegeId,
+          ),
+        ),
+      )
+      .innerJoin(
+        placementCompanies,
+        eq(
+          placementCompanies.id,
+          placementCompanyRelationships.companyId,
+        ),
+      )
+      .leftJoin(
+        placementJoiningOutcomes,
+        eq(placementJoiningOutcomes.offerId, placementOffers.id),
+      )
+      .where(
+        and(
+          eq(placementJobs.collegeId, query.collegeId),
+          eq(placementJobs.seasonId, selectedSeasonId),
+          isNull(placementJobs.archivedAt),
+          query.jobId
+            ? eq(placementJobs.id, query.jobId)
+            : undefined,
+        ),
+      ),
+  ]);
+
+  // Prefer an ACTIVE program enrollment, then the most recently admitted
+  // enrollment. This is current academic branch attribution, not a
+  // historical branch snapshot captured at offer issuance.
+  const branches = new Map<
+    string,
+    {
+      departmentId: string;
+      departmentName: string;
+      enrollmentStatus: string;
+    }
+  >();
+
+  for (const row of enrollmentRows) {
+    const previous = branches.get(row.membershipId);
+
+    if (
+      !previous ||
+      (row.enrollmentStatus === "ACTIVE" &&
+        previous.enrollmentStatus !== "ACTIVE")
+    ) {
+      branches.set(row.membershipId, {
+        departmentId: row.departmentId,
+        departmentName: row.departmentName,
+        enrollmentStatus: row.enrollmentStatus,
+      });
+    }
+  }
+
+  const registeredLearners: PlacementReportPoolLearner[] =
+    poolRows.map((row) => {
+      const branch = branches.get(row.membershipId);
+      return {
+        membershipId: row.membershipId,
+        displayName: row.displayName?.trim() || "Name unavailable",
+        departmentId: branch?.departmentId ?? null,
+        departmentName: branch?.departmentName ?? "Unassigned branch",
+      };
+    });
+
+  const offers: PlacementReportDetailedOffer[] = offerRows.map(
+    (row) => ({
+      id: row.id,
+      membershipId: row.membershipId,
+      jobId: row.jobId,
+      jobTitle: row.jobTitle,
+      companyId: row.companyId,
+      companyName: row.companyName,
+      employmentType: row.employmentType,
+      status: row.status,
+      annualCtcInr: row.annualCtcInr,
+      expiresAt: row.expiresAt?.toISOString() ?? null,
+      joiningStatus: row.joiningStatus,
+    }),
+  );
+
+  return {
+    ...workspace,
+    details: summarizePlacementReportDetails({
+      registeredLearners,
+      offers,
+      asOf: new Date().toISOString(),
+    }),
+    detailScopeNote:
+      "The unplaced pool uses current batch registration choices, not a " +
+      "historical season snapshot. A learner is unplaced here when no " +
+      "currently ACCEPTED offer exists in the selected season and drive " +
+      "scope; an accepted offer in another season or drive may still exist. " +
+      "Branches use current program enrollment. Expired outstanding offers " +
+      "are calculated from the stored expiry timestamp as of report load. " +
+      "Joining counts use current accepted offers and recorded joining " +
+      "outcomes; missing outcomes remain pending.",
   };
 }
