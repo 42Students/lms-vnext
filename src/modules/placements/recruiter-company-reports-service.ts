@@ -1,0 +1,297 @@
+import "server-only";
+
+import {
+  and,
+  count,
+  desc,
+  eq,
+  inArray,
+  sql,
+} from "drizzle-orm";
+
+import { getDb } from "@/db/client";
+import {
+  collegeMemberships,
+  placementApplications,
+  placementJobs,
+  placementOffers,
+} from "@/db/schema";
+
+import type {
+  RequestContext,
+} from "@/modules/identity/context";
+import {
+  requirePermission,
+} from "@/modules/permissions/policy";
+
+import {
+  buildRecruiterCompanyReportRows,
+  recruiterCompanyReportsQuerySchema,
+  summarizeRecruiterReportPortfolio,
+} from "./recruiter-company-reports-model";
+import {
+  getRecruiterCompanyTeam,
+} from "./recruiter-company-team-service";
+
+/**
+ * Read-only employer hiring report.
+ *
+ * The established recruiter company/team service resolves the
+ * recruiter's persisted active grant and checks its company
+ * relationship. It deliberately returns CHOOSE_COLLEGE when
+ * several grants exist and no college is selected.
+ *
+ * Every reporting query additionally restricts:
+ * - college ID;
+ * - exact granted company relationship;
+ * - recruiter-visible PUBLISHED/CLOSED jobs.
+ *
+ * The central placement recruiter permission is checked
+ * against the resolved grant before reporting queries.
+ *
+ * This service never reads the unmigrated registration,
+ * external-offer, message or TPO collaboration tables.
+ */
+export async function getRecruiterCompanyReports(
+  context: RequestContext,
+  rawQuery: unknown = {},
+) {
+  const query =
+    recruiterCompanyReportsQuerySchema.parse(rawQuery);
+
+  const companyScope = await getRecruiterCompanyTeam(
+    context,
+    query.collegeId,
+  );
+
+  if (companyScope.status !== "READY") {
+    return {
+      status: companyScope.status,
+      query,
+      choices: companyScope.choices,
+    };
+  }
+
+  const collegeId = companyScope.grant.collegeId;
+  const relationshipId =
+    companyScope.grant.companyRelationshipId;
+
+  requirePermission(
+    context,
+    "placements.recruiter.read",
+    {
+      collegeId,
+      placementCompanyRelationshipId: relationshipId,
+    },
+  );
+
+  const db = getDb();
+
+  const visibleCondition = and(
+    eq(placementJobs.collegeId, collegeId),
+    eq(
+      placementJobs.companyRelationshipId,
+      relationshipId,
+    ),
+    inArray(
+      placementJobs.status,
+      ["PUBLISHED", "CLOSED"],
+    ),
+  );
+
+  const selectedCondition =
+    query.status === "ALL"
+      ? visibleCondition
+      : and(
+          visibleCondition,
+          eq(placementJobs.status, query.status),
+        );
+
+  const [
+    portfolioCounts,
+    selectedCounts,
+    pageJobs,
+  ] = await Promise.all([
+    db
+      .select({
+        total: count(),
+        published: sql<number>`
+          count(*) filter (
+            where ${placementJobs.status} = 'PUBLISHED'
+          )::integer
+        `,
+        closed: sql<number>`
+          count(*) filter (
+            where ${placementJobs.status} = 'CLOSED'
+          )::integer
+        `,
+      })
+      .from(placementJobs)
+      .where(visibleCondition),
+
+    db
+      .select({
+        total: count(),
+      })
+      .from(placementJobs)
+      .where(selectedCondition),
+
+    db
+      .select({
+        id: placementJobs.id,
+        title: placementJobs.title,
+        status: placementJobs.status,
+        employmentType: placementJobs.employmentType,
+        publishedAt: placementJobs.publishedAt,
+        closedAt: placementJobs.closedAt,
+      })
+      .from(placementJobs)
+      .where(selectedCondition)
+      .orderBy(
+        desc(placementJobs.createdAt),
+        desc(placementJobs.id),
+      )
+      .limit(query.pageSize)
+      .offset(
+        (query.page - 1) * query.pageSize,
+      ),
+  ]);
+
+  const jobIds = pageJobs.map((job) => job.id);
+
+  /**
+   * Counts include only applications whose owning
+   * membership belongs to this same college.
+   *
+   * Multiple offer versions are separate persisted offer
+   * rows. ISSUED means currently outstanding, not
+   * "all offers ever issued"; ACCEPTED means the row's
+   * current persisted status.
+   */
+  const reportCounts = jobIds.length === 0
+    ? []
+    : await db
+        .select({
+          jobId: placementApplications.jobId,
+          applications: sql<number>`
+            count(
+              distinct ${placementApplications.id}
+            )::integer
+          `,
+          submittedApplications: sql<number>`
+            count(
+              distinct ${placementApplications.id}
+            ) filter (
+              where ${placementApplications.status}
+                = 'SUBMITTED'
+            )::integer
+          `,
+          withdrawnApplications: sql<number>`
+            count(
+              distinct ${placementApplications.id}
+            ) filter (
+              where ${placementApplications.status}
+                = 'WITHDRAWN'
+            )::integer
+          `,
+          outstandingOffers: sql<number>`
+            count(
+              distinct ${placementOffers.id}
+            ) filter (
+              where ${placementOffers.status}
+                = 'ISSUED'
+            )::integer
+          `,
+          acceptedOffers: sql<number>`
+            count(
+              distinct ${placementOffers.id}
+            ) filter (
+              where ${placementOffers.status}
+                = 'ACCEPTED'
+            )::integer
+          `,
+        })
+        .from(placementApplications)
+        .innerJoin(
+          collegeMemberships,
+          and(
+            eq(
+              collegeMemberships.id,
+              placementApplications.membershipId,
+            ),
+            eq(
+              collegeMemberships.collegeId,
+              collegeId,
+            ),
+          ),
+        )
+        .leftJoin(
+          placementOffers,
+          eq(
+            placementOffers.applicationId,
+            placementApplications.id,
+          ),
+        )
+        .where(
+          inArray(
+            placementApplications.jobId,
+            jobIds,
+          ),
+        )
+        .groupBy(
+          placementApplications.jobId,
+        );
+
+  const summaryRecord = portfolioCounts[0];
+
+  const summary = summarizeRecruiterReportPortfolio({
+    total: Number(summaryRecord?.total ?? 0),
+    published: Number(
+      summaryRecord?.published ?? 0,
+    ),
+    closed: Number(
+      summaryRecord?.closed ?? 0,
+    ),
+  });
+
+  const matchedTotal = Number(
+    selectedCounts[0]?.total ?? 0,
+  );
+
+  return {
+    status: "READY" as const,
+    query,
+    choices: companyScope.choices,
+    grant: companyScope.grant,
+    company: {
+      id: companyScope.company.id,
+      name: companyScope.company.name,
+    },
+    summary,
+    matchedTotal,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.ceil(
+      matchedTotal / query.pageSize,
+    ),
+    jobs: buildRecruiterCompanyReportRows(
+      pageJobs,
+      reportCounts.map((record) => ({
+        jobId: record.jobId,
+        applications: Number(record.applications),
+        submittedApplications: Number(
+          record.submittedApplications,
+        ),
+        withdrawnApplications: Number(
+          record.withdrawnApplications,
+        ),
+        outstandingOffers: Number(
+          record.outstandingOffers,
+        ),
+        acceptedOffers: Number(
+          record.acceptedOffers,
+        ),
+      })),
+    ),
+  };
+}
