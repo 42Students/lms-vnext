@@ -63,7 +63,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Applications | `/learn/my-placements/applications` | route + learner placement journey | Dedicated list exists; search/stage/attention filters and modal/browser parity remain. | PARTIAL |
 | Assessments | `/learn/my-placements/assessments` | typed scheduled career rounds + employer test link | Search, pending/completed buckets, reminders and modal/browser parity remain. | PARTIAL |
 | Interviews | `/learn/my-placements/interviews` | typed scheduled interview/GD rounds | Confirm, reschedule, countdown, detail modal and browser parity remain. | PARTIAL |
-| Career Calendar | `/learn/my-placements/calendar` | scheduled placement event cards | Legacy month/week/day navigation, iCal and browser parity remain. | PARTIAL |
+| Career Calendar | `/learn/my-placements/calendar` | dedicated Calendar | Month/Week/Day/Agenda navigation, event-kind filters, approved reschedules and .ics export are implemented for learner-visible scheduled rounds; legacy job important dates/TALK/BLOCKED sources, event drawer and browser parity remain. | PARTIAL |
 | Jobs list | `/learn/my-placements/jobs` | same legacy route + placements feed | Exact browse/filter surface incomplete. | PARTIAL |
 | Job detail | `/learn/my-placements/jobs/[jobId]` | role and eligibility cards for selected job | Exact legacy detail sections, actions and browser parity remain. | PARTIAL |
 | Placement Cell | `/learn/my-placements/placement` | offer/request workspace and rules link | Batch registration, consent, debarment and exact support behavior remain. | PARTIAL |

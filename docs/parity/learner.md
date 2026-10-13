@@ -376,6 +376,19 @@ Legacy contract audited from `InterviewsContent`:
 - [ ] Loading/error/empty states are verified.
 
 ## Page: Career Calendar
+
+**2026-10-13 source parity improvement:** Career Calendar now has
+Agenda / Month / Week / Day modes with period navigation, Today,
+event-kind filters, a month/week date grid and a mobile-friendly agenda.
+Times are displayed in India timezone using saved UTC instants; an
+approved round reschedule replaces the original slot. Export produces
+an .ics calendar for the learner-visible rounds and deliberately avoids
+invented event duration or protected employer URLs. Calendar date
+grouping, leap/edge navigation, rescheduling and escaping are covered
+by pure unit tests. Legacy job-deadline, TALK and college BLOCKED event
+sources, event detail drawers, full responsive/browser acceptance and
+cross-page navigation still remain open.
+
 **Legacy:** `/learn/my-placements/calendar`
 
 Legacy contract:
