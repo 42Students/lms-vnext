@@ -917,3 +917,5 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L7-018: mobile quiz cards display own attempt availability and published-results-only status, with touch-sized links. Does not invent provider outcomes, scores or send external notifications. Fresh-learner PG and pure-model tests authored; CI and mobile acceptance pending.
 
 2026-10-14 L3-032: mobile Learning Path exposes an ordered, filtered index from real published lesson items and deep links to focused lessons with Next Link. Skipped L3-037 interactive storage-backed video/content overlay: private streaming and authorized file access need a separate browser and storage acceptance pass; do not invent media URLs. Fresh own-learner PG, typecheck, lint, mobile and accessibility acceptance pending.
+
+2026-10-14 L11-015: attention badge and overflow action now expose the true number of own scheduled assessment/interview rounds within seven days rather than misleading three-item count; partial-source failure masks total and overflow. No inferred employer completion. Isolated PG and model tests authored; browser/CI acceptance pending.
