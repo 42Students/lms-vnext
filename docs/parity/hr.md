@@ -571,3 +571,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Activity query typing repair — PARTIAL:** Read-only HR Activity route now declares `page` in the typed Next searchParams and parses it through the existing strict Zod schema, preserving bounded numeric page validation. Additional unit bounds authored; runtime TypeScript/browser gates still pending. Avoids the reported TS property error while retaining company/college authorization.
+
+
+**2026-10-15 chat-10 R6 / Drive portfolio CSV — PARTIAL:** Recruiter Drives exports up to 200 company+college-granted published/closed records after existing lifecycle/search/employment/mode/deadline filters and sorting, neutralizes spreadsheet formulas, formats IST deadline, omits learner contact and reports cap. Pure unit authored, execution and browser download pending.
