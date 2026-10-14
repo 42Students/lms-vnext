@@ -407,7 +407,6 @@ export function FacultyAssignmentReview({
   async function load() {
     setOpen(true);
     setError(null);
-    setSuccess(null);
     setLoading(true);
 
     try {
