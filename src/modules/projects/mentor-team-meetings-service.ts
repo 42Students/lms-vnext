@@ -1,0 +1,82 @@
+import "server-only";
+
+import {and,count,desc,eq,isNull,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {
+  collegeMemberships,membershipRoles,projectMeetings,projectMembers,users,
+} from "@/db/schema";
+import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import {requireProjectReadAccess} from "./access";
+import {ProjectsServiceError} from "./errors";
+import {mentorTeamMeetingsPage,mentorTeamMeetingsQuerySchema} from "./mentor-team-meetings-model";
+
+/** Exact-project current team counts and historical registered meeting log. */
+export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
+  const query=mentorTeamMeetingsQuerySchema.parse(raw);
+  const membership=context.membership;
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+     !can(context,"projects.read",{
+       collegeId:membership.collegeId,organizationId:membership.organizationId,
+     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const scope=await requireProjectReadAccess(context,query.projectId);
+  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
+     !can(context,"projects.read",{
+       collegeId:scope.collegeId,organizationId:scope.organizationId,
+     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const module=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  const empty=()=>({
+    enabled:false as const,query,projectTitle:scope.project.title,
+    team:{learners:0,mentors:0,primaryRecorded:false},
+    ...mentorTeamMeetingsPage(0,1),items:[] as {
+      id:string;title:string;status:string;type:string;
+      startsAt:Date;endsAt:Date;timeZone:string;hasOutcome:boolean;
+    }[],
+  });
+  if(!module)return empty();
+  const db=getDb();
+  const [teamRows,summary]=await Promise.all([
+    db.select({role:projectMembers.role,isPrimary:projectMembers.isPrimary})
+      .from(projectMembers)
+      .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+      ))
+      .where(and(
+        eq(projectMembers.projectId,scope.project.id),
+        isNull(projectMembers.endedAt),
+        eq(collegeMemberships.collegeId,scope.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"),
+      )),
+    db.select({total:count()}).from(projectMeetings)
+      .where(and(eq(projectMeetings.projectId,scope.project.id),
+        query.status==="ALL"?undefined:eq(projectMeetings.status,query.status))),
+  ]);
+  const page=mentorTeamMeetingsPage(Number(summary[0]?.total??0),query.page);
+  const meetings=await db.select({
+    id:projectMeetings.id,title:projectMeetings.title,
+    status:projectMeetings.status,type:projectMeetings.meetingType,
+    startsAt:projectMeetings.startsAt,endsAt:projectMeetings.endsAt,
+    timeZone:projectMeetings.timeZone,outcome:projectMeetings.outcome,
+  }).from(projectMeetings)
+    .where(and(eq(projectMeetings.projectId,scope.project.id),
+      query.status==="ALL"?undefined:eq(projectMeetings.status,query.status)))
+    .orderBy(desc(projectMeetings.startsAt),desc(projectMeetings.id))
+    .limit(page.pageSize).offset((page.page-1)*page.pageSize);
+  return {
+    enabled:true as const,query,projectTitle:scope.project.title,
+    team:{
+      learners:teamRows.filter(row=>row.role==="LEARNER").length,
+      mentors:teamRows.filter(row=>row.role==="MENTOR").length,
+      primaryRecorded:teamRows.some(row=>row.role==="MENTOR"&&row.isPrimary),
+    },
+    ...page,
+    items:meetings.map(({outcome,...row})=>({
+      ...row,hasOutcome:Boolean(outcome?.trim()),
+    })),
+  };
+}
