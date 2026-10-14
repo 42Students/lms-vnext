@@ -90,7 +90,9 @@ export function FacultyAssessmentEditor({
       return;
     }
 
-    if (!window.confirm("Confirm these draft assessment edits?")) return;
+    if (!window.confirm(assessment.kind === "QUIZ" && assessment.status !== "DRAFT"
+      ? "Confirm metadata-only Quiz edits? Existing questions and learner attempts remain unchanged."
+      : "Confirm these draft assessment edits?")) return;
     setError(null);
     setSaving(true);
     try {

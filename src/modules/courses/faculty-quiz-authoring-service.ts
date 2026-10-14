@@ -55,16 +55,25 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     if(!current)throw new CoursesServiceError("QUIZ_NOT_FOUND");
     if(!facultyQuizVersionMatches(current.updatedAt,input.expectedUpdatedAt))
      throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
-    if(((input.action==="EDIT"||input.action==="PUBLISH") && current.status!=="DRAFT") ||
+    // Legacy metadata-only edits are valid for published or closed quizzes:
+    // never replace their question bank or answer snapshots after publication.
+    // Archived quizzes remain immutable.
+    if((input.action==="EDIT" &&
+      (current.status==="ARCHIVED" ||
+       (current.status!=="DRAFT" && input.questions!==undefined))) ||
+     (input.action==="PUBLISH" && current.status!=="DRAFT") ||
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const [attempt]=await tx.select({id:quizAttempts.id}).from(quizAttempts)
      .where(eq(quizAttempts.quizId,current.id)).limit(1);
-    // Closing preserves existing learner attempts; edits and archival do not
-    // bypass attempt-bearing assessment history.
-    if(attempt && input.action!=="CLOSE")
-     throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+    // Once a learner has attempted, the question bank, allowed attempt count
+    // and history cannot be rewritten. Only title, text and deadline metadata
+    // can change with a current optimistic version; closing still works.
+    if(attempt && (input.action==="ARCHIVE" ||
+       (input.action==="EDIT" &&
+        (input.questions!==undefined || input.maxAttempts!==current.maxAttempts))))
+      throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT"){
      if(input.questions){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)

@@ -32,18 +32,18 @@ export function AccountActions({
   }
 
   return (
-    <div className="flex items-center gap-1 text-right">
+    <div className="flex flex-wrap items-center justify-end gap-1 text-right">
       {showNotifications ? (
         <Link
           href="/notifications"
-          className="inline-flex min-h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+          className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"
         >
           Notifications
         </Link>
       ) : null}
       <Link
         href="/account/security"
-        className="inline-flex min-h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+        className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"
       >
         Security
       </Link>
