@@ -632,3 +632,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 Chat 6 / Users & Roles privacy-safe export — PARTIAL:** Added GET /api/admin/people/export and a directory download control with strict role, tab, name, and status filters; 500-record cap, formula-neutralized CSV, no contact fields under any scope, explicit truncated-result marker and client error state. Uses centrally authorized directory service. Pure model and in-test persisted PG fixture tests authored but not executed; pagination consistency and desktop/mobile acceptance remain open.
+
+
+**2026-10-15 Chat 6 / Super Admin Videos read-first — PARTIAL:** Added `/admin/videos` with selected-college-only persisted VIDEO/YOUTUBE lesson content, validated search/status/page filters, bounded 25-row pages, IST metadata, safe Offering drill-in and responsive loading/error/empty cards; no storage keys, signed downloads or meeting URLs exposed. Authored pure model and isolated PostgreSQL in-test VIDEO/RESOURCE fixture tests for success, foreign-scope concealment, wrong-role; not executed. Also fixed Users CSV UI href construction to ignore list pagination. Remaining: actual PG/browser checks, edit/schedule/upload controls, legacy video parity and privacy review.

@@ -11,6 +11,7 @@ describe("Super Admin users CSV",()=>{
   const href=superAdminPeopleExportHref({tab:"STUDENT",q:"A&B",platformStatus:"DISABLED"});
   expect(href).toContain("tab=STUDENT");
   expect(href).toContain("q=A%26B");
+  expect(superAdminPeopleExportHref({q:"page-safe",page:3})).toContain("q=page-safe");
  });
  it("formula-neutralizes every exported field, no PII",()=>{
   const csv=buildSuperAdminPeopleCsv([{membershipId:"id",displayName:'=SUM(1,2) "Learner"',
