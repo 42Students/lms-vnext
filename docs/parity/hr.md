@@ -439,3 +439,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / HR offer status counts and database paging — PARTIAL:** Offers tab now uses exact company-shared shortlist SQL aggregate totals (ISSUED/ACCEPTED/DECLINED/WITHDRAWN, awaiting, overdue and ACCEPTED+JOINED) with separate filtered 25-offer DB pages. Status and previous/next links are read-only; LOI and external sending remain unsupported. Pure pagination tests and in-test PG foreign-company/wrong-role fixture extended, unexecuted. Remaining full selection/issuance workflow and browser acceptance.
+
+
+**2026-10-14 chat-10 / HR Calendar narrow-screen views — PARTIAL:** Week and month now render date-grouped mobile cards without the desktop seven-column horizontal grid, preserving separate persisted rounds, deadlines and results due with exact recruiter job links. Desktop grid remains. Pure unit and PG fixture updated, unexecuted. Also corrected Offers pagination display to use exact selected-state total. Remaining browser viewport/scroll validation and legacy interview-slot surface.
