@@ -941,3 +941,14 @@ Pure model/unit and own-Faculty PostgreSQL tests authored for success,
 wrong-role, non-leaking foreign parent, stale, delete race and single audit.
 Still PARTIAL: execution/browser, genuine threaded-reply storage absent,
 and a locked-thread flag is not migrated; no fictitious lock implemented.
+
+## 2026-10-14 Faculty Section CSV contact privacy, cap and IST — PARTIAL
+Applies orchestrator decisions: exported Assignment/Quiz rows never include
+learner email or phone columns; timestamps display in Asia/Kolkata, with
+correct IST calendar rollover. Both report kinds are capped at 500 response
+rows, with omitted-row notices and formula-injection neutralization retained.
+A pure-model unit regression tests dangerous cells, IST, cap and contact
+non-disclosure. Disposable Section PG fixture tests persisted export, wrong
+role, foreign-scope denials and absence of the learner's private email.
+GET-only reports have no stale write token; other writes remain unchanged.
+PARTIAL until orchestrator gate, mobile download and legacy comparison.

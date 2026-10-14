@@ -7,7 +7,7 @@ import {
   getFacultyAssignmentReport, getFacultyQuizReport,
 } from "./faculty-assessment-report-service";
 import {
-  facultyReportCsv, facultyReportCsvFilename,
+  facultyReportCsv, facultyReportCsvFilename, capFacultyReportCsvRows,
   type FacultyReportCsvInput,
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
@@ -46,7 +46,7 @@ export async function getFacultyReportCsvForDownload(
             submission.pointsAwarded !== null && assignment.maxPoints > 0;
           return {
             name:submission.learnerDisplayName || submission.learnerEmail || "Learner",
-            email:submission.learnerEmail,
+            email:null,
             status:"SUBMITTED" as const,
             score:scored ? submission.pointsAwarded + "/" + assignment.maxPoints : null,
             percent:scored ? Math.round(submission.pointsAwarded! /
@@ -60,7 +60,7 @@ export async function getFacultyReportCsvForDownload(
         ...(query.filter===undefined||query.filter==="ALL" ? missingLearners : [])
           .map(learner => ({
           name:learner.displayName || learner.email || "Learner",
-          email:learner.email,
+          email:null,
           status:"NOT_SUBMITTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded submission",
         })),
@@ -78,7 +78,7 @@ export async function getFacultyReportCsvForDownload(
       rows:[
         ...capped.selectedAttempts.map(attempt => ({
           name:attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
-          email:attempt.learnerEmail,
+          email:null,
           status:"ATTEMPTED" as const,
           score:attempt.score + "/" + attempt.maxScore,
           percent:attempt.maxScore > 0 ?
@@ -88,18 +88,21 @@ export async function getFacultyReportCsvForDownload(
         })),
         ...capped.selectedMissing.map(learner => ({
           name:learner.displayName || learner.email || "Learner",
-          email:learner.email,
+          email:null,
           status:"NOT_ATTEMPTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded attempt",
         })),
       ],
     };
   }
-  const notice=input.kind==="quiz"?facultyQuizCsvNotice(omittedRows):null;
+  const bounded=capFacultyReportCsvRows(input.rows);
+  omittedRows+=bounded.omittedRows;
+  input={...input,rows:bounded.rows};
+  const notice=facultyQuizCsvNotice(omittedRows);
   // The notice is seven CSV fields like ordinary rows; numeric, server
   // authored metadata only. It cannot introduce a spreadsheet formula.
   const noteRow=notice?
-    '"' + notice.replaceAll('"','""') + '","","","","","",""\r\n':"";
+    '"' + notice.replaceAll('"','""') + '","","","",""\r\n':"";
   return {
     filename:facultyReportCsvFilename(input.kind,input.title,input.sectionName),
     csv:facultyReportCsv(input)+noteRow,
