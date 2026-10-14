@@ -1,0 +1,176 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+
+const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
+const pool = enabled
+  ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 })
+  : null;
+
+const adminA: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "ca-contents-a",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const adminB: RequestContext = {
+  user: {
+    id: SEED_IDS.facultyUser,
+    identityUid: "ca-contents-b",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.facultyCollegeBMembership,
+    collegeId: SEED_IDS.collegeB,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const nonAdmin: RequestContext = {
+  ...adminA,
+  membership: { ...adminA.membership!, roles: ["LEARNER"] },
+};
+const ids = {
+  period: randomUUID(),
+  program: randomUUID(),
+  cohort: randomUUID(),
+  course: randomUUID(),
+  offering: randomUUID(),
+  path: randomUUID(),
+  lesson: randomUUID(),
+  resource: randomUUID(),
+  video: randomUUID(),
+  youtube: randomUUID(),
+};
+const label = "W-CONTENT-" + ids.period.slice(0, 8);
+
+describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
+  beforeAll(async () => {
+    if (!pool) throw new Error("Disposable PostgreSQL required");
+    const registered = await pool.query(
+      "SELECT to_regclass('public.lesson_contents') AS contents, " +
+      "to_regclass('public.course_learning_paths') AS paths",
+    );
+    if (Object.values(registered.rows[0] ?? {}).some((value) => !value)) {
+      throw new Error("Registered course C2 tables required");
+    }
+    await pool.query(
+      "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
+      "VALUES($1,$2,$3,$4,'2026-07-01','2026-12-31')",
+      [ids.period, SEED_IDS.collegeA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) " +
+      "VALUES($1,$2,$3,$4,8)",
+      [ids.program, SEED_IDS.departmentA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
+      [ids.cohort, ids.program, label, label, ids.period],
+    );
+    await pool.query(
+      "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$4)",
+      [ids.course, SEED_IDS.departmentA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id) VALUES($1,$2,$3,$4)",
+      [ids.offering, ids.course, ids.cohort, ids.period],
+    );
+    await pool.query(
+      "INSERT INTO course_learning_paths(id,offering_id,title) VALUES($1,$2,$3)",
+      [ids.path, ids.offering, label],
+    );
+    await pool.query(
+      "INSERT INTO course_lessons(id,learning_path_id,name,sequence) VALUES($1,$2,$3,0)",
+      [ids.lesson, ids.path, label],
+    );
+    await pool.query(
+      "INSERT INTO lesson_contents(id,lesson_id,content_type,title,notes,sequence,created_by_user_id,status) " +
+      "VALUES($1,$2,'RESOURCE',$3,'test-only private notes',0,$4,'PUBLISHED')",
+      [ids.resource, ids.lesson, label, SEED_IDS.collegeAdminUser],
+    );
+    await pool.query(
+      "INSERT INTO lesson_contents(id,lesson_id,content_type,title,storage_key,duration_seconds,sequence,created_by_user_id) " +
+      "VALUES($1,$2,'VIDEO',$3,'test-only-private-key',120,1,$4)",
+      [ids.video, ids.lesson, label, SEED_IDS.collegeAdminUser],
+    );
+    await pool.query(
+      "INSERT INTO lesson_contents(id,lesson_id,content_type,title,external_url,duration_seconds,sequence,created_by_user_id) " +
+      "VALUES($1,$2,'YOUTUBE',$3,'https://www.youtube.com/watch?v=example',70,2,$4)",
+      [ids.youtube, ids.lesson, label, SEED_IDS.collegeAdminUser],
+    );
+  });
+
+  afterAll(async () => {
+    try {
+      if (pool) {
+        const owned: ReadonlyArray<readonly [string, string]> = [
+          ["lesson_contents", ids.youtube],
+          ["lesson_contents", ids.video],
+          ["lesson_contents", ids.resource],
+          ["course_lessons", ids.lesson],
+          ["course_learning_paths", ids.path],
+          ["course_offerings", ids.offering],
+          ["courses", ids.course],
+          ["cohorts", ids.cohort],
+          ["programs", ids.program],
+          ["academic_periods", ids.period],
+        ];
+        for (const [table, id] of owned) {
+          await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+        }
+      }
+    } finally {
+      await pool?.end();
+      await closeDatabaseConnection();
+    }
+  });
+
+  it("shows video and resources independently, with no private storage fields", async () => {
+    const [videos, resources] = await Promise.all([
+      listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
+      listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
+    ]);
+    expect(videos.items.map((item) => item.id)).toEqual(
+      expect.arrayContaining([ids.video, ids.youtube]),
+    );
+    expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    expect(videos.items.some((item) => item.id === ids.resource)).toBe(false);
+    expect(resources.items.some((item) => item.id === ids.video)).toBe(false);
+    const serialized = JSON.stringify({ videos, resources });
+    expect(serialized).not.toContain("test-only-private-key");
+    expect(serialized).not.toContain("test-only private notes");
+    expect(serialized).not.toContain("youtube.com/watch");
+  });
+
+  it("enforces tenant and role denials for both kinds", async () => {
+    for (const kind of ["VIDEO", "RESOURCE"] as const) {
+      const other = await listCollegeContentAggregate(adminB, kind, { q: label });
+      expect(other.items).toEqual([]);
+      await expect(listCollegeContentAggregate(nonAdmin, kind, {}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+      await expect(listCollegeContentAggregate(adminA, kind, {
+        collegeId: SEED_IDS.collegeB,
+      })).rejects.toBeDefined();
+    }
+  });
+});
