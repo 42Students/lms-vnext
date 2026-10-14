@@ -132,6 +132,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Capped semester CSV PARTIAL (2026-10-15):** Filtered, college-authorized program terms export through a GET-only endpoint with 1,000-row limit, spreadsheet formula neutralization and explicit truncation headers/footer. Uses existing tenant-scoped pagination and a disposable-PostgreSQL tenant/role fixture; executed PG/browser and exact legacy column acceptance remain outstanding.
+
 **Exact semester-number filter PARTIAL (2026-10-15):** Semesters now have bounded 1–24 term-number filtering in the college-scoped directory, URL pagination, accessible form and positive/negative isolated-Postgres fixture checks. Real PG/browser execution and legacy management parity still require acceptance.
 
 **Subquery column collision repair PARTIAL (2026-10-15):** Semester directory projects distinct SQL aliases for term and program IDs/names, preserving the existing paginated API while avoiding PostgreSQL ambiguous-column errors (42702). Existing disposable-PG scope fixture now checks joined program identity; execution, legacy field comparison and mobile/browser acceptance remain outstanding.

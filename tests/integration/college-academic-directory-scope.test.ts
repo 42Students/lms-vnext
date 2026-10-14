@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeAcademicDirectory } from "@/modules/academics/college-academic-export-service";
 import {
   listCollegeBatches,
   listCollegeSemesters,
@@ -182,6 +183,14 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
       .rejects.toBeDefined();
   });
 
+  it("exports only own-college semesters and denies wrong role",async()=>{
+    const own=await exportCollegeAcademicDirectory(adminA,"SEMESTERS",{q:label});
+    const foreign=await exportCollegeAcademicDirectory(adminB,"SEMESTERS",{q:label});
+    expect(own.csv).toContain(label);
+    expect(foreign.csv).not.toContain(label);
+    await expect(exportCollegeAcademicDirectory(faculty,"SEMESTERS",{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("returns honest empties for nonexistent filters", async () => {
     const [semesters, batches] = await Promise.all([
       listCollegeSemesters(adminA, { q: "never-a-term-w42" }),
