@@ -411,6 +411,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Content aggregate column collision repair PARTIAL (2026-10-15):** The combined VIDEO/RESOURCE register now aliases joined content, learning-path, offering and college ancestry projection columns uniquely (PostgreSQL 42702), with in-college PG fixture asserting labels/links and non-disclosure of private URLs/keys. Executed PG/browser and media/file workflow acceptance remain outstanding.
+
 **Legacy:** `/college-admin/lesson-content?type=video`
 
 **Read-first PARTIAL (2026-10-14):** `/college/videos` now lists owned, migrated VIDEO/YOUTUBE authoring metadata across offerings, with search/status filters and 25-row pagination. Neither media playback nor signed file authorization is implemented; storage keys and external video URLs are intentionally omitted. The existing offering editor remains the authoring surface. Exact legacy/browser and disposable-DB acceptance remain open.
@@ -424,6 +426,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Content aggregate column collision repair PARTIAL (2026-10-15):** The combined VIDEO/RESOURCE register now aliases joined content, learning-path, offering and college ancestry projection columns uniquely (PostgreSQL 42702), with in-college PG fixture asserting labels/links and non-disclosure of private URLs/keys. Executed PG/browser and media/file workflow acceptance remain outstanding.
+
 **Legacy:** `lesson-content?type=resources`
 
 **Read-first PARTIAL (2026-10-14):** `/college/resources` lists migrated RESOURCE authoring metadata by lesson/offering with search/status filters and 25-row pagination, excluding text notes, external URLs, private object paths and signed downloads. The offering workspace remains the editor; exact legacy/browser and disposable-DB acceptance remain open.
