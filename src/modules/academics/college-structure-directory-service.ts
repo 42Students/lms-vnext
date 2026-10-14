@@ -156,8 +156,6 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
     semesterNumber: electiveSlots.semesterNumber,
     academicYear: electiveSlots.academicYear,
     credits: electiveSlots.credits,
-    description: electiveSlots.description,
-    version: electiveSlots.version,
     minPick: electiveSlots.minPick,
     maxPick: electiveSlots.maxPick,
     status: electiveSlots.status,
