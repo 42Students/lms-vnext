@@ -2,9 +2,11 @@ import "server-only";
 
 import {
   and,
-  asc,
+  desc,
   eq,
+  lt,
   not,
+  or,
   sql,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -23,6 +25,16 @@ const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
   messageText: z.string().trim().min(1).max(4000),
+}).strict();
+
+const historySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(60),
+  beforeCreatedAt: z.string().datetime({ offset: true }).optional(),
+  beforeId: z.string().uuid().optional(),
+}).strict().superRefine((v, ctx) => {
+  if (Boolean(v.beforeCreatedAt) !== Boolean(v.beforeId)) {
+    ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Complete cursor required" });
+  }
 });
 
 async function discussionAccess(
@@ -80,76 +92,57 @@ async function loadDiscussionMessage(
 export async function listCourseDiscussionMessages(
   context: RequestContext,
   deliveryIdInput: string,
+  rawPage: unknown = {},
 ) {
-  const { deliveryId, mode } =
-    await discussionAccess(
-      context,
-      deliveryIdInput,
-      true,
-    );
-
+  const page = historySchema.parse(rawPage);
+  const { deliveryId, mode } = await discussionAccess(context, deliveryIdInput, true);
   let canPost = true;
   try {
-    await discussionAccess(
-      context,
-      deliveryIdInput,
-      false,
-    );
+    await discussionAccess(context, deliveryIdInput, false);
   } catch {
     canPost = false;
   }
-
-  const rows = await getDb()
+  const before = page.beforeCreatedAt && page.beforeId
+    ? or(
+        lt(courseDiscussionMessages.createdAt, new Date(page.beforeCreatedAt)),
+        and(
+          eq(courseDiscussionMessages.createdAt, new Date(page.beforeCreatedAt)),
+          lt(courseDiscussionMessages.id, page.beforeId),
+        ),
+      )
+    : undefined;
+  const fetched = await getDb()
     .select({
       id: courseDiscussionMessages.id,
-      deliveryId:
-        courseDiscussionMessages.deliveryId,
-      senderMembershipId:
-        courseDiscussionMessages.senderMembershipId,
-      senderRole:
-        courseDiscussionMessages.senderRole,
+      deliveryId: courseDiscussionMessages.deliveryId,
+      senderMembershipId: courseDiscussionMessages.senderMembershipId,
+      senderRole: courseDiscussionMessages.senderRole,
       senderName: users.displayName,
-      messageText:
-        courseDiscussionMessages.messageText,
-      pinned:
-        courseDiscussionMessages.pinned,
-      createdAt:
-        courseDiscussionMessages.createdAt,
-      updatedAt:
-        courseDiscussionMessages.updatedAt,
+      messageText: courseDiscussionMessages.messageText,
+      pinned: courseDiscussionMessages.pinned,
+      createdAt: courseDiscussionMessages.createdAt,
+      updatedAt: courseDiscussionMessages.updatedAt,
     })
     .from(courseDiscussionMessages)
-    .innerJoin(
-      collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        courseDiscussionMessages.senderMembershipId,
-      ),
-    )
-    .innerJoin(
-      users,
-      eq(users.id, collegeMemberships.userId),
-    )
-    .where(
-      eq(
-        courseDiscussionMessages.deliveryId,
-        deliveryId,
-      ),
-    )
-    .orderBy(
-      asc(courseDiscussionMessages.createdAt),
-      asc(courseDiscussionMessages.id),
-    );
-
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(eq(courseDiscussionMessages.deliveryId, deliveryId), before))
+    .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
+    .limit(page.limit + 1);
+  const hasOlder = fetched.length > page.limit;
+  const messages = (hasOlder ? fetched.slice(0, page.limit) : fetched).reverse();
+  const oldest = messages[0];
   return {
     accessMode: mode,
     canPost,
-    messages: rows.map((row) => ({
+    messages: messages.map((row) => ({
       ...row,
-      isMine:
-        context.membership?.id ===
-        row.senderMembershipId,
+      isMine: context.membership?.id === row.senderMembershipId,
     })),
+    nextCursor: hasOlder && oldest
+      ? { beforeCreatedAt: oldest.createdAt.toISOString(), beforeId: oldest.id }
+      : null,
   };
 }
 
