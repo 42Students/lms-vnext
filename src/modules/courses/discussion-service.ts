@@ -11,6 +11,8 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   courseDiscussionMessages,
@@ -178,18 +180,26 @@ export async function createCourseDiscussionMessage(
         ? "FACULTY"
         : "ADMIN";
 
-  const [created] = await getDb()
-    .insert(courseDiscussionMessages)
-    .values({
+  return getDb().transaction(async (tx) => {
+    const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
-      senderMembershipId:
-        membership.id,
+      senderMembershipId: membership.id,
       senderRole,
       messageText: input.messageText,
-    })
-    .returning();
-
-  return created!;
+    }).returning();
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
+      collegeId: membership.collegeId,
+      organizationId: membership.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: created!.id,
+      summary: "Course discussion message posted",
+      metadata: { deliveryId, senderRole },
+      groupKey: "course-discussion:" + deliveryId,
+      dedupeKey: "course-discussion:" + created!.id + ":post",
+    });
+    return created!;
+  });
 }
 
 export async function toggleCourseDiscussionPin(
@@ -219,25 +229,29 @@ export async function toggleCourseDiscussionPin(
 
   // Evaluate both columns against the current persisted value in one
   // UPDATE; two simultaneous moderators must toggle twice, not lose a write.
-  const [updated] = await getDb()
-    .update(courseDiscussionMessages)
-    .set({
+  return getDb().transaction(async (tx) => {
+    const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
       pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
         then null else ${context.user.id}::uuid end`,
       updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(courseDiscussionMessages.id, message.id),
-        eq(courseDiscussionMessages.deliveryId, message.deliveryId),
-      ),
-    )
-    .returning();
-  if (!updated) {
-    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-  }
-  return updated;
+    }).where(and(
+      eq(courseDiscussionMessages.id, message.id),
+      eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+    )).returning();
+    if (!updated) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_PIN_CHANGED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: updated.id,
+      summary: updated.pinned ? "Course discussion pinned" : "Course discussion unpinned",
+      metadata: { deliveryId: message.deliveryId, pinned: updated.pinned },
+      groupKey: "course-discussion:" + message.deliveryId,
+    });
+    return updated;
+  });
 }
 
 export async function deleteCourseDiscussionMessage(
@@ -268,16 +282,22 @@ export async function deleteCourseDiscussionMessage(
     );
   }
 
-  const [deleted] = await getDb()
-    .delete(courseDiscussionMessages)
-    .where(and(
+  return getDb().transaction(async (tx) => {
+    const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
-    ))
-    .returning({ id: courseDiscussionMessages.id });
-
-  if (!deleted) {
-    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-  }
-  return deleted;
+    )).returning({ id: courseDiscussionMessages.id });
+    if (!deleted) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_DELETED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: deleted.id,
+      summary: "Course discussion message deleted",
+      metadata: { deliveryId: message.deliveryId },
+      groupKey: "course-discussion:" + message.deliveryId,
+    });
+    return deleted;
+  });
 }
