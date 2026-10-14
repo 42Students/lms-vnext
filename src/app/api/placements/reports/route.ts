@@ -7,6 +7,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { placementReportCsv } from "@/modules/placements/report-model";
+import { getPlacementAccreditationReport } from "@/modules/placements/report-accreditation-service";
 import {
   getPlacementFailureReasonsReport,
   getPlacementLeadsReport,
@@ -36,6 +37,7 @@ const exportQuerySchema = z
       "joining-status",
       "failure-reasons",
       "leads",
+      "accreditation",
     ]),
     seasonId: z.string().uuid().optional(),
     jobId: z.string().uuid().optional(),
@@ -529,6 +531,26 @@ export async function GET(request: Request) {
         new URL(request.url).searchParams.entries(),
       ),
     );
+
+    // Separate migrated-only evidence path: the normal report workspace
+    // optionally touches staged registration persistence and is not a
+    // suitable accreditation source.
+    if (query.kind === "accreditation") {
+      const accreditation = await getPlacementAccreditationReport(
+        context,
+        { collegeId, seasonId: query.seasonId, jobId: query.jobId },
+      );
+      return new Response("\uFEFF" + accreditation.csv, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": 'attachment; filename="tpo-accreditation-evidence.csv"',
+          "Cache-Control": "private, no-store, max-age=0",
+          "X-Content-Type-Options": "nosniff",
+          Vary: "Cookie",
+        },
+      });
+    }
 
     const workspace = await getPlacementReportWorkspace(context, {
       collegeId,
