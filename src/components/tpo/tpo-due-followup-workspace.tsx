@@ -1,0 +1,232 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+type DueRow = {
+  id: string;
+  leadId: string;
+  leadName: string;
+  companyName: string | null;
+  dueAt: string;
+  note: string | null;
+  overdue: boolean;
+};
+type Lead = { id: string; name: string; companyName: string | null };
+type Outcome = "CONTACTED" | "NO_RESPONSE" | "DECLINED" | "OTHER";
+type Queue = {
+  rows: DueRow[];
+  dueCount: number;
+  hasMoreDue: boolean;
+  leads: Lead[];
+  hasMoreLeads: boolean;
+};
+
+const field = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const action = "min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50";
+function displayDate(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+  }).format(new Date(value)) + " IST";
+}
+
+export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
+  const router = useRouter();
+  const [leadId, setLeadId] = useState(data.leads[0]?.id ?? "");
+  const [dueLocal, setDueLocal] = useState("");
+  const [createNote, setCreateNote] = useState("");
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<Outcome>("CONTACTED");
+  const [doneNote, setDoneNote] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  async function post(url: string, body: unknown) {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const result = await response.json().catch(() => null) as { error?: string } | null;
+    if (!response.ok) {
+      throw new Error(result?.error === "DB09_MIGRATIONS_PENDING"
+        ? "Recruiter follow-ups are unavailable until DB09 is verified."
+        : result?.error === "TPO_CRM_FOLLOWUP_ALREADY_DONE"
+          ? "The follow-up has already changed. Reload the due queue."
+          : "The operation was not completed. Reload to check the current state.");
+    }
+  }
+
+  async function create() {
+    const parsedDue = dueLocal ? new Date(dueLocal) : null;
+    if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime())) {
+      setError("Select a recruiter and a valid follow-up date and time.");
+      return;
+    }
+    if (!window.confirm("Schedule this follow-up and record an immutable staff audit entry?")) {
+      return;
+    }
+    setPending(true); setError(""); setSuccess("");
+    try {
+      await post("/api/placements/tpo/follow-up-queue", {
+        confirmed: true, leadId, dueAt: parsedDue.toISOString(),
+        note: createNote.trim() || null,
+      });
+      setDueLocal(""); setCreateNote("");
+      setSuccess("Follow-up scheduled. Future-dated tasks appear here only when due.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Follow-up scheduling failed.");
+    } finally { setPending(false); }
+  }
+
+  async function complete(row: DueRow) {
+    if (!doneNote.trim()) {
+      setError("Record a brief outcome note before completing the follow-up.");
+      return;
+    }
+    if (!window.confirm(
+      "Mark the follow-up for " + row.leadName +
+      " done with outcome " + outcome + "? This action is terminal and audited.",
+    )) return;
+    setPending(true); setError(""); setSuccess("");
+    try {
+      await post(
+        "/api/placements/tpo/follow-up-queue/" +
+          encodeURIComponent(row.id) + "/complete",
+        {
+          confirmed: true, expectedDueAt: row.dueAt,
+          outcome, note: doneNote.trim(),
+        },
+      );
+      setActiveId(null); setDoneNote("");
+      setSuccess("Follow-up completed and recorded in the recruiter activity history.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Follow-up completion failed.");
+    } finally { setPending(false); }
+  }
+
+  return (
+    <div className="space-y-6">
+      {error ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-error">{error}</p> : null}
+      {success ? <p role="status" className="rounded-lg border border-border p-3 text-sm text-body">{success}</p> : null}
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Schedule a follow-up</h2>
+        <p className="mt-1 text-sm text-body">
+          Select a college recruiter, choose an India-local date and time, and confirm.
+          Both the task and its staff-attributed activity record are saved together.
+        </p>
+        {data.hasMoreLeads ? (
+          <p role="status" className="mt-2 text-xs text-muted-foreground">
+            Showing 200 most recently updated eligible recruiter leads. Use individual lead detail for others.
+          </p>
+        ) : null}
+        {data.leads.length === 0 ? (
+          <p className="mt-3 text-sm text-body">
+            There are no eligible recruiter leads to schedule. Add a recruiter lead first.
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm font-semibold text-foreground">
+              Recruiter
+              <select className={"mt-1 " + field} value={leadId} disabled={pending}
+                onChange={(event) => setLeadId(event.target.value)}>
+                {data.leads.map((lead) => (
+                  <option key={lead.id} value={lead.id}>
+                    {lead.name + (lead.companyName ? " · " + lead.companyName : "")}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block text-sm font-semibold text-foreground">
+              Follow-up time (local)
+              <input type="datetime-local" className={"mt-1 " + field}
+                value={dueLocal} disabled={pending} onChange={(event) => setDueLocal(event.target.value)} />
+            </label>
+            <label className="block text-sm font-semibold text-foreground sm:col-span-2">
+              Preparation note (optional)
+              <textarea rows={2} maxLength={500} className={"mt-1 " + field}
+                value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
+            </label>
+            <button type="button" disabled={pending || !leadId || !dueLocal}
+              onClick={() => void create()} className={action}>
+              {pending ? "Saving..." : "Review and confirm follow-up"}
+            </button>
+          </div>
+        )}
+      </section>
+      <section className="rounded-xl border border-border bg-surface">
+        <div className="border-b border-border p-5">
+          <h2 className="text-base font-semibold text-foreground">
+            Follow-ups due ({data.rows.length}{data.hasMoreDue ? "+" : ""})
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Open tasks due now or earlier. Future tasks appear when due.
+            The list is limited to the earliest 200 rows; it is not a company-wide total.
+          </p>
+        </div>
+        {data.rows.length === 0 ? (
+          <p role="status" className="p-5 text-sm text-body">
+            No open follow-ups are due at this time. Future tasks are not counted as due.
+          </p>
+        ) : (
+          <div className="divide-y divide-border">
+            {data.rows.map((row) => (
+              <article key={row.id} className="space-y-3 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <Link className="font-semibold text-primary-text hover:underline"
+                      href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
+                    {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Due {displayDate(row.dueAt)}
+                    </p>
+                  </div>
+                  <button type="button" disabled={pending}
+                    onClick={() => {
+                      setError("");
+                      setActiveId(activeId === row.id ? null : row.id);
+                      setDoneNote(""); setOutcome("CONTACTED");
+                    }}
+                    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+                    {activeId === row.id ? "Cancel" : "Record outcome and Done"}
+                  </button>
+                </div>
+                {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
+                {activeId === row.id ? (
+                  <div className="grid gap-3 rounded-md bg-surface-secondary p-4 sm:grid-cols-2">
+                    <label className="block text-sm font-semibold text-foreground">
+                      Outcome
+                      <select value={outcome} disabled={pending}
+                        onChange={(event) => setOutcome(event.target.value as Outcome)}
+                        className={"mt-1 " + field}>
+                        <option value="CONTACTED">Contacted</option>
+                        <option value="NO_RESPONSE">No response</option>
+                        <option value="DECLINED">Declined</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                    </label>
+                    <label className="block text-sm font-semibold text-foreground sm:col-span-2">
+                      Outcome note (required)
+                      <textarea maxLength={500} value={doneNote} disabled={pending}
+                        onChange={(event) => setDoneNote(event.target.value)}
+                        className={"mt-1 " + field} rows={2} />
+                    </label>
+                    <button type="button" onClick={() => void complete(row)}
+                      disabled={pending || !doneNote.trim()} className={action}>
+                      {pending ? "Recording..." : "Review and confirm Done"}
+                    </button>
+                  </div>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
