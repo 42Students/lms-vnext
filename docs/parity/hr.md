@@ -511,3 +511,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Today deadline urgency — PARTIAL:** Adds Passed/Within 24h/Upcoming labels to persisted company+college-scoped results-due cards. Labels only describe clock distance, not unsent/stale result state. Pure boundary unit authored; existing scope fixture applicable but not executed. Remaining stale/live browser refresh proof.
+
+
+**2026-10-15 chat-10 / Results-due round deep links — PARTIAL:** Calendar (desktop/mobile/cards) and Today due cards now link directly to the persisted authorized `roundId` in the drive Rounds tab, instead of falling back to its first round. Existing job resolver re-authorizes exact company/college and rejects foreign/missing rounds. Unit URL encoding and existing scoped PG results-due fixture cover the contract but were not executed. Browser acceptance remains.

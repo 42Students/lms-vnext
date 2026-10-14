@@ -372,7 +372,7 @@ export default async function HrCalendarPage({
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
-                <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
+                <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
                   className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary">
                   <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
                   <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
@@ -558,7 +558,7 @@ export default async function HrCalendarPage({
                         <RecruiterCalendarEventCard key={event.id} event={event} />
                       ))}
                       {day.resultsDue.map((item) => (
-                        <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId)}
+                        <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
                           className="rounded-md border border-border bg-surface p-4 text-sm text-primary-text">
                           <strong className="block">Results due · {item.roundName}</strong>
                           <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
@@ -656,7 +656,7 @@ export default async function HrCalendarPage({
                         })}
 
                         {resultsDue.map((item) => (
-                          <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId)}
+                          <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
                             title={"Results due at " + eventTime(item.dueAt) + " IST"}
                             className="block rounded-md border border-warning/40 bg-surface px-2 py-2 text-xs text-foreground hover:underline">
                             <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
@@ -720,7 +720,7 @@ export default async function HrCalendarPage({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
-                        <Link href={hrResultsDueHref(item.jobId)} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
                           Open hiring rounds →
                         </Link>
                       </article>

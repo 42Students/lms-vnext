@@ -8,6 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
+import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
@@ -94,7 +95,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <h2 className="font-semibold text-foreground">Results due this week</h2>
       <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
-        <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
+        <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
           className="min-w-0 rounded-md border border-border p-3 hover:border-primary">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
           <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
