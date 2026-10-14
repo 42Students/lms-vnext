@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {collegeContentCsvSchema,collegeContentCsvHref,renderCollegeContentMetadataCsv,exportParams}
+import {collegeContentCsvSchema,collegeContentCsvHref,renderCollegeContentMetadataCsv,renderCollegeLiveClassCsv,exportParams}
  from "@/modules/courses/college-content-export-model";
 describe("college video metadata CSV",()=>{
  it("disallows client college or paging and generates fixed encoded href",()=>{
@@ -21,5 +21,13 @@ describe("college video metadata CSV",()=>{
   expect(csv).toContain("\"'+course\"");
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).not.toContain("Storage key");
+  const live=renderCollegeLiveClassCsv([{
+   title:"=unsafe",status:"PUBLISHED",courseName:"Course",courseCode:"CS",cohortName:"2026",
+   periodName:"Year",lessonName:"Lesson",learningPathTitle:"Path",
+   startsAt:new Date("2026-10-15T05:00:00.000Z"),endsAt:null,
+  }],true);
+  expect(live).toContain("Starts at (UTC)");
+  expect(live).toContain("\"'=unsafe\"");
+  expect(live).toContain("EXPORT TRUNCATED");
  });
 });

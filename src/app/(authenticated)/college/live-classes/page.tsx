@@ -6,6 +6,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {collegeLiveClassQuerySchema,liveClassSearchParams} from "@/modules/courses/college-live-classes-model";
 import {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
+import {collegeContentCsvHref} from "@/modules/courses/college-content-export-model";
 export default async function CollegeLiveClassesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
 }){
@@ -18,5 +19,11 @@ export default async function CollegeLiveClassesPage({searchParams}:{
     action={<Link href="/college/live-classes" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
  const data=await listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data);
- return <CollegeLiveClassesDirectory data={data}/>;
+ return <div className="space-y-4">
+  <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",data.query)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    Export live-class schedule CSV (UTC)
+  </Link>
+  <CollegeLiveClassesDirectory data={data}/>
+ </div>;
 }

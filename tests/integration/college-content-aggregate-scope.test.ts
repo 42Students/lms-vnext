@@ -225,6 +225,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     const unknown=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:"NEVER-MATCH"});
     expect(exact.items.map(r=>r.id)).toContain(ids.live);
     expect(unknown.items).toEqual([]);
+    const liveCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label});
+    expect(liveCsv.csv).toContain(label);
+    expect(liveCsv.csv).toContain("Starts at (UTC)");
+    expect(liveCsv.csv).not.toContain("meet.example.test");
+    const foreignLiveCsv=await exportCollegeContentMetadata(adminB,"LIVE_CLASS",{q:label});
+    expect(foreignLiveCsv.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"LIVE_CLASS",{})).rejects.toBeInstanceOf(AuthorizationError);
     const past=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
     expect(past.items.map(r=>r.id)).toContain(ids.live);
     const upcoming=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});

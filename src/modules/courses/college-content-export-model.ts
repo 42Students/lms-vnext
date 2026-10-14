@@ -15,6 +15,18 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  const type=kind==="VIDEO"?"video":kind==="RESOURCE"?"resource":"live-class";
  return "/api/academics/college-content-export/"+type+(p.size?"?"+p.toString():"");
 }
+export function renderCollegeLiveClassCsv(rows:readonly {
+ title:string;status:string;courseName:string;courseCode:string;
+ cohortName:string;periodName:string;lessonName:string;learningPathTitle:string;
+ startsAt:Date|null;endsAt:Date|null;
+}[],truncated:boolean){
+ return buildCollegeDirectoryCsv(["Session","Publication","Course","Course code","Batch",
+  "Academic period","Lesson","Learning path","Starts at (UTC)","Ends at (UTC)"],
+ rows.map(r=>[r.title,r.status,r.courseName,r.courseCode,r.cohortName,
+  r.periodName,r.lessonName,r.learningPathTitle,
+  r.startsAt?.toISOString()??"",r.endsAt?.toISOString()??""]),
+ truncated,CONTENT_METADATA_EXPORT_CAP);
+}
 export function renderCollegeContentMetadataCsv(rows:readonly {
  title:string;contentType:string;status:string;courseName:string;courseCode:string;
  cohortName:string;periodName:string;lessonName:string;learningPathTitle:string;
