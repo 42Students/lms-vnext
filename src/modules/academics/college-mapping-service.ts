@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, isNotNull, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -131,6 +131,8 @@ export async function listCollegeFacultyAssignments(
   const db = getDb();
   const source = db.select({
     id: courseTeachingAssignments.id,
+    updatedAt: sql<Date>`${courseTeachingAssignments.updatedAt}`
+      .mapWith(courseTeachingAssignments.updatedAt).as("assignment_updated_at"),
     deliveryId: courseTeachingAssignments.deliveryId,
     membershipId: courseTeachingAssignments.membershipId,
     facultyName: users.displayName,
