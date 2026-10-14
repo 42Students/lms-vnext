@@ -1,6 +1,7 @@
-import {learnerApplicationLatestActivity, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   browseLearnerApplications,
+  learnerApplicationLatestActivity,
   learnerApplicationStage,
   learnerApplicationStageOptions,
   DEFAULT_LEARNER_APPLICATION_FILTERS as defaults,
