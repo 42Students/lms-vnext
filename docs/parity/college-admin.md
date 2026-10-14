@@ -271,6 +271,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+
+**IST hall availability PARTIAL (2026-10-14):** Each hall links to `/college/lecture-halls/[hallId]` for a strict 1–31-day IST date-range read of registered SCHEDULED section sessions. Own-college hall and academic lineage checks, not-found tenant concealment, persisted hall capacity, nullable configured class capacity, overlapping booking flags and configured capacity conflict badges are included. Overlap is a diagnostic of current persisted records, not guaranteed bookability or actual student occupancy. Rows are capped at 500 with truncation warning; pure tests and gated disposable-PostgreSQL read/denial fixtures authored. Runtime and browser acceptance remain open.
 **Legacy:** `/college-admin/lecture-halls`
 
 **Read/manage PARTIAL (2026-10-14):** `/college/lecture-halls` uses registered `lecture_halls` with the existing add/edit/archive/restore dialogs and college-scope API writes. Added server-side hall-name, status, room-type and department filtering with 25-row pagination, separate filtered/unfiltered empty messages, loading/error boundaries and dashboard setup navigation. Archived and active halls are included by default. No new write route was introduced; the existing create/PATCH routes enforce `isSameOriginRequest`. The legacy delete semantics (vNext uses archive), detailed room location, complete scheduling-conflict UI, executed new tests and browser parity remain open.
