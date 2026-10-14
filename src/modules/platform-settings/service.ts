@@ -41,9 +41,15 @@ import {
 } from "@/modules/auth/config";
 import {
   MAX_OUTBOUND_ATTEMPTS,
+  outboundRetryDelayMs,
 } from "@/modules/operations/outbound-delivery-policy";
+import {
+  OUTBOUND_CHANNELS,
+  OUTBOUND_TEMPLATE_KEYS,
+} from "@/modules/operations/outbound-delivery-contract";
 
 import {
+  buildPlatformSmsTemplateCatalog,
   collegePlatformSetting,
   fixedPlatformSetting,
   type PlatformSettingsSection,
@@ -335,6 +341,53 @@ export async function getSuperAdminPlatformSettings(
           "per-college tables. Job-specific eligibility, interview " +
           "windows, rate limits and other placement workflow policies " +
           "are not summarized by this limited platform inventory.",
+      },
+      {
+        id: "sms",
+        title: "SMS & message templates",
+        description:
+          "Source-defined SMS OTP and draft outbound message intents. " +
+          "All identifiers are non-secret labels; provider registration " +
+          "and sender configuration are intentionally withheld.",
+        items: [
+          fixedPlatformSetting(
+            "Shared queued outbound maximum attempts",
+            MAX_OUTBOUND_ATTEMPTS,
+            "src/modules/operations/outbound-delivery-policy.ts",
+            "attempts",
+          ),
+          fixedPlatformSetting(
+            "Queued outbound first retry delay",
+            outboundRetryDelayMs(1) / 1000,
+            "src/modules/operations/outbound-delivery-policy.ts",
+            "seconds",
+          ),
+          fixedPlatformSetting(
+            "Queued outbound second retry delay",
+            outboundRetryDelayMs(2) / 1000,
+            "src/modules/operations/outbound-delivery-policy.ts",
+            "seconds",
+          ),
+        ],
+        smsTemplates: buildPlatformSmsTemplateCatalog({
+          outboundTemplateKeys: OUTBOUND_TEMPLATE_KEYS,
+          outboundChannels: OUTBOUND_CHANNELS,
+        }),
+        note:
+          "Exotel OTP SMS is implemented as a fixed source message: " +
+          "provider acceptance is not recipient delivery, and its provider " +
+          "does not use the draft outbound queue retry schedule. " +
+          "The shared outbound policy supports exponential retry and " +
+          "a five-attempt limit, but the DB10 queue/dispatcher has not " +
+          "been migrated or activated. Invitation/reminder rows are " +
+          "contract template keys, NOT operational SMS templates. " +
+          "There is no verified registered attendance SMS template, " +
+          "placement-notice SMS template or per-college SMS sender/template " +
+          "override. The source-only TPO college SMS cap and editable " +
+          "templates are not migrated and are NOT presented as persisted " +
+          "values. Sender credentials, provider template IDs, DLT values, " +
+          "phone numbers and environment configuration are never queried " +
+          "or displayed.",
       },
       {
         id: "operations",
