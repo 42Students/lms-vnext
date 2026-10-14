@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
 
 type DueRow = {
   id: string;
@@ -11,6 +12,8 @@ type DueRow = {
   companyName: string | null;
   dueAt: string;
   note: string | null;
+  phoneNorm:string|null;
+  canContact:boolean;
   overdue: boolean;
 };
 type Lead = { id: string; name: string; companyName: string | null };
@@ -188,6 +191,10 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                     <p className="mt-1 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)}
                     </p>
+                    {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="inline-flex min-h-10 items-center text-primary-text hover:underline">Call recruiter ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-primary-text hover:underline">Open WhatsApp ↗</a>:null}
+                    </div>:null}
                   </div>
                   <button type="button" disabled={pending}
                     onClick={() => {

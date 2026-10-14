@@ -25,6 +25,9 @@ export type TpoDueFollowupFact = {
   companyName: string | null;
   dueAt: Date;
   note: string | null;
+  phoneNorm?: string | null;
+  unsubscribedAt?: Date | null;
+  recruiterUserId?: string | null;
 };
 
 export function projectTpoFollowupQueue(
@@ -38,6 +41,8 @@ export function projectTpoFollowupQueue(
     companyName: fact.companyName,
     dueAt: fact.dueAt.toISOString(),
     note: fact.note,
+    phoneNorm:fact.phoneNorm??null,
+    canContact:fact.unsubscribedAt==null&&fact.recruiterUserId==null,
     overdue: fact.dueAt.getTime() < now.getTime(),
   }));
   return { rows, dueCount: rows.filter((row) => row.overdue).length };
@@ -59,4 +64,13 @@ export function tpoFollowupQueueHref(input:{scope:"MINE"|"TEAM";window:"DUE"|"NE
  if(input.q)params.set("q",input.q);
  if(input.page&&input.page>1)params.set("page",String(input.page));
  return "/tpo/follow-ups?"+params.toString();
+}
+
+/** Opening a native dialer or WhatsApp does not claim that a call or message was sent. */
+export function tpoFollowupContactLinks(phoneNorm:string|null,canContact:boolean){
+ if(!canContact||!phoneNorm)return {call:null,whatsapp:null};
+ const phone=phoneNorm.trim();
+ if(!/^\+?[1-9]\d{7,14}$/.test(phone))return {call:null,whatsapp:null};
+ return {call:"tel:"+(phone.startsWith("+")?phone:"+"+phone),
+  whatsapp:"https://wa.me/"+phone.replace(/^\+/,"")};
 }
