@@ -1,0 +1,25 @@
+import Link from "next/link";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
+import {facultyAssignmentParamsSchema} from "@/modules/courses/faculty-assignment-authoring-model";
+import {FacultyAssignmentEditor} from "@/components/courses/faculty-assignment-editor";
+import {PageHeader} from "@/components/ui/page-header";
+export default async function Page({params}:{params:Promise<{deliveryId:string}>}){
+ const {deliveryId}=facultyAssignmentParamsSchema.parse(await params);
+ const context=await getCurrentRequestContext();
+ const workspace=await getFacultyCourseWorkspace(context,deliveryId);
+ const assignments=workspace.lessons.flatMap(lesson=>lesson.assignments.filter(x=>x.deliveryId===deliveryId).map(x=>({
+  id:x.id,lessonId:lesson.id,title:x.title,description:x.description,dueAt:x.dueAt?.toISOString()??null,
+  maxPoints:x.maxPoints,sequence:x.sequence,status:x.status,updatedAt:x.updatedAt.toISOString(),
+ })));
+ return <div className="space-y-6">
+  <PageHeader eyebrow="Faculty · Courses" title="Section assignments"
+   description={workspace.course.courseName+" · "+workspace.course.sectionName} />
+  {workspace.lessons.length?
+   <FacultyAssignmentEditor deliveryId={deliveryId}
+     lessons={workspace.lessons.map(x=>({id:x.id,name:x.name}))} assignments={assignments}/>
+   :<p className="rounded-xl border border-border bg-surface p-5">No registered lessons yet. Create and publish a learning path before authoring assignments.</p>}
+  <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
+   className="text-sm font-semibold text-primary-text hover:underline">Back to course</Link>
+ </div>;
+}

@@ -73,6 +73,9 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.teaching_assignment.ended",
   COURSES_LEARNER_CONTENT_COMPLETED:
     "courses.learner_content.completed",
+  COURSES_ASSIGNMENT_CREATED:"courses.assignment.created",
+  COURSES_ASSIGNMENT_UPDATED:"courses.assignment.updated",
+  COURSES_ASSIGNMENT_ARCHIVED:"courses.assignment.archived",
   COURSES_ASSIGNMENT_SUBMITTED:
     "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:
