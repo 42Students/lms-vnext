@@ -19,7 +19,7 @@ import { createCourseAssignment, transitionCourseAssignment } from "@/modules/co
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
-import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
+import {getFacultyPublishedGradebook,getFacultyPublishedGradebookLearner} from "@/modules/courses/faculty-gradebook-service";
 import {facultyGradebookCsv} from "@/modules/courses/faculty-gradebook-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
@@ -322,6 +322,30 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
         gradedCount:0,earned:null,possible:null,percent:null,hasUnknown:true}),
     ]));
     expect(facultyGradebookCsv(gradebook.rows)).toContain('"Incomplete grading"');
+    const learnerBreakdown=await getFacultyPublishedGradebookLearner(facultyOnly,{
+      deliveryId:delivery.id,learnerMembershipId:testLearnerMembershipId,
+    });
+    expect(learnerBreakdown.learner).toMatchObject({
+      membershipId:testLearnerMembershipId,earned:null,percent:null,
+    });
+    expect(learnerBreakdown.assessments.length).toBeGreaterThan(0);
+    expect(learnerBreakdown.assessments.every(row=>row.status==="UNKNOWN")).toBe(true);
+    await expect(getFacultyPublishedGradebookLearner({
+      user:{...learner.user,id:testLearnerUserId},
+      membership:{...learner.membership!,id:testLearnerMembershipId},
+    },{
+      deliveryId:delivery.id,learnerMembershipId:testLearnerMembershipId,
+    })).rejects.toBeDefined();
+    await expect(getFacultyPublishedGradebookLearner(facultyOnly,{
+      deliveryId:SEED_IDS.collegeB,learnerMembershipId:testLearnerMembershipId,
+    })).rejects.toBeDefined();
+    await expect(getFacultyPublishedGradebookLearner(facultyOnly,{
+      deliveryId:delivery.id,learnerMembershipId:SEED_IDS.collegeB,
+    })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_FOUND"});
+    await expect(getFacultyPublishedGradebookLearner(facultyOnly,{
+      deliveryId:delivery.id,learnerMembershipId:testLearnerMembershipId,
+      collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
     await expect(getFacultyPublishedGradebook(learner,{deliveryId:delivery.id}))
       .rejects.toBeDefined();
     await expect(getFacultyPublishedGradebook(faculty,{deliveryId:SEED_IDS.collegeB}))

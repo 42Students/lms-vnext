@@ -271,6 +271,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+
+**IST hall availability PARTIAL (2026-10-14):** Each hall links to `/college/lecture-halls/[hallId]` for a strict 1–31-day IST date-range read of registered SCHEDULED section sessions. Own-college hall and academic lineage checks, not-found tenant concealment, persisted hall capacity, nullable configured class capacity, overlapping booking flags and configured capacity conflict badges are included. Overlap is a diagnostic of current persisted records, not guaranteed bookability or actual student occupancy. Rows are capped at 500 with truncation warning; pure tests and gated disposable-PostgreSQL read/denial fixtures authored. Runtime and browser acceptance remain open.
 **Legacy:** `/college-admin/lecture-halls`
 
 **Read/manage PARTIAL (2026-10-14):** `/college/lecture-halls` uses registered `lecture_halls` with the existing add/edit/archive/restore dialogs and college-scope API writes. Added server-side hall-name, status, room-type and department filtering with 25-row pagination, separate filtered/unfiltered empty messages, loading/error boundaries and dashboard setup navigation. Archived and active halls are included by default. No new write route was introduced; the existing create/PATCH routes enforce `isSameOriginRequest`. The legacy delete semantics (vNext uses archive), detailed room location, complete scheduling-conflict UI, executed new tests and browser parity remain open.
@@ -454,6 +456,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+
+**Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.
 **Legacy:** `/college-admin/teachers`
 
 **Detail PARTIAL (2026-10-14):** `/college/faculty/[membershipId]` now provides scoped Faculty name, academic title, employment type, department and persisted teaching assignment history with active/ended counts and distinct offerings. No hours or availability are inferred and no private identity fields are disclosed. Foreign-college/nonexistent memberships get indistinguishable not-found behavior. Browser/PG acceptance and full legacy workload parity remain open.
@@ -830,6 +834,8 @@ Authored regression: `tests/unit/activity-date-boundary.test.ts` covers IST→UT
 
 
 ### W06 College Admin announcements staging — 2026-10-10
+
+**Personal college notice read PARTIAL (2026-10-14):** The college announcements page now also shows up to 50 persisted `in_app_notifications` addressed to the active College Admin and tied to activity events within the same college, with an explicit link to the full personal inbox. This does not implement, infer or enable the unregistered DB10 college-wide `announcements` table; no broadcast publication/delivery is claimed. New isolated PostgreSQL read-positive/foreign-recipient/foreign-event/wrong-role checks and pure projection tests are authored. Runtime/browser acceptance remains pending.
 
 A College Admin management workspace is source-authored at `/college/announcements` with server-derived own-college audience targets, create/edit/retarget, schedule/expiry, pin, soft delete/restore, active/deleted views and stable older-page continuation. Cross-college target IDs are resolved and rejected server-side. The page is deliberately inactive until W01 promotes DB10 Announcements; browser evidence is absent, so this is **not a DONE page**.
 

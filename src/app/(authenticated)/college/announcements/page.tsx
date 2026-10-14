@@ -11,6 +11,7 @@ import {
   listAnnouncementTargetOptions,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-inbox-service";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -19,6 +20,7 @@ export default async function AnnouncementsPage({
 }) {
   const context = await getCurrentRequestContext();
   const params = await searchParams;
+  const ownInbox = await getCollegeNoticeInbox(context);
 
   if (!announcementsRuntimeEnabled()) {
     return (
@@ -28,9 +30,21 @@ export default async function AnnouncementsPage({
           title="Announcements"
           description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
         />
+      <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+        <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
+        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">No persisted notifications for your account in this college.</p>
+          : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-md border border-border p-3">
+            <p className="font-semibold text-foreground">{item.title}</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Open related page</Link> : null}
+          </li>)}</ul>}
+        <Link href="/notifications" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+      </section>
         <div role="status" className="rounded-xl border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">W01 must promote and replay the DB10 announcement table before this page performs any DB reads or writes.</p>
+          <p className="mt-2 text-sm text-body">The college-wide announcements table is not registered; no broadcast announcement reads or writes are attempted. Personal notifications above are stored separately in the registered inbox.</p>
         </div>
       </div>
     );
@@ -58,6 +72,8 @@ export default async function AnnouncementsPage({
       ]
     : [];
 
+  // Server component: evaluated once per request, so the request-time clock is intended.
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   const items: AnnouncementAdminItem[] = page.items.map((item) => ({
     id: item.id,
@@ -104,6 +120,18 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
+      <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+        <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
+        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">No persisted notifications for your account in this college.</p>
+          : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-md border border-border p-3">
+            <p className="font-semibold text-foreground">{item.title}</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Open related page</Link> : null}
+          </li>)}</ul>}
+        <Link href="/notifications" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+      </section>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">

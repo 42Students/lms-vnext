@@ -68,12 +68,15 @@ export default async function FacultyCourseAttendancePage({
       </Link>
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
-        sessions={workspace.sessions.flatMap(session=>session.updatedAt?[{
-          id:session.id,title:session.title,
-          startsAt:session.startsAt,endsAt:session.endsAt,
-          marked:session.attendanceStatus==="MARKED",
-          updatedAt:session.updatedAt,
-        }]:[])}
+        sessions={data.sessions.flatMap(session=>
+          session.updatedAt&&session.facultyMembershipId===context.membership?.id?[{
+            id:session.id,title:session.title,
+            description:session.description,location:session.location,
+            startsAt:session.startsAt.toISOString(),
+            endsAt:session.endsAt.toISOString(),
+            marked:session.attendanceStatus==="MARKED",
+            updatedAt:session.updatedAt.toISOString(),
+          }]:[])}
       />
       <FacultyAttendanceWorkspace
         key={`${deliveryId}:${initialSessionId ?? "report"}`}
