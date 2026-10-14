@@ -86,3 +86,13 @@
 - Own-project PostgreSQL test with HIGH/LOW task submissions, foreign/role/
   disabled denial and pure query/href unit tests authored, not executed.
 - PARTIAL: real PG/CI/browser and historic review parity pending.
+
+
+## J — Mentor reviewed task history CSV (2026-10-14)
+- Implemented GET-only capped (200), formula-neutralized review-decision CSV
+  over current assigned Mentor project history and strict stored status filters.
+- Added UI download control, truncated count, IST timestamps and no private
+  submission content, reviewer identity or learner contact.
+- Pure unit and disposable PostgreSQL successful/foreign/wrong-role/disabled
+  fixtures authored, not run. No new permissions or schema writes.
+- PARTIAL pending full CLI and browser evidence.

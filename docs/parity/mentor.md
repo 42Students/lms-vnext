@@ -672,3 +672,22 @@ foreign college non-leakage and forged query rejection. It is read-only;
 stale-token denial is provided by the separate audited task-review write,
 not by these query controls. **PARTIAL:** actual typecheck, lint, PostgreSQL,
 mobile browser and full legacy task review acceptance remain open.
+
+
+## 2026-10-14 chat-11 J — Mentor reviewed task history sanitized CSV (PARTIAL)
+
+The existing currently assigned Mentor task-review history (registered
+APPROVED/CHANGES_REQUESTED project_task_submissions) now offers a read-only
+decision-filtered CSV export capped at 200 rows, preserving strict decision
+and literal task/project search filters. The server rechecks the active Mentor
+role, exact college/project membership, module enablement and central
+projects.read on each bounded page. The export includes only registered review
+ID, project/task titles, version, decision and IST review date; no learner
+contact, submitted links, feedback, or actor identities. UTF-8 CSV
+formula-neutralizes untrusted titles, explicitly reports truncated matches
+in the file and HTTP headers, and sends nothing externally. Source-authored
+pure unit and disposable unique-project PostgreSQL fixtures assert positive
+review visibility, forged input, wrong role, disabled user and foreign-college
+nonleakage. Read-only: no mutation or stale-token check is introduced.
+**PARTIAL:** typecheck/lint/unit/PostgreSQL tests and responsive browser CSV
+acceptance remain unexecuted, as does complete legacy review history parity.
