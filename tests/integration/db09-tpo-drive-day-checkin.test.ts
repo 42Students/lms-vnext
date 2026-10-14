@@ -49,8 +49,9 @@ async function fixture() {
   if (!role) throw new Error("Role fixture failed");
   ids.role = role.id;
   const round = (await pool.query<{ id: string }>(
-    "INSERT INTO placement_job_rounds (job_id,sequence,kind,name,created_by_user_id) " +
-    "VALUES ($1,1,'INTERVIEW','Interview',$2) RETURNING id",
+    "INSERT INTO placement_job_rounds " +
+    "(job_id,sequence,kind,name,created_by_user_id,status,scheduled_at,timezone,mode,venue) " +
+    "VALUES ($1,1,'INTERVIEW','Interview',$2,'SCHEDULED',now(),'Asia/Kolkata','ON_CAMPUS','Hall 1') RETURNING id",
     [job.id, SEED_IDS.facultyUser],
   )).rows[0];
   if (!round) throw new Error("Round fixture failed");
@@ -107,7 +108,8 @@ describe.skipIf(!enabled)("DB09 TPO Drive Day check-in PostgreSQL", () => {
   });
   it("denies wrong role, foreign college, forged candidate and unconfirmed writes", async () => {
     const { roundId } = await fixture();
-    const appId = ids.application!;
+    const appId = ids.application;
+    if (!appId) throw new Error("Missing application fixture");
     const input = { confirmed: true, applicationId: appId, expectedAttendance: "WAITING", status: "ABSENT" };
     const wrong: RequestContext = { ...tpo, membership: { ...tpo.membership!, roles: ["LEARNER"] } };
     const foreign: RequestContext = { ...tpo, membership: { ...tpo.membership!, collegeId: SEED_IDS.collegeB } };
