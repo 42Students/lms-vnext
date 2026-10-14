@@ -48,6 +48,7 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",
   ACADEMICS_BATCH_CREATED: "academics.batch.created",
   ACADEMICS_BATCH_UPDATED: "academics.batch.updated",
+  ACADEMICS_BATCH_PROMOTED: "academics.batch.promoted",
   ACADEMICS_CLASS_CREATED: "academics.class.created",
   ACADEMICS_CLASS_UPDATED: "academics.class.updated",
   ACADEMICS_LECTURE_HALL_CREATED: "academics.lecture_hall.created",
