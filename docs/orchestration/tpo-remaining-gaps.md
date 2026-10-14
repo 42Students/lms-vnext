@@ -2,6 +2,9 @@
 
 **Source:** `docs/parity/tpo.md` at the recorded TPO checklist snapshot; this is a derived inventory, not a second task tracker.
 **Scope:** Every explicit `- [ ]` checklist row in that file (332 rows). Existing `Wxx PARTIAL` implementation notes do not make an unchecked criterion DONE.
+
+- **W52 PARTIAL — TPO round-result recording:** The TPO-only round roster now stages confirmed PASS, FAIL, HOLD (ranked) or ABSENT results via migrated P6C persistence, strict Zod, same-origin POST, scoped permission, row-locked optimistic expected result ID and an actor audit in the staging transaction. Once the round is COMPLETED, TPO can confirm the existing audited APPLY transition. This does not claim employer selection, actual offers, bulk result marking, executed disposable PostgreSQL or browser parity. Remains Buildable until those gates close.
+
 **Blocker classification:** `Buildable` means work/verification remains using existing migrated facts or established app infrastructure; `Missing migrated table` means a specified durable source is not verified as registered; `Needs owner decision` means security, product semantics or compliance require an explicit disposition before parity can close.
 
 **Counts:** Buildable 302 · Missing migrated table 14 · Needs owner decision 16. **DONE claimed in this inventory: 0.**
