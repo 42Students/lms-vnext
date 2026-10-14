@@ -569,8 +569,9 @@ test("Faculty Students exports only the filtered Section roster as spreadsheet-s
   const download = await downloadStarted;
   expect(download.suggestedFilename()).toMatch(/^faculty-roster-.*\.csv$/);
   const downloaded = await readFile((await download.path())!, "utf8");
-  expect(downloaded).toContain("Student,Roll number,Email,Phone");
-  expect(downloaded).toContain("learner.seed@example.com");
+  expect(downloaded).toContain("Student,Roll number");
+  expect(downloaded).not.toContain("learner.seed@example.com");
+  expect(downloaded).not.toContain("Email,Phone");
   expect(downloaded).not.toContain("E2E Section B Secret");
 });
 
