@@ -146,3 +146,21 @@ export function facultyQuizMetadataIssue(
  catch {return "Choose a valid due date in IST.";}
  return null;
 }
+
+/** Turn the API's typed Quiz errors into user-safe, actionable messages. */
+export function facultyQuizWriteMessage(raw:unknown):string {
+ const code=raw&&typeof raw==="object"&&"error" in raw&&typeof raw.error==="string"
+  ?raw.error:"";
+ switch(code){
+  case "FACULTY_QUIZ_NO_CHANGE":return "No Quiz metadata changed. Update a field before saving.";
+  case "FACULTY_QUIZ_STALE_VERSION":return "This Quiz changed elsewhere. Reload before retrying.";
+  case "QUIZ_HAS_ATTEMPTS":return "Existing learner attempts seal questions and attempt limits.";
+  case "INVALID_QUIZ_TRANSITION":return "This Quiz state no longer permits that action. Reload first.";
+  case "QUIZ_DEADLINE_PASSED":return "Extend the deadline before publishing.";
+  case "QUIZ_NAME_CONFLICT":return "Choose a different Quiz title for this Section.";
+  case "FACULTY_TEACHING_SCOPE_REQUIRED":
+  case "LEARNING_ACCESS_DENIED":
+  case "QUIZ_NOT_FOUND":return "This teaching Section is no longer available to your account.";
+  default:return "Quiz write was rejected. Review changes or retry.";
+ }
+}
