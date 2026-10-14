@@ -8,6 +8,9 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import {
   collegeMemberships,
   membershipRoles,
@@ -230,6 +233,10 @@ export async function createPlacementCompany(
 ) {
   const input =
     createPlacementCompanyInputSchema.parse(rawInput);
+  if (!can(context, "placements.manage", { collegeId: input.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
   const db = getDb();
 
@@ -343,6 +350,21 @@ export async function createPlacementCompany(
         },
       })
       .returning();
+
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+      collegeId: input.collegeId,
+      subjectType: "placement_company_relationship",
+      subjectId: relationship.id,
+      subjectLabel: company.name,
+      summary: "Placement employer linked to college",
+      metadata: {
+        companyId: company.id,
+        relationshipId: relationship.id,
+        companyStatus: company.status,
+      },
+      groupKey: "placement-companies:" + input.collegeId,
+    });
 
     return { company, relationship };
   });
