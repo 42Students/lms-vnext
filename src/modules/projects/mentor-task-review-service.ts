@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, ne, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -57,7 +57,7 @@ export async function getMentorTaskReviews(
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
     eq(projectInstances.collegeId, membership.collegeId),
-    ne(projectInstances.status, "ARCHIVED"),
+    eq(projectInstances.status, "ACTIVE"),
     query.search ? or(
       ilike(projectInstances.title, "%" + query.search + "%"),
       ilike(projectTasks.title, "%" + query.search + "%"),
