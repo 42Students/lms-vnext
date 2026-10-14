@@ -18,6 +18,7 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
 import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
+import { sortLearnerProjectRows } from "@/modules/projects/learner-project-sort-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -27,6 +28,7 @@ const searchSchema = z.string().trim().max(100);
 const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
 const attentionSchema = z.literal("LEARNER_ACTION");
 const workSchema = z.literal("BLOCKED");
+const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
 
 function parsePageSize(value: string | undefined) {
   const parsed = z.coerce.number().int().safeParse(value);
@@ -58,6 +60,7 @@ export default async function LearnerProjectsPage({
     status: statusSchema.safeParse(status).data,
     attention: attentionSchema.safeParse(attention).data,
     work: workSchema.safeParse(work).data,
+    sort: sortSchema.safeParse(one(params.sort)).data,
     page: parsePage(one(params.page)),
     pageSize: parsePageSize(one(params.pageSize)),
   };
@@ -82,7 +85,7 @@ export default async function LearnerProjectsPage({
     "CHANGES_REQUESTED" | "DRAFT"
   >(attentionRows.map((item) => [item.projectId, item.kind]));
 
-  const filtered = allRows
+  const filtered = sortLearnerProjectRows(allRows
     .filter((row) => row.memberRole === "LEARNER")
     .filter((row) => learnerProjectMatchesSearch(
       row.project, teamsByProject.get(row.project.id)?.mentorName ?? null, query.search,
@@ -102,16 +105,7 @@ export default async function LearnerProjectsPage({
     .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
       row.project.status, progressByProject.get(row.project.id),
     ))
-    .sort((a, b) => {
-      const archivedOrder =
-        Number(a.project.status === "ARCHIVED") -
-        Number(b.project.status === "ARCHIVED");
-      if (archivedOrder) return archivedOrder;
-      return (
-        b.project.updatedAt.getTime() - a.project.updatedAt.getTime() ||
-        a.project.title.localeCompare(b.project.title)
-      );
-    });
+    ,query.sort ?? "RECENT",progressByProject);
 
   const total = filtered.length;
   const emptyState = learnerProjectListEmptyState(
