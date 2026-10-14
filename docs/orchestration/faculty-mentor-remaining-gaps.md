@@ -40,7 +40,7 @@ Primary blockers can coexist with browser/DB evidence gaps, and the listed evide
 | Mentor landing / Projects-disabled state | PARTIAL | buildable | Verify module enable/disable routing, notifications fallback, and role-denied browser behavior. |
 | Project Overview | PARTIAL | buildable | Complete existing workspace review/feedback/read-only presentation and browser acceptance; do not invent archived history. |
 | Project Team | PARTIAL | owner decision | Confirm allowed Mentor/team lifecycle writes, group-managed assignments and identity privacy; registered history/coverage reads exist. |
-| Project Sprints | PARTIAL | buildable | Verify goals, dates, sprint transition/edit permissions, release linkage and mobile states on persisted tables. |
+| Project Sprints | PARTIAL | buildable | A scoped, confirmation-gated sprint title/description PATCH now exists using migrated project_sprints, same-origin, transaction + audit, and optimistic locking; tests are authored. Sprint date/goal fields are not independently persisted and must not be invented. Verify permitted legacy semantics, full lifecycle/release linkage, positive/negative PostgreSQL execution, concurrency and mobile browser states. |
 | Project Tasks / Board | PARTIAL | missing migrated table | Legacy task assignee/workload fields are not persisted in vNext DB07; Board status/review parity also needs verification. |
 | Mentor pending task reviews | PARTIAL | buildable | Complete legacy task detail and review-control parity; confirm positive DB/role-denial and browser evidence. |
 | Project Resources | PARTIAL | owner decision | Storage-backed uploads depend on an approved live provider; link/resource metadata can be built, but files cannot be invented. |
