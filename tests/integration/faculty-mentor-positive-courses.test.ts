@@ -330,6 +330,13 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(events.rows.map(row=>row.event_type).sort()).toEqual([
       "courses.quiz.created","courses.quiz.published","courses.quiz.updated","courses.quiz.updated",
     ]);
+    await pool.query("delete from membership_roles where id=$1",[facultyOnlyRoleId]);
+    await expect(commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"EDIT",quizId:draft.id,expectedUpdatedAt:published.updatedAt.toISOString(),
+      title:"Revoked Faculty cannot edit",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
+    await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+      [facultyOnlyRoleId,facultyOnlyMembershipId]);
   });
   it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{
     const {delivery}=await fixture();

@@ -1407,3 +1407,6 @@ The Faculty Courses list now joins the persisted `users` row and requires `platf
 
 ## 2026-10-15 R4 Faculty persisted-role revocation test — PARTIAL
 The PostgreSQL acceptance fixture now removes a real persisted FACULTY membership-role row while retaining the stale caller role, asserts the Course list is empty, then restores the role and checks that the authorized Section returns. This verifies the existing SQL join rather than trusting cached role claims. Execution pending.
+
+## 2026-10-15 R4 transactional persisted Faculty Quiz actor fence — PARTIAL
+The Section Quiz authoring transaction now checks persisted ACTIVE user, ACTIVE exact-college membership, FACULTY role and live teaching assignment before any CREATE/EDIT/PUBLISH/ARCHIVE write or audit. It no longer relies exclusively on a cached active role plus assignment alone. A PostgreSQL fixture revokes the actual membership-role row and expects a teaching-scope denial. Execution pending.
