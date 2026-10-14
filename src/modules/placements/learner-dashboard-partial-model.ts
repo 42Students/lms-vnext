@@ -32,6 +32,7 @@ export function learnerDashboardPartialState(
     attention:availability.rounds?snapshot.needsAttention:null,
     urgentAssessment:availability.rounds?snapshot.urgentAssessment:null,
     urgentInterview:availability.rounds?snapshot.urgentInterview:null,
+    nextScheduledEvent:availability.rounds?snapshot.nextScheduledEvent:null,
     attentionTotal:availability.rounds?snapshot.fullAttentionCount:null,
     attentionOverflow:availability.rounds
       ? Math.max(0,snapshot.fullAttentionCount-snapshot.needsAttention.length):null,

@@ -64,6 +64,15 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.urgentInterview?.roundId).toBe("early-interview");
     expect(state.urgentInterview?.href).toBe("/learn/my-placements/interviews?applicationId=app-1&roundId=early-interview");
   });
+  it("retains the actual chronologically next scheduled event even when hero prefers a later test",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("earlier","GD","2026-10-14T08:00:00Z"),
+      round("later","TEST","2026-10-15T08:00:00Z"),
+    ]},now);
+    expect(result.nextAction.title).toBe("later");
+    expect(result.nextScheduledEvent?.roundId).toBe("earlier");
+    expect(result.nextScheduledEvent?.href).toContain("/interviews?");
+  });
   it("respects an approved reschedule and ignores past or unscheduled events", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
