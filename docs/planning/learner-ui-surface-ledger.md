@@ -137,6 +137,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-026 | Long overview Read more / Show less | InThisCourseSection | Overview | FIXED |
 | L2-027 | Partial course-details/progress widget warning state | Home | Overview | GAP |
 | L2-028 | Announcement body preview + Read more / Show less | UnifiedActivityList | discussion-backed update feed | FIXED |
+| L2-029 | Detailed lesson/item progress drill-down | Learner Course progress from persisted progress/submissions | `/learn/courses/[deliveryId]/progress` | FIXED |
 
 ## L3 — Learning Path
 
@@ -201,6 +202,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L4-015 | Previous / direct month picker / next month | StudentAttendanceView + CourseAttendeeHeaderFilters | Course Attendance month controls | CLOSED |
 | L4-016 | Future classes display as Scheduled, not Present | StudentAttendanceView | attendance status model + Course Attendance | CLOSED |
 | L4-017 | Threshold headroom / recovery guidance | StudentAttendanceView attendanceHeadroom | Course Attendance threshold card | CLOSED |
+| L4-018 | Read-only per-course attendance history by month | Course attendance records | `/learn/courses/[deliveryId]/attendance-summary` | FIXED |
 
 ## L5 — Course Discussions tab
 
