@@ -15,6 +15,7 @@ type Batch = {
   code: string;
   status: "PLANNED" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
   expectedEndPeriodId: string | null;
+  updatedAt: Date;
   activeSections: number;
   activeEnrolledLearners: number;
 };
@@ -136,6 +137,25 @@ export function CollegeCohortRowActions({ row, periods }: {
   const blocked = row.status !== "PLANNED" || row.activeSections > 0 ||
     row.activeEnrolledLearners > 0;
 
+  function retire() {
+    if(row.status!=="PLANNED")return;
+    if(!window.confirm(`Remove planned batch "${row.name}"? The batch will be archived, not physically deleted. Historical or linked records block this.`))return;
+    setNotice("");
+    startTransition(async()=>{
+      try {
+        const response=await fetch("/api/college/batches/"+encodeURIComponent(row.id),{
+          method:"DELETE",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedUpdatedAt:new Date(row.updatedAt).toISOString(),confirm:true}),
+        });
+        if(!response.ok) {
+          const payload=await response.json().catch(()=>({error:"BATCH_REMOVAL_FAILED"})) as {error?:string};
+          throw new Error(payload.error??"BATCH_REMOVAL_FAILED");
+        }
+        setNotice("Batch archived; historical identity preserved.");
+        router.refresh();
+      }catch(error){setNotice(error instanceof Error?error.message:"Batch removal failed.");}
+    });
+  }
   function close() {
     if (hasUnsavedCollegeCohortEdit(original, draft) &&
       !window.confirm("Discard unsaved batch changes?")) return;
@@ -165,11 +185,17 @@ export function CollegeCohortRowActions({ row, periods }: {
   }
 
   return <div className="min-w-28">
+    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true); setNotice(""); }}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </button>
+    <button type="button" disabled={pending || row.status!=="PLANNED"} onClick={retire}
+      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      Remove
+    </button>
+    </div>
     {blocked ? <p className="mt-1 text-xs text-muted-foreground">
       {row.status !== "PLANNED" ? "Only planned batches can be edited." : "Batch has active dependents."}
     </p> : null}

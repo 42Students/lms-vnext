@@ -1,0 +1,66 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {teachingReassignPrompt} from "@/modules/courses/college-teaching-reassign-model";
+
+export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldMembershipId,
+  expectedUpdatedAt,faculty}:{
+  assignmentId:string;facultyName:string;role:"PRIMARY"|"CO_TEACHER"|"TA";
+  oldMembershipId:string;expectedUpdatedAt:string;faculty:{id:string;label:string}[];
+}) {
+  const router=useRouter();
+  const [open,setOpen]=useState(false);
+  const [replacementMembershipId,setReplacementMembershipId]=useState("");
+  const [pending,setPending]=useState(false);
+  const [error,setError]=useState("");
+  const candidates=faculty.filter(f=>f.id!==oldMembershipId);
+  async function submit(){
+    const target=candidates.find(f=>f.id===replacementMembershipId);
+    if(!target)return;
+    if(!window.confirm(teachingReassignPrompt(facultyName,target.label,role)))return;
+    setPending(true);setError("");
+    try {
+      const response=await fetch("/api/college/teaching-assignments/"+encodeURIComponent(assignmentId)+"/reassign",{
+        method:"PATCH",headers:{"content-type":"application/json"},
+        body:JSON.stringify({expectedMembershipId:oldMembershipId,replacementMembershipId,
+          expectedUpdatedAt,confirm:true}),
+      });
+      if(!response.ok){
+        const payload=await response.json().catch(()=>({error:"REASSIGNMENT_FAILED"})) as {error?:string};
+        throw new Error(payload.error??"REASSIGNMENT_FAILED");
+      }
+      setOpen(false);setReplacementMembershipId("");router.refresh();
+    }catch(reason){setError(reason instanceof Error?reason.message:"Reassignment failed.");}
+    finally{setPending(false);}
+  }
+  return <div className="space-y-1">
+    <button type="button" disabled={pending||candidates.length===0} onClick={()=>setOpen(true)}
+      className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+      Reassign
+    </button>
+    {open?<div role="dialog" aria-modal="true" aria-label={"Reassign "+facultyName}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-md space-y-4 rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Reassign {role}</h2>
+        <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
+        <label className="grid gap-2 text-sm font-semibold text-body">Replacement Faculty
+          <select value={replacementMembershipId} onChange={e=>setReplacementMembershipId(e.target.value)}
+            className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">Choose Faculty</option>
+            {candidates.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
+          </select>
+        </label>
+        {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+        <div className="flex flex-wrap justify-end gap-2">
+          <button type="button" disabled={pending} onClick={()=>setOpen(false)}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Cancel</button>
+          <button type="button" disabled={pending||!replacementMembershipId} onClick={submit}
+            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            {pending?"Reassigning…":"Confirm replacement"}
+          </button>
+        </div>
+      </div>
+    </div>:null}
+    {!open&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  </div>;
+}

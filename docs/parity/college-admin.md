@@ -173,6 +173,9 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+
+**Guarded batch removal PARTIAL (2026-10-14):** The Batches directory now offers an explicitly confirmed Remove action only for PLANNED cohorts. It archives the cohort instead of hard-deleting registered progression/state history; the transaction locks the college-owned cohort, applies millisecond-normalized optimistic updatedAt token, blocks any section, learner enrollment, course offering, progression event or advanced progression state, and appends immutable activity audit. Strict same-origin DELETE, unit model and gated disposable-PostgreSQL success/foreign/wrong-role/stale/dependency fixtures are authored. Remediation for retired batch codes (unique codes remain reserved), full legacy hard-delete policy and browser/real PG acceptance remain open; not DONE.
+
 **Legacy:** `/college-admin/batches`
 
 **Write-side PARTIAL (2026-10-14):** `/college/batches` adds a validated create form and confirmed edit dialog (name, code, expected end period) for PLANNED cohorts via dedicated `/api/college/batches` endpoints. Registered program, period, cohort and dependency rows are enforced under College Admin college scope; parent/subject locks, case-insensitive duplicate-name/code checks, same-college period date windows, child and progression-history guards, transactional audit and explicit cross-college denial are implemented. Create/edit do **not** allow start-period/program changes, bypass archived parents, mutate an existing progression state, or imply promotion. Legacy delete, student/class modal and move, academic-year recalculate, exact status/edit parity, browser/PG execution and full acceptance remain open.
@@ -208,6 +211,8 @@ Legacy contract audited:
 
 ## Page: Classes / Sections
 **Legacy:** `/college-admin/classes`
+
+**Recurring execution PARTIAL (2026-10-14):** `/college/classes/recurring-preview` adds an explicit, confirm-gated execution of its IST weekday pattern with a section-updatedAt millisecond token; the server rechecks current Section/Period/Faculty/Hall college scope, persisted section/faculty/hall overlaps and aborts the entire transaction on any conflict. The inserted session IDs and immutable section activity audit are returned only for a full success. Pure-model tests and disposable-PG fixture success/foreign-college/wrong-role/stale-token tests authored. Limits: the advisory lock serializes this writer by college+Section, but independently managed faculty/hall scheduling writers require broader shared lock policy or exclusion constraints; no cross-writer race guarantee or real CI/browser closure is claimed. Recurrence editing, bulk failure reports and course attachment remain outstanding.
 
 **Recurring preview PARTIAL (2026-10-14):** `/college/classes/recurring-preview` accepts a selected class, weekday pattern, date range (maximum 93 days), IST-local start/end and optional in-college Faculty/lecture hall; it expands timestamps without server timezone dependence and reads migrated `section_schedule_events` to identify overlapping class, Faculty and hall sessions. It never writes sessions and is not an execution success forecast; the write must revalidate conflicts atomically. Confirmation, session materialization, linked course, historical series report and browser acceptance remain open.
 
@@ -475,6 +480,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Faculty Assignment
+
+**Atomic reassignment PARTIAL (2026-10-14):** Active rows on `/college/faculty-assignment` now offer a confirmation-gated replacement Faculty selector. The College Admin service requires same-college live delivery plus active FACULTY membership, an exact old-membership expectation and millisecond-normalized PostgreSQL timestamp token, locks the live delivery/assignment, checks duplicate/primary role policy, ends the old row, inserts one same-role successor and writes immutable audit within one transaction. Foreign/missing assignments return the same NOT_FOUND. Unit and disposable-PostgreSQL success/foreign/wrong-role/stale fixtures authored. Different delivery/role reassignment, timetable workload checks, executed database/browser evidence and legacy dialog parity remain open.
+
 **Legacy:** `/college-admin/faculty-assignment`
 
 **Write-side PARTIAL (2026-10-14):** `/college/faculty-assignment` retains the college-scoped list/search/status/pagination and adds a live course/class delivery + Faculty + role assignment form and end-assignment action. Both require explicit user confirmation. Existing registered `course_teaching_assignments` unique constraints remain the concurrency backstop; the create transaction also checks duplicate faculty/live primary teacher before insert, locks live delivery/membership/Faculty role and writes an immutable actor-scoped `activity_events` audit row. End keeps teaching history and audits in the same transaction. Read-only options filter active same-college deliveries, courses, cohorts/programs, academic periods, section and Faculty account/membership. A maximum 200-option truncation is disclosed; no silent fallback. Change/reassign in one operation, timetable conflict evaluation, exact legacy dialogs and executed DB/browser acceptance remain open.
