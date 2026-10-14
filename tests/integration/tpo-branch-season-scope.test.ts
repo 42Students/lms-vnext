@@ -29,7 +29,7 @@ describe.skipIf(!enabled)("TPO branch-season reader against disposable PostgreSQ
     });
     expect(result.season?.id).toBe(SEED_IDS.placementSeasonA);
     expect(result.rows.every((row) =>
-      row.registered !== null || result.registrationAvailable,
+      row.registered === null || result.registrationAvailable,
     )).toBe(true);
   });
   it("denies foreign season, wrong role and inactive membership", async () => {
