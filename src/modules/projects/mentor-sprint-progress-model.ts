@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const mentorSprintProgressQuerySchema = z.object({
   state: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED"]).default("ALL"),
+  release: z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -33,9 +34,11 @@ export function summarizeSprintTasks(
   };
 }
 
-export function mentorSprintProgressHref(query: MentorSprintProgressQuery) {
+export function mentorSprintProgressHref(query: Pick<MentorSprintProgressQuery,"state"|"search"|"page"> &
+  {release?:MentorSprintProgressQuery["release"]}) {
   const params = new URLSearchParams();
   if (query.state !== "ALL") params.set("state", query.state);
+  if (query.release && query.release !== "ALL") params.set("release", query.release);
   if (query.search) params.set("search", query.search);
   if (query.page > 1) params.set("page", String(query.page));
   const search = params.toString();

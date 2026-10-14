@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {listMyMentorProjectAttention} from "@/modules/projects/mentor-attention-service";
+import {selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const root:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"root",
@@ -93,6 +94,10 @@ describe("Mentor final-delivery notification latest-version PostgreSQL",()=>{
         third,project.id,SEED_IDS.learnerCollegeAMembership,
       ]);
     const after=await listMyMentorProjectAttention(mentor);
+    expect(selectMentorAttention(after,"REVIEW").every(row=>row.kind==="REVIEW"))
+      .toBe(true);
+    expect(selectMentorAttention(after,"REVIEW").some(row=>row.projectId===project.id))
+      .toBe(true);
     expect(after.filter(row=>row.kind==="REVIEW"&&row.projectId===project.id))
       .toEqual([expect.objectContaining({key:"review:"+third,projectId:project.id})]);
     await expect(listMyMentorProjectAttention(learner)).rejects.toBeDefined();
@@ -100,6 +105,8 @@ describe("Mentor final-delivery notification latest-version PostgreSQL",()=>{
       id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
     const foreignRows=await listMyMentorProjectAttention(foreign);
     expect(foreignRows.some(row=>row.projectId===project.id)).toBe(false);
+    expect(selectMentorAttention(foreignRows,"REVIEW").some(
+      row=>row.projectId===project.id)).toBe(false);
     const disabled:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
     await expect(listMyMentorProjectAttention(disabled)).rejects.toBeDefined();
   });

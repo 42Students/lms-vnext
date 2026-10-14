@@ -42,6 +42,10 @@ describe.skipIf(!enabled)("College people CSV PostgreSQL scope", () => {
     expect(result.csv).toContain(ids.member);
     expect(result.csv).toContain("'=formula");
     expect(result.csv).not.toContain("identity_uid");
+    const learners = await exportCollegePeopleCsv(admin,{q:marker,role:"LEARNER"});
+    expect(learners.exported).toBe(0);
+    const faculty = await exportCollegePeopleCsv(admin,{q:marker,role:"FACULTY"});
+    expect(faculty.exported).toBe(0);
   });
   it("rejects role forgery and never exports a foreign college row", async () => {
     expect((await exportCollegePeopleCsv(foreign,{q:marker})).exported).toBe(0);

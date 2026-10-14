@@ -55,6 +55,7 @@ export async function getMentorSprintProgress(
     ne(projectInstances.status, "ARCHIVED"),
     eq(projectReleases.projectId, projectInstances.id),
     query.state === "ALL" ? undefined : eq(projectSprints.status, query.state),
+    query.release === "ALL" ? undefined : eq(projectReleases.status,query.release),
     escaped ? or(
       ilike(projectInstances.title, "%" + escaped + "%"),
       ilike(projectSprints.title, "%" + escaped + "%"),
