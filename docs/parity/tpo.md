@@ -372,6 +372,7 @@ Legacy:
 
 **W60 D — PARTIAL / blocked write:** A TPO-only candidate round schedule view at /tpo/placements/jobs/[jobId]/candidate-schedule shows only persisted round-level times/venues and current progression-eligible applicants, with the existing 90-day venue-collision warnings and explicit unknown/incomplete states. Candidate-specific panel assignments, interviewer IDs and individual time slots have no migrated table, so no assignment POST or fictional candidate booking is introduced. Existing round-level scheduling can still be managed from the registered calendar round writer; individual-slot persistence, concurrency exclusion, actor audit and owner-approved conflict semantics remain missing.
 - [ ] round kind/date/time/mode/location fields match.
+**W67-2 PARTIAL — Round result entry:** The TPO drive workspace now links to a mobile round-results entry table for shortlisted submitted applicants, with per-round staged/applied counts and individual PASS/FAIL/HOLD/ABSENT input. It calls the existing origin-guarded confirmed-result route, which uses current result-ID optimistic guards, locked eligibility/progression checks, versioned result history and immutable audit. Never auto-applies. Tests authored, unrun. Remaining: bulk editing, pagination, apply/reconciliation UX, browser verification and exact legacy table parity.
 - [ ] auto-apply/results state matches.
 - [ ] conflict/blocker states match.
 
