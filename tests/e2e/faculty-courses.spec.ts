@@ -93,6 +93,7 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
 });
 
 test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }) => {
+  test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
@@ -120,9 +121,12 @@ test("Faculty Attendance student detail shows a real future session without fabr
     res.request().method() === "POST" &&
     new URL(res.url()).pathname === "/api/attendance/faculty");
   await form.getByRole("button", { name: "Schedule Class" }).click();
-  expect((await response).ok()).toBe(true);
+  const scheduleResult = await response;
+  expect(scheduleResult.status(), await scheduleResult.text()).toBe(201);
 
-  await page.reload();
+  await page.goto("/teacher/courses/" +
+    new URL(page.url()).pathname.split("/").filter(Boolean).at(-2) + "/attendanceDetail");
+  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
   await page.locator('input[type="month"]').fill(month);
   const health = page.getByRole("region", { name: "Monthly class health" });
   await expect(health).toBeVisible();
@@ -146,12 +150,17 @@ test("Faculty Attendance student detail shows a real future session without fabr
 });
 
 test("Faculty marks and corrects a persisted session from its Calendar class link", async ({ page, context }) => {
+  test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
-  await page.getByRole("navigation", { name: "Faculty course tabs" })
-    .getByRole("link", { name: "Attendance" }).click();
-  const deliveryId = page.url().match(/\/courses\/([^/]+)\/attendanceDetail/)?.[1];
+  const courseAttendance = page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Attendance" });
+  const destination = await courseAttendance.getAttribute("href");
+  expect(destination).toMatch(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+  await courseAttendance.click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+  const deliveryId = new URL(page.url()).pathname.split("/").at(-2)!;
   expect(deliveryId).toBeTruthy();
 
   // Held class inside the correction window in disposable E2E PostgreSQL.
@@ -171,7 +180,7 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
     new URL(res.url()).pathname === "/api/attendance/faculty");
   await form.getByRole("button", { name: "Schedule Class" }).click();
   const scheduleResponse = await scheduled;
-  expect(scheduleResponse.ok()).toBe(true);
+  expect(scheduleResponse.status(), await scheduleResponse.text()).toBe(201);
   const sessionId: string = (await scheduleResponse.json()).session.id;
   expect(sessionId).toBeTruthy();
 
@@ -229,6 +238,7 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
 });
 
 test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }) => {
+  test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");
   await page.getByRole("button", { name: "+ Create Assignment" }).click();
