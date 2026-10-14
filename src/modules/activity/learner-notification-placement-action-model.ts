@@ -22,5 +22,15 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
       ?{href:"/learn/my-placements/offers?status="+encodeURIComponent(values[0]!),label:"View your offers"}
       :{href:"/learn/my-placements/offers",label:"View your offers"};
   }
+  if(url.pathname==="/learn/my-placements/interviews"){
+    const app=url.searchParams.getAll("applicationId");
+    const round=url.searchParams.getAll("roundId");
+    if(app.length===0&&round.length===0)
+      return {href:"/learn/my-placements/interviews",label:"View interviews"};
+    if(app.length!==1||round.length!==1||
+      !uuid.safeParse(app[0]).success||!uuid.safeParse(round[0]).success)return null;
+    return {href:"/learn/my-placements/interviews?applicationId="+encodeURIComponent(app[0]!)+
+      "&roundId="+encodeURIComponent(round[0]!),label:"View interview details"};
+  }
   return learnerNotificationAssessmentAction(safe);
 }
