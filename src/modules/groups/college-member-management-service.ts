@@ -6,7 +6,10 @@ import { lmsGroups } from "@/db/schema";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { collegeStudyMemberSchema } from "./college-member-management-model";
-import { joinGroup, leaveGroup, setCollegeStudyMemberLock, GroupServiceError } from "./service";
+import {
+  joinGroup, leaveGroup, setCollegeStudyMemberLock,
+  removeAndLockCollegeStudyMember, GroupServiceError,
+} from "./service";
 import { collegeGroupIdSchema } from "./college-group-management-model";
 
 /** The core service performs its own serialized group + actor checks again. */
@@ -36,5 +39,7 @@ export async function manageCollegeStudyMember(
     return joinGroup(context, group.id, input.membershipId, "MANUAL", true);
   if (input.action === "REMOVE")
     return leaveGroup(context, group.id, input.membershipId, "MANUAL", true);
+  if (input.action === "REMOVE_AND_LOCK")
+    return removeAndLockCollegeStudyMember(context, group.id, input.membershipId, input.expectedVersion);
   return setCollegeStudyMemberLock(context, group.id, input.membershipId, input.locked);
 }

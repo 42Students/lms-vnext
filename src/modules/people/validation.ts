@@ -57,7 +57,10 @@ export const listCollegePeopleQuerySchema = z.object({
   collegeId: personCollegeIdSchema,
   limit: z.coerce.number().int().min(1).max(100).default(50),
   offset: z.coerce.number().int().min(0).default(0),
-});
+  q: z.string().trim().max(100).default(""),
+  role: z.enum(["ALL", ...MEMBERSHIP_ROLES]).default("ALL"),
+  status: z.enum(["ALL", "ACTIVE", "SUSPENDED", "ENDED"]).default("ALL"),
+}).strict();
 
 export const membershipRoleMutationInputSchema = z.object({
   role: membershipRoleInputSchema,

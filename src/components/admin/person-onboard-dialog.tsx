@@ -10,6 +10,7 @@ import {
   type MembershipRole,
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
+import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboarding-model";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -27,8 +28,10 @@ function roleLabel(role: MembershipRole) {
 
 export function PersonOnboardDialog({
   collegeId,
+  forcedRole,
 }: {
   collegeId: string;
+  forcedRole?: MembershipRole;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -36,16 +39,16 @@ export function PersonOnboardDialog({
   const [displayName, setDisplayName] = useState("");
   const [phoneE164, setPhoneE164] = useState("");
   const [email, setEmail] = useState("");
-  const [roles, setRoles] = useState<MembershipRole[]>([
-    "LEARNER",
-  ]);
+  const [roles, setRoles] = useState<MembershipRole[]>(
+    onboardingRoleSelection(forcedRole),
+  );
   const [pending, startTransition] = useTransition();
 
   function reset() {
     setDisplayName("");
     setPhoneE164("");
     setEmail("");
-    setRoles(["LEARNER"]);
+    setRoles(onboardingRoleSelection(forcedRole));
   }
 
   function toggleRole(role: MembershipRole) {
@@ -66,7 +69,7 @@ export function PersonOnboardDialog({
           displayName,
           phoneE164,
           ...(email.trim() ? { email } : {}),
-          roles,
+          roles: onboardingRoleSelection(forcedRole, roles),
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -87,9 +90,9 @@ export function PersonOnboardDialog({
       reset();
       showToast({
         tone: "success",
-        title: "Person onboarded",
+        title: forcedRole === "FACULTY" ? "Faculty onboarded" : "Person onboarded",
         description:
-          "The canonical user and college membership are ready.",
+          "The canonical user and college membership are ready. No invitation or message was sent.",
       });
       router.refresh();
     });
@@ -98,13 +101,13 @@ export function PersonOnboardDialog({
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        Onboard person
+        {forcedRole === "FACULTY" ? "Add faculty" : "Onboard person"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Onboard person"
-        description="Create or reuse one canonical identity, then add a membership for this college."
+        title={forcedRole === "FACULTY" ? "Add faculty" : "Onboard person"}
+        description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
           <>
             <Button
@@ -123,7 +126,7 @@ export function PersonOnboardDialog({
               }
               onClick={submit}
             >
-              {pending ? "Onboarding…" : "Onboard person"}
+              {pending ? "Onboarding…" : forcedRole === "FACULTY" ? "Add faculty" : "Onboard person"}
             </Button>
           </>
         }
@@ -181,7 +184,9 @@ export function PersonOnboardDialog({
               placeholder="name@example.com"
             />
           </div>
-          <fieldset className="sm:col-span-2">
+          {forcedRole ? <p className="sm:col-span-2 text-sm text-body">
+            Membership role: <strong>{roleLabel(forcedRole)}</strong>. This form does not grant additional roles.
+          </p> : <fieldset className="sm:col-span-2">
             <legend className="mb-2 text-xs font-semibold text-body">
               Membership roles
             </legend>
@@ -208,7 +213,7 @@ export function PersonOnboardDialog({
                 Select at least one membership role.
               </p>
             ) : null}
-          </fieldset>
+          </fieldset>}
         </div>
       </Dialog>
     </>
