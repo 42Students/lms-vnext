@@ -20,12 +20,20 @@ export default async function TpoPlacementsPage() {
         title="Placement Operations"
         description="One prioritized command center for screening, drives, results and upcoming rounds."
         actions={
-          <Link
-            href="/tpo/placements/new"
-            className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
-          >
-            New opportunity
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/tpo/placements/schedule-conflicts"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+            >
+              Review schedule conflicts
+            </Link>
+            <Link
+              href="/tpo/placements/new"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+            >
+              New opportunity
+            </Link>
+          </div>
         }
       />
       <PlacementOperationsWorkspace

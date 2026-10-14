@@ -243,3 +243,16 @@ continue handling read acknowledgments with same-origin checks.
 Pure-model and disposable PostgreSQL denial tests are authored, not claimed
 executed. Complete legacy notification producers, scrolling behavior,
 mobile/browser validation and independent CI remain OPEN; parity is PARTIAL.
+
+## Mentor Board reviewed task-submission history (2026-10-14)
+
+The read-only `/mentor/task-review-history` supplements pending task reviews
+with persisted P6 task submission decisions (APPROVED, CHANGES_REQUESTED),
+ordered by actual review time. Only currently assigned same-college Mentor
+projects are eligible, with central projects.read, active role and optional
+Projects module access. Zod filters, 20-row pagination, loading/error/disabled
+and honest empty states are authored. No raw feedback, learner identities,
+submission URLs or individual reviewer claims are exposed. The pending queue
+links to the new history and existing authorized Board review controls.
+Pure-model/unit and disposable PostgreSQL denial tests are authored, not
+executed. Full legacy Board functionality and browser evidence stay PARTIAL.

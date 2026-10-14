@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
+import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -36,34 +37,9 @@ export default async function FacultyAssignmentReportPage({
         description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
       />
       <FacultyReportCsvDownload
-        kind="assignment"
-        title={assignment.title}
-        sectionName={assignment.sectionName}
-        rows={[
-          ...submissions.map((submission) => {
-            const scored = submission.gradingStatus === "GRADED" &&
-              submission.pointsAwarded !== null && assignment.maxPoints > 0;
-            return {
-              name: submission.learnerDisplayName || submission.learnerEmail || "Learner",
-              email: submission.learnerEmail,
-              status: "SUBMITTED" as const,
-              score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : null,
-              percent: scored
-                ? Math.round(submission.pointsAwarded! / assignment.maxPoints * 100) : null,
-              submittedAt: submission.submittedAt.toISOString(),
-              note: (assignment.dueAt && submission.submittedAt > assignment.dueAt
-                ? "Late" : "On time") +
-                (submission.gradePublished ? " · Published grade" : " · Private grade"),
-            };
-          }),
-          ...missingLearners.map((learner) => ({
-            name: learner.displayName || learner.email || "Learner",
-            email: learner.email,
-            status: "NOT_SUBMITTED" as const,
-            score: null, percent: null, submittedAt: null,
-            note: "No recorded submission",
-          })),
-        ]}
+        href={facultyReportCsvHref({
+          kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
+        })}
       />
       <FacultyReportDownload
         kind="assignment"
