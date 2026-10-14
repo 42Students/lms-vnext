@@ -82,7 +82,16 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(result.upcomingInterviewCount).toBe(2);
     expect(result.thisWeekInterviewCount).toBe(1);
   });
-    it("respects an approved reschedule and ignores past or unscheduled events", () => {
+    it("distinguishes all future assessments from IST-week assessment actions",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("near","VENDOR_TEST","2026-10-14T09:00:00Z"),
+      round("far","TEST","2026-10-22T09:00:00Z"),
+      round("interview","INTERVIEW","2026-10-15T09:00:00Z"),
+    ]},now);
+    expect(result.upcomingAssessmentCount).toBe(2);
+    expect(result.thisWeekAssessmentCount).toBe(1);
+  });
+  it("respects an approved reschedule and ignores past or unscheduled events", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
         round("past", "TEST", "2026-10-12T10:00:00Z"),
