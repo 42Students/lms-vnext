@@ -188,6 +188,7 @@ export function LearningPathActions({
     useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
+  const [unpublishOpen, setUnpublishOpen] = useState(false);
   const [title, setTitle] =
     useState(learningPath.title);
   const [description, setDescription] =
@@ -237,6 +238,13 @@ export function LearningPathActions({
             {pending
               ? "Publishing…"
               : "Publish path"}
+          </Button>
+        ) : null}
+        {learningPath.status === "PUBLISHED" ? (
+          <Button size="sm" variant="secondary"
+            onClick={() => setUnpublishOpen(true)}
+            disabled={pending}>
+            Unpublish
           </Button>
         ) : null}
         <Button
@@ -326,6 +334,22 @@ export function LearningPathActions({
         </div>
       </Dialog>
 
+      <ConfirmDialog
+        open={unpublishOpen}
+        onOpenChange={setUnpublishOpen}
+        title="Unpublish learning path?"
+        description="Unpublishing is blocked if learner content progress, assignment submissions, or quiz attempts exist."
+        confirmLabel="Unpublish path"
+        pending={pending}
+        onConfirm={() => run(
+          () => requestJson(
+            "/api/courses/learning-paths/" + learningPath.id + "/transition",
+            "POST", { action: "UNPUBLISH" },
+          ),
+          "Learning Path unpublished",
+          () => setUnpublishOpen(false),
+        )}
+      />
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
