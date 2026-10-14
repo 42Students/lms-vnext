@@ -692,3 +692,16 @@ The existing page's marking flow remains separate. Unit and disposable PG
 fixtures with success, conflict, stale and role/foreign denial are authored
 but not executed. Mobile/browser and full registrar calendar semantics remain
 PARTIAL; no parity rows are promoted.
+
+## C — Faculty Quiz results CSV size guard (2026-10-14)
+
+The existing authenticated exact-delivery Quiz GET export is extended with a
+hard 500-learner-row result cap (latest-attempt learners first, then unmatched
+eligible learners), an explicit numeric omitted-row notice in CSV and
+X-Export-Truncated / X-Export-Omitted-Rows response headers. UI warns before
+download. Every learner cell remains formula-neutralized by the registered
+CSV serializer, with UTF-8 and private/no-store response headers retained.
+This is a bound on exported rows, not a bound on underlying authorized report
+reads, and not a complete gradebook when truncated. Unit tests and an added
+assertion in the existing fresh-PG positive Section fixture are authored but
+not executed here. Full legacy analytics/download browser parity stays PARTIAL.
