@@ -82,6 +82,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.q ? or(

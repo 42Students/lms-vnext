@@ -10,6 +10,7 @@ const common = {
 
 export const collegeSemesterDirectorySchema = z.object({
   ...common,
+  termNumber: z.coerce.number().int().min(1).max(24).optional(),
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
@@ -30,6 +31,7 @@ export function academicDirectoryHref(
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.programId) params.set("programId", query.programId);
+  if ("termNumber" in query && query.termNumber !== undefined) params.set("termNumber", String(query.termNumber));
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
@@ -43,10 +45,10 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "status", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && (key !== "programId" || value !== "")) {
+    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" || value !== "")) {
       result[key] = value;
     }
   }
