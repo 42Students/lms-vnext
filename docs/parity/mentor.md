@@ -601,3 +601,20 @@ PostgreSQL unique-project fixture cover latest-status suppression, newly
 submitted version, foreign-college non-leakage, wrong role and disabled user.
 No mutating route is added; stale-token denial does not apply. **PARTIAL:**
 TypeScript/ESLint/unit/PG/browser and legacy notification parity remain open.
+
+
+## 2026-10-14 chat-11 F — Mentor global Meetings filters and IST semantics (PARTIAL)
+
+The existing across-project Mentor Meetings calendar now supports server-validated
+status and literal meeting/project search filters, with status-preserving
+request workflows and transparent matching totals. Times and MISSED-day
+boundaries use the owner-confirmed Asia/Kolkata timezone instead of browser
+timezone or per-meeting timezone. Scope remains restricted to current assigned,
+same-college, role-granted Mentor projects, now with an explicit central
+projects.read check before the persisted read. There are no new meeting
+mutations or external sends. Unit and independently created PostgreSQL
+fixture tests cover real requested/scheduled rows, project status filters,
+wrong-role/disabled denial and cross-college nonleakage. **PARTIAL:**
+Test execution, browser verification, high-volume pagination, full legacy
+meeting calendar, and schedule/reschedule writes remain open. No direct
+status updates are introduced, so optimistic stale write tokens do not apply.
