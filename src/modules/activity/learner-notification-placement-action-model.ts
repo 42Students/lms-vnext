@@ -25,6 +25,7 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
     return {href:"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+suffix,
       label:suffix?"View application history":"View your application"};
   }
+  if(url.pathname.startsWith("/learn/my-placements/applications/"))return null;
   if(url.pathname==="/learn/my-placements/offers"){
     const values=url.searchParams.getAll("status");
     if(values.length>1||values.length===1&&!offerView.safeParse(values[0]).success)return null;

@@ -35,3 +35,38 @@ export function facultyQuizDraftIssue(
  const valid=createCourseQuizInputSchema.shape.questions.safeParse(normalized);
  return valid.success?null:(valid.error.issues[0]?.message??"Review question options and points.");
 }
+
+/** Switching a multiselect question to single choice must not retain multiple
+ * marked answers; ensure a defined answer even in an incomplete draft. */
+export function facultyChangeQuizChoiceType<
+  T extends { correct: boolean },
+  Q extends { type: "SINGLE_CHOICE" | "MULTIPLE_CHOICE"; options: T[] },
+>(
+  question: Q,
+  nextType: "SINGLE_CHOICE" | "MULTIPLE_CHOICE",
+): Q {
+  if (nextType === "MULTIPLE_CHOICE") {
+    return { ...question, type: nextType } as Q;
+  }
+  const firstCorrect = question.options.findIndex((option) => option.correct);
+  const chosen = firstCorrect === -1 ? 0 : firstCorrect;
+  return {
+    ...question,
+    type: nextType,
+    options: question.options.map((option, index) => ({
+      ...option,
+      correct: index === chosen,
+    })),
+  };
+}
+
+/** Publishing or closing seals the authoring fields even before a refresh. */
+export function facultyQuizDraftEditable(status: string | null | undefined): boolean {
+  return status == null || status === "DRAFT";
+}
+
+/** The API accepts title/instructions/due-date updates after publication,
+ * but the question bank and attempt limit are sealed. */
+export function facultyQuizMetadataEditable(status: string | null | undefined): boolean {
+  return status == null || status === "DRAFT" || status === "PUBLISHED" || status === "CLOSED";
+}

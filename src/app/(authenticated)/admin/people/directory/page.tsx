@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
+import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -26,7 +28,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const tabForm=adminPeopleSearchState(data.query);
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · People" title="Users & Roles"
-   description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."/>
+   description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
+   actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
    <Link href="/admin/people/unassigned" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Users without college memberships →</Link> : null}
   <nav aria-label="People directory tabs" className="flex flex-wrap gap-2">

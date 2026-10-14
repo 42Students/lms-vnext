@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessment-overview";
@@ -20,7 +21,7 @@ export default async function FacultyAllAssignmentsPage() {
         title="All Assignments"
         description="Track class assignments, late-submission state and private grading across your authorized teaching Sections."
       />
-      <FacultyAssessmentOverview overview={overview} kind="ASSIGNMENT" />
+      <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="ASSIGNMENT" />
     </div>
   );
 }

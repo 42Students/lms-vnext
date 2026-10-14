@@ -1,20 +1,19 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
+import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   getFacultyCourseWorkspace,
-  listFacultyCourseDeliveries,
 } from "@/modules/courses/faculty-course-service";
 
-export default async function FacultyCoursesPage() {
+export default async function FacultyCoursesPage({searchParams}: {
+  searchParams: Promise<Record<string,string|string[]|undefined>>;
+}) {
   const context =
     await getCurrentRequestContext();
-  const courses =
-    await listFacultyCourseDeliveries(
-      context,
-    );
+  const list = await getFacultyCourseList(context, await searchParams);
   const rows = await Promise.all(
-    courses.map(async (course) => ({
+    list.items.map(async (course) => ({
       course,
       workspace:
         await getFacultyCourseWorkspace(
@@ -31,7 +30,7 @@ export default async function FacultyCoursesPage() {
         title="My Teaching Courses"
         description="Your active Course deliveries, exact Sections and the learning items visible to each class."
       />
-      <FacultyCourseList rows={rows} />
+      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} />
     </div>
   );
 }
