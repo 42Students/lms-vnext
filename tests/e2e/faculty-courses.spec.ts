@@ -358,6 +358,25 @@ test("Faculty Quiz aggregate persists questions, metadata edits and archival", a
   expect(archived.quiz.status).toBe("ARCHIVED");
 });
 
+test("Faculty Notifications keep the Faculty route through unread and cursor recovery", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/notifications");
+  await expect(page.getByRole("heading", { name: "Notifications", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Personal notifications" })).toBeVisible();
+  const filters = page.getByRole("group", { name: "Notification filter" });
+  await filters.getByRole("link", { name: /Unread/ }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
+  await expect(page.getByRole("button", { name: "Mark all as read" })).toBeVisible();
+  await filters.getByRole("link", { name: "All", exact: true }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=all$/);
+
+  await page.goto("/teacher/notifications?view=unread&beforeCreatedAt=invalid&beforeId=bad-id");
+  const invalid = page.getByRole("alert").filter({ hasText: "notification page link is invalid" });
+  await expect(invalid).toBeVisible();
+  await invalid.getByRole("link", { name: "Return to the newest notifications" }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
+});
+
 test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/contacts/allContacts");

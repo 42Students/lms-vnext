@@ -330,3 +330,7 @@ All Assignments and All Quizzes now search by title, course, Section, lesson and
 ### Faculty Quiz end-to-end authoring browser gate (2026-10-14)
 
 Added an authenticated Faculty browser scenario that creates a real Section-scoped Quiz with a persisted multiple-option question, searches for it on All Quizzes, edits the title and maximum attempts, verifies the persisted edit after navigation, and archives the Quiz through the existing confirmed lifecycle route. It requires actual successful Playwright execution before closing the Create/Edit/Delete Quiz checklist rows. No change to quiz schema, learner attempt access, or global phase gates.
+
+### Faculty notification inbox cursor and role boundary (2026-10-14)
+
+The Faculty notifications page now requires an active persisted Faculty membership before either announcements or personal notifications are fetched. It exposes the shared unread/all filter, mark-all-read action and member-owned keyset pagination rather than silently truncating to 60 messages; expired, malformed or partial URL cursors give an explicit recovery link instead of a false empty feed. Navigation remains under `/teacher/notifications`; shared inbox Toolbar retains its original default `/notifications` for other accounts. The existing server-owned notification read/write routes still enforce recipient ownership and same-origin mutation checks. Unit and authenticated browser tests are added; full parity remains PARTIAL until exact-SHA execution and source comparison.
