@@ -26,6 +26,8 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**Read-first PARTIAL (2026-10-14):** `/college/activity` provides explicit actor/entity/date filters, newest-first cursor pagination and `/college/activity/[eventId]` for sanitized audit metadata. Both reads are denied outside the active College Admin membership college. Records are never edited or deleted. Exact legacy event grouping, export, browser and independently executed PostgreSQL acceptance remain open.
+
 **Legacy:** `/college-admin/audit`
 
 - [ ] Timeline/list event taxonomy matches meaningful admin activity.
