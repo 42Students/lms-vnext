@@ -4,6 +4,8 @@ import {
   and,
   asc,
   eq,
+  not,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -200,11 +202,17 @@ export async function createCourseDiscussionMessage(
 export async function toggleCourseDiscussionPin(
   context: RequestContext,
   messageIdInput: string,
+  deliveryIdInput?: string,
 ) {
-  const message =
-    await loadDiscussionMessage(
-      messageIdInput,
-    );
+  const requestedDeliveryId = deliveryIdInput === undefined
+    ? null
+    : deliveryIdSchema.parse(deliveryIdInput);
+  const message = await loadDiscussionMessage(messageIdInput);
+  // A URL scoped to Section B must never mutate a message in Section A.
+  // The check is inside the service, not a full-feed preflight in the route.
+  if (requestedDeliveryId !== null && message.deliveryId !== requestedDeliveryId) {
+    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+  }
   const { mode } = await discussionAccess(
     context,
     message.deliveryId,
@@ -216,35 +224,41 @@ export async function toggleCourseDiscussionPin(
     );
   }
 
-  const nextPinned = !message.pinned;
+  // Evaluate both columns against the current persisted value in one
+  // UPDATE; two simultaneous moderators must toggle twice, not lose a write.
   const [updated] = await getDb()
     .update(courseDiscussionMessages)
     .set({
-      pinned: nextPinned,
-      pinnedByUserId: nextPinned
-        ? context.user.id
-        : null,
+      pinned: not(courseDiscussionMessages.pinned),
+      pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
+        then null else ${context.user.id}::uuid end`,
       updatedAt: new Date(),
     })
     .where(
-      eq(
-        courseDiscussionMessages.id,
-        message.id,
+      and(
+        eq(courseDiscussionMessages.id, message.id),
+        eq(courseDiscussionMessages.deliveryId, message.deliveryId),
       ),
     )
     .returning();
-
-  return updated!;
+  if (!updated) {
+    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+  }
+  return updated;
 }
 
 export async function deleteCourseDiscussionMessage(
   context: RequestContext,
   messageIdInput: string,
+  deliveryIdInput?: string,
 ) {
-  const message =
-    await loadDiscussionMessage(
-      messageIdInput,
-    );
+  const requestedDeliveryId = deliveryIdInput === undefined
+    ? null
+    : deliveryIdSchema.parse(deliveryIdInput);
+  const message = await loadDiscussionMessage(messageIdInput);
+  if (requestedDeliveryId !== null && message.deliveryId !== requestedDeliveryId) {
+    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+  }
   const { mode } = await discussionAccess(
     context,
     message.deliveryId,
@@ -261,14 +275,16 @@ export async function deleteCourseDiscussionMessage(
     );
   }
 
-  await getDb()
+  const [deleted] = await getDb()
     .delete(courseDiscussionMessages)
-    .where(
-      eq(
-        courseDiscussionMessages.id,
-        message.id,
-      ),
-    );
+    .where(and(
+      eq(courseDiscussionMessages.id, message.id),
+      eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+    ))
+    .returning({ id: courseDiscussionMessages.id });
 
-  return { id: message.id };
+  if (!deleted) {
+    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+  }
+  return deleted;
 }
