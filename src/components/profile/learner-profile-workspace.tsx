@@ -247,6 +247,32 @@ export function LearnerProfileWorkspace(props: {
     setItemDraft(item ? { ...item } : newItem(section));
   }
 
+  function saveOwnedSection(
+    section: "education" | "skills" | "projects",
+    items: LearnerProfileDocument[typeof section],
+    onDone?: () => void,
+  ) {
+    startTransition(async () => {
+      try {
+        const result = await fetch("/api/profile/me/sections", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ confirmed: true, section, items }),
+        });
+        const payload = await result.json().catch(() => null);
+        if (!result.ok || !Array.isArray(payload?.items)) {
+          throw new Error("Could not save this section; other profile details were not changed.");
+        }
+        setDocument(current => ({ ...current, [section]: payload.items }));
+        onDone?.();
+        showToast({ tone:"success",title:"Profile section saved" });
+      } catch (error) {
+        showToast({ tone:"error",title:"Section update failed",
+          description:error instanceof Error ? error.message : "Try again." });
+      }
+    });
+  }
+
   function saveCollection() {
     if (!collection) return;
     const normalized = {
@@ -260,16 +286,22 @@ export function LearnerProfileWorkspace(props: {
       ? current.map((item) => String(item.id) === editingId ? normalized : item)
       : [...current, normalized];
 
-    saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument, () => {
-      setCollection(null);
-      setEditingId(null);
-      setItemDraft({});
-    });
+    const finished = () => { setCollection(null); setEditingId(null); setItemDraft({}); };
+    if (collection === "education" || collection === "skills" || collection === "projects") {
+      saveOwnedSection(collection, nextItems as LearnerProfileDocument[typeof collection], finished);
+    } else {
+      saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument, finished);
+    }
   }
 
   function removeItem(section: CollectionKey, id: string) {
     const current = document[section] as Array<Record<string, unknown>>;
-    saveDocument({ ...document, [section]: current.filter((item) => String(item.id) !== id) } as LearnerProfileDocument);
+    const items = current.filter((item) => String(item.id) !== id);
+    if (section === "education" || section === "skills" || section === "projects") {
+      saveOwnedSection(section, items as LearnerProfileDocument[typeof section]);
+    } else {
+      saveDocument({ ...document, [section]: items } as LearnerProfileDocument);
+    }
   }
 
 

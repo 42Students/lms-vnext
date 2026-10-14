@@ -5,10 +5,11 @@ import { useMemo, useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
+import { filterLearnerInbox,learnerNotificationInboxQuerySchema,learnerNotificationTarget,
+  type LearnerInboxQuery } from "@/modules/activity/learner-notification-inbox-model";
 import { NotificationList, type NotificationListItem } from "./notification-list";
 import {
   learnerNotificationCategories,
-  learnerNotificationCategory,
   learnerNotificationCategoryCounts,
   type LearnerNotificationCategory,
 } from "@/modules/activity/learner-notification-category";
@@ -17,12 +18,17 @@ export function LearnerNotificationsInbox({
   personal,
   announcements,
   announcementsEnabled,
+  initialFilters,
 }: {
   personal: readonly NotificationListItem[];
   announcements: readonly AnnouncementFeedItem[];
   announcementsEnabled: boolean;
+  initialFilters?: LearnerInboxQuery;
 }) {
-  const [active, setActive] = useState<LearnerNotificationCategory>("all");
+  const defaults=learnerNotificationInboxQuerySchema.parse(initialFilters ?? {});
+  const [active, setActive] = useState<LearnerNotificationCategory>(defaults.category);
+  const [unread,setUnread] = useState<"all"|"unread">(defaults.unread);
+  const [search,setSearch] = useState(defaults.q);
   const [selected, setSelected] = useState<NotificationListItem | null>(null);
 
   const combined = useMemo(() => {
@@ -51,9 +57,10 @@ export function LearnerNotificationsInbox({
     () => learnerNotificationCategoryCounts(combined),
     [combined],
   );
-  const visible = active === "all"
-    ? combined
-    : combined.filter((item) => learnerNotificationCategory(item) === active);
+  const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
+    [combined,active,unread,search]);
+  const filtered=active!=="all" || unread!=="all" || search.trim()!=="";
+  function resetFilters(){setActive("all");setUnread("all");setSearch("");}
 
   return (
     <section className="space-y-5" aria-label="Learner notifications inbox">
@@ -74,6 +81,28 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
+      <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+        <label className="text-xs font-semibold text-body">
+          Search notifications
+          <input type="search" value={search} maxLength={100}
+            onChange={event=>setSearch(event.target.value)}
+            placeholder="Search title or message"
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+        </label>
+        <button type="button" aria-pressed={unread==="unread"}
+          onClick={()=>setUnread(prev=>prev==="unread"?"all":"unread")}
+          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+          {unread==="unread"?"Unread only ✓":"Unread only"}
+        </button>
+        <button type="button" disabled={!filtered} onClick={resetFilters}
+          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+          Clear filters
+        </button>
+      </div>
+      <p role="status" className="text-xs text-muted-foreground">
+        Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
+      </p>
+
       {!announcementsEnabled && (active === "all" || active === "general") ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           College announcements are temporarily unavailable while their
@@ -85,15 +114,16 @@ export function LearnerNotificationsInbox({
           <NotificationList items={[]} emptyText={
             active === "all" ? "No notifications yet" : `No ${learnerNotificationCategories.find((tab) => tab.key === active)?.label ?? "matching"} notifications yet`
           } />
-          {active !== "all" ? (
-            <button type="button" onClick={() => setActive("all")}
+          {filtered ? (
+            <button type="button" onClick={resetFilters}
               className="min-h-10 text-sm font-semibold text-primary-text hover:underline">
               View all
             </button>
           ) : null}
         </div>
       ) : (
-        <NotificationList items={visible} onSelect={setSelected} readEndpoint="/api/learn/notifications" />
+        <NotificationList items={visible.map(item=>({...item,actionHref:learnerNotificationTarget(item.actionHref)}))}
+          onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
       <Dialog
         open={selected !== null}
@@ -102,9 +132,9 @@ export function LearnerNotificationsInbox({
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>
-            {selected?.actionHref ? (
+            {learnerNotificationTarget(selected?.actionHref) ? (
               <Link
-                href={selected.actionHref}
+                href={learnerNotificationTarget(selected?.actionHref)!}
                 onClick={() => setSelected(null)}
                 className="inline-flex min-h-10 items-center rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text"
               >

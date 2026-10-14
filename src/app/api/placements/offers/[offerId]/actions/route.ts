@@ -30,6 +30,8 @@ export async function POST(
         context,
         offerId,
         await request.json(),
+        new Date(),
+        context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
       );
     return NextResponse.json({ offer });
   } catch (error) {
