@@ -81,7 +81,7 @@ export async function bulkWithdrawPlacementOffers(
       const updated = await actOnPlacementOffer(context, offer.id, {
         action: "WITHDRAW",
         reason: input.reason,
-      });
+      }, new Date(), offer.expectedStatus);
       results.push({
         offerId: offer.id,
         status: updated.status === "WITHDRAWN" ? "withdrawn" : "ineligible",

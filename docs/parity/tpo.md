@@ -320,7 +320,7 @@ Legacy:
 - [ ] release/response/joining data matches.
 - [ ] candidate detail deep link/drawer matches.
 
-**W44 PARTIAL:** The existing Offers & Joining workspace now exposes a TPO-only, explicitly confirmed bulk withdrawal control for up to 50 issued/accepted persisted offers. A required reason is recorded by the existing single-offer audit/history transition. Already-withdrawn, stale, foreign-job, declined and recorded-joining offers are not treated as withdrawable. This is withdrawal only: learner ACCEPT/DECLINE remains self-service, and acceptance/response/joining status is never synthesized. Full legacy bulk selection/modal UX, preflight-to-transition concurrency certification and executed runtime/browser evidence remain open.
+**W44 PARTIAL:** The existing Offers & Joining workspace now exposes a TPO-only, explicitly confirmed bulk withdrawal control for up to 50 issued/accepted persisted offers. A required reason is recorded by the existing single-offer audit/history transition. Already-withdrawn, stale, foreign-job, declined and recorded-joining offers are not treated as withdrawable. This is withdrawal only: learner ACCEPT/DECLINE remains self-service, and acceptance/response/joining status is never synthesized. Full legacy bulk selection/modal UX, executed positive concurrency certification and runtime/browser evidence remain open. An expected-status check now runs under the existing offer row lock, rejecting a stale selection instead of withdrawing a newly accepted offer.
 
 ### Tab: Drive Day
 - [ ] active/completed round selector matches.

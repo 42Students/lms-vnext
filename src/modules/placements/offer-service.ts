@@ -471,6 +471,7 @@ export async function actOnPlacementOffer(
   offerIdInput: string,
   rawInput: PlacementOfferActionInput,
   now: Date = new Date(),
+  expectedStatus?: "ISSUED" | "ACCEPTED",
 ) {
   const offerId =
     placementOfferIdSchema.parse(
@@ -526,6 +527,15 @@ export async function actOnPlacementOffer(
     if (!offer) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_NOT_FOUND",
+      );
+    }
+
+    // Optional optimistic guard for TPO bulk actions; checked under the
+    // same row lock as the authoritative single-offer transition.
+    // Existing learner ACCEPT/DECLINE calls are unchanged.
+    if (expectedStatus && offer.status !== expectedStatus) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_OFFER_INVALID_TRANSITION",
       );
     }
 
