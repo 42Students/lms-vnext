@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { parseActivityDateBoundary } from "./date-boundary";
+import { ACTIVITY_MODULES, ACTIVITY_IMPORTANCE } from "./taxonomy";
 
 const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   try { parseActivityDateBoundary(value, "from"); return true; }
@@ -7,7 +8,12 @@ const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 }, "Use a valid YYYY-MM-DD date");
 
 export const collegeActivityQuerySchema = z.strictObject({
+  module: z.enum(ACTIVITY_MODULES).optional(),
+  importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
+  eventType: z.string().trim().min(1).max(120).optional(),
+  q: z.string().trim().min(1).max(100).optional(),
   actorUserId: z.string().uuid().optional(),
+  actorName: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().uuid().optional(),
   from: dateOnly.optional(),
@@ -35,7 +41,12 @@ export function collegeActivityHref(
   cursor: { beforeOccurredAt: Date; beforeId: string } | null = null,
 ) {
   const params = new URLSearchParams();
+  if (filter.module) params.set("module", filter.module);
+  if (filter.importance) params.set("importance", filter.importance);
+  if (filter.eventType) params.set("eventType", filter.eventType);
+  if (filter.q) params.set("q", filter.q);
   if (filter.actorUserId) params.set("actorUserId", filter.actorUserId);
+  if (filter.actorName) params.set("actorName", filter.actorName);
   if (filter.subjectType) params.set("subjectType", filter.subjectType);
   if (filter.subjectId) params.set("subjectId", filter.subjectId);
   if (filter.from) params.set("from", filter.from);

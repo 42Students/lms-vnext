@@ -1,0 +1,2 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";
+export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <ErrorState title="Could not load students" description="The selected college student directory is unavailable." action={<Button onClick={reset}>Retry</Button>}/>;}

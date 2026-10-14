@@ -68,6 +68,31 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(foreign.items).toHaveLength(1);
     expect(foreign.items[0].event.collegeId).toBe(SEED_IDS.collegeB);
   });
+  it("filters by actor display name under persisted college scope",async()=>{
+    const actorNameRows=await listCollegeActivity(admin,{subjectType:subject,actorName:"never-an-actor-name"});
+    expect(actorNameRows.items).toHaveLength(0);
+    const actorIdRows=await listCollegeActivity(admin,{subjectType:subject,actorUserId:SEED_IDS.collegeAdminUser});
+    expect(actorIdRows.items.every(row=>row.event.collegeId===SEED_IDS.collegeA)).toBe(true);
+    await expect(listCollegeActivity(faculty,{actorName:"never"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("matches scoped summary text before cursor pagination",async()=>{
+    const result=await listCollegeActivity(admin,{subjectType:subject,q:"w-audit-own-26"});
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].event.summary).toBe("w-audit-own-26");
+    const missing=await listCollegeActivity(admin,{subjectType:subject,q:"never-audit-needle"});
+    expect(missing.items).toHaveLength(0);
+    await expect(listCollegeActivity(faculty,{q:"w-audit-own"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
+    const match=await listCollegeActivity(admin,{subjectType:subject,module:"ACADEMICS",
+      importance:"NORMAL",eventType:"academics.program.updated"});
+    expect(match.items).toHaveLength(25);
+    expect(match.nextCursor).not.toBeNull();
+    const excluded=await listCollegeActivity(admin,{subjectType:subject,importance:"CRITICAL"});
+    expect(excluded.items).toHaveLength(0);
+    const anotherCollege=await listCollegeActivity(other,{subjectType:subject,module:"ACADEMICS"});
+    expect(anotherCollege.items).toHaveLength(1);
+  });
   it("protects event detail and denies wrong-role/forged college filter",async()=>{
     const detail=await getCollegeActivityDetail(admin,ids.own);
     expect(detail.event.id).toBe(ids.own);

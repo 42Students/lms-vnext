@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 
-type Search = { decision?: string | string[]; page?: string | string[] };
+type Search = { decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -19,7 +19,8 @@ export default async function MentorReviewHistoryPage({
 }: { searchParams: Promise<Search> }) {
   const raw=await searchParams;
   const parsed=mentorReviewHistoryQuerySchema.safeParse({
-    decision:first(raw.decision) ?? undefined, page:first(raw.page) ?? undefined,
+    decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
+    page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review history filters</h1>
@@ -40,13 +41,23 @@ export default async function MentorReviewHistoryPage({
         Projects access is disabled for this membership. No review history was loaded.
       </section>
     : <>
+      <form method="get" action="/mentor/review-history"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <input type="hidden" name="decision" value={data.query.decision}/>
+        <label className="grid gap-1 text-sm font-semibold text-body">Project title
+          <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
+            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        <Link href="/mentor/review-history" className="text-sm text-primary-text underline">Clear</Link>
+      </form>
       <nav aria-label="Review decision filter" className="flex flex-wrap gap-2">
         {([
           ["ALL","All decisions"],
           ["APPROVED","Approved"],
           ["CHANGES_REQUESTED","Changes requested"],
         ] as const).map(([decision,label]) =>
-          <Link key={decision} href={mentorReviewHistoryHref({decision,page:1})}
+          <Link key={decision} href={mentorReviewHistoryHref({...data.query,decision,page:1})}
             aria-current={data.query.decision===decision?"page":undefined}
             className={data.query.decision===decision
               ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
