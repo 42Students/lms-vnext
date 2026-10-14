@@ -2,7 +2,7 @@ import "server-only";
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementOffers, users } from "@/db/schema";
+  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, projectSharedApplicants } from "./hr-job-applicants-model";
@@ -14,13 +14,15 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const where = and(
     eq(placementApplications.jobId, workspace.job.id),
     eq(collegeMemberships.collegeId, workspace.college.id),
+    eq(collegeMemberships.status, "ACTIVE"),
+    eq(users.platformStatus, "ACTIVE"),
     // The recruiter cannot inspect unshared applications or screening decisions.
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
   const [applications, offers] = await Promise.all([
     db.select({
-      id: placementApplications.id, name: users.displayName,
+      id: placementApplications.id, name: users.displayName, email: users.email,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
       submittedAt: placementApplications.submittedAt,
@@ -34,8 +36,12 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     db.select({
       id: placementOffers.id, status: placementOffers.status, role: placementOffers.roleTitle,
       annualCtcInr: placementOffers.annualCtcInr, joiningDate: placementOffers.joiningDate,
-      issuedAt: placementOffers.issuedAt, name: users.displayName,
+      issuedAt: placementOffers.issuedAt, expiresAt: placementOffers.expiresAt,
+      applicationId: placementOffers.applicationId,
+      joiningStatus: placementJoiningOutcomes.status,
+      name: users.displayName,
     }).from(placementOffers)
+      .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
       .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
