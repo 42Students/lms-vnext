@@ -37,3 +37,14 @@ describe("Faculty Quiz archive command validation",()=>{
   expect(facultyQuizCommandSchema.safeParse({...archive,questions:valid}).success).toBe(false);
  });
 });
+
+describe("Faculty Quiz close command validation",()=>{
+ const close={action:"CLOSE",quizId:"00000000-0000-4000-8000-000000000001",
+   expectedUpdatedAt:"2026-10-14T12:00:00.000Z",confirmed:true};
+ it("accepts a confirmed versioned transition, not question/tenant mutation",()=>{
+  expect(facultyQuizCommandSchema.safeParse(close).success).toBe(true);
+  expect(facultyQuizCommandSchema.safeParse({...close,confirmed:false}).success).toBe(false);
+  expect(facultyQuizCommandSchema.safeParse({...close,questions:valid}).success).toBe(false);
+  expect(facultyQuizCommandSchema.safeParse({...close,collegeId:close.quizId}).success).toBe(false);
+ });
+});

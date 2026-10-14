@@ -26,7 +26,8 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
   const term = query.search.toLowerCase();
   return rows.filter(row =>
     (query.kind === "ALL" || row.kind === query.kind) &&
-    (query.status === "ALL" || row.status === "PUBLISHED") &&
+    (query.status === "ALL" || row.status === "PUBLISHED" ||
+      (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (!query.deliveryId || row.deliveryId === query.deliveryId) &&
     (!term || [row.title, row.courseName, row.sectionName].some(field =>
       field.toLowerCase().includes(term))),
