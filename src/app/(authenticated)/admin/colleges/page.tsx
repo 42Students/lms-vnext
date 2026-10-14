@@ -56,6 +56,12 @@ const columns: DataTableColumn<CollegeRow>[] = [
         >
           Readiness
         </Link>
+        <Link
+          href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        >
+          Branding
+        </Link>
         <CollegeEditDialog
           college={college}
         />
