@@ -17,7 +17,7 @@ from an old ledger note without checking the registered journal.
 - **579** operational Learner ledger rows not literally DONE
   (including coded but not final-accepted rows).
 - **28** Learner account-matrix rows not marked DONE.
-- Ledger statuses: BLOCKED 14 · CLOSED 143 · FIXED 173 · GAP 72 · REDESIGNED 5 · RETIRED 1 · UNCHECKED 171.
+- Ledger statuses: BLOCKED 14 · CLOSED 143 · FIXED 174 · GAP 72 · REDESIGNED 5 · RETIRED 1 · UNCHECKED 170.
 - Primary blocker categories: buildable 531 · missing migrated table 28 · owner decision 20.
 
 Each row below gets one **initial** dependency category: **buildable** means
@@ -747,7 +747,7 @@ legacy-to-vNext descriptions remain in the canonical linked ledger.
 | L29-014 | Loading state | UNCHECKED | buildable | Inspect current implementation and close missing behavior, tests, mobile and source-of-truth verification. |
 | L29-015 | Empty state | FIXED | buildable | Source implementation recorded; execute focused DB/UI/mobile verification and finalize family acceptance. |
 | L29-016 | Error/stale/retry behavior | UNCHECKED | buildable | Inspect current implementation and close missing behavior, tests, mobile and source-of-truth verification. |
-| L29-017 | No cross-college/cross-role leakage | UNCHECKED | buildable | Inspect current implementation and close missing behavior, tests, mobile and source-of-truth verification. |
+| L29-017 | No cross-college/cross-role leakage | FIXED | buildable | Learner-specific and legacy shared mark-read single/bulk paths now use persisted college/role fences; DB success/denial and browser tests must run before family DONE. |
 | L29-018 | Mobile notification list | UNCHECKED | buildable | Inspect current implementation and close missing behavior, tests, mobile and source-of-truth verification. |
 
 ### L30 (43 rows)
@@ -825,3 +825,13 @@ legacy-to-vNext descriptions remain in the canonical linked ledger.
   acceptance remain open. Parent Assessment surface stays PARTIAL.
 - No `docs/tracker.json` task, global phase gate, or account matrix
   surface was changed to DONE.
+
+## 2026-10-14 positive-path evidence follow-up
+
+L29-017 is now FIXED at source level, not DONE: notification read and
+acknowledgement use a persisted active learner membership and originating
+college. Test fixtures create a user, membership, enrollment, application,
+scheduled round and notifications during the integration test. Positive-path
+and negative-path assertions were authored; executable PostgreSQL, TypeScript,
+ESLint and browser outcomes remain outstanding. The Learner Notifications
+matrix row remains PARTIAL and `docs/tracker.json` is unchanged.
