@@ -153,8 +153,9 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     expect(activity.type).toBe("CALL");
     expect((await listTpoLeads(tpo, SEED_IDS.collegeA))[0]?.manualStage)
       .toBe("CONTACTED");
+    // Lead creation itself is an immutable NOTE activity.
     expect(await listTpoLeadActivities(tpo, SEED_IDS.collegeA, lead.id))
-      .toHaveLength(1);
+      .toHaveLength(2);
 
     await markTpoLeadNotNow(tpo, lead.id, {
       collegeId: SEED_IDS.collegeA,
