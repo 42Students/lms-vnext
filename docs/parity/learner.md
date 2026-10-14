@@ -1050,3 +1050,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-005 PARTIAL:** Day mode includes a scoped IST-day timeline summary with real first/last scheduled times, distinct from week/month. Tests authored; execute PG, static and browser acceptance before closing.
+
+
+**2026-10-15 chat-5 L17-006 PARTIAL:** Previous/Next respect view-specific increments and disable when the resulting date is outside the validated 2000–2100 calendar range, avoiding an invalid URL reset to Today. The Today control remains explicit. Tests authored, browser/runtime acceptance pending.
