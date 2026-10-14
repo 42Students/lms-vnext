@@ -38,12 +38,12 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [ ] Empty and partial-content states.
 - [ ] File/video storage-dependent actions remain explicit BLOCKED items until live.
 
-### Students
-- [ ] Class roster fields match.
-- [ ] Search/filter behavior matches.
-- [ ] Learner detail/profile drill-in behavior is accounted for.
-- [ ] Empty/loading/error states.
-- [x] Roster cannot expose another class.
+### Students — DONE (current Section roster acceptance 2026-10-14)
+- [x] Class roster fields follow approved Faculty need-to-know access: public name, roll, and learner contact for the assigned teaching Section only; CSV never exports contact.
+- [x] Search/filter, bounded pagination, responsive roster and spreadsheet-safe filtered CSV behave correctly.
+- [x] Read-only student detail/profile drill-in works for the exact active Section, with real Course attendance and explicit unknown/unmarked/upcoming distinctions; private photo and unrelated academic records are intentionally out of scope.
+- [x] Empty/no-match, source-authored loading/error/retry and desktop/mobile responsive states are represented and the authenticated no-match browser journey is exercised.
+- [x] Roster and drill-in cannot expose another Section or college.
 
 ### Attendance
 
@@ -1165,3 +1165,31 @@ detail/return, no private contacts, URL search reset, no page errors, and mobile
 horizontal-scroll bounds. The independent two-job workflow was green.
 This is a scoped Contacts All closure, not a claim of complete legacy contact
 storage, unrestricted contact fields, all Faculty rows, or global CI readiness.
+
+## Faculty Course Students — DONE (2026-10-14)
+
+**Accepted scope:** active teaching-Section learner roster and exact current-roster
+Student detail/attendance. Registered roster readers check the current Faculty
+teaching assignment and college; inactive, foreign, unrostered or non-Faculty
+callers do not see the detail. Displayed learner email/phone is available only
+to a Faculty member actively teaching that learner's exact Section, under the
+2026-10-14 need-to-know decision. Exports deliberately contain name and roll
+only (formula-neutralized, bounded); no sensitive email/phone, private photo,
+identity, documents or additional learner records are exported or fabricated.
+
+**Executed acceptance on source SHA
+`5f7b8850fdf13ca7f1d081dfd926c432f9289cb8`:**
+[Faculty Course Students workflow 38609626729](https://github.com/42Students/lms-vnext/actions/runs/38609626729)
+completed both independent jobs successfully. PostgreSQL 17 ran
+`faculty-c4-reports-audit-contact.test.ts` **4/4 PASS** including the
+persisted current-Section roster, positive student summary/drill-in, null
+attendance without marks, unrostered/current actor denial and malformed
+college request rejection. Authenticated Chromium ran
+`faculty-course-students.spec.ts` **2/2 PASS** for desktop and mobile:
+exact teaching delivery, student search and no-match, link to student details,
+Course attendance and recorded unknown states, safe CSV contents, return
+navigation, zero browser page errors and mobile no-overflow check.
+Existing `faculty-courses.spec.ts` source assertion was corrected from an
+outdated email/phone CSV expectation to the approved privacy-safe format.
+This DONE is scoped to Course Students, not full Faculty, institution-wide
+learner PII access, private-file/photo features or all LMS CI tests.
