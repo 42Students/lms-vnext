@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   buildDiscussionFeed,
   countNewDiscussionMessages,
+  mergeDiscussionHistory,
 } from "./learner-course-discussion-model";
 
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
@@ -20,6 +21,7 @@ type DiscussionMessage = {
   messageText: string;
   pinned: boolean;
   createdAt: string;
+  createdAtExact: string;
   updatedAt: string;
   isMine: boolean;
 };
@@ -42,6 +44,12 @@ export function LearnerCourseDiscussion({
   moderate?: boolean;
 }) {
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
+  const [highlightedPinned, setHighlightedPinned] = useState<{
+    id: string;
+    messageText: string;
+    senderName: string | null;
+    createdAt: string;
+  } | null>(null);
   const [canPost, setCanPost] = useState(true);
   const [loading, setLoading] = useState(true);
   const [olderCursor, setOlderCursor] = useState<DiscussionCursor | null>(null);
@@ -61,12 +69,6 @@ export function LearnerCourseDiscussion({
   const previousMessages = useRef<DiscussionMessage[]>([]);
   const forceBottomOnNextLoad = useRef(false);
   const historyPrepend = useRef(false);
-  const mergeHistory = useCallback((previous: DiscussionMessage[], incoming: DiscussionMessage[]) => {
-    const rows = new Map(previous.map(row => [row.id, row]));
-    for (const row of incoming) rows.set(row.id, row);
-    return [...rows.values()].sort((a, b) =>
-      a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
-  }, []);
 
   const load = useCallback(async (silent = false) => {
     if (!silent && !loadedOnce.current) setLoading(true);
@@ -78,8 +80,9 @@ export function LearnerCourseDiscussion({
       if (!response.ok) throw new Error("discussion_load_failed");
       const payload = await response.json();
       const incoming = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
-      setMessages((previous) => loadedOnce.current ? mergeHistory(previous, incoming) : incoming);
+      setMessages((previous) => loadedOnce.current ? mergeDiscussionHistory(previous, incoming) : incoming);
       if (!loadedOnce.current) setOlderCursor(payload.nextCursor ?? null);
+      setHighlightedPinned(payload.highlightedPinned ?? null);
       setCanPost(payload.canPost !== false);
       setLoadError(false);
       loadedOnce.current = true;
@@ -88,7 +91,7 @@ export function LearnerCourseDiscussion({
     } finally {
       if (!silent) setLoading(false);
     }
-  }, [deliveryId, mergeHistory]);
+  }, [deliveryId]);
 
   const loadOlder = useCallback(async () => {
     if (!olderCursor || loadingOlder) return;
@@ -107,7 +110,7 @@ export function LearnerCourseDiscussion({
       const result = await response.json();
       const previousHeight = scrollRef.current?.scrollHeight ?? 0;
       historyPrepend.current = true;
-      setMessages((previous) => mergeHistory(previous, Array.isArray(result.messages) ? result.messages : []));
+      setMessages((previous) => mergeDiscussionHistory(previous, Array.isArray(result.messages) ? result.messages : []));
       setOlderCursor(result.nextCursor ?? null);
       window.requestAnimationFrame(() => {
         const scroller = scrollRef.current;
@@ -118,7 +121,7 @@ export function LearnerCourseDiscussion({
     } finally {
       setLoadingOlder(false);
     }
-  }, [deliveryId, loadingOlder, mergeHistory, olderCursor]);
+  }, [deliveryId, loadingOlder, olderCursor]);
 
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
@@ -138,7 +141,7 @@ export function LearnerCourseDiscussion({
     () => messages.filter((item) => item.pinned),
     [messages],
   );
-  const pinned = pinnedMessages[0] ?? null;
+  const pinned = highlightedPinned ?? pinnedMessages[0] ?? null;
   const feed = useMemo(
     () => buildDiscussionFeed(messages),
     [messages],
@@ -239,6 +242,8 @@ export function LearnerCourseDiscussion({
       );
       if (!response.ok) throw new Error("discussion_delete_failed");
       setMessages((current) => current.filter((item) => item.id !== messageId));
+      setHighlightedPinned((current) => current?.id === messageId ? null : current);
+      await load(true);
     } catch {
       setLoadError(true);
     } finally {
@@ -274,9 +279,8 @@ export function LearnerCourseDiscussion({
               : item,
           ),
         );
-      } else {
-        await load(true);
       }
+      await load(true);
     } catch {
       setLoadError(true);
     } finally {
@@ -301,11 +305,6 @@ export function LearnerCourseDiscussion({
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               Pinned
             </p>
-            {pinnedMessages.length > 1 ? (
-              <span className="text-xs font-semibold text-muted-foreground">
-                1 of {pinnedMessages.length} pinned messages
-              </span>
-            ) : null}
           </div>
           <p className="mt-2 text-sm font-semibold text-foreground">
             {pinned.messageText}

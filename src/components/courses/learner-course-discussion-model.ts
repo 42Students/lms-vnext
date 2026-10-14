@@ -98,3 +98,25 @@ export function countNewDiscussionMessages<T extends { id: string }>(
     0,
   );
 }
+
+/** Server sends the full six-digit PostgreSQL timestamp alongside the regular
+ * ISO date. Preserve database keyset ordering when combining old pages with
+ * live polling. Date.parse() discards sub-millisecond precision. */
+export type DiscussionHistoryItem = {
+  id: string;
+  createdAtExact: string;
+};
+
+export function mergeDiscussionHistory<T extends DiscussionHistoryItem>(
+  previous: readonly T[],
+  incoming: readonly T[],
+): T[] {
+  const byId = new Map(previous.map((message) => [message.id, message]));
+  for (const message of incoming) {
+    byId.set(message.id, message);
+  }
+  return [...byId.values()].sort((a, b) =>
+    a.createdAtExact.localeCompare(b.createdAtExact) ||
+    a.id.localeCompare(b.id),
+  );
+}
