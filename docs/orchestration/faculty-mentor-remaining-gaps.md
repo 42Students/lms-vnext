@@ -272,3 +272,18 @@ empty or reversed windows are rejected before confirmation, and success/error
 messages are accessible. Server-side permission/scope/version/audit and the
 previously authored PostgreSQL schedule test remain unchanged. Runtime/browser
 evidence and final conflict-policy acceptance remain open.
+
+## 2026-10-14 A — JavaScript/PostgreSQL optimistic token precision audit (PARTIAL)
+
+Checked all `faculty-*.ts` under courses and attendance and all `mentor-*.ts`
+under projects for direct `eq(table.updatedAt, Date)` predicates: **none found**.
+Their existing row-lock + `getTime()` millisecond checks do not compare a
+microsecond-precision SQL column with an unrepresentable JavaScript Date.
+Hardened the Mentor task-details UPDATE with a second normalized, server-side
+`date_trunc('milliseconds', updated_at) = expectedIso::timestamptz` predicate
+to defend the read/write boundary. A disposable PostgreSQL test inserts its
+own temporary row with SQL `DEFAULT now()` and checks first write success,
+stale replay denial, and unchanged record. Existing Mentor task-details
+service-level PG success/foreign/stale coverage remains in place.
+No independent PostgreSQL execution or tsc/eslint evidence in this chat;
+do not promote any parity row to DONE.
