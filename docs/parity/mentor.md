@@ -874,3 +874,6 @@ non-task risk evidence visible and honest. This filter does not invent risk
 scores or hide the existence of recorded lower-priority tasks. Pure and
 owned-PostgreSQL fixture checks authored; **PARTIAL:** actual PG/tsc/browser
 and full legacy readiness behavior remain unverified.
+
+## 2026-10-15 chat-11 AB — Mentor final-review queue ordering (PARTIAL)
+Oldest/newest persisted submission ordering and URL-preserved pagination added to current assigned-project review alerts. The established role, college and project gate remains; strict query validation and pure unit tests are authored. CLI/PG/browser and legacy acceptance remain open.

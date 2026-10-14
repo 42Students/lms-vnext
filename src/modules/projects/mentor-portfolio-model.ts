@@ -7,6 +7,7 @@ const paging = {
 };
 export const mentorReviewQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
+  order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object(paging).strict();
@@ -24,12 +25,15 @@ export function pageMentorPortfolio<T>(
 }
 export function selectMentorReviewQueue(
   alerts: readonly MentorProjectAttention[], search: string,
+  order: "NEWEST"|"OLDEST" = "NEWEST",
 ) {
   const term = search.trim().toLowerCase();
   return alerts.filter(a => a.kind === "REVIEW")
     .filter(a => !term ||
       [a.title, a.description].some(v => v.toLowerCase().includes(term)))
-    .sort((a,b) => b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key));
+    .sort((a,b) => (order === "OLDEST"
+      ? a.occurredAt.localeCompare(b.occurredAt)
+      : b.occurredAt.localeCompare(a.occurredAt)) || a.key.localeCompare(b.key));
 }
 /** Raw activity summaries/metadata may contain personal details; emit fixed labels. */
 export function safeMentorProjectEventLabel(eventType: string): string {
@@ -56,10 +60,11 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number },
+  query: { search?: string; page?: number; pageSize?: number; order?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
+  if (area === "reviews" && query.order && query.order !== "NEWEST") params.set("order", query.order);
   if (query.page && query.page > 1) params.set("page", String(query.page));
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
   return "/mentor/" + area + (params.size ? "?" + params.toString() : "");

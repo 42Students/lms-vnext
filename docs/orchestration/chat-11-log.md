@@ -172,3 +172,6 @@
 
 ## AA — Recorded task-priority risk/readiness drill-ins
 - Strict task priority selector, stable non-task facts and tests authored; PARTIAL.
+
+## Round 3 AB — Delivery review ordering (PARTIAL)
+- Oldest-first triage over live pending delivery alerts, with strict selector and pure tests; execution not verified.
