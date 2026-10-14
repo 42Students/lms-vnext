@@ -796,3 +796,19 @@ and own-project PostgreSQL fixtures cover stored draft+review evidence,
 filter accuracy, forged selector, wrong-role, disabled and foreign denials.
 Read-only: no new mutation stale token applies. **PARTIAL:** independent
 PG/tsc/eslint/browser execution and legacy feedback-history parity remain.
+
+## 2026-10-14 chat-11 R — scoped Mentor portfolio report CSV (PARTIAL)
+
+The assigned-project /mentor/reports view now exports up to 100 matching
+current same-college Mentor project records using its strict status, attention
+and title filters. The UTF-8 CSV formula-neutralizes potentially unsafe project
+titles, includes only registered project ID/title/status, current primary-
+Mentor flag, safe attention category labels and IST update time, and reports
+omitted matches both in the file and HTTP header. No learner contacts,
+unaudited student data, inferred scores, or raw alert descriptions are sent.
+The existing active Mentor role, projects.read, persisted assignment and
+module guards are reused; no new write path, new permission or external send.
+Unit-model cap/neutralization tests and an own-project PostgreSQL fixture
+cover persisted positive selection and wrong-role/disabled/foreign/forged
+denial. Read-only, so no stale write token applies. **PARTIAL:** real typecheck,
+lint, PostgreSQL, browser download and legacy reports acceptance remain open.

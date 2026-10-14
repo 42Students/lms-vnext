@@ -140,3 +140,10 @@
 - Added 200-row formula-neutralized metadata-only CSV, no raw review text.
 - Own-project PG and pure model tests authored, not run.
 - PARTIAL: real PostgreSQL, lint/typecheck and mobile/browser acceptance pending.
+
+## R — Mentor assigned-project reports CSV (2026-10-14)
+- Added capped, formula-neutralized 100-project portfolio report CSV via
+  existing strict Mentor assignment/status/attention filters.
+- No learner contact or raw descriptions, no new mutation or external send.
+- Unit/PG own-project positive and denial tests authored but not run.
+- PARTIAL pending actual CI/PG and responsive browser proof.

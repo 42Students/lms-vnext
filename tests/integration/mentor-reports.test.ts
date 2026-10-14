@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
+import {mentorReportsCsv} from "@/modules/projects/mentor-reports-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const root:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"root",
@@ -84,6 +85,14 @@ describe("Mentor assigned-project reports — migrated PostgreSQL",()=>{
     })]);
     expect(report.statusCounts.PLANNED).toBeGreaterThanOrEqual(1);
     expect(report.projectCount).toBeGreaterThanOrEqual(1);
+    expect(report.exportItems).toEqual([expect.objectContaining({
+      id:project.id,title:project.title,status:"PLANNED",
+    })]);
+    const csv=mentorReportsCsv(report.exportItems,report.exportOmitted);
+    expect(csv).toContain(project.title);
+    expect(csv).toContain("IST");
+    expect(csv).not.toContain("learner_email");
+    expect(csv).not.toContain("phone");
     const noMatch=await getMentorReports(mentor,{...query,status:"ARCHIVED"});
     expect(noMatch.items.some(item=>item.id===project.id)).toBe(false);
     await expect(getMentorReports(learner,query)).rejects.toBeDefined();

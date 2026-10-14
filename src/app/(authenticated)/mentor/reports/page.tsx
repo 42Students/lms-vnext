@@ -96,6 +96,19 @@ export default async function MentorReportsPage({searchParams}:{
         </button>
         <Link href="/mentor/reports" className="text-sm font-semibold text-primary-text underline">Clear</Link>
       </form>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/mentor/reports/export?"+
+          new URLSearchParams({
+            status:data.query.status,attention:data.query.attention,
+            search:data.query.search,
+          }).toString()} download
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          Export filtered project report CSV (max 100)
+        </Link>
+        {data.exportOmitted>0?<span role="status">
+          CSV omits {data.exportOmitted} matching assigned projects.
+        </span>:null}
+      </div>
       <p className="text-sm text-body">{data.total} projects match these filters.</p>
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
