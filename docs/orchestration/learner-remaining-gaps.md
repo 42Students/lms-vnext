@@ -907,3 +907,5 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L14-002: application filters use URL history and bounded parsing with own-membership-scoped source data. Skipped L1-021 (no canonical image association), L13-016 (private storage/upload approval), L30-034..043 (unmigrated verification/review document state). Fresh-PG and browser acceptance pending.
 
 2026-10-14 L12-022: mobile Drives filters collapse with active-filter count and remain accessible while desktop controls stay shown. Persisted own-college read and pure test authored; browser and disposable-DB execution outstanding. Skipped L13-016: private resume-object upload policy/storage approval absent.
+
+2026-10-14 L14-024: mobile applications filters reveal active URL selections; cards and drawer links use full-width accessible actions. No external sends/storage. Own learner PG and unit tests authored, browser/runtime acceptance pending.
