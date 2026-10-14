@@ -280,6 +280,9 @@ Legacy contract:
 ## Page: Attendance
 **Legacy:** `/college-admin/attendance`
 
+**Department attendance export PARTIAL:** `/college/attendance/departments` now exposes the active college correction policy in read-only form and a server-scoped CSV export of departmental marked-session and explicit status-record counts; formula-like cells are neutralized. These metrics do not imply learner-level attendance percentages. Exact legacy CSV, browser and executed PostgreSQL checks remain open.
+
+
 **Department-summary read-first PARTIAL (2026-10-14):** `/college/attendance/departments` reports marked scheduled-session counts and explicit attendance status rows by the authenticated college department, using registered session/event/record tables. It cannot derive true attendance percentages, because PRESENT can be implicit and eligible learner/session denominators are not computed. Search, pagination, loading/error and honest no-data states are included. Exact legacy reporting, database runtime and browser acceptance remain open.
 
 Legacy contract audited:
