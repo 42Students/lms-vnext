@@ -1,8 +1,21 @@
 import {describe,it,expect} from "vitest";
-import {collegeGroupDetailWriteSchema,collegeGroupDetailActionLabel}
+import {collegeGroupDetailWriteSchema,collegeGroupDetailActionLabel,collegeWaitlistPromotionBlocker}
   from "@/modules/groups/college-group-detail-write-model";
 const a="10000000-0000-4000-8000-000000000001";
 describe("College Group waitlist and rule writes",()=>{
+  it("preserves FIFO, capacity, locks and active learner eligibility",()=>{
+    const ready={accountStatus:"ACTIVE",membershipStatus:"ACTIVE",state:"WAITLISTED",
+      memberType:"LEARNER",locked:false,memberVersion:1,expectedMemberVersion:1,
+      firstInQueue:true,capacity:1,activeCount:0};
+    expect(collegeWaitlistPromotionBlocker(ready)).toBeNull();
+    for(const patch of [{accountStatus:"DISABLED"},{membershipStatus:"SUSPENDED"},
+      {state:"REMOVED"},{memberType:"MENTOR"},{locked:true}])
+      expect(collegeWaitlistPromotionBlocker({...ready,...patch})).toBe("MEMBER_NOT_FOUND");
+    expect(collegeWaitlistPromotionBlocker({...ready,expectedMemberVersion:0})).toBe("MEMBER_STALE");
+    expect(collegeWaitlistPromotionBlocker({...ready,firstInQueue:false})).toBe("WAITLIST_OUT_OF_ORDER");
+    expect(collegeWaitlistPromotionBlocker({...ready,activeCount:1})).toBe("GROUP_CAPACITY_FULL");
+    expect(collegeWaitlistPromotionBlocker({...ready,capacity:null,activeCount:1000})).toBeNull();
+  });
   it("requires both group and member optimistic versions for promotion",()=>{
     const valid={action:"PROMOTE_WAITLIST",memberId:a,expectedGroupVersion:1,
       expectedMemberVersion:0,confirm:true};

@@ -16,10 +16,12 @@ const tpo: RequestContext = {
     organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["TPO"] },
 };
 const addedTpoRoleIds:string[]=[];
-const ids: { company?: string; relationship?: string; job?: string } = {};
+const ids: { company?: string; relationship?: string; job?: string;search?:string } = {};
+const extraJobs:string[]=[];
 async function fixture() {
   if (!pool) throw new Error("Isolated PostgreSQL required");
   const token = randomUUID();
+  ids.search="Lifecycle list "+token;
   const company = (await pool.query<{ id: string }>(
     "INSERT INTO placement_companies(name,created_by_user_id) VALUES($1,$2) RETURNING id",
     ["Lifecycle list " + token, SEED_IDS.facultyUser])).rows[0]!;
@@ -39,6 +41,7 @@ async function fixture() {
 async function cleanup() {
   if (!pool) return;
   if (ids.job) await pool.query("DELETE FROM placement_jobs WHERE id=$1", [ids.job]);
+  for(const id of extraJobs)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[id]);
   if (ids.relationship) await pool.query("DELETE FROM placement_company_relationships WHERE id=$1", [ids.relationship]);
   if (ids.company) await pool.query("DELETE FROM placement_companies WHERE id=$1", [ids.company]);
 }
@@ -60,9 +63,22 @@ afterAll(async()=>{
  await closeDatabaseConnection();
 });
 it("lists a real draft and fences off foreign colleges and wrong roles", async () => {
+    if(!pool)throw Error("PG required");
     const id = await fixture();
-    const own = await getTpoDriveLifecycleList(tpo, { seasonId: SEED_IDS.placementSeasonA, view: "DRAFT" });
+    const own = await getTpoDriveLifecycleList(tpo, { seasonId: SEED_IDS.placementSeasonA, view: "DRAFT",search:ids.search });
     expect(own.rows.some((row) => row.id === id)).toBe(true);
+    const inserted=await pool.query<{id:string}>(
+     "INSERT INTO placement_jobs(college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,application_mode,status,created_by_user_id) SELECT $1,$2,$3,$4::text||' page '||series::text,'Pagination fixture','FULL_TIME','ONSITE','INTERNAL','DRAFT',$5 FROM generate_series(1,25) AS series RETURNING id",
+     [SEED_IDS.collegeA,SEED_IDS.placementSeasonA,ids.relationship,ids.search,SEED_IDS.facultyUser]);
+    extraJobs.push(...inserted.rows.map(row=>row.id));
+    const filters={seasonId:SEED_IDS.placementSeasonA,view:"DRAFT",search:ids.search};
+    const first=await getTpoDriveLifecycleList(tpo,{...filters,page:1});
+    const second=await getTpoDriveLifecycleList(tpo,{...filters,page:2});
+    expect(first.rows).toHaveLength(25);expect(second.rows).toHaveLength(1);
+    expect(first.counts.drafts).toBe(26);expect(second.totalMatching).toBe(26);
+    expect(new Set([...first.rows,...second.rows].map(row=>row.id)).size).toBe(26);
+    expect((await getTpoDriveLifecycleList(tpo,{...filters,page:1000})).page).toBe(2);
+    expect((await getTpoDriveLifecycleList(tpo,{...filters,search:"%"})).rows).toHaveLength(0);
     const foreign: RequestContext = { ...tpo, membership: { ...tpo.membership!,
       id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB } };
     await expect(getTpoDriveLifecycleList(foreign, { seasonId: SEED_IDS.placementSeasonA }))

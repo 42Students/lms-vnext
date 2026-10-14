@@ -78,7 +78,9 @@ describe.skipIf(!enabled)("TPO close consequence preview isolated PostgreSQL",()
    .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
   const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
   await expect(closeTpoDriveWithPreview(wrong,jobId,write)).rejects.toBeInstanceOf(AuthorizationError);
-  const saved=await closeTpoDriveWithPreview(tpo,jobId,write);
+  const offsetToken=new Date(new Date(write.expectedUpdatedAt).getTime()+19800000)
+   .toISOString().replace("Z","+05:30");
+  const saved=await closeTpoDriveWithPreview(tpo,jobId,{...write,expectedUpdatedAt:offsetToken});
   expect(saved.status).toBe("CLOSED");
   await expect(closeTpoDriveWithPreview(tpo,jobId,write))
    .rejects.toMatchObject({code:"PLACEMENT_JOB_STALE"});

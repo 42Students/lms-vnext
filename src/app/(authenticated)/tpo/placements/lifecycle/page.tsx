@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-type Search = { seasonId?: string | string[]; view?: string | string[] };
+type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -14,7 +14,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
+    ...(first(params.search)?{search:first(params.search)}:{}),
+    ...(first(params.page)?{page:first(params.page)}:{}),
   });
+  const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
+   ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
+  function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
+   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,page,
+  }};}
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
       description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
@@ -35,12 +42,15 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </select>
       </label>
+      <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company or drive
+       <input name="search" defaultValue={data.search} maxLength={100}
+        className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
     </form>
     {!data.season ? <EmptyState title="No season available" description="Create a season before reading its drive lifecycle." /> : <>
       <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {([["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
-          ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const).map(([name,n]) =>
+        {metrics.map(([name,n]) =>
           <div key={name} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs text-body">{name}</p>
             <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{n}</p>
@@ -48,7 +58,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </section>
       <p className="text-sm text-body">Requests are not included: this view counts persisted job lifecycle states only.
         A submitted request is not the same as a draft.</p>
-      {data.truncated ? <p role="status" className="text-sm text-body">First 500 jobs shown. Totals may be incomplete.</p> : null}
+      <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
+       Counts cover the selected season and search across every page.</p>
       {data.rows.length === 0 ?
         <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." /> :
         <section className="grid gap-3" aria-label="Drives">
@@ -58,10 +69,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <p className="text-sm text-body">{job.status} · {job.employmentType} · {job.workMode}</p>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
-                  : "Not recorded"}</p></div>
+                  +" IST": "Not recorded"}</p></div>
               <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open drive</Link>
             </div></article>)}
         </section>}
+      <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
+       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
+       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link>:null}
+      </nav>
     </>}
   </div>;
 }
