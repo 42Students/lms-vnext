@@ -18,7 +18,7 @@ import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-aut
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {createLessonContent,transitionLessonContent} from "@/modules/courses/lesson-content-service";
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
-import {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
+import {getFacultyAssignmentReport,getFacultyQuizReport} from "@/modules/courses/faculty-assessment-report-service";
 import {getFacultyReportCsvForDownload} from "@/modules/courses/faculty-report-csv-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL is mandatory.");
@@ -233,6 +233,57 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    from activity_events where subject_id=$1::text
    and event_type='courses.assignment.updated'`,[created.id]);
   expect(history.rows[0]?.n).toBe("1");
+ });
+ it("serves real Section Quiz question accuracy and privacy-safe filtered CSV",async()=>{
+   const {delivery,lesson}=await fixture();
+   const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+    action:"CREATE",lessonId:lesson.id,sequence:6,title:"Report Quiz "+tag,
+    description:"Report positive PostgreSQL witness",dueAt:null,maxAttempts:2,
+    questions:[{type:"SINGLE_CHOICE",prompt:"Which structure is FIFO?",points:5,sequence:0,
+      options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}]}],
+    confirmed:true,
+   });
+   const published=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+    action:"PUBLISH",quizId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),confirmed:true,
+   });
+   expect(published.status).toBe("PUBLISHED");
+   const report=await getFacultyQuizReport(faculty,created.id,delivery.id);
+   expect(report.quiz).toMatchObject({
+    id:created.id,deliveryId:delivery.id,title:"Report Quiz "+tag,
+   });
+   expect(report.metrics).toMatchObject({
+    totalAttempts:0,submittedLearners:0,eligibleLearners:0,
+    notAttempted:0,questionCount:1,averagePercent:null,
+   });
+   expect(report.questions).toEqual([expect.objectContaining({
+    prompt:"Which structure is FIFO?",answeredCount:0,correctCount:0,accuracyPercent:null,
+   })]);
+   const all=await getFacultyReportCsvForDownload(faculty,{
+    kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,filter:"ALL",
+   });
+   const attempted=await getFacultyReportCsvForDownload(faculty,{
+    kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,filter:"ATTEMPTED",
+   });
+   const missed=await getFacultyReportCsvForDownload(faculty,{
+    kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,filter:"NOT_ATTEMPTED",
+   });
+   expect(all.filename.startsWith("faculty-quiz-report-")).toBe(true);
+   expect(all.csv).toContain('"Learner","Response","Score","Percent","Submitted at (IST)","Details"');
+   expect(all.csv).not.toContain("@example.");
+   expect(all.omittedRows).toBe(0);
+   expect(attempted.csv).toBe(all.csv);
+   expect(missed.csv).toBe(all.csv);
+   await expect(getFacultyQuizReport(learner,created.id,delivery.id)).rejects.toBeDefined();
+   await expect(getFacultyQuizReport(faculty,created.id,SEED_IDS.collegeB)).rejects.toBeDefined();
+   await expect(getFacultyReportCsvForDownload(learner,{
+    kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,
+   })).rejects.toBeDefined();
+   await expect(getFacultyReportCsvForDownload(faculty,{
+    kind:"quiz",assessmentId:created.id,deliveryId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
+   await expect(getFacultyReportCsvForDownload(faculty,{
+    kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
  });
  it("rejects SQL microsecond-stale Quiz question replacement with one audited edit",async()=>{
    const {delivery,lesson}=await fixture();
