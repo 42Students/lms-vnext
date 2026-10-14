@@ -31,6 +31,7 @@ export type LearnerPlacementJobItem = {
     applicationMode: string;
     externalApplicationUrl: string | null;
     applicationDeadline: string | null;
+    publishedAt?: string | null;
   };
   roleOption: {
     id: string;
