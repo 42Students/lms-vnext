@@ -43,6 +43,7 @@ export async function getCollegeHallAvailability(context: RequestContext, raw: u
     title: sectionScheduleEvents.title,
     startsAt: sectionScheduleEvents.startsAt,
     endsAt: sectionScheduleEvents.endsAt,
+    updatedAt: sectionScheduleEvents.updatedAt,
     sectionId: sections.id,
     sectionName: sections.name,
     sectionCapacity: sections.capacity,
