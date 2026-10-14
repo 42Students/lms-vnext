@@ -122,6 +122,15 @@ export default async function CollegeActivityPage({
           <input name="to" type="date" defaultValue={data.query.to ?? ""}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Events per page
+          <select name="pageSize" defaultValue={data.query.pageSize ?? "25"}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="10">10 events</option>
+            <option value="25">25 events</option>
+            <option value="50">50 events</option>
+          </select>
+        </label>
         <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Apply filters
@@ -167,7 +176,7 @@ export default async function CollegeActivityPage({
       </table>}
     </section>
     <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
-      <p className="text-muted-foreground">Up to 25 events per page</p>
+      <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
         className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
         Older activity
