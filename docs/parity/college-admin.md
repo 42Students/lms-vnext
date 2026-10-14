@@ -472,6 +472,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Student Groups List
 **Legacy:** `/college-admin/student-groups`
 
+**Write-side PARTIAL:** `/college/groups` now provides Study Group create/edit/activate/close/archive on migrated `lms_groups`, with same-college duplicate-name, version and member/capacity guards. All changes use persisted actor rechecks and transactional `activity_events` audits. Group types with additional semantics (PROJECT_TEAM/ELECTIVE) remain read-only here. Complete legacy dynamic rules, CSV, member moderation and browser acceptance remain open.
+
 Audited contract:
 - search toolbar;
 - Kind filter;
