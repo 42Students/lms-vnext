@@ -6,6 +6,7 @@ import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
+import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -185,6 +186,7 @@ export function LearnerProfileWorkspace(props: {
   );
   const coverage=learnerProfileCareerCoverage(checklist);
   const percent=coverage.percentage??0;
+  const authoredPublicationsAwards=learnerProfilePublicationsAwards(document);
 
   // Preserve unsaved local edits; adopt a new server snapshot only when
   // the on-screen document was still equal to the previous saved snapshot.
@@ -496,6 +498,30 @@ export function LearnerProfileWorkspace(props: {
         </Card>
         <Card id="hobbies" title="Hobbies">
           {document.hobbies.length ? <div className="flex flex-wrap gap-2">{document.hobbies.map((hobby) => <StatusBadge key={hobby}>{hobby}</StatusBadge>)}</div> : <p className="m-0 text-sm text-muted-foreground">No hobbies added yet.</p>}
+        </Card>
+        <Card title="Publications and awards (saved entries)">
+          <p className="text-xs leading-5 text-muted-foreground">
+            These are learner-entered profile records, not verified publications or awards.
+            Structured publication/award verification is not available here.
+          </p>
+          <div className="mt-3 space-y-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Achievements / possible awards</p>
+              {authoredPublicationsAwards.achievements.length ?
+                <ul className="mt-1 space-y-1 text-sm text-body">
+                  {authoredPublicationsAwards.achievements.slice(0,4).map(item=><li key={item.id} className="break-words">{item.title}{item.year?" · "+item.year:""}</li>)}
+                </ul> : <p className="mt-1 text-sm text-muted-foreground">No recorded achievements.</p>}
+              <Link href="/learn/profile?section=achievements" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review achievements</Link>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Publication-labelled additional information</p>
+              {authoredPublicationsAwards.publications.length ?
+                <ul className="mt-1 space-y-1 text-sm text-body">
+                  {authoredPublicationsAwards.publications.slice(0,4).map(item=><li key={item.id} className="break-words">{item.value}</li>)}
+                </ul> : <p className="mt-1 text-sm text-muted-foreground">No publication-labelled entries recorded.</p>}
+              <Link href="/learn/profile?section=metadata" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review additional information</Link>
+            </div>
+          </div>
         </Card>
       </div>
 
