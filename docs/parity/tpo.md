@@ -337,6 +337,8 @@ Legacy:
 ### Tab: Rounds
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
+
+**W60 D — PARTIAL / blocked write:** A TPO-only candidate round schedule view at /tpo/placements/jobs/[jobId]/candidate-schedule shows only persisted round-level times/venues and current progression-eligible applicants, with the existing 90-day venue-collision warnings and explicit unknown/incomplete states. Candidate-specific panel assignments, interviewer IDs and individual time slots have no migrated table, so no assignment POST or fictional candidate booking is introduced. Existing round-level scheduling can still be managed from the registered calendar round writer; individual-slot persistence, concurrency exclusion, actor audit and owner-approved conflict semantics remain missing.
 - [ ] round kind/date/time/mode/location fields match.
 - [ ] auto-apply/results state matches.
 - [ ] conflict/blocker states match.
@@ -351,6 +353,8 @@ Legacy:
 **W49 A — PARTIAL:** TPO Offers & Joining now includes a confirmed, all-or-nothing administrative lifecycle recorder for up to 200 offer IDs. Registered offer statuses remain ISSUED/ACCEPTED/DECLINED/WITHDRAWN; EXTEND changes only expiry, and JOINED records an accepted offer's PENDING joining outcome. The pure action/transition model and row-locked transaction enforce expected status, expiry, terminal joining constraints, tenant scope, mandatory evidence/reason, and immutable actor-attributed offer/joining history and activity events. TPO-recorded ACCEPTED/DECLINED are evidence-backed administrative entries, not learner self-actions; exact permission/product consent policy, positive PostgreSQL/browser certification and parity remain open.
 - [ ] verify/selection actions match.
 - [ ] release/response/joining data matches.
+
+**W60 B — PARTIAL / blocked write:** A TPO-only offer letter evidence view at /tpo/placements/jobs/[jobId]/letters displays actual persisted offer issue/response states and explicitly labels letter issued/acknowledged as unavailable. P8 has no offer-letter documents, delivery/acknowledgement timestamps, approved transition history or proof of receipt, so the proposed bulk 200-row letter-issued/acknowledged mutation is not implementable safely without a registered table and owner-approved transition rules. This does not downgrade existing offer lifecycle DONE checks or claim offer response equals letter acknowledgement.
 - [ ] candidate detail deep link/drawer matches.
 
 **W45 PARTIAL:** Each TPO drive workspace now links to /tpo/placements/jobs/[jobId]/joining, a college-scoped read of persisted ACCEPTED offer joining states (PENDING/unrecorded, JOINED, DEFERRED, DID_NOT_JOIN) with per-offer confirmable updates through the existing same-origin PUT joining API, strict existing joining-outcome Zod rules, and correction-reason/history enforcement. Issued/declined/withdrawn offers do not show update forms; unrecorded outcomes are not called confirmed joins. This is not an offer letter/document tracker. Bulk joining updates, audit of sensitive reasons, positive DB/browser testing and exact legacy joining workflow remain open.
@@ -380,6 +384,8 @@ Legacy includes:
 - [ ] Extend Deadline modal validation matches.
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.
+
+**W60 C — PARTIAL:** A signed-in TPO drive close-out page at /tpo/placements/jobs/[jobId]/closeout reports persisted job-scoped distinct applicants, currently submitted and shortlisted learners, distinct offered/accepted/joined learners and offer versions, with the same pure evaluator driving a formula-neutralized CSV. Independent selected count remains null because PASS results and offers are not canonical final selection evidence; absent external/historical facts are not fabricated. Final closed-drive snapshot, selection owner semantics, positive PostgreSQL/browser proof and exact legacy reconciliation remain open.
 
 **W49 B — PARTIAL:** The TPO drive workspace now has a separate confirmed publish/close/reopen control using only registered season, company-relationship, active role-option, evaluative-round, eligibility-policy, applied result and accepted-offer records. Publish/reopen refuse unready or expired-deadline drives; reopen also refuses any applied round result or accepted offer. CLOSE remains a distinct step from completing rounds. Status and blockers are rechecked under a job row lock with an optimistic expected status, and every successful change appends a college-scoped actor audit. The existing generic non-TPO lifecycle endpoint is preserved; uniform legacy behavior, browser/positive PostgreSQL execution and immutable historical snapshots remain open.
 - [ ] Messages drawer matches recruiter conversation workflow.

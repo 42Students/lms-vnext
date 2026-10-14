@@ -62,8 +62,8 @@ export function TpoCompanyPersonEditor({
           : "Contact was not saved; verify access and details before retrying.");
         return;
       }
-      setMessage("Contact saved. Refreshing current records.");
       select("NEW");
+      setMessage("Contact saved. Refreshing current records.");
       router.refresh();
     } catch {
       setMessage("Network error: refresh before retrying to avoid duplicate changes.");
