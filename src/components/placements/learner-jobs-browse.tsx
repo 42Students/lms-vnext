@@ -206,7 +206,7 @@ export function LearnerJobsBrowse({
           </button>
         </div>
       ) : (
-        <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} />
+        <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} />
       )}
 
       {totalPages > 1 ? (

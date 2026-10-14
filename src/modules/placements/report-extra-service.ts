@@ -17,6 +17,8 @@ import {
   placementOfferStatusHistory,
   placementOffers,
   placementRoundResults,
+  placementTpoLeadActivities,
+  placementTpoFollowups,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -33,6 +35,7 @@ import {
   type PlacementReportQuery,
 } from "./report-service";
 import { listTpoLeads } from "./tpo-crm-service";
+import { summarizeTpoLeadHealth } from "./tpo-lead-health-model";
 
 /**
  * Each selected event is joined back to its owning job
@@ -366,8 +369,30 @@ export async function getPlacementLeadsReport(
   // Existing CRM read service checks placements.manage
   // against the college and returns an explicit safe view.
   const leads = await listTpoLeads(context, collegeId);
+  const db = getDb();
+  // Only real contact types count as outreach; NOTE/creation/SYSTEM do not.
+  const [contacts, openSteps] = await Promise.all([
+    db.select({ leadId: placementTpoLeadActivities.leadId,
+      at: placementTpoLeadActivities.createdAt })
+      .from(placementTpoLeadActivities)
+      .where(and(eq(placementTpoLeadActivities.collegeId, collegeId),
+        inArray(placementTpoLeadActivities.type, ["CALL", "EMAIL", "WHATSAPP", "MEETING"]))),
+    db.select({ leadId: placementTpoFollowups.leadId, dueAt: placementTpoFollowups.dueAt })
+      .from(placementTpoFollowups)
+      .where(and(eq(placementTpoFollowups.collegeId, collegeId),
+        isNull(placementTpoFollowups.doneAt))),
+  ]);
+  const health = summarizeTpoLeadHealth(
+    leads.map((lead) => ({ id: lead.id, manualStage: lead.manualStage,
+      ownerMembershipId: lead.ownerMembershipId, recruiterUserId: lead.recruiterUserId,
+      unsubscribedAt: lead.unsubscribedAt?.toISOString() ?? null })),
+    contacts.map((item) => ({ leadId: item.leadId, at: item.at.toISOString() })),
+    openSteps.map((item) => ({ leadId: item.leadId, dueAt: item.dueAt.toISOString() })),
+    new Date().toISOString(),
+  );
 
   return {
+    health,
     collegeId,
     leads: summarizePlacementLeads(
       leads.map((lead) => ({

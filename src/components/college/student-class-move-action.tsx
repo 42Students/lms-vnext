@@ -22,6 +22,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
   function load() {
     setOpen(true);
     setLoaded(null);
+    setTargetId("");
     setError("");
     start(async () => {
       try {
@@ -67,6 +68,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
     </button>
     {open ? <div className="mt-2 min-w-56 rounded-md border border-border bg-surface p-3">
       <p className="mb-2 text-xs text-body">Same batch and academic period only</p>
+      {loaded && loaded.options.every(item => item.id === loaded.current.sectionId) ?
+        <p className="mb-2 text-xs text-muted-foreground">No other eligible class is available in the current batch and period.</p> : null}
       {loaded ? <select aria-label={"Destination class for " + name}
         value={targetId} onChange={e => setTargetId(e.target.value)}
         className="w-full rounded-md border border-border bg-surface p-2 text-sm text-foreground">
