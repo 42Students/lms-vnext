@@ -485,7 +485,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L16-001 | Route is materialized, not placeholder | InterviewsContent | interviews page | FIXED |
 | L16-002 | Upcoming / Past views | InterviewsContent | per-learner schedule tabs with actual upcoming, past and unscheduled counts, URL-backed view choice and browser navigation, preserving own round deep links; past schedule explicitly not attendance/completion. PARTIAL: fresh PG, ts/lint, mobile and Back/Forward runtime acceptance pending | PARTIAL |
-| L16-003 | Search | InterviewsContent | interviews page | GAP |
+| L16-003 | Search | InterviewsContent | searchable authorized shortlisted interview round list now has bounded Zod-backed shareable `q` URL, preserves `view` and exact application/round link, restores query on Back/Forward; no other-college records. PARTIAL: isolated PostgreSQL, unit, typecheck/lint and mobile/browser acceptance pending | PARTIAL |
 | L16-004 | Highlight deep link | InterviewsContent | interviews page | GAP |
 | L16-005 | Countdown/live/past badges | InterviewsContent | career rounds | GAP |
 | L16-006 | Confirm interview | InterviewsContent | interviews page | GAP |
