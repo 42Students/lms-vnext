@@ -249,12 +249,13 @@ export function LearnerClassSchedule({
   function scheduleEventsForDay(rows: readonly LearnerScheduleEvent[], day: Date) {
     return calendarMode === "IST" ? eventsForLearnerIstScheduleDay(rows, day) : eventsForLocalDay(rows, day);
   }
+  // Summary cards must use the same authorized, course-filtered event set as the calendar.
   const todayEvents = scheduleEventsForDay(
-    events,
+    filteredEvents,
     calendarToday,
   );
   const upcoming = upcomingScheduleEvents(
-    events,
+    filteredEvents,
     now,
     3,
   );
