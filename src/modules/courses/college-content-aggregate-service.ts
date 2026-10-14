@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, count, eq, ilike, inArray, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
+import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
   cohorts,
@@ -53,22 +54,22 @@ export async function listCollegeContentAggregate(
 
   const db = getDb();
   const scoped = db.select({
-    id: lessonContents.id,
-    title: lessonContents.title,
-    contentType: lessonContents.contentType,
-    status: lessonContents.status,
-    sequence: lessonContents.sequence,
-    durationSeconds: lessonContents.durationSeconds,
-    deliveryId: lessonContents.deliveryId,
-    lessonName: courseLessons.name,
-    learningPathTitle: courseLearningPaths.title,
-    learningPathStatus: courseLearningPaths.status,
-    offeringId: courseOfferings.id,
-    offeringStatus: courseOfferings.status,
-    courseName: courses.name,
-    courseCode: courses.code,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
+    id: aliasedColumn(lessonContents.id, "content_id"),
+    title: aliasedColumn(lessonContents.title, "content_title"),
+    contentType: aliasedColumn(lessonContents.contentType, "content_content_type"),
+    status: aliasedColumn(lessonContents.status, "content_status"),
+    sequence: aliasedColumn(lessonContents.sequence, "content_sequence"),
+    durationSeconds: aliasedColumn(lessonContents.durationSeconds, "content_duration_seconds"),
+    deliveryId: aliasedColumn(lessonContents.deliveryId, "content_delivery_id"),
+    lessonName: aliasedColumn(courseLessons.name, "content_lesson_name"),
+    learningPathTitle: aliasedColumn(courseLearningPaths.title, "content_learning_path_title"),
+    learningPathStatus: aliasedColumn(courseLearningPaths.status, "content_learning_path_status"),
+    offeringId: aliasedColumn(courseOfferings.id, "content_offering_id"),
+    offeringStatus: aliasedColumn(courseOfferings.status, "content_offering_status"),
+    courseName: aliasedColumn(courses.name, "content_course_name"),
+    courseCode: aliasedColumn(courses.code, "content_course_code"),
+    cohortName: aliasedColumn(cohorts.name, "content_cohort_name"),
+    periodName: aliasedColumn(academicPeriods.name, "content_period_name"),
   }).from(lessonContents)
     .innerJoin(courseLessons, eq(courseLessons.id, lessonContents.lessonId))
     .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -89,8 +90,10 @@ export async function listCollegeContentAggregate(
       eq(academicPeriods.collegeId, collegeId),
     ))
     .where(and(
-      inArray(lessonContents.contentType, [...collegeContentTypes(kind)]),
+      inArray(lessonContents.contentType,
+        kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
+      query.courseCode ? eq(courses.code, query.courseCode) : undefined,
       query.q ? or(
         ilike(lessonContents.title, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
         ilike(courseLessons.name, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),

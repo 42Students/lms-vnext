@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, count, eq, ilike, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
+import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
   cohorts,
@@ -58,17 +59,17 @@ export async function listCollegeSemesterCourseMappings(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: courseOfferings.id,
-    courseName: courses.name,
-    courseCode: courses.code,
-    cohortName: cohorts.name,
-    programName: programs.name,
-    programId: programs.id,
-    periodName: academicPeriods.name,
-    periodCode: academicPeriods.code,
-    type: courseOfferings.type,
-    credits: courseOfferings.credits,
-    status: courseOfferings.status,
+    id: aliasedColumn(courseOfferings.id, "sc_id"),
+    courseName: aliasedColumn(courses.name, "sc_course_name"),
+    courseCode: aliasedColumn(courses.code, "sc_course_code"),
+    cohortName: aliasedColumn(cohorts.name, "sc_cohort_name"),
+    programName: aliasedColumn(programs.name, "sc_program_name"),
+    programId: aliasedColumn(programs.id, "sc_program_id"),
+    periodName: aliasedColumn(academicPeriods.name, "sc_period_name"),
+    periodCode: aliasedColumn(academicPeriods.code, "sc_period_code"),
+    type: aliasedColumn(courseOfferings.type, "sc_type"),
+    credits: aliasedColumn(courseOfferings.credits, "sc_credits"),
+    status: aliasedColumn(courseOfferings.status, "sc_status"),
   }).from(courseOfferings)
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, and(
@@ -88,6 +89,7 @@ export async function listCollegeSemesterCourseMappings(
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.periodId ? eq(academicPeriods.id, query.periodId) : undefined,
+      query.type !== "ALL" ? eq(courseOfferings.type, query.type) : undefined,
       query.q ? or(
         ilike(courses.name, pattern(query.q)),
         ilike(courses.code, pattern(query.q)),
@@ -130,22 +132,22 @@ export async function listCollegeFacultyAssignments(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: courseTeachingAssignments.id,
+    id: aliasedColumn(courseTeachingAssignments.id, "fa_id"),
     updatedAt: sql<Date>`${courseTeachingAssignments.updatedAt}`
       .mapWith(courseTeachingAssignments.updatedAt).as("assignment_updated_at"),
-    deliveryId: courseTeachingAssignments.deliveryId,
-    membershipId: courseTeachingAssignments.membershipId,
-    facultyName: users.displayName,
-    courseName: courses.name,
-    courseCode: courses.code,
-    sectionName: sections.name,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
-    offeringId: courseOfferings.id,
-    role: courseTeachingAssignments.role,
-    startedAt: courseTeachingAssignments.startedAt,
-    endedAt: courseTeachingAssignments.endedAt,
-    deliveryEndedAt: courseSectionDeliveries.endedAt,
+    deliveryId: aliasedColumn(courseTeachingAssignments.deliveryId, "fa_delivery_id"),
+    membershipId: aliasedColumn(courseTeachingAssignments.membershipId, "fa_membership_id"),
+    facultyName: aliasedColumn(users.displayName, "fa_faculty_name"),
+    courseName: aliasedColumn(courses.name, "fa_course_name"),
+    courseCode: aliasedColumn(courses.code, "fa_course_code"),
+    sectionName: aliasedColumn(sections.name, "fa_section_name"),
+    cohortName: aliasedColumn(cohorts.name, "fa_cohort_name"),
+    periodName: aliasedColumn(academicPeriods.name, "fa_period_name"),
+    offeringId: aliasedColumn(courseOfferings.id, "fa_offering_id"),
+    role: aliasedColumn(courseTeachingAssignments.role, "fa_role"),
+    startedAt: aliasedColumn(courseTeachingAssignments.startedAt, "fa_started_at"),
+    endedAt: aliasedColumn(courseTeachingAssignments.endedAt, "fa_ended_at"),
+    deliveryEndedAt: aliasedColumn(courseSectionDeliveries.endedAt, "fa_delivery_ended_at"),
   }).from(courseTeachingAssignments)
     .innerJoin(collegeMemberships, and(
       eq(collegeMemberships.id, courseTeachingAssignments.membershipId),
@@ -179,6 +181,7 @@ export async function listCollegeFacultyAssignments(
       eq(sections.academicPeriodId, academicPeriods.id),
     ))
     .where(and(
+      query.role !== "ALL" ? eq(courseTeachingAssignments.role, query.role) : undefined,
       query.status === "ACTIVE" ? and(
         isNull(courseTeachingAssignments.endedAt),
         isNull(courseSectionDeliveries.endedAt),

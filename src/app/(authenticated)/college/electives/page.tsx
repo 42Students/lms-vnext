@@ -7,7 +7,7 @@ import { listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  collegeStructureQuerySchema,
+  collegeElectiveQuerySchema,
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeElectives } from "@/modules/academics/college-structure-directory-service";
@@ -18,7 +18,7 @@ export default async function CollegeElectivesPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const raw = readCollegeStructureParams(await searchParams);
-  const parsed = collegeStructureQuerySchema.safeParse(raw);
+  const parsed = collegeElectiveQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
     <ErrorState title="Invalid elective filters"

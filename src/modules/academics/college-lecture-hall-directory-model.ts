@@ -16,6 +16,7 @@ export const collegeLectureHallFiltersSchema = z.object({
     "CONFERENCE_ROOM",
   ]).default("ALL"),
   departmentId: z.string().uuid().optional(),
+  minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 
@@ -28,7 +29,7 @@ export function parseCollegeLectureHallSearchParams(
   const input: Record<string, string> = {};
   for (const [key, value] of Object.entries(params)) {
     if (Array.isArray(value)) return null;
-    if (value !== undefined && !(key === "departmentId" && value === "")) {
+    if (value !== undefined && !((key === "departmentId" || key === "minimumCapacity") && value === "")) {
       input[key] = value;
     }
   }
@@ -42,6 +43,7 @@ export function collegeLectureHallHref(query: CollegeLectureHallFilters) {
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.roomType !== "ALL") params.set("roomType", query.roomType);
   if (query.departmentId) params.set("departmentId", query.departmentId);
+  if (query.minimumCapacity !== undefined) params.set("minimumCapacity", String(query.minimumCapacity));
   if (query.page !== 1) params.set("page", String(query.page));
   const suffix = params.toString();
   return "/college/lecture-halls" + (suffix ? "?" + suffix : "");
@@ -53,5 +55,5 @@ export function collegeLectureHallTotalPages(total: number) {
 
 export function hasCollegeLectureHallFilters(query: CollegeLectureHallFilters) {
   return Boolean(query.q || query.status !== "ALL" ||
-    query.roomType !== "ALL" || query.departmentId);
+    query.roomType !== "ALL" || query.departmentId || query.minimumCapacity !== undefined);
 }
