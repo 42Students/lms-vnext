@@ -70,7 +70,7 @@ describe("learner class schedule parity surface", () => {
       'aria-label="Next upcoming classes"',
     );
     expect(component).toContain(
-      'className="mt-5 space-y-4 md:hidden"',
+      '"mt-5 space-y-4 md:hidden"',
     );
   });
   it("keeps loading/error boundaries separate from true empty schedule", () => {

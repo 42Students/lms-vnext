@@ -48,6 +48,7 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",
   ACADEMICS_BATCH_CREATED: "academics.batch.created",
   ACADEMICS_BATCH_UPDATED: "academics.batch.updated",
+  ACADEMICS_BATCH_PROMOTED: "academics.batch.promoted",
   ACADEMICS_CLASS_CREATED: "academics.class.created",
   ACADEMICS_CLASS_UPDATED: "academics.class.updated",
   ACADEMICS_LECTURE_HALL_CREATED: "academics.lecture_hall.created",
@@ -89,6 +90,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.discussion.deleted",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
+  PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
   // Lifecycle events are emitted only after W03's persisted mutation succeeds.
   // W06 owns the shared names; W03 owns actor authorization and the mutation.
   PROJECTS_PROJECT_ARCHIVED:
