@@ -520,3 +520,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Profile college access quick navigation — PARTIAL:** Each exact active self-grant exposes scoped Today, Drives and Company & Team links, validated by a pure UUID route model. Explicitly distinguishes page selection from unavailable persistent membership switching. No new write, user data or company disclosure. Unit test authored, execution and full legacy scope-switch persistence remain.
+
+
+**2026-10-15 chat-10 round 4 / draft annual CTC consistency — PARTIAL:** Request a Drive now validates a fully specified fixed-plus-variable amount against both the advertised minimum and maximum annual CTC; incomplete breakdowns are not misrepresented as totals. Cross-field errors attach to the relevant field. Pure unit coverage authored, execution pending; no submission, storage, or external notification.
