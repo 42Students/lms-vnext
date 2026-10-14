@@ -859,3 +859,5 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `college-admin/das
 ## College Admin Department Placement Evidence (read-first PARTIAL)
 
 `/college/placements/readiness-by-department` lists active enrolled learners, recorded candidate-academic-evidence profiles, verified profiles, and placement preference profiles by owning department. It does not assert job eligibility or actual readiness, and is not a replacement for legacy Hiring Analytics. This reports only migrated source evidence with College Admin permission and strict college scope; full funnel reporting, browser and runtime DB acceptance remain open.
+
+**Classes CSV export PARTIAL (2026-10-14):** `/college/classes` reuses existing persisted search/program/status filters, exports up to 1,000 same-college registered sections across server-paged results, neutralizes spreadsheet formulas, and emits CSV footer plus HTTP cap/truncation headers. Auth derives college from context, not query; no private learner data. Pure unit and gated own/foreign-college PostgreSQL tests authored; CI and browser acceptance pending.
