@@ -116,6 +116,8 @@ Legacy contract:
 ## Page: Semesters
 **Legacy:** `/college-admin/semesters`
 
+**Read-first PARTIAL (2026-10-14):** `/college/semesters` lists registered DB-0050 `program_terms` by program and term number, with mandatory authored name, isActive state, configured credits and only same-college `program_term_courses` counts. Uses server-side search, program/status filters, 25-row pagination and honest empty/loading/error states. This is a direct persisted term list, not an academic-period proxy. Legacy create/edit/delete, dependency confirmation, active-state transitions and UI/browser/database acceptance remain open.
+
 Legacy contract:
 - Program selector;
 - Semester Number;
@@ -150,6 +152,8 @@ Legacy contract:
 
 ## Page: Batches
 **Legacy:** `/college-admin/batches`
+
+**Read-first PARTIAL (2026-10-14):** `/college/batches` lists persisted cohorts with program, start academic period, status, and optional DB-0051 `cohort_progression_state` (current term and academic year), alongside scoped counts of active sections and active learner enrollments. Server-side search, program/status filters, 25-row pagination, explicit absent progression and empty/error states included. A cohort period is not interpreted as an exact legacy batch end date. Legacy create/edit/delete, learner drill-in/moves, promotion preview and true current-class attendance remain open. No database/browser acceptance claimed.
 
 Legacy contract audited:
 - Program;
