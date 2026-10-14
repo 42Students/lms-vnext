@@ -5,7 +5,7 @@ import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
 import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calendar-service";
-import {combineHrCalendarDays} from "@/modules/placements/hr-calendar-day-model";
+import {combineHrCalendarDays,selectHrMobileCalendarDays} from "@/modules/placements/hr-calendar-day-model";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -34,6 +34,8 @@ describe.skipIf(!enabled)("HR results due calendar PostgreSQL",()=>{
   const own=await listRecruiterCalendarEvents(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),query);
   expect(own.resultsDue.some(item=>item.id===round.id)).toBe(true);
   expect(combineHrCalendarDays(own.days, own.resultsDue).some(day=>day.resultsDue.some(item=>item.id===round.id))).toBe(true);
+  expect(selectHrMobileCalendarDays(combineHrCalendarDays(own.days, own.resultsDue),
+    ["2026-10-22"]).some(day=>day.resultsDue.some(item=>item.id===round.id))).toBe(true);
   const foreign=await listRecruiterCalendarEvents(hr(b.company.id,b.relationship.id,SEED_IDS.collegeA),query);
   expect(foreign.resultsDue.some(item=>item.id===round.id)).toBe(false);
   const otherCollege=await listRecruiterCalendarEvents(hr(a.company.id,a.relationship.id,SEED_IDS.collegeB),query);

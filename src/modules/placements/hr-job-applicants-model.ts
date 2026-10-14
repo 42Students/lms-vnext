@@ -40,7 +40,7 @@ export const HR_OFFER_STATES = ["ALL", "ISSUED", "ACCEPTED", "DECLINED", "WITHDR
 export const HR_OFFER_PAGE_SIZE = 25;
 export function hrOfferPageBounds(page: number, total: number) {
   return {
-    page, pageSize: HR_OFFER_PAGE_SIZE,
+    page, pageSize: HR_OFFER_PAGE_SIZE, total,
     pages: Math.ceil(total / HR_OFFER_PAGE_SIZE),
     first: total === 0 || (page - 1) * HR_OFFER_PAGE_SIZE >= total ? 0
       : (page - 1) * HR_OFFER_PAGE_SIZE + 1,

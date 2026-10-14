@@ -324,11 +324,7 @@ export default async function HrPlacementJobPage({
           <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
-              {" of "+(filters.offerState==="ALL" ? offersTotal :
-                filters.offerState==="ISSUED" ? offerSummary.issued :
-                filters.offerState==="ACCEPTED" ? offerSummary.accepted :
-                filters.offerState==="DECLINED" ? offerSummary.declined :
-                offersPage.pageSize * (offersPage.pages - 1) + Math.max(0, offersPage.last - (offersPage.pages - 1) * offersPage.pageSize))}
+              {" of " + offersPage.total}
             </span>
             <div className="flex gap-2">
               {filters.offerPage > 1 ? <Link

@@ -43,3 +43,14 @@ export function combineHrCalendarDays(
 export function hrResultsDueHref(jobId: string) {
   return "/hr/placements/jobs/" + encodeURIComponent(jobId) + "?tab=rounds";
 }
+
+/** Only occupied days in the selected week or month are presented on narrow
+ * screens. The desktop seven-column grid remains unchanged. */
+export function selectHrMobileCalendarDays(
+  days: ReturnType<typeof combineHrCalendarDays>,
+  visibleDays: readonly string[],
+) {
+  const visible = new Set(visibleDays);
+  return days.filter((day) => visible.has(day.day) &&
+    (day.events.length !== 0 || day.resultsDue.length !== 0));
+}

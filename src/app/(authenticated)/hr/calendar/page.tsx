@@ -30,7 +30,7 @@ import {
 import {
   listRecruiterCalendarEvents,
 } from "@/modules/placements/recruiter-calendar-service";
-import { combineHrCalendarDays, hrResultsDueHref } from "@/modules/placements/hr-calendar-day-model";
+import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } from "@/modules/placements/hr-calendar-day-model";
 
 export const dynamic = "force-dynamic";
 
@@ -276,6 +276,7 @@ export default async function HrCalendarPage({
 
   const allDays = combineHrCalendarDays(calendar.days, calendar.resultsDue);
   const byDay = new Map(allDays.map((day) => [day.day, day]));
+  const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
   const eventCount = calendar.events.length + calendar.resultsDue.length;
   const nextResult = calendar.resultsDue.find((item) => item.dueAt.getTime() >= now.getTime());
 
@@ -530,9 +531,33 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
+              className="rounded-xl border border-border bg-surface p-3 md:overflow-x-auto"
             >
-              <div className="grid min-w-[56rem] grid-cols-7 gap-2">
+              <div className="space-y-4 md:hidden">
+                {mobileDays.map((day) => (
+                  <article key={day.day} className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
+                    <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
+                    <div className="grid gap-3">
+                      {day.events.map((event) => (
+                        <RecruiterCalendarEventCard key={event.id} event={event} />
+                      ))}
+                      {day.resultsDue.map((item) => (
+                        <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId)}
+                          className="rounded-md border border-border bg-surface p-4 text-sm text-primary-text">
+                          <strong className="block">Results due · {item.roundName}</strong>
+                          <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+                {mobileDays.length === 0 ? (
+                  <p role="status" className="p-4 text-sm text-muted-foreground">
+                    No rounds, deadlines or results due in this calendar period.
+                  </p>
+                ) : null}
+              </div>
+              <div className="hidden min-w-[56rem] grid-cols-7 gap-2 md:grid">
                 {[
                   "Mon",
                   "Tue",

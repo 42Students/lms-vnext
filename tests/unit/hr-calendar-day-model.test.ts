@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { combineHrCalendarDays, hrResultsDueHref } from "@/modules/placements/hr-calendar-day-model";
+import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } from "@/modules/placements/hr-calendar-day-model";
 
 const due = {
   id: "round-1", jobId: "job-1", jobTitle: "Engineer", roundName: "Technical",
@@ -20,5 +20,9 @@ describe("HR calendar results due day integration", () => {
     expect(combineHrCalendarDays(initial, [due]).map((item) => item.day))
       .toEqual(["2026-10-20", "2026-10-22"]);
     expect(hrResultsDueHref("a/b")).toBe("/hr/placements/jobs/a%2Fb?tab=rounds");
+    expect(selectHrMobileCalendarDays(combineHrCalendarDays(initial,[due]),["2026-10-22"]))
+      .toMatchObject([{day:"2026-10-22"}]);
+    expect(selectHrMobileCalendarDays(combineHrCalendarDays([],[]),["2026-10-22"]))
+      .toEqual([]);
   });
 });
