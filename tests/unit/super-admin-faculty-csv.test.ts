@@ -13,7 +13,7 @@ describe("Super Admin faculty CSV security",()=>{
   expect(csv).toContain('"\'=IMPORT(""secret"")"');
   expect(csv).toContain('""x""');
   expect(csv).not.toContain("EXPORT TRUNCATED");
-  expect(superAdminScopedCsvHref("/api/admin/faculty/export",{q:"A & B",status:"ACTIVE",page:8}))
+  expect(superAdminScopedCsvHref("/api/admin/faculty/export",{q:"A & B",status:"ACTIVE"}))
    .toBe("/api/admin/faculty/export?q=A+%26+B&status=ACTIVE");
  });
 });
