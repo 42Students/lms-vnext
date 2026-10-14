@@ -671,3 +671,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Interviews — PARTIAL:** Added `/admin/placements/interviews`: scope-fenced 25-row persisted interview/round view with PENDING/SCHEDULED/COMPLETED/CANCELLED, search, IST schedule, safe job links, mobile-first loading/empty/error. No meeting URL, candidate comments or TPO write access. Pure query unit test authored; full round action parity and executable PostgreSQL/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Shortlisted — PARTIAL:** `/admin/placements/shortlisted` has read-only, persisted SHORTLISTED screening outcomes, selected-college joined applicant/job/membership, safe search and application status paging, IST decision date, responsive error/empty/loading; strips screening internalReason, candidate contact and recruiter notes. Pure query tests authored. Bulk shortlist/export, details and PG/browser acceptance remain open.
