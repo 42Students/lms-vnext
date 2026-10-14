@@ -518,3 +518,19 @@ preserved. Unit tests cover timezone boundaries, and the existing unique-
 fixture disposable PG suite now authors a real crossing-midnight Section
 session, success, foreign-delivery and wrong-role denials with full session
 cleanup. Browser execution and independent current-SHA CI remain PARTIAL.
+
+## Faculty Assignment Section submissions and filtered CSV (2026-10-14)
+
+The Section-authenticated `/teacher/report/assignment/[contentId]/submissions`
+page now lists persisted submissions with ALL/GRADED/UNGRADED/LATE filters,
+20-row paging, grades only when recorded, publication privacy status,
+mobile cards, loading/error/empty states and links back to the canonical
+Section report. Its CSV link reuses the server-side formula-neutralizing
+GET reader with a strict optional validated assignment-only filter; duplicate
+or forged query selectors are rejected. ALL retains the existing missing
+learner rows; narrower views return only matching actual submissions and
+never invent a grade for non-submitters. The route remains GET-only with exact
+Faculty delivery authorization; no new audit rows or writes occur.
+Pure-model and query regression tests and the existing unique-fixture
+PostgreSQL positive-path assertion are authored. Complete grading editing,
+runtime/browser export and exact legacy modal parity remain PARTIAL.

@@ -308,6 +308,15 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(csvAssignment.filename).toMatch(/^faculty-assignment-report-.*\.csv$/);
     expect(csvAssignment.csv).toContain('"NOT_SUBMITTED"');
     expect(csvAssignment.csv).not.toContain('"SUBMITTED"');
+    const gradedCsv=await getFacultyReportCsvForDownload(faculty,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,
+      filter:"GRADED",
+    });
+    expect(gradedCsv.csv).toContain('"Learner","Email"');
+    expect(gradedCsv.csv).not.toContain('"NOT_SUBMITTED"');
+    await expect(getFacultyReportCsvForDownload(faculty,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"LATE",
+    })).rejects.toBeDefined();
     const csvQuiz=await getFacultyReportCsvForDownload(faculty,{
       kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,
     });
