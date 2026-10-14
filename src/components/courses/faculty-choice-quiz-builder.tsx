@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -159,8 +159,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       className="mt-1 block min-h-10 min-w-0 w-full max-w-full rounded border border-border p-2"/></label>
     <label className="flex items-center gap-1 text-xs">
      <input type="checkbox" checked={o.correct}
-      onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>({...x,correct:k===j?e.target.checked:
-       (old.type==="SINGLE_CHOICE"&&e.target.checked?false:x.correct)}))}))}/>
+      onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
      Correct
     </label>
     <button type="button" disabled={q.options.length<=2}

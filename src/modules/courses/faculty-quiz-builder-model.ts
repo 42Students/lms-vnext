@@ -67,3 +67,17 @@ export function facultyQuizDraftEditable(status: string | null | undefined): boo
 export function facultyQuizMetadataEditable(status: string | null | undefined): boolean {
   return status == null || status === "DRAFT" || status === "PUBLISHED" || status === "CLOSED";
 }
+
+/** Keep exactly one correct option in single-choice mode while editing.
+ * Reject clearing the last answer instead of leaving a draft in an invalid state. */
+export function facultyToggleQuizAnswer<T extends {correct:boolean}>(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";options:readonly T[]},
+ index:number,checked:boolean,
+):T[]{
+ if(index<0||index>=question.options.length)return [...question.options];
+ if(question.type==="SINGLE_CHOICE"){
+  if(!checked)return [...question.options];
+  return question.options.map((option,i)=>({...option,correct:i===index}));
+ }
+ return question.options.map((option,i)=>i===index?{...option,correct:checked}:option);
+}

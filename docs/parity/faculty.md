@@ -1386,3 +1386,6 @@ The Assignment report now rejects malformed, duplicate or forged exact-Section p
 
 ## 2026-10-15 Faculty Quiz report private route boundary — PARTIAL
 The Quiz summary/report now validates the path-owned Quiz UUID and entire Section query, refusing duplicate or extra user-provided scope selectors; unassigned, missing or wrong-Section Quiz reports respond with a private 404 instead of leaking identity. Does not alter published-score visibility; pure tests authored. Actual PG/browser validation remains outstanding.
+
+## 2026-10-15 Faculty Quiz single-choice correct-answer fence — PARTIAL
+The Quiz choice editor prevents unchecking the sole correct option for single-choice questions while letting Faculty switch the correct answer atomically. Multi-choice editing remains flexible pending the existing Zod save-time rule. Pure single/multiple interaction tests authored; no DB/browser acceptance claimed.
