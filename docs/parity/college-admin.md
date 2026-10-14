@@ -326,6 +326,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Elective slot CSV PARTIAL (2026-10-15):** College Admin can export selected current-college slot search/program/status/semester matches with recorded pick limits and offerings, capped at 1,000 rows, formula-neutralized and explicit truncation. The isolated PostgreSQL own/foreign/wrong-role fixture is extended for this endpoint. This does not imply learner selections or finalized enrollment; executed acceptance remains open.
+
 **Semester-scoped elective filter PARTIAL (2026-10-15):** College elective slot catalogue now filters on the persisted semester number (1–24) with route-preserved pagination and strict class/elective filter separation. Isolated PG fixture checks included/excluded terms and still checks foreign-college and wrong-role denials. Executed and browser acceptance, selection finalization remain open.
 
 **Lifecycle PARTIAL (2026-10-14):** College Admin elective slot rows expose confirmation-gated ARCHIVE/RESTORE using strict Zod, same-origin PATCH, college-scoped active role and revalidated persisted actor, integer version CAS and immutable activity audit. Archive is blocked when any active offering or persisted learner selection exists; restore requires a currently active parent program and eligible IST academic period. The registered slot only supports ACTIVE/ARCHIVED; selection FINALIZE was intentionally not invented. Pure-model/unit and disposable PG own/foreign/wrong-role/stale tests authored, unexecuted. Full selection/finalization mechanics, UI/browser acceptance and real PG gates remain open.

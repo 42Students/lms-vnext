@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeElectives } from "@/modules/academics/college-elective-export-service";
 import {
   listCollegeClasses,
   listCollegeElectives,
@@ -141,6 +142,14 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
       .toMatchObject({ semesterNumber: 1, minPick: 1, maxPick: 2, activeOfferings: 0 });
   });
 
+  it("exports registered elective slots within the signed-in college only",async()=>{
+    const own=await exportCollegeElectives(adminA,{q:key});
+    const foreign=await exportCollegeElectives(adminB,{q:key});
+    expect(own.csv).toContain(key);
+    expect(own.csv).toContain("Select");
+    expect(foreign.csv).not.toContain(key);
+    await expect(exportCollegeElectives(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("does not expose either registered record to a different college", async () => {
     const [classes, electives] = await Promise.all([
       listCollegeClasses(adminB, { q: key }),
