@@ -6,6 +6,8 @@ TPO parity is a product-critical gate. A TPO page is not complete unless its ope
 
 # Home
 
+**W62 C PARTIAL:** TPO Drive Day now shows scheduled PUBLISHED rounds actually inside their persisted duration window; checked-in, explicit ABSENT no-shows, WAITING and unknown derive from the existing college-scoped roster and attendance. Unknown duration never implies live status. Browser/PG execution, refresh cadence and exact legacy hero remain open.
+
 ## Page: TPO Home / Command Center
 **Legacy:** `/tpo/home`
 
