@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
+import { TpoCollegeRulesControl } from "@/components/placements/tpo-college-rules-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -10,6 +11,7 @@ import {
   TPO_FIXED_PLACEMENT_RULE_NOTES,
   formatTpoEligibilityThreshold,
 } from "@/modules/placements/tpo-settings-model";
+import { getCollegePlacementRules } from "@/modules/placements/tpo-policy-service";
 import { getTpoPlacementRulesSettings } from "@/modules/placements/tpo-settings-read-service";
 
 type SearchParams = {
@@ -89,6 +91,7 @@ export default async function TpoPlacementRulesSettingsPage({
   );
 
   const rules = result.collegeRules;
+  const rulesVersion = (await getCollegePlacementRules(context, context.membership.collegeId)).version;
 
   return (
     <div className="space-y-6">
@@ -150,6 +153,14 @@ export default async function TpoPlacementRulesSettingsPage({
             : "This college has no placement_college_rules row. Values shown are the effective source defaults: offer released, one held offer, 40% uplift, and a 48-hour minimum response period."}
         </p>
       </section>
+
+      <TpoCollegeRulesControl rules={{
+        countsAsPlacedAt: rules.countsAsPlacedAt,
+        maxHeldOffers: rules.maxHeldOffers,
+        upliftPct: rules.upliftPct,
+        minResponseHours: rules.minResponseHours,
+        version: rulesVersion,
+      }} />
 
       <section className="space-y-4">
         <div>

@@ -390,6 +390,8 @@ Legacy includes:
 
 - [ ] round roster matches.
 - [ ] attendance/check-in actions match.
+
+**W58 PARTIAL:** TPO round roster now offers confirmed PRESENT check-in and explicit ABSENT no-show actions only on the currently scheduled India-local round date, for progression-eligible candidates. Strict Zod and same-origin POST, centralized college permission, row-locked expected-status checks, idempotent repeats and transactional immutable activity audit apply. IN_INTERVIEW/DONE marks cannot be downgraded. Bulk marking, final legacy UX, positive PostgreSQL and browser acceptance remain open.
 - [ ] result/outcome capture matches.
 - [ ] bulk result/attendance actions match.
 
@@ -657,6 +659,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] warning for earlier-season open drives.
 - [ ] Open Registration confirmation and consequence.
 
+**W56 PARTIAL:** TPO-only confirmed season creation reuses the established locked P9 season writer and immutable activity; editing an ACTIVE season now requires an unchanged updatedAt snapshot, validates ISO calendar dates/date order and unique college season code, and stores before/after actor audit in the same transaction. The Placement Rules page now offers confirmed, version-checked writes to registered DB09 college offer rules with immutable before/after audit. No registration-open state, learner registration deadline, historical closed-season editing, full modal/dirty-state behavior, browser or executed disposable-PostgreSQL acceptance is claimed.
+
 ## Settings: Placement Rules
 - [ ] placed-count trigger setting matches.
 - [ ] offer limits/uplift/response rules present in legacy match.
@@ -677,6 +681,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] recruiters with college access list matches.
 - [ ] Active/Removed state matches.
 - [ ] revoke access confirmation and immediate effect match.
+
+**W57 PARTIAL:** TPO Recruiter Settings now includes a confirmed grant form for existing active users and active linked college-company relationships, plus row-level confirmed revocation. Registered recruiter profiles/grants are locked and checked for an active duplicate; revocation requires the exact unchanged grant updatedAt. Every changed grant and revocation inserts immutable actor activity inside its transaction. Email is used only as an admin-supplied lookup, not disclosed in the historical roster. Invitation, brand-new user provisioning, exact legacy modal UX, executed PostgreSQL/browser evidence and permission-session propagation remain open.
 
 ## Settings: Trusted Companies
 - [ ] trusted domains list matches.
