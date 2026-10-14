@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
+import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -246,6 +247,7 @@ export function LearnerClassSchedule({
     () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
   const [sectionId, setSectionId] = useState("");
+  const [sessionSearch,setSessionSearch]=useState("");
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
@@ -253,11 +255,11 @@ export function LearnerClassSchedule({
 
   const filteredEvents = useMemo(
     () =>
-      filterLearnerScheduleSections(filterScheduleEvents(
+      filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ), sectionId),
-    [events, selectedDeliveryIds, sectionId],
+      ), sectionId),sessionSearch),
+    [events, selectedDeliveryIds, sectionId,sessionSearch],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),
@@ -425,6 +427,23 @@ export function LearnerClassSchedule({
           </label>
         </div>
 
+        {courseBasePath === "/learn/courses" ? (
+          <div className="mt-4 flex flex-wrap items-end gap-3 border-t border-border pt-4">
+            <label className="min-w-0 flex-1 text-xs font-semibold text-body">Find sessions
+              <input type="search" value={sessionSearch} maxLength={100}
+                onChange={event=>setSessionSearch(event.target.value)}
+                placeholder="Class title, faculty, location or course"
+                className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm font-normal text-foreground" />
+            </label>
+            {sessionSearch ? <button type="button" onClick={()=>setSessionSearch("")}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+              Clear search
+            </button> : null}
+            <span role="status" className="w-full text-xs text-muted-foreground">
+              {filteredEvents.length} matching authorized sessions
+            </span>
+          </div>
+        ) : null}
         {sections.length > 1 ? (
           <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
             Section
@@ -493,7 +512,7 @@ export function LearnerClassSchedule({
           <div className="mt-5">
             <EmptyState
               title="No scheduled classes in this view"
-              description="Try another date, view, or Course filter. General Section events remain visible even when Courses are filtered."
+              description="Try another date, view, section, Course filter or session search. General Section events remain visible unless a search excludes them."
             />
           </div>
         ) : (
