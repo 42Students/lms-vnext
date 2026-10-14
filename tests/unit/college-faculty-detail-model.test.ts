@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { facultyTeachingAssignmentState } from "@/modules/people/college-faculty-detail-model";
+import { collegeFacultyAssignmentHistoryQuerySchema, facultyTeachingAssignmentState } from "@/modules/people/college-faculty-detail-model";
 
 describe("College Admin Faculty detail", () => {
   it("only calls an assignment active when both the assignment and delivery are active", () => {
