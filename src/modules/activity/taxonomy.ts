@@ -98,6 +98,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.screening.decided",
   PLACEMENTS_ROUND_COMPLETED:
     "placements.round.completed",
+  PLACEMENTS_RESULT_STAGED:
+    "placements.result.staged",
   PLACEMENTS_RESULT_APPLIED:
     "placements.result.applied",
   PLACEMENTS_OFFER_ISSUED:
