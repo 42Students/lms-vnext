@@ -319,10 +319,10 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"PUBLISH",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
     });
     await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"CLOSE",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
-    await expect(updateCourseQuiz(facultyOnly,draft.id,{
-      title:"Published question bank replacement",questions,
-      expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
-    })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    // Metadata-only edits of a published quiz are allowed (CAS-audited); replacing its question bank is not.
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",questions:[{...questions[0],prompt:"Published rewrite"}],expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    const questionIdsPublished=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    expect(questionIdsPublished.rows).toEqual(questionIdsBefore.rows);
     expect(published.status).toBe("PUBLISHED");
     await expect(updateCourseQuiz(facultyOnly,draft.id,{
       maxAttempts:3,expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
@@ -552,9 +552,10 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("filters only persisted Faculty teaching deliveries and invalidates revoked assignments",async()=>{
     const {delivery}=await fixture();
+    // facultyOnly holds the fixture's CO_TEACHER assignment; PRIMARY belongs to another Faculty member.
+    const primaryOnly=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY"});
+    expect(primaryOnly.items).toEqual([]);
     const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"CO_TEACHER",page:999});
-    const primary=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY"});
-    expect(primary.items).toEqual([]);
     expect(list.items.map(item=>item.deliveryId)).toEqual([delivery.id]);
     expect(list.page).toBe(1);
     expect(list.items.length).toBeLessThanOrEqual(48);
@@ -567,19 +568,14 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     const revoked=await getFacultyCourseList(facultyOnly,{});
     expect(revoked.items).toEqual([]);
-    // A stale request cookie cannot restore a disabled persisted user.
     await pool.query("update course_teaching_assignments set ended_at=null where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     await pool.query("update users set platform_status='DISABLED' where id=$1",[facultyOnlyUserId]);
-    const disabled=await getFacultyCourseList(facultyOnly,{});
-    expect(disabled.items).toEqual([]);
+    expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
     await pool.query("update users set platform_status='ACTIVE' where id=$1",[facultyOnlyUserId]);
-    // Revoke the persisted FACULTY role while keeping stale identity claims.
     await pool.query("delete from membership_roles where id=$1",[facultyOnlyRoleId]);
     expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
-    await pool.query(
-      "insert into membership_roles (id,membership_id,role) values($1,$2,'FACULTY')",
-      [facultyOnlyRoleId,facultyOnlyMembershipId],
-    );
+    await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+      [facultyOnlyRoleId,facultyOnlyMembershipId]);
     expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items.map(row=>row.deliveryId))
       .toEqual([delivery.id]);
   });

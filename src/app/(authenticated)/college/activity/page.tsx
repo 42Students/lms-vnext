@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
+import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -30,28 +31,64 @@ export default async function CollegeActivityPage({
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
-  for (const key of ["actorUserId", "subjectType", "from", "to"] as const) {
+  for (const key of ["module", "importance", "eventType", "q", "actorUserId", "actorName", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
-      description="College-scoped immutable event history, with actor, entity and date filters. Newest events first."
+      description="College-scoped immutable event history, with severity, module, action, actor, entity and date filters. Newest events first."
       actions={<a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Export filtered CSV (max 1,000)
       </a>} />
     <p className="text-xs text-muted-foreground">
-      The export uses actor, entity type and IST date filters (not the entity UUID), from the newest event,
+      The export uses severity, module, action, actor, entity type, entity UUID and IST date filters from the newest event,
       with a 1,000-row cap and an explicit CSV footer if truncated.
     </p>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
+          Module
+          <select name="module" defaultValue={data.query.module ?? ""}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">All modules</option>
+            {ACTIVITY_MODULES.map(v =>
+              <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Importance
+          <select name="importance" defaultValue={data.query.importance ?? ""}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">All importance levels</option>
+            {ACTIVITY_IMPORTANCE.map(v =>
+              <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Event type
+          <input name="eventType" defaultValue={data.query.eventType ?? ""}
+            maxLength={120} placeholder="identity.membership.suspended"
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Search audit summary or entity
+          <input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
+            placeholder="Summary, entity or action text"
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
           Actor user UUID
           <input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Actor display name
+          <input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
+            placeholder="Search recorded actor name"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">

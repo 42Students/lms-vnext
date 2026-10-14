@@ -26,6 +26,9 @@ describe("Mentor sprint progress read model", () => {
     expect(mentorSprintProgressQuerySchema.safeParse({collegeId:"other"}).success).toBe(false);
     expect(mentorSprintProgressQuerySchema.safeParse({projectId:"other"}).success).toBe(false);
     expect(mentorSprintProgressQuerySchema.safeParse({state:"SHIPPED"}).success).toBe(false);
+    expect(mentorSprintProgressQuerySchema.safeParse({release:"COMPLETED"}).success).toBe(false);
+    expect(mentorSprintProgressQuerySchema.parse({release:"SHIPPED"}).release).toBe("SHIPPED");
+    expect(mentorSprintProgressHref({state:"ALL",release:"SHIPPED",search:"",page:2})).toContain("release=SHIPPED&page=2");
     expect(mentorSprintProgressQuerySchema.safeParse({page:"0"}).success).toBe(false);
     expect(mentorSprintProgressQuerySchema.safeParse({search:"x".repeat(121)}).success).toBe(false);
   });

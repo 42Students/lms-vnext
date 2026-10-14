@@ -16,10 +16,10 @@ const ids={period:randomUUID(),program:randomUUID(),batch:randomUUID(),section:r
 const name="admin-class-"+ids.section.slice(0,8);
 describe.skipIf(!enabled)("Super Admin Classes in-test PostgreSQL",()=>{
  beforeAll(async()=>{
-  await pool!.query("insert into academic_periods(id,college_id,name,code,start_date,end_date) values ($1,$2,$3,$3,'2026-07-01','2026-12-31')",[ids.period,SEED_IDS.collegeA,name]);
-  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3,$3,8)",[ids.program,SEED_IDS.departmentA,name]);
-  await pool!.query("insert into cohorts(id,program_id,name,code,start_period_id) values ($1,$2,$3,$3,$4)",[ids.batch,ids.program,name,ids.period]);
-  await pool!.query("insert into sections(id,cohort_id,academic_period_id,name,code,capacity) values ($1,$2,$3,$4,$4,40)",[ids.section,ids.batch,ids.period,name]);
+  await pool!.query("insert into academic_periods(id,college_id,name,code,start_date,end_date) values ($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')",[ids.period,SEED_IDS.collegeA,name]);
+  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3::text,$3::text,8)",[ids.program,SEED_IDS.departmentA,name]);
+  await pool!.query("insert into cohorts(id,program_id,name,code,start_period_id) values ($1,$2,$3::text,$3::text,$4)",[ids.batch,ids.program,name,ids.period]);
+  await pool!.query("insert into sections(id,cohort_id,academic_period_id,name,code,capacity) values ($1,$2,$3,$4::text,$4::text,40)",[ids.section,ids.batch,ids.period,name]);
  });
  afterAll(async()=>{try{
   for(const [table,id] of [["sections",ids.section],["cohorts",ids.batch],["programs",ids.program],["academic_periods",ids.period]] as const)

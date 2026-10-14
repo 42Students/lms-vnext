@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
 import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { search?: string | string[]; order?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorReviewsPage({
@@ -18,6 +18,7 @@ export default async function MentorReviewsPage({
   const raw = await searchParams;
   const parsed = mentorReviewQuerySchema.safeParse({
     search: first(raw.search) ?? undefined,
+    order: first(raw.order) ?? undefined,
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -46,6 +47,13 @@ export default async function MentorReviewsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Project title" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Review order
+          <select name="order" defaultValue={data.query.order}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="NEWEST">Newest submitted first</option>
+            <option value="OLDEST">Oldest submitted first</option>
+          </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
           <select name="pageSize" defaultValue={String(data.pageSize)}

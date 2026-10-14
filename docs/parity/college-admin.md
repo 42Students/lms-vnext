@@ -13,7 +13,12 @@ Every page below also requires:
 
 # Operations
 
+**Personal-notification unread counts PARTIAL (2026-10-15):** College Admin announcements displays a separate exact unread own-recipient count from registered notifications, independently of the 50-row inbox cap and regardless of unread-only filter. Count reads enforce the signed-in college and recipient; no college-wide send or delivery is inferred. Model, isolated PG tenant/role fixture updates authored; runtime/browser acceptance outstanding.
+
+**Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
+
 ## Page: Dashboard
+**Empty-source follow-ups PARTIAL (2026-10-15):** Dashboard adds an actionable, zero-only list of deep links to relevant directories. It never calls an unavailable count zero, and deliberately says an empty source is not a setup failure, readiness score or student-performance alarm. Pure-model and existing scoped PG read fixtures cover the projection; exact legacy priority cards and browser acceptance remain open.
 **Legacy:** `/college-admin/dashboard`
 
 **Count cards PARTIAL (2026-10-14):** `/college` now renders eight source-authored overview cards (active student/faculty memberships, active courses, non-archived batches, active classes, active teaching assignments, active lecture halls and published jobs). Counts reuse the same signed-in-college `getCollegeSetupChecklist` query as the setup evidence, with central `can()/requirePermission()` and fixed internal deep links. The pure model renders missing values as Unavailable, not zero; failing DB reads surface the dashboard error boundary. These are registered record counts, not attendance, readiness or total hours. Legacy KPI/attention definitions and executed browser/DB acceptance remain open.
@@ -31,6 +36,12 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**Actor-name audit triage PARTIAL (2026-10-15):** Actor display-name substring filtering is now available alongside exact actor UUID; it uses the existing escaped server search before scoped cursor paging and capped CSV export, with no direct user-directory disclosure. Zod, URL and isolated PG no-match/denial fixtures authored; real browser/PG and exact legacy taxonomy parity remain open.
+**Scoped audit text search PARTIAL (2026-10-15):** College Admin can search persisted summary, subject label/ID/type and event type before cursor pagination using escaped literal PostgreSQL matching. The capped CSV export carries the query through the existing shared audit read service. Zod/URL and scoped PG positive/no-match/wrong-role fixtures authored; legacy/browser/executed database acceptance remain open.
+**Entity-filtered CSV PARTIAL (2026-10-15):** The 1,000-row Activity Log CSV now carries the exact subject ID filter used by the web history. Subject IDs are bounded at 500 characters (audit subjects are not necessarily UUIDs); CSV service keeps server-derived college scope, no caller-supplied tenant selector, and isolated PG own/foreign fixtures. Historical CSV volume, legacy format and executed browser/PG acceptance remain open.
+
+**Triage filters PARTIAL (2026-10-15):** Added registered module, importance and exact event-type filters to college-scoped activity history. The cursor preserves every filter, and capped CSV export receives the same triage selectors. Strict Zod rejects invalid modules/severity; isolated PG coverage checks filtering and cross-college scope. Noise grouping, legacy filter semantics and executed browser/PG acceptance remain open.
+
 **CSV export PARTIAL (2026-10-14):** College Admin Activity Log adds a download matching actor/subject/IST date filters and the broader Activity Center adds module/importance/event filters. Both use the same read service, scoped to the current college, with a 1,000-event cap, spreadsheet-formula neutralization, and explicit truncation footer and HTTP headers. No data is mutated. Exact legacy export column parity and high-volume browser/PG acceptance remain open.
 
 **Read-first PARTIAL (2026-10-14):** `/college/activity` provides explicit actor/entity/date filters, newest-first cursor pagination and `/college/activity/[eventId]` for sanitized audit metadata. Both reads are denied outside the active College Admin membership college. Records are never edited or deleted. Exact legacy event grouping, export, browser and independently executed PostgreSQL acceptance remain open.
@@ -509,6 +520,11 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+**Scoped faculty-department selector PARTIAL (2026-10-15):** Faculty roster now filters by exact primary department against own-college registered department/profile ancestry before pagination. The dropdown shows up to 200 active own-college departments and explicitly discloses truncation. Unsupported Learner department filters reject, and foreign UUIDs return empty (not existence). Zod/URL and isolated PG tenant/role fixtures authored; exact legacy/browser checks remain open.
+**Profile metadata search PARTIAL (2026-10-15):** Faculty name/email directory search now includes authored academic title, employment type and registered own-college department name using correlated FACULTY profile rows. No cross-college or private identity columns are searched; pagination and membership-role restrictions remain unchanged. Pure hint and in-test PG metadata fixtures with role denials authored; runtime/browser parity remains open.
+**Role-restricted CSV export PARTIAL (2026-10-15):** Faculty directory links to the canonical college people CSV exporter with FACULTY role fixed and current search/membership status. Teaching/account-status filters are not applied and UI discloses the difference. Unit and existing isolated PG role/tenant coverage extended; detailed legacy roster/browser checks remain open.
+**Teaching-presence filter PARTIAL (2026-10-15):** Faculty directory adds server-filtered ASSIGNED/NONE for persisted non-ended teaching assignments on live course deliveries in the admin’s college, before pagination. Counts are assignments, not teaching hours. Own/foreign/wrong-role and URL/model PG fixtures authored; browser evidence and legacy scheduling parity remain open.
+**Account-status filter PARTIAL (2026-10-15):** Faculty memberships now filter persisted ACTIVE/DISABLED platform account status independently from membership lifecycle, with strict Zod, URL-persisted pagination and isolated PG role/tenant checks. Browser and legacy profile/edit parity remain open.
 
 **Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.
 **Legacy:** `/college-admin/teachers`
@@ -552,6 +568,11 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Active program/batch search PARTIAL (2026-10-15):** College Admin learner directory can search persisted active program or batch name/code through a correlated, same-college enrollment lookup, alongside name/email and learner identity identifiers. Archived/non-active enrollments are not presented as current. Unit label and disposable PG signed-in college/role checks authored; browser/legacy and full fixture execution remain open.
+**Identity-key search PARTIAL (2026-10-15):** The College Admin student directory can search registered learner roll and registration numbers in addition to name/email, using correlated membership-scoped profile predicates before pagination. Faculty searches do not expose learner identifiers. Pure model and disposable PG in-test own-college/denied-role fixtures authored, not executed; mobile/browser and legacy roster parity still open.
+**Role-restricted CSV export PARTIAL (2026-10-15):** Students directory now exposes the existing, signed-in-college export with LEARNER role fixed and current name/email and membership-status selectors. Contacts are visible only with College Admin permissions; 1,000-record cap, truncation footer and CSV formula neutralization remain. Enrollment/account-status filters are explicitly *not* reflected in export. Unit and existing isolated PG role/tenant tests extended; browser and legacy report parity remain open.
+**Enrollment-presence filter PARTIAL (2026-10-15):** Student directory can distinguish an active college-owned program enrollment from no active enrollment using a correlated registered-table EXISTS predicate *before pagination*. It does not infer missing enrollment as a failed student record. Pure URL/Zod and isolated PG partition/role/tenant tests authored; full legacy moves and browser acceptance remain open.
+**Account-status filter PARTIAL (2026-10-15):** Learner memberships now filter persisted ACTIVE/DISABLED platform account status independently from cohort/class context, with the same college-only query, URL-persisted pagination and PG isolation witness. Browser and full learner lifecycle parity remain open.
 
 **Class-move guard PARTIAL (2026-10-14):** Directory move now returns the same non-leaking `STUDENT_NOT_FOUND` code for a foreign or absent membership, resets stale destination selection on reopening, and distinguishes no alternative eligible section. Persisted move remains version-checked, same-cohort and same-period, transactionally audited. Legacy modal/browser acceptance remains outstanding.
 **Legacy:** `/college-admin/students`
@@ -573,6 +594,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: People Directory
+**Role-directory ordering PARTIAL (2026-10-15):** Student and Faculty directories now use server-side NAME/NEWEST/OLDEST sort before 25-row pagination, with membership-UUID tie breaking and URL-persisted sort state. This is membership-join chronology, not program admission chronology. Strict query and isolated PG sort/role tests authored; browser/legacy parity remains open.
 **Legacy:** `/college-admin/people`
 
 - [ ] Combined role directory fields match.

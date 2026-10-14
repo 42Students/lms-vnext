@@ -147,3 +147,52 @@
 - No learner contact or raw descriptions, no new mutation or external send.
 - Unit/PG own-project positive and denial tests authored but not run.
 - PARTIAL pending actual CI/PG and responsive browser proof.
+
+## S — Global Mentor Meetings IST period filters
+- Added strict 4-way daypart period query, IST day boundaries and URL controls.
+- Authenticated scope reused; pure and PG fixture cases authored, not executed.
+
+## T — Mentor project meeting log title search
+- Escaped literal search and shared count/page filters, tests authored not run.
+
+## U — Pending task review metadata export
+- 200-row capped safe CSV reusing scoped queue; model and PG tests authored.
+
+## V — Mentor global meeting calendar CSV
+- 200-row sanitized CSV from scoped filtered meetings, model/PG tests authored.
+
+## X — Mentor project attention kind filters
+- Strict recorded-kind selection, server UI and pure tests authored; PARTIAL.
+
+## Y — Team history role filter
+- Same-project SQL role filter and current/ended navigation, tests authored.
+
+## Z — Positive team coverage filters
+- Has active learners / has primary Mentor, pure and own-project PG checks authored.
+
+## AA — Recorded task-priority risk/readiness drill-ins
+- Strict task priority selector, stable non-task facts and tests authored; PARTIAL.
+
+## Round 3 AB — Delivery review ordering (PARTIAL)
+- Oldest-first triage over live pending delivery alerts, with strict selector and pure tests; execution not verified.
+
+## Round 3 AC — Resource link filter (PARTIAL)
+- Filter unsafe/unavailable versus safe HTTPS resource links before paging/CSV, with unit tests authored but not run.
+
+## Round 3 AD — Team coverage status filter (PARTIAL)
+- Registered lifecycle status filter on current project staffing, with unit test updates; gates unexecuted.
+
+## Round 3 AE — Assignment-role report filters (PARTIAL)
+- Primary/supporting Mentor report filters on page and capped CSV, unit tests authored but not executed.
+
+## Round 3 AF — Meeting type filter (PARTIAL)
+- Filter registered meeting types with consistent count, paging and scoped SQL; pure/PG assertions source-authored, unexecuted.
+
+## Round 3 AG — Sprint Release status (PARTIAL)
+- Added registered Release status filter to Mentor Sprint progress and sanitized export, with unit tests authored only.
+
+## Round 3 AH — Review history project-title search (PARTIAL)
+- SQL-scoped escaped literal project title search plus decision/pagination state, source-authored model/PG assertions not executed.
+
+## Round 3 AI — Cross-project activity importance (PARTIAL)
+- Safe registered event importance SQL filter across authorized Mentor projects with URL retention; unit and denial PG assertions authored, gates unexecuted.
