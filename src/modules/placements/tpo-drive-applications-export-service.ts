@@ -10,7 +10,7 @@ import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown){
  const collegeId=await requireTpoJobCollege(context);
- const {jobId,stage,search,channel}=tpoDriveApplicationsExportQuerySchema.parse(raw);
+ const {jobId,stage,search,channel,eligibility}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const db=getDb();
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
@@ -31,6 +31,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
    eq(placementApplicationScreenings.applicationId,placementApplications.id))
   .where(and(eq(placementApplications.jobId,job.id),
    channel!=="ALL"?eq(placementApplications.channel,channel):undefined,
+   eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,eligibility):undefined,
    stage==="ALL"?undefined:stage==="SUBMITTED"?eq(placementApplications.status,"SUBMITTED"):
     sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
      when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
@@ -40,7 +41,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   ))
   .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
   .limit(TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
- return {job,stage,search,channel,...projectTpoDriveApplicationsExport(records.map(r=>({
+ return {job,stage,search,channel,eligibility,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,submittedAt:r.submittedAt.toISOString(),
  })),job.title)};
 }

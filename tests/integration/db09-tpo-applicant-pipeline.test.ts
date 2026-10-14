@@ -59,6 +59,9 @@ it("reads persisted pending applicants and denies foreign college / wrong role",
 if(!pool)throw Error("PG required");
 const jobId=await fixture();
 const result=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING"});
+const ownEvidence=await getTpoApplicantPipeline(tpo,{jobId,eligibility:"ELIGIBLE"});
+expect(ownEvidence.rows.some(r=>r.id===ids.app)).toBe(true);
+expect((await getTpoApplicantPipeline(tpo,{jobId,eligibility:"ELIGIBLE_WITH_MISSING_EVIDENCE"})).rows.some(r=>r.id===ids.app)).toBe(false);
 const ownChannel=await getTpoApplicantPipeline(tpo,{jobId,channel:"INTERNAL"});
 expect(ownChannel.rows.some(r=>r.id===ids.app)).toBe(true);
 expect((await getTpoApplicantPipeline(tpo,{jobId,channel:"EXTERNAL"})).rows.some(r=>r.id===ids.app)).toBe(false);

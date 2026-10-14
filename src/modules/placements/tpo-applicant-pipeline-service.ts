@@ -29,6 +29,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const projection=await db.transaction(async tx=>{
    const scope=and(eq(placementApplications.jobId,job.id),
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
+    input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
     input.search?or(
     ilike(users.displayName,tpoApplicantExportSearchPattern(input.search)),
     ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(input.search))):undefined);
@@ -83,5 +84,5 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,...projection};
 }
