@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { exportCollegeOfferingMappings } from "@/modules/academics/college-mapping-export-service";
+import { exportCollegeFacultyAssignments } from "@/modules/academics/college-faculty-assignment-export-service";
 import {
   listCollegeFacultyAssignments,
   listCollegeSemesterCourseMappings,
@@ -163,6 +164,16 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     expect(ours.csv).toContain(code);
     expect(theirs.csv).not.toContain(code);
     await expect(exportCollegeOfferingMappings(faculty,{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("exports current-college teaching assignments without contacts",async()=>{
+    const ours=await exportCollegeFacultyAssignments(admin,{q:code});
+    const foreignCsv=await exportCollegeFacultyAssignments(foreign,{q:code});
+    expect(ours.csv).toContain(code);
+    expect(ours.csv).toContain("PRIMARY");
+    expect(foreignCsv.csv).not.toContain(code);
+    expect(ours.csv).not.toContain("Email");
+    await expect(exportCollegeFacultyAssignments(faculty,{}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
   it("denies non-admin roles and caller-supplied college IDs", async () => {
