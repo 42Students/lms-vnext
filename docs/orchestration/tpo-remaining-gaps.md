@@ -462,3 +462,11 @@
 - **L744 · keyboard activation works.** — **Buildable:** Finish the persisted projection and responsive presentation, preserving legacy row statuses, scoped grouping and unknown states. Data candidates: persisted in-app notification deliveries; feature remains unchecked until verified.
 - **L745 · mobile navigation uses this page where legacy does.** — **Buildable:** Connect the expected drill-in to a real college-scoped detail route with unknown/foreign-ID denials and responsive navigation. Data candidates: persisted in-app notification deliveries; feature remains unchecked until verified.
 - **L746 · no secondary tool becomes unreachable on small screens.** — **Buildable:** Verify accessibility, keyboard/focus behavior and narrow-screen route reachability against the production account. Data candidates: persisted in-app notification deliveries; feature remains unchecked until verified.
+
+
+## W54 — Buildable parity slices, not closure
+
+- **L65 Add Lead / Lead detail editing:** Existing DB09 Add Lead and edit writers/forms retained; W54 adds edit confirmation and explicit normalized-email-before-validation Zod contract. Legacy duplicate overlay and browser parity still **Buildable**.
+- **Company directory create/link:** Confirmed TPO-only create/link form now uses canonical company/relationship writer with transactional PLACEMENTS actor activity event and identity conflict guards; external identity reconciliation and runtime proof still **Buildable**.
+- **New Drive Step 1:** Active-season company relationship, draft job and primary role are persisted transactionally with actor audit and IST-offset date parsing; full wizard, role targeting, publication steps and browser proof still **Buildable**.
+- **L439 Students bulk Add to Drive:** Current Students roster page allows selection, drive/role choice and confirmed reuse of the previous bulk add API with per-learner eligibility results. Selection across roster pages and exact legacy modal remain **Buildable**.
