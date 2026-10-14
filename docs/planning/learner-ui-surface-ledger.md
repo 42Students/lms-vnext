@@ -124,7 +124,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-013 | Lesson progress metric | Home | Overview | FIXED |
 | L2-014 | Assignment progress metric | Home | Overview | FIXED |
 | L2-015 | Quiz progress metric | Home | Overview | FIXED |
-| L2-016 | Unified recent course updates | Home activity/widgets | Overview | GAP |
+| L2-016 | Unified recent course updates | Home activity/widgets | course-team announcements plus real last-14-day content completion and assignment submission, alongside next-14-day deadlines/live classes; never fabricate grade/published event timestamps. PARTIAL pending real PostgreSQL/tsc/lint tests, chronology and mobile/browser acceptance | PARTIAL |
 | L2-017 | Course-team update links to Discussions | Home activity/widgets | Overview | FIXED |
 | L2-018 | Assessment/live update links to exact item | Home activity/widgets | Overview | FIXED |
 | L2-019 | Historical course Overview read-only messaging | course history | Overview | CLOSED |

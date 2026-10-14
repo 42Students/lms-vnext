@@ -6,6 +6,7 @@ import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overvie
 import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
 import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
 import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
+import { learnerRecentCourseActivity } from "@/modules/courses/learner-recent-course-activity-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -173,6 +174,7 @@ export function LearnerCourseOverview({
   // Keep the update feed time-ordered, but never allow its six-item display
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
+  const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
   const priorityActivity = readOnly
     ? null
     : selectPriorityLearnerActivity(allUpcomingActivity);
@@ -197,7 +199,7 @@ export function LearnerCourseOverview({
       : null;
 
   const unifiedUpdates = [
-    ...courseUpdates.map((update) => ({
+    ...courseUpdates.slice(0,2).map((update) => ({
       key: `discussion-${update.id}`,
       title: update.pinned ? "Pinned update" : "Course update",
       detail: `${update.senderName} · ${formatWhen(update.createdAt) ?? ""}`,
@@ -206,20 +208,29 @@ export function LearnerCourseOverview({
       priority: update.pinned ? 0 : 1,
       time: update.createdAt.getTime(),
     })),
-    ...activity.map((item) => ({
+    ...recentLearnerActivity.map((item) => ({
+      key:`recent-${item.label}-${item.id}`,
+      title:item.title,
+      detail:`${item.label} · ${formatWhen(item.when)??""}`,
+      body:null,
+      href:`/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
+      priority:2,
+      time:item.when.getTime(),
+    })),
+    ...activity.slice(0,2).map((item) => ({
       key: `activity-${item.type}-${item.id}`,
       title: item.title,
       detail: `${item.type}${item.when ? ` · ${formatWhen(item.when)}` : ""}`,
       body: null,
       href: `/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
-      priority: 2,
+      priority: 3,
       time: item.when?.getTime() ?? Number.MAX_SAFE_INTEGER,
     })),
   ]
     .sort((left, right) =>
       left.priority !== right.priority
         ? left.priority - right.priority
-        : left.priority < 2
+        : left.priority < 3
           ? right.time - left.time
           : left.time - right.time,
     )
@@ -437,7 +448,7 @@ export function LearnerCourseOverview({
                 Recent updates
               </h3>
               <p className="mt-1 text-xs text-body">
-                Course-team messages, upcoming assessments, and live sessions.
+                Course-team messages, saved completions, upcoming assessments, and live sessions.
               </p>
             </div>
             <Link
