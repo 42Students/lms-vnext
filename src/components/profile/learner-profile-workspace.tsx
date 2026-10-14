@@ -11,7 +11,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import type { LearnerProfileDocument } from "@/modules/people/profile-validation";
+import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
 
 type CollectionKey =
   | "experiences"
@@ -229,7 +229,7 @@ export function LearnerProfileWorkspace(props: {
       if (!response.ok || !payload?.contacts) {
         throw new Error("Contact details could not be saved. Your existing details are unchanged.");
       }
-      const savedContacts = learnerContactEditSchema.shape.contacts.parse(payload.contacts);
+      const savedContacts = learnerProfileDocumentSchema.parse({ contacts: payload.contacts }).contacts;
       setDocument(current => ({ ...current, contacts: savedContacts }));
       setDetailsDraft(current => ({ ...current, contacts: savedContacts }));
       setContactOpen(false);
