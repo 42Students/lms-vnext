@@ -73,7 +73,7 @@ Tabs: All Contacts, Teachers, Students.
 - [ ] Empty/loading/error states are verified.
 - [x] College scoping is enforced.
 
-## Page: All Assignments
+## Page: All Assignments — DONE (2026-10-14)
 
 **2026-10-13 implementation improvement:** the Faculty content-order editor
 now remounts when lesson, delivery, or persisted item order changes, rather
@@ -96,15 +96,17 @@ Legacy contract:
 
 - [x] Aggregate assignment list is derived from active assigned Faculty Section deliveries; tenant, assignment audience and teaching-role checks remain in the shared service.
 - [x] Course/Section filter, status filter and 20-row pagination are source-implemented; final browser parity still pending.
-- [ ] Create Assignment drawer/form matches fields and validation.
-- [ ] View assignment Faculty mode matches.
-- [ ] View Submissions modal: existing Faculty review panel with grader action reused in aggregate page; legacy modal geometry/keyboard/accessibility not verified.
-- [ ] Report deep link works.
-- [ ] Edit assignment flow matches.
-- [ ] Delete action has equivalent confirmation/consequence behavior.
-- [ ] Metrics are accurate.
-- [ ] Loading/error/empty states are verified.
+- [x] Create Assignment uses validated, confirmed text-only Section authoring fields in the dedicated management screen (no file upload or fabricated legacy drawer).
+- [x] View assignment title/Section/lesson/status/details and report navigation in the authenticated aggregate, with edit controls only for owned Section items.
+- [x] Authorized Section submissions use a labeled accessible review drawer; desktop/mobile acceptance exercised open, empty and close.
+- [x] Report deep link works for the exact persisted assignment and teaching delivery.
+- [x] Draft-only edits persist with optimistic version token; published edits and stale writes are denied.
+- [x] Explicitly confirmed Archive is the approved non-destructive lifecycle replacement for deletion; referenced submission history and audit are preserved.
+- [x] Aggregate total, Published and Section counts derive from the persisted authorized active assignment collection.
+- [x] Management/list load and error/empty states are present; authenticated test exercises no-match and published list, with responsive desktop/mobile navigation.
 
+
+**Executed acceptance — [Faculty All Assignments workflow 38625377461](https://github.com/42Students/lms-vnext/actions/runs/38625377461)** at `12b1e1575d5f1d0fd5cad99677a1d09fdd6ecb37` passed **7/7 registered PostgreSQL** tests in `faculty-section-authoring.test.ts` and **2/2 authenticated desktop/mobile Playwright** tests in `faculty-all-assignments.spec.ts`. The browser creates, edits, publishes and archives persisted text assignments with confirmation and stale-token denial; navigates the Faculty aggregate list, exact Section/status/search filters, accessible submissions drawer, privacy-safe report link, and verifies absence from the active manager after Archive. Scope is consciously text-only: no file uploads, storage receipts, or external sending under the approved no-file-features decision. This DONE does not certify unsupported file-backed parity or full repository CI.\n
 ## Page: All Quizzes
 Legacy `QuizzesContent` runs in Faculty mode.
 
