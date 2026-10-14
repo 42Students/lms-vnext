@@ -27,10 +27,12 @@ describe("College Admin semester offering and faculty assignment models", () => 
 
   it("validates teaching lifecycle filters and rejects unrecognised fields", () => {
     expect(facultyAssignmentQuerySchema.parse({}))
-      .toEqual({ q: "", status: "ACTIVE", page: 1 });
+      .toEqual({ q: "", status: "ACTIVE", role: "ALL", page: 1 });
     expect(facultyAssignmentQuerySchema.parse({ status: "ENDED", page: "3" }))
-      .toEqual({ q: "", status: "ENDED", page: 3 });
+      .toEqual({ q: "", status: "ENDED", role: "ALL", page: 3 });
     expect(facultyAssignmentQuerySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);
+    expect(facultyAssignmentQuerySchema.safeParse({ role: "LEAD" }).success).toBe(false);
+    expect(facultyAssignmentQuerySchema.parse({ role: "TA" }).role).toBe("TA");
     expect(facultyAssignmentQuerySchema.safeParse({ collegeId: "other" }).success).toBe(false);
   });
 
@@ -58,5 +60,8 @@ describe("College Admin semester offering and faculty assignment models", () => 
       q: "", status: "ENDED", page: 1,
     });
     expect(faculty).toBe("/college/faculty-assignment?status=ENDED");
+    expect(collegeMappingHref("FACULTY_ASSIGNMENTS", {
+      q: "", status: "ALL", role: "CO_TEACHER", page: 2,
+    })).toContain("role=CO_TEACHER");
   });
 });
