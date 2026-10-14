@@ -19,7 +19,7 @@ const detailPages = [
     "No extended company biography", "sm:"],
   ["learn/my-placements/offers", "No offers recorded", "sm:"],
   ["learn/my-placements/assessments/results", "No official assessment results yet", "sm:"],
-  ["learn/notifications/history", "emptyMessage", "sm:"],
+  ["learn/notifications/history", "emptyMessage", "NotificationList"],
   ["learn/courses/[deliveryId]/progress", "No published lessons", "sm:"],
   ["learn/courses/[deliveryId]/attendance-summary", "No attendance sessions for this selection", "sm:"],
 ] as const;
@@ -44,6 +44,10 @@ describe("Learner added page mobile/recovery/empty audit", () => {
       expect(read(route + "/loading.tsx")).toContain("Loading");
       expect(read(route + "/error.tsx")).toContain("Retry");
     }
+    const notificationList = fs.readFileSync(path.join(
+      process.cwd(), "src/components/activity/notification-list.tsx",
+    ), "utf8");
+    expect(notificationList).toContain("sm:");
     const placementPage = read("learn/my-placements/placement/page.tsx");
     expect(placementPage).toContain("LearnerPlacementAlerts");
     const personalAlerts = fs.readFileSync(path.join(
