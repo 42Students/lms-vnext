@@ -525,3 +525,18 @@ Admin legacy controls remain unchanged. Source-authored pure and PostgreSQL
 tests cover valid writes, audit, forged inputs, stale replay and role/foreign
 denial. **PARTIAL:** checks are not executed in this session; mobile/browser,
 exact legacy Board controls, task assignees and workloads remain outstanding.
+
+
+## 2026-10-14 chat-11 B — Mentor Board/Sprint filters and exports (PARTIAL)
+
+The exact-project Mentor task-board status page now filters by registered Sprint
+ID, status, priority and literal title/Sprint search. Existing per-state totals
+remain whole-project counts while displayed/exported rows honor the selected
+filters. A same-college/current-assigned-Mentor GET route exports at most 500
+task rows to UTF-8 formula-neutralized CSV with a truncation count. Cross-project
+Sprint progress adds a filtered, current-Mentor-only export capped at 100 rows,
+also neutralized and explicitly truncated. Neither export invents assignees,
+workload, velocity or readiness. Unit tests and a new isolated positive/foreign/
+wrong-role PostgreSQL board-export fixture are authored. **PARTIAL:** real
+typecheck, ESLint, unit, PostgreSQL, download/browser and legacy filters
+verification remain open; full-scale streaming is not implemented.
