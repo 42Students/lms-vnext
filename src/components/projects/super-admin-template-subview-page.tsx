@@ -17,6 +17,7 @@ import {
   TEMPLATE_SUBVIEW_TABS,
   type TemplateReadSubview,
 } from "@/modules/projects/template-subview-model";
+import { templateVersionComparisonHref } from "@/modules/projects/template-version-comparison-model";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 
 function formatDate(value: Date) {
@@ -639,6 +640,11 @@ export async function SuperAdminTemplateSubviewPage({
                       ))}
                     </div>
                   </div>
+
+                  <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
+                    className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                    Compare changes and inspect snapshot →
+                  </Link>
 
                   {version.summary ? (
                     <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
