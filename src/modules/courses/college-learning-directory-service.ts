@@ -105,7 +105,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
-      query.q ? sql`(${courseLessons.name} ilike ${searchLike(query.q)} or
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
+      query.q ? sql`(${courseLessons.name) ilike ${searchLike(query.q)} or
         ${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)})` : undefined,
     )).as("college_lessons");

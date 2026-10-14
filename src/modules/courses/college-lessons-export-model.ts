@@ -4,11 +4,12 @@ export const LESSONS_EXPORT_CAP=1000;
 export const lessonsCsvSchema=collegeLessonQuerySchema.omit({page:true});
 export {exportParams};
 export function lessonsCsvHref(q:{
- q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;
+ q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
  if(q.courseCode)p.set("courseCode",q.courseCode);
+ if(q.programCode)p.set("programCode",q.programCode);
  if(q.status!=="ACTIVE")p.set("status",q.status);
  if(q.offeringStatus!=="ALL")p.set("offeringStatus",q.offeringStatus);
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");

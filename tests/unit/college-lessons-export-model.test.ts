@@ -5,6 +5,8 @@ describe("college lessons CSV",()=>{
  it("strictly preserves authorized filter state and refuses page/college",()=>{
   expect(lessonsCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   expect(lessonsCsvSchema.safeParse({page:3}).success).toBe(false);
+  expect(lessonsCsvSchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+  expect(lessonsCsvHref({...lessonsCsvSchema.parse({programCode:"PROG-1"})})).toContain("programCode=PROG-1");
   expect(lessonsCsvSchema.safeParse({offeringStatus:"CLOSED"}).success).toBe(false);
   expect(exportParams(new URLSearchParams("q=a&q=b"))).toBeNull();
   expect(lessonsCsvHref({q:"A & B",status:"ACTIVE",offeringStatus:"ARCHIVED"}))
