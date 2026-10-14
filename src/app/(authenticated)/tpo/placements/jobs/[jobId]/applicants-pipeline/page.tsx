@@ -44,6 +44,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <h2 className="font-semibold text-foreground">{a.student??"Name unavailable"}</h2>
      <p className="mt-1 text-sm text-body">{a.role} · {applicantStage(a)} · Application {a.applicationStatus}</p>
      <p className="mt-1 text-xs text-body">Submitted {new Date(a.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+     <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+a.id}
+       className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+       Open applicant detail →
+     </Link>
    </article>)}</section>}
   <p className="text-xs text-body">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
  </div>;
