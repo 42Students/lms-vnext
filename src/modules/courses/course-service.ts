@@ -7,6 +7,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   colleges,
   courseOfferings,
@@ -15,7 +17,7 @@ import {
   organizations,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   loadAcademicCollegeScope,
   loadAcademicDepartmentScope,
@@ -36,6 +38,15 @@ import {
   type CreateCourseInput,
   type UpdateCourseInput,
 } from "./validation";
+
+type CourseTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+type CourseRunner = <T>(work: (tx: CourseTx) => Promise<T>) => Promise<T>;
+
+function requireCourseWrite(context: RequestContext, organizationId: string, collegeId: string) {
+  if (!can(context, "courses.manage", { organizationId, collegeId }))
+    throw new AuthorizationError("courses.manage");
+  requirePermission(context, "courses.manage", { organizationId, collegeId });
+}
 
 async function assertCourseUnique(
   departmentId: string,
@@ -192,6 +203,7 @@ export async function listCourses(
 export async function createCourse(
   context: RequestContext,
   rawInput: CreateCourseInput,
+  transaction: CourseRunner = (work) => getDb().transaction(work),
 ) {
   const input = createCourseInputSchema.parse(
     rawInput,
@@ -201,10 +213,7 @@ export async function createCourse(
       input.departmentId,
     );
 
-  requirePermission(context, "courses.manage", {
-    organizationId: department.organizationId,
-    collegeId: department.collegeId,
-  });
+  requireCourseWrite(context, department.organizationId, department.collegeId);
 
   await assertCourseUnique(
     input.departmentId,
@@ -212,7 +221,7 @@ export async function createCourse(
   );
 
   try {
-    return await getDb().transaction(async (tx) => {
+    return await transaction(async (tx) => {
       // Department may be archived, transferred to another college, or its
       // college/organization disabled after the permission precheck. Hold
       // SHARE locks on the entire authorized tenant path through INSERT.
@@ -255,7 +264,13 @@ export async function createCourse(
           description: input.description ?? null,
         })
         .returning();
-
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_CREATED,
+        collegeId: department.collegeId, organizationId: department.organizationId,
+        subjectType: "course", subjectId: created.id, subjectLabel: created.name,
+        summary: "Course created",
+        metadata: { departmentId: created.departmentId, code: created.code },
+      });
       return created;
     });
   } catch (error) {
@@ -276,10 +291,7 @@ export async function updateCourse(
   );
   const scope = await loadCourseScope(courseId);
 
-  requirePermission(context, "courses.manage", {
-    organizationId: scope.organizationId,
-    collegeId: scope.collegeId,
-  });
+  requireCourseWrite(context, scope.organizationId, scope.collegeId);
 
   await assertCourseUnique(
     scope.departmentId,
@@ -288,7 +300,21 @@ export async function updateCourse(
   );
 
   try {
-    const [updated] = await getDb()
+    return await getDb().transaction(async (tx) => {
+      const [locked] = await tx.select({
+        id: courses.id, name: courses.name, code: courses.code,
+        status: courses.status, departmentId: courses.departmentId,
+      }).from(courses).innerJoin(departments, and(
+        eq(departments.id, courses.departmentId),
+        eq(departments.collegeId, scope.collegeId),
+        isNull(departments.archivedAt),
+      )).where(and(
+        eq(courses.id, courseId),
+        eq(courses.departmentId, scope.departmentId),
+      )).for("update", { of: courses }).limit(1);
+      if (!locked || locked.status !== "ACTIVE")
+        throw new CoursesServiceError("COURSE_NOT_FOUND");
+      const [updated] = await tx
       .update(courses)
       .set({
         ...input,
@@ -311,7 +337,16 @@ export async function updateCourse(
       );
     }
 
-    return updated;
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_UPDATED,
+        collegeId: scope.collegeId, organizationId: scope.organizationId,
+        subjectType: "course", subjectId: updated.id, subjectLabel: updated.name,
+        summary: "Course updated",
+        metadata: { previousName: locked.name, previousCode: locked.code,
+          updatedName: updated.name, updatedCode: updated.code },
+      });
+      return updated;
+    });
   } catch (error) {
     if (error instanceof CoursesServiceError) {
       throw error;
@@ -328,10 +363,7 @@ export async function archiveCourse(
     courseIdSchema.parse(courseIdInput);
   const scope = await loadCourseScope(courseId);
 
-  requirePermission(context, "courses.manage", {
-    organizationId: scope.organizationId,
-    collegeId: scope.collegeId,
-  });
+  requireCourseWrite(context, scope.organizationId, scope.collegeId);
 
   // Serialize the child-existence check with offering INSERT. PostgreSQL
   // FK checks take KEY SHARE on the referenced course; FOR UPDATE conflicts
@@ -384,6 +416,13 @@ export async function archiveCourse(
       throw new CoursesServiceError("COURSE_NOT_FOUND");
     }
 
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_ARCHIVED,
+      collegeId: scope.collegeId, organizationId: scope.organizationId,
+      subjectType: "course", subjectId: archived.id, subjectLabel: archived.name,
+      summary: "Course archived",
+      metadata: { departmentId: archived.departmentId, code: archived.code },
+    });
     return archived;
   });
 }
