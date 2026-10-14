@@ -39,6 +39,9 @@ describe("Mentor portfolio models", () => {
     expect(mentorReviewQuerySchema.safeParse({search:"x".repeat(121)}).success).toBe(false);
     expect(mentorActivityQuerySchema.safeParse({page:"0"}).success).toBe(false);
     expect(mentorActivityQuerySchema.safeParse({pageSize:"51"}).success).toBe(false);
+    expect(mentorActivityQuerySchema.safeParse({importance:"DANGEROUS"}).success).toBe(false);
+    expect(mentorActivityQuerySchema.parse({importance:"CRITICAL"}).importance).toBe("CRITICAL");
+    expect(mentorPortfolioHref("activity",{importance:"HIGH",page:2})).toBe("/mentor/activity?importance=HIGH&page=2");
   });
   it("builds scoped-navigation URLs without tenant parameters", () => {
     expect(mentorPortfolioHref("reviews",{search:"Atlas",page:2,pageSize:50}))

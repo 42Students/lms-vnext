@@ -72,6 +72,7 @@ export async function getMentorPortfolioActivity(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
+    query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     or(
       and(eq(activityEvents.subjectType, "project"), inArray(activityEvents.subjectId, ids)),
       inArray(metadataProjectId, ids),

@@ -895,3 +895,6 @@ Cross-project Sprint progress now filters persisted PLANNED, IN_PROGRESS and SHI
 
 ## 2026-10-15 chat-11 AH — persisted final-review history title search (PARTIAL)
 Delivery decision history now filters by literal project title with SQL wildcard escape, preserving decision filter/page and limiting reads to currently assigned Mentor project review records. Strict Zod, unit and unique-project DB fixture assertions source-authored. Raw feedback/learner contact not returned. Actual PG/type/lint/browser and legacy history parity remain open.
+
+## 2026-10-15 chat-11 AI — global Mentor project activity importance filter (PARTIAL)
+The cross-assignment sanitized activity feed now supports registered event importance LOW/NORMAL/HIGH/CRITICAL. SQL applies the selector before count/pagination over current same-college assigned Mentor projects; URLs and page-size controls preserve the filter. Only safe labels/timestamps and authorized project links are shown, no raw event summary/metadata/learner identities. Strict unit and PG wrong-role denial assertions authored. Independent CLI/PG/browser and legacy activity completeness still open.

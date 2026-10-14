@@ -10,7 +10,10 @@ export const mentorReviewQuerySchema = z.object({
   order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   ...paging,
 }).strict();
-export const mentorActivityQuerySchema = z.object(paging).strict();
+export const mentorActivityQuerySchema = z.object({
+  importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
+  ...paging,
+}).strict();
 
 export function pageMentorPortfolio<T>(
   rows: readonly T[], query: { page: number; pageSize: number },
@@ -60,11 +63,12 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number; order?: string },
+  query: { search?: string; page?: number; pageSize?: number; order?: string; importance?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
   if (area === "reviews" && query.order && query.order !== "NEWEST") params.set("order", query.order);
+  if (area === "activity" && query.importance && query.importance !== "ALL") params.set("importance",query.importance);
   if (query.page && query.page > 1) params.set("page", String(query.page));
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
   return "/mentor/" + area + (params.size ? "?" + params.toString() : "");

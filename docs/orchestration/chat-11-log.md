@@ -193,3 +193,6 @@
 
 ## Round 3 AH — Review history project-title search (PARTIAL)
 - SQL-scoped escaped literal project title search plus decision/pagination state, source-authored model/PG assertions not executed.
+
+## Round 3 AI — Cross-project activity importance (PARTIAL)
+- Safe registered event importance SQL filter across authorized Mentor projects with URL retention; unit and denial PG assertions authored, gates unexecuted.
