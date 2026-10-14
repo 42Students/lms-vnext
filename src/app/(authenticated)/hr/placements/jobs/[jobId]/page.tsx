@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
+import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 
 function formatCtc(
   value: number | null,
@@ -25,7 +26,7 @@ export default async function HrPlacementJobPage({
   searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{ tab?: string; stage?: string }>;
+  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -46,6 +47,8 @@ export default async function HrPlacementJobPage({
     throw error;
   }
   const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
+  const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
+  if (filters.applicant && !selectedApplicant) notFound();
 
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
@@ -165,10 +168,34 @@ export default async function HrPlacementJobPage({
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
-                <p className="mt-2 text-xs text-muted-foreground">Applied {applicant.submittedAt.toISOString().slice(0,10)}</p>
+                <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&applicant="+applicant.id}
+                  className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
+          {selectedApplicant ? (
+            <section role="dialog" aria-modal="false" aria-labelledby="hr-applicant-drawer-title"
+              className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">Applicant review</h3>
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage}
+                  className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
+              </div>
+              <dl className="mt-5 grid gap-4 text-sm">
+                <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
+                <div><dt className="text-muted-foreground">Role</dt><dd className="text-foreground">{selectedApplicant.role}</dd></div>
+                <div><dt className="text-muted-foreground">Shared email</dt><dd className="break-all text-foreground">{selectedApplicant.email ?? "Not provided"}</dd></div>
+                <div><dt className="text-muted-foreground">Application</dt><dd className="text-foreground">{selectedApplicant.status}</dd></div>
+                <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
+                <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
+              </dl>
+              <p className="mt-5 text-sm text-muted-foreground">Recruiter notes and round-specific review decisions are not yet persisted by this read-only drawer. The placement team controls official screening.</p>
+              <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"}
+                className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
+            </section>
+          ) : null}
           {applicantsTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 shared applications only.</p> : null}
         </section>
       ) : null}

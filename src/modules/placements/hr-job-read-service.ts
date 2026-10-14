@@ -14,13 +14,15 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const where = and(
     eq(placementApplications.jobId, workspace.job.id),
     eq(collegeMemberships.collegeId, workspace.college.id),
+    eq(collegeMemberships.status, "ACTIVE"),
+    eq(users.platformStatus, "ACTIVE"),
     // The recruiter cannot inspect unshared applications or screening decisions.
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
   const [applications, offers] = await Promise.all([
     db.select({
-      id: placementApplications.id, name: users.displayName,
+      id: placementApplications.id, name: users.displayName, email: users.email,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
       submittedAt: placementApplications.submittedAt,
