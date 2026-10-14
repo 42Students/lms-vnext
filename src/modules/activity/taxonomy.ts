@@ -106,6 +106,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.class.scheduled",
   COURSES_DISCUSSION_POSTED:
     "courses.discussion.posted",
+  COURSES_DISCUSSION_REPLIED:"courses.discussion.replied",
   COURSES_DISCUSSION_PIN_CHANGED:
     "courses.discussion.pin_changed",
   COURSES_DISCUSSION_DELETED:

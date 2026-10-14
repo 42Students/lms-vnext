@@ -36,6 +36,7 @@ import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-a
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import {getFacultyDiscussionParticipation} from "@/modules/courses/faculty-discussion-participation-service";
 import {getFacultySessionCoverage} from "@/modules/courses/faculty-session-coverage-service";
+import {postFacultyDiscussionReply} from "@/modules/courses/faculty-discussion-reply-service";
 import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage}
  from "@/modules/courses/discussion-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
@@ -337,6 +338,34 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.assignment.created","courses.assignment.updated",
     ]);
+  });
+  it("writes version-checked Faculty reply against locked Section parent, with immutable audit",async()=>{
+    const {delivery}=await fixture();
+    const parent=await createCourseDiscussionMessage(facultyOnly,delivery.id,{
+      messageText:"Parent message "+runId,
+    });
+    const input={messageText:"Faculty answer with evidence",replyToMessageId:parent.id,
+      expectedParentUpdatedAt:parent.updatedAt.toISOString(),confirmed:true as const};
+    await expect(postFacultyDiscussionReply(learner,delivery.id,input)).rejects.toBeDefined();
+    await expect(postFacultyDiscussionReply({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },delivery.id,input)).rejects.toBeDefined();
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      ...input,replyToMessageId:SEED_IDS.collegeB,
+    })).rejects.toMatchObject({code:"DISCUSSION_MESSAGE_NOT_FOUND"});
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      ...input,expectedParentUpdatedAt:"2026-01-01T00:00:00.000Z",
+    })).rejects.toMatchObject({code:"DISCUSSION_STALE_VERSION"});
+    const reply=await postFacultyDiscussionReply(facultyOnly,delivery.id,input);
+    expect(reply.messageText).toContain("Faculty answer with evidence");
+    const events=await pool.query<{n:string}>(`select count(*)::text as n from activity_events
+      where subject_id=$1::text and event_type='courses.discussion.replied'`,[reply.id]);
+    expect(events.rows[0]?.n).toBe("1");
+    await deleteCourseDiscussionMessage(facultyOnly,parent.id,delivery.id,{
+      expectedUpdatedAt:parent.updatedAt.toISOString(),confirmed:true,
+    });
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,input))
+      .rejects.toMatchObject({code:"DISCUSSION_MESSAGE_NOT_FOUND"});
   });
   it("pins and deletes own-Section discussion with microsecond CAS, audit and denial",async()=>{
     const {delivery}=await fixture();

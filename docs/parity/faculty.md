@@ -867,3 +867,16 @@ Pure-model unit and fresh Section PG fixtures cover real correction, no-op,
 missing reason, wrong role, foreign Section, stale token and audit.
 Still PARTIAL: executed tests, mobile/keyboard/browser, correction-request
 workflow and legacy report acceptance.
+
+## 2026-10-14 Faculty version-checked moderation replies — PARTIAL
+A distinct, same-origin Faculty-only reply POST uses existing discussion
+storage and an authorized teaching-Section scope. The parent message is
+re-read with a shared row lock in the insert transaction, rejecting deleted,
+foreign-Section or stale parent versions before a reply can be created.
+A new immutable `courses.discussion.replied` event records only parent ID,
+Section and role (not private message text). Learner replies retain their
+existing route. Shared mobile composer displays a clear stale-parent error.
+Pure model/unit and own-Faculty PostgreSQL tests authored for success,
+wrong-role, non-leaking foreign parent, stale, delete race and single audit.
+Still PARTIAL: execution/browser, genuine threaded-reply storage absent,
+and a locked-thread flag is not migrated; no fictitious lock implemented.
