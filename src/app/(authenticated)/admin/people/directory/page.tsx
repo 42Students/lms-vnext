@@ -17,7 +17,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
- const data=await listSuperAdminUsers(await getCurrentRequestContext(),query.data);
+ const context=await getCurrentRequestContext();
+ const data=await listSuperAdminUsers(context,query.data);
  const tabs=[{id:"ALL",label:"All"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
@@ -26,6 +27,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · People" title="Users & Roles"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."/>
+  {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Users without college memberships →</Link> : null}
   <nav aria-label="People directory tabs" className="flex flex-wrap gap-2">
    {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
     aria-current={data.query.tab===tab.id?"page":undefined}
