@@ -15,6 +15,7 @@ type SemesterRow = {
   programName: string;
   totalCredits: number | null;
   isActive: boolean;
+  updatedAt: Date;
   mappedCourses: number;
 };
 
@@ -134,11 +135,13 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     setNotice("");
     const parsed = updateCollegeSemesterSchema.safeParse({
       name, totalCredits: inputNumber(credits), isActive,
+      expectedUpdatedAt:row.updatedAt.toISOString(),confirm:true,
     });
     if (!parsed.success) {
       setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
       return;
     }
+    if(!window.confirm("Save semester changes? Deactivation is blocked for mapped curriculum or live cohort progression."))return;
     startTransition(async () => {
       try {
         await mutate("PATCH", url, parsed.data);

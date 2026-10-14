@@ -8,3 +8,6 @@ Taken by Claude under the owner's delegated ownership. Reversible; the owner may
 4. **File storage:** no file-backed features are built until the private R2 bucket exists. Text/link submissions stay the only supported kind. Rows depending on files stay BLOCKED.
 5. **External sending (email/SMS/WhatsApp):** only through existing OTP/notification paths; chats build in-app notification records and copy-to-clipboard summaries, never new external sends.
 6. **Parity DONE:** only the orchestrator flips rows to DONE after browser verification (desktop + mobile, no console errors, no horizontal scroll). Chats write PARTIAL only.
+
+## Owner confirmations (2026-10-14 ~21:45)
+Owner confirmed items 1 (contact visibility default), 2 (IST), 3 (mentor membership writes) as written, and approved creating the private R2 bucket `lms-vnext-private` (item 4 becomes: file features may be built once the bucket exists and the storage module (owned by the orchestrator, not chats) exposes signed upload/download helpers).

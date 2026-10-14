@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { canonicalLearnerProjectTab } from "@/modules/projects/learner-project-tab-alias-model";
 
 const tabs = [
   { key: "overview", label: "Overview" },
@@ -14,7 +15,7 @@ const tabs = [
 
 export function LearnerProjectTabs({ projectId }: { projectId: string }) {
   const searchParams = useSearchParams();
-  const active = searchParams.get("tab") ?? "overview";
+  const active = canonicalLearnerProjectTab(searchParams.get("tab"));
 
   return (
     <nav aria-label="Project sections" className="overflow-x-auto border-b border-border">

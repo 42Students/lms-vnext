@@ -60,6 +60,18 @@ describe.skipIf(!enabled)("College study group rule and waitlist PG",()=>{
     expect(saved.groupVersion).toBe(1);
     await expect(writeCollegeGroupDetail(own,ids.group,rule))
       .rejects.toMatchObject({code:"GROUP_STALE"});
+    await pool!.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[ids.user]);
+    await expect(writeCollegeGroupDetail(own,ids.group,promotion))
+      .rejects.toMatchObject({code:"MEMBER_NOT_FOUND"});
+    const before=await pool!.query("SELECT state,version FROM lms_group_members WHERE id=$1",[ids.groupMember]);
+    expect(before.rows[0]).toEqual({state:"WAITLISTED",version:0});
+    const beforeGroup=await pool!.query("SELECT active_count,version FROM lms_groups WHERE id=$1",[ids.group]);
+    expect(beforeGroup.rows[0]).toEqual({active_count:0,version:1});
+    const beforeHistory=await pool!.query("SELECT id FROM lms_group_member_events WHERE group_id=$1",[ids.group]);
+    expect(beforeHistory.rowCount).toBe(0);
+    await pool!.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[ids.user]);
+    await expect(writeCollegeGroupDetail(own,ids.group,{...promotion,expectedMemberVersion:5}))
+      .rejects.toMatchObject({code:"MEMBER_STALE"});
     const promoted=await writeCollegeGroupDetail(own,ids.group,promotion);
     expect(promoted.groupVersion).toBe(2);
     await expect(writeCollegeGroupDetail(own,ids.group,promotion))
