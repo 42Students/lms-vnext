@@ -131,6 +131,8 @@ export async function listCollegeFacultyAssignments(
   const db = getDb();
   const source = db.select({
     id: courseTeachingAssignments.id,
+    deliveryId: courseTeachingAssignments.deliveryId,
+    membershipId: courseTeachingAssignments.membershipId,
     facultyName: users.displayName,
     courseName: courses.name,
     courseCode: courses.code,
