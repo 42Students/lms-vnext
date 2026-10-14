@@ -49,6 +49,7 @@ function availablePrograms(collegeId: string) {
     id: programs.id,
     name: programs.name,
     code: programs.code,
+    status: programs.status,
   }).from(programs)
     .innerJoin(departments, and(
       eq(departments.id, programs.departmentId),
@@ -136,6 +137,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     name: cohorts.name,
     code: cohorts.code,
     status: cohorts.status,
+    expectedEndPeriodId: cohorts.expectedEndPeriodId,
     programId: programs.id,
     programName: programs.name,
     programCode: programs.code,

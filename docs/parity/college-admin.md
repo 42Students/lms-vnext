@@ -93,7 +93,7 @@ Legacy contract:
 ## Page: Programs
 **Legacy:** `/college-admin/programs`
 
-**Write-side PARTIAL (2026-10-14):** `/college/programs` now uses strict Zod College Admin mutation contracts for create/edit/archive, with current-college ownership, `can()`/`requirePermission()`, isSameOriginRequest on all mutation routes, program-row locks, same-transaction activity audit entries and case-insensitive name/code conflicts. Archive confirmation is required in UI and server body; current/historical cohort, enrollment and curriculum term dependencies all block archive. Edits preserve immutable department and deny lowering duration below authored semester or recorded batch progression. Loading/error/empty states and search/CSV remain. Isolated PostgreSQL success/cross-college/denial tests authored, pending execution here. Exact legacy duration-years/edit-discard UX, blocker detail view and browser acceptance remain open.
+**Write-side PARTIAL (2026-10-14):** `/college/programs` now uses strict Zod College Admin mutation contracts for create/edit/archive, with current-college ownership, `can()`/`requirePermission()`, isSameOriginRequest on all mutation routes, program-row locks, same-transaction activity audit entries and case-insensitive name/code conflicts. Archive confirmation is required in UI and server body; current/historical cohort, enrollment and curriculum term dependencies all block archive. Edits preserve immutable department and deny lowering duration below authored semester or recorded batch progression. Loading/error/empty states and search/CSV remain. Isolated PostgreSQL success/cross-college/denial tests authored, pending execution here. Legacy duration-years input, blocker detail view and browser acceptance remain open. Dirty program edits now require explicit discard confirmation.
 
 Legacy contract:
 - Create Program;
@@ -157,6 +157,9 @@ Legacy contract:
 ## Page: Batches
 **Legacy:** `/college-admin/batches`
 
+**Write-side PARTIAL (2026-10-14):** `/college/batches` adds a validated create form and confirmed edit dialog (name, code, expected end period) for PLANNED cohorts via dedicated `/api/college/batches` endpoints. Registered program, period, cohort and dependency rows are enforced under College Admin college scope; parent/subject locks, case-insensitive duplicate-name/code checks, same-college period date windows, child and progression-history guards, transactional audit and explicit cross-college denial are implemented. Create/edit do **not** allow start-period/program changes, bypass archived parents, mutate an existing progression state, or imply promotion. Legacy delete, student/class modal and move, academic-year recalculate, exact status/edit parity, browser/PG execution and full acceptance remain open.
+
+
 **Read-first PARTIAL (2026-10-14):** `/college/batches` lists persisted cohorts with program, start academic period, status, and optional DB-0051 `cohort_progression_state` (current term and academic year), alongside scoped counts of active sections and active learner enrollments. Server-side search, program/status filters, 25-row pagination, explicit absent progression and empty/error states included. A cohort period is not interpreted as an exact legacy batch end date. Legacy create/edit/delete, learner drill-in/moves, promotion preview and true current-class attendance remain open. No database/browser acceptance claimed.
 
 Legacy contract audited:
@@ -187,6 +190,8 @@ Legacy contract audited:
 
 ## Page: Classes / Sections
 **Legacy:** `/college-admin/classes`
+
+**Write-side PARTIAL (2026-10-14):** `/college/classes` adds a confirmed College Admin create/edit flow through strict Zod, college-scoped, same-origin POST/PATCH routes. Transactions serialize with the cohort and period ancestry, enforce unique active class name/code, valid cohort-period range, capacity not below active enrolled learners and dependency guards on identity change, and append one actor audit event per success. Cancel/discard confirmation and empty/loading/error states retained. Legacy recurring scheduling, archival, detailed min/max students, browser/database acceptance and full parity remain open.
 
 **Read-first PARTIAL (2026-10-14):** `/college/classes` now shows migrated class/section rows with program, cohort, academic period, configured capacity, active enrollments and lifecycle state. Includes program/status filters, search, 25-row pagination, college-scoped permissions, honest empty/loading/error states and a link to the existing section detail. Active enrollment counts use joined learner program/section enrollments with current in-college LEARNER memberships; no attendance, scheduled-session, or capacity-utilization metric is inferred. Legacy create/edit/delete, recurring-series scheduling, conflicts, moving learners, real-DB execution and browser parity remain open.
 
@@ -432,7 +437,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Faculty Assignment
 **Legacy:** `/college-admin/faculty-assignment`
 
-**Read-first PARTIAL:** `/college/faculty-assignment` shows persisted college-scoped teaching assignments, Faculty identity, class/course context, active/ended lifecycle, filtering and pagination. Mutation dialogs, conflict warnings, exact legacy assignment behavior and browser acceptance remain open.
+**Write-side PARTIAL (2026-10-14):** `/college/faculty-assignment` retains the college-scoped list/search/status/pagination and adds a live course/class delivery + Faculty + role assignment form and end-assignment action. Both require explicit user confirmation. Existing registered `course_teaching_assignments` unique constraints remain the concurrency backstop; the create transaction also checks duplicate faculty/live primary teacher before insert, locks live delivery/membership/Faculty role and writes an immutable actor-scoped `activity_events` audit row. End keeps teaching history and audits in the same transaction. Read-only options filter active same-college deliveries, courses, cohorts/programs, academic periods, section and Faculty account/membership. A maximum 200-option truncation is disclosed; no silent fallback. Change/reassign in one operation, timetable conflict evaluation, exact legacy dialogs and executed DB/browser acceptance remain open.
 
 - [ ] Course/Class/Faculty selectors match.
 - [ ] Existing assignment list/table matches.
@@ -466,6 +471,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Student Groups List
 **Legacy:** `/college-admin/student-groups`
+
+**Write-side PARTIAL:** `/college/groups` now provides Study Group create/edit/activate/close/archive on migrated `lms_groups`, with same-college duplicate-name, version and member/capacity guards. All changes use persisted actor rechecks and transactional `activity_events` audits. Group types with additional semantics (PROJECT_TEAM/ELECTIVE) remain read-only here. Complete legacy dynamic rules, CSV, member moderation and browser acceptance remain open.
 
 Audited contract:
 - search toolbar;

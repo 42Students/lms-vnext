@@ -119,6 +119,18 @@ const learner: RequestContext = {
 };
 
 async function cleanupUI2A() {
+  // This suite writes immutable attendance audit rows which otherwise outlive
+  // its disposable class sessions; remove only events belonging to this fixture.
+  await pool.query(`delete from activity_events
+    where event_type = 'courses.attendance.marked'
+      and subject_type = 'attendance_session'
+      and subject_id in (
+        select e.id::text from section_schedule_events e
+        join sections s on s.id = e.section_id
+        join cohorts c on c.id = s.cohort_id
+        join programs p on p.id = c.program_id
+        where p.code like 'FUI2A-%'
+      )`);
   // Schedule link FKs must go before the Section and delivery fixtures.
   await pool.query(`delete from section_schedule_event_courses
    where schedule_event_id in (
@@ -774,6 +786,49 @@ describe("courses UI2A faculty read model", () => {
       );
     expect(exceptionRows.rows).toHaveLength(0);
 
+    const audits = await pool.query<{
+      event_type: string;
+      subject_id: string;
+      actor_user_id: string;
+      college_id: string;
+      metadata: {
+        deliveryId: string;
+        markedAbsent: number;
+        markedPresent: number;
+        correction: boolean;
+      };
+      summary: string;
+    }>(
+      `select event_type, subject_id, actor_user_id, college_id, metadata, summary
+         from activity_events
+        where event_type = 'courses.attendance.marked'
+          and subject_type = 'attendance_session'
+          and subject_id = $1
+        order by occurred_at, id`,
+      [session.id],
+    );
+    expect(audits.rows).toHaveLength(2);
+    expect(audits.rows.map((row) => row.metadata)).toEqual([
+      expect.objectContaining({
+        deliveryId: structure.deliveryA.id,
+        markedAbsent: 1,
+        markedPresent: 0,
+        correction: false,
+      }),
+      expect.objectContaining({
+        deliveryId: structure.deliveryA.id,
+        markedAbsent: 0,
+        markedPresent: 1,
+        correction: true,
+      }),
+    ]);
+    expect(audits.rows.every((row) =>
+      row.subject_id === session.id &&
+      row.actor_user_id === faculty.user.id &&
+      row.college_id === SEED_IDS.collegeA
+    )).toBe(true);
+    expect(JSON.stringify(audits.rows)).not.toContain(SEED_IDS.learnerCollegeAMembership);
+
     const future = await createFacultyAttendanceSession(faculty, {
       deliveryId: structure.deliveryA.id,
       title: "FUI2A Future Attendance",
@@ -801,6 +856,12 @@ describe("courses UI2A faculty read model", () => {
     const state = await getFacultyAttendanceWorkspace(faculty, structure.deliveryA.id);
     expect(state.sessions.filter((session) => [future.id, expired.id].includes(session.id))
       .every((session) => session.attendanceStatus === null)).toBe(true);
+    const rejectedAudits = await pool.query(
+      `select id from activity_events where event_type = 'courses.attendance.marked'
+         and subject_id in ($1, $2)`,
+      [future.id, expired.id],
+    );
+    expect(rejectedAudits.rows).toHaveLength(0);
   });
 
   it("keeps Faculty attendance scheduling and marking inside exact teaching scope", async () => {

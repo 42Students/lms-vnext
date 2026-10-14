@@ -64,6 +64,8 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
   const db = getDb();
   const scoped = db.select({
     id: sections.id,
+    cohortId: sections.cohortId,
+    academicPeriodId: sections.academicPeriodId,
     name: sections.name,
     code: sections.code,
     status: sections.status,

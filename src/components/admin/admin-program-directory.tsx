@@ -170,7 +170,11 @@ export function AdminProgramDirectory({
         <DataTable columns={columns} rows={result.items}
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
-            {search ? "No matching programs." : "No programs yet. Create a department first."}
+            {search
+              ? "No matching programs."
+              : departments.length === 0
+                ? "No programs yet. Create a department first."
+                : "No programs yet. Create the first program using the form above."}
           </p>} />
         {result.total > 0 ? (
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">

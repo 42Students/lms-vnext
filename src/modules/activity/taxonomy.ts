@@ -41,16 +41,29 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_SEMESTER_CREATED: "academics.semester.created",
   ACADEMICS_SEMESTER_UPDATED: "academics.semester.updated",
   ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",
+  ACADEMICS_BATCH_CREATED: "academics.batch.created",
+  ACADEMICS_BATCH_UPDATED: "academics.batch.updated",
+  ACADEMICS_CLASS_CREATED: "academics.class.created",
+  ACADEMICS_CLASS_UPDATED: "academics.class.updated",
+  ACADEMICS_GROUP_CREATED: "academics.group.created",
+  ACADEMICS_GROUP_UPDATED: "academics.group.updated",
+  ACADEMICS_GROUP_STATUS_CHANGED: "academics.group.status_changed",
   ACADEMICS_LEARNER_ENROLLED:
     "academics.learner.enrolled",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
+  COURSES_TEACHING_ASSIGNED:
+    "courses.teaching_assignment.assigned",
+  COURSES_TEACHING_ENDED:
+    "courses.teaching_assignment.ended",
   COURSES_ASSIGNMENT_PUBLISHED:
     "courses.assignment.published",
   COURSES_ASSIGNMENT_GRADED:
     "courses.assignment.graded",
   COURSES_ASSIGNMENT_GRADE_PUBLISHED:
     "courses.assignment.grade_published",
+  COURSES_ATTENDANCE_MARKED:
+    "courses.attendance.marked",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   // Lifecycle events are emitted only after W03's persisted mutation succeeds.
@@ -67,6 +80,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "projects.readiness.overridden",
   PROJECTS_SPRINT_UPDATED:
     "projects.sprint.updated",
+  PROJECTS_TASK_DETAILS_UPDATED:
+    "projects.task.details_updated",
   PROJECTS_TASK_SUBMITTED:
     "projects.task.submitted",
   PROJECTS_TASK_REVIEWED:
@@ -89,6 +104,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.screening.decided",
   PLACEMENTS_ROUND_COMPLETED:
     "placements.round.completed",
+  PLACEMENTS_RESULT_STAGED:
+    "placements.result.staged",
   PLACEMENTS_RESULT_APPLIED:
     "placements.result.applied",
   PLACEMENTS_OFFER_ISSUED:
@@ -101,6 +118,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.request.submitted",
   PLACEMENTS_REQUEST_DECIDED:
     "placements.request.decided",
+  PLACEMENTS_NOTIFICATION_PREFERENCES_UPDATED:
+    "placements.notification_preferences.updated",
 } as const;
 
 export type ActivityEventType =

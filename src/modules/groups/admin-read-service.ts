@@ -41,6 +41,7 @@ export type GroupListRow = {
   id: string;
   name: string;
   kind: string;
+  version: number;
   status: string;
   description: string | null;
   capacity: number | null;
@@ -96,6 +97,7 @@ export async function listCollegeGroups(
         id: lmsGroups.id,
         name: lmsGroups.name,
         kind: lmsGroups.kind,
+        version: lmsGroups.version,
         status: lmsGroups.status,
         description: lmsGroups.description,
         capacity: lmsGroups.capacity,

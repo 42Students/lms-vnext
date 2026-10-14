@@ -50,7 +50,7 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
     title: "People",
     steps: [
       { label: "Register Faculty", key: "faculty", href: null },
-      { label: "Assign Faculty", key: "faculty-assignment", href: null },
+      { label: "Assign Faculty", key: "faculty-assignment", href: "/college/faculty-assignment" },
       { label: "Register Students", key: "students", href: null },
     ],
   },

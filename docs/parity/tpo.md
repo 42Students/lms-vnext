@@ -39,6 +39,8 @@ Closure checklist:
 - [ ] Follow-ups Due list matches.
 - [ ] Call and WhatsApp actions work safely.
 - [ ] Follow-up outcome logging and Done action match.
+
+**W49 PARTIAL:** A TPO-only /tpo/follow-ups queue now presents the earliest 200 college-scoped open due tasks joined to registered DB09 recruiter leads, explicitly signals truncation, and links to each contact. Confirmed Create and Record Outcome + Done actions use strict Zod and same-origin routes, college-scoped row locking, stale due-date rejection, one immutable actor-attributed recruiter activity audit per successful write, and full transactional rollback on audit denial. Missing/foreign records do not become successful completion. The due queue is reachable from the recruiter leads header; dashboard card placement, mobile legacy ordering, per-owner My Work/Team segregation, future-task visibility, exact legacy outcome taxonomy, browser and separately executed PG acceptance remain open. Existing lead-detail follow-up API behavior is preserved pending migration to audited actions.
 - [ ] This Week agenda matches.
 - [ ] Placement rate/registered/offers/live/ready-unplaced/employer-conversation metrics match.
 - [ ] Branch performance matches.
@@ -98,8 +100,13 @@ Filters/actions:
 - [ ] Search/filter/export behavior matches.
 - [ ] All seven filter controls/toggles match.
 - [ ] Bulk Assign Owner uses review/confirmation.
+
+**W50 PARTIAL:** DB09-backed TPO Bulk Assign Owner now offers active same-college placement staff (TPO/Faculty/College Admin) as target owners and lets operators confirm up to 100 filtered, non-joined, non-unsubscribed leads. Same-origin strict POST, TPO+college permissions, sorted row locks and an expected-current-owner check prevent stale reassignment. Every changed row and its actor-attributed immutable NOTE audit commit together; unchanged/foreign/stale/protected rows return honest per-lead outcomes. The registered DB09 principal guard validates the target under SHARE locks. Legacy owner filters, unassign semantics, large-staff pagination, exact selection/modal UX, browser verification and executed isolated PostgreSQL tests remain open.
+
 - [ ] Bulk Mark Contacted uses review/confirmation.
 - [ ] Bulk Not Now opens reason/revisit flow.
+
+**W48 PARTIAL:** Bulk Mark Contacted and bulk Not Now are wired in the recruiter Leads table/board workspace for at most 100 filtered active, non-joined, non-unsubscribed lead IDs. Explicit confirmation and mandatory Not Now reason, optional revisit ISO date, strict discriminated Zod validation, central TPO/college-scope checks, same-origin POST, ordered row locking, expected-stage stale-state checks, and an immutable actor-attributed NOTE for every changed lead are implemented against registered DB09 tables. Results distinguish updated/unchanged/ineligible, with no false claim of manual recruiter conversion. The legacy bulk modal/board row-actions/selection ergonomics, delivery UI and full browser acceptance are still unverified. Unit and isolated PostgreSQL success/denial/rollback tests are authored but not yet executed at this SHA.
 - [ ] Bulk WhatsApp invite preparation matches.
 - [ ] Bulk email invite preflight/count/confirmation matches.
 - [ ] Joined/unsubscribed leads are correctly skipped/disabled.
@@ -203,7 +210,9 @@ Legacy contract:
 
 **W45 PARTIAL:** A separate /tpo/companies/[companyId]/feedback page now shows internal NOTE-type CRM activity for only recruiter leads explicitly linked to the college-company relationship, with a confirmed append-only note form. The POST endpoint requires same-origin, central TPO placements.manage permission, college scope, strict Zod input and an existing scoped lead, and reuses the migrated DB09 activity writer with a relationship check under the lead row lock. A new note on a NEW lead also moves that lead to CONTACTED as the existing writer requires. Contactless/DB09-unavailable/empty-history states are explicit. This is not externally submitted company feedback, rating, sent communications, or a replacement for the legacy interaction log; positive database, private-note disclosure, browser and UX parity checks remain open.
 
-**W41 PARTIAL:** Company detail now links to a separate read-only, paginated contact activity log backed by registered DB09 lead activities. College-company relationship ownership, central placements permission, event type filtering, recorded outcome and timestamp are enforced; unavailable activity storage is labeled rather than counted as zero. Raw private notes and contact addresses are not projected. Legacy document-sharing, interaction editing, exact history semantics, browser and positive DB verification remain open.
+**W41 PARTIAL:** Company detail now links to a paginated contact activity log backed by registered DB09 lead activities. College-company relationship ownership, central placements permission, event type filtering, recorded outcome and timestamp are enforced; unavailable activity storage is labeled rather than counted as zero. Raw private notes and contact addresses are not projected. Legacy document-sharing, exact history semantics, browser and positive DB verification remain open.
+
+**W51 PARTIAL:** The company contact-log page now records confirmed internal CALL, EMAIL, WHATSAPP, MEETING or NOTE activities against explicitly linked, non-unsubscribed DB09 recruiter leads. Strict Zod prohibits SYSTEM/delivery impersonation, requires a note and an expected lead timestamp; same-origin POST and central can()/scope gate use the signed-in TPO college. Within one transaction the active company relationship is scoped and read-locked, the selected lead is row-locked and stale-checked, its updatedAt is advanced to reject duplicate replays, and exactly one immutable actor-attributed DB09 activity is inserted. This form deliberately does NOT change the lead's manual stage, send messages or certify actual calls. Authored model and gated disposable-PostgreSQL tests cover success, immutable audit, wrong role, foreign college and stale inputs. Executed tests, legacy lead-detail timeline/interaction consistency, browser acceptance and interaction-outcome taxonomy still require certification.
 - [ ] Hiring History metrics/table match.
 - [ ] Shared Documents history matches.
 - [ ] Open Drive from document/history works.
@@ -377,6 +386,10 @@ Legacy includes:
 - [ ] attendance/check-in actions match.
 - [ ] result/outcome capture matches.
 - [ ] bulk result/attendance actions match.
+
+**W52 PARTIAL:** The existing TPO-only round page now supports per-learner, confirmed result staging for PASS (progression), FAIL (not selected), HOLD (ranked waitlist) and ABSENT, and confirmation-based application of a STAGED result only after the evaluative round is COMPLETED. A new same-origin POST adapter uses strict Zod, central TPO placement-management scope and the existing result service; the confirmed path checks the expected current result identity under row locks and inserts a scoped immutable PLACEMENTS result-staged audit event in the same transaction as the durable STAGED version. The existing apply path already records a separate immutable result-applied activity. Learner-facing messages are mandatory for non-PASS outcomes. This is not an employer offer/hire selection and does not fabricate a SELECTED result status. Bulk APPLY, attendance bulk operations, exact legacy modal/column parity, mixed-role routing, privacy/browser acceptance and independently executed PostgreSQL evidence remain OPEN.
+
+**W53 PARTIAL:** The TPO round roster now offers confirmed bulk **initial PASS/FAIL staging** for up to 25 eligible applicants without a current result. Strict Zod rejects duplicate application IDs and requires learner-facing messages for FAIL. Every row delegates to the existing scoped, row-locked transaction and immutable result-staged actor audit; the batch is explicitly **not atomic** and reports staged/ineligible per row. Operators still apply final results separately after round completion. Unknown/foreign rounds fail before any mutation, and stale row snapshots do not overwrite current results. Positive disposable PostgreSQL test execution, exact legacy bulk selection UX, bulk APPLY, HOLD/ABSENT mass marking, browser acceptance and mixed-role routing remain open.
 
 **W41 PARTIAL:** The TPO round overview now provides an authorized, formula-safe CSV export of its current persisted attendance roster. It includes per-learner recorded attendance and only APPLIED result outcomes, without inventing missing marks or exporting recruiter contact details. Bulk attendance/result mutations, legacy CSV columns, completed-round historical snapshots and browser/DB acceptance remain open.
 
