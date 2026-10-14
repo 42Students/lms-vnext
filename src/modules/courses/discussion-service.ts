@@ -148,6 +148,7 @@ export async function listCourseDiscussionMessages(
       messageText: courseDiscussionMessages.messageText,
       senderName: users.displayName,
       createdAt: courseDiscussionMessages.createdAt,
+      updatedAt: courseDiscussionMessages.updatedAt,
     })
     .from(courseDiscussionMessages)
     .innerJoin(collegeMemberships,
