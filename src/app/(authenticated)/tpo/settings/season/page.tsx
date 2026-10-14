@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
+import { TpoSeasonControls } from "@/components/placements/tpo-season-controls";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -68,6 +69,8 @@ export default async function TpoPlacementSeasonSettingsPage() {
           </section>
         ))}
       </div>
+
+      <TpoSeasonControls seasons={seasons} />
 
       {seasons.length === 0 ? (
         <EmptyState
@@ -142,8 +145,9 @@ export default async function TpoPlacementSeasonSettingsPage() {
         Source: persisted placement_seasons records.
         No registration deadline, blocked academic dates,
         or open-registration state is inferred from the
-        season dates. Creating, editing, starting, or
-        closing seasons is outside this read-only view.
+        season dates. Creating and editing the active season now require
+        confirmation. Closing uses the existing season lifecycle; registration-opening
+        remains unavailable until the registration lifecycle is verified.
       </p>
     </div>
   );
