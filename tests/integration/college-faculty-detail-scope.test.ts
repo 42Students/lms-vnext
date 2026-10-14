@@ -24,7 +24,8 @@ const foreign: RequestContext = {
     organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["COLLEGE_ADMIN"]},
 };
 const learner: RequestContext = {...admin, membership: {...admin.membership!, roles: ["LEARNER"]}};
-const ids = { period: randomUUID(), program: randomUUID(), cohort: randomUUID(),
+const ids = { user: randomUUID(), membership: randomUUID(), roleId: randomUUID(),
+  period: randomUUID(), program: randomUUID(), cohort: randomUUID(),
   section: randomUUID(), course: randomUUID(), offering: randomUUID(),
   delivery: randomUUID(), assignment: randomUUID() };
 const code = "w-faculty-detail-" + ids.period.slice(0, 8);
@@ -32,6 +33,12 @@ const code = "w-faculty-detail-" + ids.period.slice(0, 8);
 describe.skipIf(!enabled)("College Faculty Detail DB ownership", () => {
   beforeAll(async () => {
     if (!pool) throw new Error("Disposable PG required");
+    await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
+      [ids.user, ids.user, code]);
+    await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+      [ids.membership, ids.user, SEED_IDS.collegeA]);
+    await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'FACULTY')",
+      [ids.roleId, ids.membership]);
     await pool.query("INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) VALUES($1,$2,$3,$4,'2026-07-01','2026-12-31')",
       [ids.period, SEED_IDS.collegeA, code, code]);
     await pool.query("INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,8)",
@@ -47,7 +54,7 @@ describe.skipIf(!enabled)("College Faculty Detail DB ownership", () => {
     await pool.query("INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3)",
       [ids.delivery, ids.offering, ids.section]);
     await pool.query("INSERT INTO course_teaching_assignments(id,delivery_id,membership_id,role) VALUES($1,$2,$3,'PRIMARY')",
-      [ids.assignment, ids.delivery, SEED_IDS.facultyCollegeAMembership]);
+      [ids.assignment, ids.delivery, ids.membership]);
   });
   afterAll(async () => {
     try {
@@ -55,26 +62,29 @@ describe.skipIf(!enabled)("College Faculty Detail DB ownership", () => {
         ["course_teaching_assignments", ids.assignment], ["course_section_deliveries", ids.delivery],
         ["course_offerings", ids.offering], ["courses", ids.course], ["sections", ids.section],
         ["cohorts", ids.cohort], ["programs", ids.program], ["academic_periods", ids.period],
+        ["membership_roles", ids.roleId], ["college_memberships", ids.membership],
+        ["users", ids.user],
       ] as const) await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
     } finally {await pool?.end(); await closeDatabaseConnection();}
   });
   it("shows own-college faculty and actual teaching counts without private identity", async () => {
-    const data = await getCollegeFacultyDetail(admin, SEED_IDS.facultyCollegeAMembership);
+    const data = await getCollegeFacultyDetail(admin, ids.membership);
     expect(data.assignments.map(x=>x.id)).toContain(ids.assignment);
-    expect(data.counts.activeAssignments).toBeGreaterThanOrEqual(1);
+    expect(data.counts.activeAssignments).toBe(1);
+    expect(data.person.name).toBe(code);
     expect("identityUid" in data.person).toBe(false);
     expect("email" in data.person).toBe(false);
   });
   it("returns NOT_FOUND for foreign-college and nonexistent faculties", async () => {
-    await expect(getCollegeFacultyDetail(foreign, SEED_IDS.facultyCollegeAMembership))
+    await expect(getCollegeFacultyDetail(foreign, ids.membership))
       .rejects.toBeInstanceOf(CollegePersonNotFoundError);
     await expect(getCollegeFacultyDetail(admin, randomUUID()))
       .rejects.toBeInstanceOf(CollegePersonNotFoundError);
   });
   it("denies non-admin and forged college context", async () => {
-    await expect(getCollegeFacultyDetail(learner, SEED_IDS.facultyCollegeAMembership))
+    await expect(getCollegeFacultyDetail(learner, ids.membership))
       .rejects.toBeInstanceOf(AuthorizationError);
-    await expect(getCollegeFacultyDetail(admin, SEED_IDS.facultyCollegeAMembership, {
+    await expect(getCollegeFacultyDetail(admin, ids.membership, {
       collegeId: SEED_IDS.collegeB,
     })).rejects.toBeDefined();
   });

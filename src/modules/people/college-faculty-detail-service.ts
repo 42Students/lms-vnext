@@ -54,17 +54,17 @@ export async function getCollegeFacultyDetail(
     : [];
 
   const base = db.select({
-    id: courseTeachingAssignments.id,
-    role: courseTeachingAssignments.role,
-    startedAt: courseTeachingAssignments.startedAt,
-    endedAt: courseTeachingAssignments.endedAt,
-    deliveryEndedAt: courseSectionDeliveries.endedAt,
-    offeringId: courseOfferings.id,
-    courseName: courses.name,
-    courseCode: courses.code,
-    cohortName: cohorts.name,
-    sectionName: sections.name,
-    periodName: academicPeriods.name,
+    id: sql<string>`${courseTeachingAssignments.id}`.as("assignment_id"),
+    role: sql<string>`${courseTeachingAssignments.role}`.as("assignment_role"),
+    startedAt: sql<Date>`${courseTeachingAssignments.startedAt}`.as("assignment_started_at"),
+    endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.as("assignment_ended_at"),
+    deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.as("delivery_ended_at"),
+    offeringId: sql<string>`${courseOfferings.id}`.as("offering_id"),
+    courseName: sql<string>`${courses.name}`.as("course_name"),
+    courseCode: sql<string>`${courses.code}`.as("course_code"),
+    cohortName: sql<string>`${cohorts.name}`.as("cohort_name"),
+    sectionName: sql<string>`${sections.name}`.as("section_name"),
+    periodName: sql<string>`${academicPeriods.name}`.as("period_name"),
   }).from(courseTeachingAssignments)
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
