@@ -9,6 +9,7 @@ import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-sched
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -252,19 +253,23 @@ export function LearnerClassSchedule({
   const [sessionSearch,setSessionSearch]=useState("");
   const [sessionKind,setSessionKind]=useState<LearnerScheduleKind>("ALL");
   const [upcomingOnly,setUpcomingOnly]=useState(false);
+  const [filterNowMs,setFilterNowMs]=useState(()=>Date.now());
+  useEffect(()=>{
+    const id=window.setInterval(()=>setFilterNowMs(Date.now()),60_000);
+    return ()=>window.clearInterval(id);
+  },[]);
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
     );
 
-  const filterNow = new Date();
   const filteredEvents = useMemo(
     () =>
       filterLearnerScheduleUpcoming(filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNow.getTime()),
-    [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly],
+      ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNowMs),
+    [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly,filterNowMs],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),

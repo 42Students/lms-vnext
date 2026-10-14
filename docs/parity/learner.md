@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 round-6 upcoming filter clock correction (PARTIAL):** The upcoming-only schedule filter now refreshes its cutoff on a one-minute client clock rather than a stale memoized render-time snapshot. An effect cleans up its interval; filtering remains read-only and authorized-scope only. Browser acceptance open.
+
 **2026-10-15 chat-7 round-6 assessment attention metrics (PARTIAL):** The global Assignments/Quizzes header now reports counts of genuinely actionable work and overdue/missed items based on the identical persisted state policy used by list filters. Expired quizzes do not inflate actionable counts, and submitted work is excluded; no new cross-course reads. Pure model regression authored; PG/browser acceptance outstanding.
 
 **2026-10-15 chat-7 round-6 attendance exception drill-ins (PARTIAL):** Global Attendance now distinguishes persisted `LATE`, `EXCUSED` and `MEDICAL` session statuses individually in addition to the grouped exceptions filter. Course/month and CSV selection remain the authorized source, with no reinterpretation of absence or denominator policy. Pure regressions authored; DB/browser verification pending.
