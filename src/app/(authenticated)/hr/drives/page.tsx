@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[] };
@@ -46,7 +47,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const filtered = filterRecruiterDrives(jobs, {...query.data, collegeId: selectedCollege},now);
   const pageResult = paginateRecruiterDrives(filtered,query.data.page);
   return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title="Drives" description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only." />
+    <PageHeader eyebrow="Employer Recruiter" title="Drives"
+      description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only."
+      actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        Request a Drive · preview
+      </Link>} />
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
         className={selectedCollege === grant.collegeId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
@@ -90,6 +96,6 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
-    <p className="text-xs text-muted-foreground">Request a Drive, Hire Again, and Fix and Resend require the separate employer request lifecycle and remain unavailable here.</p>
+    <p className="text-xs text-muted-foreground">Draft previews are local-only. Approval submission, Fix and Resend and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
 }

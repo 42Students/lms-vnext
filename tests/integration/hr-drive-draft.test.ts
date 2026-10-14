@@ -5,6 +5,7 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { hrDraftFromAuthorizedJob } from "@/modules/placements/hr-drive-draft-model";
+import {recruiterDriveDraftHref} from "@/modules/placements/hr-drive-draft-links";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -46,6 +47,8 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
     });
     const own = await getRecruiterPlacementWorkspace(hr(a.company.id, a.relationship.id, SEED_IDS.collegeA), job.id);
     expect(hrDraftFromAuthorizedJob(own.job, own.rounds).title).toBe("Recruiter Draft " + nonce);
+    expect(recruiterDriveDraftHref({collegeId:own.college.id,fromJobId:own.job.id}))
+      .toContain("from=" + own.job.id);
     await expect(getRecruiterPlacementWorkspace(hr(b.company.id, b.relationship.id, SEED_IDS.collegeA), job.id))
       .rejects.toMatchObject({ code: "PLACEMENT_JOB_NOT_FOUND" });
     await expect(getRecruiterPlacementWorkspace(hr(a.company.id, a.relationship.id, SEED_IDS.collegeB), job.id))

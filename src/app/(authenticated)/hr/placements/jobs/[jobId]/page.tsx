@@ -13,6 +13,7 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 function formatCtc(
   value: number | null,
@@ -186,6 +187,16 @@ export default async function HrPlacementJobPage({
           </div>
         </section>
       ) : null}
+      <div className="flex flex-wrap gap-3">
+        <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Hire Again · draft preview
+        </Link>
+        <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          New drive preview
+        </Link>
+      </div>
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
         {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
           <Link key={tab} href={`/hr/placements/jobs/${workspace.job.id}?tab=${tab}`}
