@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import { getTpoLiveDriveDaySummary } from "@/modules/placements/tpo-live-drive-day-service";
 
 function formatWhen(
   value: Date | null,
@@ -22,11 +23,68 @@ function formatWhen(
 export default async function DriveDayPage() {
   const context =
     await getCurrentRequestContext();
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
-  ) {
+  if (!context.membership ||
+      (!hasMembershipRole(context, "LEARNER") && !hasMembershipRole(context, "TPO"))) {
     redirect("/dashboard");
+  }
+
+  // A dual-role student coordinator retains the existing assignment view.
+  // TPO-only staff see a scoped operational snapshot, not a coordinator roster.
+  if (hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")) {
+    const snapshot = await getTpoLiveDriveDaySummary(context);
+    return (
+      <div className="space-y-6">
+        <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
+          description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
+        {snapshot.truncated ? (
+          <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+            Only the first 20 live rounds are shown; more records may exist.
+          </p>
+        ) : null}
+        {snapshot.rows.length === 0 ? (
+          <section className="rounded-xl border border-border bg-surface p-6">
+            <h2 className="text-base font-semibold text-foreground">No verified round happening now</h2>
+            <p className="mt-2 text-sm text-body">
+              Only published scheduled rounds with a recorded start and duration count as live.
+              A round without duration is not assumed active. No check-ins or no-shows are inferred.
+            </p>
+          </section>
+        ) : (
+          <div className="grid gap-4">
+            {snapshot.rows.map((round) => (
+              <article key={round.id} className="rounded-xl border border-border bg-surface p-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-foreground">{round.companyName} · {round.name}</h2>
+                    <p className="text-sm text-body">{round.jobTitle} · Started {
+                      round.scheduledAt ? new Date(round.scheduledAt).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
+                      }) : "unknown"
+                    } IST</p>
+                  </div>
+                  <Link href={"/tpo/drive-day/" + round.id}
+                    className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+                    Open round
+                  </Link>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  {([
+                    ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
+                    ["Explicit no-shows", round.counts.noShow], ["Pending", round.counts.pending],
+                    ["Unknown", round.counts.unknown],
+                  ] as const).map(([label, count]) => (
+                    <div key={label} className="rounded-lg bg-surface-subtle p-3">
+                      <dt className="text-xs text-body">{label}</dt>
+                      <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
 
   const rounds =
