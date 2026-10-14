@@ -12,7 +12,7 @@ if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
 const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"tpo-interview-readiness",platformStatus:"ACTIVE",systemRoles:[]},
 membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
-const ids:{company?:string;rel?:string;job?:string;round?:string}={};let roleId:string|null=null;
+const ids:{company?:string;rel?:string;job?:string;round?:string}={};const addedTpoRoleIds:string[]=[];
 async function fixture(){
  if(!pool)throw Error("DB required");const token=randomUUID();
  ids.company=(await pool.query<{id:string}>("INSERT INTO placement_companies(name,created_by_user_id) VALUES($1,$2) RETURNING id",["Interview "+token,SEED_IDS.facultyUser])).rows[0]!.id;
@@ -27,9 +27,23 @@ async function cleanup(){if(!pool)return;
  if(ids.rel)await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[ids.rel]);
  if(ids.company)await pool.query("DELETE FROM placement_companies WHERE id=$1",[ids.company]);}
 describe.skipIf(!enabled)("TPO interview readiness scoped PostgreSQL",()=>{
- beforeAll(async()=>{if(!pool)throw Error("DB required");roleId=(await pool.query<{id:string}>("INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",[SEED_IDS.facultyCollegeAMembership])).rows[0]?.id??null;});
- afterAll(async()=>{await cleanup();if(roleId&&pool)await pool.query("DELETE FROM membership_roles WHERE id=$1",[roleId]);await pool?.end();await closeDatabaseConnection();});
- it("projects scheduled interview without crossing college/role scope",async()=>{
+ beforeAll(async()=>{
+ if(!pool)throw Error("Isolated PostgreSQL required");
+ for(const membershipId of [SEED_IDS.facultyCollegeAMembership,SEED_IDS.facultyCollegeBMembership]){
+  const inserted=await pool.query<{id:string}>(
+   "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
+   [membershipId]);
+  if(inserted.rows[0]?.id)addedTpoRoleIds.push(inserted.rows[0].id);
+ }
+});
+afterAll(async()=>{
+ await cleanup();
+ if(pool)for(const id of addedTpoRoleIds)
+  await pool.query("DELETE FROM membership_roles WHERE id=$1",[id]);
+ await pool?.end();
+ await closeDatabaseConnection();
+});
+it("projects scheduled interview without crossing college/role scope",async()=>{
  const id=await fixture();const own=await getTpoInterviewReadiness(tpo,{days:7});
  expect(own.rows.find(r=>r.id===id)?.state).toBe("UPCOMING");
  const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
