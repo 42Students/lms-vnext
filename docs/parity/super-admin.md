@@ -710,3 +710,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Placement season detail — PARTIAL:** Added `/admin/placements/seasons/[seasonId]`, selected-college+organization SQL-filtered season detail with registered dates, lifecycle, IST created/updated/closed, UUID validation and unknown/foreign 404. Season directory deep-links and safe back navigation. No season mutation/closeout or implied cross-college season. Pure ID/date tests authored; DB/browser gates remain.
+
+
+**2026-10-15 chat-6 round 5 / Job Settings detail — PARTIAL:** Added `/admin/placements/job-settings/[jobId]` as read-only persisted eligibility/deadline detail; exact selected-college/org SQL guard and 404 for unknown/foreign job UUID. Distinguishes absent policy vs unrestricted fields, includes past/active backlog, CGPA, gap, allowed program/cohort count (no identity leakage), missing evidence handling and IST update. Directory deep-linked; unit authored, full editor and PG/browser acceptance remain.
