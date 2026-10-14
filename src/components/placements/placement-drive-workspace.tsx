@@ -286,6 +286,19 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {isTpo && driveDay.rounds.length>0 ? (
+        <section aria-label="Round result entry" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="font-semibold text-foreground">Enter round results</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
+              <Link key={round.id}
+                href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                {round.name}
+              </Link>)}
+          </div>
+        </section>
+      ) : null}
       {isTpo ? (
         <section
           aria-label="Current screening shortlist"
