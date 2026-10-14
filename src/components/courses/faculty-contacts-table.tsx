@@ -44,9 +44,11 @@ function roleLabel(value: string) {
 export function FacultyContactsTable({
   items,
   showRoles,
+  detailBaseHref,
 }: {
   items: readonly FacultyContactRow[];
   showRoles: boolean;
+  detailBaseHref?: string;
 }) {
   if (items.length === 0) {
     return (
@@ -84,9 +86,16 @@ export function FacultyContactsTable({
                       >
                         {initials(name)}
                       </span>
-                      <span className="font-semibold text-foreground">
-                        {name}
-                      </span>
+                      {detailBaseHref ? (
+                        <Link
+                          href={detailBaseHref + "/" + encodeURIComponent(contact.membershipId)}
+                          className="font-semibold text-primary-text hover:underline"
+                        >
+                          {name}
+                        </Link>
+                      ) : (
+                        <span className="font-semibold text-foreground">{name}</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-3">
@@ -148,7 +157,12 @@ export function FacultyContactsTable({
                 </span>
                 <div className="min-w-0">
                   <h2 className="m-0 text-sm font-semibold text-foreground">
-                    {name}
+                    {detailBaseHref ? (
+                      <Link href={detailBaseHref + "/" + encodeURIComponent(contact.membershipId)}
+                        className="text-primary-text hover:underline">
+                        {name}
+                      </Link>
+                    ) : name}
                   </h2>
                   {showRoles ? (
                     <div className="mt-2 flex flex-wrap gap-1.5">
