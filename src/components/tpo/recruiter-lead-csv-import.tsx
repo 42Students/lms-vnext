@@ -1,0 +1,230 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import {
+  previewTpoLeadCsv,
+  TPO_LEAD_CSV_MAX_CHARACTERS,
+  TPO_LEAD_CSV_MAX_ROWS,
+  type TpoLeadImportRowResult,
+} from "@/modules/placements/tpo-lead-csv-import-model";
+
+const inputClass = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const buttonClass = "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50";
+const primaryClass = "inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50";
+
+const template = "name,email,phone,companyName,designation,source\r\n" +
+  "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
+
+type Preview = ReturnType<typeof previewTpoLeadCsv>;
+type ImportResponse = {
+  counts: { total: number; created: number; duplicate: number; invalid: number };
+  results: TpoLeadImportRowResult[];
+};
+
+export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [csv, setCsv] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<ImportResponse | null>(null);
+
+  async function chooseFile(file: File | undefined) {
+    setResult(null);
+    setPreview(null);
+    setCsv("");
+    setError("");
+    setFileName(file?.name ?? "");
+    if (!file) return;
+    if (file.size > TPO_LEAD_CSV_MAX_CHARACTERS * 4) {
+      setError("CSV file is too large (limit: 160,000 characters).");
+      return;
+    }
+    try {
+      const content = await file.text();
+      const parsed = previewTpoLeadCsv(content);
+      setPreview(parsed);
+      setCsv(content);
+    } catch (cause) {
+      setError(
+        cause instanceof Error && cause.message.startsWith("CSV_")
+          ? "Invalid CSV format: " + cause.message.replaceAll("_", " ")
+          : "Could not read or validate the CSV file.",
+      );
+    }
+  }
+
+  async function commit() {
+    if (!preview || !csv || preview.valid === 0 || busy) return;
+    if (!window.confirm(
+      "Import " + preview.valid + " valid recruiter lead row(s) from " + fileName +
+      "? " + preview.invalid + " invalid row(s) will be skipped. Existing contacts " +
+      "will be reported as duplicates. Each created lead receives an immutable audit entry.",
+    )) return;
+    setBusy(true);
+    setError("");
+    setResult(null);
+    try {
+      const response = await fetch("/api/placements/tpo/leads/import", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmed: true, csv }),
+      });
+      const data = await response.json() as ImportResponse & { error?: string };
+      if (!response.ok || !Array.isArray(data.results)) {
+        throw new Error(data.error ?? "Import failed");
+      }
+      setResult(data);
+      onImported();
+    } catch (cause) {
+      setError(
+        "Import could not be confirmed. Refresh recruiter leads before retrying. " +
+        (cause instanceof Error ? cause.message : ""),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function close() {
+    if (busy) return;
+    setOpen(false);
+    setPreview(null);
+    setCsv("");
+    setError("");
+    setResult(null);
+    setFileName("");
+  }
+
+  return (
+    <>
+      <button type="button" className={buttonClass} onClick={() => setOpen(true)}>
+        Import leads CSV
+      </button>
+      {open ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Import recruiter leads"
+            className="max-h-[90vh] w-full max-w-3xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Import recruiter leads</h2>
+                <p className="mt-2 text-sm text-body">
+                  Upload a six-column CSV, with headers in this exact order:
+                  name, email, phone, companyName, designation, source.
+                  Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Name and one contact method are required.
+                </p>
+              </div>
+              <button className={buttonClass} type="button" onClick={close} disabled={busy}>
+                Close
+              </button>
+            </div>
+            <a
+              download="recruiter-leads-template.csv"
+              href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
+              className="text-sm font-semibold text-primary-text hover:underline"
+            >
+              Download CSV template
+            </a>
+            <label className="block text-sm font-semibold text-foreground">
+              Choose CSV file
+              <input
+                className={inputClass + " mt-2"}
+                type="file"
+                accept=".csv,text/csv"
+                disabled={busy}
+                onChange={event => void chooseFile(event.target.files?.[0])}
+              />
+            </label>
+            {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
+            {preview ? (
+              <div className="space-y-3">
+                <p className="text-sm text-body" role="status">
+                  {preview.total} rows: {preview.valid} valid, {preview.invalid} invalid.
+                  Duplicate contacts are determined by the database when the import commits.
+                </p>
+                <div className="max-h-56 overflow-auto rounded-lg border border-border">
+                  <table className="w-full text-left text-sm">
+                    <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
+                      <tr>
+                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">Name</th>
+                        <th scope="col" className="px-3 py-2">Validation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {preview.rows.map(item => (
+                        <tr key={item.row} className="border-t border-border">
+                          <td className="px-3 py-2">{item.row}</td>
+                          <td className="px-3 py-2">{item.name || "Unnamed"}</td>
+                          <td className="px-3 py-2">{item.error ?? "Ready to import"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {!result ? (
+                  <button
+                    type="button"
+                    className={primaryClass}
+                    disabled={busy || preview.valid === 0}
+                    onClick={() => void commit()}
+                  >
+                    {busy ? "Importing…" : "Review and confirm import"}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            {result ? (
+              <div className="space-y-3" aria-live="polite">
+                <h3 className="font-semibold text-foreground">Import results</h3>
+                <p className="text-sm text-body">
+                  {result.counts.created} created, {result.counts.duplicate} duplicate,
+                  {" "}{result.counts.invalid} invalid. {result.counts.total} rows processed.
+                </p>
+                <div className="max-h-56 overflow-auto rounded-lg border border-border">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-surface-secondary">
+                      <tr>
+                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">Status</th>
+                        <th scope="col" className="px-3 py-2">Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.results.map(item => (
+                        <tr key={item.row} className="border-t border-border">
+                          <td className="px-3 py-2">{item.row}</td>
+                          <td className="px-3 py-2">{item.status}</td>
+                          <td className="px-3 py-2">
+                            {item.leadId ? (
+                              <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
+                                className="font-semibold text-primary-text hover:underline">
+                                Open created lead
+                              </Link>
+                            ) : (item.reason ?? "—")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : null}
+            <p className="text-xs text-muted-foreground">
+              Imports cannot change an existing contact. Invalid and duplicate rows are skipped.
+              Imported leads receive a staff-attributed audit entry; a failed transaction
+              does not leave half-written lead/audit pairs.
+            </p>
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}
