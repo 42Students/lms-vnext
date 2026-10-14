@@ -17,7 +17,7 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  if(q.q)p.set("q",q.q);
  if(q.courseCode)p.set("courseCode",q.courseCode);
  if(q.status!=="ALL")p.set("status",q.status);
- if(q.scope!=="ALL"&&kind!=="LIVE_CLASS")p.set("scope",q.scope);
+ if(q.scope!=="ALL")p.set("scope",q.scope);
  if(kind!=="LIVE_CLASS"&&q.offeringStatus&&q.offeringStatus!=="ALL")p.set("offeringStatus",q.offeringStatus);
  if(q.format!=="ALL"&&kind==="VIDEO")p.set("format",q.format);
  if(kind==="LIVE_CLASS"&&q.view&&q.view!=="ALL")p.set("view",q.view);

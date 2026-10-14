@@ -29,6 +29,13 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </select>
     </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Session audience
+      <select name="scope" defaultValue={data.query.scope}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
+        <option value="SECTION">Section-specific</option>
+      </select>
+    </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Timing
       <select name="view" defaultValue={data.view}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -56,6 +63,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
           <span className="text-xs text-muted-foreground">{item.status}</span>
         </div>
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
+        <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
         <p className="break-words text-sm text-body">Lesson: {item.lessonName} · {item.cohortName} · {item.periodName}</p>
         <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
           className="block break-words text-sm font-semibold text-primary-text hover:underline">
