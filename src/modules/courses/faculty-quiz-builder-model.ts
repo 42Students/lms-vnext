@@ -81,3 +81,17 @@ export function facultyToggleQuizAnswer<T extends {correct:boolean}>(
  }
  return question.options.map((option,i)=>i===index?{...option,correct:checked}:option);
 }
+
+/** Removing a correct option cannot leave a single-choice question without a
+ * valid answer. At least two choices must remain. */
+export function facultyRemoveQuizOption<T extends {correct:boolean}>(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";options:readonly T[]},
+ index:number,
+):T[]{
+ if(question.options.length<=2 || index<0 || index>=question.options.length)
+  return [...question.options];
+ const remaining=question.options.filter((_,i)=>i!==index).map(o=>({...o}));
+ if(question.type==="SINGLE_CHOICE"&&!remaining.some(o=>o.correct))
+  remaining[0]!.correct=true;
+ return remaining;
+}
