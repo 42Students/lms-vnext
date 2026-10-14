@@ -1080,3 +1080,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L30-023 PARTIAL:** Learner Profile now makes legacy publications/awards discoverable without inventing a dedicated verified publication entity: it labels saved achievements as possible awards and only explicitly publication-labelled, learner-authored metadata as publications. Full section editors remain the canonical authorship workflow, with no promotion to verified status. Pure model and self-seeded own-profile PostgreSQL role/tenant/suspension tests authored. Exact legacy data entry, storage migration, runtime and mobile/browser parity remain open.
+
+
+**2026-10-15 chat-5 L30-033 PARTIAL:** Learner Profile on narrow screens now has direct quick links to up to four unfinished, non-sensitive career sections; verified/identity status is not inferred. Profile cards/long names wrap within their grid cells, and collection edit/delete actions use full-width minimum-44px mobile hit targets. Unit and own-profile PostgreSQL access/denial tests authored; 375px, keyboard, dialog resizing and browser/mobile verification pending.
