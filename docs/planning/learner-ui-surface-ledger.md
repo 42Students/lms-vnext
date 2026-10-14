@@ -376,7 +376,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-017 | Recent placement activity | placements dashboard | persisted own-application activity list | FIXED |
 | L11-018 | Loading skeletons | placements dashboard | placements home | UNCHECKED |
 | L11-019 | Error counts remain unknown, not zero | placements dashboard | placements home | UNCHECKED |
-| L11-020 | All dashboard CTAs preserve intended filter/context | placements dashboard | placements routes | UNCHECKED |
+| L11-020 | All dashboard CTAs preserve intended filter/context | placements dashboard and own round pages | assessment/interview next-action and event CTAs carry persisted application+round IDs; own-scoped round service validates exact ID before opening drawer; metric CTAs remain aggregate. PARTIAL pending disposable PostgreSQL/negative-case and browser deep-link/back acceptance | PARTIAL |
 
 ## L12 — Drives/Jobs list
 
@@ -386,7 +386,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-002 | All drives tab | JobsListContent | learner jobs | UNCHECKED |
 | L12-003 | Saved tab | JobsListContent | learner jobs | UNCHECKED |
 | L12-004 | Search with URL state | JobsListContent | learner jobs | UNCHECKED |
-| L12-005 | Browser Back/Forward search hydration | jobs route | learner jobs | UNCHECKED |
+| L12-005 | Browser Back/Forward search hydration | learner jobs | strict URL-first Zod parsing; committed searches, filters and pagination use history pushes; popstate/URL effects hydrate controlled search without dropping in-flight edits; unknown caller IDs stripped. PARTIAL pending Playwright/browser Back/Forward and disposable PostgreSQL acceptance | PARTIAL |
 | L12-006 | Sort by deadline | JobsListContent | learner jobs | UNCHECKED |
 | L12-007 | Sort newest | learner jobs | persisted `placement_jobs.published_at` descending (missing timestamps last), available on Drives; PARTIAL pending fresh PostgreSQL service/negative-case execution, browser sort and Back/Forward verification | PARTIAL |
 | L12-008 | Sort highest CTC | JobsListContent | learner jobs | UNCHECKED |
@@ -397,7 +397,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-013 | Save job | JobsListContent | learner jobs | UNCHECKED |
 | L12-014 | Unsave job | JobsListContent | learner jobs | UNCHECKED |
 | L12-015 | Pagination | JobsListContent | learner jobs | UNCHECKED |
-| L12-016 | Open/not-open/closed grouping | JobsListContent | learner jobs | UNCHECKED |
+| L12-016 | Open/not-open/closed grouping | learner jobs | learner-specific open-to-apply/unavailable-to-apply/deadline-passed chips over authorized published roles, with honest counts; PARTIAL pending fresh PostgreSQL negative/read verification and mobile/browser acceptance; unpublished jobs remain intentionally hidden | PARTIAL |
 | L12-017 | Deadline urgency labels | JobsListContent | learner jobs | UNCHECKED |
 | L12-018 | Eligibility state on card | JobsListContent | learner jobs | FIXED |
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |

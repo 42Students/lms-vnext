@@ -1,12 +1,18 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { resolveOwnAssessmentDeepLink } from "@/modules/placements/learner-assessment-deeplink-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerAssessmentBrowse } from "@/modules/placements/learner-assessment-browse-service";
 
-export default async function LearnerPlacementAssessmentsPage() {
+export default async function LearnerPlacementAssessmentsPage({searchParams}: {
+  searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[]}>;
+}) {
   const context = await getCurrentRequestContext();
   const workspace = await getOwnLearnerAssessmentBrowse(context);
+  const link=resolveOwnAssessmentDeepLink(workspace.rounds,await searchParams);
+  if(!link.valid)notFound();
   const rounds = workspace.rounds.map((row) => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,
@@ -43,6 +49,8 @@ export default async function LearnerPlacementAssessmentsPage() {
         View official assessment results →
       </Link>
       <LearnerCareerRoundsWorkspace
+        key={link.key ?? "all-assessments"}
+        initialSelectedKey={link.key}
         kind="ASSESSMENT"
         rounds={rounds}
         snapshotNowIso={new Date().toISOString()}
