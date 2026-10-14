@@ -1122,3 +1122,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-004 PARTIAL:** The Placements hero now greets the authenticated learner by a bounded persisted display name only after live membership/user/college validation, otherwise uses a generic greeting without fabricating a name. Authorization revocations remain hard denials, while a noncritical name read failure leaves the dashboard functional. Pure sanitization and own-fixture PostgreSQL success/denial cases authored; browser/source and executed CI still pending.
+
+
+**2026-10-15 chat-5 L11-011 PARTIAL:** The learner dashboard now shows a true five-stage breakdown sourced only from the current own-learner application/screening journey. Withdrawals are separated before screening; no inferred offer, hire, provider completion, or cross-college data. Failure to load the journey displays Unknown rather than zero. Pure-model and own-fixture PostgreSQL authorization tests authored; CI/device/source parity pending.
