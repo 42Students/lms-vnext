@@ -19,6 +19,8 @@ export type LearnerApplicationBrowseFilters = {
   sort: "activity" | "company" | "oldest" | "stage";
 };
 
+const companyNameCollator=new Intl.Collator("en-IN",{numeric:true,sensitivity:"base"});
+
 export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilters = {
   search: "", view: "all", stage: "all", sort: "activity",
 };
@@ -61,8 +63,8 @@ export function browseLearnerApplications<T extends LearnerApplicationBrowseItem
     return !needle || (item.companyName + " " + item.jobTitle).toLocaleLowerCase().includes(needle);
   }).sort((a,b) => {
     if (filters.sort === "company") {
-      return a.companyName.localeCompare(b.companyName) ||
-        a.jobTitle.localeCompare(b.jobTitle) ||
+      return companyNameCollator.compare(a.companyName.trim(),b.companyName.trim()) ||
+        companyNameCollator.compare(a.jobTitle,b.jobTitle) ||
         a.applicationId.localeCompare(b.applicationId);
     }
     if (filters.sort === "stage") {

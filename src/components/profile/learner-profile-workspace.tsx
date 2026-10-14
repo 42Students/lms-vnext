@@ -8,6 +8,7 @@ import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/p
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
 import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
+import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -226,6 +227,18 @@ export function LearnerProfileWorkspace(props: {
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [props.initialSection]);
 
+  useEffect(()=>{
+    if(!detailsOpen)return;
+    const field=learnerProfileSocialFocusField(props.initialSection);
+    if(!field)return;
+    const frame=window.requestAnimationFrame(()=>{
+      window.document.querySelector<HTMLInputElement>(
+        '[data-learner-social-link="'+field+'"]',
+      )?.focus();
+    });
+    return ()=>window.cancelAnimationFrame(frame);
+  },[detailsOpen,props.initialSection]);
+
   function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
     startTransition(async () => {
       try {
@@ -250,6 +263,12 @@ export function LearnerProfileWorkspace(props: {
         showToast({tone:"error",title:"Profile update failed",description:error instanceof Error?error.message:"Please try again."});
       }
     });
+  }
+
+  function openDetails(){
+    setDetailsDraft(document);
+    setDetailsBaseline(document);
+    setDetailsOpen(true);
   }
 
   function openContacts() {
@@ -396,7 +415,7 @@ export function LearnerProfileWorkspace(props: {
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button variant="secondary" onClick={() => { setDetailsDraft(document); setDetailsBaseline(document); setDetailsOpen(true); }}>Edit profile</Button>
+          <Button variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-border bg-surface-subtle p-4">
@@ -476,7 +495,8 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Contact email" value={document.contacts.contactEmail} />
           </div>
         </Card>
-        <Card id="social-profiles" title="Social profiles">
+        <Card id="social-profiles" title="Social profiles"
+          action={<Button variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Value label="LinkedIn" value={document.socialProfiles.linkedinUrl} />
             <Value label="GitHub" value={document.socialProfiles.githubUrl} />
@@ -653,7 +673,7 @@ export function LearnerProfileWorkspace(props: {
               ["twitterUrl", "Twitter"],
               ["googleScholarUrl", "Google Scholar"],
               ["researchGateUrl", "ResearchGate"],
-            ] as const).map(([key, label]) => <label key={key} className="text-xs font-semibold text-body">{label}<Input className="mt-1.5" type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
+            ] as const).map(([key, label]) => <label key={key} className="text-xs font-semibold text-body">{label}<Input className="mt-1.5" data-learner-social-link={key} type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
           </fieldset>
 
           <fieldset className="grid gap-4">
