@@ -6,6 +6,7 @@ import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-on
 import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
 import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboard-fallback-model";
+import {learnerDashboardMetricView} from "@/modules/placements/learner-dashboard-metric-view-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -28,16 +29,18 @@ function Metric({
   href: string;
   detail: string;
 }) {
+  const metric=learnerDashboardMetricView(value,label,detail);
   return (
     <Link
       href={href}
+      aria-label={metric.ariaLabel}
       className="group rounded-xl border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value===null?"—":value}</p>
-      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{value===null?"Currently unavailable; retry loading":detail} →</p>
+      <p className="mt-2 break-words text-2xl font-bold tabular-nums text-foreground sm:text-3xl">{metric.display}</p>
+      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{metric.detail} →</p>
     </Link>
   );
 }
