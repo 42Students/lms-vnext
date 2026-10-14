@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,desc,eq,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobs,users} from "@/db/schema";
@@ -7,10 +7,10 @@ import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
- TPO_DRIVE_APPLICATION_EXPORT_LIMIT} from "./tpo-drive-applications-export-model";
+ TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown){
  const collegeId=await requireTpoJobCollege(context);
- const {jobId}=tpoDriveApplicationsExportQuerySchema.parse(raw);
+ const {jobId,stage,search}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const db=getDb();
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
@@ -29,10 +29,17 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
    eq(placementJobRoleOptions.jobId,job.id)))
   .leftJoin(placementApplicationScreenings,
    eq(placementApplicationScreenings.applicationId,placementApplications.id))
-  .where(eq(placementApplications.jobId,job.id))
-  .orderBy(placementApplications.submittedAt,placementApplications.id)
+  .where(and(eq(placementApplications.jobId,job.id),
+   stage==="ALL"?undefined:stage==="SUBMITTED"?eq(placementApplications.status,"SUBMITTED"):
+    sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
+     when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
+     then ${placementApplicationScreenings.status}::text else 'PENDING' end = ${stage}::text`,
+   search?or(ilike(users.displayName,tpoApplicantExportSearchPattern(search)),
+    ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(search))):undefined,
+  ))
+  .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
   .limit(TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
- return {job,...projectTpoDriveApplicationsExport(records.map(r=>({
+ return {job,stage,search,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,submittedAt:r.submittedAt.toISOString(),
  })),job.title)};
 }
