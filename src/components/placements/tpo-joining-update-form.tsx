@@ -1,0 +1,117 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type JoiningChoice = "JOINED" | "DEFERRED" | "DID_NOT_JOIN";
+
+export function TpoJoiningUpdateForm({
+  offerId,
+  initialStatus,
+  initialJoiningDate,
+}: {
+  offerId: string;
+  initialStatus: string;
+  initialJoiningDate: string | null;
+}) {
+  const router = useRouter();
+  const [status, setStatus] = useState<JoiningChoice>("JOINED");
+  const [joiningDate, setJoiningDate] = useState(initialJoiningDate ?? "");
+  const [reason, setReason] = useState("");
+  const [correctionReason, setCorrectionReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const corrected = initialStatus !== "PENDING";
+  const needsDate = status === "JOINED" || status === "DEFERRED";
+  const needsReason = status !== "JOINED";
+
+  async function save() {
+    if (busy) return;
+    if ((needsDate && !joiningDate) ||
+        (needsReason && !reason.trim()) ||
+        (corrected && !correctionReason.trim())) {
+      setError("Complete the required date, reason and correction fields.");
+      return;
+    }
+    if (!window.confirm(
+      "Record " + status.replaceAll("_", " ") +
+      " for this accepted offer? Changes are kept in joining history.",
+    )) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        "/api/placements/offers/" + encodeURIComponent(offerId) + "/joining",
+        {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status,
+            joiningDate: needsDate ? joiningDate : null,
+            reason: needsReason ? reason.trim() : null,
+            correctionReason: corrected ? correctionReason.trim() : null,
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error("The joining update was rejected. Refresh and review the offer.");
+      }
+      setReason("");
+      setCorrectionReason("");
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Could not update joining status.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-3 grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
+      <label className="text-sm font-medium text-foreground">
+        New joining outcome
+        <select
+          value={status}
+          onChange={(event) => setStatus(event.target.value as JoiningChoice)}
+          className="mt-1 w-full rounded-md border border-border bg-surface p-2"
+        >
+          <option value="JOINED">Joined</option>
+          <option value="DEFERRED">Deferred</option>
+          <option value="DID_NOT_JOIN">Did not join</option>
+        </select>
+      </label>
+      {needsDate ? (
+        <label className="text-sm font-medium text-foreground">
+          {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
+          <input type="date" value={joiningDate}
+            onChange={(event) => setJoiningDate(event.target.value)}
+            className="mt-1 w-full rounded-md border border-border bg-surface p-2" />
+        </label>
+      ) : null}
+      {needsReason ? (
+        <label className="text-sm font-medium text-foreground sm:col-span-2">
+          Outcome reason
+          <textarea rows={2} value={reason} maxLength={2000}
+            onChange={(event) => setReason(event.target.value)}
+            className="mt-1 w-full rounded-md border border-border bg-surface p-2" />
+        </label>
+      ) : null}
+      {corrected ? (
+        <label className="text-sm font-medium text-foreground sm:col-span-2">
+          Reason for correcting the recorded outcome
+          <textarea rows={2} value={correctionReason} maxLength={2000}
+            onChange={(event) => setCorrectionReason(event.target.value)}
+            className="mt-1 w-full rounded-md border border-border bg-surface p-2" />
+        </label>
+      ) : null}
+      <div className="sm:col-span-2">
+        <button type="button" disabled={busy} onClick={() => void save()}
+          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+          {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
+        </button>
+        {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
+      </div>
+    </div>
+  );
+}
