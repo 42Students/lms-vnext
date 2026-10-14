@@ -113,7 +113,7 @@ describe("learner Course page parity contract", () => {
     expect(discussion).toContain('method: "DELETE"');
     expect(discussion).toContain("No messages yet");
     expect(deleteRoute).toContain("deleteCourseDiscussionMessage");
-    expect(deleteRoute).toContain("listCourseDiscussionMessages");
+    expect(deleteRoute).toContain("toggleCourseDiscussionPin");
   });
 
   it("keeps the old LMS Courses page naming and filter vocabulary", () => {
