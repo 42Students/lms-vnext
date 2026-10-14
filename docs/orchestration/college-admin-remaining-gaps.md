@@ -15,6 +15,7 @@
 | 4.1 | Dashboard | PARTIAL | Buildable — reconcile legacy dashboard cards, completion states, count scopes, deep links and mobile/browser proof. |
 | 4.1 | Activity Log | PARTIAL | Buildable — actor/entity/date filters, high-volume noise controls, full drill-in and cross-college denial coverage. |
 | 4.1 | Self Profile | PARTIAL | Buildable — exact legacy profile sections, contact edits, resume/identity document safety and incomplete-section isolation. |
+| 4.1 | College Contact Profile | PARTIAL | Separate own-college display/contact editor built using registered colleges/college_branding, versioned confirmation and atomic activity audit; original self-profile fields, visual branding, owner/oracle confirmation and executed PG/browser acceptance remain open. |
 | 4.1 | Placement Interview Calendar | PARTIAL | Buildable — exact calendar filters, interview click-through and browser/DB acceptance. |
 | 4.2 | Programs | PARTIAL | Buildable — reconcile dedicated program CRUD/list with legacy form, active/archive lifecycle and browser acceptance. |
 | 4.2 | Semesters | PARTIAL | Buildable — add/edit/delete registered program terms, required name, immutable number and dependency guards. |
@@ -23,7 +24,7 @@
 | 4.2 | Classes | PARTIAL | Buildable — section CRUD, capacity, recurring schedule setup and conflict/result reporting. |
 | 4.2 | Batch Promotion | PARTIAL | Buildable — read-first preview and confirmed PROMOTE mutation authored (version-CAS, blocker recheck, history/audit); GRADUATE and legacy/browser/PG acceptance remain open. |
 | 4.2 | Lecture Halls | PARTIAL | Buildable — migrated management exists; verify legacy field parity, conflicts, responsive behaviors and executed acceptance. |
-| 4.2 | Electives | PARTIAL | Buildable — existing slot catalogue; implement selection/enrollment rules, finalize actions, feature-disabled behavior and denial tests. |
+| 4.2 | Electives | PARTIAL | Buildable — existing slot catalogue plus slot create/edit with confirmation, version/selection guards; implement selection/enrollment rules, finalize actions, feature-disabled behavior and denial tests. |
 | 4.2 | Attendance | PARTIAL | Buildable — policy authority, exact grid/session corrections, department evidence, export and DB/browser acceptance. |
 | 4.2 | Section operations / schedules | PARTIAL | Buildable — reconcile section scheduling, repeated sessions, dependencies and error/prerequisite paths with legacy. |
 | 4.3 | Course detail | PARTIAL | Buildable — exact offering workspace sections, action/state parity, ownership and rollback/error behavior. |
@@ -38,7 +39,7 @@
 | 4.4 | Faculty Assignment | PARTIAL | Buildable — assign/reassign/remove, duplicate/conflict checks and scheduling-side effects. |
 | 4.4 | Students | PARTIAL | Buildable — CSV import preview + confirmed per-row onboarding/enrollment authored; lifecycle, academic moves and learner profile drill-in remain, as do executed PG/browser checks. |
 | 4.4 | Student Groups list | PARTIAL | Buildable — group create/edit/status changes, CSV import and dynamic rule controls. |
-| 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, eligibility rules and denial paths. |
+| 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, read-only bounded rule eligibility preview authored; rule writes, waitlist actions and executed denial acceptance remain. |
 | 4.5 | Drives landing | PARTIAL | Buildable — legacy tab/list/filter parity and College Admin scoped placement operations. |
 | 4.5 | Drive Overview | PARTIAL | Buildable — complete job detail sections, statuses, actions and browser parity. |
 | 4.5 | Applications | PARTIAL | Buildable — dedicated applicant list, screening actions, export and cross-college denial tests. |
