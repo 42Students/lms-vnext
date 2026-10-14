@@ -1,3 +1,5 @@
+import { facultySubmissionReportSearchSchema } from "@/modules/courses/faculty-assignment-submissions-model";
+import { facultyQuizAttemptSearchSchema } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultySubmissionReviewPage } from "@/modules/courses/faculty-submission-review-service";
 import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
@@ -566,7 +568,8 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   it("pages actual Faculty grading submissions and rechecks publication and scope",async()=>{
     const {delivery,assignment}=await fixture();
     await pool.query("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Review fixture')",[assignment.id,delivery.id,testLearnerMembershipId]);
-    const query={assignmentId:assignment.id,deliveryId:delivery.id,filter:"UNGRADED",page:999};
+    const search=facultySubmissionReportSearchSchema.parse({deliveryId:delivery.id,filter:"UNGRADED",page:"999"});
+    const query={assignmentId:assignment.id,...search};
     const pending=await getFacultySubmissionReviewPage(facultyOnly,query);
     expect(pending.total).toBe(1);expect(pending.page).toBe(1);
     expect(pending.items[0]?.submittedAt).toEqual(expect.any(String));
@@ -580,6 +583,16 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
     await pool.query("update course_assignments set status='ARCHIVED' where id=$1",[assignment.id]);
     await expect(getFacultySubmissionReviewPage(facultyOnly,query)).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
+  });
+  it("reads a real Quiz attempt drill-in from strict search selectors without widening Section scope",async()=>{
+    const {delivery,quiz}=await fixture();
+    const search=facultyQuizAttemptSearchSchema.parse({deliveryId:delivery.id,page:"1"});
+    const result=await getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search});
+    expect(result.quiz.id).toBe(quiz.id);expect(result.pageSize).toBe(10);
+    expect(result.items).toEqual([]);
+    await expect(getFacultyQuizAttemptDrilldown(learner,{quizId:quiz.id,...search})).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search,deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   });
   it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
     const {delivery}=await fixture();

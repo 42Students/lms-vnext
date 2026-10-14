@@ -9,6 +9,7 @@ export const facultySubmissionListQuerySchema=z.object({
   filter:facultySubmissionFilterSchema.default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
+export const facultySubmissionReportSearchSchema = facultySubmissionListQuerySchema.omit({assignmentId:true});
 export type FacultySubmissionListQuery=z.infer<typeof facultySubmissionListQuerySchema>;
 
 export function selectFacultyAssignmentSubmissions<T extends {
