@@ -835,3 +835,16 @@ the server-owned list, with explicit error/status feedback; no client state
 is treated as proof of authorization. Actual PostgreSQL and authenticated
 browser/keyboard/mobile execution, published edit parity, archived-list parity
 and richer legacy modals remain OPEN. All Assessments/Quizzes remain PARTIAL.
+
+## Faculty Overview evidence correctness and at-risk totals (2026-10-14)
+
+PARTIAL: The Faculty Course Home current-Section signals now deduplicate marked
+sessions and absence pairs, reject out-of-roster attendance or submission
+records and nonfinite assignment grades, and report the full current-roster
+at-risk count rather than truncating the counter to eight displayed previews.
+The source still links to the exact Section roster; it does not invent
+historical enrollment dates, weighted scores or private grade publication.
+Unit tests cover duplicate/foreign evidence, malformed scores, missing
+grading, 12-student risk counts and preview truncation. These additions are
+source-authored only; legacy behavior, real PostgreSQL and authenticated
+mobile/browser verification remain open. Course Overview stays PARTIAL.
