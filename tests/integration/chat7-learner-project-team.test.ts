@@ -16,6 +16,8 @@ if (!process.env.TEST_DATABASE_URL) {
 const pool = new Pool({connectionString: process.env.TEST_DATABASE_URL, max:1});
 const ids = {
   college:randomUUID(), learner:randomUUID(), membership:randomUUID(),
+  department:randomUUID(),program:randomUUID(),period:randomUUID(),
+  cohort:randomUUID(),enrollment:randomUUID(),
   role:randomUUID(), mentor:randomUUID(), mentorMembership:randomUUID(),
   mentorRole:randomUUID(), template:randomUUID(), version:randomUUID(),
   assignment:randomUUID(), project:randomUUID(), projectMember:randomUUID(),
@@ -42,6 +44,23 @@ async function setup() {
     await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,$3)",
       [role,membership,roleName]);
   }
+  // Produce all academic parentage locally, including the learner's enrollment.
+  await pool.query("insert into departments(id,college_id,name) values($1,$2,'Own Project Test Department')",
+    [ids.department,ids.college]);
+  await pool.query(`insert into programs(id,department_id,name,code,duration_terms)
+    values($1,$2,'Own Project Program',$3,8)`,
+    [ids.program,ids.department,"P7-"+suffix]);
+  await pool.query(`insert into academic_periods
+    (id,college_id,name,code,start_date,end_date,status)
+    values($1,$2,'Own Project Term',$3,'2026-07-01','2026-12-31','ACTIVE')`,
+    [ids.period,ids.college,"T7-"+suffix]);
+  await pool.query(`insert into cohorts(id,program_id,name,code,start_period_id,status)
+    values($1,$2,'Own Project Cohort',$3,$4,'ACTIVE')`,
+    [ids.cohort,ids.program,"B7-"+suffix,ids.period]);
+  await pool.query(`insert into learner_program_enrollments
+    (id,membership_id,program_id,cohort_id,status)
+    values($1,$2,$3,$4,'ACTIVE')`,
+    [ids.enrollment,ids.membership,ids.program,ids.cohort]);
   // Minimal project-template lineage is per-test and is not a shared seeded project.
   await pool.query(`insert into project_templates
     (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
@@ -76,6 +95,11 @@ async function cleanup() {
   await pool.query("delete from project_template_college_assignments where id=$1",[ids.assignment]);
   await pool.query("delete from project_template_versions where id=$1",[ids.version]);
   await pool.query("delete from project_templates where id=$1",[ids.template]);
+  await pool.query("delete from learner_program_enrollments where id=$1",[ids.enrollment]);
+  await pool.query("delete from cohorts where id=$1",[ids.cohort]);
+  await pool.query("delete from academic_periods where id=$1",[ids.period]);
+  await pool.query("delete from programs where id=$1",[ids.program]);
+  await pool.query("delete from departments where id=$1",[ids.department]);
   await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",
     [[ids.membership,ids.mentorMembership]]);
   await pool.query("delete from college_memberships where id=any($1::uuid[])",
