@@ -13,12 +13,12 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
-import { collegePromotionExecuteSchema, promotionReady } from "./college-batch-promotion-model";
+import { collegePromotionExecuteSchema, promotionPreviewMatches, promotionReady } from "./college-batch-promotion-model";
 import { previewCollegeBatchPromotionInTransaction } from "./college-batch-promotion-service";
 
 export class CollegePromotionExecuteError extends Error {
   constructor(public readonly code:
-    "BATCH_NOT_FOUND" | "PROMOTION_STALE" | "PROMOTION_BLOCKED") {
+    "BATCH_NOT_FOUND" | "PROMOTION_STALE" | "PROMOTION_BLOCKED" | "PROMOTION_PREVIEW_CHANGED") {
     super(code);
     this.name = "CollegePromotionExecuteError";
   }
@@ -84,6 +84,8 @@ export async function executeCollegeBatchPromotion(
       preview.plan.targetTermNumber === null ||
       preview.plan.academicYearStart === null)
       throw new CollegePromotionExecuteError("PROMOTION_BLOCKED");
+    if (!promotionPreviewMatches(input,preview))
+      throw new CollegePromotionExecuteError("PROMOTION_PREVIEW_CHANGED");
 
     const [updated] = await tx.update(cohortProgressionState).set({
       currentTermNumber: preview.plan.targetTermNumber,
