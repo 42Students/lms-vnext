@@ -9,6 +9,7 @@ import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
   learnerInterviewViewHref,type LearnerInterviewScheduleView }
   from "@/modules/placements/learner-interview-view-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
+import {learnerInterviewMobileSummary} from "@/modules/placements/learner-interview-mobile-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LearnerCareerRounds, type LearnerCareerRound } from "./learner-career-rounds";
@@ -196,6 +197,12 @@ export function LearnerCareerRoundsWorkspace({
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
+  const mobileInterviewSummary=kind==="INTERVIEW"&&selected
+    ? learnerInterviewMobileSummary({
+        scheduledAt:selected.scheduledAt,
+        approvedScheduledAt:selected.exception?.scheduledAt??null,
+      })
+    : null;
   const interviewCalendar=kind==="INTERVIEW" && selected
     ? learnerInterviewCalendarArtifacts({
         applicationId:selected.applicationId,
@@ -222,7 +229,7 @@ export function LearnerCareerRoundsWorkspace({
   return (
     <div className="space-y-5">
       <section aria-label={kind === "ASSESSMENT" ? "Assessment filters" : "Interview filters"}
-        className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        className="space-y-4 rounded-xl border border-border bg-surface p-3 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="m-0 text-sm font-semibold text-foreground">
             {relevant.length} scheduled round{relevant.length === 1 ? "" : "s"}
@@ -231,7 +238,7 @@ export function LearnerCareerRoundsWorkspace({
             {urgencyCount} within seven days
           </StatusBadge>
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by schedule">
+        <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
             <button
               type="button"
@@ -239,8 +246,8 @@ export function LearnerCareerRoundsWorkspace({
               aria-pressed={filters.time === value}
               onClick={() => chooseTimeView(value)}
               className={filters.time === value
-                ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"}
+                ? "min-h-11 shrink-0 whitespace-nowrap rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 shrink-0 whitespace-nowrap rounded-full border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"}
             >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</button>
           ))}
         </div>
@@ -367,14 +374,14 @@ export function LearnerCareerRoundsWorkspace({
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
               : "/learn/my-placements/applications"}
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
           >View application</Link>
           {kind === "INTERVIEW" && selected ? (
             <Link
               href={"/learn/my-placements/interviews?applicationId=" +
                 encodeURIComponent(selected.applicationId) +
                 "&roundId=" + encodeURIComponent(selected.roundId)}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
             >
               Direct link
             </Link>
@@ -383,16 +390,21 @@ export function LearnerCareerRoundsWorkspace({
             <Link
               href={"/learn/my-placements?requestRoundId=" +
                 encodeURIComponent(selected.roundId) + "#round-reschedule"}
-              className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
             >
               Request reschedule
             </Link>
           ) : null}
-          <Button onClick={() => setSelectedKey(null)}>Close</Button>
+          <Button className="min-h-11 w-full sm:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
         </>}
       >
         {selected ? (
           <div className="space-y-4">
+            {mobileInterviewSummary ? (
+              <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-foreground sm:hidden">
+                {mobileInterviewSummary}
+              </p>
+            ) : null}
             <dl className="grid gap-4 text-sm sm:grid-cols-2">
               <div><dt className="text-xs font-semibold text-muted-foreground">Date & time (IST)</dt>
                 <dd className="mt-1 text-foreground">
@@ -442,7 +454,7 @@ export function LearnerCareerRoundsWorkspace({
                 {interviewCalendar ? <div className="mt-3 flex flex-wrap gap-3">
                   <a download={interviewCalendar.filename}
                     href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
-                    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto">
                     Download .ics
                   </a>
                   <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"

@@ -501,7 +501,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
 | L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
-| L16-019 | Mobile interview actions/modals | InterviewsContent responsive | interviews page | UNCHECKED |
+| L16-019 | Mobile interview actions/modals | InterviewsContent responsive | mobile-safe interview filter scroller, 44px full-width drawer links/close, wrapping titles and IST effective scheduled/rescheduled summary drawn only from authorized round; PARTIAL pending device keyboard/screen-reader acceptance plus PG/unit/tsc/lint/browser verification | PARTIAL |
 | L16-020 | Deterministic assessment vs interview round-kind classification | Rounds are typed TEST/VENDOR_TEST/GD/INTERVIEW; names editable | learner-career-rounds typed policy | FIXED |
 
 ## L17 — Career Calendar
