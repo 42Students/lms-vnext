@@ -21,7 +21,7 @@ export function buildSuperAdminPeopleCsv(rows: readonly SuperAdminPeopleCsvRow[]
  return "\ufeff"+lines.join("\r\n");
 }
 export function superAdminPeopleExportHref(raw: unknown) {
- const query=adminUsersExportQuerySchema.parse(raw),p=new URLSearchParams();
+ const query=adminUsersQuerySchema.parse(raw),p=new URLSearchParams();
  if(query.tab!=="ALL")p.set("tab",query.tab);
  if(query.q)p.set("q",query.q);
  if(query.role!=="ALL")p.set("role",query.role);
