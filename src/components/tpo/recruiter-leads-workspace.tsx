@@ -269,6 +269,9 @@ export function RecruiterLeadsWorkspace({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Link href="/tpo/follow-ups" className={buttonStyle}>
+            Follow-ups Due
+          </Link>
           <RecruiterLeadCsvImport onImported={() => void load()} />
           <button type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>

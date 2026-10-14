@@ -39,6 +39,8 @@ Closure checklist:
 - [ ] Follow-ups Due list matches.
 - [ ] Call and WhatsApp actions work safely.
 - [ ] Follow-up outcome logging and Done action match.
+
+**W49 PARTIAL:** A TPO-only /tpo/follow-ups queue now presents the earliest 200 college-scoped open due tasks joined to registered DB09 recruiter leads, explicitly signals truncation, and links to each contact. Confirmed Create and Record Outcome + Done actions use strict Zod and same-origin routes, college-scoped row locking, stale due-date rejection, one immutable actor-attributed recruiter activity audit per successful write, and full transactional rollback on audit denial. Missing/foreign records do not become successful completion. The due queue is reachable from the recruiter leads header; dashboard card placement, mobile legacy ordering, per-owner My Work/Team segregation, future-task visibility, exact legacy outcome taxonomy, browser and separately executed PG acceptance remain open. Existing lead-detail follow-up API behavior is preserved pending migration to audited actions.
 - [ ] This Week agenda matches.
 - [ ] Placement rate/registered/offers/live/ready-unplaced/employer-conversation metrics match.
 - [ ] Branch performance matches.
