@@ -1000,3 +1000,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 private learner contacts: optimistic compare of own saved alternate phone/email, transactional jsonb_set and no-op audit suppression; no identity upload and no contact disclosure to other roles. Requires fresh PostgreSQL/TypeScript/ESLint and browser/multi-tab acceptance.
 
 2026-10-14 learner issued-offer extension: in-place confirmation uses existing transactional placement request with persisted expiry optimistic token under offer row lock. No external sending or files. Fresh-learner PostgreSQL and pure-model tests authored; browser/date boundary/CI acceptance pending.
+
+2026-10-14 Offer extension pending UX: readonly learner-owned persisted request overlay on Offers/Placement Cell, no external sends and no changing status. Exact offer IDs only; fresh fixture PG + unit authored; browser, CI and producer acceptance pending.
