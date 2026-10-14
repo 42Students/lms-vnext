@@ -195,7 +195,7 @@ export function HrDriveDraftForm({
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
             onClick={restoreFromThisTab}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
-            onClick={() => { try{window.sessionStorage.removeItem(storageKey);}catch{} setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice("Cleared this tab’s saved draft."); }}>Start over</button>
+            onClick={() => { try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset the form regardless. */} setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice("Cleared this tab’s saved draft."); }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
           <div role="alert" className="mt-4 rounded-md border border-border p-3 text-sm text-body">

@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrActivityQuerySchema} from "@/modules/placements/hr-job-activity-model";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
+const HR_ACTIVITY_FILTER_KINDS=["ALL","PUBLISHED","CLOSED"] as const;
 export default async function HrJobActivityPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];kind?:string|string[]}>
 }) {
@@ -34,7 +35,7 @@ export default async function HrJobActivityPage({searchParams}:{
      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">{grant.collegeName}</Link>)}
    </nav>:null}
    <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
-     {(["ALL","PUBLISHED","CLOSED"] as const).map(kind=><Link key={kind}
+     {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}
        href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind}
        aria-current={kind===input.data.kind?"page":undefined}
        className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">
