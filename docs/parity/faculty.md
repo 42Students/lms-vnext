@@ -1428,3 +1428,6 @@ Faculty directory details now validate their route IDs and produce the same non-
 
 ## 2026-10-15 Round 5 Faculty Course default-route ID guard — PARTIAL
 The `/teacher/courses/[deliveryId]` landing route validates the Section UUID before canonicalizing to Overview, preventing malformed/legacy arbitrary segments from becoming misleading instructor links. Tests cover valid and invalid IDs. Persisted teaching-scope authorization remains enforced on the destination; browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz metadata reconfirmation — PARTIAL
+Editing Quiz title, instructions, IST deadline, max attempts or a new draft's lesson selector now invalidates the previous confirmation. The server continues requiring explicit confirmed writes. Pure confirmation-state regression tests added; browser keyboard/mobile acceptance pending.
