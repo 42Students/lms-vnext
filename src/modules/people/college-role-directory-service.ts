@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -58,6 +58,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "FACULTY" && filter.classPresence !== "ALL") {
     throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
   }
+  if (kind === "FACULTY" && filter.rollPresence !== "ALL") {
+    throw new RangeError("FACULTY_ROLL_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
@@ -114,6 +117,11 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.cohortId,filter.cohortId),
       eq(learnerProgramEnrollments.status,"ACTIVE"),
     ))) : undefined;
+  const hasRoll = exists(db.select({ memberId: learnerProfiles.membershipId })
+    .from(learnerProfiles).where(and(
+      eq(learnerProfiles.membershipId, collegeMemberships.id),
+      sql`nullif(btrim(${learnerProfiles.rollNumber}), '') is not null`,
+    )));
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
@@ -179,6 +187,8 @@ export async function listCollegeRoleDirectory(
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind === "FACULTY" ? facultyInDepartment : undefined,
+      kind === "LEARNER" && filter.rollPresence !== "ALL"
+        ? (filter.rollPresence === "PRESENT" ? hasRoll : not(hasRoll)) : undefined,
       kind === "FACULTY" ? matchesEmployment : undefined,
       kind === "LEARNER" ? belongsToCohort : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"
