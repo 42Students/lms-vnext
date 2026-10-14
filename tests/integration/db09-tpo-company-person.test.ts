@@ -63,6 +63,15 @@ describe.skipIf(!enabled)("DB09 company contact people on isolated PostgreSQL", 
       expectedUpdatedAt: contact.updatedAt,
       name: "Stale", email: token + "@example.org",
     })).rejects.toBeInstanceOf(TpoCompanyPersonStale);
+    await pool.query(
+      "UPDATE placement_tpo_leads SET unsubscribed_at=now() WHERE id=$1",
+      [contact.id],
+    );
+    await expect(saveTpoCompanyPerson(tpo, companyId, {
+      action: "EDIT", confirmed: true, leadId: contact.id,
+      expectedUpdatedAt: updated.updatedAt,
+      name: "Suppressed", email: token + "@example.org",
+    })).rejects.toBeDefined();
     const audit = await pool.query<{ count: number }>(
       "SELECT count(*)::integer AS count FROM placement_tpo_lead_activities WHERE lead_id=$1",
       [contact.id],
