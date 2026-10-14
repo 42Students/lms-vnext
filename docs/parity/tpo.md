@@ -309,6 +309,9 @@ Legacy table:
 - [ ] past-season/permission restrictions are enforced.
 
 ## Page: Edit Drive
+
+**W66-1 PARTIAL — Edit Drive:** New `/tpo/placements/jobs/[jobId]/edit` edits title, description, locations, openings and INR CTC on active-season DRAFT jobs only. TPO college-actor scope, confirmed PATCH, row lock, millisecond-safe timestamp CAS, synchronized active primary role and immutable activity audit. Unit and disposable PG tests authored, unrun. Remaining: full legacy fields, navigation dirty-state checks, browser validation and independent PG certification.
+
 **Legacy:** `/tpo/drives/[jobId]/edit`
 
 - [ ] Editable fields match lifecycle restrictions.
@@ -349,6 +352,8 @@ Legacy:
 
 ### Tab: Applicants
 - [ ] applicant table/search/filter/stage views match.
+**W66-4 PARTIAL — Candidate detail:** A focused TPO applicant detail route now shows persisted application identity, eligibility and screening stage, latest applied round outcomes and recorded offer/accepted joining evidence with a scoped college/drive/application lookup. It links from the existing applicant stage table, with mobile, loading, error and non-leaking not-found states. Does not disclose private screening notes, staged results or fabricate employer selection. Remaining: legacy side drawer/modal, richer candidate sections/filters, positive PG/browser evidence and visual parity.
+
 - [ ] candidate detail drawer matches.
 - [ ] bulk actions match.
 - [ ] external-registration/company-id state matches.
@@ -407,7 +412,11 @@ Legacy includes:
 - [ ] Reject request modal/reason/consequence matches.
 - [ ] Send Back modal/reason matches.
 - [ ] Publish Preview modal checks and consequences match.
+**W66-2 PARTIAL — Extend Deadline:** A confirmed TPO published-drive extension at /tpo/placements/jobs/[jobId]/extend-deadline updates only persisted applicationDeadline for an active season, requires a later future IST deadline, row-locked expectedUpdatedAt with millisecond-safe SQL CAS, and immutable actor audit. Unit/PG tests authored, unexecuted. Legacy overlay placement, borrower notifications, browser/race validation remain open.
+
 - [ ] Extend Deadline modal validation matches.
+**W66-3 PARTIAL — Close consequence preview:** A TPO-only drive close-preview page shows persisted applications, rounds, and offer versions. A confirmed same-origin POST checks signed-in college/actor, active season, PUBLISHED state, millisecond-safe job token and unchanged preview counts under a job lock, then closes and writes immutable audit. This is CLOSE only: the job enum has no CANCELLED state. Remaining: legacy CANCEL semantics, cross-writer serialization, consequence notifications, browser checks and executed PostgreSQL evidence.
+
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.
 

@@ -1,10 +1,13 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
+import { PlacementsServiceError } from "@/modules/placements/errors";
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
+import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 
 function formatCtc(
   value: number | null,
@@ -19,8 +22,10 @@ function formatCtc(
 
 export default async function HrPlacementJobPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ jobId: string }>;
+  searchParams: Promise<{ tab?: string; stage?: string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -29,11 +34,18 @@ export default async function HrPlacementJobPage({
   }
 
   const { jobId } = await params;
-  const workspace =
-    await getRecruiterPlacementWorkspace(
-      context,
-      jobId,
-    );
+  const query = await searchParams;
+  let hiring: Awaited<ReturnType<typeof getHrJobRead>>;
+  try {
+    hiring = await getHrJobRead(context, jobId, query);
+  } catch (error) {
+    if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
+        (error instanceof z.ZodError && !z.string().uuid().safeParse(jobId).success)) {
+      notFound();
+    }
+    throw error;
+  }
+  const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
 
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
@@ -124,7 +136,60 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
-      <section>
+      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
+        {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
+          <Link key={tab} href={`/hr/placements/jobs/${workspace.job.id}?tab=${tab}`}
+            aria-current={filters.tab === tab ? "page" : undefined}
+            className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+            {tab}
+          </Link>
+        ))}
+      </nav>
+      {filters.tab === "applicants" ? (
+        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
+          <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded.</p>
+          <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
+            {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
+              ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
+              <Link key={stage} href={`/hr/placements/jobs/${workspace.job.id}?tab=applicants&stage=${stage}`}
+                aria-current={filters.stage === stage ? "page" : undefined}
+                className={`inline-flex min-h-10 items-center rounded-md border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+                {label} ({count})
+              </Link>
+            ))}
+          </nav>
+          {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
+            {applicants.rows.map(applicant => (
+              <article key={applicant.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
+                <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
+                <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
+                <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
+                <p className="mt-2 text-xs text-muted-foreground">Applied {applicant.submittedAt.toISOString().slice(0,10)}</p>
+              </article>
+            ))}
+          </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
+          {applicantsTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 shared applications only.</p> : null}
+        </section>
+      ) : null}
+      {filters.tab === "offers" ? (
+        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
+          <p className="text-sm text-body">Only offers associated with candidates already shared with your company appear here.</p>
+          {offers.length ? <div className="grid gap-3 md:grid-cols-2">{offers.map(offer => (
+            <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
+              <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
+              <p className="mt-1 text-sm text-body">{offer.role}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2"><StatusBadge>{offer.status}</StatusBadge>
+                {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Issued {offer.issuedAt.toISOString().slice(0, 10)} · Joining {offer.joiningDate ?? "Not set"}</p>
+            </article>
+          ))}</div> : <p className="text-sm text-muted-foreground">No offers recorded for shared applicants.</p>}
+          {offersTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 offers only.</p> : null}
+        </section>
+      ) : null}
+      {filters.tab === "rounds" || filters.tab === "overview" ? <section>
         <div className="mb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Hiring rounds
@@ -200,7 +265,7 @@ export default async function HrPlacementJobPage({
             }),
           )}
         />
-      </section>
+      </section> : null}
     </div>
   );
 }
