@@ -5,6 +5,8 @@ import {
   asc,
   count,
   eq,
+  exists,
+  ilike,
   inArray,
   or,
   sql,
@@ -461,10 +463,28 @@ export const drizzlePeopleRepository:
 
   async listCollegePeople(input): Promise<CollegePeoplePage> {
     const db = getDb();
+    const pattern = "%" + input.q.replace(/[\\%_]/g, "\\$&") + "%";
+    const filters = and(
+      eq(collegeMemberships.collegeId, input.collegeId),
+      input.status === "ALL" ? undefined : eq(collegeMemberships.status, input.status),
+      input.q ? or(
+        ilike(users.displayName, pattern),
+        ilike(users.email, pattern),
+        ilike(users.phoneE164, pattern),
+      ) : undefined,
+      input.role === "ALL" ? undefined : exists(
+        db.select({ id: membershipRoles.id }).from(membershipRoles)
+          .where(and(
+            eq(membershipRoles.membershipId, collegeMemberships.id),
+            eq(membershipRoles.role, input.role),
+          )),
+      ),
+    );
     const [totalRow] = await db
       .select({ total: count() })
       .from(collegeMemberships)
-      .where(eq(collegeMemberships.collegeId, input.collegeId));
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .where(filters);
 
     const rows = await db
       .select({
@@ -485,7 +505,7 @@ export const drizzlePeopleRepository:
       .from(collegeMemberships)
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
-      .where(eq(collegeMemberships.collegeId, input.collegeId))
+      .where(filters)
       .orderBy(
         asc(users.displayName),
         asc(users.id),

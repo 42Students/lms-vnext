@@ -563,6 +563,77 @@ export async function moveElectiveMember(
 
 /** Serializes roster locks against add/leave using the SAME locked group row.
  * A locked membership still permits a deliberately confirmed admin removal. */
+
+/**
+ * One atomic Remove & Lock action: the member is REMOVED+locked before a seat
+ * can be given to the existing eligible waitlist. Never perform two HTTP
+ * mutations, which would leave an unlocked removed learner after a failure.
+ */
+export async function removeAndLockCollegeStudyMember(
+  context: RequestContext, groupIdInput: string, memberIdInput: string, expectedVersion: number,
+) {
+  const groupId = uuid.parse(groupIdInput), memberId = uuid.parse(memberIdInput);
+  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0)
+    throw new GroupServiceError("GROUP_MEMBER_STALE");
+  return getDb().transaction(async tx => {
+    const group = await lockGroup(tx, groupId);
+    if (group.kind !== "STUDY_GROUP" || group.ownerScope !== "COLLEGE" || !group.collegeId)
+      throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
+    assertScope(context, group, "MANUAL", memberId);
+    await assertPersistedGroupActor(tx, context, {
+      collegeId: group.collegeId, mode: "MANUAL", memberId,
+    });
+    if (group.status !== "ACTIVE" && group.status !== "DRAFT")
+      throw new GroupServiceError("GROUP_NOT_MUTABLE");
+    const [member] = await tx.select().from(lmsGroupMembers).where(and(
+      eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.membershipId, memberId),
+    )).for("update").limit(1);
+    if (!member || member.state === "REMOVED")
+      throw new GroupServiceError("GROUP_MEMBER_NOT_FOUND");
+    if (member.version !== expectedVersion)
+      throw new GroupServiceError("GROUP_MEMBER_STALE");
+    if (!["ACTIVE", "WAITLISTED", "REQUESTED"].includes(member.state))
+      throw new GroupServiceError("GROUP_MEMBER_STATE_INVALID");
+
+    const now = new Date();
+    const [updated] = await tx.update(lmsGroupMembers).set({
+      state: "REMOVED", isLocked: true, waitlistPosition: null,
+      version: sql.raw('"version" + 1'), updatedAt: now,
+    }).where(and(
+      eq(lmsGroupMembers.id, member.id),
+      eq(lmsGroupMembers.version, expectedVersion),
+    )).returning();
+    if (!updated) throw new GroupServiceError("GROUP_MEMBER_STALE");
+    await emitEvent(tx, {
+      groupId, membershipId: memberId, fromState: member.state,
+      toState: "REMOVED", source: "MANUAL", context,
+      reason: "MANUAL_REMOVE_AND_LOCK",
+    });
+    if (member.state === "ACTIVE") {
+      await tx.update(lmsGroups).set({
+        activeCount: sql.raw('"active_count" - 1'),
+        version: sql.raw('"version" + 1'), updatedAt: now,
+      }).where(eq(lmsGroups.id, groupId));
+      if (group.status === "ACTIVE")
+        await promoteEligibleWaitlist(tx, group, null, context, now);
+    }
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_UPDATED,
+      organizationId: context.membership!.organizationId,
+      collegeId: group.collegeId,
+      subjectType: "lms_group_member", subjectId: member.id,
+      subjectLabel: group.name,
+      summary: "Study group member removed and locked",
+      metadata: {
+        groupId, membershipId: memberId,
+        before: { state: member.state, isLocked: member.isLocked, version: member.version },
+        after: { state: "REMOVED", isLocked: true, version: updated.version },
+      },
+    });
+    return updated;
+  });
+}
+
 export async function setCollegeStudyMemberLock(
   context: RequestContext, groupIdInput: string, memberIdInput: string, locked: boolean,
 ) {
