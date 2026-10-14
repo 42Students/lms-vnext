@@ -109,6 +109,9 @@ export default async function CollegesPage() {
           description="Every college belongs to an organization, so the organization is the required first tenant boundary."
         />
       ) : null}
+      <Link href="/admin/tenants" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Search tenant directory →
+      </Link>
       <DataTable
         columns={columns}
         rows={colleges}
