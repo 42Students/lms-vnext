@@ -1,3 +1,4 @@
+import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
 import { commandFacultyAttendanceSchedule } from "@/modules/attendance/faculty-schedule-mutation-service";
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
@@ -531,6 +532,22 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       "courses.assignment.grade_published","courses.assignment.graded",
       "courses.assignment.graded",
     ]);
+  });
+  it("filters only persisted Faculty teaching deliveries and invalidates revoked assignments",async()=>{
+    const {delivery}=await fixture();
+    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY",page:999});
+    expect(list.items.map(item=>item.deliveryId)).toEqual([delivery.id]);
+    expect(list.page).toBe(1);
+    expect(list.items.length).toBeLessThanOrEqual(48);
+    const foreignSelector=await getFacultyCourseList(facultyOnly,{period:SEED_IDS.collegeB});
+    expect(foreignSelector.items).toEqual([]);
+    await expect(getFacultyCourseList(learner,{})).rejects.toBeDefined();
+    await expect(getFacultyCourseList(facultyOnly,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    const foreign=await getFacultyCourseList({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},{});
+    expect(foreign.items).toEqual([]);
+    await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
+    const revoked=await getFacultyCourseList(facultyOnly,{});
+    expect(revoked.items).toEqual([]);
   });
   it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
     const {delivery}=await fixture();
