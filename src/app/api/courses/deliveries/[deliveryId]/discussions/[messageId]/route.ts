@@ -4,7 +4,6 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   deleteCourseDiscussionMessage,
-  listCourseDiscussionMessages,
   toggleCourseDiscussionPin,
 } from "@/modules/courses/discussion-service";
 
@@ -31,21 +30,10 @@ export async function DELETE(
   try {
     const context = await getCurrentRequestContext();
     const { deliveryId, messageId } = await params;
-    const discussion = await listCourseDiscussionMessages(
-      context,
-      deliveryId,
-    );
-
-    if (!discussion.messages.some((message) => message.id === messageId)) {
-      return NextResponse.json(
-        { error: "DISCUSSION_MESSAGE_NOT_FOUND" },
-        { status: 404 },
-      );
-    }
-
     const deleted = await deleteCourseDiscussionMessage(
       context,
       messageId,
+      deliveryId,
     );
 
     return NextResponse.json({ deleted });
@@ -69,27 +57,11 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { deliveryId, messageId } = await params;
-    const discussion =
-      await listCourseDiscussionMessages(
-        context,
-        deliveryId,
-      );
-
-    if (
-      !discussion.messages.some(
-        (message) => message.id === messageId,
-      )
-    ) {
-      return NextResponse.json(
-        { error: "DISCUSSION_MESSAGE_NOT_FOUND" },
-        { status: 404 },
-      );
-    }
-
     const message =
       await toggleCourseDiscussionPin(
         context,
         messageId,
+        deliveryId,
       );
 
     return NextResponse.json({ message });
