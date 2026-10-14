@@ -4,6 +4,10 @@ import { ExpandableCourseDescription } from "./expandable-course-description";
 import { ExpandableCourseUpdate } from "./expandable-course-update";
 import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overview-priority";
 import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
+import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
+import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
+import { learnerRecentCourseActivity } from "@/modules/courses/learner-recent-course-activity-model";
+import { learnerCourseOverviewJumps } from "@/modules/courses/learner-course-overview-mobile-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -90,6 +94,12 @@ export function LearnerCourseOverview({
   }>;
 }) {
   const summary = workspace.summary;
+  const pathPreview = learnerCoursePathPreview(workspace.lessons);
+  const aboutSource = learnerCourseAboutSource({
+    safeBodyHtml: meta.bodyHtml,
+    courseDescription:meta.courseDescription,
+    learningPathDescription:workspace.learningPath?.description??null,
+  });
   const progressAvailability = learnerProgressAvailability({
     hasPublishedLearningPath: workspace.learningPath !== null,
     publishedLessonCount: workspace.lessons.length,
@@ -165,6 +175,7 @@ export function LearnerCourseOverview({
   // Keep the update feed time-ordered, but never allow its six-item display
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
+  const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
   const priorityActivity = readOnly
     ? null
     : selectPriorityLearnerActivity(allUpcomingActivity);
@@ -189,7 +200,7 @@ export function LearnerCourseOverview({
       : null;
 
   const unifiedUpdates = [
-    ...courseUpdates.map((update) => ({
+    ...courseUpdates.slice(0,2).map((update) => ({
       key: `discussion-${update.id}`,
       title: update.pinned ? "Pinned update" : "Course update",
       detail: `${update.senderName} · ${formatWhen(update.createdAt) ?? ""}`,
@@ -198,27 +209,49 @@ export function LearnerCourseOverview({
       priority: update.pinned ? 0 : 1,
       time: update.createdAt.getTime(),
     })),
-    ...activity.map((item) => ({
+    ...recentLearnerActivity.map((item) => ({
+      key:`recent-${item.label}-${item.id}`,
+      title:item.title,
+      detail:`${item.label} · ${formatWhen(item.when)??""}`,
+      body:null,
+      href:`/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
+      priority:2,
+      time:item.when.getTime(),
+    })),
+    ...activity.slice(0,2).map((item) => ({
       key: `activity-${item.type}-${item.id}`,
       title: item.title,
       detail: `${item.type}${item.when ? ` · ${formatWhen(item.when)}` : ""}`,
       body: null,
       href: `/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
-      priority: 2,
+      priority: 3,
       time: item.when?.getTime() ?? Number.MAX_SAFE_INTEGER,
     })),
   ]
     .sort((left, right) =>
       left.priority !== right.priority
         ? left.priority - right.priority
-        : left.priority < 2
+        : left.priority < 3
           ? right.time - left.time
           : left.time - right.time,
     )
     .slice(0, 6);
 
+  const jumpLinks=learnerCourseOverviewJumps({
+    hasPublishedPath:pathPreview.totalLessons>0,
+    hasUpdates:unifiedUpdates.length>0,
+  });
   return (
     <div className="space-y-5">
+      <nav aria-label="Course overview sections"
+        className="sticky top-16 z-10 -mx-1 flex gap-2 overflow-x-auto rounded-lg border border-border bg-surface p-2 shadow-sm sm:hidden">
+        {jumpLinks.map(item=>(
+          <a key={item.id} href={"#"+item.id}
+            className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+            {item.label}
+          </a>
+        ))}
+      </nav>
       <div>
         <h2 className="sr-only">Overview</h2>
         <p className="m-0 text-sm text-body">
@@ -226,12 +259,15 @@ export function LearnerCourseOverview({
         </p>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section id="course-overview-about" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <h3 className="m-0 text-lg font-semibold text-foreground">
               About this course
             </h3>
+            <p className="mt-1 text-xs text-muted-foreground" role="note">
+              {aboutSource.label}
+            </p>
             {meta.introductionText?.trim() ? (
               <p className="mt-2 text-sm font-medium leading-6 text-foreground">
                 {meta.introductionText}
@@ -274,7 +310,10 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
           <div className="flex max-w-md flex-wrap gap-2">
-            {meta.credits ? (
+            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+              {workspace.course.code}
+            </span>
+            {meta.credits !== null ? (
               <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
                 {meta.credits} Credits
               </span>
@@ -285,6 +324,11 @@ export function LearnerCourseOverview({
             <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
               {meta.academicPeriodName}
             </span>
+            {meta.instructors.length===0 ? (
+              <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+                Faculty not recorded
+              </span>
+            ) : null}
             {meta.instructors.map((instructor) => (
               <span
                 key={instructor.membershipId}
@@ -303,8 +347,43 @@ export function LearnerCourseOverview({
         </div>
       </section>
 
-      <section
-        className="rounded-xl border border-primary bg-primary-subtle p-5"
+      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
+            <p className="mt-1 text-sm text-body">
+              {pathPreview.totalLessons} published {pathPreview.totalLessons===1?"lesson":"lessons"} in sequence.
+              Lesson names describe the curriculum, not promises of learning outcomes.
+            </p>
+          </div>
+          <Link href={`/learn/courses/${deliveryId}/roadmap`}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+            Full learning path →
+          </Link>
+        </div>
+        {pathPreview.lessons.length ? (
+          <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+            {pathPreview.lessons.map((lesson)=>(
+              <li key={lesson.id} className="rounded-lg border border-border p-3">
+                <Link href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
+                  className="block text-sm font-semibold text-primary-text">{lesson.name}</Link>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {lesson.progress===null?"No published trackable items"
+                    : `${lesson.completed} of ${lesson.total} items completed · ${lesson.progress}%`}
+                </p>
+              </li>
+            ))}
+          </ol>
+        ) : <p role="status" className="mt-4 text-sm text-body">
+          A published lesson outline is not available yet.
+        </p>}
+        {pathPreview.remaining>0?<p className="mt-3 text-xs text-muted-foreground">
+          And {pathPreview.remaining} more lessons in the learning path.
+        </p>:null}
+      </section>
+
+      <section id="course-overview-next"
+        className="scroll-mt-32 rounded-xl border border-primary bg-primary-subtle p-4 sm:p-5"
         aria-label="Next action"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -352,7 +431,7 @@ export function LearnerCourseOverview({
         </section>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
@@ -376,14 +455,14 @@ export function LearnerCourseOverview({
       </div>
 
       {unifiedUpdates.length > 0 ? (
-        <section className="rounded-xl border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
+        <section id="course-overview-updates" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="m-0 text-base font-semibold text-foreground">
                 Recent updates
               </h3>
               <p className="mt-1 text-xs text-body">
-                Course-team messages, upcoming assessments, and live sessions.
+                Course-team messages, saved completions, upcoming assessments, and live sessions.
               </p>
             </div>
             <Link
