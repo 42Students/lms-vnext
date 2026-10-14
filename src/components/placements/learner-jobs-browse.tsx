@@ -65,10 +65,12 @@ export function LearnerJobsBrowse({
     location: params.get("loc") ?? "all",
     eligibleOnly: params.get("eligible") === "1",
     closingSoon: learnerClosingSoonQuerySchema.safeParse(params.get("soon")).success,
+    availability: learnerDriveAvailabilitySchema.safeParse(params.get("availability")).data ?? "all",
     sort: validSort.includes(rawSort as LearnerJobBrowseFilters["sort"])
       ? rawSort as LearnerJobBrowseFilters["sort"] : "deadline",
   };
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
+  const availabilityCounts=useMemo(()=>learnerDriveAvailabilityCounts(items),[items]);
   const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
   const parsedPage = Number(params.get("page") ?? "1");
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
@@ -113,6 +115,22 @@ export function LearnerJobsBrowse({
               ))}
             </select>
           </label>
+        </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Drive application availability">
+          {([
+            ["all","All published"],
+            ["open","Open to apply"],
+            ["not-open","Not open to apply"],
+            ["closed","Deadline passed"],
+          ] as const).map(([key,label])=>(
+            <button type="button" key={key} aria-pressed={filters.availability===key}
+              onClick={()=>updateQuery({availability:key})}
+              className={filters.availability===key
+                ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              {label} ({availabilityCounts[key]})
+            </button>
+          ))}
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
