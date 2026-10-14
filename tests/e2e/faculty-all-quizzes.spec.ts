@@ -110,8 +110,24 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   expect((await resultsResponse).status()).toBe(200);
   await expect(closedCard.getByRole("button",{name:"Hide results"})).toBeVisible();
 
+  // Metadata-only edits remain legal after publication/close; quiz questions
+  // and submitted answer snapshots must remain unchanged.
+  await page.reload();
+  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
+  await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
+  const metadataCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
+  await metadataCard.getByRole("button",{name:"Edit",exact:true}).click();
+  const metadataDrawer=page.getByRole("dialog",{name:"Edit Quiz"});
+  await expect(metadataDrawer).toBeVisible();
+  await metadataDrawer.getByRole("textbox",{name:"Title"}).fill(title+" metadata");
+  page.once("dialog",dialog=>dialog.accept());
+  const metadataResponse=page.waitForResponse(r=>r.request().method()==="PATCH"&&new URL(r.url()).pathname==="/api/courses/quizzes/"+id);
+  await metadataDrawer.getByRole("button",{name:"Save changes"}).click();
+  const metadata=await metadataResponse;
+  expect(metadata.status()).toBe(200);
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
-  await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" revised (CLOSED)"});
+  await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" metadata (CLOSED)"});
   await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   page.once("dialog",dialog=>dialog.accept());
   const archiveResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
