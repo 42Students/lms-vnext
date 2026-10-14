@@ -15,7 +15,9 @@ export async function PATCH(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const raw: unknown = await request.json();
+    let raw: unknown;
+    try { raw = await request.json(); }
+    catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     const saved = await updateOwnCollegeContactProfile(context, raw);
     return NextResponse.json({ profile: saved });
   } catch (error) {

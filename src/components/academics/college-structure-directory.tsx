@@ -174,7 +174,10 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
         {classes
           ? "Active enrollments count persisted section enrollments for active learner memberships. Class capacity is configured capacity, not occupancy or attendance; scheduling conflicts and recurring series creation are not available here."
           : "Offered-course counts represent nondeleted active elective offerings with college-owned courses. Slots do not prove that the elective feature is enabled or that learner selections are open. Selection finalization and capacity enforcement are not implemented here."}
-        Read-only. Legacy create/edit/delete, confirmation and browser parity remain open.
+        {classes
+          ? "Class listing is read-first; create/edit actions are available where authorized."
+          : "Elective slot creation/editing is available with confirmation. Learner choice, finalization, offering capacity, and complete legacy parity remain open."}
+        Browser verification remains open.
       </p>
     </div>
   );

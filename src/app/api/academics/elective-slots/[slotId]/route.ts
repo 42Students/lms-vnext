@@ -15,7 +15,9 @@ export async function PATCH(request: Request, { params }: {
   try {
     const context = await getCurrentRequestContext();
     const { slotId } = await params;
-    const body: unknown = await request.json();
+    let body: unknown;
+    try { body = await request.json(); }
+    catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     const result = await updateCollegeElectiveSlot(context, slotId, body);
     return NextResponse.json({ slot: result });
   } catch (error) {
