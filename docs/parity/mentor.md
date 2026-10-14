@@ -907,3 +907,6 @@ Exact-project Team membership history can isolate registered primary Mentor assi
 
 ## 2026-10-15 chat-11 AL — Mentor timeline Sprint lifecycle drill-in (PARTIAL)
 Exact-project Release/Sprint timeline now filters actual planned/active/completed Sprint statuses and includes only Releases containing matching Sprints when filtered. Pagination and Release state navigation retain the filter. Query rejects unregistered states; zero-task progress remains unknown. Unit regression cases authored; CLI/PG/browser and complete legacy parity open.
+
+## 2026-10-15 chat-11 AM — meeting outcome-presence filter (PARTIAL)
+Exact-project meeting history now selects meetings with/without nonblank persisted outcome text; SQL count/paging share the filter and current Mentor/college guards. Actual outcome content remains private in list. Strict unit and test-owned PostgreSQL cases authored; execution/browser and full lifecycle parity OPEN.
