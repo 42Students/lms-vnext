@@ -3,10 +3,11 @@ import { z } from "zod";
 export const hrApplicantFilterSchema = z.strictObject({
   tab: z.enum(["overview", "applicants", "offers", "rounds"]).default("overview"),
   stage: z.enum(["ALL", "SHORTLISTED", "WITHDRAWN"]).default("ALL"),
+  applicant: z.string().uuid().optional(),
 });
 export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
-  screening: string; submittedAt: Date;
+  screening: string; submittedAt: Date; email: string | null;
 };
 export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: "ALL" | "SHORTLISTED" | "WITHDRAWN") {
   const counts = {
