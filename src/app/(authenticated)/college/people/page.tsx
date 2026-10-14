@@ -11,6 +11,7 @@ import { PEOPLE_PAGE_SIZE, peoplePageState } from "@/modules/admin-ui/people-pag
 import { collegePeopleDirectoryHref, collegePeopleDirectoryFilterSchema } from "@/modules/people/college-people-directory-model";
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
+import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
@@ -70,7 +71,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin" title="People"
       description="Search this college’s memberships by name, email, phone, role and status."
-      actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="People filters">
       <form action="/college/people" method="get" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Name, email or phone
@@ -120,6 +121,6 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
-    <p className="text-xs text-muted-foreground">Roles are membership grants, not separate people. A multi-role person may appear under multiple role filters. Profile and lifecycle actions are governed by existing permissions.</p>
+    <p className="text-xs text-muted-foreground">The CSV includes at most 1,000 matching memberships and visibly discloses truncation. Roles are membership grants, not separate people. A multi-role person may appear under multiple role filters. Profile and lifecycle actions are governed by existing permissions.</p>
   </div>;
 }
