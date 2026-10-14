@@ -1389,3 +1389,6 @@ The Quiz summary/report now validates the path-owned Quiz UUID and entire Sectio
 
 ## 2026-10-15 Faculty Quiz single-choice correct-answer fence — PARTIAL
 The Quiz choice editor prevents unchecking the sole correct option for single-choice questions while letting Faculty switch the correct answer atomically. Multi-choice editing remains flexible pending the existing Zod save-time rule. Pure single/multiple interaction tests authored; no DB/browser acceptance claimed.
+
+## 2026-10-15 Faculty Quiz option deletion answer consistency — PARTIAL
+Removing a correct option from a single-choice quiz draft now transfers correctness to the first remaining option rather than leaving an impossible unanswered selection. Two-option minimum and unchanged source state are preserved; multi-choice options keep their remaining correctness. Pure model and regression test authored. Executed PG/browser acceptance remains open.
