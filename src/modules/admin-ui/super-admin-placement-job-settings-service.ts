@@ -41,6 +41,6 @@ export async function listSuperAdminJobSettings(context:RequestContext,raw:unkno
    "Max active backlogs: "+(r.activeBacklogs??"Not restricted"),
    "Max gap years: "+(r.gapYears??"Not restricted"),
    "Missing evidence: "+(r.missingEvidence??"Not configured"),
-  ],href:`/admin/placements/jobs/${encodeURIComponent(r.id)}`,
+  ],href:`/admin/placements/job-settings/${encodeURIComponent(r.id)}`,
  }))};
 }
