@@ -489,8 +489,10 @@ export function LearnerProfileWorkspace(props: {
 
           <fieldset className="grid gap-4 sm:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Contacts</legend>
-            <label className="text-xs font-semibold text-body">Alternate phone<Input className="mt-1.5" value={detailsDraft.contacts.alternatePhone} onChange={(event) => setDetailsDraft({ ...detailsDraft, contacts: { ...detailsDraft.contacts, alternatePhone: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">Contact email<Input className="mt-1.5" type="email" value={detailsDraft.contacts.contactEmail} onChange={(event) => setDetailsDraft({ ...detailsDraft, contacts: { ...detailsDraft.contacts, contactEmail: event.target.value } })} /></label>
+            <p className="text-sm text-body sm:col-span-2">
+              Alternate phone and contact email are edited separately from the Contacts card,
+              with their own confirmation and audit. Primary login contacts remain unchanged.
+            </p>
           </fieldset>
 
           <fieldset className="grid gap-4 sm:grid-cols-2">
