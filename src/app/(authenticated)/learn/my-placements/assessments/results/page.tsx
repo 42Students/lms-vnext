@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
-  learnerAssessmentResultsViewSchema,
+  learnerAssessmentResultsQuerySchema,
+  pageLearnerAssessmentResults,
   type LearnerAssessmentResultsView,
 } from "@/modules/placements/learner-assessment-results-model";
 import { getOwnLearnerAssessmentResults } from "@/modules/placements/learner-assessment-results-service";
@@ -26,13 +28,22 @@ function formatIst(value: Date): string {
 export default async function LearnerAssessmentResultsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ view?: string | string[] }>;
+  searchParams: Promise<{ view?: string | string[]; q?: string | string[]; page?: string | string[] }>;
 }) {
-  const query = await searchParams;
-  const parsedView = learnerAssessmentResultsViewSchema.safeParse(query.view);
-  const view = parsedView.success ? parsedView.data : "all";
+  const parsed=learnerAssessmentResultsQuerySchema.safeParse(await searchParams);
+  if(!parsed.success)notFound();
+  const {view,q}=parsed.data;
   const context = await getCurrentRequestContext();
   const results = await getOwnLearnerAssessmentResults(context, view);
+  const paged=pageLearnerAssessmentResults(results.items,parsed.data);
+  function href(nextView:string,pageNumber=1,search=q) {
+    const query=new URLSearchParams();
+    if(nextView!=="all")query.set("view",nextView);
+    if(search)query.set("q",search);
+    if(pageNumber>1)query.set("page",String(pageNumber));
+    const tail=query.toString();
+    return "/learn/my-placements/assessments/results"+(tail?"?"+tail:"");
+  }
 
   return (
     <div className="space-y-6">
@@ -49,9 +60,7 @@ export default async function LearnerAssessmentResultsPage({
         {views.map((option) => (
           <Link
             key={option.id}
-            href={option.id === "all"
-              ? "/learn/my-placements/assessments/results"
-              : "/learn/my-placements/assessments/results?view=" + option.id}
+            href={href(option.id)}
             aria-current={view === option.id ? "page" : undefined}
             className={view === option.id
               ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
@@ -61,7 +70,24 @@ export default async function LearnerAssessmentResultsPage({
           </Link>
         ))}
       </nav>
-      {results.items.length === 0 ? (
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {view!=="all" ? <input type="hidden" name="view" value={view}/> : null}
+        <label className="min-w-0 flex-1 text-xs font-semibold text-body">
+          Search published results
+          <input type="search" name="q" defaultValue={q} maxLength={100}
+            placeholder="Company, role or round"
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Search
+        </button>
+        {q?<Link href={href(view,1,"")}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+      </form>
+      <p role="status" className="text-sm text-body">
+        Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
+      </p>
+      {paged.items.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
@@ -80,7 +106,7 @@ export default async function LearnerAssessmentResultsPage({
         </section>
       ) : (
         <section aria-label="Official assessment outcomes" className="grid gap-3">
-          {results.items.map((item) => (
+          {paged.items.map((item) => (
             <article key={item.resultId} className="rounded-xl border border-border bg-surface p-4 sm:p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -128,6 +154,18 @@ export default async function LearnerAssessmentResultsPage({
           ))}
         </section>
       )}
+      {paged.pages>1?<nav aria-label="Assessment results pagination"
+        className="flex flex-wrap items-center justify-between gap-3">
+        {paged.page>1?<Link href={href(view,paged.page-1)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Previous
+        </Link>:<span/>}
+        <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
+        {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Next
+        </Link>:<span/>}
+      </nav>:null}
       <p className="text-xs text-muted-foreground">
         Only applied placement round results appear here. Provider submission
         status, internal reviews and unpublished grades are not inferred.
