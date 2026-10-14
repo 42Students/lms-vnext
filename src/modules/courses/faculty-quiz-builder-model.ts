@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {createCourseQuizInputSchema} from "./quiz-validation";
+import {authoringDueInstant} from "./faculty-authoring-datetime-model";
 
 const item=z.object({
  type:z.enum(["SINGLE_CHOICE","MULTIPLE_CHOICE"]),
@@ -131,4 +132,17 @@ export function facultyQuizDraftLoadAllowsAction(
  action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE",
 ):boolean {
  return !(failed&&status==="DRAFT"&&(action==="EDIT"||action==="PUBLISH"));
+}
+
+/** Validate the complete editable Quiz metadata before asking for confirmation. */
+export function facultyQuizMetadataIssue(
+ title:string,description:string,dueAt:string,maxAttempts:number,
+):string|null {
+ if(!title.trim()||title.trim().length>255)return "Enter a Quiz title (up to 255 characters).";
+ if(description.trim().length>10000)return "Instructions are too long.";
+ if(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)
+  return "Maximum attempts must be a whole number between 1 and 20.";
+ try {authoringDueInstant(dueAt);}
+ catch {return "Choose a valid due date in IST.";}
+ return null;
 }
