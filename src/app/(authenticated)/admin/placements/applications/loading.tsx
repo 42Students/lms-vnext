@@ -1,0 +1,1 @@
+export default function Loading(){return <div role="status" aria-label="Loading applications" className="animate-pulse space-y-3"><div className="h-12 rounded bg-muted"/><div className="h-40 rounded bg-muted"/></div>;}
