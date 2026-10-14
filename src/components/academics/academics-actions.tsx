@@ -286,6 +286,7 @@ export function AcademicPeriodActions({
     useState(false);
   const [closeOpen, setCloseOpen] =
     useState(false);
+  const [reopenOpen, setReopenOpen] = useState(false);
   const [name, setName] =
     useState(period.name);
   const [code, setCode] =
@@ -306,7 +307,25 @@ export function AcademicPeriodActions({
   }
 
   if (period.status === "CLOSED") {
-    return null;
+    return <>
+      <Button size="sm" variant="secondary" onClick={() => setReopenOpen(true)}>
+        Reopen
+      </Button>
+      <ConfirmDialog
+        open={reopenOpen}
+        onOpenChange={setReopenOpen}
+        title="Reopen academic period?"
+        description="Reopening allows additional academic operations for this period. Confirm before restoring active status."
+        confirmLabel="Reopen period"
+        pending={pending}
+        onConfirm={() => run(
+          () => mutate(`/api/academics/periods/${period.id}`, "PATCH",
+            { action: "REOPEN", confirm: true }),
+          "Academic period reopened",
+          () => setReopenOpen(false),
+        )}
+      />
+    </>;
   }
 
   return (
@@ -454,7 +473,7 @@ export function AcademicPeriodActions({
         open={closeOpen}
         onOpenChange={setCloseOpen}
         title="Close academic period?"
-        description="Closed periods are terminal in the current Academics lifecycle."
+        description="Closing blocks further scheduling and enrollment changes. Any active section or scheduled session blocks closure."
         confirmLabel="Close period"
         pending={pending}
         onConfirm={() =>
@@ -463,7 +482,7 @@ export function AcademicPeriodActions({
               mutate(
                 `/api/academics/periods/${period.id}`,
                 "PATCH",
-                { action: "CLOSE" },
+                { action: "CLOSE", confirm: true },
               ),
             "Academic period closed",
             () => setCloseOpen(false),
