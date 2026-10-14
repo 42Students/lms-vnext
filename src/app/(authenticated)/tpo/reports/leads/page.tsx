@@ -51,7 +51,7 @@ export default async function TpoLeadsReportPage({
     getPlacementLeadsReport(context, collegeId),
   ]);
 
-  const { leads } = result;
+  const { leads, health } = result;
 
   const metrics = [
     ["Recruiter leads", leads.totals.leads],
@@ -134,6 +134,37 @@ export default async function TpoLeadsReportPage({
             )}
           </p>
         </div>
+      </section>
+
+      <section aria-label="Outreach health" className="space-y-3">
+        <h2 className="text-lg font-semibold text-foreground">Outreach health · last 14 days</h2>
+        <p className="text-sm text-body">
+          Only recorded calls, email, WhatsApp and meetings count as contact.
+          Paused, unsubscribed and linked recruiter accounts are excluded.
+          Missing contact evidence is not classified as quiet.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {([
+            ["Actionable leads", health.actionableLeads],
+            ["Contacted in 14 days", health.contactedLast14Days],
+            ["Gone quiet", health.goneQuiet14Days],
+            ["No contact evidence", health.noContactEvidence],
+            ["Due follow-ups", health.dueFollowups],
+            ["No next step", health.noNextStep],
+            ["Unassigned", health.unassigned],
+          ] as const).map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-border bg-surface p-4">
+              <p className="text-xs font-semibold uppercase text-body">{label}</p>
+              <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{reportNumber(value)}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-body">
+          Recent contact rate: {reportPercent(health.recentContactRatePercent)} ·
+          Latest observed contact: {health.lastContactAt
+            ? new Date(health.lastContactAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+            : "Not recorded"}
+        </p>
       </section>
 
       <ReportTable
