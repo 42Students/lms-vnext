@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeDepartmentInsights } from "@/components/college/college-department-insights";
+import { getCollegeAttendancePolicy } from "@/modules/attendance/policy-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -26,7 +27,9 @@ export default async function CollegeDepartmentAttendancePage({
       description="The search or page value is invalid. No attendance evidence was loaded."
       action={<Link href="/college/attendance/departments" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
-  return <CollegeDepartmentInsights data={
-    await listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data)
-  } />;
+  const [data, policy] = await Promise.all([
+    listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),
+    getCollegeAttendancePolicy(context, context.membership.collegeId),
+  ]);
+  return <CollegeDepartmentInsights data={data} correctionPolicy={policy.policy} />;
 }

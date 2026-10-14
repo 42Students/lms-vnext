@@ -26,6 +26,8 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**Read-first PARTIAL (2026-10-14):** `/college/activity` provides explicit actor/entity/date filters, newest-first cursor pagination and `/college/activity/[eventId]` for sanitized audit metadata. Both reads are denied outside the active College Admin membership college. Records are never edited or deleted. Exact legacy event grouping, export, browser and independently executed PostgreSQL acceptance remain open.
+
 **Legacy:** `/college-admin/audit`
 
 - [ ] Timeline/list event taxonomy matches meaningful admin activity.
@@ -280,6 +282,9 @@ Legacy contract:
 ## Page: Attendance
 **Legacy:** `/college-admin/attendance`
 
+**Department attendance export PARTIAL:** `/college/attendance/departments` now exposes the active college correction policy in read-only form and a server-scoped CSV export of departmental marked-session and explicit status-record counts; formula-like cells are neutralized. These metrics do not imply learner-level attendance percentages. Exact legacy CSV, browser and executed PostgreSQL checks remain open.
+
+
 **Department-summary read-first PARTIAL (2026-10-14):** `/college/attendance/departments` reports marked scheduled-session counts and explicit attendance status rows by the authenticated college department, using registered session/event/record tables. It cannot derive true attendance percentages, because PRESENT can be implicit and eligible learner/session denominators are not computed. Search, pagination, loading/error and honest no-data states are included. Exact legacy reporting, database runtime and browser acceptance remain open.
 
 Legacy contract audited:
@@ -316,6 +321,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/prerequisite/error/loading states match.
 
 # Courses & Content
+
+**Offering lifecycle PARTIAL (2026-10-14):** The existing offering page supports confirmed path publish/unpublish, denying publish without active lessons and unpublish once learner progress/submissions/attempts are present. Mutation and audit share a transaction; exact legacy behavior and browser/real-PG acceptance are not yet confirmed.
 
 ## Page: Courses
 **Legacy:** `/college-admin/courses`
