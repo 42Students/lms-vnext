@@ -15,6 +15,7 @@ import {
   placementApplications,
   placementJobs,
   placementOffers,
+  placementJoiningOutcomes,
 } from "@/db/schema";
 
 import type {
@@ -203,12 +204,17 @@ export async function getRecruiterCompanyReports(
             )::integer
           `,
           acceptedOffers: sql<number>`
-            count(
-              distinct ${placementOffers.id}
-            ) filter (
-              where ${placementOffers.status}
-                = 'ACCEPTED'
-            )::integer
+            count(distinct ${placementOffers.id})
+              filter (where ${placementOffers.status} = 'ACCEPTED')::integer
+          `,
+          declinedOffers: sql<number>`
+            count(distinct ${placementOffers.id})
+              filter (where ${placementOffers.status} = 'DECLINED')::integer
+          `,
+          joinedOffers: sql<number>`
+            count(distinct ${placementOffers.id})
+              filter (where ${placementOffers.status} = 'ACCEPTED'
+                and ${placementJoiningOutcomes.status} = 'JOINED')::integer
           `,
         })
         .from(placementApplications)
@@ -227,10 +233,11 @@ export async function getRecruiterCompanyReports(
         )
         .leftJoin(
           placementOffers,
-          eq(
-            placementOffers.applicationId,
-            placementApplications.id,
-          ),
+          eq(placementOffers.applicationId,placementApplications.id),
+        )
+        .leftJoin(
+          placementJoiningOutcomes,
+          eq(placementJoiningOutcomes.offerId,placementOffers.id),
         )
         .where(
           inArray(
@@ -288,9 +295,9 @@ export async function getRecruiterCompanyReports(
         outstandingOffers: Number(
           record.outstandingOffers,
         ),
-        acceptedOffers: Number(
-          record.acceptedOffers,
-        ),
+        acceptedOffers: Number(record.acceptedOffers),
+        declinedOffers: Number(record.declinedOffers),
+        joinedOffers: Number(record.joinedOffers),
       })),
     ),
   };

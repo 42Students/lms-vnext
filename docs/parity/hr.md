@@ -388,3 +388,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Offers and selection read view — PARTIAL:** Persisted shared-offer versions now show reply expiry, accepted/declined/issued counts and explicit joining outcomes; selected-candidate readiness inferred ONLY from completed APPLIED PASS rounds. LOI kind and recruiter selection sending remain explicitly unsupported (no registered LOI row, no external sending). Scoped service/Pure-model/isolated PG tests authored, not executed. Remaining: final selection confirmation, OFFER/LOI issuance and upstream approval, response workflows, complete legacy table & browser/PG proof.
+
+
+**2026-10-14 Chat 10 / Company Reports outcome funnel — PARTIAL:** Joined and declined offer counts now use persisted offer/explicit joining records (joined counted only with ACCEPTED), in addition to existing applied/issued/accepted; responsive mobile cards complement table. Relationship scope and bound page size preserved, no candidate PII. Pure unit and PG no-grant/wrong-role tests authored but unexecuted; positive persisted tenant/report fixtures, historical dedup, deep legacy report parity and browser evidence remain open.
