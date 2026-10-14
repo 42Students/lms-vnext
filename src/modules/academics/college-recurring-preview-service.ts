@@ -111,7 +111,7 @@ export async function listRecurringPreviewOptions(context: RequestContext) {
   });
   const db = getDb();
   const [classes, halls, faculty] = await Promise.all([
-    db.select({ id: sections.id, name: sections.name, cohortName: cohorts.name,
+    db.select({ id: sections.id, name: sections.name, updatedAt: sections.updatedAt, cohortName: cohorts.name,
       periodStart: academicPeriods.startDate, periodEnd: academicPeriods.endDate })
       .from(sections)
       .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
