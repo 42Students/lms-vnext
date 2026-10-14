@@ -1,5 +1,11 @@
 # LMS vNext — Account Surface Parity Matrix v2
 
+**W64 D PARTIAL:** New TPO-only offers-expiry watchlist uses migrated ISSUED offers with non-null expiry, strict 1–90 day selector and lexically compared IST YYYY-MM-DD boundaries. Capped to 200 with honest truncation and formula-neutralized CSV. Pure-model/isolated PG success, tenant/role and status-exclusion tests authored, not executed. Browser and runtime acceptance remain open.
+
+**W64 C PARTIAL:** Existing canonical TPO company detail already has linked contacts, drive history and offer/join timeline. It now shows college relationship trust/status/updatedAt from persisted scoped lifecycle read; a pure model and gated PostgreSQL success/foreign/wrong-role tests are authored. Historical CRM parity, executed PG/browser verification and full detail performance review remain open.
+**W64 B PARTIAL:** /tpo/reports/placed-branch derives season/drive-scoped unique accepted-offer learners and explicitly confirmed JOINED learners from persisted offers/outcomes; uses current active academic enrollment for branch and exposes unmatched students as Unassigned. CSV is formula-neutralized, capped to 200 branch rows with total+notice. Unit and isolated PostgreSQL tests authored; runtime PG/browser acceptance and historically accurate branch snapshots remain open.
+
+
 > **Freshness gate — 2026-10-05:** this matrix was built against FE `38cdd38e...`, while current observed FE is `1d563f75...` and BE is `94af997f...`. The matrix is still useful for work tracking but is not final cutover proof until `docs/planning/clone-parity-protocol.md` is satisfied, the route manifest is refreshed, and family evidence is VERIFIED against the frozen oracle.
 
 **Audit date:** 2026-10-04  
@@ -366,6 +372,10 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 ---
 
 # 6. TPO
+
+**W62 D PARTIAL:** Added /tpo/reports/season-pipeline and capped CSV, final selection null. Test execution and browser parity outstanding.
+
+**W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.
 
 **W62 C PARTIAL:** TPO-only Drive Day index lists actually live, timed, published rounds and persisted attendance summary; no-show requires ABSENT, and unknown remains separate. Unit/PG tests authored but unrun; dashboard hero/browser parity remain open.
 
