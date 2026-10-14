@@ -21,6 +21,7 @@ export default async function SuperAdminCoursesPage() {
         />
         <Link href="/admin/lessons" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Lessons directory →</Link>
         <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Course Progress directory →</Link>
+        <Link href="/admin/assignments" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Assignments directory →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before managing Courses, Offerings, Section deliveries or teaching assignments."
@@ -44,6 +45,7 @@ export default async function SuperAdminCoursesPage() {
       />
       <Link href="/admin/lessons" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Lessons directory →</Link>
       <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Course Progress →</Link>
+      <Link href="/admin/assignments" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Assignments →</Link>
       <AdminCourseOverview
         workspace={workspace}
         offeringBasePath="/admin/courses/offerings"

@@ -13,7 +13,7 @@ import {
   departments,
   quizAttempts,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
   COLLEGE_ASSESSMENT_PAGE_SIZE,
@@ -37,19 +37,27 @@ export async function listCollegeAssessmentAggregate(
   rawQuery: unknown,
 ) {
   const query = parseCollegeAssessmentQuery(kind, rawQuery);
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    context.membership.status !== "ACTIVE" ||
-    context.user.platformStatus !== "ACTIVE"
-  ) {
-    throw new AuthorizationError("courses.read");
+  let collegeId: string;
+  if (isSuperAdmin(context) && context.adminScope?.collegeId) {
+    // Read-only Super Admin path; never resolve from a stale membership.
+    collegeId = context.adminScope.collegeId;
+    requirePermission(context, "courses.read", {
+      collegeId, organizationId: context.adminScope.organizationId,
+    });
+  } else {
+    if (
+      !context.membership ||
+      !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+      context.membership.status !== "ACTIVE" ||
+      context.user.platformStatus !== "ACTIVE"
+    ) {
+      throw new AuthorizationError("courses.read");
+    }
+    collegeId = context.membership.collegeId;
+    requirePermission(context, "courses.read", {
+      collegeId, organizationId: context.membership.organizationId,
+    });
   }
-  const collegeId = context.membership.collegeId;
-  requirePermission(context, "courses.read", {
-    collegeId,
-    organizationId: context.membership.organizationId,
-  });
 
   const db = getDb();
   // Deliberately keep the two Drizzle roots statically typed. Both are
