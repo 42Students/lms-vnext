@@ -541,3 +541,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / Today live hiring-drive operational cards — PARTIAL:** Today now shows up to three company+college-filtered, non-archived published drives with the earliest recorded application deadlines, safe deep links, and an honest no-live-drive state. No fictitious recruiter attribution or offers are inferred. Pure model/unit covers wrong company/college, archived, closed, sorting and limits; execution and browser proof pending.
+
+
+**2026-10-15 chat-10 round 4 / Drives IST-day and past-deadline filters — PARTIAL:** Drives adds Today (Asia/Kolkata calendar day) and recorded deadline-passed filters atop authorized published/closed jobs. Past deadline is a timestamp fact, never claimed to indicate a live application or auto-closed drive. Filters preserve URL/search and cap. Pure date-boundary and query tests authored but unexecuted; browser review pending.
