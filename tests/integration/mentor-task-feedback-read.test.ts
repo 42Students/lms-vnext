@@ -112,7 +112,7 @@ describe("Mentor exact-project read of registered review feedback",()=>{
   await expect(getMentorTaskFeedback(mentor,{projectId:SEED_IDS.collegeB,taskId:task.id})).rejects.toBeDefined();
   await expect(getMentorTaskFeedback(mentor,{...params,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   await expect(getMentorTaskFeedback({
-   ...mentor,user:{...mentor.user,platformStatus:"SUSPENDED"},
+   ...mentor,membership:{...mentor.membership!,status:"SUSPENDED"},
   },params)).rejects.toBeDefined();
  });
 });
