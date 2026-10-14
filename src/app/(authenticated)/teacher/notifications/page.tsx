@@ -1,51 +1,74 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   NotificationList,
   type NotificationListItem,
 } from "@/components/activity/notification-list";
+import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
-import { listOwnNotifications } from "@/modules/activity/notification-service";
+import {
+  countOwnUnreadNotifications,
+  listOwnNotificationPage,
+} from "@/modules/activity/notification-service";
+import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
+import { requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 
-export default async function FacultyNotificationsPage() {
+const FACULTY_INBOX = "/teacher/notifications";
+
+export default async function FacultyNotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    view?: string;
+    beforeCreatedAt?: string;
+    beforeId?: string;
+  }>;
+}) {
   const context = await getCurrentRequestContext();
-  const announcementsEnabled =
-    announcementsRuntimeEnabled();
-  const [rows, announcements] =
-    await Promise.all([
-      listOwnNotifications(context, {
-        limit: 60,
-      }),
-      announcementsEnabled
-        ? listVisibleAnnouncementsForMembership(
-            context,
-          )
-        : Promise.resolve([]),
-    ]);
+  requireFacultyNotificationsAccess(context);
 
-  const items: NotificationListItem[] =
-    rows.map(
-      ({
-        notification,
-        event,
-      }) => ({
-        id: notification.id,
-        title: notification.title,
-        body: notification.body,
-        actionHref:
-          notification.actionHref,
-        readAt:
-          notification.readAt?.toISOString() ??
-          null,
-        createdAt:
-          notification.createdAt.toISOString(),
-        module: event.module,
-        importance:
-          event.importance,
-      }),
-    );
+  const params = await searchParams;
+  const view = params.view === "unread" ? "unread" : "all";
+  const cursor = parseNotificationCursor({
+    beforeCreatedAt: params.beforeCreatedAt,
+    beforeId: params.beforeId,
+  });
+  const announcementsEnabled = announcementsRuntimeEnabled();
+  const [page, unreadCount, announcements] = await Promise.all([
+    cursor.invalid
+      ? Promise.resolve({ items: [], nextCursor: null })
+      : listOwnNotificationPage(context, {
+          limit: 50,
+          unreadOnly: view === "unread",
+          ...(cursor.cursor ?? {}),
+        }),
+    countOwnUnreadNotifications(context),
+    announcementsEnabled
+      ? listVisibleAnnouncementsForMembership(context)
+      : Promise.resolve([]),
+  ]);
+
+  const nextHref = page.nextCursor
+    ? FACULTY_INBOX + "?" + new URLSearchParams({
+        view,
+        beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
+        beforeId: page.nextCursor.beforeId,
+      }).toString()
+    : null;
+
+  const items: NotificationListItem[] = page.items.map(({ notification, event }) => ({
+    id: notification.id,
+    title: notification.title,
+    body: notification.body,
+    actionHref: notification.actionHref,
+    readAt: notification.readAt?.toISOString() ?? null,
+    createdAt: notification.createdAt.toISOString(),
+    module: event.module,
+    importance: event.importance,
+  }));
 
   return (
     <div className="space-y-8">
@@ -54,38 +77,47 @@ export default async function FacultyNotificationsPage() {
         title="Notifications"
         description="Course workflow updates and college announcements that need your attention."
       />
-
       <AnnouncementFeed
         enabled={announcementsEnabled}
-        items={announcements.map(
-          (announcement) => ({
-            id: announcement.id,
-            title: announcement.title,
-            message:
-              announcement.message,
-            senderType:
-              announcement.senderType,
-            receiverType:
-              announcement.receiverType,
-            isPinned:
-              announcement.isPinned,
-            createdAt:
-              announcement.createdAt,
-          }),
-        )}
+        items={announcements.map((announcement) => ({
+          id: announcement.id,
+          title: announcement.title,
+          message: announcement.message,
+          senderType: announcement.senderType,
+          receiverType: announcement.receiverType,
+          isPinned: announcement.isPinned,
+          createdAt: announcement.createdAt,
+        }))}
       />
-
-      <section
-        aria-labelledby="faculty-personal-notifications"
-        className="space-y-3"
-      >
-        <h2
-          id="faculty-personal-notifications"
-          className="text-lg font-semibold text-foreground"
-        >
+      <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
+        <h2 id="faculty-personal-notifications" className="text-lg font-semibold text-foreground">
           Personal notifications
         </h2>
-        <NotificationList items={items} />
+        <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX} />
+        {cursor.invalid ? (
+          <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
+            The notification page link is invalid.{" "}
+            <Link href={FACULTY_INBOX + "?view=" + view}
+              className="font-semibold text-primary-text underline">
+              Return to the newest notifications
+            </Link>
+          </div>
+        ) : (
+          <>
+            <NotificationList
+              items={items}
+              emptyText={view === "unread" ? "No unread notifications." : "Nothing yet."}
+            />
+            {nextHref ? (
+              <div className="flex justify-center">
+                <Link href={nextHref}
+                  className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+                  Older notifications
+                </Link>
+              </div>
+            ) : null}
+          </>
+        )}
       </section>
     </div>
   );
