@@ -64,6 +64,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "projects.mentor.reassigned",
   PROJECTS_READINESS_OVERRIDDEN:
     "projects.readiness.overridden",
+  PROJECTS_SPRINT_UPDATED:
+    "projects.sprint.updated",
   PROJECTS_TASK_SUBMITTED:
     "projects.task.submitted",
   PROJECTS_TASK_REVIEWED:
