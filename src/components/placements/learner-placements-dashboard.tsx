@@ -110,7 +110,7 @@ export function LearnerPlacementsDashboard({
               Review the issued offer terms and expiration before responding.
             </p>
           </div>
-          <Link href="/learn/my-placements#my-offers" className="text-sm font-semibold text-primary-text hover:underline">
+          <Link href="/learn/my-placements/offers?status=pending" className="text-sm font-semibold text-primary-text hover:underline">
             Review offers →
           </Link>
         </div>

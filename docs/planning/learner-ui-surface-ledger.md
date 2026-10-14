@@ -371,7 +371,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-014 | Needs-attention list | placements dashboard | placements home | UNCHECKED |
 | L11-015 | Attention overflow CTAs | placements dashboard | placements home | UNCHECKED |
 | L11-016 | Rolling 7-day calendar preview | placements dashboard | placements home | UNCHECKED |
-| L11-017 | Recent placement activity | placements dashboard | placements home | UNCHECKED |
+| L11-017 | Recent placement activity | placements dashboard | persisted own-application activity list | FIXED |
 | L11-018 | Loading skeletons | placements dashboard | placements home | UNCHECKED |
 | L11-019 | Error counts remain unknown, not zero | placements dashboard | placements home | UNCHECKED |
 | L11-020 | All dashboard CTAs preserve intended filter/context | placements dashboard | placements routes | UNCHECKED |
@@ -436,7 +436,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-006 | Sort stage | ApplicationsContent | applications page | UNCHECKED |
 | L14-007 | Sort company | ApplicationsContent | applications page | UNCHECKED |
 | L14-008 | Attention banner | ApplicationsContent | applications page | UNCHECKED |
-| L14-009 | Review offers opens full offered list | applications route | applications page | UNCHECKED |
+| L14-009 | Review offers opens full offered list | applications route | own-offers page with status filters | FIXED |
 | L14-010 | Application cards | ApplicationsContent | applications page | UNCHECKED |
 | L14-011 | Journey/status visualization | ApplicationsContent | learner journey | FIXED |
 | L14-012 | Application Detail modal | ApplicationsContent | applications page | UNCHECKED |

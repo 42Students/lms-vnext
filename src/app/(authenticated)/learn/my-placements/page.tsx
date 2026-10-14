@@ -12,13 +12,14 @@ import {
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
+import { LearnerRecentPlacementActivity } from "@/components/placements/learner-recent-placement-activity";
 import { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
 import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
-import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
+import { getLearnerPlacementJourneyWithActivity } from "@/modules/placements/learner-recent-placement-activity-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
@@ -41,18 +42,20 @@ export default async function LearnerPlacementsPage({
   const [
     rows,
     preferences,
-    journeyRows,
+    journeyBundle,
     academicEvidence,
     offerRows,
     requestWorkspace,
   ] = await Promise.all([
     listLearnerPlacementJobs(context),
     getCandidatePreferences(context),
-    getLearnerPlacementJourney(context),
+    getLearnerPlacementJourneyWithActivity(context),
     getOwnAcademicEvidence(context),
     listOwnPlacementOffers(context),
     getLearnerPlacementRequestWorkspace(context),
   ]);
+
+  const journeyRows = journeyBundle.rows;
 
   const items: LearnerPlacementJobItem[] =
     rows.map((row) => ({
@@ -173,6 +176,8 @@ export default async function LearnerPlacementsPage({
       />
 
       <LearnerPlacementsDashboard snapshot={dashboard} />
+
+      <LearnerRecentPlacementActivity events={journeyBundle.activity} />
 
       <LearnerPlacementOffers
         offers={offerRows.map((row) => ({
