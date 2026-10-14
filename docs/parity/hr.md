@@ -550,3 +550,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Messages loading and hard error — PARTIAL:** Scoped notifications now have a route-local loading skeleton and retryable error state that distinguishes failed reads from empty inbox or zero unread. No additional recipients, messages or data exposure. Browser and stale-refresh acceptance open.
+
+
+**2026-10-15 chat-10 R5 / Drive Detail hard error — PARTIAL:** Added retryable route-local error state and Back to Drives option for operational loading failures, separate from existing 404 and loading skeleton. Error copy never displays raw denial codes or private applicant data. Browser permission/error verification pending.
