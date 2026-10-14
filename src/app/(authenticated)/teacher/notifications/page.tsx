@@ -14,6 +14,7 @@ import {
   listOwnNotificationPage,
 } from "@/modules/activity/notification-service";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
+import { facultyNotificationActionHref } from "@/modules/courses/faculty-notification-link-model";
 import { requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 
 const FACULTY_INBOX = "/teacher/notifications";
@@ -64,7 +65,7 @@ export default async function FacultyNotificationsPage({
     id: notification.id,
     title: notification.title,
     body: notification.body,
-    actionHref: notification.actionHref,
+    actionHref: facultyNotificationActionHref(notification.actionHref),
     readAt: notification.readAt?.toISOString() ?? null,
     createdAt: notification.createdAt.toISOString(),
     module: event.module,

@@ -1352,3 +1352,6 @@ The quiz builder now normalizes changing an authored multiple-choice question to
 
 ## 2026-10-15 Faculty Quiz metadata editor lifecycle lock — PARTIAL
 Quiz title, instructions, due date, attempt limit, question add/remove and selection are disabled while loading/saving, and published/closed/archived quizzes render metadata read-only rather than offering unsaveable edits. A pure-model unit suite asserts draft-only editing. Lifecycle writes still validate persisted status and optimistic timestamps. Executed browser/PG evidence and legacy modal ergonomics remain outstanding.
+
+## 2026-10-15 Faculty notification deep-link boundary — PARTIAL
+Faculty inbox destinations are now normalized through a pure same-origin Faculty-path policy. External, protocol-relative, wrong-account and control-character links are suppressed; authorized items can still be marked read. Unit tests cover valid Course links and malicious/wrong-role cases. Existing persisted membership-scoped feed and same-origin write route are unchanged. Producer audit and real PG/browser acceptance remain open.
