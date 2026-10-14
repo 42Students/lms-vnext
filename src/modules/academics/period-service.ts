@@ -8,7 +8,7 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods,
 } from "@/db/schema";
-import { changeCollegePeriodLifecycle } from "./college-period-lifecycle-service";
+
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
@@ -222,6 +222,8 @@ export async function transitionAcademicPeriod(
     academicPeriodIdSchema.parse(periodIdInput);
   if (rawInput && typeof rawInput === "object" && "action" in rawInput &&
       (rawInput.action === "CLOSE" || rawInput.action === "REOPEN")) {
+    // Load lifecycle-only server code lazily: E2E bootstrap imports this service.
+    const { changeCollegePeriodLifecycle } = await import("./college-period-lifecycle-service");
     return changeCollegePeriodLifecycle(context, periodId, rawInput);
   }
   const input =
