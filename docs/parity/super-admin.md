@@ -695,3 +695,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Read-first oversight verification — PARTIAL:** Added an isolated PostgreSQL in-test CLOSED placement season fixture with explicit UUID/text raw parameter casts to prevent ambiguous inferred parameter type, cross-college/org non-leaking empty result and wrong-role denial; corrected placements-navigation JSX indentation. Authored, not executed; the full 8-route PostgreSQL, lint, TypeScript and 375px browser gates still require orchestration run. Prior unrelated test repairs remain main-owned.
+
+
+**2026-10-15 chat-6 round 5 / Application detail — PARTIAL:** Added `/admin/placements/applications/[applicationId]` read-only drill-in with exact selected-college/org SQL guards, UUID validation, non-leaking 404 for absent/foreign IDs, course role/job/eligibility/lifecycle dates (IST), and directory deep links. Contact and screening notes deliberately withheld. Pure UUID/time unit tests authored; PG/browser acceptance and legacy actions remain open.
