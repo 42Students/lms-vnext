@@ -123,7 +123,7 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
       const results=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:rows.rows[0].name});
       expect(results.items.map(row=>row.membershipId)).toContain(SEED_IDS.learnerCollegeAMembership);
     }
-    const absent=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:"never-program-"-concat(SEED_IDS.collegeB)});
+    const absent=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:"never-program-"+SEED_IDS.collegeB});
     expect(absent.items).toHaveLength(0);
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:"program"}))
       .rejects.toBeInstanceOf(AuthorizationError);
