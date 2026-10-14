@@ -490,3 +490,47 @@ Unit tests cover GET URL, malformed query, headers and filename; the existing
 isolated PostgreSQL positive and tenant-denial tests continue to cover
 the underlying export service. No new write or UI table was invented.
 Independent execution and full legacy report/browser parity remain PARTIAL.
+
+## Public Faculty Contacts policy applied — 2026-10-14
+
+The All/Teachers/Students directory and drill-ins are now limited to public
+display name, registered active same-college role and Faculty department.
+The service does not select email, phone, photo or private profile identity,
+and searches only public name/department. Central courses.read, active
+persisted Faculty role, same-college actor/target scoping, strict Zod,
+ten/twenty/fifty pagination and exact tab links remain enforced. Existing
+PostgreSQL tenant test search is updated from private email to display name.
+Private contact actions are intentionally not offered. Parent parity
+remains PARTIAL until browser/DB acceptance of this exact revision.
+
+## IST-safe Faculty Class Schedule month grid (2026-10-14)
+
+`/teacher/calendar` now includes a 42-cell server-rendered month grid keyed to
+the authoritative Asia/Kolkata dates of persisted Section schedule sessions,
+including sessions crossing IST midnight; dates do not depend on browser
+timezone. Course/Section filtering is limited to current Faculty teaching
+deliveries through the existing scoped schedule service and central courses.read
+authorization. Exact course-linked sessions link to their real delivery Home;
+Section-wide sessions are explicitly unlinked rather than guessed. Strict Zod
+month/delivery selectors, previous/next month, mobile horizontal scrolling and
+existing loading/error/empty states apply. The existing week/day interface is
+preserved. Unit tests cover timezone boundaries, and the existing unique-
+fixture disposable PG suite now authors a real crossing-midnight Section
+session, success, foreign-delivery and wrong-role denials with full session
+cleanup. Browser execution and independent current-SHA CI remain PARTIAL.
+
+## Faculty Assignment Section submissions and filtered CSV (2026-10-14)
+
+The Section-authenticated `/teacher/report/assignment/[contentId]/submissions`
+page now lists persisted submissions with ALL/GRADED/UNGRADED/LATE filters,
+20-row paging, grades only when recorded, publication privacy status,
+mobile cards, loading/error/empty states and links back to the canonical
+Section report. Its CSV link reuses the server-side formula-neutralizing
+GET reader with a strict optional validated assignment-only filter; duplicate
+or forged query selectors are rejected. ALL retains the existing missing
+learner rows; narrower views return only matching actual submissions and
+never invent a grade for non-submitters. The route remains GET-only with exact
+Faculty delivery authorization; no new audit rows or writes occur.
+Pure-model and query regression tests and the existing unique-fixture
+PostgreSQL positive-path assertion are authored. Complete grading editing,
+runtime/browser export and exact legacy modal parity remain PARTIAL.

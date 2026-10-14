@@ -11,6 +11,7 @@ import {
   type FacultyReportCsvInput,
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
+import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
 
 /** A GET export re-runs the persisted Section authorization; never trust cached UI report props. */
 export async function getFacultyReportCsvForDownload(
@@ -32,10 +33,13 @@ export async function getFacultyReportCsvForDownload(
       context,query.assessmentId,query.deliveryId,
     );
     const {assignment,submissions,missingLearners} = report;
+    const selected=selectFacultyAssignmentSubmissions(
+      submissions,query.filter??"ALL",assignment.dueAt,
+    );
     input = {
       kind:"assignment",title:assignment.title,sectionName:assignment.sectionName,
       rows:[
-        ...submissions.map(submission => {
+        ...selected.map(submission => {
           const scored = submission.gradingStatus === "GRADED" &&
             submission.pointsAwarded !== null && assignment.maxPoints > 0;
           return {
@@ -51,7 +55,8 @@ export async function getFacultyReportCsvForDownload(
               (submission.gradePublished ? " · Published grade" : " · Private grade"),
           };
         }),
-        ...missingLearners.map(learner => ({
+        ...(query.filter===undefined||query.filter==="ALL" ? missingLearners : [])
+          .map(learner => ({
           name:learner.displayName || learner.email || "Learner",
           email:learner.email,
           status:"NOT_SUBMITTED" as const,
