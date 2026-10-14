@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -265,10 +266,13 @@ export function RecruiterLeadsWorkspace({
             Track employer contacts, outreach and follow-ups for your college.
           </p>
         </div>
-        <button type="button" className={primaryStyle} disabled={phase !== "ready"}
-          onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
-          Add recruiter lead
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <RecruiterLeadCsvImport onImported={() => void load()} />
+          <button type="button" className={primaryStyle} disabled={phase !== "ready"}
+            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
+            Add recruiter lead
+          </button>
+        </div>
       </div>
 
       {phase !== "ready" ? (

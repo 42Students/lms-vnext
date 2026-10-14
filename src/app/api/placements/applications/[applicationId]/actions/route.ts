@@ -1,21 +1,15 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { withdrawPlacementApplication } from "@/modules/placements/application-service";
+import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 
 export const runtime = "nodejs";
 
 type RouteContext = {
   params: Promise<{ applicationId: string }>;
 };
-
-const inputSchema = z
-  .object({
-    action: z.literal("WITHDRAW"),
-  })
-  .strict();
 
 export async function POST(
   request: Request,
@@ -31,11 +25,12 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { applicationId } = await params;
-    inputSchema.parse(await request.json());
+    const input = learnerApplicationWithdrawalSchema.parse(await request.json());
     const application =
       await withdrawPlacementApplication(
         context,
         applicationId,
+        input.reason,
       );
     return NextResponse.json({ application });
   } catch (error) {
