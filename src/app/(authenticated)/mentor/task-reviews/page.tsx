@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-service";
 import {
-  mentorTaskReviewHref, mentorTaskReviewQuerySchema,
+  mentorTaskReviewHref, mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
 } from "@/modules/projects/mentor-task-review-model";
 
 type Params = {
@@ -98,9 +98,9 @@ export default async function MentorTaskReviewsPage({
                 dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
               }).format(item.submittedAt)} IST
             </p>
-            <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=board"}
+            <Link href={mentorTaskReviewTargetHref(item.projectId,item.taskId)}
               className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
-              Open authorized task review →
+              Open exact task review →
             </Link>
           </article>)}</div>}
       <nav aria-label="Task review pagination" className="flex items-center justify-between gap-3">

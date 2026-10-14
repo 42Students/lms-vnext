@@ -588,6 +588,7 @@ export function ProjectWorkspace({
                         return (
                           <div
                             key={task.id}
+                            id={"mentor-task-"+task.id}
                             className="rounded-lg border border-border bg-surface px-3 py-3"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
