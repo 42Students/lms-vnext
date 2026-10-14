@@ -13,6 +13,7 @@ import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@
 import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, LEARNER_ATTENDANCE_HISTORY_OPTIONS, type LearnerAttendanceHistoryFilter } from "@/modules/attendance/learner-attendance-history-model";
 import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
+import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -235,6 +236,7 @@ export function LearnerAttendanceWorkspace({
     [monthRows,historyFilter,historyOrder],
   );
   const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
+  const recovery = learnerAttendanceRecoveryProjection(summary.markedSessions,summary.present,threshold);
 
   function updateUrl(
     nextDeliveryId: string,
@@ -441,6 +443,16 @@ export function LearnerAttendanceWorkspace({
           </StatusBadge>
         </div>
       </section>
+
+      {recovery !== null ? (
+        <p className="rounded-lg border border-border bg-surface-subtle p-4 text-sm leading-6 text-body" role="note">
+          {recovery === Infinity
+            ? "At a 100% threshold, prior non-present marks cannot be offset by future attendance alone."
+            : recovery === 0
+              ? "Your recorded attendance is currently at or above the threshold."
+              : `If your next ${recovery} marked sessions are all present, your recorded percentage can reach the threshold. This is a mathematical estimate, not an eligibility guarantee.`}
+        </p>
+      ) : null}
 
       <section className="rounded-xl border border-border bg-surface p-4">
         <h2 className="m-0 text-sm font-semibold text-foreground">
