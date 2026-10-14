@@ -23,6 +23,7 @@ import {
   collegeProgramIdSchema,
   createCollegeProgramSchema,
   updateCollegeProgramSchema,
+  restoreCollegeProgramSchema,
 } from "./college-program-mutation-model";
 
 export type CollegeProgramMutationErrorCode =
@@ -258,4 +259,66 @@ export async function archiveCollegeProgram(
       return archived;
     });
   } catch (error) { return mapError(error); }
+}
+
+/** Restoration is an explicit, confirmed action. Previously archived rows
+ * stay in history; their names/codes cannot silently shadow live programs. */
+export async function restoreCollegeProgram(
+  context: RequestContext, programIdInput: unknown, raw: unknown,
+) {
+  const programId = collegeProgramIdSchema.parse(programIdInput);
+  restoreCollegeProgramSchema.parse(raw);
+  const member = ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const [current] = await tx.select({
+        id: programs.id, departmentId: programs.departmentId,
+        name: programs.name, code: programs.code, status: programs.status,
+      }).from(programs)
+        .innerJoin(departments, and(
+          eq(departments.id, programs.departmentId),
+          eq(departments.collegeId, member.collegeId),
+          isNull(departments.archivedAt),
+        ))
+        .innerJoin(colleges, and(
+          eq(colleges.id, departments.collegeId), eq(colleges.status, "ACTIVE"),
+        ))
+        .innerJoin(organizations, and(
+          eq(organizations.id, colleges.organizationId),
+          eq(organizations.status, "ACTIVE"),
+        ))
+        .where(eq(programs.id, programId))
+        .for("update", { of: programs }).limit(1);
+      if (!current || current.status !== "ARCHIVED")
+        throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+      await ensureUnique(tx, current.departmentId, current.name, current.code, current.id);
+      const [restored] = await tx.update(programs).set({
+        status: "ACTIVE", updatedAt: new Date(),
+      }).where(and(eq(programs.id, programId), eq(programs.status, "ARCHIVED")))
+        .returning();
+      if (!restored) throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_UPDATED,
+        collegeId: member.collegeId, organizationId: member.organizationId,
+        subjectType: "program", subjectId: restored.id, subjectLabel: restored.name,
+        summary: "College program restored",
+        metadata: { action: "RESTORE", departmentId: restored.departmentId,
+          fromStatus: "ARCHIVED", toStatus: "ACTIVE" },
+      });
+      return restored;
+    });
+  } catch (error) { return mapError(error); }
+}
+
+export async function listArchivedCollegePrograms(context: RequestContext) {
+  const member = ownCollege(context);
+  return getDb().select({
+    id: programs.id, name: programs.name, code: programs.code,
+    departmentName: departments.name,
+  }).from(programs).innerJoin(departments, and(
+    eq(departments.id, programs.departmentId),
+    eq(departments.collegeId, member.collegeId),
+    isNull(departments.archivedAt),
+  )).where(eq(programs.status, "ARCHIVED"))
+    .orderBy(programs.name, programs.id).limit(100);
 }

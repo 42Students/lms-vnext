@@ -35,6 +35,9 @@ export const ACTIVITY_EVENT_TYPES = {
     "identity.membership.reactivated",
   IDENTITY_MEMBERSHIP_ENDED:
     "identity.membership.ended",
+  ACADEMICS_DEPARTMENT_CREATED: "academics.department.created",
+  ACADEMICS_DEPARTMENT_UPDATED: "academics.department.updated",
+  ACADEMICS_DEPARTMENT_ARCHIVED: "academics.department.archived",
   ACADEMICS_PROGRAM_CREATED:
     "academics.program.created",
   ACADEMICS_PROGRAM_UPDATED: "academics.program.updated",
@@ -139,6 +142,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.request.submitted",
   PLACEMENTS_REQUEST_DECIDED:
     "placements.request.decided",
+  PLACEMENTS_CANDIDATE_PREFERENCES_UPDATED:
+    "placements.candidate_preferences.updated",
   PLACEMENTS_NOTIFICATION_PREFERENCES_UPDATED:
     "placements.notification_preferences.updated",
 } as const;
