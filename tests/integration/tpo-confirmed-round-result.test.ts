@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { confirmTpoRoundResult } from "@/modules/placements/tpo-confirmed-round-result-service";
+import { confirmTpoBulkRoundResults } from "@/modules/placements/tpo-bulk-round-result-service";
 import { applyPlacementRoundResult } from "@/modules/placements/result-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -221,6 +222,68 @@ describe.skipIf(!enabled)("confirmed TPO round-result PostgreSQL", () => {
       },
     };
     await expect(confirmTpoRoundResult(foreign, f.roundId, body(f)))
+      .rejects.toMatchObject({ code: "PLACEMENT_ROUND_NOT_FOUND" });
+    expect(await stagedRows(f)).toHaveLength(0);
+    expect(await auditRows(f)).toHaveLength(0);
+  });
+
+  it("bulk stages a new PASS with one actor audit, then reports stale retries without writes", async () => {
+    const f = await fixture();
+    const body = {
+      confirmed: true as const,
+      entries: [{
+        expectedCurrentResultId: null,
+        result: { applicationId: f.applicationId, outcome: "PASS" as const },
+      }],
+    };
+    const success = await confirmTpoBulkRoundResults(tpo, f.roundId, body);
+    expect(success.counts).toEqual({ staged: 1, ineligible: 0 });
+    expect(success.results).toMatchObject([
+      { applicationId: f.applicationId, status: "staged" },
+    ]);
+    expect(await stagedRows(f)).toHaveLength(1);
+    const stagedAudit = (await auditRows(f)).filter(
+      (event) => event.event_type === "placements.result.staged",
+    );
+    expect(stagedAudit).toHaveLength(1);
+    expect(stagedAudit[0]).toMatchObject({
+      actor_user_id: tpo.user.id,
+      actor_membership_id: tpo.membership!.id,
+    });
+
+    const stale = await confirmTpoBulkRoundResults(tpo, f.roundId, body);
+    expect(stale.counts).toEqual({ staged: 0, ineligible: 1 });
+    expect(stale.results).toMatchObject([
+      { applicationId: f.applicationId, status: "ineligible",
+        reason: "PLACEMENT_RESULT_NOT_FOUND" },
+    ]);
+    expect(await stagedRows(f)).toHaveLength(1);
+    expect((await auditRows(f)).filter(
+      (event) => event.event_type === "placements.result.staged",
+    )).toHaveLength(1);
+  });
+
+  it("bulk stage denies foreign college and wrong-role before any writes", async () => {
+    const f = await fixture();
+    const input = {
+      confirmed: true as const,
+      entries: [{
+        expectedCurrentResultId: null,
+        result: { applicationId: f.applicationId, outcome: "PASS" as const },
+      }],
+    };
+    const wrongRole: RequestContext = {
+      ...tpo,
+      membership: { ...tpo.membership!, roles: ["FACULTY"] },
+    };
+    await expect(confirmTpoBulkRoundResults(wrongRole, f.roundId, input))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    const foreign: RequestContext = {
+      ...tpo,
+      membership: { ...tpo.membership!,
+        id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB },
+    };
+    await expect(confirmTpoBulkRoundResults(foreign, f.roundId, input))
       .rejects.toMatchObject({ code: "PLACEMENT_ROUND_NOT_FOUND" });
     expect(await stagedRows(f)).toHaveLength(0);
     expect(await auditRows(f)).toHaveLength(0);
