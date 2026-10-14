@@ -19,8 +19,8 @@ beforeEach(async()=>{
   await seedLearnerCareerCalendarFixture(pool,owned);
   offerId=randomUUID();
   await pool.query(
-    "INSERT INTO placement_offers(id,application_id,version,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at) VALUES($1,$2,1,'ISSUED','Engineer',1100000,$3,$4)",
-    [offerId,owned.applicationId,SEED_IDS.collegeAdminUser,new Date(clock.getTime()+3_600_000)],
+    "INSERT INTO placement_offers(id,application_id,version,status,role_title,annual_ctc_inr,issued_by_user_id,issued_at,expires_at) VALUES($1,$2,1,'ISSUED','Engineer',1100000,$3,$5,$4)",
+    [offerId,owned.applicationId,SEED_IDS.collegeAdminUser,new Date(clock.getTime()+3_600_000),new Date(clock.getTime()-3_600_000)],
   );
 },45000);
 afterEach(async()=>{

@@ -70,10 +70,10 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     code: sections.code,
     status: sections.status,
     capacity: sections.capacity,
-    programId: programs.id,
-    programName: programs.name,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
+    programId: sql<string>`${programs.id}`.as("program_id"),
+    programName: sql<string>`${programs.name}`.as("program_name"),
+    cohortName: sql<string>`${cohorts.name}`.as("cohort_name"),
+    periodName: sql<string>`${academicPeriods.name}`.as("period_name"),
   }).from(sections)
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
