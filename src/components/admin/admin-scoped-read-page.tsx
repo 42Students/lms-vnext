@@ -1,15 +1,18 @@
 import Link from "next/link";
+import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
+import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader}:{
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
+ exportPath?:string;exportFilename?:string;
 }) {
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
@@ -24,6 +27,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const data=await loader(parsed.data);
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
+  {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}

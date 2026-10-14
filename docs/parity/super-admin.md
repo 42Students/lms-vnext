@@ -719,3 +719,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Screening Queue detail — PARTIAL:** Added `/admin/placements/screenings/[applicationId]` with exact selected-college/org membership and job guard, PENDING/HOLD/REJECTED persisted screening statuses, application eligibility/channel/IST decision and submission dates. UUID malformed/foreign/missing or a now-shortlisted record returns non-leaking 404; internalReason and candidate contacts excluded. Directory deep-link and pure ID/date tests authored; decision writes/PG/browser parity still open.
+
+
+**2026-10-15 chat-6 round 6 / Faculty CSV — PARTIAL:** Added filtered selected-college FACULTY membership CSV through the existing scoped people service, strict q/status URL with rejection of organization/college/page overrides and duplicate params, 250-row cap/truncation notice, formula-neutralized CSV and privacy-safe contact-free projection, linked download/error state. Model/unit tests authored; execution/browser and full faculty lifecycle parity remain open.
