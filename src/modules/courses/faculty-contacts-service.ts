@@ -1,253 +1,148 @@
 import "server-only";
 
-import {
-  and,
-  asc,
-  count,
-  eq,
-  ilike,
-  or,
-} from "drizzle-orm";
+import { and, asc, count, eq, ilike, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships,
-  membershipRoles,
-  users,
+  collegeMemberships, membershipRoles, facultyProfiles, departments, users,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
-import { CoursesServiceError } from "./errors";
-import { can } from "@/modules/permissions/policy";
-import { hasMembershipRole } from "@/modules/identity/context";
 import {
-  facultyContactDetailParamsSchema,
-  facultyContactTabMatches,
+  hasActiveMembership, hasMembershipRole, type RequestContext,
+} from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
+import { CoursesServiceError } from "./errors";
+import {
+  facultyContactDetailParamsSchema, facultyContactTabMatches,
 } from "./faculty-contact-detail-model";
 
-const querySchema = z.object({
-  tab: z.enum(["ALL", "FACULTY", "LEARNER"]),
-  search: z.string().trim().max(200).default(""),
-  page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(10).max(50).default(20),
-});
+const querySchema=z.object({
+  tab:z.enum(["ALL","FACULTY","LEARNER"]),
+  search:z.string().trim().max(200).default(""),
+  page:z.coerce.number().int().min(1).max(100000).default(1),
+  pageSize:z.coerce.number().int().min(10).max(50).default(20),
+}).strict();
 
-async function requirePersistedFaculty(context: RequestContext) {
-  if (!context.membership || context.user.platformStatus !== "ACTIVE") {
-    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  }
-
-  const [row] = await getDb()
-    .select({
-      membershipId: collegeMemberships.id,
-      collegeId: collegeMemberships.collegeId,
-    })
-    .from(collegeMemberships)
-    .innerJoin(
-      membershipRoles,
-      and(
-        eq(membershipRoles.membershipId, collegeMemberships.id),
-        eq(membershipRoles.role, "FACULTY"),
-      ),
-    )
-    .where(
-      and(
-        eq(collegeMemberships.id, context.membership.id),
-        eq(collegeMemberships.userId, context.user.id),
-        eq(collegeMemberships.collegeId, context.membership.collegeId),
-        eq(collegeMemberships.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
-
-  if (!row) {
-    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  }
+/** No private contact fields or photos may escape this public directory. */
+async function requirePersistedFaculty(context:RequestContext) {
+  const membership=context.membership;
+  if (!membership || context.user.platformStatus!=="ACTIVE" ||
+      !hasActiveMembership(context) || !hasMembershipRole(context,"FACULTY") ||
+      !can(context,"courses.read",{
+        collegeId:membership.collegeId,organizationId:membership.organizationId,
+      })) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const [row]=await getDb().select({
+    id:collegeMemberships.id,collegeId:collegeMemberships.collegeId,
+  }).from(collegeMemberships)
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id,membership.id),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,membership.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    )).limit(1);
+  if(!row) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   return row;
 }
 
-export async function listFacultyContacts(
-  context: RequestContext,
-  rawInput: unknown,
-) {
-  const input = querySchema.parse(rawInput);
-  const actor = await requirePersistedFaculty(context);
-  const db = getDb();
-
-  const role =
-    input.tab === "ALL" ? null : input.tab;
-  // Wildcard metacharacters are literal user text, never a SQL pattern.
-  const escapedSearch = input.search.replace(/[%_\\]/g, "\\$&");
-  const searchCondition = escapedSearch
-    ? or(
-        ilike(users.displayName, `%${escapedSearch}%`),
-        ilike(users.email, `%${escapedSearch}%`),
-        ilike(users.phoneE164, `%${escapedSearch}%`),
-      )
-    : null;
-
-  const conditions = [
-    eq(collegeMemberships.collegeId, actor.collegeId),
-    eq(collegeMemberships.status, "ACTIVE"),
-    eq(users.platformStatus, "ACTIVE"),
-    ...(searchCondition ? [searchCondition] : []),
-  ];
-
-  const totalQuery = role
-    ? db
-        .select({ total: count() })
-        .from(collegeMemberships)
-        .innerJoin(users, eq(users.id, collegeMemberships.userId))
-        .innerJoin(
-          membershipRoles,
-          and(
-            eq(membershipRoles.membershipId, collegeMemberships.id),
-            eq(membershipRoles.role, role),
-          ),
-        )
-        .where(and(...conditions))
-    : db
-        .select({ total: count() })
-        .from(collegeMemberships)
-        .innerJoin(users, eq(users.id, collegeMemberships.userId))
-        .where(and(...conditions));
-
-  // Count first so a stale URL cannot render a false empty directory when
-  // the last visible page disappears due to status/role changes.
-  const [totalRow] = await totalQuery;
-  const total = Number(totalRow?.total ?? 0);
-  const totalPages = Math.max(1, Math.ceil(total / input.pageSize));
-  const page = Math.min(input.page, totalPages);
-  const offset = (page - 1) * input.pageSize;
-  const pageQuery = role
-    ? db
-        .select({
-          membershipId: collegeMemberships.id,
-          displayName: users.displayName,
-          email: users.email,
-          phoneE164: users.phoneE164,
-        })
-        .from(collegeMemberships)
-        .innerJoin(users, eq(users.id, collegeMemberships.userId))
-        .innerJoin(
-          membershipRoles,
-          and(
-            eq(membershipRoles.membershipId, collegeMemberships.id),
-            eq(membershipRoles.role, role),
-          ),
-        )
-        .where(and(...conditions))
-        .orderBy(asc(users.displayName), asc(users.email), asc(collegeMemberships.id))
-        .limit(input.pageSize)
-        .offset(offset)
-    : db
-        .select({
-          membershipId: collegeMemberships.id,
-          displayName: users.displayName,
-          email: users.email,
-          phoneE164: users.phoneE164,
-        })
-        .from(collegeMemberships)
-        .innerJoin(users, eq(users.id, collegeMemberships.userId))
-        .where(and(...conditions))
-        .orderBy(asc(users.displayName), asc(users.email), asc(collegeMemberships.id))
-        .limit(input.pageSize)
-        .offset(offset);
-
-  const items = await pageQuery;
-
-  const ids = items.map((item) => item.membershipId);
-  const roleRows =
-    ids.length === 0
-      ? []
-      : await db
-          .select({
-            membershipId: membershipRoles.membershipId,
-            role: membershipRoles.role,
-          })
-          .from(membershipRoles)
-          .where(
-            or(
-              ...ids.map((id) =>
-                eq(membershipRoles.membershipId, id),
-              ),
-            ),
-          )
-          .orderBy(
-            asc(membershipRoles.membershipId),
-            asc(membershipRoles.role),
-          );
-
-  const rolesByMembership = new Map<string, string[]>();
-  for (const row of roleRows) {
-    const bucket = rolesByMembership.get(row.membershipId) ?? [];
-    bucket.push(row.role);
-    rolesByMembership.set(row.membershipId, bucket);
+export async function listFacultyContacts(context:RequestContext,rawInput:unknown) {
+  const input=querySchema.parse(rawInput);
+  const actor=await requirePersistedFaculty(context);
+  const db=getDb();
+  const role=input.tab==="ALL"?null:input.tab;
+  const escaped=input.search.replace(/[%_\\]/g,"\\$&");
+  const filters=and(
+    eq(collegeMemberships.collegeId,actor.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+    eq(users.platformStatus,"ACTIVE"),
+    escaped ? or(
+      ilike(users.displayName,"%"+escaped+"%"),
+      ilike(departments.name,"%"+escaped+"%"),
+    ):undefined,
+  );
+  const departmentJoin=and(
+    eq(departments.id,facultyProfiles.primaryDepartmentId),
+    eq(departments.collegeId,actor.collegeId),
+    isNull(departments.archivedAt),
+  );
+  const base=db.select({
+    membershipId:collegeMemberships.id,
+    displayName:users.displayName,
+    departmentName:departments.name,
+  }).from(collegeMemberships)
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(departments,departmentJoin);
+  const countBase=db.select({total:count()}).from(collegeMemberships)
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(departments,departmentJoin);
+  const roleJoin=and(
+    eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,role??"FACULTY"),
+  );
+  const totals=role ? await countBase.innerJoin(membershipRoles,roleJoin).where(filters)
+    :await countBase.where(filters);
+  const total=Number(totals[0]?.total??0);
+  const totalPages=Math.max(1,Math.ceil(total/input.pageSize));
+  const page=Math.min(input.page,totalPages);
+  const rows=role
+    ?await base.innerJoin(membershipRoles,roleJoin).where(filters)
+      .orderBy(asc(users.displayName),asc(collegeMemberships.id))
+      .limit(input.pageSize).offset((page-1)*input.pageSize)
+    :await base.where(filters)
+      .orderBy(asc(users.displayName),asc(collegeMemberships.id))
+      .limit(input.pageSize).offset((page-1)*input.pageSize);
+  const ids=rows.map(row=>row.membershipId);
+  const grants=ids.length===0?[]:await db.select({
+    membershipId:membershipRoles.membershipId,role:membershipRoles.role,
+  }).from(membershipRoles).where(or(
+    ...ids.map(id=>eq(membershipRoles.membershipId,id)),
+  )).orderBy(asc(membershipRoles.role));
+  const byId=new Map<string,string[]>();
+  for(const grant of grants){
+    const roles=byId.get(grant.membershipId)??[];
+    roles.push(grant.role);byId.set(grant.membershipId,roles);
   }
-
   return {
-    tab: input.tab,
-    search: input.search,
-    page,
-    pageSize: input.pageSize,
-    total,
-    totalPages,
-    items: items.map((item) => ({
-      ...item,
-      roles: rolesByMembership.get(item.membershipId) ?? [],
-    })),
+    tab:input.tab,search:input.search,page,pageSize:input.pageSize,
+    total,totalPages,
+    items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
   };
 }
 
-/**
- * A single same-college active contact exposed by the Faculty directory.
- * This deliberately does not load private profile files, identities, or
- * role-specific records beyond the existing directory columns.
- */
-export async function getFacultyContactDetail(
-  context: RequestContext,
-  rawParams: unknown,
-) {
-  const params = facultyContactDetailParamsSchema.parse(rawParams);
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "FACULTY") ||
-      !can(context, "courses.read", {
-        organizationId: membership.organizationId,
-        collegeId: membership.collegeId,
-      })) {
-    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  }
-  const actor = await requirePersistedFaculty(context);
-  const db = getDb();
-  const [contact] = await db.select({
-    membershipId: collegeMemberships.id,
-    displayName: users.displayName,
-    email: users.email,
-    phoneE164: users.phoneE164,
+export async function getFacultyContactDetail(context:RequestContext,rawParams:unknown) {
+  const params=facultyContactDetailParamsSchema.parse(rawParams);
+  const actor=await requirePersistedFaculty(context);
+  const db=getDb();
+  const [contact]=await db.select({
+    membershipId:collegeMemberships.id,
+    displayName:users.displayName,
+    departmentName:departments.name,
   }).from(collegeMemberships)
-    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(departments,and(
+      eq(departments.id,facultyProfiles.primaryDepartmentId),
+      eq(departments.collegeId,actor.collegeId),
+      isNull(departments.archivedAt),
+    ))
     .where(and(
-      eq(collegeMemberships.id, params.membershipId),
-      eq(collegeMemberships.collegeId, actor.collegeId),
-      eq(collegeMemberships.status, "ACTIVE"),
-      eq(users.platformStatus, "ACTIVE"),
+      eq(collegeMemberships.id,params.membershipId),
+      eq(collegeMemberships.collegeId,actor.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
     )).limit(1);
-
-  if (!contact) {
-    // Same denial for an inactive or other-college membership.
+  if(!contact) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const grants=await db.select({role:membershipRoles.role}).from(membershipRoles)
+    .where(eq(membershipRoles.membershipId,contact.membershipId))
+    .orderBy(asc(membershipRoles.role));
+  const roles=grants.map(x=>x.role);
+  if(!facultyContactTabMatches(params.contactsTab,roles))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  }
-  const roleRows = await db.select({
-    role: membershipRoles.role,
-  }).from(membershipRoles).where(
-    eq(membershipRoles.membershipId, contact.membershipId),
-  ).orderBy(asc(membershipRoles.role));
-  const roles = roleRows.map(row => row.role);
-  if (!facultyContactTabMatches(params.contactsTab, roles)) {
-    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  }
-  return {
-    ...contact,
-    roles,
-    contactsTab: params.contactsTab,
-  };
+  return {...contact,roles,contactsTab:params.contactsTab};
 }

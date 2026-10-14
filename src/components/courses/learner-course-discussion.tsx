@@ -9,6 +9,7 @@ import {
   buildDiscussionFeed,
   countNewDiscussionMessages,
   mergeDiscussionHistory,
+  reconcileLatestDiscussionPage,
 } from "./learner-course-discussion-model";
 
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
@@ -57,6 +58,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  const [replyTo, setReplyTo] = useState<{ id: string; text: string } | null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
@@ -69,6 +71,7 @@ export function LearnerCourseDiscussion({
   const previousMessages = useRef<DiscussionMessage[]>([]);
   const forceBottomOnNextLoad = useRef(false);
   const historyPrepend = useRef(false);
+  const locallyDeletedIds = useRef(new Set<string>());
 
   const load = useCallback(async (silent = false) => {
     if (!silent && !loadedOnce.current) setLoading(true);
@@ -79,10 +82,17 @@ export function LearnerCourseDiscussion({
       );
       if (!response.ok) throw new Error("discussion_load_failed");
       const payload = await response.json();
-      const incoming = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
-      setMessages((previous) => loadedOnce.current ? mergeDiscussionHistory(previous, incoming) : incoming);
+      const received = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
+      const incoming = received.filter((row) => !locallyDeletedIds.current.has(row.id));
+      setMessages((previous) => loadedOnce.current
+        ? reconcileLatestDiscussionPage(previous, incoming, received.length)
+        : incoming);
       if (!loadedOnce.current) setOlderCursor(payload.nextCursor ?? null);
-      setHighlightedPinned(payload.highlightedPinned ?? null);
+      setHighlightedPinned(
+        payload.highlightedPinned?.id && !locallyDeletedIds.current.has(payload.highlightedPinned.id)
+          ? payload.highlightedPinned
+          : null,
+      );
       setCanPost(payload.canPost !== false);
       setLoadError(false);
       loadedOnce.current = true;
@@ -110,7 +120,11 @@ export function LearnerCourseDiscussion({
       const result = await response.json();
       const previousHeight = scrollRef.current?.scrollHeight ?? 0;
       historyPrepend.current = true;
-      setMessages((previous) => mergeDiscussionHistory(previous, Array.isArray(result.messages) ? result.messages : []));
+      const received = Array.isArray(result.messages) ? result.messages as DiscussionMessage[] : [];
+      setMessages((previous) => mergeDiscussionHistory(
+        previous,
+        received.filter((row) => !locallyDeletedIds.current.has(row.id)),
+      ));
       setOlderCursor(result.nextCursor ?? null);
       window.requestAnimationFrame(() => {
         const scroller = scrollRef.current;
@@ -215,11 +229,12 @@ export function LearnerCourseDiscussion({
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ messageText }),
+          body: JSON.stringify({ messageText, ...(replyTo ? { replyToMessageId: replyTo.id } : {}) }),
         },
       );
       if (!response.ok) throw new Error("discussion_post_failed");
       setDraft("");
+      setReplyTo(null);
       forceBottomOnNextLoad.current = true;
       await load(true);
       window.requestAnimationFrame(() =>
@@ -241,6 +256,9 @@ export function LearnerCourseDiscussion({
         { method: "DELETE" },
       );
       if (!response.ok) throw new Error("discussion_delete_failed");
+      // Requests already in flight can return a pre-delete snapshot.
+      // Tombstone this ID for this workspace to prevent resurrection.
+      locallyDeletedIds.current.add(messageId);
       setMessages((current) => current.filter((item) => item.id !== messageId));
       setHighlightedPinned((current) => current?.id === messageId ? null : current);
       await load(true);
@@ -401,6 +419,14 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
+                    {canPost ? <button type="button"
+                      className="mt-2 text-xs font-semibold text-primary-text underline"
+                      onClick={() => {
+                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100)});
+                        composerRef.current?.focus();
+                      }}>
+                      Reply
+                    </button> : null}
                     {canPost &&
                     (moderate || row.item.isMine) ? (
                       <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -460,6 +486,11 @@ export function LearnerCourseDiscussion({
               ? "Post an announcement, answer a learner, or add class context."
               : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
+          {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
+            <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
+            <button type="button" className="text-xs font-semibold text-primary-text underline"
+              onClick={() => setReplyTo(null)}>Cancel reply</button>
+          </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
             Write a message
           </label>
