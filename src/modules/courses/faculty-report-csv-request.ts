@@ -1,16 +1,23 @@
 import { z } from "zod";
+import { facultySubmissionFilterSchema } from "./faculty-assignment-submissions-model";
 
 export const facultyReportCsvRequestSchema = z.object({
   kind: z.enum(["assignment","quiz"]),
   assessmentId: z.string().uuid(),
   deliveryId: z.string().uuid(),
-}).strict();
+  filter: facultySubmissionFilterSchema.optional(),
+}).strict().refine(input=>input.kind==="assignment"||
+    input.filter===undefined||input.filter==="ALL",{
+  message:"Quiz reports do not accept assignment grading filters",
+});
 
 export function facultyReportCsvHref(raw: unknown) {
   const input = facultyReportCsvRequestSchema.parse(raw);
+  const params=new URLSearchParams({deliveryId:input.deliveryId});
+  if(input.filter && input.filter!=="ALL")params.set("filter",input.filter);
   return "/api/courses/faculty/reports/" + input.kind +
-    "/" + encodeURIComponent(input.assessmentId) + "/csv?deliveryId=" +
-    encodeURIComponent(input.deliveryId);
+    "/" + encodeURIComponent(input.assessmentId) + "/csv?" +
+    params.toString();
 }
 
 /**
@@ -18,19 +25,21 @@ export function facultyReportCsvHref(raw: unknown) {
  * object silently drops duplicate keys (and hides injected audience fields).
  */
 export function parseFacultyCsvDownloadUrl(url: string, rawParams: unknown) {
-  const parsedUrl = new URL(url);
-  const entries = [...parsedUrl.searchParams.entries()];
-  if (entries.length !== 1 ||
-      entries[0]?.[0] !== "deliveryId" ||
-      parsedUrl.searchParams.getAll("deliveryId").length !== 1) {
+  const params=new URL(url).searchParams;
+  const entries=[...params.entries()];
+  const deliveries=params.getAll("deliveryId");
+  const filters=params.getAll("filter");
+  if(deliveries.length!==1 || filters.length>1 ||
+    entries.some(([key])=>key!=="deliveryId"&&key!=="filter") ||
+    entries.length!==1+filters.length) {
     return facultyReportCsvRequestSchema.parse({
-      ...rawParams as Record<string,unknown>,
-      deliveryId: null,
+      ...rawParams as Record<string,unknown>,deliveryId:null,
     });
   }
   return facultyReportCsvRequestSchema.parse({
     ...rawParams as Record<string,unknown>,
-    deliveryId:entries[0][1],
+    deliveryId:deliveries[0],
+    ...(filters.length?{filter:filters[0]}:{}),
   });
 }
 

@@ -1,210 +1,38 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { facultyContactRoleLabel } from "@/modules/courses/faculty-contact-detail-model";
 
-export type FacultyContactRow = {
-  membershipId: string;
-  displayName: string | null;
-  email: string | null;
-  phoneE164: string | null;
-  roles: string[];
+export type FacultyContactRow={
+  membershipId:string;displayName:string|null;
+  departmentName:string|null;roles:string[];
 };
 
-function displayName(contact: FacultyContactRow) {
-  return (
-    contact.displayName?.trim() ||
-    contact.email?.trim() ||
-    `Contact ${contact.membershipId.slice(0, 8)}`
-  );
-}
-
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  return (
-    (parts.length > 1
-      ? `${parts[0]![0]}${parts.at(-1)![0]}`
-      : parts[0]?.slice(0, 2)) || "C"
-  ).toUpperCase();
-}
-
-function roleLabel(value: string) {
-  if (value === "LEARNER") return "Student";
-  if (value === "COLLEGE_ADMIN") return "College Admin";
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
-
-export function FacultyContactsTable({
-  items,
-  showRoles,
-  detailBaseHref,
-}: {
-  items: readonly FacultyContactRow[];
-  showRoles: boolean;
-  detailBaseHref?: string;
+export function FacultyContactsTable({items,showRoles,detailBaseHref}:{
+  items:readonly FacultyContactRow[];showRoles:boolean;detailBaseHref?:string;
 }) {
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No contacts found"
-        description="Try another search or contact tab."
-      />
-    );
-  }
-
-  return (
-    <>
-      <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-        <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
-          <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
-            <tr>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Contact</th>
-              {showRoles ? (
-                <th className="px-4 py-3">Role</th>
-              ) : null}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {items.map((contact) => {
-              const name = displayName(contact);
-              return (
-                <tr key={contact.membershipId}>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text"
-                      >
-                        {initials(name)}
-                      </span>
-                      {detailBaseHref ? (
-                        <Link
-                          href={detailBaseHref + "/" + encodeURIComponent(contact.membershipId)}
-                          className="font-semibold text-primary-text hover:underline"
-                        >
-                          {name}
-                        </Link>
-                      ) : (
-                        <span className="font-semibold text-foreground">{name}</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    {contact.email ? (
-                      <a
-                        href={`mailto:${contact.email}`}
-                        className="font-semibold text-primary-text hover:underline"
-                      >
-                        {contact.email}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    {contact.phoneE164 ? (
-                      <a
-                        href={`tel:${contact.phoneE164}`}
-                        className="font-semibold text-primary-text hover:underline"
-                      >
-                        {contact.phoneE164}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </td>
-                  {showRoles ? (
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1.5">
-                        {contact.roles.map((role) => (
-                          <StatusBadge key={role} tone="info">
-                            {roleLabel(role)}
-                          </StatusBadge>
-                        ))}
-                      </div>
-                    </td>
-                  ) : null}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="space-y-3 md:hidden">
-        {items.map((contact) => {
-          const name = displayName(contact);
-          return (
-            <article
-              key={contact.membershipId}
-              className="rounded-xl border border-border bg-surface p-4"
-            >
-              <div className="flex items-start gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text"
-                >
-                  {initials(name)}
-                </span>
-                <div className="min-w-0">
-                  <h2 className="m-0 text-sm font-semibold text-foreground">
-                    {detailBaseHref ? (
-                      <Link href={detailBaseHref + "/" + encodeURIComponent(contact.membershipId)}
-                        className="text-primary-text hover:underline">
-                        {name}
-                      </Link>
-                    ) : name}
-                  </h2>
-                  {showRoles ? (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {contact.roles.map((role) => (
-                        <StatusBadge key={role} tone="info">
-                          {roleLabel(role)}
-                        </StatusBadge>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-              <div className="mt-4 grid gap-2 text-sm">
-                {contact.email ? (
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="break-all font-semibold text-primary-text"
-                  >
-                    {contact.email}
-                  </a>
-                ) : null}
-                {contact.phoneE164 ? (
-                  <a
-                    href={`tel:${contact.phoneE164}`}
-                    className="font-semibold text-primary-text"
-                  >
-                    {contact.phoneE164}
-                  </a>
-                ) : null}
-                {!contact.email &&
-                !contact.phoneE164 ? (
-                  <span className="text-muted-foreground">
-                    Contact details unavailable
-                  </span>
-                ) : null}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </>
-  );
+  if(items.length===0) return <EmptyState title="No public directory members found"
+    description="Try another name, department or contact tab. Private contact information is not displayed." />;
+  return <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    {items.map(item=>{
+      const name=item.displayName?.trim()||"Name not recorded";
+      return <article key={item.membershipId}
+        className="rounded-xl border border-border bg-surface p-4">
+        <h2 className="text-sm font-semibold text-foreground">
+          {detailBaseHref?<Link
+            href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)}
+            className="text-primary-text hover:underline">{name}</Link>:name}
+        </h2>
+        <p className="mt-2 text-sm text-body">Department: {item.departmentName??"Not recorded"}</p>
+        {showRoles||item.roles.length>0?<ul
+          aria-label="Current college roles" className="mt-3 flex flex-wrap gap-2">
+          {item.roles.map(role=><li key={role}>
+            <StatusBadge tone="info">{facultyContactRoleLabel(role)}</StatusBadge>
+          </li>)}
+        </ul>:null}
+      </article>;
+    })}
+  </div>;
 }
 
 export function FacultyContactsPagination({
