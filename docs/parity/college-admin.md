@@ -132,6 +132,10 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Exact semester-number filter PARTIAL (2026-10-15):** Semesters now have bounded 1–24 term-number filtering in the college-scoped directory, URL pagination, accessible form and positive/negative isolated-Postgres fixture checks. Real PG/browser execution and legacy management parity still require acceptance.
+
+**Subquery column collision repair PARTIAL (2026-10-15):** Semester directory projects distinct SQL aliases for term and program IDs/names, preserving the existing paginated API while avoiding PostgreSQL ambiguous-column errors (42702). Existing disposable-PG scope fixture now checks joined program identity; execution, legacy field comparison and mobile/browser acceptance remain outstanding.
+
 **Term edit concurrency PARTIAL (2026-10-14):** The existing semester edit action now requires an explicit confirmed millisecond-safe updatedAt token and rejects stale writes. Deactivating a registered program term is blocked when its mapped curriculum courses exist or any active/non-archived cohort progression currently references its term number. Parent scope and immutable activity audit remain transactional; unit and in-test-fixture PostgreSQL stale/foreign-role/dependency checks updated. Exact legacy parity and executed gates remain open.
 
 **Legacy:** `/college-admin/semesters`
@@ -162,6 +166,10 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semester–Course Mapping
+**Registered offering-type filter PARTIAL (2026-10-15):** College Admin can filter mapped course offerings by CORE/ELECTIVE using the shared authoritative type enum, strict URL state and same-college SQL filtering before pagination; isolated PostgreSQL fixture checks the positive and excluded type. The separate numbered-semester mapping workflow and executed PG/browser parity remain outstanding.
+
+**Offering-mapping subquery repair PARTIAL (2026-10-15):** The College Admin mapping list now projects unique names for course/cohort/program/period identifiers, titles and codes to avoid PostgreSQL 42702 in paginated reads; isolated PG test additionally asserts the ancestry fields. Dedicated program-term assignment mutations and executed PG/mobile/legacy parity evidence remain open.
+
 **Legacy:** `/college-admin/semester-courses`
 
 **Read-first PARTIAL:** `/college/semester-courses` lists persisted college-owned course offerings by cohort/program/academic period with CORE/ELECTIVE type, credits, filters and offering links. Academic periods are not yet certified as legacy numbered semesters; no create/remove mapping writes and no complete browser parity.
@@ -175,6 +183,10 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Academic-year progression filter PARTIAL (2026-10-15):** Batch list can select the exact persisted progression academic-year start, rather than deriving a year from names or start periods; strict bounds, URL paging, absent-progression exclusion and positive/negative isolated PostgreSQL checks are authored. Browser and integration execution remain open.
+
+**Subquery column collision repair PARTIAL (2026-10-15):** Batch directory now aliases cohort/program/starting-period IDs, names and codes individually before pagination (PostgreSQL 42702); the existing tenant-isolated fixture asserts joined identity and progression shape. No executed PostgreSQL/browser closure or legacy cohort form parity is claimed.
+
 
 **Guarded batch removal PARTIAL (2026-10-14):** The Batches directory now offers an explicitly confirmed Remove action only for PLANNED cohorts. It archives the cohort instead of hard-deleting registered progression/state history; the transaction locks the college-owned cohort, applies millisecond-normalized optimistic updatedAt token, blocks any section, learner enrollment, course offering, progression event or advanced progression state, and appends immutable activity audit. Strict same-origin DELETE, unit model and gated disposable-PostgreSQL success/foreign/wrong-role/stale/dependency fixtures are authored. Remediation for retired batch codes (unique codes remain reserved), full legacy hard-delete policy and browser/real PG acceptance remain open; not DONE.
 
@@ -212,6 +224,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Class capacity filter PARTIAL (2026-10-15):** Admin Classes directory and capped CSV export now share strict minimum-configured-capacity filtering against saved Section capacity (unknown/null does not match), with URL retention and PG fixture for boundary inclusivity. No real PG/browser gates run; recurring scheduling and full parity remain open.
+
 **Section lifecycle PARTIAL (2026-10-14):** The College Admin Classes directory now adds confirmed ACTIVE/ARCHIVED transitions for persisted Sections. Dedicated same-origin PATCH uses exact college and role permission, row lock, millisecond-truncated updatedAt token, an all-history dependency blocker covering enrollments, Faculty assignments, schedules and course deliveries, parent eligibility/active name-code collision on restore, and same-transaction immutable audit. Authored pure unit and disposable PG success, cross-college NOT_FOUND, wrong-role, stale-token and dependency tests. Executed real DB/browser acceptance and legacy/archive versus hard-delete semantics remain open.
 
 **Legacy:** `/college-admin/classes`
@@ -282,6 +296,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Seating-capacity filter PARTIAL (2026-10-15):** Room directory now accepts 1–5000 minimum configured seats, enforced by the shared scoped list query before pagination and persisted in filter links. Isolated PG fixture checks inclusive boundaries, with existing tenant and wrong-role denials unchanged. Execution and mobile/browser acceptance still open.
+
 **Hall cancellation PARTIAL (2026-10-14):** A confirmed per-session Cancel action on the hall availability page now persists SCHEDULED→CANCELLED, takes a required reason and millisecond-safe updatedAt token, locks the owning college hall and session, and blocks sessions already started or linked to attendance/course-delivery evidence. One immutable section audit event is written transactionally. Same-origin PATCH, pure-model test and disposable-PostgreSQL cross-college, wrong-role, stale/evidence and positive fixtures authored. Rescheduling, cross-writer universal Hall locking and real browser/database execution remain open; PARTIAL only.
 
 **Hall Faculty concurrency PARTIAL (2026-10-14):** The single-session booking writer now locks the selected Faculty account, membership and role exclusively before reading schedule overlap. Requests for the same Faculty in different halls/classes serialize through that lock; disabled Faculty are rejected. Pure active-identity tests and an in-test two-hall/two-class PostgreSQL concurrent overlap witness added. This covers this booking writer only: other schedule writers still need a shared lock convention or registered exclusion constraints. PostgreSQL execution remains blocked by sandbox user restrictions; legacy/browser verification and full rescheduling remain open.
@@ -304,6 +320,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Semester-scoped elective filter PARTIAL (2026-10-15):** College elective slot catalogue now filters on the persisted semester number (1–24) with route-preserved pagination and strict class/elective filter separation. Isolated PG fixture checks included/excluded terms and still checks foreign-college and wrong-role denials. Executed and browser acceptance, selection finalization remain open.
+
 **Lifecycle PARTIAL (2026-10-14):** College Admin elective slot rows expose confirmation-gated ARCHIVE/RESTORE using strict Zod, same-origin PATCH, college-scoped active role and revalidated persisted actor, integer version CAS and immutable activity audit. Archive is blocked when any active offering or persisted learner selection exists; restore requires a currently active parent program and eligible IST academic period. The registered slot only supports ACTIVE/ARCHIVED; selection FINALIZE was intentionally not invented. Pure-model/unit and disposable PG own/foreign/wrong-role/stale tests authored, unexecuted. Full selection/finalization mechanics, UI/browser acceptance and real PG gates remain open.
 
 **Legacy:** `/college-admin/electives`
@@ -392,6 +410,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Offering-lifecycle lesson filter PARTIAL (2026-10-15):** Lesson catalogue now separates lesson lifecycle filtering from parent offering lifecycle (ALL/ACTIVE/ARCHIVED), without confusing archived offerings with deleted content. Strict dedicated lesson Zod query, URL paging and tenant-bound PostgreSQL include/exclude fixtures authored. Runtime/database/browser evidence and complete lesson edits remain outstanding.
+
 **Legacy:** `/college-admin/lessons`
 
 **Read-first PARTIAL:** `/college/lessons` lists migrated lessons with course, cohort, academic-period and learning-path context, status filter/search, 25-row pagination and persisted authored/published content counts. Create/edit are available in the existing offering editor and now include transaction-coupled immutable audit. Offering lesson up/down reorder adds a stale-sequence fence, same-origin API, and confirmation. Full bulk drag reorder, exact legacy modals, upload, and browser/PG execution remain open.
@@ -405,6 +425,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Mobile catalogue parity PARTIAL (2026-10-15):** The content catalogue now shows self-contained course/lesson/status/scope cards at narrow widths rather than a minimum-800px data table; desktop retains the wide table. A shared pure scope-label model has unit coverage and the existing isolated-PG fixture validates persisted delivery scope. Actual 375px browser verification and full legacy actions remain open.
+
+**Video-type filtering PARTIAL (2026-10-15):** The read-only catalogue supports persisted VIDEO versus YOUTUBE subtype filtering, strict URL parsing, deep-link pagination and a compact responsive select. Existing isolated PG fixture asserts both subtype partitions and same-college privacy. Playback/storage access, executed PG/browser proof and remaining legacy actions are open.
+
+**Content aggregate column collision repair PARTIAL (2026-10-15):** The combined VIDEO/RESOURCE register now aliases joined content, learning-path, offering and college ancestry projection columns uniquely (PostgreSQL 42702), with in-college PG fixture asserting labels/links and non-disclosure of private URLs/keys. Executed PG/browser and media/file workflow acceptance remain outstanding.
+
 **Legacy:** `/college-admin/lesson-content?type=video`
 
 **Read-first PARTIAL (2026-10-14):** `/college/videos` now lists owned, migrated VIDEO/YOUTUBE authoring metadata across offerings, with search/status filters and 25-row pagination. Neither media playback nor signed file authorization is implemented; storage keys and external video URLs are intentionally omitted. The existing offering editor remains the authoring surface. Exact legacy/browser and disposable-DB acceptance remain open.
@@ -418,6 +444,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Mobile catalogue parity PARTIAL (2026-10-15):** The content catalogue now shows self-contained course/lesson/status/scope cards at narrow widths rather than a minimum-800px data table; desktop retains the wide table. A shared pure scope-label model has unit coverage and the existing isolated-PG fixture validates persisted delivery scope. Actual 375px browser verification and full legacy actions remain open.
+
+**Course-code filter PARTIAL (2026-10-15):** Registered resource/video catalogue queries now accept an optional exact course-code filter, applied inside the same tenant-fenced JOIN before count and pagination. The responsive filter keeps its value in links; pure-model and disposable-PG fixtures cover invalid/absent matches. Executed PG/browser proof, secure downloads and resource write parity remain open.
+
+**Content aggregate column collision repair PARTIAL (2026-10-15):** The combined VIDEO/RESOURCE register now aliases joined content, learning-path, offering and college ancestry projection columns uniquely (PostgreSQL 42702), with in-college PG fixture asserting labels/links and non-disclosure of private URLs/keys. Executed PG/browser and media/file workflow acceptance remain outstanding.
+
 **Legacy:** `lesson-content?type=resources`
 
 **Read-first PARTIAL (2026-10-14):** `/college/resources` lists migrated RESOURCE authoring metadata by lesson/offering with search/status filters and 25-row pagination, excluding text notes, external URLs, private object paths and signed downloads. The offering workspace remains the editor; exact legacy/browser and disposable-DB acceptance remain open.
@@ -496,6 +528,10 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Faculty Assignment
+**Teaching-role filter PARTIAL (2026-10-15):** Faculty assignments can be narrowed to PRIMARY, CO_TEACHER or TA using the authoritative teaching-role enum and current-college persisted assignments. Model and isolated PG fixtures cover valid/invalid roles and role-specific matches. Executed PG/browser proof and remaining mutation/legacy behavior are not closed.
+
+**Teaching-assignment directory repair PARTIAL (2026-10-15):** Joined assignment/offering, course/class/cohort/period and two independently sourced end timestamps now carry unique subquery column aliases; the isolated-PG fixture checks the correct delivery and active/ended meaning. Atomic reassignment conflict and scheduling acceptance still needs executed PG/browser verification and legacy comparison.
+
 
 **Reassignment actor safety PARTIAL (2026-10-14):** The transaction now rechecks the persisted acting account, membership and College Admin role under SHARE locks and rejects revoked actors even with a cached active request context. Replacement Faculty account, membership and role are locked through commit; disabled accounts return TARGET_NOT_FOUND. Pure policy coverage and PostgreSQL revocation/no-side-effect fixtures added using a dedicated admin. PostgreSQL execution is blocked in this sandbox by OS user creation/switch restrictions; timetable conflicts, legacy/browser verification and remaining reassignment variants remain open.
 
