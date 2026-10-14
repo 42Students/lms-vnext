@@ -1,7 +1,6 @@
 import "server-only";
 
 import { and, eq, sql } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, learnerProfiles, membershipRoles, users,
@@ -11,27 +10,8 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { learnerProfileDocumentSchema } from "./profile-validation";
+import { learnerContactEditSchema } from "./learner-contact-model";
 
-export const learnerContactEditSchema = z.object({
-  confirmed: z.literal(true),
-  contacts: z.object({
-    alternatePhone: z.string().trim().max(32),
-    contactEmail: z.string().trim().max(320),
-  }).strict(),
-}).strict().superRefine((value, ctx) => {
-  const checked = learnerProfileDocumentSchema.safeParse({
-    contacts: value.contacts,
-  });
-  if (!checked.success) {
-    for (const issue of checked.error.issues) {
-      ctx.addIssue({
-        code: "custom",
-        path: issue.path,
-        message: issue.message,
-      });
-    }
-  }
-});
 
 export async function updateOwnLearnerContacts(
   context: RequestContext,
