@@ -61,6 +61,16 @@ export default async function MentorTaskReviewHistoryPage({
         </Link>
       </form>
       <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/mentor/task-review-history/export?"+
+          new URLSearchParams({decision:data.query.decision,search:data.query.search}).toString()}
+          download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          Export reviewed task decisions CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status">
+          CSV excludes {data.total-200} additional matching versions.
+        </span>:null}
+      </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred." />
       : <ol className="grid gap-3">{data.items.map(item=>

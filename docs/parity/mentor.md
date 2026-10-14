@@ -618,3 +618,76 @@ wrong-role/disabled denial and cross-college nonleakage. **PARTIAL:**
 Test execution, browser verification, high-volume pagination, full legacy
 meeting calendar, and schedule/reschedule writes remain open. No direct
 status updates are introduced, so optimistic stale write tokens do not apply.
+
+
+## 2026-10-14 chat-11 G — Mentor meeting reschedule CAS/audit (PARTIAL)
+
+For current assigned Mentors, the registered project Team & Meetings list now
+offers a confirmed reschedule of an existing SCHEDULED meeting, converting
+IST wall-clock inputs to UTC instants explicitly without browser-local drift.
+The exact-project same-origin PATCH uses strict Zod, current persisted Mentor
+membership and central projects.read/module scope, locks Project and Meeting,
+rejects completed/archived workspaces and stale timestamp tokens with SQL
+millisecond compare-and-swap, and prevents overlapping SCHEDULED meetings
+within that same Project. The meeting link and agenda are unchanged; no
+external message is sent. A single actor/college reschedule activity event
+is inserted atomically without private URL or notes. New error code is
+declared in ProjectsServiceErrorCode; no new permission is required.
+Pure-model and unique-fixture PostgreSQL tests cover success, audit, SQL
+microseconds, stale replay, collision, wrong-role, foreign and disabled
+denials. **PARTIAL:** TypeScript/ESLint/PG/browser verification, optional
+cross-project Mentor conflict policy, and full legacy meeting lifecycle
+remain unverified.
+
+
+## 2026-10-14 chat-11 H — Mentor exact-project activity CSV (PARTIAL)
+
+The existing role/college/project-scoped activity-history screen now exposes
+a read-only capped CSV export of up to 200 actual persisted PROJECTS event
+rows, respecting the existing event-importance filter. Export fields are
+limited to safe event label, importance, ID and IST timestamp, with formula
+neutralization, no raw metadata, learner contact, actor identity, private
+notes, or event summary. The service revalidates current Mentor assignment,
+central projects.read and optional Projects enablement for every bounded
+page. CSV declares omitted matches both visibly and in HTTP headers; no
+external delivery or new permission is introduced. A pure export model/unit
+suite and unique-project PostgreSQL fixture assert safe output, persisted
+read success, wrong-role, disabled and non-leaking foreign-college denial.
+**PARTIAL:** Run typecheck, lint, unit, PG and browser download tests, verify
+historic producer completeness and exact legacy activity filters.
+
+
+## 2026-10-14 chat-11 I — Mentor pending task-review priority triage (PARTIAL)
+
+The current assigned-project /mentor/task-reviews queue now supports strict
+priority filters (LOW/MEDIUM/HIGH/CRITICAL or ALL) and oldest/newest submission
+ordering in addition to existing task/project literal search, bounded pages
+and exact-task deep links. SQL applies priority and ordering only after
+persisted active Mentor project, tenant, live task IN_REVIEW and latest-version
+SUBMITTED checks. The queue does not expose learner contacts or submission
+URLs or create a parallel review-write endpoint. Pure Zod/filter/link unit
+tests and an isolated PostgreSQL own-project fixture cover registered
+HIGH/LOW submissions, deterministic ordering, forbidden role/disabled actors,
+foreign college non-leakage and forged query rejection. It is read-only;
+stale-token denial is provided by the separate audited task-review write,
+not by these query controls. **PARTIAL:** actual typecheck, lint, PostgreSQL,
+mobile browser and full legacy task review acceptance remain open.
+
+
+## 2026-10-14 chat-11 J — Mentor reviewed task history sanitized CSV (PARTIAL)
+
+The existing currently assigned Mentor task-review history (registered
+APPROVED/CHANGES_REQUESTED project_task_submissions) now offers a read-only
+decision-filtered CSV export capped at 200 rows, preserving strict decision
+and literal task/project search filters. The server rechecks the active Mentor
+role, exact college/project membership, module enablement and central
+projects.read on each bounded page. The export includes only registered review
+ID, project/task titles, version, decision and IST review date; no learner
+contact, submitted links, feedback, or actor identities. UTF-8 CSV
+formula-neutralizes untrusted titles, explicitly reports truncated matches
+in the file and HTTP headers, and sends nothing externally. Source-authored
+pure unit and disposable unique-project PostgreSQL fixtures assert positive
+review visibility, forged input, wrong role, disabled user and foreign-college
+nonleakage. Read-only: no mutation or stale-token check is introduced.
+**PARTIAL:** typecheck/lint/unit/PostgreSQL tests and responsive browser CSV
+acceptance remain unexecuted, as does complete legacy review history parity.
