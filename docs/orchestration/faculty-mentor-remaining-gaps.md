@@ -432,3 +432,11 @@ row locks, microsecond-safe optimistic CAS, persisted review insert and
 immutable activity event. Other roles retain prior workflow. Tests authored
 with fresh Mentor/Learner memberships and audit-preserving cleanup.
 Remaining: executed test/build and browser/legacy acceptance, revision cycle.
+
+## 2026-10-14 Faculty All Assignments grade publication fence — PARTIAL
+No new writer introduced. Existing `gradeAssignmentSubmission` and
+`publishAssignmentGrade` now lock the parent Course Assignment and reject
+writes unless status remains PUBLISHED at transaction time, including when a
+concurrent ARCHIVE starts. Pure policy + unit; own-Section PostgreSQL
+grade/publish/stale/foreign/role/archived/audit tests authored. Remains:
+executed tests, responsive browser and exact legacy grading modal parity.

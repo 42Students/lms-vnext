@@ -790,3 +790,14 @@ read path was added. Focused unit regressions are authored but NOT claimed
 as executed PostgreSQL, browser, ESLint or whole-repository TypeScript proof.
 Legacy gradebook weighting, full exported/download acceptance and responsive
 browser review remain OPEN; no parity status is promoted to DONE.
+
+## 2026-10-14 Faculty All Assignments published-grade guards (PARTIAL)
+Existing audited grade/regrade/publish writers now fail closed when the linked
+assignment is DRAFT/ARCHIVED and hold a shared assignment row lock while a
+published-only grade or grade publication is committed. Existing integer
+optimistic submission version and immutable audit remain authoritative.
+The mobile submission grading card displays write status. Pure-model and a
+fresh Learner+Faculty Section PostgreSQL test cover successful grade/publish,
+stale version, wrong role, forged college and archived assignment denial.
+Still PARTIAL: execute tsc/eslint/PG/unit tests, browser and legacy grading
+modal/regrade review, old server consumers.

@@ -16,6 +16,7 @@ import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assig
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
+import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
@@ -108,6 +109,11 @@ async function cleanup() {
     join course_learning_paths lp on lp.id=l.learning_path_id
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
+  await pool.query(`delete from assignment_submissions where assignment_id in (
+    select a.id from course_assignments a join course_lessons l on l.id=a.lesson_id
+    join course_learning_paths lp on lp.id=l.learning_path_id
+    join course_offerings o on o.id=lp.offering_id join courses c on c.id=o.course_id
+    where c.code like $1)`,[codePattern]);
   for(const table of ["course_quizzes","course_assignments"]) {
     await pool.query(`delete from ${table} where lesson_id in (
       select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
@@ -358,6 +364,41 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.discussion.deleted","courses.discussion.pin_changed",
       "courses.discussion.posted",
+    ]);
+  });
+  it("grades a published Section submission, publishes, denies stale/foreign/role, and blocks archive grade",async()=>{
+    const {delivery,assignment}=await fixture();
+    const row=await pool.query<{id:string,version:number}>(`insert into assignment_submissions
+      (assignment_id,delivery_id,membership_id,submission_type,text_content)
+      values($1,$2,$3,'TEXT','Created by fixture') returning id,version`,
+      [assignment.id,delivery.id,testLearnerMembershipId]);
+    const id=row.rows[0]!.id;
+    await expect(gradeAssignmentSubmission(learner,id,{
+      pointsAwarded:7,expectedVersion:0,
+    })).rejects.toBeDefined();
+    await expect(gradeAssignmentSubmission({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },id,{pointsAwarded:7,expectedVersion:0})).rejects.toBeDefined();
+    const graded=await gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:7,expectedVersion:0,feedback:"Good",
+    });
+    expect(graded.gradePublished).toBe(false);
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:9,expectedVersion:0,
+    })).rejects.toBeDefined();
+    const published=await publishAssignmentGrade(facultyOnly,id,{
+      expectedVersion:graded.version,
+    });
+    expect(published.gradePublished).toBe(true);
+    await transitionCourseAssignment(faculty,assignment.id,{action:"ARCHIVE"});
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:published.version,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
+    const audit=await pool.query<{event_type:string}>(`select event_type from activity_events
+      where subject_id=$1::text and event_type in
+      ('courses.assignment.graded','courses.assignment.grade_published')`,[id]);
+    expect(audit.rows.map(x=>x.event_type).sort()).toEqual([
+      "courses.assignment.grade_published","courses.assignment.graded",
     ]);
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
