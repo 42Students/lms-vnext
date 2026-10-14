@@ -354,6 +354,7 @@ Legacy:
 - [ ] applicant table/search/filter/stage views match.
 **W66-4 PARTIAL — Candidate detail:** A focused TPO applicant detail route now shows persisted application identity, eligibility and screening stage, latest applied round outcomes and recorded offer/accepted joining evidence with a scoped college/drive/application lookup. It links from the existing applicant stage table, with mobile, loading, error and non-leaking not-found states. Does not disclose private screening notes, staged results or fabricate employer selection. Remaining: legacy side drawer/modal, richer candidate sections/filters, positive PG/browser evidence and visual parity.
 
+**W67-1 PARTIAL — Applicant review:** A scoped applicant detail action now supports confirmed shortlist/reject with a required note, stale screening updatedAt token (millisecond-safe CAS), existing transactional screening history and immutable activity audit. Rejection note is candidate-visible; shortlist note stays internal. Only active submitted applicants in published drives can transition from pending/hold. Tests authored but not executed; full legacy drawer, decision history UI, mobile/browser proof and product consent parity remain open.
 - [ ] candidate detail drawer matches.
 - [ ] bulk actions match.
 - [ ] external-registration/company-id state matches.

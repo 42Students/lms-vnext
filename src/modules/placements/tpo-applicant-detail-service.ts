@@ -23,6 +23,7 @@ export async function getTpoApplicantDetail(context:RequestContext,raw:unknown){
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
   roleTitle:placementJobRoleOptions.title,
   screeningStatus:placementApplicationScreenings.status,
+  screeningUpdatedAt:placementApplicationScreenings.updatedAt,
   screeningDecidedAt:placementApplicationScreenings.decidedAt,
  }).from(placementApplications)
   .innerJoin(collegeMemberships,and(
@@ -68,6 +69,7 @@ export async function getTpoApplicantDetail(context:RequestContext,raw:unknown){
   channel:app.channel,eligibilityStatus:app.eligibilityStatus,
   submittedAt:app.submittedAt.toISOString(),roleTitle:app.roleTitle,
   screeningDecidedAt:app.screeningDecidedAt?.toISOString()??null,
+  screeningUpdatedAt:app.screeningUpdatedAt?.toISOString()??null,
  },...projected,
   resultsTruncated:results.length>100,offersTruncated:offers.length>100,
  };
