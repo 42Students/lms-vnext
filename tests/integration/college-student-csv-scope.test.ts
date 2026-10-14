@@ -37,12 +37,12 @@ const faculty: RequestContext = {
 describe.skipIf(!enabled)("College Student CSV preflight, disposable PostgreSQL", () => {
   beforeAll(async () => {
     await pool!.query("INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
-      "VALUES($1,$2,$3,$3,'2026-07-01','2026-12-31')",
+      "VALUES($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')",
       [ids.period, SEED_IDS.collegeA, label]);
     await pool!.query("INSERT INTO programs(id,department_id,name,code,duration_terms) " +
-      "VALUES($1,$2,$3,$3,8)", [ids.program, SEED_IDS.departmentA, label]);
+      "VALUES($1,$2,$3::text,$3::text,8)", [ids.program, SEED_IDS.departmentA, label]);
     await pool!.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id) " +
-      "VALUES($1,$2,$3,$3,$4)", [ids.cohort, ids.program, label, ids.period]);
+      "VALUES($1,$2,$3::text,$3::text,$4)", [ids.cohort, ids.program, label, ids.period]);
   });
 
   afterAll(async () => {

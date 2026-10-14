@@ -318,7 +318,7 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const gradebook=await getFacultyPublishedGradebook(faculty,{deliveryId:delivery.id});
     expect(gradebook.rosterSize).toBe(1);
     expect(gradebook.rows).toEqual(expect.arrayContaining([
-      expect.objectContaining({membershipId:SEED_IDS.learnerCollegeAMembership,
+      expect.objectContaining({membershipId:testLearnerMembershipId,
         gradedCount:0,earned:null,possible:null,percent:null,hasUnknown:true}),
     ]));
     expect(facultyGradebookCsv(gradebook.rows)).toContain('"Incomplete grading"');
