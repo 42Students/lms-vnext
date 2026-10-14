@@ -2,36 +2,76 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
-import {facultyGradebookParamsSchema} from "@/modules/courses/faculty-gradebook-model";
+import {
+  facultyGradebookParamsSchema,
+  facultyGradebookViewQuerySchema,
+  paginateFacultyGradebookRows,
+  facultyGradebookViewHref,
+} from "@/modules/courses/faculty-gradebook-model";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
 
+type SearchParams={search?:string|string[];page?:string|string[]};
+
 export default async function FacultyGradebookPage({
-  params,
-}:{params:Promise<{deliveryId:string}>}){
-  const raw=await params;
+  params,searchParams,
+}:{
+  params:Promise<{deliveryId:string}>;
+  searchParams:Promise<SearchParams>;
+}){
+  const [raw,rawSearch]=await Promise.all([params,searchParams]);
   const parsed=facultyGradebookParamsSchema.safeParse(raw);
-  if(!parsed.success) return <section role="alert">
-    <h1>Invalid Section identifier</h1>
-    <Link href="/teacher/courses" className="text-primary-text underline">Courses</Link>
+  // Avoid accepting duplicate query fields or arbitrary tenant/role selectors.
+  const knownKeys=Object.keys(rawSearch).every(key=>key==="search"||key==="page");
+  const view=facultyGradebookViewQuerySchema.safeParse(knownKeys?rawSearch:{invalid:true});
+  if(!parsed.success||!view.success)return <section role="alert" className="space-y-3 p-6">
+    <h1 className="text-xl font-semibold text-foreground">Invalid gradebook link or filters</h1>
+    <Link href={parsed.success?
+      facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
+      "/teacher/courses"} className="text-primary-text underline">
+      Return to the gradebook
+    </Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyPublishedGradebook(context,parsed.data);
+  const filtered=paginateFacultyGradebookRows(data.rows,view.data);
+  const base={...view.data};
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty · Section" title="Published gradebook"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
       actions={<Link href={csv}
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
-        Download safe CSV
+        Download full Section CSV
       </Link>} />
     <p className="text-sm text-body">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
     </p>
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-foreground">
+        Find learner
+        <input type="search" name="search" defaultValue={view.data.search}
+          maxLength={120} placeholder="Name, roll number or email"
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+      </label>
+      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        Search
+      </button>
+      <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
+        className="inline-flex min-h-10 items-center px-2 text-sm font-semibold text-primary-text">
+        Clear
+      </Link>
+    </form>
+    <p aria-live="polite" className="text-sm text-muted-foreground">
+      Showing {filtered.matching} of {filtered.total} authorized learners · Page {filtered.page} of {filtered.totalPages}.
+      The CSV contains the full authorized Section, not only visible search matches.
+    </p>
     {data.rows.length===0?<EmptyState title="No current enrolled learners"
       description="The authorized Section roster is empty. No scores were inferred."/>
+    :filtered.items.length===0?<EmptyState title="No matching learners"
+      description="Try another name, roll number or email. Published grades were not inferred."/>
     :<div className="grid gap-3">
-      {data.rows.map(row=><article key={row.membershipId}
+      {filtered.items.map(row=><article key={row.membershipId}
         className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">
           {row.displayName||row.email||"Unnamed learner"}
@@ -60,6 +100,22 @@ export default async function FacultyGradebookPage({
         </p>}
       </article>)}
     </div>}
+    {filtered.totalPages>1&&<nav aria-label="Gradebook pages"
+      className="flex items-center justify-between gap-3">
+      <span className="text-sm text-muted-foreground">
+        Page {filtered.page} of {filtered.totalPages}
+      </span>
+      <div className="flex gap-3">
+        {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
+          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text">
+          Previous
+        </Link>}
+        {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
+          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text">
+          Next
+        </Link>}
+      </div>
+    </nav>}
     <p className="text-xs text-muted-foreground">
       This read-only gradebook includes only actually published learner grades.
       Private, missing and ungraded results never become zero scores; percentages

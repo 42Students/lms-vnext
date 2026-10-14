@@ -14,6 +14,7 @@ import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyAssessmentCreate } from "./faculty-assessment-create";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
+import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
@@ -193,6 +194,22 @@ export function FacultyAssessmentOverview({
                           deliveryId={item.deliveryId}
                         />
                       ) : null}
+                      <Link
+                        href={"/teacher/courses/" + encodeURIComponent(item.deliveryId) +
+                          (item.kind === "QUIZ" ? "/quizzes/manage" : "/assignments/manage")}
+                        className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text hover:border-primary"
+                      >
+                        Manage {item.kind === "QUIZ" ? "quiz" : "assignment"}
+                      </Link>
+                      <FacultyAssessmentLifecycle
+                        key={item.id + ":" + new Date(item.updatedAt).toISOString()}
+                        kind={item.kind}
+                        id={item.id}
+                        deliveryId={item.deliveryId}
+                        updatedAt={item.updatedAt}
+                        status={item.status}
+                        owned={item.facultyOwned}
+                      />
                     </>
                   ) : null}
                   <Link

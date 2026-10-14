@@ -18,6 +18,7 @@ export default async function SuperAdminAcademicsPage() {
           title="Academics"
           description="Academic administration requires a college safety scope."
         />
+        <Link href="/admin/electives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Elective slots →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before managing Programs, Periods, Cohorts or Sections."
@@ -39,6 +40,10 @@ export default async function SuperAdminAcademicsPage() {
         description="Academic structure inside the selected college safety scope."
       />
       <div>
+        <Link href="/admin/electives"
+          className="mr-2 inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Elective slots
+        </Link>
         <Link
           href="/admin/programs"
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"

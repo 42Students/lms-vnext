@@ -28,6 +28,15 @@ describe("Faculty assessment results model",() => {
     expect(filterFacultyResultCandidates(rows,{kind:"ALL",status:"ALL",search:"",deliveryId:d2}).map(x=>x.id)).toEqual(["b"]);
     expect(filterFacultyResultCandidates(rows,{kind:"ALL",status:"ALL",search:"nonexistent"})).toEqual([]);
   });
+  it("includes closed quizzes in published result reports but excludes draft",()=>{
+    const closed={...rows[1]!,status:"CLOSED"};
+    expect(filterFacultyResultCandidates([...rows,closed],{
+      kind:"QUIZ",status:"PUBLISHED",search:"",
+    }).map(x=>x.id)).toEqual(["b"]);
+    expect(filterFacultyResultCandidates(rows,{
+      kind:"QUIZ",status:"PUBLISHED",search:"",
+    })).toEqual([]);
+  });
   it("bounds summary batch work and clamps stale page numbers",() => {
     expect(paginateFacultyResults(rows,999,1)).toMatchObject({
       total:2,totalPages:2,page:2,items:[rows[1]],

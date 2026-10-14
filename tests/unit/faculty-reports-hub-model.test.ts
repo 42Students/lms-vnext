@@ -6,8 +6,9 @@ describe("Faculty Reports hub model",()=>{
  it("separates published counts from draft rows",()=>{
   expect(publishedReportBreakdown([
    {kind:"ASSIGNMENT",status:"PUBLISHED"},{kind:"ASSIGNMENT",status:"DRAFT"},
-   {kind:"QUIZ",status:"PUBLISHED"},{kind:"QUIZ",status:"ARCHIVED"},
-  ])).toEqual({assignments:2,quizzes:2,publishedAssignments:1,publishedQuizzes:1});
+   {kind:"QUIZ",status:"PUBLISHED"},{kind:"QUIZ",status:"CLOSED"},
+   {kind:"QUIZ",status:"ARCHIVED"},
+  ])).toEqual({assignments:2,quizzes:3,publishedAssignments:1,publishedQuizzes:2});
  });
  it("does not infer unmarked attendance or missing sessions",()=>{
   expect(attendanceReportCounts([])).toEqual({scheduled:0,marked:0});

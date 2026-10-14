@@ -70,3 +70,44 @@ describe("W02 Faculty Course Home signals", () => {
     expect(result.performance.averagePercent).toBe(90);
   });
 });
+
+describe("Faculty Course Overview resilient current Section signals",()=>{
+ const marked=(id:string)=>({id,startsAt:new Date("2026-10-01T10:00:00Z"),attendanceStatus:"MARKED"});
+ it("ignores duplicate, nonmember and invalid attendance evidence",()=>{
+  const result=buildFacultyCourseHomeSignals({
+   roster:[{membershipId:"m1",displayName:"A",email:null},
+     {membershipId:"m2",displayName:"B",email:null}],
+   attendanceSessions:[marked("s1"),marked("s1"),marked("s2")],
+   attendanceRecords:[
+     {scheduleEventId:"s1",membershipId:"m1",status:"ABSENT"},
+     {scheduleEventId:"s1",membershipId:"m1",status:"ABSENT"},
+     {scheduleEventId:"s1",membershipId:"foreign",status:"ABSENT"},
+     {scheduleEventId:"s2",membershipId:"foreign",status:"ABSENT"},
+   ],assignments:[{id:"a1",lessonId:"l1",title:"Test",dueAt:null,maxPoints:10,status:"PUBLISHED",
+     submissions:[
+       {membershipId:"foreign",gradingStatus:"NOT_GRADED",pointsAwarded:null},
+       {membershipId:"m1",gradingStatus:"GRADED",pointsAwarded:Number.NaN},
+     ]}],
+  },new Date("2026-10-12T00:00:00Z"));
+  expect(result.attendance.markedSessions).toBe(2);
+  expect(result.attendance.averagePercent).toBe(75);
+  expect(result.pendingSubmissions).toHaveLength(0);
+  expect(result.performance.averagePercent).toBeNull();
+  expect(result.atRiskTotal).toBe(1);
+ });
+ it("keeps the total at-risk count even when preview truncates at eight",()=>{
+  const learners=Array.from({length:12},(_,i)=>({
+    membershipId:"m"+i,displayName:"Learner "+i,email:null,
+  }));
+  const result=buildFacultyCourseHomeSignals({
+    roster:learners,attendanceSessions:[marked("s1"),marked("s2")],
+    attendanceRecords:learners.flatMap(learner=>[
+      {scheduleEventId:"s1",membershipId:learner.membershipId,status:"ABSENT"},
+      {scheduleEventId:"s2",membershipId:learner.membershipId,status:"ABSENT"},
+    ]),assignments:[],
+  },new Date("2026-10-12T00:00:00Z"));
+  expect(result.atRiskTotal).toBe(12);
+  expect(result.atRisk).toHaveLength(8);
+  expect(result.attendance.averagePercent).toBe(0);
+ });
+});

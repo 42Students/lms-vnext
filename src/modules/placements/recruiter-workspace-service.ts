@@ -18,7 +18,8 @@ import {
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { can } from "@/modules/permissions/policy";
+import { isRecruiterJobVisible } from "./recruiter-job-visibility-model";
 import { PlacementsServiceError } from "./errors";
 import { placementJobIdSchema } from "./validation";
 
@@ -90,15 +91,14 @@ export async function getRecruiterPlacementWorkspace(
     );
   }
 
-  requirePermission(
-    context,
-    "placements.recruiter.read",
-    {
-      collegeId: scope.job.collegeId,
-      placementCompanyRelationshipId:
-        scope.relationshipId,
-    },
-  );
+  if (!isRecruiterJobVisible(context, scope.job.collegeId, scope.relationshipId) ||
+      !can(context, "placements.recruiter.read", {
+        collegeId: scope.job.collegeId,
+        placementCompanyRelationshipId: scope.relationshipId,
+      }) || context.recruiter?.companyId !== scope.companyId) {
+    // Intentionally indistinguishable from a nonexistent or unpublished job.
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  }
 
   const db = getDb();
   const [rounds, candidates, resultRows] =

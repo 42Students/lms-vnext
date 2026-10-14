@@ -7,6 +7,7 @@ import { ProjectTemplateView } from "@/components/projects/project-template-view
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getProjectTemplateDetail } from "@/modules/projects/template-service";
+import { can } from "@/modules/permissions/policy";
 
 export default async function SuperAdminProjectTemplateDetailPage({
   params,
@@ -53,6 +54,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
+            {can(context, "project-template.manage") || context.adminScope?.collegeId ? (
             <ProjectTemplateActions
               templateId={detail.template.id}
               title={detail.template.title}
@@ -71,6 +73,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
                 )
               }
             />
+            ) : <span className="text-xs text-muted-foreground">Clear admin scope for global template edits.</span>}
           </div>
         }
       />
