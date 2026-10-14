@@ -118,6 +118,9 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     expect(created.leadId).toBe(leadId);
     const queue = await getTpoDueFollowupQueue(tpo);
     expect(queue.rows.some((row) => row.id === created.id)).toBe(true);
+    const mine=await getTpoDueFollowupQueue(tpo,undefined,{scope:"MINE"});
+    expect(mine.rows.some(row=>row.id===created.id)).toBe(true);
+    await expect(getTpoDueFollowupQueue(tpo,undefined,{scope:"FOREIGN"})).rejects.toBeDefined();
     const databaseDate = (await pool.query(
       "SELECT to_char(due_at AT TIME ZONE 'UTC', " +
       "'YYYY-MM-DD\"T\"HH24:MI:SS') AS due_text, done_at " +
