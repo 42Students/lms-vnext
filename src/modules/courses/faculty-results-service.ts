@@ -69,5 +69,5 @@ export async function getFacultyAssessmentResults(
         "?deliveryId="+encodeURIComponent(row.deliveryId),
     };
   }));
-  return {query,...chosen,items};
+  return {query,...chosen,items,sections:overview.courses};
 }
