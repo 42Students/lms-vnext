@@ -263,3 +263,12 @@ reveal cross-Section records. An isolated PostgreSQL fixture already creating
 its own Learner and Faculty membership exercises positive and role/foreign/
 forged-input denials. Pure-model tests were extended. Runtime PostgreSQL,
 TypeScript, lint and responsive browser evidence still required; no DONE row.
+
+## 2026-10-14 Faculty attendance create/reschedule editor polish — PARTIAL
+
+The UI no longer offers other co-teachers' Section events as reschedulable.
+Existing owned sessions prefill metadata and local clock values; invalid,
+empty or reversed windows are rejected before confirmation, and success/error
+messages are accessible. Server-side permission/scope/version/audit and the
+previously authored PostgreSQL schedule test remain unchanged. Runtime/browser
+evidence and final conflict-policy acceptance remain open.
