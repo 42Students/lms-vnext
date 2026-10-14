@@ -863,3 +863,21 @@ activity_events or the user/membership/role records referenced by their audit
 history. This is a regression-safety correction, not a passed database run.
 Authenticated keyboard/Playwright, real PostgreSQL and exact legacy overlay
 acceptance remain OPEN; no detailed or master parity row is marked DONE.
+
+## Executed CI Faculty-browser blocker repairs (2026-10-14)
+
+An earlier main CI browser run (38590894448) exposed four Faculty
+regressions. The Faculty Discussion E2E had not accepted the new intentional
+pin/unpin confirmation dialogs, so no PATCH was sent while it waited for a
+response; both dialogs are now explicitly accepted in the test. Faculty
+Contacts E2E assertions still expected the retired private-email/table UI
+after the directory's public-only card policy; the tests now assert active
+role-labeled public cards by seeded membership ID, confirm that searching
+private login email finds no directory member, and check responsive cards.
+Faculty Notifications E2E reused SQL parameter $1 as UUID and text, causing
+PostgreSQL type inference failure; the insert now uses explicit UUID casts
+and a separate $6::text subject field. Its teardown no longer deletes
+append-only activity_events or their referenced actor/membership rows.
+These are source changes targeting proven failing CI cases, **not yet a
+successful rerun at this revision**. Run targeted authenticated Chromium,
+then full CI, before marking Discussions/Contacts/Notifications DONE.
