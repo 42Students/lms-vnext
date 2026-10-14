@@ -171,3 +171,10 @@ export function facultyQuizCanRetryDetails(
 ):boolean {
  return failed && Boolean(quizId) && !pending;
 }
+
+/** Publishing must reflect the persisted, reviewed question bank, not dirty UI state. */
+export function facultyQuizCanPublishSavedDraft(
+ status:string|undefined,unsaved:boolean,loadFailed:boolean,
+):boolean {
+ return status==="DRAFT" && !unsaved && !loadFailed;
+}
