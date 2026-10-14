@@ -4,8 +4,9 @@ export function readLearnerAssessmentDueFromUrl(raw:string):LearnerAssessmentDue
  const params=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);
  const values=params.getAll("due");
  if(values.length===0)return "all";
- return values.length===1
-   ?learnerAssessmentDueBucketSchema.safeParse(values[0]).data??"all":"all";
+ if(values.length!==1)return "all";
+ const parsed=learnerAssessmentDueBucketSchema.safeParse(values[0]);
+ return parsed.success?parsed.data:"all";
 }
 export function learnerAssessmentDueHref(raw:string,bucket:LearnerAssessmentDueBucket):string{
  const url=new URL(raw,"https://lms-vnext.invalid");
