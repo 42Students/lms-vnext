@@ -898,3 +898,6 @@ Delivery decision history now filters by literal project title with SQL wildcard
 
 ## 2026-10-15 chat-11 AI — global Mentor project activity importance filter (PARTIAL)
 The cross-assignment sanitized activity feed now supports registered event importance LOW/NORMAL/HIGH/CRITICAL. SQL applies the selector before count/pagination over current same-college assigned Mentor projects; URLs and page-size controls preserve the filter. Only safe labels/timestamps and authorized project links are shown, no raw event summary/metadata/learner identities. Strict unit and PG wrong-role denial assertions authored. Independent CLI/PG/browser and legacy activity completeness still open.
+
+## 2026-10-15 chat-11 AJ — reviewed task priority triage (PARTIAL)
+Reviewed task-submission history now filters registered task priority alongside decision and literal search in the scoped SQL count/page, including the capped sanitized CSV. Pure model and positive own-project PostgreSQL assertions are authored. No new writes, learner contact or feedback export; runtime/PG/browser and legacy verification remain OPEN.

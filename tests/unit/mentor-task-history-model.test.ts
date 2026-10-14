@@ -18,11 +18,15 @@ describe("Mentor reviewed task history model",()=>{
     expect(mentorTaskHistoryQuerySchema.safeParse({collegeId:"other"}).success).toBe(false);
     expect(mentorTaskHistoryQuerySchema.safeParse({projectId:"other"}).success).toBe(false);
     expect(mentorTaskHistoryQuerySchema.safeParse({decision:"SUBMITTED"}).success).toBe(false);
+    expect(mentorTaskHistoryQuerySchema.safeParse({priority:"URGENT"}).success).toBe(false);
+    expect(mentorTaskHistoryQuerySchema.parse({priority:"HIGH"}).priority).toBe("HIGH");
     expect(mentorTaskHistoryQuerySchema.safeParse({page:0}).success).toBe(false);
     expect(mentorTaskHistoryQuerySchema.safeParse({search:"x".repeat(121)}).success).toBe(false);
   });
   it("preserves filters when moving through authorized pages",()=>{
     expect(mentorTaskHistoryHref({decision:"APPROVED",search:"A & B",page:2}))
       .toBe("/mentor/task-review-history?decision=APPROVED&search=A+%26+B&page=2");
+    expect(mentorTaskHistoryHref({decision:"APPROVED",priority:"CRITICAL",search:"",page:2}))
+      .toContain("priority=CRITICAL");
   });
 });

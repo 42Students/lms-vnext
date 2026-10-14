@@ -9,7 +9,7 @@ import {
 } from "@/modules/projects/mentor-task-history-model";
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
 
-type Params={decision?:string|string[];search?:string|string[];page?:string|string[]};
+type Params={decision?:string|string[];priority?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTaskReviewHistoryPage({
   searchParams,
@@ -17,6 +17,7 @@ export default async function MentorTaskReviewHistoryPage({
   const raw=await searchParams;
   const parsed=mentorTaskHistoryQuerySchema.safeParse({
     decision:first(raw.decision)??undefined,
+    priority:first(raw.priority)??undefined,
     search:first(raw.search)??undefined,
     page:first(raw.page)??undefined,
   });
@@ -52,6 +53,14 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Task priority
+          <select name="priority" defaultValue={data.query.priority}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All priorities</option><option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
         <button type="submit"
           className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
@@ -63,7 +72,7 @@ export default async function MentorTaskReviewHistoryPage({
       <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/task-review-history/export?"+
-          new URLSearchParams({decision:data.query.decision,search:data.query.search}).toString()}
+          new URLSearchParams({decision:data.query.decision,priority:data.query.priority,search:data.query.search}).toString()}
           download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export reviewed task decisions CSV (max 200)
         </Link>
