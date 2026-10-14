@@ -12,6 +12,9 @@ import {
   createProjectTemplate, publishProjectTemplate, assignProjectTemplateToCollege,
 } from "@/modules/projects/template-service";
 import { updateMentorSprintDetails } from "@/modules/projects/mentor-sprint-details-service";
+import {
+  createMentorProjectSprint, transitionMentorProjectSprint,
+} from "@/modules/projects/mentor-sprint-write-service";
 
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Requires a migrated and seeded disposable TEST_DATABASE_URL; never use DATABASE_URL");
@@ -183,5 +186,74 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
         where event_type='projects.sprint.updated' and metadata->>'sprintId'=$1`,[sprint.id]),
     ]);
     expect(events.rows[0]?.total).toBe("1");
+  });
+  it("creates a registered planned sprint, audits three token-checked transitions and denies scope forgery",async()=>{
+    const {project,sprint:original}=await fixture();
+    const params={projectId:project.id};
+    const created=await createMentorProjectSprint(mentor,params,{
+      releaseId:original.releaseId,title:"Mentor Created Sprint",
+      description:"Source-backed sprint",
+    });
+    expect(created).toMatchObject({
+      projectId:project.id,releaseId:original.releaseId,
+      title:"Mentor Created Sprint",status:"PLANNED",
+      sequence:original.sequence+1,
+    });
+    const byMentor=await getProjectInstanceWorkspace(mentor,project.id);
+    expect(byMentor.sprints.some(row=>row.id===created.id)).toBe(true);
+    const sprintParams={projectId:project.id,sprintId:created.id};
+    await expect(createMentorProjectSprint(mentor,params,{
+      releaseId:original.releaseId,title:"Fake dated sprint",
+      description:null,startDate:"2026-10-14",endDate:"2026-10-15",
+    })).rejects.toBeDefined();
+    const forged:RequestContext={
+      ...learner,membership:{...learner.membership!,roles:["MENTOR"]},
+    };
+    await expect(createMentorProjectSprint(forged,params,{
+      releaseId:original.releaseId,title:"Forged sprint",description:null,
+    })).rejects.toBeDefined();
+    const foreign:RequestContext={
+      ...mentor,membership:{...mentor.membership!,collegeId:SEED_IDS.collegeB,
+        id:SEED_IDS.facultyCollegeBMembership,roles:["MENTOR"]},
+    };
+    await expect(createMentorProjectSprint(foreign,params,{
+      releaseId:original.releaseId,title:"Foreign sprint",description:null,
+    })).rejects.toBeDefined();
+
+    const started=await transitionMentorProjectSprint(mentor,sprintParams,{
+      action:"START",expectedUpdatedAt:created.updatedAt.toISOString(),
+    });
+    expect(started.status).toBe("ACTIVE");
+    await expect(transitionMentorProjectSprint(mentor,sprintParams,{
+      action:"COMPLETE",expectedUpdatedAt:created.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    await expect(transitionMentorProjectSprint(forged,sprintParams,{
+      action:"COMPLETE",expectedUpdatedAt:started.updatedAt.toISOString(),
+    })).rejects.toBeDefined();
+    const complete=await transitionMentorProjectSprint(mentor,sprintParams,{
+      action:"COMPLETE",expectedUpdatedAt:started.updatedAt.toISOString(),
+    });
+    expect(complete.status).toBe("COMPLETED");
+    const reopened=await transitionMentorProjectSprint(mentor,sprintParams,{
+      action:"REOPEN",expectedUpdatedAt:complete.updatedAt.toISOString(),
+    });
+    expect(reopened.status).toBe("ACTIVE");
+    await expect(transitionMentorProjectSprint(mentor,sprintParams,{
+      action:"COMPLETE",expectedUpdatedAt:complete.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const audit=await pool.query<{
+      event_type:string;actor_user_id:string;college_id:string;
+      metadata:Record<string,unknown>;
+    }>(`select event_type,actor_user_id,college_id,metadata from activity_events
+      where metadata->>'sprintId'=$1 and event_type='projects.sprint.updated'`,[created.id]);
+    expect(audit.rows).toHaveLength(4);
+    expect(audit.rows.map(row=>row.metadata.action).sort()).toEqual(
+      ["COMPLETE","CREATE","REOPEN","START"],
+    );
+    for(const row of audit.rows) {
+      expect(row.actor_user_id).toBe(SEED_IDS.facultyUser);
+      expect(row.college_id).toBe(SEED_IDS.collegeA);
+      expect(row.metadata).not.toHaveProperty("description");
+    }
   });
 });
