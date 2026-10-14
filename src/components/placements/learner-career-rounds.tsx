@@ -10,6 +10,7 @@ export type LearnerCareerRound = {
   roundKind: string;
   testUrl: string | null;
   sequence: number;
+  durationMinutes?: number | null;
   scheduledAt: string | null;
   timezone: string | null;
   mode: string | null;
