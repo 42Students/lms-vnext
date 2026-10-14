@@ -1,8 +1,8 @@
 import "server-only";
-import {can} from "@/modules/permissions/policy";
+import {AuthorizationError,can} from "@/modules/permissions/policy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {getOwnFacultyProfileWithRuntime} from "@/modules/people/runtime";
-import {AuthorizationError} from "@/modules/permissions/policy";
+
 import {facultyContactReadQuerySchema,facultyContactStorageAvailability} from "./faculty-contact-availability-model";
 
 export async function getOwnFacultyContactAvailability(context:RequestContext,raw:unknown){
