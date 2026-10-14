@@ -237,9 +237,23 @@ export function LearnerCareerRoundsWorkspace({
                 : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
               Due this week ({dueCounts.week.length})
             </button>
+            {([
+              ["later","Later",dueCounts.later.length],
+              ["past","Scheduled time passed",dueCounts.past.length],
+              ["unscheduled","Awaiting employer schedule",dueCounts.unscheduled.length],
+            ] as const).map(([value,label,count])=>(
+              <button type="button" key={value} aria-pressed={dueBucket===value}
+                onClick={()=>selectDueBucket(value)}
+                className={dueBucket===value
+                  ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                  : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+                {label} ({count})
+              </button>
+            ))}
             <p className="w-full text-xs text-muted-foreground">
-              Scheduled upcoming rounds in IST. This week means Monday to Sunday
-              and includes due-today rounds; it does not indicate employer submission.
+              IST schedule categories: Today and this week refer to the published
+              round time; Later is a future week. A past scheduled time is not
+              evidence of employer submission, attendance or completion.
             </p>
           </div>
         ) : null}

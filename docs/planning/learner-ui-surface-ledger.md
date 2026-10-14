@@ -462,7 +462,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L15-001 | Route is materialized, not placeholder | assessments page | vNext assessments | FIXED |
 | L15-002 | Pending / Completed views | AssessmentsContent | scheduled assessment view + separate applied-results route; provider completion remains unregistered/unverified | GAP |
 | L15-003 | Search | AssessmentsContent | already authorized local search now has a bounded Zod-validated shareable query and Back/Forward restoration, preserving exact own application/round links; fresh learner PG and pure tests authored. PARTIAL: PostgreSQL/ESLint/tsc and mobile browser acceptance unexecuted | PARTIAL |
-| L15-004 | Urgency filter | AssessmentsContent | assessments page | GAP |
+| L15-004 | Urgency filter | AssessmentsContent | persisted IST schedule urgency now distinguishes due today, this week, later, scheduled time passed, and awaiting employer schedule with scoped counts; never equates elapsed time to submitted/completed. PARTIAL: disposable PostgreSQL, lint/tsc, mobile and timezone-browser acceptance outstanding | PARTIAL |
 | L15-005 | Due today bucket | AssessmentsContent | IST-calendar upcoming due-today count and quick filter | FIXED |
 | L15-006 | Due this week bucket | AssessmentsContent | IST Monday-Sunday upcoming assessment count and quick filter | FIXED |
 | L15-007 | Later bucket | AssessmentsContent | assessments page | GAP |
