@@ -931,3 +931,6 @@ Exact-project team meeting history supports persisted start-time oldest/newest o
 
 ## 2026-10-15 chat-11 round 6 AT — reviewed task decision chronology (PARTIAL)
 Currently assigned Mentor task-review history now supports oldest/newest recorded review ordering with deterministic ID tie-break; paginated UI and capped safe CSV retain the selector. Decision/priority/literal title and current college/role scope still apply in SQL. Pure strict-selector tests authored; executed gates/browser and historical parity remain open.
+
+## 2026-10-15 chat-11 round 6 AU — exact recorded delivery version lookup (PARTIAL)
+The current assigned Mentor exact-project delivery review overview now filters by an actual positive registered version number, shared by SQL count/page and metadata-only capped export; status and feedback-presence controls remain. Strict Zod rejects unknown tenant selectors and invalid versions. Unit cases authored; browser/PG and full legacy delivery parity remain open.
