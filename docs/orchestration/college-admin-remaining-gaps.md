@@ -43,7 +43,7 @@
 | 4.5 | Drives landing | PARTIAL | Read-first `/college/placements/drives` built with scoped status/season/company/title filtering and paged results; legacy tabs, mutations, and executed browser/DB acceptance remain. |
 | 4.5 | Drive Overview | PARTIAL | Read-first college-scoped overview with sourced application/current-shortlist/offer counts and unknown selected; complete job actions, source-owned selection semantics and browser acceptance remain. |
 | 4.5 | Applications | PARTIAL | Read-first scoped applicant list and 1,000-row neutralized/truncation-signaled CSV authored. Screening actions, export parity, browser/PG acceptance remain. |
-| 4.5 | Interviews | PARTIAL | Buildable — dedicated interview rounds, scheduling/results, guardrails and UI states. |
+| 4.5 | Interviews | PARTIAL | Read-first scoped GD/INTERVIEW round schedule and venue list with honest unavailable individual slots. Scheduling/results, registered slot semantics, browser/DB acceptance remain. |
 | 4.5 | Shortlisted | PARTIAL | Buildable — persist shortlist decisions and display history/denial states in dedicated tab. |
 | 4.5 | Job Settings | PARTIAL | Buildable — validated job edits, lifecycle guards, consistency across applications/rounds. |
 | 4.5 | Companies | PARTIAL | Buildable — dedicated company relationship management, notes and ownership validation. |
