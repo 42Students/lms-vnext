@@ -910,3 +910,6 @@ Exact-project Release/Sprint timeline now filters actual planned/active/complete
 
 ## 2026-10-15 chat-11 AM — meeting outcome-presence filter (PARTIAL)
 Exact-project meeting history now selects meetings with/without nonblank persisted outcome text; SQL count/paging share the filter and current Mentor/college guards. Actual outcome content remains private in list. Strict unit and test-owned PostgreSQL cases authored; execution/browser and full lifecycle parity OPEN.
+
+## 2026-10-15 chat-11 AN — exact-project recent activity windows (PARTIAL)
+Registered safe Project activity can filter events recorded within rolling 7×24h or 30×24h windows, shared by SQL count/page and the capped sanitized CSV. Only stored occurred_at instants, assigned Mentor authorization and existing fixed safe event labels are used. Pure cutoff/selector tests authored; time moves between export page requests, so cross-page snapshot isolation and browser/CI remain outstanding. Legacy activity history remains PARTIAL.

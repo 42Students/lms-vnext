@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -9,7 +9,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { requireProjectReadAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { safeMentorProjectEventLabel } from "./mentor-portfolio-model";
-import { mentorProjectActivityEventTypes, mentorProjectActivityPage, mentorProjectActivityQuerySchema } from "./mentor-project-activity-model";
+import { mentorProjectActivityEventTypes, mentorProjectActivityPage, mentorProjectActivityQuerySchema, mentorProjectActivitySince } from "./mentor-project-activity-model";
 
 /** Exact project history read; raw actor names, summaries and metadata stay private. */
 export async function getMentorProjectActivityHistory(
@@ -35,11 +35,13 @@ export async function getMentorProjectActivityHistory(
   });
   if(!enabled)return empty();
   const allowedTypes=mentorProjectActivityEventTypes(query.view);
+  const since=mentorProjectActivitySince(query.window,new Date());
   const filters=and(
     eq(activityEvents.module,"PROJECTS"),
     allowedTypes?inArray(activityEvents.eventType,allowedTypes):undefined,
     eq(activityEvents.collegeId,scope.collegeId),
     eq(activityEvents.organizationId,scope.organizationId),
+    since?gte(activityEvents.occurredAt,since):undefined,
     or(
       and(eq(activityEvents.subjectType,"project"),
         eq(activityEvents.subjectId,scope.project.id)),
