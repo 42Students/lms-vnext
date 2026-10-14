@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
  from "@/modules/projects/mentor-resource-directory-model";
-type Search={required?:string|string[];link?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
+type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -14,6 +14,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const parsed=mentorResourceDirectoryQuerySchema.safeParse({
   projectId,required:first(raw.required)??undefined,
   link:first(raw.link)??undefined,
+  description:first(raw.description)??undefined,
   order:first(raw.order)??undefined,
   search:first(raw.search)??undefined,page:first(raw.page)??undefined,
  });
@@ -57,6 +58,13 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       className="min-h-10 rounded-md border border-border bg-background px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
+     </select>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Description recorded
+     <select name="description" defaultValue={data.query.description}
+      className="min-h-10 rounded-md border border-border bg-background px-3">
+      <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
+      <option value="MISSING">No written description</option>
      </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource order
