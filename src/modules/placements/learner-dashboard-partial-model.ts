@@ -1,0 +1,40 @@
+import type { learnerPlacementDashboard } from "./learner-dashboard-model";
+
+export type PlacementDashboardAvailability={
+  jobs:boolean;journey:boolean;rounds:boolean;offers:boolean;
+  preferences:boolean;academic:boolean;
+};
+type DashboardSnapshot=ReturnType<typeof learnerPlacementDashboard>;
+const sourceNames:Record<keyof PlacementDashboardAvailability,string>={
+  jobs:"Published opportunities",
+  journey:"Applications and activity",
+  rounds:"Interview and assessment schedule",
+  offers:"Placement offers",
+  preferences:"Placement preferences",
+  academic:"Academic placement evidence",
+};
+
+/** Failed reads must never be presented as a genuine zero or empty schedule. */
+export function learnerDashboardPartialState(
+  availability:PlacementDashboardAvailability, snapshot:DashboardSnapshot,
+) {
+  const failed=(Object.keys(sourceNames) as (keyof PlacementDashboardAvailability)[])
+    .filter(key=>!availability[key]).map(key=>sourceNames[key]);
+  return {
+    failed,
+    partial:failed.length>0,
+    openJobs:availability.jobs?snapshot.openJobCount:null,
+    eligibleJobs:availability.jobs?snapshot.eligibleToApplyCount:null,
+    applications:availability.journey?snapshot.applicationCount:null,
+    activeApplications:availability.journey?snapshot.activeApplicationCount:null,
+    assessments:availability.rounds?snapshot.upcomingAssessmentCount:null,
+    interviews:availability.rounds?snapshot.upcomingInterviewCount:null,
+    attention:availability.rounds?snapshot.needsAttention:null,
+    weekEvents:availability.rounds?snapshot.weekEvents:null,
+    fullWeekEventCount:availability.rounds?snapshot.fullWeekEventCount:null,
+    nextAction:availability.jobs&&availability.journey&&availability.rounds
+      ? snapshot.nextAction:null,
+    firstRun:availability.journey?snapshot.firstRun:null,
+    activeOffers:availability.offers?snapshot.activeOfferCount:null,
+  };
+}

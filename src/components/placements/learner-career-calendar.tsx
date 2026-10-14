@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Drawer } from "@/components/ui/drawer";
+import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
+  from "@/modules/placements/learner-career-event-detail-model";
 import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
+import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-career-agenda-model";
 import {
   careerCalendarEvents,
   careerCalendarPeriod,
@@ -52,6 +56,7 @@ export function LearnerCareerCalendar({
   const [anchor, setAnchor] = useState(initialAnchor);
   const [view, setView] = useState<CareerCalendarView>("agenda");
   const [filter, setFilter] = useState<EventFilter>("ALL");
+  const [selectedKey,setSelectedKey]=useState<string|null>(null);
 
   const events = useMemo(() => careerCalendarEvents(rounds), [rounds]);
   const filtered = useMemo(() => filter === "ALL"
@@ -82,6 +87,11 @@ export function LearnerCareerCalendar({
     }
     return map;
   }, [filtered]);
+
+  const selected=findOwnCareerCalendarEvent(filtered,selectedKey);
+  function showEventDetail(event:CareerCalendarEvent){setSelectedKey(event.key);}
+
+  const mobileDays=useMemo(()=>learnerMobileCareerAgenda(period.events),[period.events]);
 
   function downloadCalendar() {
     const file = learnerCareerIcal(filtered, new Date());
@@ -178,7 +188,7 @@ export function LearnerCareerCalendar({
       </section>
 
       {calendarDays.length ? (
-        <section className="overflow-x-auto rounded-xl border border-border bg-surface p-3" aria-label={view + " calendar grid"}>
+        <section className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block" aria-label={view + " calendar grid"}>
           <div className="grid min-w-[38rem] grid-cols-7 gap-1">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
               <p key={label} className="py-2 text-center text-xs font-semibold uppercase text-muted-foreground">
@@ -210,7 +220,40 @@ export function LearnerCareerCalendar({
         </section>
       ) : null}
 
-      <section aria-label="Career events in selected period" className="space-y-3">
+      {calendarDays.length ? (
+        <section className="space-y-4 md:hidden" aria-label="Mobile career calendar agenda">
+          <h3 className="text-base font-semibold text-foreground">Agenda by day (IST)</h3>
+          {mobileDays.length===0 ? (
+            <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+              No scheduled placement events match this period and filter.
+            </p>
+          ) : mobileDays.map(day=>(
+            <div key={day.dayKey} className="rounded-xl border border-border bg-surface p-4">
+              <h4 className="text-sm font-semibold text-foreground">{prettyDay(day.dayKey)}</h4>
+              <ul className="mt-3 divide-y divide-border">
+                {day.events.map(event=>(
+                  <li key={event.key} className="py-3 first:pt-0 last:pb-0">
+                    <p className="text-sm font-semibold text-foreground">{event.title} · {event.companyName}</p>
+                    <p className="mt-1 text-xs text-body">{displayDate(event.start)} · {event.kind}</p>
+                    <div className="mt-2 flex flex-wrap gap-3">
+                      <button type="button" onClick={()=>showEventDetail(event)}
+                        className="min-h-10 text-sm font-semibold text-primary-text">
+                        Event details
+                      </button>
+                      <Link href={learnerCareerCalendarEventTarget(event)}
+                        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                        Open exact round →
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ) : null}
+
+      <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 md:block" : "space-y-3"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-base font-semibold text-foreground">
             {view === "agenda" ? "Agenda" : "Events"} · {period.events.length}
@@ -243,13 +286,48 @@ export function LearnerCareerCalendar({
                 {event.rescheduled ? <StatusBadge>Rescheduled</StatusBadge> : null}
               </div>
             </div>
-            <Link
-              href={hrefForEvent(event)}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
-            >View application →</Link>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button type="button" onClick={()=>showEventDetail(event)}
+                className="min-h-10 text-sm font-semibold text-primary-text hover:underline">
+                Event details
+              </button>
+              <Link href={hrefForEvent(event)}
+                className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                View application →
+              </Link>
+            </div>
           </article>
         ))}
       </section>
+      <Drawer open={selected!==null} onOpenChange={(open)=>{if(!open)setSelectedKey(null);}}
+        title={selected?.title??"Career event"}
+        description={selected?selected.companyName+" · "+selected.roleTitle:undefined}
+        footer={
+          <>
+            {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Open exact round
+            </Link>:null}
+            <button type="button" onClick={()=>setSelectedKey(null)}
+              className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body">
+              Close
+            </button>
+          </>
+        }>
+        {selected?<dl className="grid gap-3 text-sm sm:grid-cols-2">
+          <div><dt className="font-semibold text-muted-foreground">Scheduled (IST)</dt>
+            <dd className="mt-1 text-foreground">{displayDate(selected.start)}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Round type</dt>
+            <dd className="mt-1 text-foreground">{selected.kind}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Employer</dt>
+            <dd className="mt-1 text-foreground">{selected.companyName}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Role</dt>
+            <dd className="mt-1 text-foreground">{selected.roleTitle}</dd></div>
+          {selected.rescheduled?<p role="status" className="sm:col-span-2 text-body">
+            Approved reschedule applied to this event.
+          </p>:null}
+        </dl>:null}
+      </Drawer>
     </div>
   );
 }

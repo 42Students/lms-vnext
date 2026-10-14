@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
+import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -19,7 +20,7 @@ function Metric({
   detail,
 }: {
   label: string;
-  value: number;
+  value: number | null;
   href: string;
   detail: string;
 }) {
@@ -31,25 +32,27 @@ function Metric({
       <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value}</p>
-      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{detail} →</p>
+      <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value===null?"—":value}</p>
+      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{value===null?"Currently unavailable; retry loading":detail} →</p>
     </Link>
   );
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,
+  snapshot,availability,
 }: {
   snapshot: Snapshot;
+  availability:PlacementDashboardAvailability;
 }) {
-  const next = snapshot.nextAction;
+  const display=learnerDashboardPartialState(availability,snapshot);
+  const next = display.nextAction;
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
-      <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
+      {next ? <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              {snapshot.firstRun ? "Welcome to placements" : next.label}
+              {display.firstRun ? "Welcome to placements" : next.label}
             </p>
             <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">
               {next.title}
@@ -58,7 +61,7 @@ export function LearnerPlacementsDashboard({
               {next.detail}
               {next.when ? ` · ${formatWhen(next.when)}` : ""}
             </p>
-            {snapshot.firstRun ? (
+            {display.firstRun ? (
               <p className="mt-2 text-sm text-body">
                 Explore your college’s published opportunities and check eligibility before applying.
               </p>
@@ -68,43 +71,48 @@ export function LearnerPlacementsDashboard({
             href={next.href}
             className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
-            {snapshot.firstRun ? "Browse drives" : "View next step"} →
+            {display.firstRun ? "Browse drives" : "View next step"} →
           </Link>
         </div>
-      </div>
+      </div> : (
+        <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          Next placement action is temporarily unavailable while key sources reload.
+          Your current applications or schedule have not been treated as empty.
+        </p>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
           label="Open drives"
-          value={snapshot.openJobCount}
+          value={display.openJobs}
           href="/learn/my-placements/jobs"
-          detail={`${snapshot.eligibleToApplyCount} currently eligible to apply`}
+          detail={`${display.eligibleJobs ?? "Unknown"} currently eligible to apply`}
         />
         <Metric
           label="Applications"
-          value={snapshot.applicationCount}
+          value={display.applications}
           href="/learn/my-placements/applications"
-          detail={`${snapshot.activeApplicationCount} under consideration`}
+          detail={`${display.activeApplications ?? "Unknown"} under consideration`}
         />
         <Metric
           label="Upcoming assessments"
-          value={snapshot.upcomingAssessmentCount}
+          value={display.assessments}
           href="/learn/my-placements/assessments"
           detail="View scheduled employer assessments"
         />
         <Metric
           label="Upcoming interviews"
-          value={snapshot.upcomingInterviewCount}
+          value={display.interviews}
           href="/learn/my-placements/interviews"
           detail="View scheduled interview rounds"
         />
       </div>
 
-      {snapshot.activeOfferCount > 0 ? (
+      {display.activeOffers !== null && display.activeOffers > 0 ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning bg-surface px-5 py-4">
           <div>
             <p className="m-0 font-semibold text-foreground">
-              {snapshot.activeOfferCount} offer{snapshot.activeOfferCount === 1 ? "" : "s"} awaiting a response
+              {display.activeOffers} offer{snapshot.activeOfferCount === 1 ? "" : "s"} awaiting a response
             </p>
             <p className="mt-1 text-sm text-body">
               Review the issued offer terms and expiration before responding.
@@ -122,13 +130,15 @@ export function LearnerPlacementsDashboard({
             <h3 id="placement-attention-heading" className="m-0 text-base font-semibold text-foreground">
               Needs attention
             </h3>
-            <StatusBadge tone={snapshot.needsAttention.length ? "warning" : "neutral"}>
-              {snapshot.needsAttention.length ? `${snapshot.needsAttention.length} soon` : "All clear"}
+            <StatusBadge tone={display.attention?.length ? "warning" : "neutral"}>
+              {display.attention===null ? "Unknown" : display.attention.length ? `${display.attention.length} soon` : "All clear"}
             </StatusBadge>
           </div>
-          {snapshot.needsAttention.length ? (
+          {display.attention===null ? (
+            <p role="status" className="text-sm text-body">Schedule data unavailable; please retry.</p>
+          ) : display.attention.length ? (
             <ul className="divide-y divide-border">
-              {snapshot.needsAttention.map((event) => (
+              {display.attention.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
                   <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
                     <p className="text-sm font-semibold text-foreground">{event.roundName}</p>
@@ -156,11 +166,13 @@ export function LearnerPlacementsDashboard({
             <h3 id="placement-week-heading" className="m-0 text-base font-semibold text-foreground">
               Your next seven days
             </h3>
-            <StatusBadge>{snapshot.fullWeekEventCount} event{snapshot.fullWeekEventCount === 1 ? "" : "s"}</StatusBadge>
+            <StatusBadge>{display.fullWeekEventCount===null ? "Unknown" : `${display.fullWeekEventCount} events`}</StatusBadge>
           </div>
-          {snapshot.weekEvents.length ? (
+          {display.weekEvents===null ? (
+            <p role="status" className="text-sm text-body">Schedule data unavailable; please retry.</p>
+          ) : display.weekEvents.length ? (
             <ul className="divide-y divide-border">
-              {snapshot.weekEvents.map((event) => (
+              {display.weekEvents.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
                   <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
                     <p className="text-sm font-semibold text-foreground">{event.companyName} · {event.roundName}</p>
@@ -174,9 +186,9 @@ export function LearnerPlacementsDashboard({
               No scheduled placement events in the coming week.
             </p>
           )}
-          {snapshot.fullWeekEventCount > snapshot.weekEvents.length ? (
+          {display.fullWeekEventCount !== null && display.weekEvents !== null && display.fullWeekEventCount > display.weekEvents.length ? (
             <p className="text-xs text-muted-foreground">
-              And {snapshot.fullWeekEventCount - snapshot.weekEvents.length} more scheduled events.
+              And {display.fullWeekEventCount - display.weekEvents.length} more scheduled events.
             </p>
           ) : null}
           <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
