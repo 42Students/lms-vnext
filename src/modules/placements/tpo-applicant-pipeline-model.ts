@@ -3,6 +3,7 @@ export const tpoApplicantPipelineParams = z.object({
   jobId: z.string().uuid(),
   stage: z.enum(["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"]).default("ALL"),
   search: z.string().trim().max(100).default(""),
+  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
 export function tpoApplicantPipelinePage(total:number,requestedPage:number){
