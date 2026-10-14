@@ -39,7 +39,7 @@ export function NotificationList({
   items: readonly NotificationListItem[];
   emptyText?: string;
   onSelect?: (item: NotificationListItem) => void;
-  readEndpoint?: "/api/notifications" | "/api/learn/notifications";
+  readEndpoint?: "/api/notifications" | "/api/learn/notifications" | "/api/mentor/notifications";
 }) {
   const router = useRouter();
   const { showToast } = useToast();
