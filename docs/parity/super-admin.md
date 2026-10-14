@@ -713,3 +713,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Job Settings detail — PARTIAL:** Added `/admin/placements/job-settings/[jobId]` as read-only persisted eligibility/deadline detail; exact selected-college/org SQL guard and 404 for unknown/foreign job UUID. Distinguishes absent policy vs unrestricted fields, includes past/active backlog, CGPA, gap, allowed program/cohort count (no identity leakage), missing evidence handling and IST update. Directory deep-linked; unit authored, full editor and PG/browser acceptance remain.
+
+
+**2026-10-15 chat-6 round 5 / Shortlisted detail — PARTIAL:** Added `/admin/placements/shortlisted/[applicationId]` requiring actual persisted SHORTLISTED screening and exact job/role/applicant membership college/org match; wrong status, unknown UUID and foreign scope return same 404. Displays application status, channel, IST submission/decision dates and safe application link, no internal comments/contact. Directory deep-link, pure ID/date unit authored; actions, PG and browser parity open.
