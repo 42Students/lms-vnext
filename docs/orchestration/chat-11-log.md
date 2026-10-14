@@ -163,3 +163,6 @@
 
 ## X — Mentor project attention kind filters
 - Strict recorded-kind selection, server UI and pure tests authored; PARTIAL.
+
+## Y — Team history role filter
+- Same-project SQL role filter and current/ended navigation, tests authored.
