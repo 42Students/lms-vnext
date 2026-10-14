@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TpoRoundCheckIn } from "./tpo-round-check-in";
 
 import {
   PageHeader,
@@ -301,6 +302,13 @@ export function TpoRoundDriveDayReadOnly({
                           " ",
                         )}
                       </StatusBadge>
+                      <TpoRoundCheckIn
+                        roundId={data.round.id}
+                        applicationId={student.applicationId}
+                        displayName={student.displayName}
+                        attendance={student.attendance}
+                        roundStatus={data.round.status}
+                      />
                     </td>
 
                     <td className="px-4 py-3">
