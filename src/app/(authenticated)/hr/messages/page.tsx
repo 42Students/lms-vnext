@@ -6,6 +6,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-model";
 import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-button";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
+import {groupHrNotificationPage} from "@/modules/placements/hr-notification-groups-model";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
@@ -58,17 +59,30 @@ export default async function HrMessagesPage({searchParams}:{
        Export scoped notifications CSV
      </Link>
    </div>
-   {result.rows.length?<ol className="grid gap-3">{result.rows.map(row=>
-    <li key={row.id} className="rounded-lg border border-border bg-surface p-4">
-     <div className="flex flex-wrap justify-between gap-3">
-      <Link href={"/hr/placements/jobs/"+encodeURIComponent(row.jobId)}
-       className="break-words font-semibold text-primary-text">{row.title}</Link>
-      <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
-     </div>
-     <p className="mt-2 text-sm text-body">{row.label}{row.unread?" · Unread":""}</p>
-     {row.unread?<HrNotificationReadButton notificationId={row.id}
-        expectedCreatedAt={row.createdAt.toISOString()}/>:null}
-    </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
+   {result.rows.length?<div className="space-y-5">
+     <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
+     {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}
+       aria-label={"Notifications for "+group.title}
+       className="rounded-xl border border-border bg-surface p-4">
+       <div className="flex flex-wrap items-center justify-between gap-2">
+         <h2 className="font-semibold text-foreground">
+           <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
+             className="text-primary-text">{group.title}</Link>
+         </h2>
+         <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
+       </div>
+       <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
+         <li key={row.id} className="py-3">
+           <div className="flex flex-wrap justify-between gap-2">
+             <span className="text-sm text-body">{row.label}{row.unread?" · Unread":""}</span>
+             <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
+           </div>
+           {row.unread?<HrNotificationReadButton notificationId={row.id}
+             expectedCreatedAt={row.createdAt.toISOString()}/>:null}
+         </li>)}
+       </ol>
+     </section>)}
+   </div>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
