@@ -191,6 +191,14 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     await expect(exportCollegeAcademicDirectory(faculty,"SEMESTERS",{}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("exports only same-college saved batch progression and rejects other roles",async()=>{
+    const own=await exportCollegeAcademicDirectory(adminA,"BATCHES",{q:label});
+    const foreign=await exportCollegeAcademicDirectory(adminB,"BATCHES",{q:label});
+    expect(own.csv).toContain(label);
+    expect(foreign.csv).not.toContain(label);
+    await expect(exportCollegeAcademicDirectory(faculty,"BATCHES",{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("returns honest empties for nonexistent filters", async () => {
     const [semesters, batches] = await Promise.all([
       listCollegeSemesters(adminA, { q: "never-a-term-w42" }),

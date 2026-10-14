@@ -17,6 +17,19 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
   (p.size?"?"+p.toString():"");
 }
 export {exportParams};
+export function renderBatchCsv(rows:readonly {
+ name:string;code:string;status:string;programName:string;programCode:string;
+ currentTermNumber:number|null;currentAcademicYearStart:number|null;
+ activeSections:number;activeEnrolledLearners:number;
+}[],truncated:boolean){
+ return buildCollegeDirectoryCsv(["Batch","Batch code","Program","Program code","State","Recorded term",
+  "Academic year start","Active classes","Active learner enrollments"],rows.map(r=>[
+  r.name,r.code,r.programName,r.programCode,r.status,
+  r.currentTermNumber===null?"":String(r.currentTermNumber),
+  r.currentAcademicYearStart===null?"":String(r.currentAcademicYearStart),
+  String(r.activeSections),String(r.activeEnrolledLearners),
+ ]),truncated,ACADEMIC_EXPORT_CAP);
+}
 export function renderSemesterCsv(rows:readonly {
  name:string;termNumber:number;programName:string;programCode:string;
  totalCredits:number|null;isActive:boolean;mappedCourses:number;

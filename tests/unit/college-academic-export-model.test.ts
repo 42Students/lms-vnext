@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {academicExportHref,semesterCsvSchema,renderSemesterCsv,exportParams}
+import {academicExportHref,semesterCsvSchema,batchCsvSchema,renderSemesterCsv,renderBatchCsv,exportParams}
  from "@/modules/academics/college-academic-export-model";
 describe("college semester CSV",()=>{
  it("never accepts arbitrary college/page and rejects duplicate query keys",()=>{
@@ -14,5 +14,14 @@ describe("college semester CSV",()=>{
   expect(csv).toContain("\"'=HYPERLINK(1)\"");
   expect(csv).toContain("\"'+bad\"");
   expect(csv).toContain("EXPORT TRUNCATED");
+ });
+ it("exports bounded saved batch progression and neutralizes spreadsheet formulas",()=>{
+  expect(batchCsvSchema.safeParse({page:2}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
+  const csv=renderBatchCsv([{name:"=batch",code:"+code",status:"ACTIVE",programName:"P",programCode:"P",
+   currentTermNumber:null,currentAcademicYearStart:null,activeSections:0,activeEnrolledLearners:0}],true);
+  expect(csv).toContain("\"'=batch\"");
+  expect(csv).toContain("EXPORT TRUNCATED");
+  expect(academicExportHref("BATCHES",{q:"",status:"ACTIVE",yearStart:2026})).toContain("yearStart=2026");
  });
 });

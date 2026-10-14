@@ -11,6 +11,7 @@ import {
   collegeBatchDirectorySchema,
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeBatches } from "@/modules/academics/college-academic-directory-service";
+import { academicExportHref } from "@/modules/academics/college-academic-export-model";
 
 export default async function CollegeBatchesPage({
   searchParams,
@@ -38,6 +39,10 @@ export default async function CollegeBatchesPage({
   }));
   return <div className="space-y-6">
     <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
+    <Link prefetch={false} href={academicExportHref("BATCHES",directory.query)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export filtered batches CSV
+    </Link>
     <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices} />
   </div>;
 }
