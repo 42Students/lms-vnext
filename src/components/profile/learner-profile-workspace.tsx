@@ -6,6 +6,8 @@ import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
+import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
+import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -116,12 +118,12 @@ function initials(name: string | null) {
 
 function Card({ id, title, action, children }: { id?: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
+    <section id={id} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">{title}</h2>
+        <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
         {action}
       </div>
-      <div className="mt-4">{children}</div>
+      <div className="mt-4 min-w-0">{children}</div>
     </section>
   );
 }
@@ -169,6 +171,7 @@ export function LearnerProfileWorkspace(props: {
   const [document, setDocument] = useState(props.initialDocument);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsDraft, setDetailsDraft] = useState<LearnerProfileDocument>(props.initialDocument);
+  const [detailsBaseline,setDetailsBaseline]=useState<LearnerProfileDocument>(props.initialDocument);
   const [contactOpen, setContactOpen] = useState(false);
   const [contactDraft, setContactDraft] = useState(props.initialDocument.contacts);
   const [contactPending, setContactPending] = useState(false);
@@ -184,6 +187,8 @@ export function LearnerProfileWorkspace(props: {
   );
   const coverage=learnerProfileCareerCoverage(checklist);
   const percent=coverage.percentage??0;
+  const authoredPublicationsAwards=learnerProfilePublicationsAwards(document);
+  const mobileQuickLinks=learnerProfileMobileQuickLinks(checklist.items);
 
   // Preserve unsaved local edits; adopt a new server snapshot only when
   // the on-screen document was still equal to the previous saved snapshot.
@@ -221,21 +226,29 @@ export function LearnerProfileWorkspace(props: {
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [props.initialSection]);
 
-  function saveDocument(next: LearnerProfileDocument, onDone?: () => void) {
+  function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
     startTransition(async () => {
-      const response = await fetch("/api/profile/me", {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(next),
-      });
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        showToast({ tone: "error", title: "Profile update failed", description: payload?.error || "Please review the fields and try again." });
-        return;
+      try {
+        const response = await fetch("/api/profile/me", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({document:next,expectedDocument}),
+        });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) {
+          if(payload?.error==="LEARNER_PROFILE_DOCUMENT_STALE"){
+            router.refresh();
+            throw new Error("Your saved profile changed in another tab. Your draft was kept. Close this editor and reopen it to review the latest version before saving.");
+          }
+          throw new Error("Profile changes were not saved. Review your fields and try again.");
+        }
+        if(!payload?.profile?.profileDocument)throw new Error("Could not confirm the saved profile. Reload before trying again.");
+        setDocument(payload.profile.profileDocument);
+        onDone?.();
+        showToast({ tone: "success", title: "Profile updated" });
+      } catch(error) {
+        showToast({tone:"error",title:"Profile update failed",description:error instanceof Error?error.message:"Please try again."});
       }
-      setDocument(payload?.profile?.profileDocument || next);
-      onDone?.();
-      showToast({ tone: "success", title: "Profile updated" });
     });
   }
 
@@ -351,7 +364,18 @@ export function LearnerProfileWorkspace(props: {
 
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
+      <nav aria-label="Quick access to unfinished profile sections" className="rounded-xl border border-border bg-surface p-4 sm:hidden">
+        <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
+        <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
+        {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
+          {mobileQuickLinks.map(item=><Link key={item.section}
+            href={"/learn/profile?section="+encodeURIComponent(item.section)}
+            className="flex min-h-11 min-w-0 items-center justify-center rounded-lg border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            {item.label}
+          </Link>)}
+        </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
+      </nav>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
         <Button size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
@@ -364,15 +388,15 @@ export function LearnerProfileWorkspace(props: {
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Learner profile</p>
-            <h1 className="mt-1 text-2xl font-semibold text-foreground">{props.displayName || "Learner"}</h1>
-            <p className="mt-1 text-sm text-body">{document.headline || "Add a headline to introduce yourself."}</p>
+            <h1 className="mt-1 break-words text-2xl font-semibold text-foreground">{props.displayName || "Learner"}</h1>
+            <p className="mt-1 break-words text-sm text-body">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
               {props.registrationNumber ? <StatusBadge>Reg {props.registrationNumber}</StatusBadge> : null}
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button variant="secondary" onClick={() => { setDetailsDraft(document); setDetailsOpen(true); }}>Edit profile</Button>
+          <Button variant="secondary" onClick={() => { setDetailsDraft(document); setDetailsBaseline(document); setDetailsOpen(true); }}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-border bg-surface-subtle p-4">
@@ -488,6 +512,30 @@ export function LearnerProfileWorkspace(props: {
         <Card id="hobbies" title="Hobbies">
           {document.hobbies.length ? <div className="flex flex-wrap gap-2">{document.hobbies.map((hobby) => <StatusBadge key={hobby}>{hobby}</StatusBadge>)}</div> : <p className="m-0 text-sm text-muted-foreground">No hobbies added yet.</p>}
         </Card>
+        <Card title="Publications and awards (saved entries)">
+          <p className="text-xs leading-5 text-muted-foreground">
+            These are learner-entered profile records, not verified publications or awards.
+            Structured publication/award verification is not available here.
+          </p>
+          <div className="mt-3 space-y-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Achievements / possible awards</p>
+              {authoredPublicationsAwards.achievements.length ?
+                <ul className="mt-1 space-y-1 text-sm text-body">
+                  {authoredPublicationsAwards.achievements.slice(0,4).map(item=><li key={item.id} className="break-words">{item.title}{item.year?" · "+item.year:""}</li>)}
+                </ul> : <p className="mt-1 text-sm text-muted-foreground">No recorded achievements.</p>}
+              <Link href="/learn/profile?section=achievements" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review achievements</Link>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Publication-labelled additional information</p>
+              {authoredPublicationsAwards.publications.length ?
+                <ul className="mt-1 space-y-1 text-sm text-body">
+                  {authoredPublicationsAwards.publications.slice(0,4).map(item=><li key={item.id} className="break-words">{item.value}</li>)}
+                </ul> : <p className="mt-1 text-sm text-muted-foreground">No publication-labelled entries recorded.</p>}
+              <Link href="/learn/profile?section=metadata" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review additional information</Link>
+            </div>
+          </div>
+        </Card>
       </div>
 
       {(Object.keys(collectionLabels) as CollectionKey[]).map((section) => {
@@ -500,13 +548,13 @@ export function LearnerProfileWorkspace(props: {
                   const summary = itemTitle(section, item);
                   return (
                     <div key={String(item.id)} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-subtle p-4">
-                      <div>
-                        <p className="m-0 text-sm font-semibold text-foreground">{summary.primary}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="secondary" onClick={() => openCollection(section, item)}>Edit</Button>
-                        <Button size="sm" variant="danger" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
+                      <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+                        <Button size="sm" variant="secondary" className="min-h-11 flex-1 sm:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
+                        <Button size="sm" variant="danger" className="min-h-11 flex-1 sm:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
                       </div>
                     </div>
                   );
@@ -579,7 +627,7 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={setDetailsOpen}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false))}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">

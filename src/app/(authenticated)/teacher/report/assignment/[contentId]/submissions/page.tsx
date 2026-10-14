@@ -6,19 +6,18 @@ import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
   facultySubmissionListHref,facultySubmissionListPage,
-  facultySubmissionListQuerySchema,selectFacultyAssignmentSubmissions,
+  facultySubmissionListQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
 type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 
 export default async function FacultyAssignmentSubmissionsPage({
   params,searchParams,
 }:{params:Promise<{contentId:string}>;searchParams:Promise<Params>}) {
   const [{contentId},raw]=await Promise.all([params,searchParams]);
+  const search=facultySubmissionReportSearchSchema.safeParse(raw);
   const parsed=facultySubmissionListQuerySchema.safeParse({
-    assignmentId:contentId,deliveryId:first(raw.deliveryId),
-    filter:first(raw.filter)??undefined,page:first(raw.page)??undefined,
+    assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Section submission filters</h1>

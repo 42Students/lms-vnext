@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ProjectsServiceError } from "@/modules/projects/errors";
+import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
+import { TemplateMetadataEditControl } from "@/components/projects/template-metadata-edit-control";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getProjectTemplateDetail } from "@/modules/projects/template-service";
@@ -16,11 +20,15 @@ export default async function SuperAdminProjectTemplateDetailPage({
 }) {
   const context = await getCurrentRequestContext();
   const { templateId } = await params;
-  const detail =
-    await getProjectTemplateDetail(
-      context,
-      templateId,
-    );
+  const id = projectTemplateIdSchema.safeParse(templateId);
+  if (!id.success) notFound();
+  let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;
+  try {
+    detail = await getProjectTemplateDetail(context, id.data);
+  } catch (error) {
+    if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
+    throw error;
+  }
 
   return (
     <div className="space-y-6">
@@ -54,6 +62,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
+            {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
+              <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
+                summary={detail.template.summary} currentVersion={detail.template.currentVersion}
+                updatedAt={detail.template.updatedAt.toISOString()} /> : null}
             {can(context, "project-template.manage") || context.adminScope?.collegeId ? (
             <ProjectTemplateActions
               templateId={detail.template.id}

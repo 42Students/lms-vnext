@@ -13,7 +13,8 @@ import {
   countOwnUnreadNotifications,
   listOwnNotificationPage,
 } from "@/modules/activity/notification-service";
-import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
+import { parseFacultyInboxQuery } from "@/modules/courses/faculty-inbox-query-model";
+import { facultyNotificationActionHref } from "@/modules/courses/faculty-notification-link-model";
 import { requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 
 const FACULTY_INBOX = "/teacher/notifications";
@@ -30,21 +31,16 @@ export default async function FacultyNotificationsPage({
   const context = await getCurrentRequestContext();
   const membership = requireFacultyNotificationsAccess(context);
 
-  const params = await searchParams;
-  const view = params.view === "unread" ? "unread" : "all";
-  const cursor = parseNotificationCursor({
-    beforeCreatedAt: params.beforeCreatedAt,
-    beforeId: params.beforeId,
-  });
+  const { view, cursor, invalid } = parseFacultyInboxQuery(await searchParams);
   const announcementsEnabled = announcementsRuntimeEnabled();
   const [page, unreadCount, announcements] = await Promise.all([
-    cursor.invalid
+    invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
           limit: 50,
           unreadOnly: view === "unread",
           collegeId: membership.collegeId,
-          ...(cursor.cursor ?? {}),
+          ...(cursor ?? {}),
         }),
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
@@ -64,7 +60,7 @@ export default async function FacultyNotificationsPage({
     id: notification.id,
     title: notification.title,
     body: notification.body,
-    actionHref: notification.actionHref,
+    actionHref: facultyNotificationActionHref(notification.actionHref),
     readAt: notification.readAt?.toISOString() ?? null,
     createdAt: notification.createdAt.toISOString(),
     module: event.module,
@@ -96,9 +92,9 @@ export default async function FacultyNotificationsPage({
         </h2>
         <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
           markAllEndpoint="/api/notifications/faculty/read-all" />
-        {cursor.invalid ? (
+        {invalid ? (
           <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
-            The notification page link is invalid.{" "}
+            The notification filters or page link are invalid.{" "}
             <Link href={FACULTY_INBOX + "?view=" + view}
               className="font-semibold text-primary-text underline">
               Return to the newest notifications
