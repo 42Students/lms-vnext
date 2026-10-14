@@ -50,6 +50,7 @@ describe.skipIf(!enabled)("College notices: registered own-recipient PostgreSQL"
   it("lists only own-recipient events belonging to the active college", async () => {
     const view = await getCollegeNoticeInbox(own);
     expect(view.items.map(item => item.id)).toContain(ids.notificationA);
+    expect(view.unreadCount).toBeGreaterThanOrEqual(1);
     expect(view.items.map(item => item.id)).not.toContain(ids.notificationB);
     const unread = await getCollegeNoticeInbox(own, { unreadOnly:"1" });
     expect(unread.items.map(item => item.id)).toContain(ids.notificationA);

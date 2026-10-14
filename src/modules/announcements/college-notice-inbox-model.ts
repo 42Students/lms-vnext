@@ -13,6 +13,11 @@ export type CollegeNoticeSource = {
   readAt: Date | null;
 };
 
+export function collegeNoticeUnreadLabel(value: number) {
+  if (!Number.isSafeInteger(value) || value < 0) throw new Error("INVALID_UNREAD_COUNT");
+  return `${value.toLocaleString("en-IN")} unread personal notification${value === 1 ? "" : "s"}`;
+}
+
 export function collegeNoticeInboxProjection(rows: readonly CollegeNoticeSource[]) {
   return rows.map(row => ({
     id: row.id,

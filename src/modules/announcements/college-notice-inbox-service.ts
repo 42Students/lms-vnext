@@ -3,7 +3,7 @@ import "server-only";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
-import { listOwnNotifications } from "@/modules/activity/notification-service";
+import { countOwnUnreadNotifications, listOwnNotifications } from "@/modules/activity/notification-service";
 import { collegeNoticeInboxProjection, collegeNoticeInboxQuerySchema }
   from "./college-notice-inbox-model";
 
@@ -18,9 +18,12 @@ export async function getCollegeNoticeInbox(context: RequestContext, raw: unknow
   requirePermission(context, "college.read", {
     collegeId: own.collegeId, organizationId: own.organizationId,
   });
-  const rows = await listOwnNotifications(context, {
+  const [rows, unreadCount] = await Promise.all([
+    listOwnNotifications(context, {
     collegeId: own.collegeId, unreadOnly: filter.unreadOnly === "1", limit: 50,
-  });
+  }),
+    countOwnUnreadNotifications(context, { collegeId:own.collegeId }),
+  ]);
   return {
     items: collegeNoticeInboxProjection(rows.map(row => ({
       id: row.notification.id,
@@ -31,5 +34,6 @@ export async function getCollegeNoticeInbox(context: RequestContext, raw: unknow
       readAt: row.notification.readAt,
     }))),
     capped: rows.length === 50,
+    unreadCount,
   };
 }

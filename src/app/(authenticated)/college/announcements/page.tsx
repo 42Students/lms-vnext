@@ -12,6 +12,7 @@ import {
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-inbox-service";
+import { collegeNoticeUnreadLabel } from "@/modules/announcements/college-notice-inbox-model";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -37,7 +38,13 @@ export default async function AnnouncementsPage({
         />
       <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+          <div>
+            <div>
+            <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
+          </div>
+            <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
+          </div>
           <Link href={unreadHref} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
