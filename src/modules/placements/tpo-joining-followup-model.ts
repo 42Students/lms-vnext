@@ -2,14 +2,14 @@ import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 export const tpoJoiningFollowupQuerySchema=z.object({
  seasonId:z.string().uuid().optional(),
- state:z.enum(["ALL","PENDING","DEFERRED","DATE_DUE"]).default("ALL"),
+ state:z.enum(["ALL","PENDING","DEFERRED","DATE_DUE","DATE_MISSING"]).default("ALL"),
 }).strict();
 export type JoiningFollowupFact={
  offerId:string;jobId:string;jobTitle:string;companyName:string;
  candidateName:string|null;roleTitle:string;offerStatus:string;
  joiningStatus:string|null;scheduledDate:string|null;
 };
-export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],todayIst:string,state:"ALL"|"PENDING"|"DEFERRED"|"DATE_DUE"){
+export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],todayIst:string,state:"ALL"|"PENDING"|"DEFERRED"|"DATE_DUE"|"DATE_MISSING"){
  const accepted=[...new Map(facts.filter(r=>r.offerStatus==="ACCEPTED")
    .map(r=>[r.offerId,r])).values()];
  const counts={
@@ -27,7 +27,8 @@ export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],
  const rows=open.filter(r=>state==="ALL"||
    (state==="PENDING"&&(r.joiningStatus===null||r.joiningStatus==="PENDING"))||
    (state==="DEFERRED"&&r.joiningStatus==="DEFERRED")||
-   (state==="DATE_DUE"&&r.scheduledDate!==null&&r.scheduledDate<=todayIst))
+   (state==="DATE_DUE"&&r.scheduledDate!==null&&r.scheduledDate<=todayIst)||
+   (state==="DATE_MISSING"&&r.scheduledDate===null&&(r.joiningStatus===null||r.joiningStatus==="PENDING")))
    .sort((a,b)=>(a.scheduledDate??"9999-12-31").localeCompare(b.scheduledDate??"9999-12-31")||
      a.companyName.localeCompare(b.companyName)||a.offerId.localeCompare(b.offerId));
  return {counts,rows,todayIst};

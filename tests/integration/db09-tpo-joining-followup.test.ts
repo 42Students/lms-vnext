@@ -51,6 +51,10 @@ afterAll(async()=>{
 it("counts a persisted accepted offer and fences foreign-college and wrong role",async()=>{
  const offerId=await fixture();const own=await getTpoJoiningFollowups(tpo,{seasonId:SEED_IDS.placementSeasonA,state:"PENDING"});
  expect(own.rows.find(o=>o.offerId===offerId)?.scheduledDate).toBe("2026-10-15");
+ if(!pool)throw Error("Isolated PostgreSQL required");
+ await pool.query("UPDATE placement_offers SET joining_date=NULL WHERE id=$1",[offerId]);
+ const unknownDate=await getTpoJoiningFollowups(tpo,{seasonId:SEED_IDS.placementSeasonA,state:"DATE_MISSING"});
+ expect(unknownDate.rows.some(o=>o.offerId===offerId)).toBe(true);
  const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
  await expect(getTpoJoiningFollowups(foreign,{seasonId:SEED_IDS.placementSeasonA}))
   .rejects.toMatchObject({code:"PLACEMENT_SEASON_NOT_FOUND"});

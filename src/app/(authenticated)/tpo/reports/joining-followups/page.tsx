@@ -38,6 +38,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
       className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
       <option value="DEFERRED">Deferred</option><option value="DATE_DUE">Dated and due</option>
+      <option value="DATE_MISSING">Missing joining date</option>
      </select></label>
     <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary">Apply</button>
   </form>
