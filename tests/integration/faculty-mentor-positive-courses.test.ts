@@ -16,6 +16,7 @@ import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assig
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
+import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
@@ -245,6 +246,44 @@ afterAll(async()=>{
 });
 
 describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
+  it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{
+    const {delivery}=await fixture();
+    const lessonRow=await pool.query<{id:string}>(`
+      select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
+      join course_offerings o on o.id=lp.offering_id
+      where o.id=(select offering_id from course_section_deliveries where id=$1)
+      limit 1`,[delivery.id]);
+    const lessonId=lessonRow.rows[0]!.id;
+    const created=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
+      action:"CREATE",lessonId,sequence:10,title:"Faculty owned draft "+runId,
+      description:"Text only",dueAt:null,maxPoints:15,confirmed:true,
+    });
+    expect(created.status).toBe("DRAFT");
+    const edited=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
+      action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
+      title:"Revised draft "+runId,description:"Updated text",dueAt:null,maxPoints:20,
+      confirmed:true,
+    });
+    expect(edited.maxPoints).toBe(20);
+    await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
+      action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
+      title:"Stale write",description:"No",dueAt:null,maxPoints:5,confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(commandFacultyAssignment(learner,{deliveryId:delivery.id},{
+      action:"ARCHIVE",assignmentId:created.id,
+      expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(commandFacultyAssignment(facultyOnly,{deliveryId:SEED_IDS.collegeB},{
+      action:"ARCHIVE",assignmentId:created.id,
+      expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    const events=await pool.query<{event_type:string}>(`
+      select event_type from activity_events where subject_id=$1::text
+      and event_type in ('courses.assignment.created','courses.assignment.updated')`,[created.id]);
+    expect(events.rows.map(x=>x.event_type).sort()).toEqual([
+      "courses.assignment.created","courses.assignment.updated",
+    ]);
+  });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();
     await pool.query(`insert into course_discussion_messages(delivery_id,sender_membership_id,
