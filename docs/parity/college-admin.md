@@ -588,6 +588,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: People Directory
+**Role-directory ordering PARTIAL (2026-10-15):** Student and Faculty directories now use server-side NAME/NEWEST/OLDEST sort before 25-row pagination, with membership-UUID tie breaking and URL-persisted sort state. This is membership-join chronology, not program admission chronology. Strict query and isolated PG sort/role tests authored; browser/legacy parity remains open.
 **Legacy:** `/college-admin/people`
 
 - [ ] Combined role directory fields match.

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, exists, ilike, inArray, isNull, not, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -128,7 +128,11 @@ export async function listCollegeRoleDirectory(
   const [counts, baseRows] = await Promise.all([
     db.select({ total: count() }).from(query),
     db.select().from(query)
-      .orderBy(asc(query.name), asc(query.membershipId))
+      .orderBy(
+        filter.sort === "NEWEST" ? desc(query.joinedAt) :
+          filter.sort === "OLDEST" ? asc(query.joinedAt) : asc(query.name),
+        asc(query.membershipId),
+      )
       .limit(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)
       .offset((filter.page - 1) * COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
   ]);
