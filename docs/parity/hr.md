@@ -475,3 +475,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR notification title search — PARTIAL:** Search authorized job titles in Messages, applied to the exact company-and-college allowlist before notification queries, with GET search retained across pages. No private message body, candidate contact or other-company jobs. Unit and in-test PG fixtures extended, unexecuted.
+
+
+**2026-10-15 chat-10 / recruiter activity lifecycle filters — PARTIAL:** /hr/activity adds explicit Published/Closed/All URL filters at SQL query level after exact company+college job allowlist; counts remain bounded, raw audit metadata hidden. Unit and in-test PostgreSQL filters extended, not executed. Remaining full audit pagination and legacy Messages threading.
