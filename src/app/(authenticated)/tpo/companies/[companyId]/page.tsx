@@ -84,14 +84,22 @@ export default async function TpoCompanyDetailPage({
         title={company.name}
         description="College-linked contacts, placement drives, hiring records and a timeline drawn from persisted events only."
         actions={
-          <Link
-            href={`/tpo/recruiters?add=1&company=${encodeURIComponent(
-              company.name,
-            )}`}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-          >
-            Add recruiter contact
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {relationship?.relationshipStatus === "ACTIVE" ? (
+              <Link
+                href={`/tpo/placements/new/draft?companyId=${encodeURIComponent(company.id)}`}
+                className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+              >
+                Create draft drive
+              </Link>
+            ) : null}
+            <Link
+              href={`/tpo/recruiters?add=1&company=${encodeURIComponent(company.name)}`}
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              Add recruiter contact
+            </Link>
+          </div>
         }
       />
 
