@@ -516,6 +516,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Live Classes
+**Live-session audience filter PARTIAL (2026-10-15):** Live Classes now distinguishes saved shared-offering from section-bound sessions using actual deliveryId and a scoped SQL predicate, not a default assumption. Audience label, pagination and privacy-safe CSV carry the filter; own/empty PG and invalid-value unit fixtures authored. No meeting URL displayed; executed PG/browser validation pending.
+
 **IST date-window CSV parity PARTIAL (2026-10-15):** Downloaded live-class schedule metadata now uses the same chosen from/through IST dates as on-screen pagination, without leaking meeting links. Calendar selectors pass through bounded service validation, with owned/absent-date fixture assertions; runtime and browser proof still pending.
 
 **IST day-range scheduling filter PARTIAL (2026-10-15):** Saved LIVE_CLASS content now filters on configured start/end instants overlapping bounded IST-local days, preserving day selectors in paginated URLs. Strict range and tenant-scoped PostgreSQL fixture authored; independent runtime/browser acceptance remains outstanding.

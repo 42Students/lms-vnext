@@ -4,6 +4,8 @@ import {collegeContentCsvSchema,collegeContentCsvHref,renderCollegeContentMetada
 describe("college video metadata CSV",()=>{
  it("disallows client college or paging and generates fixed encoded href",()=>{
   expect(collegeContentCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
+  expect(collegeContentCsvHref("LIVE_CLASS",{...collegeContentCsvSchema.parse({scope:"SECTION"})}))
+    .toContain("scope=SECTION");
   expect(collegeContentCsvSchema.safeParse({offeringStatus:"DISABLED"}).success).toBe(false);
   expect(collegeContentCsvHref("VIDEO",{...collegeContentCsvSchema.parse({offeringStatus:"ARCHIVED"})}))
     .toContain("offeringStatus=ARCHIVED");
