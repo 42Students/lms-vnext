@@ -9,6 +9,7 @@ const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 export const collegeActivityQuerySchema = z.strictObject({
   actorUserId: z.string().uuid().optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
+  subjectId: z.string().uuid().optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),
@@ -36,6 +37,7 @@ export function collegeActivityHref(
   const params = new URLSearchParams();
   if (filter.actorUserId) params.set("actorUserId", filter.actorUserId);
   if (filter.subjectType) params.set("subjectType", filter.subjectType);
+  if (filter.subjectId) params.set("subjectId", filter.subjectId);
   if (filter.from) params.set("from", filter.from);
   if (filter.to) params.set("to", filter.to);
   if (cursor) {

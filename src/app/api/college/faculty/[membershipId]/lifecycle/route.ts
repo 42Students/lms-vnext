@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { transitionCollegeFaculty } from "@/modules/people/college-faculty-lifecycle-service";
+import { transitionCollegeFaculty, CollegeFacultyLifecycleError } from "@/modules/people/college-faculty-lifecycle-service";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ membershipId: string }> };
@@ -17,5 +17,13 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return NextResponse.json({
       membership: await transitionCollegeFaculty(context, membershipId, await request.json()),
     });
-  } catch (error) { return apiErrorResponse(error); }
+  } catch (error) {
+    if (error instanceof CollegeFacultyLifecycleError) {
+      return NextResponse.json(
+        { error: error.code === "FACULTY_NOT_FOUND" ? "NOT_FOUND" : error.code },
+        { status: error.code === "FACULTY_NOT_FOUND" ? 404 : 409 },
+      );
+    }
+    return apiErrorResponse(error);
+  }
 }

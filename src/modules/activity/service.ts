@@ -81,6 +81,7 @@ const activityFilterSchema = z
       .min(1)
       .max(80)
       .optional(),
+    subjectId: z.string().trim().min(1).max(500).optional(),
     from: activityDateSchema("from").optional(),
     to: activityDateSchema("to").optional(),
     beforeOccurredAt:
@@ -562,6 +563,9 @@ export async function listActivityEvents(
         input.subjectType,
       ),
     );
+  }
+  if (input.subjectId) {
+    conditions.push(eq(activityEvents.subjectId, input.subjectId));
   }
   if (input.from) {
     conditions.push(
