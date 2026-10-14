@@ -48,6 +48,7 @@ export async function CollegeRoleDirectoryWorkspace({
     status: first(params.status),
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
+    rollPresence: first(params.rollPresence),
     cohortId: first(params.cohortId),
     classPresence: first(params.classPresence),
     teaching: first(params.teaching),
@@ -170,6 +171,15 @@ export async function CollegeRoleDirectoryWorkspace({
             {result.cohortOptionsTruncated ? <span className="text-xs text-muted-foreground">
               First 200 batches shown; search by name for others.
             </span> : null}
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Roll number coverage
+            <select name="rollPresence" defaultValue={result.filter.rollPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="PRESENT">Roll recorded</option>
+              <option value="MISSING">Roll missing</option>
+            </select>
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement
