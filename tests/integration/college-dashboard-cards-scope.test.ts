@@ -45,6 +45,9 @@ describe.skipIf(!enabled)("College dashboard cards registered PG",()=>{
     expect(step?.count).toBe(expected.rows[0].n);
     expect(result.cards.find(x=>x.key==="students")?.count).toBeGreaterThanOrEqual(0);
     expect(result.cards.every(x=>x.href.startsWith("/college/"))).toBe(true);
+    const { collegeDashboardEmptyRecordPrompts } = await import("@/modules/admin-ui/college-dashboard-cards-model");
+    const prompts = collegeDashboardEmptyRecordPrompts(result.cards);
+    expect(prompts.every(x=>x.href.startsWith("/college/"))).toBe(true);
   });
   it("uses different scoped counts for another college without leaking fixture",async()=>{
     const result=await getCollegeDashboardCards(adminB);

@@ -1,4 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
+import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -11,6 +13,7 @@ const enabled =
   process.env.DB09_ISOLATED_TEST_DATABASE === "1";
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 
+const profilePool = enabled ? new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}) : null;
 const collegeAdmin: RequestContext = {
   user: {
     id: SEED_IDS.collegeAdminUser,
@@ -45,6 +48,7 @@ const facultyInCollegeB: RequestContext = {
 
 describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial checks", () => {
   afterAll(async () => {
+    await profilePool?.end();
     await closeDatabaseConnection();
   });
 
@@ -61,6 +65,69 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
       .not.toContain(SEED_IDS.facultyCollegeBMembership);
   });
 
+  it("finds roll and registration numbers only inside this college", async () => {
+    if (!profilePool) throw Error("Disposable PG required");
+    const userId=randomUUID(),memberId=randomUUID(),roleId=randomUUID();
+    const uid="directory-roll-"+userId;
+    const roll="ROLL"+userId.slice(0,10).toUpperCase();
+    try {
+      await profilePool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",[userId,uid,"Roll Fixture"]);
+      await profilePool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1::uuid,$2::uuid,$3::uuid)",[memberId,userId,SEED_IDS.collegeA]);
+      await profilePool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1::uuid,$2::uuid,'LEARNER')",[roleId,memberId]);
+      await profilePool.query("INSERT INTO learner_profiles(membership_id,roll_number,registration_number) VALUES($1::uuid,$2::text,$3::text)",[memberId,roll,"REG"+roll]);
+      const own=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:roll});
+      expect(own.items.map(r=>r.membershipId)).toContain(memberId);
+      const faculty=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{q:roll});
+      expect(faculty.items.map(r=>r.membershipId)).not.toContain(memberId);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:roll})).rejects.toBeInstanceOf(AuthorizationError);
+    } finally {
+      await profilePool.query("DELETE FROM learner_profiles WHERE membership_id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM membership_roles WHERE id=$1::uuid",[roleId]);
+      await profilePool.query("DELETE FROM college_memberships WHERE id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
+    }
+  });
+  it("finds Faculty by registered academic title, employment type and college-owned department",async()=>{
+    if (!profilePool) throw Error("Disposable PG required");
+    const userId=randomUUID(),memberId=randomUUID(),roleId=randomUUID(),deptId=randomUUID();
+    const token="Prof"+userId.slice(0,10);
+    try {
+      await profilePool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",[userId,"faculty-search-"+userId,"Metadata Fixture"]);
+      await profilePool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1::uuid,$2::uuid,$3::uuid)",[memberId,userId,SEED_IDS.collegeA]);
+      await profilePool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1::uuid,$2::uuid,'FACULTY')",[roleId,memberId]);
+      await profilePool.query("INSERT INTO departments(id,college_id,name) VALUES($1::uuid,$2::uuid,$3::text)",[deptId,SEED_IDS.collegeA,token+" Dept"]);
+      await profilePool.query("INSERT INTO faculty_profiles(membership_id,primary_department_id,academic_title,employment_type) VALUES($1::uuid,$2::uuid,$3::text,$4::text)",[memberId,deptId,token+" Title",token+" Employee"]);
+      for(const q of [token+" Title",token+" Dept",token+" Employee"]){
+        const own=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{q});
+        expect(own.items.map(r=>r.membershipId)).toContain(memberId);
+        await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{q})).rejects.toBeInstanceOf(AuthorizationError);
+      }
+      const learner=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:token+" Title"});
+      expect(learner.items.map(r=>r.membershipId)).not.toContain(memberId);
+    } finally {
+      await profilePool.query("DELETE FROM faculty_profiles WHERE membership_id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM departments WHERE id=$1::uuid",[deptId]);
+      await profilePool.query("DELETE FROM membership_roles WHERE id=$1::uuid",[roleId]);
+      await profilePool.query("DELETE FROM college_memberships WHERE id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
+    }
+  });
+  it("searches registered own-college active program/batch names without returning foreign learners",async()=>{
+    if(!profilePool)throw Error("Disposable PG required");
+    const rows=await profilePool.query<{name:string}>(
+      "SELECT p.name AS name FROM learner_program_enrollments e "+
+      "JOIN programs p ON p.id=e.program_id JOIN departments d ON d.id=p.department_id "+
+      "WHERE e.membership_id=$1::uuid AND e.status='ACTIVE' AND d.college_id=$2::uuid LIMIT 1",
+      [SEED_IDS.learnerCollegeAMembership,SEED_IDS.collegeA]);
+    if(rows.rows[0]){
+      const results=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:rows.rows[0].name});
+      expect(results.items.map(row=>row.membershipId)).toContain(SEED_IDS.learnerCollegeAMembership);
+    }
+    const absent=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:"never-program-"+SEED_IDS.collegeB});
+    expect(absent.items).toHaveLength(0);
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:"program"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("denies a non-admin in another college before any directory read", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {}))
@@ -68,6 +135,67 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     }
   });
 
+  it("filters account lifecycle in both role directories without changing tenant scope", async () => {
+    for (const kind of ["FACULTY", "LEARNER"] as const) {
+      const active = await listCollegeRoleDirectory(collegeAdmin, kind, {accountStatus:"ACTIVE"});
+      expect(active.items.every(row => row.userStatus === "ACTIVE")).toBe(true);
+      expect(active.items.every(row => row.membershipId !== SEED_IDS.facultyCollegeBMembership)).toBe(true);
+      const disabled = await listCollegeRoleDirectory(collegeAdmin, kind, {accountStatus:"DISABLED"});
+      expect(disabled.items.every(row => row.userStatus === "DISABLED")).toBe(true);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {accountStatus:"ACTIVE"}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
+  it("partitions college learners by persisted active enrollment without mixing foreign memberships", async () => {
+    const all = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {});
+    const active = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {enrollment:"ACTIVE"});
+    const none = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {enrollment:"NONE"});
+    expect(active.total + none.total).toBe(all.total);
+    expect(active.items.every(row => row.membershipId !== SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(facultyInCollegeB, "LEARNER", {enrollment:"ACTIVE"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeRoleDirectory(collegeAdmin, "FACULTY", {enrollment:"NONE"}))
+      .rejects.toThrow("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
+  });
+  it("partitions Faculty memberships by persisted active teaching in their own college", async () => {
+    const all = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {});
+    const assigned = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {teaching:"ASSIGNED"});
+    const none = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {teaching:"NONE"});
+    expect(assigned.total + none.total).toBe(all.total);
+    expect(assigned.items.every(row => row.activeTeachingAssignments > 0)).toBe(true);
+    expect(none.items.every(row => row.activeTeachingAssignments === 0)).toBe(true);
+    await expect(listCollegeRoleDirectory(facultyInCollegeB, "FACULTY", {teaching:"ASSIGNED"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeRoleDirectory(collegeAdmin, "LEARNER", {teaching:"ASSIGNED"}))
+      .rejects.toThrow("LEARNER_TEACHING_FILTER_UNSUPPORTED");
+  });
+  it("sorts both role directories at SQL level before pagination with stable membership ID tie breaks",async()=>{
+    for(const kind of ["LEARNER","FACULTY"] as const){
+      const newest=await listCollegeRoleDirectory(collegeAdmin,kind,{sort:"NEWEST"});
+      const oldest=await listCollegeRoleDirectory(collegeAdmin,kind,{sort:"OLDEST"});
+      for(const [rows,reverse] of [[newest.items,true],[oldest.items,false]] as const)
+        for(let i=1;i<rows.length;i++)
+          expect(reverse ? rows[i-1].joinedAt.getTime() >= rows[i].joinedAt.getTime() :
+            rows[i-1].joinedAt.getTime() <= rows[i].joinedAt.getTime()).toBe(true);
+      expect(newest.items.every(x=>x.membershipId!==SEED_IDS.facultyCollegeBMembership || kind==="FACULTY")).toBe(true);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB,kind,{sort:"NEWEST"}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
+  it("restricts exact Faculty-department selection to the own college and does not apply to Learners",async()=>{
+    const directory=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{});
+    for(const dept of directory.departmentOptions.slice(0,2)){
+      const filtered=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{facultyDepartmentId:dept.id});
+      expect(filtered.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    }
+    const foreignId=SEED_IDS.collegeB;
+    const foreignFilter=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{facultyDepartmentId:foreignId});
+    expect(foreignFilter.items).toHaveLength(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{facultyDepartmentId:foreignId}))
+      .rejects.toThrow("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{facultyDepartmentId:foreignId}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {
