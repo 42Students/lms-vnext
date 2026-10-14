@@ -68,10 +68,7 @@ function SubmissionGradeCard({
 }) {
   const actions =
     assignmentSubmissionActions({
-      gradingStatus:
-        submission.gradingStatus,
-      gradePublished:
-        submission.gradePublished,
+      gradingStatus:submission.gradingStatus,gradePublished:submission.gradePublished,
     });
   const [points, setPoints] = useState(
     submission.pointsAwarded?.toString() ??
@@ -80,6 +77,9 @@ function SubmissionGradeCard({
   const [feedback, setFeedback] = useState(
     submission.feedback ?? "",
   );
+  const unchanged=submission.gradingStatus==="GRADED"&&
+    submission.pointsAwarded===Number(points)&&
+    (submission.feedback??"")===feedback.trim();
   const [saving, setSaving] =
     useState(false);
   const [publishing, setPublishing] =
@@ -326,7 +326,7 @@ function SubmissionGradeCard({
               size="sm"
               type="submit"
               disabled={
-                saving || publishing
+                saving || publishing || unchanged
               }
             >
               {saving

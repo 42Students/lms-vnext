@@ -7,6 +7,7 @@ import {
 import { getDb } from "@/db/client";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
+import {facultyGradeHasChanges} from "./faculty-grade-noop-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -670,6 +671,8 @@ export async function gradeAssignmentSubmission(
   if(current.assignmentStatus!=="PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
+  if(!facultyGradeHasChanges(current,input))
+    throw new CoursesServiceError("ASSIGNMENT_GRADE_NO_CHANGE");
   if(!facultyRegradeFeedbackAllowed(current.gradePublished,input.feedback))
     throw new CoursesServiceError("ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED");
   if (

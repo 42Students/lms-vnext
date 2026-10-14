@@ -1012,3 +1012,14 @@ Faculty Quiz report offers mobile-friendly direct links for both subsets.
 Pure unit and disposable PG read fixtures cover empty attempted vs persisted
 unattempted, invalid filter, foreign Section and learner denied. GET-only;
 no stale write token. PARTIAL until tests/browser/legacy.
+
+## 2026-10-14 Faculty grading idempotence — PARTIAL
+The existing exact-Section Faculty grade/regrade PATCH now rejects a no-op
+score+feedback pair before it can increment the submission version, hide
+a learner-visible published score or create a redundant audit event. Changes
+to either score or learner feedback still go through the existing published
+assignment lock, integer optimistic version and transaction-coupled audit.
+The mobile grading drawer disables Save when no revision exists. Pure model
+unit and the disposable Faculty/Learner grading PG fixture verify rejection
+alongside valid regrading, stale version, role/scope denial and audit event
+counts. Remains PARTIAL: CI and mobile/keyboard/legacy UI acceptance.
