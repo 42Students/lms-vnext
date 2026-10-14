@@ -263,13 +263,6 @@ describe("TPO companies pure aggregation", () => {
       event.type === "DRIVE_CREATED",
     )).toBe(true);
 
-    expect(timeline.filter((event) =>
-      event.type === "OFFER_ISSUED" || event.type === "OFFER_RESPONSE" ||
-      event.type === "JOINING_RECORDED",
-    ).every((event) =>
-      event.href === "/tpo/placements/jobs/job-1/offers/offer-1",
-    )).toBe(true);
-
     expect(timeline.every(
       (event) => Number.isFinite(event.at.getTime()),
     )).toBe(true);

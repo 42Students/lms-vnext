@@ -12,6 +12,10 @@ import { TENANT_LIFECYCLE_PAGE_SIZE, tenantLifecyclePaging, tenantLifecycleQuery
 function scopedTenantSource(context: RequestContext, query?: z.output<typeof tenantLifecycleQuerySchema>) {
   if (!isSuperAdmin(context)) throw new AuthorizationError("college.read");
   const scope = context.adminScope;
+  // A caller-supplied organization filter can never widen or contradict the selected scope.
+  if (scope?.organizationId && query?.organizationId && query.organizationId !== scope.organizationId) {
+    throw new AuthorizationError("college.read");
+  }
   requirePermission(context, "college.read", { collegeId: scope?.collegeId,
     organizationId: query?.organizationId || scope?.organizationId });
   const where: SQL[] = [];

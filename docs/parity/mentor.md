@@ -812,3 +812,89 @@ Unit-model cap/neutralization tests and an own-project PostgreSQL fixture
 cover persisted positive selection and wrong-role/disabled/foreign/forged
 denial. Read-only, so no stale write token applies. **PARTIAL:** real typecheck,
 lint, PostgreSQL, browser download and legacy reports acceptance remain open.
+
+## chat-11 backlog S — global Meetings IST date-window filters (PARTIAL)
+
+Current assigned Mentor global Meetings filters support Today, next 7 IST calendar
+days and previous 7 IST calendar days alongside existing status/search. The
+ALL view retains expired REQUESTED meetings as actionable, without synthesizing
+MISSED status. Pure timezone-boundary tests and the existing same-college/foreign
+PostgreSQL fixture were extended. **PARTIAL:** test/browser execution, large-calendar
+paging and legacy parity remain open.
+
+## chat-11 backlog T — exact-project meeting title search (PARTIAL)
+
+A literal SQL-wildcard-escaped title filter now applies to the persisted
+meeting count and page query, alongside registered status and current-Mentor
+college/module access. Pure unit and in-test meeting PostgreSQL fixture checks
+cover search, percent literals and role denial. **PARTIAL:** test/browser and
+legacy meeting acceptance pending.
+
+## chat-11 backlog U — pending task-review safe CSV (PARTIAL)
+
+The current assigned-Mentor task-review queue now exports up to 200 registered
+IN_REVIEW/latest-version SUBMITTED rows honoring existing search, priority and
+oldest/newest filters. Formula-neutralized CSV includes no learner contact,
+submission URLs, feedback or actor identity. Every bounded page revalidates
+current grants; truncation is explicit. Unit and PG-fixture assertions authored,
+not executed. **PARTIAL:** verified runtime/export/browser and legacy parity open.
+
+## chat-11 backlog V — global Meeting calendar metadata CSV (PARTIAL)
+
+Exact current-Mentor global meetings export supports existing status/search/IST
+period filters, caps at 200 rows and formula-neutralizes human-supplied text.
+No join URLs, learner contacts, meeting notes or external sends. The same role,
+college and Projects-module gates are checked; model/unit and own-project PG
+assertions authored. **PARTIAL:** browser and executed DB/typecheck still open.
+
+## chat-11 backlog X — project-attention type filters (PARTIAL)
+Current authorized Mentor project-attention signals can be filtered by recorded kind without changing personal notifications, producer/scope, or external sends. Pure unit cases authored. PARTIAL pending PG, browser and legacy checks.
+
+## chat-11 backlog Y — Mentor team-history role filter (PARTIAL)
+
+The exact-project registered Team history supports persisted MENTOR vs LEARNER
+role selection alongside current/open/ended membership filters; role is
+applied to both SQL count and paginated rows and preserved in page links.
+No Mentor membership writes or private identities are added. Unit and
+own-project PG assertions authored; **PARTIAL:** executed tests/browser remain.
+
+## chat-11 backlog Z — positive Mentor coverage filters (PARTIAL)
+
+Existing current-assignment Team coverage can filter projects with actual
+active learner memberships and projects with recorded active primary Mentors,
+complementing missing-coverage signals. No members, inferred staffing scores
+or private learner contacts are introduced. Unit and existing in-test PG
+staffing scope checks authored; **PARTIAL:** CLI/browser verification open.
+
+## chat-11 backlog AA — Mentor risk/readiness task-priority drill-ins (PARTIAL)
+
+Existing exact-project readiness supports optional HIGH/MEDIUM/LOW/CRITICAL
+filters on persisted task drill-ins, while keeping overall task counts and
+non-task risk evidence visible and honest. This filter does not invent risk
+scores or hide the existence of recorded lower-priority tasks. Pure and
+owned-PostgreSQL fixture checks authored; **PARTIAL:** actual PG/tsc/browser
+and full legacy readiness behavior remain unverified.
+
+## 2026-10-15 chat-11 AB — Mentor final-review queue ordering (PARTIAL)
+Oldest/newest persisted submission ordering and URL-preserved pagination added to current assigned-project review alerts. The established role, college and project gate remains; strict query validation and pure unit tests are authored. CLI/PG/browser and legacy acceptance remain open.
+
+## 2026-10-15 chat-11 AC — Mentor Resource HTTPS link availability filter (PARTIAL)
+The exact-project Resource directory filters records with credential-free HTTPS links separately from unavailable/unsafe records, in both paginated reads and bounded formula-neutralized metadata CSV. Strict Zod and pure unit assertions authored. Current same-college assigned Mentor authority unchanged. Tests/browser/full legacy resource parity open.
+
+## 2026-10-15 chat-11 AD — active-project state in Mentor team coverage (PARTIAL)
+The current-assignment team coverage view now filters registered PLANNED/ACTIVE/COMPLETED project statuses alongside staffing counts, with URL-preserved pagination, strict invalid-state rejection and unit assertions. Archived project records remain excluded by existing scope; totals keep their authorized whole-portfolio meaning. Real tests/browser and legacy parity remain open.
+
+## 2026-10-15 chat-11 AE — Mentor primary/supporting assignment report (PARTIAL)
+Assigned-project reports now distinguish registered current primary versus supporting Mentor assignments, in page filters, pagination and capped neutralized report CSV. Whole-portfolio counts remain distinct from filtered totals. Strict Zod and model tests authored. No membership changes or learner contact. Actual test/browser/legacy parity open.
+
+## 2026-10-15 chat-11 AF — exact-project meeting type filter (PARTIAL)
+The registered Team & Meeting log filters by GENERAL, PLANNING, STANDUP, REVIEW or RETRO in the same scoped SQL count and paginated query as status/title. URL pagination retains meeting type, with strict invalid-selector unit tests and test-owned PostgreSQL fixture assertions. Existing Mentor role/college/current project checks unchanged; execution and full meeting legacy parity open.
+
+## 2026-10-15 chat-11 AG — Mentor Sprint progress Release status (PARTIAL)
+Cross-project Sprint progress now filters persisted PLANNED, IN_PROGRESS and SHIPPED Release status in the same SQL scope/count/page as Sprint filters, retaining it in pagination and capped CSV. Strict Zod and unit query cases are source-authored. No phantom velocity, scope override or write; CLI/PG/browser and full Sprint/Release legacy acceptance remain open.
+
+## 2026-10-15 chat-11 AH — persisted final-review history title search (PARTIAL)
+Delivery decision history now filters by literal project title with SQL wildcard escape, preserving decision filter/page and limiting reads to currently assigned Mentor project review records. Strict Zod, unit and unique-project DB fixture assertions source-authored. Raw feedback/learner contact not returned. Actual PG/type/lint/browser and legacy history parity remain open.
+
+## 2026-10-15 chat-11 AI — global Mentor project activity importance filter (PARTIAL)
+The cross-assignment sanitized activity feed now supports registered event importance LOW/NORMAL/HIGH/CRITICAL. SQL applies the selector before count/pagination over current same-college assigned Mentor projects; URLs and page-size controls preserve the filter. Only safe labels/timestamps and authorized project links are shown, no raw event summary/metadata/learner identities. Strict unit and PG wrong-role denial assertions authored. Independent CLI/PG/browser and legacy activity completeness still open.

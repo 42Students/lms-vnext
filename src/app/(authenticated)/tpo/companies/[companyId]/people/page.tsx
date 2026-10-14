@@ -4,7 +4,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoCompanyPersonEditor } from "@/components/placements/tpo-company-person-editor";
 import { listTpoCompanyPeople } from "@/modules/placements/tpo-company-person-service";
-import { tpoCompanyLeadHref } from "@/modules/placements/tpo-company-action-model";
 
 export default async function TpoCompanyPeoplePage({
   params,
@@ -34,12 +33,7 @@ export default async function TpoCompanyPeoplePage({
         : <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
             {company.contacts.map(contact => (
               <li key={contact.id} className="p-4 text-sm">
-                <Link
-                  href={tpoCompanyLeadHref(contact.id)}
-                  className="inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline"
-                >
-                  {contact.name} · Open recruiter contact →
-                </Link>
+                <strong>{contact.name}</strong>
                 <span className="ml-2 text-body">{contact.designation ?? "Designation not recorded"}</span>
                 <p className="mt-1 break-all text-muted-foreground">{contact.email ?? "Email not recorded"}</p>
               </li>

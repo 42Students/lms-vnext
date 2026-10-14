@@ -7,7 +7,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
 import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
-import { tpoCompanyOfferDetailHref } from "@/modules/placements/tpo-company-action-model";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -85,22 +84,14 @@ export default async function TpoCompanyDetailPage({
         title={company.name}
         description="College-linked contacts, placement drives, hiring records and a timeline drawn from persisted events only."
         actions={
-          <div className="flex flex-wrap gap-2">
-            {relationship?.relationshipStatus === "ACTIVE" ? (
-              <Link
-                href={`/tpo/placements/new/draft?companyId=${encodeURIComponent(route.companyId)}`}
-                className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
-              >
-                Create draft drive
-              </Link>
-            ) : null}
-            <Link
-              href={`/tpo/recruiters?add=1&company=${encodeURIComponent(company.name)}`}
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-            >
-              Add recruiter contact
-            </Link>
-          </div>
+          <Link
+            href={`/tpo/recruiters?add=1&company=${encodeURIComponent(
+              company.name,
+            )}`}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+          >
+            Add recruiter contact
+          </Link>
         }
       />
 
@@ -405,12 +396,6 @@ export default async function TpoCompanyDetailPage({
                       >
                         {offer.status}
                       </StatusBadge>
-                      <Link
-                        href={tpoCompanyOfferDetailHref(offer.jobId, offer.id)}
-                        className="mt-2 block text-xs font-semibold text-primary-text hover:underline"
-                      >
-                        Open offer record →
-                      </Link>
                     </td>
                     <td className="px-4 py-3">
                       {offer.joiningStatus ?? "Not recorded"}

@@ -9,6 +9,10 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
+import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+import {getMentorTeamHistory} from "@/modules/projects/mentor-team-history-service";
+import {getMentorTeamCoverage} from "@/modules/projects/mentor-team-coverage-service";
 import {filterMentorCalendar,mentorCalendarFiltersSchema}
   from "@/modules/projects/mentor-calendar-filter-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -89,12 +93,55 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
         meetingId,project.id,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,secondId,
         SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
       ]);
+    const staffed=await getMentorTeamCoverage(mentor,{
+      filter:"HAS_LEARNERS",search:project.title,page:1,
+    });
+    expect(staffed.items).toEqual([expect.objectContaining({projectId:project.id})]);
+    const primary=await getMentorTeamCoverage(mentor,{
+      filter:"HAS_PRIMARY_MENTOR",search:project.title,page:1,
+    });
+    expect(primary.items).toHaveLength(1);
+    await expect(getMentorTeamCoverage(learner,{
+      filter:"HAS_LEARNERS",search:"",page:1,
+    })).rejects.toBeDefined();
+    const learners=await getMentorTeamHistory(mentor,{
+      projectId:project.id,view:"ALL",role:"LEARNER",page:1,
+    });
+    expect(learners.items.every(row=>row.role==="LEARNER")).toBe(true);
+    expect(learners.items.length).toBeGreaterThan(0);
+    const mentors=await getMentorTeamHistory(mentor,{
+      projectId:project.id,view:"ALL",role:"MENTOR",page:1,
+    });
+    expect(mentors.items.every(row=>row.role==="MENTOR")).toBe(true);
+    await expect(getMentorTeamHistory(learner,{
+      projectId:project.id,view:"ALL",role:"LEARNER",page:1,
+    })).rejects.toBeDefined();
     const all=await listMyMentorCalendarMeetings(mentor);
     const owned=all.filter(row=>row.projectId===project.id);
     expect(owned).toHaveLength(2);
+    const csv=mentorCalendarCsv(owned,0);
+    expect(csv).toContain("IST");
+    expect(csv).not.toContain("https://meet.example.org/room");
     const query=mentorCalendarFiltersSchema.parse({status:"REQUESTED",search:"checkpoint"});
     expect(filterMentorCalendar(owned,query).map(row=>row.id)).toEqual([meetingId]);
-    expect(filterMentorCalendar(owned,{status:"ALL",search:"nonsense"})).toEqual([]);
+    expect(filterMentorCalendar(owned,{status:"ALL",search:"nonsense",period:"ALL"})).toEqual([]);
+    const inNovember=filterMentorCalendar(owned,{...query,period:"NEXT_7_DAYS"},
+      new Date("2026-11-01T00:00:00Z"));
+    expect(inNovember.map(row=>row.id)).toEqual([meetingId]);
+    const selected=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,status:"REQUESTED",search:"checkpoint",page:1,
+    });
+    expect(selected.total).toBe(1);
+    expect(selected.items.map(row=>row.id)).toEqual([meetingId]);
+    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,type:"GENERAL"})).total).toBe(1);
+    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,type:"RETRO"})).total).toBe(0);
+    const literal=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,search:"%",page:1,
+    });
+    expect(literal.total).toBe(0);
+    await expect(getMentorTeamMeetings(learner,{
+      projectId:project.id,search:"",page:1,
+    })).rejects.toBeDefined();
     await expect(listMyMentorCalendarMeetings(learner)).rejects.toBeDefined();
     const disabled:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
     await expect(listMyMentorCalendarMeetings(disabled)).rejects.toBeDefined();

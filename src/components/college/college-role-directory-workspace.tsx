@@ -11,9 +11,11 @@ import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
+  collegeDirectorySearchHint,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
+import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -44,6 +46,11 @@ export async function CollegeRoleDirectoryWorkspace({
   const input = {
     q: first(params.q),
     status: first(params.status),
+    accountStatus: first(params.accountStatus),
+    enrollment: first(params.enrollment),
+    teaching: first(params.teaching),
+    facultyDepartmentId: first(params.facultyDepartmentId),
+    sort: first(params.sort),
     page: first(params.page),
   };
   const parsed = collegeRoleDirectoryQuerySchema.safeParse(
@@ -91,6 +98,10 @@ export async function CollegeRoleDirectoryWorkspace({
                 Import CSV
               </Link>
             ) : null}
+            <Link href={collegePeopleExportHref({q:result.filter.q,role:kind,status:result.filter.status})}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Export {kind === "FACULTY" ? "Faculty" : "Learner"} CSV (max 1,000)
+            </Link>
             <Link href="/college/people"
               className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
               People directory
@@ -102,7 +113,7 @@ export async function CollegeRoleDirectoryWorkspace({
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">
-            Name or email
+            {collegeDirectorySearchHint(kind)}
             <input
               type="search"
               name="q"
@@ -123,6 +134,53 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ACTIVE">Active</option>
               <option value="SUSPENDED">Suspended</option>
               <option value="ENDED">Ended</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Platform account
+            <select name="accountStatus" defaultValue={result.filter.accountStatus}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All accounts</option>
+              <option value="ACTIVE">Active accounts</option>
+              <option value="DISABLED">Disabled accounts</option>
+            </select>
+          </label>
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active enrollment
+            <select name="enrollment" defaultValue={result.filter.enrollment}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="ACTIVE">Has active program enrollment</option>
+              <option value="NONE">No active program enrollment</option>
+            </select>
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Department
+            <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All departments</option>
+              {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
+            </select>
+            {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              Only first 200 departments shown; use name search for others.
+            </span> : null}
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Course teaching
+            <select name="teaching" defaultValue={result.filter.teaching}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All faculty</option>
+              <option value="ASSIGNED">Has active teaching</option>
+              <option value="NONE">No active teaching</option>
+            </select>
+          </label> : null}
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Order
+            <select name="sort" defaultValue={result.filter.sort}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="NAME">Name A–Z</option>
+              <option value="NEWEST">Newest membership</option>
+              <option value="OLDEST">Oldest membership</option>
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
@@ -219,6 +277,11 @@ export async function CollegeRoleDirectoryWorkspace({
           ) : null}
         </div>
       </nav>
+      <p className="text-xs leading-5 text-muted-foreground">
+        CSV applies name/email and membership-status filters only. Platform account,
+        academic enrollment and teaching filters do not apply to export.
+        College Admin CSV includes contacts and is capped at 1,000 rows.
+      </p>
       <p className="text-xs leading-5 text-muted-foreground">
         Read-only source: registered memberships, roles and related college-owned records.
         {kind === "FACULTY"
