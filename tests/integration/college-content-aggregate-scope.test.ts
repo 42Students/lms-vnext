@@ -161,6 +161,12 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       expect.arrayContaining([ids.video, ids.youtube]),
     );
     expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    const [shared,sectionOnly]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,scope:"SHARED"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,scope:"SECTION"}),
+    ]);
+    expect(shared.items.map(row=>row.id)).toContain(ids.resource);
+    expect(sectionOnly.items).toEqual([]);
     const [scopedResource, absentCourse] = await Promise.all([
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: "UNKNOWN-COURSE" }),
