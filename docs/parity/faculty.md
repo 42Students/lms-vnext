@@ -549,3 +549,19 @@ The existing unique-fixture Faculty PostgreSQL test is extended with success
 (unavailable state) and wrong-role/foreign-scope checks but not executed here.
 Posting waits for a promoted DB10 migration and Faculty authoring/audit policy.
 The course notices capability remains PARTIAL and blocked.
+
+## Faculty Quiz individual-attempt detail (2026-10-14)
+
+The read-only `/teacher/report/quiz/[quizId]/attempts?deliveryId=...`
+now shows Section-authorized persisted attempt rows with score, submission
+instant, per-question correctness and earned/possible points. Aggregate
+question accuracy continues to use *latest* attempt per learner, while the
+individual-attempt list explicitly includes retakes. Faculty permission,
+current persisted teaching assignment and matching Quiz/delivery are checked
+before any answer rows are fetched. The page labels unpublished results
+as private, does not change publication, and does not expose raw selected
+option IDs to the page. Pagination is bounded to ten attempts per page, with
+honest empty/error/loading states and a link from the main Quiz report.
+Pure model tests and seeded PostgreSQL success-empty + foreign/wrong-role
+denial assertions are authored. Actual attempt-populated PostgreSQL
+and authenticated browser acceptance remain PARTIAL.

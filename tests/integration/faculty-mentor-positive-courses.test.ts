@@ -24,6 +24,7 @@ import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
 import { getFacultySectionNotices } from "@/modules/courses/faculty-notices-service";
+import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -326,6 +327,21 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(gradedCsv.csv).not.toContain('"NOT_SUBMITTED"');
     await expect(getFacultyReportCsvForDownload(faculty,{
       kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"LATE",
+    })).rejects.toBeDefined();
+    const drill=await getFacultyQuizAttemptDrilldown(faculty,{
+      quizId:quiz.id,deliveryId:delivery.id,page:1,
+    });
+    expect(drill.total).toBe(0);
+    expect(drill.items).toEqual([]);
+    expect(drill.questions).toHaveLength(1);
+    await expect(getFacultyQuizAttemptDrilldown(learner,{
+      quizId:quiz.id,deliveryId:delivery.id,
+    })).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(faculty,{
+      quizId:quiz.id,deliveryId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(faculty,{
+      quizId:quiz.id,deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
     })).rejects.toBeDefined();
     const csvQuiz=await getFacultyReportCsvForDownload(faculty,{
       kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,
