@@ -914,3 +914,7 @@ Closure checklist:
 - [ ] Loading skeleton, hard-error retry and visibility-refresh behavior are verified.
 - [x] Role redirect/fence behavior is server-safe.
 - [x] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.
+
+## Placement-only notification preferences — chat-4 (2026-10-14)
+
+PARTIAL — New mobile-friendly `/learn/my-placements/notification-preferences` lets the signed-in Learner explicitly confirm updates to the two registered P2 candidate-preferences notification flags. A narrow same-origin PUT uses strict Zod booleans and confirmation, central placements.read, live own-college LEARNER role/paid participation checks, and a single transactional actor audit on real changes. The update preserves role/location/CTC preferences. No-op retries do not generate fake audits. Unique-fixture PostgreSQL tests cover success, suspension, forged college, revoked role and wrong-role denials; they are authored but not executed. This is not a global course/security notification opt-out; producer delivery, browser validation and full legacy parity remain OPEN.
