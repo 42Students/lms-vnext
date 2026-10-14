@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref, isFacultyCourseTab } from "@/modules/courses/faculty-course-navigation";
+import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref, isFacultyCourseTab,validFacultyDefaultDeliveryId } from "@/modules/courses/faculty-course-navigation";
 
 describe("Faculty course legacy tab navigation contract", () => {
+  it("rejects malformed Section IDs before canonical Overview redirect",()=>{
+    expect(validFacultyDefaultDeliveryId("00000000-0000-4000-8000-000000000001")).toBe(true);
+    expect(validFacultyDefaultDeliveryId("other-college")).toBe(false);
+    expect(validFacultyDefaultDeliveryId("../learn")).toBe(false);
+    expect(validFacultyDefaultDeliveryId(null)).toBe(false);
+  });
   it("preserves all five distinct legacy daily-use pages in original order", () => {
     expect(facultyCourseTabs.map((tab) => tab.path)).toEqual([
       "home", "blueprint", "students", "attendanceDetail", "discussions",

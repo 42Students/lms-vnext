@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {CoursesServiceError} from "./errors";
 import {neutralizeFacultyCsvCell,capFacultyReportCsvRows} from "./faculty-report-csv";
 export const facultyGradebookParamsSchema=z.object({
   deliveryId:z.string().uuid(),
@@ -124,4 +125,13 @@ export function facultyGradebookViewHref(
   const suffix=params.toString();
   return "/teacher/courses/"+encodeURIComponent(deliveryId)+"/gradebook"+
     (suffix?"?"+suffix:"");
+}
+
+/** Unauthorized learner and unknown roster member share a private 404.
+ * Unexpected failures must remain visible through the error boundary. */
+export function facultyGradebookPrivateNotFound(error:unknown):boolean {
+ return error instanceof CoursesServiceError && [
+  "MEMBERSHIP_NOT_FOUND","SECTION_DELIVERY_NOT_FOUND",
+  "FACULTY_TEACHING_SCOPE_REQUIRED","LEARNING_ACCESS_DENIED",
+ ].includes(error.code);
 }

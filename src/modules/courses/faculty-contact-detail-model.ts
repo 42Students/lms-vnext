@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {CoursesServiceError} from "./errors";
 
 export const facultyContactDetailParamsSchema = z.object({
   contactsTab: z.enum(["allContacts", "teachers", "students"]),
@@ -24,4 +25,10 @@ export function facultyContactTabMatches(
 export function facultyContactDetailHref(tab: string, membershipId: string) {
   return "/teacher/contacts/" + encodeURIComponent(tab) +
     "/" + encodeURIComponent(membershipId);
+}
+
+/** An unavailable or foreign directory member should never disclose presence. */
+export function facultyContactDetailHidden(error:unknown):boolean {
+ return error instanceof CoursesServiceError &&
+  ["MEMBERSHIP_NOT_FOUND","FACULTY_TEACHING_SCOPE_REQUIRED"].includes(error.code);
 }
