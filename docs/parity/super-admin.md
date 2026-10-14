@@ -653,3 +653,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Semester–Course Mapping — PARTIAL:** `/admin/semester-courses` read-first maps persisted program-term course records, joins both course and program departments to the exact selected college, exposes search, term active/inactive status and 25-row pagination with mobile/error/empty states. No assumption that numbered terms equal offering academic periods. Pure and disposable PostgreSQL fixture with foreign/wrong-role assertions authored, not executed; mapping writes, full legacy selectors and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty Assignment — PARTIAL:** `/admin/faculty-assignment` read-first persisted teaching assignments, joined course, section, program and faculty membership to exact selected college; search, active/ended lifecycle, IST start, bounded 25-row cards, loading/error/empty/mobile states. No reassignment write privileges. Unit and disposable PG in-test fixture foreign/wrong-role assertions authored, unexecuted; atomic reassignment, selector UI and legacy parity still open.
