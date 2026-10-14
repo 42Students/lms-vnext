@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 
@@ -15,7 +16,7 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
   const [error, setError] = useState<string | null>(null);
   const available = [
     { action: "PUBLISH" as const, decision: readiness.publish },
-    { action: "CLOSE" as const, decision: readiness.close },
+
     { action: "REOPEN" as const, decision: readiness.reopen },
   ];
   const selected = available.find((item) => item.action === action) ?? null;
@@ -62,6 +63,18 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
         eligibility policy, an active role, an evaluative round and an active season/company.
         Reopen is blocked after applied results or accepted offers.
       </p>
+      <div className="mt-4">
+        {readiness.close.allowed ? (
+          <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+            Review close consequences before confirming
+          </Link>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            CLOSE blockers: {readiness.close.blockers.join(", ")}
+          </p>
+        )}
+      </div>
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         {available.map((item) => (
           <button
