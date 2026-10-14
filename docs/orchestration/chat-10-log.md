@@ -66,3 +66,5 @@
 - 2026-10-15 — HR Company Reports CSV PARTIAL: company/college-scoped aggregate funnel, 200 cap and safe quoting, tests authored not executed.
 
 - 2026-10-15 — HR notification pagination PARTIAL: exact unread/total SQL counts and 25-row pages, Today count label fixed. Unit authored; PG/browser unexecuted.
+
+- 2026-10-15 HR notification title search PARTIAL: scoped drive-name filters, URL persistence; unit+PG tests unexecuted.
