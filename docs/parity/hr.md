@@ -502,3 +502,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Request Drive round ordering — PARTIAL:** Accessible Up/Down controls reorder unsent rounds with boundary guards and immutable draft projection; no network writes or approval state is fabricated. Unit tests authored, not run. Browser acceptance remains.
+
+
+**2026-10-15 chat-10 / Request Drive student preview sequence — PARTIAL:** Local-only validated preview now enumerates round sequence/kind/name and compensation/eligibility (not just count), using top-level const for display fields. Pure model/unit ensures round order; no misleading approval or storage. Remaining real student-facing schema integration and browser acceptance.
