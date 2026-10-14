@@ -28,3 +28,5 @@
 - 2026-10-14 — Today results due PARTIAL: company/college-authorized upcoming result deadlines on Today, no external notifications; pure/unit + isolated PG tests authored, unexecuted.
 
 - 2026-10-14 — HR round contact privacy PARTIAL: user ACTIVE + same-college membership + submission/shortlist + company identity; defense-in-depth model and PG guard tests authored, gates pending.
+
+- 2026-10-14 — HR Calendar RESULTS_DUE day grouping PARTIAL: due-only IST days and agenda/calendar badges; unit and PG fixture updated, execution pending.

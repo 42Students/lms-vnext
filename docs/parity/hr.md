@@ -418,3 +418,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Shared candidate contact privacy — PARTIAL:** Recruiter round read now explicitly requires an ACTIVE learner user, ACTIVE same-college membership, SUBMITTED application, SHORTLISTED screening, exact employer company and previously authorized job. Applies SQL active-user filter and pure post-query disclosure guard before round participant names/emails are projected. Unit privacy matrix + disposable PG own/foreign-company/college/wrong-role tests authored, unexecuted. Remaining genuine shortlist user fixture, share-marker parity, runtime/browser privacy acceptance.
+
+
+**2026-10-14 chat-10 HR Calendar RESULTS_DUE day placement — PARTIAL:** Persisted recruiter-scope results-due events now appear in the IST week/month day columns and agenda, including due-only calendar days and round deep links. No invented SLOT data. Unit and prior in-test PostgreSQL authorization fixture extended but not executed. Remaining slot table, mobile/browser acceptance, and stale-load distinctions.
