@@ -100,6 +100,9 @@ Filters/actions:
 - [ ] Search/filter/export behavior matches.
 - [ ] All seven filter controls/toggles match.
 - [ ] Bulk Assign Owner uses review/confirmation.
+
+**W50 PARTIAL:** DB09-backed TPO Bulk Assign Owner now offers active same-college placement staff (TPO/Faculty/College Admin) as target owners and lets operators confirm up to 100 filtered, non-joined, non-unsubscribed leads. Same-origin strict POST, TPO+college permissions, sorted row locks and an expected-current-owner check prevent stale reassignment. Every changed row and its actor-attributed immutable NOTE audit commit together; unchanged/foreign/stale/protected rows return honest per-lead outcomes. The registered DB09 principal guard validates the target under SHARE locks. Legacy owner filters, unassign semantics, large-staff pagination, exact selection/modal UX, browser verification and executed isolated PostgreSQL tests remain open.
+
 - [ ] Bulk Mark Contacted uses review/confirmation.
 - [ ] Bulk Not Now opens reason/revisit flow.
 
