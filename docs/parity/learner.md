@@ -1068,3 +1068,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L29-012 PARTIAL:** Learner notifications now canonicalize the course list, persisted delivery detail and course home actions, rejecting malformed delivery IDs and unexpected course paths while removing caller-supplied scope parameters. Existing course delivery routes enforce enrollment and learner membership. New pure-model/own-course PostgreSQL tests authored; runtime and mobile navigation acceptance pending. Course feature files remain under chat-7 ownership.
+
+
+**2026-10-15 chat-5 L29-013 PARTIAL:** Notification project actions now recognize the own Projects directory and exact project instance UUID with a single permitted legacy tab (including Board and Delivery). Arbitrary tenant/actor selectors are stripped; forged/duplicate tabs and unexpected project URLs fail closed. The destination still enforces learner project-membership access. Unit and independent own-membership PostgreSQL denial evidence authored; project producer-to-inbox and browser verification outstanding. No chat-7 Projects files changed.
