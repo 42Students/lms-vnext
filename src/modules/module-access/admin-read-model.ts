@@ -132,3 +132,8 @@ export function collegeModuleCardSummary(
   persisted: modules.filter(x=>x.source==="PERSISTED").length,
  };
 }
+
+/** Describes stored lower-level overrides without claiming effective learner access. */
+export function summarizeStoredModuleOverrides(items:readonly {enabled:boolean;locked:boolean}[]) {
+ return {rules:items.length,enabled:items.filter(x=>x.enabled).length,locked:items.filter(x=>x.locked).length};
+}

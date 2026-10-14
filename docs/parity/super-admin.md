@@ -586,3 +586,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Feature Controls mobile matrix — PARTIAL:** /admin/features now renders each selected-college module decision as a compact card below desktop width; no forced 50rem-wide table on mobile. Keeps existing server-authored optional-module resolution, source-default versus persisted rule provenance, locked-state labels, search, scope safety and pagination. Desktop table stays at lg; all mutation/toggle gaps remain. Pure model/unit and in-test PG own/foreign/wrong-role tests authored, not executed; browser no-horizontal-scroll acceptance pending.
+
+
+**2026-10-14 Chat 6 / Module Access hierarchy mobile — PARTIAL:** Selected college Feature Controls detail now presents global/organization/college inheritance and paginated descendant override rows as mobile-first cards, with desktop table retained only at lg. Derived source-backed summary counts from visible override rows, without representing them as effective student entitlements. Existing authenticated college scope and learner trace semantics unchanged. Pure unit and isolated PG in-test own/foreign/wrong-role tests authored; tsc/lint/DB/browser unexecuted. Remaining: full editing/lock workflows and exact legacy interaction parity.
