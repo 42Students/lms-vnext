@@ -17,6 +17,7 @@ import { createLearningPath, transitionLearningPath } from "@/modules/courses/le
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
+import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
@@ -246,6 +247,49 @@ afterAll(async()=>{
 });
 
 describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
+  it("authors Section quiz questions with stale, wrong-role, and foreign-scope denial",async()=>{
+    const {delivery}=await fixture();
+    const lessonRow=await pool.query<{id:string}>(`
+      select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
+      join course_offerings o on o.id=lp.offering_id
+      where o.id=(select offering_id from course_section_deliveries where id=$1) limit 1`,[delivery.id]);
+    const questions=[{type:"SINGLE_CHOICE" as const,prompt:"Original question",points:5,sequence:0,
+      options:[{text:"Correct",correct:true,sequence:0},{text:"Wrong",correct:false,sequence:1}]}];
+    const draft=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"CREATE",lessonId:lessonRow.rows[0]!.id,sequence:15,
+      title:"Faculty quiz "+runId,description:null,dueAt:null,maxAttempts:2,
+      questions,confirmed:true,
+    });
+    const revised=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"EDIT",quizId:draft.id,expectedUpdatedAt:draft.updatedAt.toISOString(),
+      title:"Revised quiz "+runId,description:null,dueAt:null,maxAttempts:2,
+      questions:[{...questions[0],prompt:"Revised question"}],confirmed:true,
+    });
+    expect(revised.totalPoints).toBe(5);
+    await expect(commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"PUBLISH",quizId:draft.id,
+      expectedUpdatedAt:draft.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(commandFacultyQuiz(learner,{deliveryId:delivery.id},{
+      action:"PUBLISH",quizId:draft.id,
+      expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(commandFacultyQuiz(facultyOnly,{deliveryId:SEED_IDS.collegeB},{
+      action:"PUBLISH",quizId:draft.id,
+      expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    const published=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"PUBLISH",quizId:draft.id,
+      expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    });
+    expect(published.status).toBe("PUBLISHED");
+    const events=await pool.query<{event_type:string}>(`
+      select event_type from activity_events where subject_id=$1::text
+      and event_type like 'courses.quiz.%'`,[draft.id]);
+    expect(events.rows.map(row=>row.event_type).sort()).toEqual([
+      "courses.quiz.created","courses.quiz.published","courses.quiz.updated",
+    ]);
+  });
   it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{
     const {delivery}=await fixture();
     const lessonRow=await pool.query<{id:string}>(`

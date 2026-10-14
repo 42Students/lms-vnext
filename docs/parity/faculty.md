@@ -752,3 +752,13 @@ same-origin guards remain authoritative. A dedicated pure model test and
 unique-fixture PostgreSQL command tests cover success, stale, cross-Section,
 wrong-role and audit. **Not DONE:** browser/keyboard/mobile and exact
 legacy edit/submission-grade modal acceptance plus executed PG/lint/tsc.
+
+## 2026-10-14 Faculty All Quizzes authoring recovery — PARTIAL
+Existing draft quiz builder now consumes the actual nested GET response, safely
+ignores stale overlapping load responses, restores local due instants without
+UTC hour drift, validates unique options and correct selections before POST,
+requires an explicit confirmation and blocks published-question editing.
+The existing own-Section command retains row lock, Zod and transactional audit;
+unique Faculty-only fixture PG tests add create/edit/publish, old token,
+wrong-role and foreign-Section denial. Outstanding: independently execute PG,
+unit, ESLint/tsc, browser/keyboard/mobile, exact legacy result-edit parity.
