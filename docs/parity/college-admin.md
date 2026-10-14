@@ -296,6 +296,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Seating-capacity filter PARTIAL (2026-10-15):** Room directory now accepts 1–5000 minimum configured seats, enforced by the shared scoped list query before pagination and persisted in filter links. Isolated PG fixture checks inclusive boundaries, with existing tenant and wrong-role denials unchanged. Execution and mobile/browser acceptance still open.
+
 **Hall cancellation PARTIAL (2026-10-14):** A confirmed per-session Cancel action on the hall availability page now persists SCHEDULED→CANCELLED, takes a required reason and millisecond-safe updatedAt token, locks the owning college hall and session, and blocks sessions already started or linked to attendance/course-delivery evidence. One immutable section audit event is written transactionally. Same-origin PATCH, pure-model test and disposable-PostgreSQL cross-college, wrong-role, stale/evidence and positive fixtures authored. Rescheduling, cross-writer universal Hall locking and real browser/database execution remain open; PARTIAL only.
 
 **Hall Faculty concurrency PARTIAL (2026-10-14):** The single-session booking writer now locks the selected Faculty account, membership and role exclusively before reading schedule overlap. Requests for the same Faculty in different halls/classes serialize through that lock; disabled Faculty are rejected. Pure active-identity tests and an in-test two-hall/two-class PostgreSQL concurrent overlap witness added. This covers this booking writer only: other schedule writers still need a shared lock convention or registered exclusion constraints. PostgreSQL execution remains blocked by sandbox user restrictions; legacy/browser verification and full rescheduling remain open.
