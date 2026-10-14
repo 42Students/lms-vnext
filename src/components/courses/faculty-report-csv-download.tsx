@@ -4,7 +4,9 @@ import Link from "next/link";
  * Downloads are regenerated at GET time from the current server-verified
  * Faculty teaching assignment, rather than trusting stale serialized scores.
  */
-export function FacultyReportCsvDownload({ href }: { href:string }) {
+export function FacultyReportCsvDownload({
+  href,notice,
+}: {href:string;notice?:string}) {
   return <div className="flex flex-wrap items-center gap-3 print:hidden">
     <Link
       href={href}
@@ -12,5 +14,6 @@ export function FacultyReportCsvDownload({ href }: { href:string }) {
     >
       Download CSV
     </Link>
+    {notice?<p className="text-xs text-muted-foreground">{notice}</p>:null}
   </div>;
 }

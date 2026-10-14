@@ -21,10 +21,12 @@ export async function GET(request:Request,{params}:RouteContext) {
     const query = parseFacultyCsvDownloadUrl(request.url,{
       kind:path.kind,assessmentId:path.assessmentId,
     });
-    const {csv,filename} = await getFacultyReportCsvForDownload(context,query);
+    const {csv,filename,omittedRows} = await getFacultyReportCsvForDownload(context,query);
+    const headers=new Headers(facultyCsvAttachmentHeaders(filename));
+    headers.set("X-Export-Truncated",omittedRows>0?"true":"false");
+    headers.set("X-Export-Omitted-Rows",String(omittedRows));
     return new Response("\uFEFF" + csv,{
-      status:200,
-      headers:facultyCsvAttachmentHeaders(filename),
+      status:200,headers,
     });
   } catch (error) {
     return apiErrorResponse(error);
