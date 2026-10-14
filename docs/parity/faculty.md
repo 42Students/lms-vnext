@@ -1446,3 +1446,6 @@ Quiz CREATE and EDIT now validate title, instructions, bounded integer attempt c
 
 ## 2026-10-15 Round 5 Contacts Zod 4 default typing repair — PARTIAL
 Contacts selector defaults now use input-side Zod prefault values before numeric transforms, so the parser still returns numeric page/size without a mismatched output-default type. Unit/default and browser verification pending.
+
+## 2026-10-15 R6 Faculty Course page strict decimal selectors — PARTIAL
+The Course list now accepts only bounded positive integer page selectors (or ordinary URL decimal strings), rejecting duplicate array values, booleans, exponent notation and leading-zero aliases that Zod number coercion would silently admit. Existing validated query links are unchanged. Unit regressions authored; executed page/PG acceptance pending.
