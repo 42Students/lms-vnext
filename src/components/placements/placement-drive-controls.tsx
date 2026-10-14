@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementCandidateEvidenceEditor } from "./placement-candidate-evidence-editor";
+import type { TpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 
 type RoundKind =
   | "TALK"
@@ -218,8 +219,10 @@ function FieldLabel({
 
 export function PlacementDriveControls({
   data,
+  scheduleWarnings,
 }: {
   data: PlacementDriveControlData;
+  scheduleWarnings?: TpoDriveScheduleWarnings;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -1396,6 +1399,27 @@ export function PlacementDriveControls({
           <p className="mt-1 text-sm text-body">
             Stage results first. Applying a staged result is the explicit step that advances candidate progression.
           </p>
+          {scheduleWarnings ? (
+            <div className="mt-3 rounded-lg border border-border bg-surface p-3 text-sm text-body">
+              {scheduleWarnings.state === "UNAVAILABLE"
+                ? "Venue collision checking is unavailable. Do not assume the schedule is clear."
+                : scheduleWarnings.state === "LIMITED"
+                  ? "Venue collision scan was capped at 1,000 rounds. Results are incomplete."
+                  : scheduleWarnings.collisions > 0 || scheduleWarnings.unknown > 0
+                    ? String(scheduleWarnings.collisions) + " collision warning(s) and " +
+                      String(scheduleWarnings.unknown) + " unassessable round(s) in this drive."
+                    : "No persisted venue overlap was proven for the current drive within the assessed upcoming window. This is not schedule clearance."}
+              {" "}
+              <a href="/tpo/placements/schedule-conflicts?days=90"
+                className="font-semibold text-primary-text hover:underline">
+                Review college venue conflicts →
+              </a>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Persisted on-campus schedules only; unsaved form edits, student conflicts
+                and dates outside the next 90 days are not assessed. Recheck after saving.
+              </p>
+            </div>
+          ) : null}
         </div>
         {data.rounds.map((round) => {
           const schedule =
@@ -1429,6 +1453,14 @@ export function PlacementDriveControls({
                   {humanize(round.status)}
                 </StatusBadge>
               </div>
+
+              {scheduleWarnings?.warnings
+                .find((entry) => entry.roundId === round.id)?.messages.map((message) => (
+                  <p key={message} role="status"
+                    className="mt-3 rounded-md border border-border bg-surface-secondary p-3 text-sm text-warning">
+                    {message}
+                  </p>
+                ))}
 
               {(round.status === "PENDING" ||
                 round.status ===
