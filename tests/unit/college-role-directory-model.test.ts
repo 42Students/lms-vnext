@@ -42,7 +42,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(students.searchParams.has("teaching")).toBe(false);
     expect(students.searchParams.has("collegeId")).toBe(false);
     expect(collegeRoleDirectoryHref("LEARNER", {
-      q: "", status: "ALL", accountStatus: "ALL", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", teaching: "ALL", page: 1,
     })).toBe("/college/students");
   });
 
