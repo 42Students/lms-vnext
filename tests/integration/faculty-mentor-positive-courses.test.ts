@@ -1,3 +1,7 @@
+import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
+import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-correction-audit-model";
+import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
+import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { randomUUID } from "node:crypto";
@@ -15,12 +19,15 @@ import { createCourseSectionDelivery } from "@/modules/courses/delivery-service"
 import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
-import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
+import { createCourseAssignment, transitionCourseAssignment, updateCourseAssignment } from "@/modules/courses/assignment-service";
+import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
-import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
+import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
+import { createCourseQuiz, transitionCourseQuiz,setCourseQuizResults,updateCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
+import {markFacultyAttendance} from "@/modules/attendance/faculty-service";
 import {getFacultyPublishedGradebook,getFacultyPublishedGradebookLearner} from "@/modules/courses/faculty-gradebook-service";
 import {facultyGradebookCsv} from "@/modules/courses/faculty-gradebook-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
@@ -33,6 +40,8 @@ import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-a
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import {getFacultyDiscussionParticipation} from "@/modules/courses/faculty-discussion-participation-service";
 import {getFacultySessionCoverage} from "@/modules/courses/faculty-session-coverage-service";
+import {postFacultyDiscussionReply} from "@/modules/courses/faculty-discussion-reply-service";
+import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-history-service";
 import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage}
  from "@/modules/courses/discussion-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
@@ -108,6 +117,11 @@ async function cleanup() {
     join course_learning_paths lp on lp.id=l.learning_path_id
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
+  await pool.query(`delete from assignment_submissions where assignment_id in (
+    select a.id from course_assignments a join course_lessons l on l.id=a.lesson_id
+    join course_learning_paths lp on lp.id=l.learning_path_id
+    join course_offerings o on o.id=lp.offering_id join courses c on c.id=o.course_id
+    where c.code like $1)`,[codePattern]);
   for(const table of ["course_quizzes","course_assignments"]) {
     await pool.query(`delete from ${table} where lesson_id in (
       select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
@@ -203,8 +217,8 @@ async function fixture() {
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}],
     }],
   });
-  await transitionCourseAssignment(faculty,assignment.id,{action:"PUBLISH"});
-  await transitionCourseQuiz(faculty,quiz.id,{action:"PUBLISH"});
+  await transitionCourseAssignment(faculty,assignment.id,{...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id), action:"PUBLISH"});
+  await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"PUBLISH"});
   return {delivery,section,assignment,quiz};
 }
 async function seedFacultyOnly() {
@@ -280,16 +294,31 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"PUBLISH",quizId:draft.id,
       expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
     })).rejects.toBeDefined();
-    const published=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
-      action:"PUBLISH",quizId:draft.id,
-      expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Missing token"})).rejects.toBeDefined();
+    const questionIdsBefore=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    const metadata=await updateCourseQuiz(facultyOnly,draft.id,{
+      title:"Quiz metadata drawer "+runId,expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
     });
+    expect(metadata.totalPoints).toBe(5);
+    const questionIdsAfter=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    expect(questionIdsAfter.rows).toEqual(questionIdsBefore.rows);
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{
+      title:"Stale metadata",expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
+    await expect(updateCourseQuiz(learner,draft.id,{title:"Wrong role",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
+    await expect(updateCourseQuiz({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},draft.id,{title:"Foreign",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
+    await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"PUBLISH"})).rejects.toBeDefined();
+    const published=await transitionCourseQuiz(facultyOnly,draft.id,{
+      action:"PUBLISH",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
+    });
+    await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"CLOSE",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     expect(published.status).toBe("PUBLISHED");
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type like 'courses.quiz.%'`,[draft.id]);
     expect(events.rows.map(row=>row.event_type).sort()).toEqual([
-      "courses.quiz.created","courses.quiz.published","courses.quiz.updated",
+      "courses.quiz.created","courses.quiz.published","courses.quiz.updated","courses.quiz.updated",
     ]);
   });
   it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{
@@ -302,14 +331,16 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const lessonId=lessonRow.rows[0]!.id;
     const created=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"CREATE",lessonId,sequence:10,title:"Faculty owned draft "+runId,
-      description:"Text only",dueAt:null,maxPoints:15,confirmed:true,
+      description:"Text only",dueAt:authoringDueInstant("2026-10-21T09:30"),maxPoints:15,confirmed:true,
     });
     expect(created.status).toBe("DRAFT");
     const edited=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-      title:"Revised draft "+runId,description:"Updated text",dueAt:null,maxPoints:20,
+      title:"Revised draft "+runId,description:"Updated text",dueAt:authoringDueInstant("2026-10-21T00:15"),maxPoints:20,
       confirmed:true,
     });
+    expect(created.dueAt?.toISOString()).toBe("2026-10-21T04:00:00.000Z");
+    expect(edited.dueAt?.toISOString()).toBe("2026-10-20T18:45:00.000Z");
     expect(edited.maxPoints).toBe(20);
     await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
@@ -323,12 +354,88 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"ARCHIVE",assignmentId:created.id,
       expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
     })).rejects.toBeDefined();
+    await expect(updateCourseAssignment(facultyOnly,created.id,{title:"Unversioned bypass"})).rejects.toBeDefined();
+    const throughDrawer=await updateCourseAssignment(facultyOnly,created.id,{
+      title:"Confirmed drawer draft "+runId, expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    });
+    expect(throughDrawer.title).toContain("Confirmed drawer draft");
+    await expect(updateCourseAssignment(facultyOnly,created.id,{
+      title:"Stale drawer replay",expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+    await expect(updateCourseAssignment(learner,created.id,{
+      title:"Wrong role",expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(updateCourseAssignment({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},created.id,{
+      title:"Foreign drawer",expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(transitionCourseAssignment(facultyOnly,created.id,{action:"PUBLISH"})).rejects.toBeDefined();
+    const lifecycleToken={expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true as const};
+    await expect(transitionCourseAssignment(learner,created.id,{action:"PUBLISH",...lifecycleToken})).rejects.toBeDefined();
+    await expect(transitionCourseAssignment({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},created.id,{action:"PUBLISH",...lifecycleToken})).rejects.toBeDefined();
+    const released=await transitionCourseAssignment(facultyOnly,created.id,{action:"PUBLISH",...lifecycleToken});
+    expect(released.status).toBe("PUBLISHED");
+    await expect(transitionCourseAssignment(facultyOnly,created.id,{action:"ARCHIVE",...lifecycleToken})).rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+    const lifecycleAudit=await pool.query<{count:number}>("select count(*)::int as count from activity_events where subject_id=$1::text and event_type='courses.assignment.published'",[created.id]);
+    expect(lifecycleAudit.rows[0]?.count).toBe(1);
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type in ('courses.assignment.created','courses.assignment.updated')`,[created.id]);
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
-      "courses.assignment.created","courses.assignment.updated",
+      "courses.assignment.created","courses.assignment.updated","courses.assignment.updated",
     ]);
+  });
+  it("filters actual Faculty reply audit with exact Section and non-leaking denial",async()=>{
+    const {delivery}=await fixture();
+    const parent=await createCourseDiscussionMessage(facultyOnly,delivery.id,{
+      messageText:"Question from registered Section",
+    });
+    const reply=await postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      replyToMessageId:parent.id,expectedParentUpdatedAt:parent.updatedAt.toISOString(),
+      confirmed:true,messageText:"Answer using the course reading",
+    });
+    const history=await getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:delivery.id,action:"REPLY",
+    });
+    expect(history.total).toBe(1);
+    expect(history.items[0]).toMatchObject({subjectId:reply.id,
+      action:"Faculty reply recorded"});
+    expect(JSON.stringify(history.items)).not.toContain("Answer using the course reading");
+    await expect(getFacultyDiscussionHistory(learner,{deliveryId:delivery.id,action:"REPLY"}))
+      .rejects.toBeDefined();
+    await expect(getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:SEED_IDS.collegeB,action:"REPLY",
+    })).rejects.toBeDefined();
+    await expect(getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:delivery.id,action:"REPLY",collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
+  it("writes version-checked Faculty reply against locked Section parent, with immutable audit",async()=>{
+    const {delivery}=await fixture();
+    const parent=await createCourseDiscussionMessage(facultyOnly,delivery.id,{
+      messageText:"Parent message "+runId,
+    });
+    const input={messageText:"Faculty answer with evidence",replyToMessageId:parent.id,
+      expectedParentUpdatedAt:parent.updatedAt.toISOString(),confirmed:true as const};
+    await expect(postFacultyDiscussionReply(learner,delivery.id,input)).rejects.toBeDefined();
+    await expect(postFacultyDiscussionReply({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },delivery.id,input)).rejects.toBeDefined();
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      ...input,replyToMessageId:SEED_IDS.collegeB,
+    })).rejects.toMatchObject({code:"DISCUSSION_MESSAGE_NOT_FOUND"});
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      ...input,expectedParentUpdatedAt:"2026-01-01T00:00:00.000Z",
+    })).rejects.toMatchObject({code:"DISCUSSION_STALE_VERSION"});
+    const reply=await postFacultyDiscussionReply(facultyOnly,delivery.id,input);
+    expect(reply.messageText).toContain("Faculty answer with evidence");
+    const events=await pool.query<{n:string}>(`select count(*)::text as n from activity_events
+      where subject_id=$1::text and event_type='courses.discussion.replied'`,[reply.id]);
+    expect(events.rows[0]?.n).toBe("1");
+    await deleteCourseDiscussionMessage(facultyOnly,parent.id,delivery.id,{
+      expectedUpdatedAt:parent.updatedAt.toISOString(),confirmed:true,
+    });
+    await expect(postFacultyDiscussionReply(facultyOnly,delivery.id,input))
+      .rejects.toMatchObject({code:"DISCUSSION_MESSAGE_NOT_FOUND"});
   });
   it("pins and deletes own-Section discussion with microsecond CAS, audit and denial",async()=>{
     const {delivery}=await fixture();
@@ -359,6 +466,241 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       "courses.discussion.deleted","courses.discussion.pin_changed",
       "courses.discussion.posted",
     ]);
+  });
+  it("grades a published Section submission, publishes, denies stale/foreign/role, and blocks archive grade",async()=>{
+    const {delivery,assignment}=await fixture();
+    const row=await pool.query<{id:string,version:number}>(`insert into assignment_submissions
+      (assignment_id,delivery_id,membership_id,submission_type,text_content)
+      values($1,$2,$3,'TEXT','Created by fixture') returning id,version`,
+      [assignment.id,delivery.id,testLearnerMembershipId]);
+    const id=row.rows[0]!.id;
+    await expect(gradeAssignmentSubmission(learner,id,{
+      pointsAwarded:7,expectedVersion:0,
+    })).rejects.toBeDefined();
+    await expect(gradeAssignmentSubmission({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },id,{pointsAwarded:7,expectedVersion:0})).rejects.toBeDefined();
+    const graded=await gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:7,expectedVersion:0,feedback:"Good",
+    });
+    expect(graded.gradePublished).toBe(false);
+    // The editor cannot publish a saved grade while its displayed draft differs.
+    expect(facultyGradeEditorState(graded,"7","Good",10).canPublish).toBe(true);
+    expect(facultyGradeEditorState(graded,"8","Good",10).canPublish).toBe(false);
+    expect(facultyGradeEditorState(graded,"7","Revised feedback",10).canPublish).toBe(false);
+    expect(facultyGradeEditorState(graded,"","Good",10).points).toBeNull();
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:7,feedback:"Good",expectedVersion:graded.version,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_GRADE_NO_CHANGE"});
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:9,expectedVersion:0,
+    })).rejects.toBeDefined();
+    const published=await publishAssignmentGrade(facultyOnly,id,{
+      expectedVersion:graded.version,
+    });
+    expect(published.gradePublished).toBe(true);
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:published.version,feedback:null,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED"});
+    const regraded=await gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:published.version,
+      feedback:"Corrected using the published rubric",
+    });
+    expect(regraded.gradePublished).toBe(false);
+    expect(regraded.feedback).toBe("Corrected using the published rubric");
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:5,expectedVersion:published.version,
+      feedback:"Outdated browser replay",
+    })).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_CONFLICT"});
+    // A published assignment with submissions must NOT archive through the
+    // command. Force the restricted state only in this disposable fixture
+    // to verify the grading writer's fail-closed parent-status fence.
+    await expect(transitionCourseAssignment(faculty,assignment.id,{...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id), action:"ARCHIVE"}))
+      .rejects.toBeDefined();
+    await pool.query("update course_assignments set status='ARCHIVED' where id=$1",
+      [assignment.id]);
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:regraded.version,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
+    const audit=await pool.query<{event_type:string}>(`select event_type from activity_events
+      where subject_id=$1::text and event_type in
+      ('courses.assignment.graded','courses.assignment.grade_published')`,[id]);
+    expect(audit.rows.map(x=>x.event_type).sort()).toEqual([
+      "courses.assignment.grade_published","courses.assignment.graded",
+      "courses.assignment.graded",
+    ]);
+  });
+  it("corrects an exact Section session with SQL microsecond markedAt and rejects stale/foreign/learner",async()=>{
+    const {delivery,section}=await fixture();
+    const end=new Date(Date.now()-10*60000);
+    const start=new Date(end.getTime()-30*60000);
+    const session=await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,
+      title:"Correction fixture "+runId,startsAt:start.toISOString(),endsAt:end.toISOString(),
+    });
+    const inserted=await pool.query<{marked_at:Date}>(`insert into attendance_sessions
+      (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
+      values($1,'MARKED',$2,now(),now()) returning marked_at`,
+      [session.id,facultyOnlyUserId]);
+    await pool.query(`insert into attendance_records
+      (schedule_event_id,membership_id,status,marked_by_user_id)
+      values($1,$2,'ABSENT',$3)`,
+      [session.id,testLearnerMembershipId,facultyOnlyUserId]);
+    const request={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
+      absentMembershipIds:[],expectedMarkedAt:inserted.rows[0]!.marked_at.toISOString(),
+      correctionReason:"Corrected marked presence per official register"};
+    await expect(markFacultyAttendance(learner,session.id,request)).rejects.toBeDefined();
+    await expect(markFacultyAttendance(facultyOnly,SEED_IDS.collegeB,request)).rejects.toBeDefined();
+    await expect(markFacultyAttendance({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },session.id,request)).rejects.toBeDefined();
+    const prior=await pool.query<{membership_id:string}>(
+      "select membership_id from attendance_records where schedule_event_id=$1 and status='ABSENT'",[session.id]);
+    const preview=facultyAttendanceConfirmation(true,prior.rows.map(row=>row.membership_id),[],1);
+    expect(preview).toContain("0 changed to absent, 1 changed to present");
+    expect(preview).not.toContain(testLearnerMembershipId);
+    const corrected=await markFacultyAttendance(facultyOnly,session.id,request);
+    expect(corrected.markedPresent).toBe(1);
+    expect(facultyAttendanceConfirmation(true,[],[],1)).toBeNull();
+    await expect(markFacultyAttendance(facultyOnly,session.id,request))
+      .rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
+    const audit=await pool.query<{metadata:{correction:boolean,markedAt:string}}>(`
+      select metadata from activity_events
+      where subject_id=$1::text and event_type='courses.attendance.marked'
+      order by created_at desc limit 1`,[session.id]);
+    expect(audit.rows[0]?.metadata.correction).toBe(true);
+    const reason=await pool.query<{metadata:{correctionReason:string}}>(`
+      select metadata from activity_events
+      where subject_id=$1::text and event_type='courses.attendance.marked'
+      order by created_at desc limit 1`,[session.id]);
+    expect(reason.rows[0]?.metadata.correctionReason).toMatch(/official register/);
+    expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
+  });
+  it("fences Faculty from old Quiz results endpoint and audits the Admin path",async()=>{
+    const {delivery,quiz}=await fixture();
+    await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
+    await expect(setCourseQuizResults(facultyOnly,quiz.id,{published:true}))
+      .rejects.toMatchObject({code:"QUIZ_RESULTS_ADMIN_ONLY"});
+    await expect(setCourseQuizResults(learner,quiz.id,{published:true}))
+      .rejects.toBeDefined();
+    await expect(setCourseQuizResults({
+      ...admin,membership:{...admin.membership!,collegeId:SEED_IDS.collegeB},
+    },quiz.id,{published:true})).rejects.toBeDefined();
+    const published=await setCourseQuizResults(admin,quiz.id,{published:true});
+    expect(published.resultsPublished).toBe(true);
+    await expect(setCourseQuizResults(admin,quiz.id,{published:true}))
+      .rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    const hidden=await setCourseQuizResults(admin,quiz.id,{published:false});
+    expect(hidden.resultsPublished).toBe(false);
+    const audits=await pool.query<{n:string}>(`
+      select count(*)::text as n from activity_events
+      where subject_id=$1::text and event_type='courses.quiz.results_changed'`,[quiz.id]);
+    expect(audits.rows[0]?.n).toBe("2");
+    const visible=await pool.query<{results_published:boolean}>(
+      "select results_published from course_quizzes where id=$1",[quiz.id]);
+    expect(visible.rows[0]!.results_published).toBe(false);
+    expect(delivery.id).toBeTruthy();
+  });
+  it("toggles CLOSED Quiz result visibility with an audited SQL-default token",async()=>{
+   const {delivery,quiz}=await fixture();
+   const closed=await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
+   const row=await pool.query<{updated_at:Date}>(
+    "update course_quizzes set updated_at=now() where id=$1 returning updated_at",[closed.id]);
+   const token={deliveryId:delivery.id,action:"PUBLISH" as const,
+    expectedUpdatedAt:row.rows[0]!.updated_at.toISOString(),confirmed:true as const};
+   await expect(commandFacultyQuizResults(learner,quiz.id,token)).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults({
+    ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+   },quiz.id,token)).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,deliveryId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
+   })).rejects.toMatchObject({code:"QUIZ_RESULTS_STALE_VERSION"});
+   const published=await commandFacultyQuizResults(facultyOnly,quiz.id,token);
+   expect(published.resultsPublished).toBe(true);
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,token)).rejects.toBeDefined();
+   const hidden=await commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,action:"HIDE",expectedUpdatedAt:published.updatedAt.toISOString(),
+   });
+   expect(hidden.resultsPublished).toBe(false);
+   const events=await pool.query<{n:string}>(`
+    select count(*)::text as n from activity_events where subject_id=$1::text
+     and event_type='courses.quiz.results_changed'`,[quiz.id]);
+   expect(events.rows[0]?.n).toBe("2");
+  });
+  it("denies a no-op and an unexplained existing-session correction",async()=>{
+    const {delivery,section}=await fixture();
+    const end=new Date(Date.now()-12*60000),start=new Date(end.getTime()-30*60000);
+    const event=await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,title:"Explain corrections "+runId,
+      startsAt:start.toISOString(),endsAt:end.toISOString(),
+    });
+    const [record]= (await pool.query<{marked_at:Date}>(`insert into attendance_sessions
+      (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
+      values($1,'MARKED',$2,now(),now()) returning marked_at`,
+      [event.id,facultyOnlyUserId])).rows;
+    const body={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
+      absentMembershipIds:[],expectedMarkedAt:record!.marked_at.toISOString()};
+    await expect(markFacultyAttendance(facultyOnly,event.id,body))
+      .rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_REASON_REQUIRED"});
+    await expect(markFacultyAttendance(facultyOnly,event.id,{
+      ...body,correctionReason:"Checked register; no learner state changed",
+    })).rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_NO_CHANGE"});
+  });
+  it("filters Quiz CSV by actual attempted state without leaking another Section",async()=>{
+    const {delivery,quiz}=await fixture();
+    const none=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"ATTEMPTED",
+    });
+    expect(none.csv).not.toContain('"NOT_ATTEMPTED"');
+    const unattempted=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"NOT_ATTEMPTED",
+    });
+    expect(unattempted.csv).toContain("NOT_ATTEMPTED");
+    expect(unattempted.csv).not.toContain('"Email"');
+    await expect(getFacultyReportCsvForDownload(learner,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"ATTEMPTED",
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:SEED_IDS.collegeB,filter:"ATTEMPTED",
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"LATE",
+    })).rejects.toBeDefined();
+  });
+  it("exports only scoped Faculty Section rows without learner contact fields",async()=>{
+    const {delivery,assignment,quiz}=await fixture();
+    const row=await pool.query<{id:string}>(`insert into assignment_submissions
+      (assignment_id,delivery_id,membership_id,submission_type,text_content)
+      values($1,$2,$3,'TEXT','Learner response') returning id`,
+      [assignment.id,delivery.id,testLearnerMembershipId]);
+    expect(row.rows[0]?.id).toBeTruthy();
+    // Contact must not escape via the name fallback when the real name is missing.
+    await pool.query("update users set display_name=null where id=$1", [testLearnerUserId]);
+    const exported=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id});
+    expect(exported.csv).toContain("Submitted at (IST)");
+    expect(exported.csv).toContain("Learner (name unavailable)");
+    expect(exported.csv).not.toContain('"Email"');
+    const identity=await pool.query<{email:string}>("select email from users where id=$1",
+      [testLearnerUserId]);
+    expect(exported.csv).not.toContain(identity.rows[0]!.email);
+    const quizCsv=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id});
+    expect(quizCsv.csv).not.toContain(identity.rows[0]!.email);
+    expect(quizCsv.csv).toContain("Learner (name unavailable)");
+    await expect(getFacultyReportCsvForDownload(learner,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },{kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id}))
+      .rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();

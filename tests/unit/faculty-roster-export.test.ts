@@ -3,22 +3,31 @@ import { facultyRosterCsv, facultyRosterFileName } from "@/modules/courses/facul
 
 const base = { membershipId:"learner-a",displayName:"Asha",rollNumber:"R1",email:"asha@example.com",phoneE164:"+919123456789" };
 describe("Faculty authorized roster CSV export", () => {
-  it("exports exactly passed learner rows with stable fields and safe phone values", () => {
-    const csv=facultyRosterCsv([base]);
-    expect(csv).toContain("Student,Roll number,Email,Phone\r\n");
-    expect(csv).toContain("\"Asha\",\"R1\",\"asha@example.com\",\"'+919123456789\"");
-    expect(csv).not.toContain("learner-b");
-    expect(csv.split("\r\n").filter(Boolean)).toHaveLength(2);
+  it("exports learner names and rolls without contact fields or fallback contact", () => {
+    const csv = facultyRosterCsv([base, { ...base, displayName: null }]);
+    expect(csv).toContain('Student,Roll number\r\n');
+    expect(csv).toContain('"Asha","R1"');
+    expect(csv).toContain('"Learner (name unavailable)"');
+    expect(csv).not.toContain(base.email);
+    expect(csv).not.toContain(base.phoneE164);
+    expect(csv).not.toContain(base.membershipId);
   });
-  it("neutralizes spreadsheet-formula injection and escapes CSV quoting", () => {
-    const csv=facultyRosterCsv([{...base,displayName:' =HYPERLINK("https://evil.example")',rollNumber:'@SUM(1,2)',email:'x"@example.com'}]);
-    expect(csv).toContain("\"'=HYPERLINK(\"\"https://evil.example\"\")\"");
-    expect(csv).toContain("\"'@SUM(1,2)\"");
-    expect(csv).toContain('"x""@example.com"');
+  it("neutralizes formulas including invisible prefixes and escapes quotes", () => {
+    const csv = facultyRosterCsv([{ ...base, displayName: '\u200B=HYPERLINK("evil")', rollNumber: '@SUM(1,2)' }]);
+    expect(csv).toContain("'\u200B=HYPERLINK");
+    expect(csv).toContain('""evil""');
+    expect(csv).toContain("'@SUM(1,2)");
+  });
+  it("caps at 500 learner rows and explicitly reports omitted rows", () => {
+    const csv = facultyRosterCsv(Array.from({length: 501}, (_,i) => ({...base, displayName:'Student '+i})));
+    expect(csv).toContain('"Student 499"');
+    expect(csv).not.toContain('"Student 500"');
+    expect(csv).toContain('1 learner rows omitted');
+    expect(csv.split('\r\n').filter(Boolean)).toHaveLength(502);
   });
   it("preserves UTF-8 names and creates deterministic filenames", () => {
     expect(facultyRosterCsv([{...base,displayName:"రాము"}])).toContain("రాము");
-    expect(facultyRosterCsv([])).toBe("Student,Roll number,Email,Phone\r\n");
+    expect(facultyRosterCsv([])).toBe("Student,Roll number\r\n");
     expect(facultyRosterFileName("Section A / 2026")).toBe("faculty-roster-section-a-2026.csv");
   });
 });

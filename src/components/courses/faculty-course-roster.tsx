@@ -99,6 +99,7 @@ export function FacultyCourseRoster({
       Boolean(learner.email || learner.phoneE164),
   ).length;
 
+  // Faculty exports exclude phone/email and cap the already authorized roster.
   function exportFiltered() {
     // CSV contains exactly the active Section roster already authorized for
     // this Faculty view; filtering does not widen the permission boundary.
@@ -164,7 +165,7 @@ export function FacultyCourseRoster({
             onClick={exportFiltered}
             aria-label="Download roster CSV"
           >
-            Download roster CSV
+            Download roster CSV (names and roll numbers)
           </Button>
           <label className="w-full max-w-md text-xs font-semibold text-body">
             Search students

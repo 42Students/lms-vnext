@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const facultyDiscussionHistorySchema=z.object({
   deliveryId:z.string().uuid(),
-  action:z.enum(["ALL","PIN","DELETE"]).default("ALL"),
+  action:z.enum(["ALL","PIN","DELETE","REPLY"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type FacultyDiscussionHistoryQuery=z.infer<typeof facultyDiscussionHistorySchema>;
@@ -27,5 +27,6 @@ export function discussionHistoryLabel(eventType:string,pinned:unknown) {
       pinned===false ? "Unpinned by moderator" : "Pin state changed";
   }
   if(eventType==="courses.discussion.deleted") return "Discussion deletion recorded";
+  if(eventType==="courses.discussion.replied") return "Faculty reply recorded";
   return "Unknown discussion activity";
 }

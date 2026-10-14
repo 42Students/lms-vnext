@@ -24,12 +24,15 @@ import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import { formatDiscussionReply } from "./learner-discussion-reply-model";
 import {facultyDiscussionModerationSchema,facultyDiscussionTokenMatches}
  from "./faculty-discussion-moderation-model";
+import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
   messageText: z.string().trim().min(1).max(3900),
   replyToMessageId: messageIdSchema.optional(),
+  expectedParentUpdatedAt:z.string().datetime({offset:true}).optional(),
+  confirmed:z.literal(true).optional(),
 }).strict();
 
 const historySchema = z.object({
@@ -200,13 +203,6 @@ export async function createCourseDiscussionMessage(
   const input =
     createDiscussionMessageSchema.parse(rawInput);
   if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
-  const parent = input.replyToMessageId
-    ? await loadDiscussionMessage(input.replyToMessageId)
-    : null;
-  if (parent && parent.deliveryId !== deliveryId) {
-    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-  }
-  const messageText = formatDiscussionReply(input.messageText, parent?.id ?? null);
   const senderRole =
     mode === "LEARNER"
       ? "LEARNER"
@@ -215,6 +211,17 @@ export async function createCourseDiscussionMessage(
         : "ADMIN";
 
   return getDb().transaction(async (tx) => {
+    const [parent]=input.replyToMessageId
+      ? await tx.select().from(courseDiscussionMessages)
+        .where(and(eq(courseDiscussionMessages.id,input.replyToMessageId),
+          eq(courseDiscussionMessages.deliveryId,deliveryId))).for("share").limit(1)
+      : [null];
+    if(input.replyToMessageId&&!parent)
+      throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    if(mode==="FACULTY"&&parent&&(!input.confirmed||!input.expectedParentUpdatedAt||
+       !facultyReplyParentTokenMatches(parent.updatedAt,input.expectedParentUpdatedAt)))
+      throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
+    const messageText=formatDiscussionReply(input.messageText,parent?.id??null);
     const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
       senderMembershipId: membership.id,
@@ -222,13 +229,15 @@ export async function createCourseDiscussionMessage(
       messageText,
     }).returning();
     await recordActivityEventInTransaction(tx, context, {
-      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
+      eventType: mode==="FACULTY"&&parent?
+        ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_REPLIED:
+        ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
       collegeId: membership.collegeId,
       organizationId: membership.organizationId,
       subjectType: "course_discussion_message",
       subjectId: created!.id,
       summary: "Course discussion message posted",
-      metadata: { deliveryId, senderRole },
+      metadata: { deliveryId, senderRole, ...(parent?{replyToMessageId:parent.id}:{}) },
       groupKey: "course-discussion:" + deliveryId,
       dedupeKey: "course-discussion:" + created!.id + ":post",
     });
