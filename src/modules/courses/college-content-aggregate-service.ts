@@ -90,8 +90,10 @@ export async function listCollegeContentAggregate(
       eq(academicPeriods.collegeId, collegeId),
     ))
     .where(and(
-      inArray(lessonContents.contentType, [...collegeContentTypes(kind)]),
+      inArray(lessonContents.contentType,
+        kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
+      query.courseCode ? eq(courses.code, query.courseCode) : undefined,
       query.q ? or(
         ilike(lessonContents.title, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
         ilike(courseLessons.name, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
