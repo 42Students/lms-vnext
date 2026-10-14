@@ -135,7 +135,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-024 | Authored rich HTML overview + sanitization | InThisCourseSection html_content | Course domain has no rich overview field | GAP |
 | L2-025 | Authored takeaways list | InThisCourseSection takeaways | vNext currently derives lesson names | GAP |
 | L2-026 | Long overview Read more / Show less | InThisCourseSection | Overview | FIXED |
-| L2-027 | Partial course-details/progress widget warning state | Home | Overview | GAP |
+| L2-027 | Partial course-details/progress widget warning state | Home | explicitly distinguish no path/lessons/items and avoid false 0 percent | FIXED |
 | L2-028 | Announcement body preview + Read more / Show less | UnifiedActivityList | discussion-backed update feed | FIXED |
 | L2-029 | Detailed lesson/item progress drill-down | Learner Course progress from persisted progress/submissions | `/learn/courses/[deliveryId]/progress` | FIXED |
 
@@ -736,7 +736,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L30-001 | User summary/name/program | Profile/About | profile workspace | UNCHECKED |
+| L30-001 | User summary/name/program | Profile/About | persisted own-user profile and active program/cohort/department identity card | FIXED |
 | L30-002 | Profile completeness | ProfileCompleteness | profile workspace | FIXED |
 | L30-003 | Profile image view | About/userInfo | profile workspace | UNCHECKED |
 | L30-004 | Profile image upload/remove | profile image flow | secure storage | BLOCKED |
