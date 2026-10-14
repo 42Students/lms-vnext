@@ -9,6 +9,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
+import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -35,7 +36,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
-  const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege);
+  const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const totals = summarizeRecruiterDrives(jobs);
   const viewOptions = [
     {view: "ALL", label: "All", count: totals.all},
@@ -46,6 +47,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   // eslint-disable-next-line react-hooks/purity -- recruiter deadline urgency needs request-time current instant.
   const now = new Date();
   const filtered = filterRecruiterDrives(jobs, {...query.data, collegeId: selectedCollege},now);
+  const attention=hrDriveAttention(jobs,selectedCollege,now);
   const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
   return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Drives"
@@ -57,6 +59,23 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
         className={selectedCollege === grant.collegeId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
+    {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
+      className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <h2 className="font-semibold text-foreground">Deadline attention</h2>
+      <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/hr/placements/jobs/"+encodeURIComponent(item.job.id)}
+          className="rounded-lg border border-border p-3 text-sm text-primary-text">
+          <span className="block font-semibold">{item.job.title}</span>
+          <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+        </Link>)}
+        {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/hr/placements/jobs/"+encodeURIComponent(item.job.id)}
+          className="rounded-lg border border-border p-3 text-sm text-primary-text">
+          <span className="block font-semibold">{item.job.title}</span>
+          <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+        </Link>)}
+      </div>
+    </section>:null}
     <nav aria-label="Drive lifecycle" className="flex flex-wrap gap-2">{viewOptions.map(option =>
       <Link key={option.view} href={recruiterDrivesHref({...query.data, collegeId: selectedCollege, view: option.view, page: 1})}
         aria-current={query.data.view === option.view ? "page" : undefined}
