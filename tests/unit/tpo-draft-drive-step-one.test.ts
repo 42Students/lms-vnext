@@ -34,6 +34,9 @@ describe("TPO quick draft step-one contract", () => {
       ...payload, applicationDeadline: "2026-15-99T09:30:00+05:30",
     }).success).toBe(false);
     expect(tpoDraftDriveStepOneSchema.safeParse({
+      ...payload, applicationDeadline: "2020-01-01T09:30:00+05:30",
+    }).success).toBe(false);
+    expect(tpoDraftDriveStepOneSchema.safeParse({
       ...payload, confirmed: false,
     }).success).toBe(false);
     expect(tpoDraftDriveStepOneSchema.safeParse({
