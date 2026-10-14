@@ -866,6 +866,7 @@ export async function actOnPlacementRequest(
 
   if (input.action === "CANCEL") {
     const membership = requireLearner(context);
+    await requireLearnerPlacementAccess(context);
     if (
       membership.id !==
         current.application.membershipId ||
