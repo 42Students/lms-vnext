@@ -499,7 +499,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-014 | Cancel reschedule request | InterviewsContent | learner requests | GAP |
 | L16-015 | Reschedule summary + copy | InterviewsContent | approved own application-round exception displayed with original and new IST date plus venue; copyable sanitized personal schedule excludes meeting credentials and does not send employer messages. PARTIAL pending actual PG/tsc/eslint, clipboard permission and browser/mobile acceptance | PARTIAL |
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
-| L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
+| L16-017 | Withdrawal request | InterviewsContent | confirmed owned-interview application withdrawal request, strict same-origin POST, locked millisecond stale token + existing audited pending producer; PARTIAL pending PG/browser/team approval acceptance | PARTIAL |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
 | L16-019 | Mobile interview actions/modals | InterviewsContent responsive | mobile-safe interview filter scroller, 44px full-width drawer links/close, wrapping titles and IST effective scheduled/rescheduled summary drawn only from authorized round; PARTIAL pending device keyboard/screen-reader acceptance plus PG/unit/tsc/lint/browser verification | PARTIAL |
 | L16-020 | Deterministic assessment vs interview round-kind classification | Rounds are typed TEST/VENDOR_TEST/GD/INTERVIEW; names editable | learner-career-rounds typed policy | FIXED |

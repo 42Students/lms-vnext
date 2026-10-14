@@ -6,6 +6,7 @@ import {
   inArray,
   lt,
   ne,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -438,6 +439,19 @@ export async function createPlacementRequest(
   const db = getDb();
 
   const created = await db.transaction(async (tx) => {
+    if(input.requestType==="APPLICATION_WITHDRAWAL"&&input.expectedUpdatedAt){
+      const [locked]=await tx.select({id:placementApplications.id})
+        .from(placementApplications).where(and(
+          eq(placementApplications.id,input.applicationId),
+          eq(placementApplications.membershipId,membership.id),
+          eq(placementApplications.status,"SUBMITTED"),
+          sql`date_trunc('milliseconds', ${placementApplications.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`,
+        )).for("update").limit(1);
+      if(!locked)throw new PlacementsServiceError("PLACEMENT_REQUEST_STALE");
+      const [activeOffer]=await tx.select({id:placementOffers.id}).from(placementOffers)
+        .where(and(eq(placementOffers.applicationId,input.applicationId),inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+      if(activeOffer)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+    }
     if(input.requestType==="OFFER_EXTENSION"){
       // Revalidate against a locked, persisted offer rather than a stale card.
       const [currentOffer]=await tx.select({
