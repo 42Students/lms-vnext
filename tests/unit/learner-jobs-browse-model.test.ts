@@ -40,7 +40,19 @@ describe("Learner job browsing filters", () => {
       ...defaults, location:"Chennai", eligibleOnly:true,
     })).toEqual([]);
   });
-  it("sorts by earliest deadline with missing deadlines last", () => {
+  it("deduplicates case/whitespace location aliases and matches all role locations",()=>{
+    const variant=[
+      {...jobs[0]!,roleOption:{...jobs[0]!.roleOption,locations:[" Hyderabad ","HYDERABAD","Vijayawada"]}},
+      {...jobs[1]!,roleOption:{...jobs[1]!.roleOption,locations:["hyderabad"]}},
+    ];
+    expect(availableLearnerJobFacets(variant).locations.map(x=>x.toLocaleLowerCase()))
+     .toEqual(["hyderabad","vijayawada"]);
+    expect(filterLearnerPlacementJobs(variant,{...defaults,location:"Hyderabad"}).map(x=>x.job.id))
+     .toEqual(["a","b"]);
+    expect(filterLearnerPlacementJobs(variant,{...defaults,location:"Vijayawada"}).map(x=>x.job.id))
+     .toEqual(["a"]);
+  });
+    it("sorts by earliest deadline with missing deadlines last", () => {
     expect(filterLearnerPlacementJobs(jobs,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
   });
   it("sorts actionable deadlines before closed or malformed dates",()=>{

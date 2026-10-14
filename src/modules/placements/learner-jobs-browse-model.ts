@@ -67,8 +67,10 @@ export function availableLearnerJobFacets<T extends BrowseJobShape>(items: reado
   return {
     types: [...new Set(items.map((row) => row.roleOption.employmentType))]
       .filter(Boolean).sort((a,b) => a.localeCompare(b)),
-    locations: [...new Set(items.flatMap((row) => row.roleOption.locations))]
-      .filter(Boolean).sort((a,b) => a.localeCompare(b)),
+    locations: [...new Map(items.flatMap(row=>row.roleOption.locations)
+      .map(value=>value.trim()).filter(Boolean)
+      .map(value=>[value.toLocaleLowerCase(),value] as const)).values()]
+      .sort((a,b)=>a.localeCompare(b)),
   };
 }
 
@@ -102,8 +104,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     }
     if (filters.employmentType !== "all" &&
         row.roleOption.employmentType !== filters.employmentType) return false;
-    if (filters.location !== "all" &&
-        !row.roleOption.locations.includes(filters.location)) return false;
+    if(filters.location!=="all"&&!row.roleOption.locations.some(place=>
+      place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
     return [
       row.company.name,
