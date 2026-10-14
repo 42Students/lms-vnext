@@ -21,11 +21,15 @@ export type TpoCompanyFeedbackFact = {
 export function projectTpoCompanyFeedback(
   facts: readonly TpoCompanyFeedbackFact[],
 ) {
-  return facts.filter((fact) => Boolean(fact.note?.trim())).map((fact) => ({
-    id: fact.id,
-    leadId: fact.leadId,
-    contactName: fact.leadName.trim() || "Unnamed contact",
-    note: fact.note!.trim(),
-    recordedAtIso: fact.at.toISOString(),
-  }));
+  return facts.flatMap((fact) => {
+    const note = fact.note?.trim();
+    if (!note) return [];
+    return [{
+      id: fact.id,
+      leadId: fact.leadId,
+      contactName: fact.leadName.trim() || "Unnamed contact",
+      note,
+      recordedAtIso: fact.at.toISOString(),
+    }];
+  });
 }
