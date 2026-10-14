@@ -194,6 +194,8 @@ Legacy contract:
 - [ ] Add Contact opens Leads add flow with company prefill.
 - [ ] Company KPI strip matches.
 - [ ] People list/stage/activity/deep links match.
+
+**W41 PARTIAL:** Company detail now links to a separate read-only, paginated contact activity log backed by registered DB09 lead activities. College-company relationship ownership, central placements permission, event type filtering, recorded outcome and timestamp are enforced; unavailable activity storage is labeled rather than counted as zero. Raw private notes and contact addresses are not projected. Legacy document-sharing, interaction editing, exact history semantics, browser and positive DB verification remain open.
 - [ ] Hiring History metrics/table match.
 - [ ] Shared Documents history matches.
 - [ ] Open Drive from document/history works.
@@ -359,6 +361,8 @@ Legacy includes:
 - [ ] attendance/check-in actions match.
 - [ ] result/outcome capture matches.
 - [ ] bulk result/attendance actions match.
+
+**W41 PARTIAL:** The TPO round overview now provides an authorized, formula-safe CSV export of its current persisted attendance roster. It includes per-learner recorded attendance and only APPLIED result outcomes, without inventing missing marks or exporting recruiter contact details. Bulk attendance/result mutations, legacy CSV columns, completed-round historical snapshots and browser/DB acceptance remain open.
 - [ ] progress/summary counts match.
 - [ ] coordinator vs TPO permission differences match.
 - [ ] completion confirmation matches.

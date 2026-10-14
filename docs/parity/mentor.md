@@ -181,3 +181,17 @@ states and unit/DB denial tests are authored. This is distinct from the
 final-delivery `/mentor/reviews` queue. Existing project Board controls remain
 responsible for authorized task review writes. Full legacy task-detail and
 positive database/browser acceptance remain OPEN, with no checkbox claimed DONE.
+
+## Mentor project team membership lifecycle (2026-10-14)
+
+The read-only `/mentor/projects/[projectId]/team-history` is accessible
+from the existing Mentor workspace. It shows registered P4 project_members
+`started_at` / `ended_at` lifecycle rows with filters for all, open or
+ended membership records. Authorization requires a persisted active Mentor
+assignment for the exact requested project, matching current college and
+central projects.read; optional-module disablement produces an honest notice.
+Former/inactive member names are withheld. Dates are presented in IST; missing
+pre-migration history is not fabricated. Pure model and PostgreSQL denial
+tests are authored but not run, and exact legacy team-management actions,
+complete audit history and browser acceptance remain OPEN. No parity row or
+checklist is marked DONE.
