@@ -188,6 +188,7 @@ a moderator, but existing delete audit has no actor-role snapshot and may be
 learner self-deletion; the view labels it neutrally. No message content
 reconstruction and no write route. PARTIAL until successful PG/browser checks.
 
+
 ## B — Faculty Reports hub (2026-10-14)
 
 Read-only per-delivery Reports hub linking registered Assignment, Quiz,
@@ -195,6 +196,7 @@ Attendance and published Gradebook. Exact current Faculty teaching scope,
 bounded five-report pagination and clear unknown semantics. No inferred
 weighted final grades and no writes. PARTIAL until independent PostgreSQL,
 lint/TypeScript and responsive browser proof.
+
 
 ## C — Faculty own alternate contact edit (2026-10-14)
 
@@ -205,6 +207,7 @@ write to staged faculty profile documents. A role-scoped read-only status
 page is provided, with loading/error states and exact blocker. Follow-up
 requires DB migration, privacy policy, optimistic version and transaction
 audit specifications. No fake create/edit action is enabled. PARTIAL.
+
 
 ## D — Mentor project review overview (2026-10-14)
 
