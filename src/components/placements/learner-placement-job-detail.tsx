@@ -138,7 +138,7 @@ export function LearnerPlacementJobDetail({
             Eligibility breakdown
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
-            Your college's published eligibility rules are checked separately for each role.
+            Your college&apos;s published eligibility rules are checked separately for each role.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <StatusBadge tone="success">{summary.eligibleCount} eligible role{summary.eligibleCount === 1 ? "" : "s"}</StatusBadge>
