@@ -1257,3 +1257,16 @@ Remaining: real PostgreSQL execution, mobile/browser scheduling and legacy
 calendar acceptance. The non-root PostgreSQL attempt is blocked: useradd -m
 pguser fails with "Cannot open audit interface - aborting" in the root-only UID
 namespace; no PostgreSQL run is claimed. Existing DONE rows remain unchanged.
+
+## 2026-10-15 Faculty Courses URL filters and bounded workspace reads — PARTIAL
+Courses search, academic-period/teaching-role selectors and pagination now
+round-trip through validated URLs. Only current persisted teaching deliveries
+are selectable; filters never widen scope. The server filters/pages before
+loading at most 48 full Course workspaces, and cards render on the server
+instead of serializing all lesson/content data to a client list. Clear,
+filtered-empty, previous/next, retry and responsive cards remain available.
+Pure tests cover literal search, combined filters, pagination/clamping and
+invalid/duplicate/forged selectors. Fresh Faculty Section PG fixtures cover
+success, wrong-role/foreign selector, forbidden college injection and revocation.
+GET-only; stale write tokens do not apply. Remaining: PostgreSQL execution and
+legacy/browser/mobile list acceptance. No DONE promotion.

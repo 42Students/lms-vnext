@@ -1,0 +1,39 @@
+import { z } from "zod";
+import { COURSE_TEACHING_ROLES } from "./constants";
+
+export const facultyCourseListQuerySchema = z.object({
+  q: z.string().trim().max(120).default(""),
+  period: z.union([z.string().uuid(), z.literal("")]).default(""),
+  role: z.union([z.enum(COURSE_TEACHING_ROLES), z.literal("")]).default(""),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+}).strict();
+export type FacultyCourseListQuery = z.infer<typeof facultyCourseListQuerySchema>;
+export const FACULTY_COURSE_LIST_PAGE_SIZE = 48;
+
+/** Filter only the actor's persisted, authorized teaching deliveries. */
+export function pageFacultyCourseList<T extends {
+  courseName: string; courseCode: string; sectionName: string; sectionCode: string;
+  academicPeriodId: string; academicPeriodName: string; teachingRole: string;
+}>(rows: readonly T[], query: FacultyCourseListQuery) {
+  const term = query.q.toLocaleLowerCase();
+  const filtered = rows.filter(row =>
+    (!query.period || row.academicPeriodId === query.period) &&
+    (!query.role || row.teachingRole === query.role) &&
+    (!term || [row.courseName, row.courseCode, row.sectionName, row.sectionCode,
+      row.academicPeriodName].some(field => field.toLocaleLowerCase().includes(term))),
+  );
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / FACULTY_COURSE_LIST_PAGE_SIZE));
+  const page = Math.min(query.page, totalPages);
+  return {total, totalPages, page, pageSize:FACULTY_COURSE_LIST_PAGE_SIZE,
+    items:filtered.slice((page - 1) * FACULTY_COURSE_LIST_PAGE_SIZE, page * FACULTY_COURSE_LIST_PAGE_SIZE)};
+}
+export function facultyCourseListHref(raw: unknown) {
+  const query = facultyCourseListQuerySchema.parse(raw);
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.period) params.set("period", query.period);
+  if (query.role) params.set("role", query.role);
+  if (query.page > 1) params.set("page", String(query.page));
+  return "/teacher/courses" + (params.size ? "?" + params.toString() : "");
+}
