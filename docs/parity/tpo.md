@@ -375,6 +375,8 @@ Legacy:
 
 ### Tab: Rounds
 
+**Work Mode shared venue booking — PARTIAL:** Interview rescheduling and the generic calendar scheduling writer now use one transaction-scoped college/venue advisory lock and conflict query. Unknown duration/time and over-cap venue occupancy fail closed; adjacent half-open intervals remain allowed. Generic scheduling locks the parent drive to serialize with closure and advances version timestamps by at least one millisecond. ISO offset tokens normalize and TPO meeting links accept HTTP(S) only (unsafe URL schemes intentionally rejected). Unit and PG cross-writer collision/adjacency/denial/stale fixtures authored; sandbox non-root setup still blocks PG execution. Concurrent DB certification, candidate/interviewer conflicts, full notifications and browser acceptance remain open.
+
 **Work Mode results follow-up — PARTIAL:** Result entry now validates form data through the canonical confirmed-result Zod contract, requires HOLD rank only when selected, separates internal PASS notes from candidate-visible feedback, and disables repeated submission after save. Closed/draft/archived drives show read-only entries. Result staging locks the parent drive before round/application locks to serialize against closure. Unit tests and PG fixtures cover boundaries, optimistic identity, wrong-role denial and closed-drive state; PG execution remains blocked by sandbox account setup. Full bulk/apply UX, cross-writer concurrency certification, pagination and desktop/mobile browser verification remain open.
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
