@@ -577,3 +577,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Drives deadline-attention cards — PARTIAL:** Company+college-scoped non-archived published drives expose next-seven-day and recorded-past-deadline action links with explicit no-auto-closure caveat. Filters exclude other colleges, archived and closed jobs, and limit surfaced cards; pure unit authored, execution/browser acceptance pending.
+
+
+**2026-10-15 chat-10 R6 / Calendar next-visible-event correctness — PARTIAL:** Upcoming event highlight now compares real round/deadline starts against recorded results-due timestamps and honors selected calendar category; selected-category empty states use visible count rather than unfiltered totals. Pure model/unit for priority and unsupported SLOT types authored; execution/browser validation pending.

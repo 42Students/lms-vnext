@@ -31,6 +31,7 @@ import {
   listRecruiterCalendarEvents,
 } from "@/modules/placements/recruiter-calendar-service";
 import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } from "@/modules/placements/hr-calendar-day-model";
+import {hrNextCalendarEvent} from "@/modules/placements/hr-calendar-next-event-model";
 import {HR_CALENDAR_CATEGORIES,hrCalendarCategorySchema,filterHrCalendarDays,type HrCalendarCategory} from "@/modules/placements/hr-calendar-category-model";
 
 export const dynamic = "force-dynamic";
@@ -282,8 +283,8 @@ export default async function HrCalendarPage({
   const allDays = filterHrCalendarDays(combineHrCalendarDays(calendar.days, calendar.resultsDue),category);
   const byDay = new Map(allDays.map((day) => [day.day, day]));
   const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
-  const eventCount = calendar.events.length + calendar.resultsDue.length;
-  const nextResult = calendar.resultsDue.find((item) => item.dueAt.getTime() >= now.getTime());
+  const eventCount = allDays.reduce((total,day)=>total+day.events.length+day.resultsDue.length,0);
+  const nextVisible=hrNextCalendarEvent(calendar.events,calendar.resultsDue,category,now);
 
   const heading =
     view === "week"
@@ -511,7 +512,7 @@ export default async function HrCalendarPage({
             </form>
           </section>
 
-          {calendar.summary.next || nextResult ? (
+          {nextVisible ? (
             <section className="rounded-xl border border-border bg-surface-secondary p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
@@ -520,12 +521,12 @@ export default async function HrCalendarPage({
               <p className="mt-2 text-sm font-semibold text-foreground">
                 {context.recruiter?.companyName ?? "Employer"}
                 {" · "}
-                {calendar.summary.next?.title ?? "Results due: " + nextResult?.roundName}
+                {nextVisible.title}
               </p>
 
               <p className="mt-1 text-sm text-body">
                 {eventDateTime(
-                  calendar.summary.next?.startsAt ?? nextResult!.dueAt,
+                  nextVisible.at,
                 )}{" "}
                 IST
               </p>
@@ -542,10 +543,7 @@ export default async function HrCalendarPage({
               </h2>
 
               <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-                None of your authorized hiring drives
-                has a scheduled round or application
-                deadline during these dates. Try another
-                week or month.
+                No matching authorized events are recorded in this period for the selected category. Try another week, month, or event type.
               </p>
             </section>
           ) : null}
