@@ -11,6 +11,7 @@ export type BrowseJobShape = {
     title: string;
     description: string;
     applicationDeadline: string | null;
+    publishedAt?: string | null;
   };
   company: { name: string };
   roleOption: {
@@ -31,7 +32,7 @@ export type LearnerJobBrowseFilters = {
   location: string;
   eligibleOnly: boolean;
   closingSoon: boolean;
-  sort: "deadline" | "ctc" | "title";
+  sort: "deadline" | "ctc" | "title" | "newest";
 };
 
 export const DEFAULT_LEARNER_JOB_FILTERS: LearnerJobBrowseFilters = {
@@ -79,6 +80,14 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   });
 
   return [...rows].sort((a,b) => {
+    if (filters.sort === "newest") {
+      const published = (row: T) => row.job.publishedAt
+        ? Date.parse(row.job.publishedAt) : Number.NaN;
+      const publishedTime = (row: T) => Number.isFinite(published(row))
+        ? published(row) : Number.NEGATIVE_INFINITY;
+      return publishedTime(b) - publishedTime(a) ||
+        a.roleOption.id.localeCompare(b.roleOption.id);
+    }
     if (filters.sort === "ctc") {
       const ctc = (row: T) => row.roleOption.maximumAnnualCtcInr ??
         row.roleOption.minimumAnnualCtcInr ?? -1;
