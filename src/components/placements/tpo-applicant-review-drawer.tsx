@@ -13,7 +13,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app}:{
    Review applicant
   </button>
   <dialog ref={dialog} aria-labelledby={titleId}
-   className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-xl border border-border bg-surface p-4 text-foreground backdrop:bg-black/40 sm:p-6">
+   className="m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-xl overflow-y-auto rounded-xl border border-border bg-surface p-4 text-foreground backdrop:bg-black/40 sm:p-6">
    <div className="mb-4 flex items-start justify-between gap-3">
     <h2 id={titleId} className="min-w-0 break-words text-lg font-semibold">{app.student??"Name unavailable"}</h2>
     <button type="button" onClick={()=>dialog.current?.close()}

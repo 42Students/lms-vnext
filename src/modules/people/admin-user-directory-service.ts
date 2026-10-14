@@ -29,15 +29,15 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  }
  const db=getDb();
  const source=db.select({
-  membershipId:collegeMemberships.id,
-  userId:users.id,
+  membershipId:sql<string>`${collegeMemberships.id}`.mapWith(collegeMemberships.id).as("membership_id_alias"),
+  userId:sql<string>`${users.id}`.mapWith(users.id).as("user_id_alias"),
   displayName:users.displayName,
   email:sql<string|null>`case when ${Boolean(selected?.collegeId)} then ${users.email} else null::text end`.as("scoped_email"),
   phoneE164:sql<string|null>`case when ${Boolean(selected?.collegeId)} then ${users.phoneE164} else null::text end`.as("scoped_phone"),
   platformStatus:users.platformStatus,
   membershipStatus:collegeMemberships.status,
   collegeName:colleges.name,
-  collegeId:colleges.id,
+  collegeId:sql<string>`${colleges.id}`.mapWith(colleges.id).as("college_id_alias"),
   organizationId:colleges.organizationId,
   updatedAt:collegeMemberships.updatedAt,
  }).from(collegeMemberships)
