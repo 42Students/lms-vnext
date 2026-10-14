@@ -274,6 +274,8 @@ Legacy contract:
 ## Page: Electives
 **Legacy:** `/college-admin/electives`
 
+**Write-side PARTIAL:** `/college/electives` includes confirmed slot create/edit via same-origin POST/PATCH, own-college program/period checks, versioned update, enrollment-impacting edit guard, atomic audit, unit and gated DB tests. Feature enablement, full offering capacity, learner choice/finalize and exact legacy/browser parity remain open.
+
 **Read-first PARTIAL (2026-10-14):** `/college/electives` now shows registered DB-0037 elective slots with program, term, optional academic year/period, choice constraints, credits, status and counts of active college-owned course offerings. Search, program/status filters, 25-row pagination, loading/error and honest empty states included. Presence of a slot does **not** verify the college feature switch or a learner choice window. Feature-disabled state, creation/editing, selection/enrollment, capacity enforcement, close/finalize, executed DB/browser parity remain open.
 
 - [ ] Feature-disabled state matches ("Electives is turned off for this college").
