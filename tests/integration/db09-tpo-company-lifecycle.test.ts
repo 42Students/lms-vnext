@@ -105,6 +105,36 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
     );
     expect(audit.rows[0]?.count).toBe(3);
   });
+  it("accepts first write from a SQL-default microsecond timestamp but rejects old tokens", async () => {
+    if (!pool) throw new Error("Disposable PostgreSQL required");
+    const companyId = await fixture();
+    // Preserve the SQL-default now() timestamp precision deliberately; node-postgres
+    // can only round-trip milliseconds. Guarantee nonzero microseconds so this
+    // reproduces the original WHERE updated_at = $date false-stale regression.
+    const timestamp = await pool.query<{ microseconds: number }>(
+      "UPDATE placement_company_relationships " +
+      "SET updated_at=date_trunc('milliseconds', updated_at)+interval '123 microseconds' " +
+      "WHERE company_id=$1 RETURNING " +
+      "(extract(microseconds from updated_at)::numeric % 1000)::integer AS microseconds",
+      [companyId],
+    );
+    expect(timestamp.rows[0]?.microseconds).toBe(123);
+    const before = await getTpoCompanyLifecycle(tpo, companyId);
+    if (!before) throw new Error("SQL fixture must be visible");
+    const first = await saveTpoCompanyLifecycle(tpo, change(
+      companyId, before.updatedAt, "EDIT_TRUST", !before.isTrusted,
+    ));
+    expect(first.isTrusted).toBe(!before.isTrusted);
+    expect(first.updatedAt).not.toBe(before.updatedAt);
+    await expect(saveTpoCompanyLifecycle(tpo, change(
+      companyId, before.updatedAt, "ARCHIVE",
+    ))).rejects.toMatchObject({ code: "STALE" });
+    const archived = await saveTpoCompanyLifecycle(tpo, change(
+      companyId, first.updatedAt, "ARCHIVE",
+    ));
+    expect(archived.status).toBe("ARCHIVED");
+  });
+
   it("rejects foreign college, missing company and wrong role", async () => {
     const companyId = await fixture();
     const initial = await getTpoCompanyLifecycle(tpo, companyId);

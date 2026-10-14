@@ -1,0 +1,50 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasMembershipRole } from "@/modules/identity/context";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { applicantStage } from "@/modules/placements/tpo-applicant-pipeline-model";
+import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[]}>};
+function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
+export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
+ const {jobId}=await params;const query=await searchParams;
+ const data=await getTpoApplicantPipeline(context,{jobId,...(first(query.stage)?{stage:first(query.stage)}:{}),
+   ...(first(query.search)?{search:first(query.search)}:{})});
+ const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
+ return <div className="space-y-6">
+  <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
+   description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
+  <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive</Link>
+  <section className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Applicant pipeline counts">
+   {Object.entries(data.counts).map(([label,count])=>
+    <div className="rounded-xl border border-border bg-surface p-3" key={label}>
+      <p className="text-xs capitalize text-body">{label}</p>
+      <p className="text-xl font-semibold tabular-nums text-foreground">{count}</p>
+    </div>)}
+  </section>
+  <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
+   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
+    <select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     {stages.map(s=><option key={s} value={s}>{s}</option>)}
+    </select></label>
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Student or role
+    <input name="search" defaultValue={data.search} maxLength={100}
+     className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
+   <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+  </form>
+  {data.truncated?<p role="status" className="text-sm text-body">First 500 applications examined; counts may be incomplete.</p>:null}
+  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:
+   <section className="grid gap-3" aria-label="Applicant records">
+   {data.rows.map(a=><article key={a.id} className="rounded-xl border border-border bg-surface p-4">
+     <h2 className="font-semibold text-foreground">{a.student??"Name unavailable"}</h2>
+     <p className="mt-1 text-sm text-body">{a.role} · {applicantStage(a)} · Application {a.applicationStatus}</p>
+     <p className="mt-1 text-xs text-body">Submitted {new Date(a.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+   </article>)}</section>}
+  <p className="text-xs text-body">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
+ </div>;
+}

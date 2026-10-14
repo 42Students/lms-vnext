@@ -1,5 +1,18 @@
 # TPO — Remaining Parity Gaps
 
+**W65 B / Drive Applicants stage table — PARTIAL:** College-TPO-scoped per-drive application stage view now reads registered application+screening state, separates WITHDRAWN from SUBMITTED, and offers validated stage/search filtering, counts, applicant-role context and mobile rows. It excludes private screening comments and does not fabricate SELECTED. The 500-row limit is disclosed. Legacy candidate drawer, bulk mutations, external channel details, full filter/export parity, executed PG/browser acceptance and large-list pagination remain open.
+
+**W65 A / Drives List lifecycle tabs/counts — PARTIAL:** A TPO-only mobile drive lifecycle list now filters persisted non-archived draft/published/closed jobs by college and season with deadline-within-seven-days counts and links to the canonical drive workspace. The legacy Requests tab is not fabricated from job status; source request-state reconciliation, 500-row pagination, search/export, exact legacy columns, stale-success caching, browser acceptance and executed PG tests remain outstanding.
+
+**W64 D PARTIAL:** New TPO-only offers-expiry watchlist uses migrated ISSUED offers with non-null expiry, strict 1–90 day selector and lexically compared IST YYYY-MM-DD boundaries. Capped to 200 with honest truncation and formula-neutralized CSV. Pure-model/isolated PG success, tenant/role and status-exclusion tests authored, not executed. Browser and runtime acceptance remain open.
+
+**W64 C PARTIAL:** Existing canonical TPO company detail already has linked contacts, drive history and offer/join timeline. It now shows college relationship trust/status/updatedAt from persisted scoped lifecycle read; a pure model and gated PostgreSQL success/foreign/wrong-role tests are authored. Historical CRM parity, executed PG/browser verification and full detail performance review remain open.
+**W64 B PARTIAL:** /tpo/reports/placed-branch derives season/drive-scoped unique accepted-offer learners and explicitly confirmed JOINED learners from persisted offers/outcomes; uses current active academic enrollment for branch and exposes unmatched students as Unassigned. CSV is formula-neutralized, capped to 200 branch rows with total+notice. Unit and isolated PostgreSQL tests authored; runtime PG/browser acceptance and historically accurate branch snapshots remain open.
+
+
+- **W62 D / L45 — PARTIAL:** Season funnel/CSV authored; selected requires canonical persisted evidence, and PG/browser acceptance outstanding.
+- **W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.
+
 - **W62 C — Buildable / PARTIAL:** TPO-only /tpo/drive-day now shows live scheduled rounds by recorded start/duration with confirmed check-in, explicit absence and waiting/unknown counts. Existing coordinator view preserved. Runtime PG/browser verification and command-center hero remain open.
 
 - **W62 B — Buildable / PARTIAL:** Existing Leads stage/source report extended with persisted DB09 recent-contact health and honest null semantics; tests authored, not executed. Legacy drill-in, full activity health UX and browser proof remain.

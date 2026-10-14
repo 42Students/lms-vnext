@@ -395,7 +395,7 @@ Legacy contract audited from `ApplicationsContent`:
 - empty/filtered-empty/loading/error states.
 
 - [ ] Search, URL-state and browser Back/Forward behavior match.
-- [ ] Stage chips and In Progress/Completed views match.
+- [ ] **PARTIAL (L14-003):** stage chips now derive from own persisted application screening, display counts, and update the existing URL-backed filter. In Progress/Completed views already exist. Remaining: executed PostgreSQL/unit, TypeScript/ESLint and mobile/Back-Forward browser parity.
 - [ ] Sort options match.
 - [ ] Attention banner opens the complete relevant filtered list.
 - [ ] Journey/status timeline is reproduced.

@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {ownApplicationInterviewLinks} from "@/modules/placements/learner-application-interview-links-model";
+import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-application-assessment-links-model";
 
 export default async function LearnerPlacementApplicationsPage() {
   const context = await getCurrentRequestContext();
@@ -22,6 +23,13 @@ export default async function LearnerPlacementApplicationsPage() {
     })),new Date().toISOString(),
   );
 
+  const assessmentLinks=ownApplicationAssessmentLinks(
+    requests.rounds.map(row=>({
+      applicationId:row.applicationId,roundId:row.roundId,roundKind:row.roundKind,
+      scheduledAt:row.scheduledAt?.toISOString()??null,
+      exception:row.exception?{scheduledAt:row.exception.scheduledAt.toISOString()}:null,
+    })),new Date().toISOString(),
+  );
   const items: LearnerPlacementJourneyItem[] = rows.map((row) => ({
     applicationId: row.applicationId,
     jobId: row.job.id,
@@ -54,7 +62,7 @@ export default async function LearnerPlacementApplicationsPage() {
         Review all official offers →
       </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
-        <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} />
+        <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks} />
       </Suspense>
     </div>
   );
