@@ -58,6 +58,15 @@ export function LearnerProjectMobileFilters({
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Sort projects
+            <select name="sort" defaultValue={query.sort ?? "RECENT"}
+              className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+              <option value="RECENT">Recently updated</option>
+              <option value="TITLE">Title A–Z</option>
+              <option value="PROGRESS">Least progress first</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
             Results per page
             <select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
               className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground">

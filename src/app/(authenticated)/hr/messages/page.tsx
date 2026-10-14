@@ -7,14 +7,14 @@ import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-
 import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-button";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 export default async function HrMessagesPage({searchParams}:{
- searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[]}>
+ searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const query=hrNotificationsQuerySchema.safeParse({
-  collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),
+  collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),q:first(raw.q),
  });
  if(!query.success)return <div className="space-y-4">
   <PageHeader eyebrow="Employer Recruiter" title="Messages & Notifications"/>
@@ -38,12 +38,26 @@ export default async function HrMessagesPage({searchParams}:{
      href={"/hr/messages?collegeId="+encodeURIComponent(grant.collegeId)}
      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">{grant.collegeName}</Link>):null}
     <Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+
-      (query.data.unreadOnly==="true"?"false":"true")}
+      (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
-   <p className="text-sm text-body">{result.unread} unread · {result.total} authorized notifications</p>
+   <form action="/hr/messages" method="get" className="flex flex-wrap gap-2">
+     <input type="hidden" name="collegeId" value={result.collegeId} />
+     <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
+     <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
+     <input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
+       placeholder="Search drive titles" className="min-h-11 min-w-48 flex-1 rounded-md border border-border bg-surface px-3 text-sm" />
+     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Search</button>
+   </form>
+   <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
+   <div className="flex justify-end">
+     <Link href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+       Export scoped notifications CSV
+     </Link>
+   </div>
    {result.rows.length?<ol className="grid gap-3">{result.rows.map(row=>
     <li key={row.id} className="rounded-lg border border-border bg-surface p-4">
      <div className="flex flex-wrap justify-between gap-3">
@@ -62,9 +76,9 @@ export default async function HrMessagesPage({searchParams}:{
        {" of "+(query.data.unreadOnly==="true"?result.unread:result.total)}
       </p>
       <div className="flex flex-wrap gap-2">
-       {result.page>1?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&page="+(result.page-1)}
+       {result.page>1?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}
         className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
-       {result.page<result.pages?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&page="+(result.page+1)}
+       {result.page<result.pages?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}
         className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div>
     </nav>

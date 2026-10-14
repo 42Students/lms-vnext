@@ -42,4 +42,31 @@ describe("HR recruiter Request Drive draft preview", () => {
       fixedAnnualCtcInr: "500000", variableAnnualCtcInr: "100000",
     }).success).toBe(true);
   });
+  it("checks complete fixed/variable annual CTC against both endpoints of the advertised range", () => {
+    const draft = {...emptyHrDriveDraft(), title:"Engineer",
+      description:"A full-stack engineering position with clear eligibility.",
+      location:"Hyderabad",minimumAnnualCtcInr:"500000",maximumAnnualCtcInr:"750000",
+      fixedAnnualCtcInr:"500000",variableAnnualCtcInr:"100000"};
+    expect(hrDriveDraftSchema.safeParse(draft).success).toBe(true);
+    expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:"300000"}).success).toBe(false);
+    expect(hrDriveDraftSchema.safeParse({...draft,fixedAnnualCtcInr:"350000"}).success).toBe(false);
+    // An unspecified component does not assert a complete salary breakdown.
+    expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:""}).success).toBe(true);
+  });
+
+  it("rejects confusing duplicate hiring-round names after spacing/case normalization",()=>{
+    const draft={...emptyHrDriveDraft(),title:"Engineer",
+      description:"A full role description for the college placement cell.",
+      location:"Hyderabad",rounds:[
+        {kind:"TEST" as const,name:"Technical assessment"},
+        {kind:"INTERVIEW" as const,name:"  technical   ASSESSMENT  "},
+      ]};
+    const parsed=hrDriveDraftSchema.safeParse(draft);
+    expect(parsed.success).toBe(false);
+    if(!parsed.success)expect(parsed.error.issues.some(i=>i.path.join(".")==="rounds.1.name")).toBe(true);
+    expect(hrDriveDraftSchema.safeParse({
+      ...draft,rounds:[draft.rounds[0],{kind:"INTERVIEW" as const,name:"Panel interview"}],
+    }).success).toBe(true);
+  });
+
 });

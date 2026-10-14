@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {hrNotificationsQuerySchema,projectHrNotifications} from "@/modules/placements/hr-notifications-model";
+import {hrNotificationsQuerySchema,projectHrNotifications,filterHrNotificationJobs} from "@/modules/placements/hr-notifications-model";
 describe("HR notifications privacy projection",()=>{
  it("removes foreign company records and arbitrary private messages",()=>{
   const rows=[
@@ -14,5 +14,8 @@ describe("HR notifications privacy projection",()=>{
  it("validates filters without allowing caller-supplied company",()=>{
   expect(hrNotificationsQuerySchema.safeParse({unreadOnly:"true"}).success).toBe(true);
   expect(hrNotificationsQuerySchema.safeParse({companyId:"other"}).success).toBe(false);
+  expect(hrNotificationsQuerySchema.safeParse({q:"x".repeat(121)}).success).toBe(false);
+  expect(filterHrNotificationJobs([{title:"Data Engineer"},{title:"Product Designer"}],"engi"))
+    .toEqual([{title:"Data Engineer"}]);
  });
 });
