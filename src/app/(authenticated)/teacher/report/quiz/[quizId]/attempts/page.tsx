@@ -2,19 +2,19 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
+import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 
 type Query={deliveryId?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function FacultyQuizAttemptPage({
   params,searchParams,
 }:{
   params:Promise<{quizId:string}>;searchParams:Promise<Query>;
 }) {
   const [{quizId},raw]=await Promise.all([params,searchParams]);
+  const search=facultyQuizAttemptSearchSchema.safeParse(raw);
   const parsed=facultyQuizAttemptsQuerySchema.safeParse({
-    quizId,deliveryId:first(raw.deliveryId),page:first(raw.page)??undefined,
+    quizId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Quiz Section or pagination</h1>

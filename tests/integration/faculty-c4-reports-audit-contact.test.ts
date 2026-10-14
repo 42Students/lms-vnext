@@ -256,7 +256,7 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    collegeId:SEED_IDS.collegeB,
   })).rejects.toBeDefined();
   const audit=await pool.query<{summary:string}>(
-   "select summary from activity_events where subject_id=$1 and summary like 'Class attendance%' order by created_at",
+   "select summary from activity_events where subject_id=$1 and summary like 'Class attendance%' order by occurred_at",
    [event.id],
   );
   expect(audit.rows.map(row=>row.summary).sort()).toEqual([
