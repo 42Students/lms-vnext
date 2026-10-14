@@ -125,6 +125,59 @@ export default async function SuperAdminSettingsPage() {
             </table>
           </div>
 
+          {section.smsTemplates ? (
+            <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+              <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
+                <thead className="bg-surface-subtle">
+                  <tr>
+                    {[
+                      "Source template / key",
+                      "Purpose",
+                      "Declared channels",
+                      "Definition",
+                      "Source file",
+                    ].map((heading) => (
+                      <th
+                        key={heading}
+                        scope="col"
+                        className="border-b border-border px-4 py-3 font-semibold text-foreground"
+                      >
+                        {heading}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.smsTemplates.map((template) => (
+                    <tr
+                      key={template.key}
+                      className="border-b border-border last:border-0"
+                    >
+                      <th
+                        scope="row"
+                        className="px-4 py-3 font-semibold text-foreground"
+                      >
+                        {template.key}
+                      </th>
+                      <td className="px-4 py-3 text-body">{template.purpose}</td>
+                      <td className="px-4 py-3 text-body">
+                        {template.channels.join(", ")}
+                      </td>
+                      <td className="px-4 py-3 text-body">
+                        {template.definition === "FIXED_OTP_SOURCE"
+                          ? "Fixed source OTP template"
+                          : "Fixed intent key, not an operational sender"}
+                      </td>
+                      <td className="break-all px-4 py-3 font-mono text-xs text-muted-foreground">
+                        {template.source}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
           {section.note ? (
             <p className="rounded-lg bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
               {section.note}
@@ -135,7 +188,8 @@ export default async function SuperAdminSettingsPage() {
 
       <p className="text-xs leading-6 text-muted-foreground">
         Inventory scope is intentionally limited to
-        non-secret numeric and boolean values.
+        non-secret numeric and boolean values and fixed source
+        template names or intent keys.
         Environment variables, credentials, API keys,
         tokens, connection details and custom
         configuration blobs are neither read nor

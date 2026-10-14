@@ -24,16 +24,61 @@ export type PlatformSettingItem = {
   scope: PlatformSettingScope;
 };
 
+export type PlatformSmsTemplate = {
+  key: string;
+  purpose: string;
+  channels: readonly string[];
+  definition: "FIXED_OTP_SOURCE" | "OUTBOUND_INTENT_ONLY";
+  source: string;
+};
+
+/**
+ * Present source-authored, non-secret identifiers only. These rows are not
+ * DLT sender IDs, provider template IDs, message bodies, credentials or
+ * evidence of an operational outbound dispatcher.
+ *
+ * The invitation keys and channel vocabulary are supplied by the shared
+ * outbound contract rather than independently redefined.
+ */
+export function buildPlatformSmsTemplateCatalog(input: {
+  outboundTemplateKeys: readonly string[];
+  outboundChannels: readonly string[];
+}): PlatformSmsTemplate[] {
+  return [
+    {
+      key: "OTP",
+      purpose: "One-time login verification via the Exotel SMS provider.",
+      channels: ["SMS"],
+      definition: "FIXED_OTP_SOURCE",
+      source: "src/modules/notifications/exotel-sms.ts",
+    },
+    ...input.outboundTemplateKeys.map((key) => ({
+      key,
+      purpose:
+        key === "RECRUITER_INVITATION"
+          ? "Recruiter invitation intent; no active queued sender is established."
+          : key === "RECRUITER_INVITATION_REMINDER"
+            ? "Recruiter invitation reminder intent; no active queued sender is established."
+            : "Outbound message intent only; purpose not classified.",
+      channels: [...input.outboundChannels],
+      definition: "OUTBOUND_INTENT_ONLY" as const,
+      source: "src/modules/operations/outbound-delivery-contract.ts",
+    })),
+  ];
+}
+
 export type PlatformSettingsSection = {
   id:
     | "course-progress"
     | "attendance"
     | "placements"
+    | "sms"
     | "operations";
   title: string;
   description: string;
   items: PlatformSettingItem[];
   note?: string;
+  smsTemplates?: PlatformSmsTemplate[];
 };
 
 export function fixedPlatformSetting(

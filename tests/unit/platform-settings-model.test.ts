@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildPlatformSmsTemplateCatalog,
   collegePlatformSetting,
   fixedPlatformSetting,
   formatPlatformSettingValue,
@@ -147,6 +148,47 @@ describe("Platform settings presentation model", () => {
         value: true,
       }),
     ).toBe("Enabled");
+  });
+
+  it("lists only source-authored template labels and purpose, not provider configuration", () => {
+    const templates = buildPlatformSmsTemplateCatalog({
+      outboundTemplateKeys: [
+        "RECRUITER_INVITATION",
+        "RECRUITER_INVITATION_REMINDER",
+      ],
+      outboundChannels: ["EMAIL", "SMS", "WHATSAPP"],
+    });
+
+    expect(templates.map((template) => template.key)).toEqual([
+      "OTP",
+      "RECRUITER_INVITATION",
+      "RECRUITER_INVITATION_REMINDER",
+    ]);
+    expect(templates[0]).toMatchObject({
+      channels: ["SMS"],
+      definition: "FIXED_OTP_SOURCE",
+    });
+    expect(templates[1]).toMatchObject({
+      channels: ["EMAIL", "SMS", "WHATSAPP"],
+      definition: "OUTBOUND_INTENT_ONLY",
+    });
+    expect(templates[2].purpose).toContain("reminder");
+
+    const serialized = JSON.stringify(templates);
+    expect(serialized).not.toContain("apiKey");
+    expect(serialized).not.toContain("accountSid");
+    expect(serialized).not.toContain("dltTemplateId");
+    expect(serialized).not.toContain("senderId");
+    expect(serialized).not.toContain("recipient");
+  });
+
+  it("preserves contract-provided channels instead of claiming all templates are live SMS", () => {
+    const result = buildPlatformSmsTemplateCatalog({
+      outboundTemplateKeys: ["RECRUITER_INVITATION"],
+      outboundChannels: ["EMAIL", "SMS"],
+    });
+    expect(result[1].channels).toEqual(["EMAIL", "SMS"]);
+    expect(result[1].definition).toBe("OUTBOUND_INTENT_ONLY");
   });
 
   it("distinguishes all three origins", () => {
