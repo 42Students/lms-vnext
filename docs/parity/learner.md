@@ -1170,3 +1170,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-013 PARTIAL (round 5):** Upcoming-assessments card differentiates all future authorized TEST/VENDOR_TEST schedules from assessments in the next seven IST calendar dates, reusing approved reschedule instants. The metric does not claim employer submission or a provider deadline. Fixed-clock unit regression authored; PG, lint and browser checks pending.
+
+
+**2026-10-15 chat-5 L12-006 PARTIAL (round 5):** Deadline-first learner drive sorting now places published, not-expired and parseable upcoming deadlines ahead of expired and malformed/missing deadlines, while preserving explicit closed and eligibility filters. This uses the existing learner-scoped published-drive dataset and does not turn a missing provider deadline into urgency. Pure regression for closed/malformed/valid tie cases authored; CI/mobile/PG gate pending.
