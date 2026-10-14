@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
+import Link from "next/link";
+import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -107,31 +109,6 @@ function initials(name: string | null) {
   return (name || "Learner").split(/\s+/).slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join("");
 }
 
-function hasText(value: unknown) {
-  return typeof value === "string" && value.trim().length > 0;
-}
-
-function completion(document: LearnerProfileDocument) {
-  const checks = [
-    hasText(document.headline) || hasText(document.bio),
-    Object.values(document.contacts).some(hasText),
-    Object.values(document.socialProfiles).some(hasText),
-    Object.values(document.address).some(hasText),
-    Object.values(document.personalDetails).some(hasText),
-    hasText(document.identity.aadhaarNumber) || hasText(document.identity.panNumber),
-    document.experiences.length > 0,
-    document.education.length > 0,
-    document.skills.length > 0,
-    document.projects.length > 0,
-    document.certifications.length > 0,
-    document.achievements.length > 0,
-    document.languages.length > 0,
-    document.extracurriculars.length > 0,
-    document.hobbies.length > 0,
-    document.metadata.length > 0,
-  ];
-  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
-}
 
 function Card({ id, title, action, children }: { id?: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -179,6 +156,7 @@ export function LearnerProfileWorkspace(props: {
   rollNumber: string | null;
   registrationNumber: string | null;
   initialDocument: LearnerProfileDocument;
+  initialSection?: LearnerProfileSection | null;
 }) {
   const { showToast } = useToast();
   const [document, setDocument] = useState(props.initialDocument);
@@ -189,10 +167,17 @@ export function LearnerProfileWorkspace(props: {
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
   const [pending, startTransition] = useTransition();
 
-  const percent = useMemo(
-    () => completion(document),
+  const checklist = useMemo(
+    () => learnerProfileChecklist(document),
     [document],
   );
+  const percent = checklist.percentage;
+
+  useEffect(() => {
+    if (!props.initialSection) return;
+    const target = window.document.getElementById(props.initialSection);
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [props.initialSection]);
 
   function saveDocument(next: LearnerProfileDocument, onDone?: () => void) {
     startTransition(async () => {
@@ -246,7 +231,7 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section id="profile-introduction" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
@@ -271,6 +256,44 @@ export function LearnerProfileWorkspace(props: {
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-labelledby="learner-profile-checklist-title">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
+            Profile completion checklist
+          </h2>
+          <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>
+            {checklist.completed} of {checklist.total} sections filled
+          </StatusBadge>
+        </div>
+        <p className="mt-2 text-sm text-body">
+          This reflects fields saved in your profile, not verification or placement eligibility.
+          Sensitive identity information is optional. Select a section to review or edit it.
+        </p>
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {checklist.items.map(item => (
+            <li key={item.section}>
+              <Link
+                href={"/learn/profile?section=" + encodeURIComponent(item.section)}
+                className="flex min-h-11 items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                onClick={() => {
+                  if (props.initialSection === item.section) {
+                    window.document.getElementById(item.section)?.scrollIntoView({
+                      behavior: "smooth", block: "start",
+                    });
+                  }
+                }}
+              >
+                <span aria-hidden="true" className={item.completed ? "text-success" : "text-muted-foreground"}>
+                  {item.completed ? "✓" : "○"}
+                </span>
+                <span className="min-w-0 break-words">{item.label}</span>
+                <span className="sr-only">{item.completed ? "Completed" : "Not filled"}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
