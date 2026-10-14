@@ -731,3 +731,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 6 / Classes CSV — PARTIAL:** Added `/api/admin/classes/export` and in-page filtered CSV download using the selected-college classes service, exact cohort/program/department/period scope checks and status filters. Registered class, cohort, academic period, class code and capacity from the selected college only. Strict URL rejects caller college/org/page override and duplicates; cap 250, formula-neutralized CSV, truncation notice, no-cache response and pending/error UI. Unit authored; PostgreSQL/browser and legacy class editing parity open.
+
+
+**2026-10-15 chat-6 round 6 / Semesters CSV — PARTIAL:** Added `/api/admin/semesters/export` and status/search-matched download for selected-college program semesters, with registered names, term number and credits, CSV formula-neutralization and 250-row bounded truncation disclosure. Strict request rejects duplicated params, explicit tenant/college/page override and unsupported statuses; authorized scoped-read service and pending/error UI reused. Unit authored; PostgreSQL/browser and full semester editing parity open.

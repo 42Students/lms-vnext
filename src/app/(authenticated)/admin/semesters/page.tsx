@@ -7,6 +7,7 @@ export default async function SuperAdminSemestersPage({searchParams}:{
 }) {
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Semesters" path="/admin/semesters"
+  exportPath="/api/admin/semesters/export" exportFilename="super-admin-semesters-ist.csv"
   description="Persisted program terms in the selected college. This is read-only, not a course mapping editor."
   statuses={statuses} searchParams={searchParams}
   loader={query=>listAdminSemesters(context,query)}/>;
