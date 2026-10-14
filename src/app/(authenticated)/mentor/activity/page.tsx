@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { page?: string | string[]; pageSize?: string | string[] };
+type Params = { importance?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -15,6 +15,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
+    importance: first(raw.importance) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -30,12 +31,21 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       Projects access is disabled. No activity was loaded.
     </div> : <>
       <form action="/mentor/activity" method="get" className="flex items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
+          <select name="importance" defaultValue={data.query.importance}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All importance</option><option value="LOW">Low</option>
+            <option value="NORMAL">Normal</option><option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
           <select name="pageSize" defaultValue={String(data.pageSize)} className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+        <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
