@@ -16,6 +16,8 @@ describe("college live class read model",()=>{
   expect(collegeLiveClassQuerySchema.safeParse({view:"COMING"}).success).toBe(false);
   expect(collegeLiveClassQuerySchema.safeParse({from:"2026-11-02",to:"2026-11-01"}).success).toBe(false);
   expect(collegeLiveClassQuerySchema.safeParse({from:"2026-10-01",to:"2026-11-02"}).success).toBe(false);
+  expect(collegeLiveClassQuerySchema.safeParse({from:"2026-02-30"}).success).toBe(false);
+  expect(collegeLiveClassQuerySchema.parse({from:"2026-11-01"}).from).toBe("2026-11-01");
   expect(istDayBoundary("2026-11-01").toISOString()).toBe("2026-10-31T18:30:00.000Z");
   expect(collegeLiveClassHref({...collegeLiveClassQuerySchema.parse({view:"PAST"}),page:2})).toContain("view=PAST");
   const q=collegeContentQuerySchema.parse({q:"a & b",page:2});

@@ -239,15 +239,16 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(wrongDayCsv.csv).not.toContain(label);
     const historicalCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
     const futureCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
-    expect(historicalCsv.csv).toContain(label);
-    expect(futureCsv.csv).not.toContain(label);
+    const wasPast = Date.now() >= Date.parse("2026-11-01T06:00:00Z");
+    expect(historicalCsv.csv.includes(label)).toBe(wasPast);
+    expect(futureCsv.csv.includes(label)).toBe(!wasPast);
     const foreignLiveCsv=await exportCollegeContentMetadata(adminB,"LIVE_CLASS",{q:label});
     expect(foreignLiveCsv.csv).not.toContain(label);
     await expect(exportCollegeContentMetadata(nonAdmin,"LIVE_CLASS",{})).rejects.toBeInstanceOf(AuthorizationError);
     const past=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
-    expect(past.items.map(r=>r.id)).toContain(ids.live);
+    expect(past.items.some(r=>r.id===ids.live)).toBe(wasPast);
     const upcoming=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
-    expect(upcoming.items).toEqual([]);
+    expect(upcoming.items.some(r=>r.id===ids.live)).toBe(!wasPast);
     expect(theirs.items).toEqual([]);
     expect(JSON.stringify(mine)).not.toContain("meet.example.test");
     await expect(listCollegeContentAggregate(nonAdmin,"LIVE_CLASS",{}))
