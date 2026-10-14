@@ -580,3 +580,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / People tabs and scoped contacts — PARTIAL:** Added All/Faculty/Students contact-view tabs with persisted role filter and stable pagination. SQL returns NULL for email and phone outside explicitly selected-college Super Admin scope; in-scope contacts are permitted, with no CSV exposure. Unit and PG in-test success/foreign-scope/wrong-role tests extended to cover tabs and global masked vs scoped contact (unexecuted). Remaining: legacy contact/detail drawer, lifecycle actions and browser/PG gates.
+
+
+**2026-10-14 Chat 6 / Super Admin dashboard quick actions — PARTIAL:** Reactivated existing global Tenant Setup, Feature Controls, and Activity Log routes, replacing old disabled placeholder links; selected-college dashboard now offers separate 6-card action grid with only established /admin destinations. Does not restore the deliberately retired full college setup checklist. Existing role/scoped count service unchanged; authored pure navigation unit plus isolated PG tenant/wrong-role fixtures (not executed). Remaining: exact legacy layout, browser/mobile verification and dashboard KPI parity.
