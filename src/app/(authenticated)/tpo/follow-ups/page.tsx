@@ -8,6 +8,8 @@ import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-
 import { tpoFollowupQueueHref,tpoFollowupQueueExportHref } from "@/modules/placements/tpo-followup-queue-model";
 
 export const dynamic = "force-dynamic";
+const FOLLOWUP_SCOPES=["MINE","TEAM"] as const;
+const FOLLOWUP_WINDOWS=["DUE","NEXT_7_DAYS"] as const;
 
 export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[];q?:string|string[];page?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
@@ -31,14 +33,14 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data." />
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
-        {(["MINE","TEAM"] as const).map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
+        {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
-        {(["DUE","NEXT_7_DAYS"] as const).map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
+        {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           {view==="DUE"?"Due now":"Next 7 days"}

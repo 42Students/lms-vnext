@@ -6,6 +6,9 @@ import {
   placementTpoFollowups,
   placementTpoLeadActivities,
   placementTpoLeads,
+  collegeMemberships,
+  membershipRoles,
+  users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -32,6 +35,20 @@ async function requireTpo(context: RequestContext) {
     throw new AuthorizationError("placements.manage");
   }
   requirePermission(context, "placements.manage", { collegeId });
+  const [stored]=await getDb().select({id:collegeMemberships.id})
+    .from(collegeMemberships)
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO"),
+    ))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(
+      eq(collegeMemberships.id,membership.id),
+      eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    )).limit(1);
+  if(!stored)throw new AuthorizationError("placements.manage");
   await requirePlacementManageScope(context, collegeId);
   return { collegeId, ownerMembershipId: membership.id };
 }

@@ -21,6 +21,7 @@ const pool = enabled
   ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 })
   : null;
 const leadIds = new Set<string>();
+let addedTpoRoleId:string|null=null;
 
 const tpo: RequestContext = {
   user: {
@@ -86,6 +87,10 @@ async function fixture() {
 describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL", () => {
   beforeAll(async () => {
     if (!pool) throw new Error("Disposable PostgreSQL is required");
+    const role=await pool.query<{id:string}>(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,\u0027TPO\u0027) ON CONFLICT DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership]);
+    addedTpoRoleId=role.rows[0]?.id??null;
     const [tables] = (await pool.query(
       "SELECT to_regclass('public.placement_tpo_leads') AS leads, " +
       "to_regclass('public.placement_tpo_followups') AS followups, " +
@@ -105,6 +110,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
   afterEach(async () => { await cleanup(); });
   afterAll(async () => {
     await cleanup();
+    if(addedTpoRoleId&&pool)await pool.query("DELETE FROM membership_roles WHERE id=$1",[addedTpoRoleId]);
     await pool?.end();
     await closeDatabaseConnection();
   });
@@ -207,6 +213,8 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getTpoDueFollowupQueue(learner)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getTpoFollowupQueueCsv(learner,{})).rejects.toBeInstanceOf(AuthorizationError);
+    const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+    await expect(getTpoDueFollowupQueue(forged)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(createConfirmedTpoFollowup(foreign, {
       confirmed: true, leadId, dueAt,
     })).rejects.toBeDefined();
