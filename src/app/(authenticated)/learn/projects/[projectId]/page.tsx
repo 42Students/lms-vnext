@@ -1,4 +1,4 @@
-import { listProjectActivity } from "@/modules/projects/activity-service";
+import { getProjectActivityPage } from "@/modules/projects/activity-service";
 import { parseLearnerProjectActivityFilters } from "@/modules/projects/learner-project-activity-filter-model";
 import { LearnerProjectActivity } from "@/components/projects/learner-project-activity";
 import { notFound, redirect } from "next/navigation";
@@ -23,12 +23,12 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[] }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
   if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
-  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory, activityFrom, activityTo } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
   const activeSection =
     tab === "board" || tab === "tasks"
       ? "tasks"
@@ -70,9 +70,10 @@ export default async function LearnerProjectPage({
 
   const parsedActivity = parseLearnerProjectActivityFilters({
     category: activityCategory, from: activityFrom, to: activityTo,
+    beforeTime: activityBeforeTime, beforeId: activityBeforeId,
   });
   const filteredActivity = activeSection === "audit" && parsedActivity.success
-    ? await listProjectActivity(context, projectId, parsedActivity.data) : [];
+    ? await getProjectActivityPage(context, projectId, parsedActivity.data) : { events: [], hasMore: false };
 
   const goals = activeSection === "overview"
     ? await getLearnerProjectGoals(context,projectId)
@@ -110,8 +111,9 @@ export default async function LearnerProjectPage({
       ) : null}
       {goals ? <LearnerProjectGoals overview={goals} /> : null}
       {activeSection === "audit" ? <LearnerProjectActivity projectId={projectId}
-        events={filteredActivity} categoryInput={activityCategory}
-        fromInput={activityFrom} toInput={activityTo} /> : <ProjectWorkspace
+        events={filteredActivity.events} hasMore={filteredActivity.hasMore} categoryInput={activityCategory}
+        fromInput={activityFrom} toInput={activityTo}
+        beforeTimeInput={activityBeforeTime} beforeIdInput={activityBeforeId} /> : <ProjectWorkspace
       workspace={shownWorkspace}
       backHref="/learn/projects"
       backLabel="Projects"
