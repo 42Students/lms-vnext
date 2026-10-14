@@ -24,8 +24,9 @@ const fixture = newLearnerPositiveFixture();
 const { ids, context } = fixture;
 let seeded = false;
 beforeAll(async () => {
-  await seedLearnerPositiveFixture(pool, fixture);
+  // A partially failed fixture still needs cleanup of the rows already inserted.
   seeded = true;
+  await seedLearnerPositiveFixture(pool, fixture);
 }, 30_000);
 afterAll(async () => {
   try {
