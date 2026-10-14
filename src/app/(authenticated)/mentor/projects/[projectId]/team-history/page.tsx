@@ -8,7 +8,7 @@ import {
   mentorTeamHistoryQuerySchema,
 } from "@/modules/projects/mentor-team-history-model";
 
-type Raw = { view?: string | string[]; page?: string | string[] };
+type Raw = { view?: string | string[]; role?: string | string[]; page?: string | string[] };
 const one = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -24,7 +24,8 @@ export default async function MentorTeamHistoryPage({
 }) {
   const [{ projectId }, raw] = await Promise.all([params, searchParams]);
   const parsed = mentorTeamHistoryQuerySchema.safeParse({
-    projectId, view: one(raw.view) ?? undefined, page: one(raw.page) ?? undefined,
+    projectId, view: one(raw.view) ?? undefined, role: one(raw.role) ?? undefined,
+    page: one(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid team history filters</h1>
@@ -46,13 +47,27 @@ export default async function MentorTeamHistoryPage({
           Projects access is disabled. Team history cannot be displayed.
         </section>
       : <>
+        <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
+          className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
+          <input type="hidden" name="view" value={data.query.view}/>
+          <label className="grid gap-1 text-sm font-semibold text-body">Registered role
+            <select name="role" defaultValue={data.query.role}
+              className="min-h-10 rounded-md border border-border bg-background px-3">
+              <option value="ALL">All roles</option>
+              <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
+            </select>
+          </label>
+          <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            Filter role
+          </button>
+        </form>
         <nav aria-label="Team membership history views" className="flex flex-wrap gap-2">
           {([
             ["ALL", "All records"],
             ["OPEN", "Open membership records"],
             ["ENDED", "Ended membership records"],
           ] as const).map(([view, label]) =>
-            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,page:1})}
+            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,role:data.query.role,page:1})}
               aria-current={data.query.view === view ? "page" : undefined}
               className={data.query.view === view
                 ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
@@ -84,9 +99,9 @@ export default async function MentorTeamHistoryPage({
         <nav aria-label="Team history pagination" className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
           <div className="flex gap-3">
-            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,page:data.page-1})}
+            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,page:data.page-1})}
               className="text-sm font-semibold text-primary-text">Previous</Link> : null}
-            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,page:data.page+1})}
+            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,page:data.page+1})}
               className="text-sm font-semibold text-primary-text">Next</Link> : null}
           </div>
         </nav>
