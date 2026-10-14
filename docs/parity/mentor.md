@@ -883,3 +883,6 @@ The exact-project Resource directory filters records with credential-free HTTPS 
 
 ## 2026-10-15 chat-11 AD — active-project state in Mentor team coverage (PARTIAL)
 The current-assignment team coverage view now filters registered PLANNED/ACTIVE/COMPLETED project statuses alongside staffing counts, with URL-preserved pagination, strict invalid-state rejection and unit assertions. Archived project records remain excluded by existing scope; totals keep their authorized whole-portfolio meaning. Real tests/browser and legacy parity remain open.
+
+## 2026-10-15 chat-11 AE — Mentor primary/supporting assignment report (PARTIAL)
+Assigned-project reports now distinguish registered current primary versus supporting Mentor assignments, in page filters, pagination and capped neutralized report CSV. Whole-portfolio counts remain distinct from filtered totals. Strict Zod and model tests authored. No membership changes or learner contact. Actual test/browser/legacy parity open.

@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
-type Search={status?:string|string[];attention?:string|string[];
+type Search={status?:string|string[];attention?:string|string[];assignment?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorReportsPage({searchParams}:{
@@ -14,6 +14,7 @@ export default async function MentorReportsPage({searchParams}:{
   const params=await searchParams;
   const parsed=mentorReportsQuerySchema.safeParse({
     status:first(params.status)??undefined,attention:first(params.attention)??undefined,
+    assignment:first(params.assignment)??undefined,
     search:first(params.search)??undefined,page:first(params.page)??undefined,
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
@@ -91,6 +92,14 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="MEETING_SOON">Meeting soon</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
+          <select name="assignment" defaultValue={data.query.assignment}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All assigned projects</option>
+            <option value="PRIMARY">Primary Mentor</option>
+            <option value="SUPPORTING">Supporting Mentor</option>
+          </select>
+        </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
@@ -100,6 +109,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Link href={"/api/mentor/reports/export?"+
           new URLSearchParams({
             status:data.query.status,attention:data.query.attention,
+            assignment:data.query.assignment,
             search:data.query.search,
           }).toString()} download
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">

@@ -5,6 +5,7 @@ import type {MentorProjectAttention} from "./mentor-attention";
 export const mentorReportsQuerySchema=z.object({
   status:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON"]).default("ALL"),
+  assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   search:z.string().trim().max(120).default(""),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -36,6 +37,8 @@ export function mentorReportsOverview(
   const term=query.search.toLocaleLowerCase("en-IN");
   const filtered=projects.filter(p=>
     (query.status==="ALL"||p.status===query.status)&&
+    (query.assignment==="ALL"||
+     (query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
     (query.attention==="ALL"||kinds.get(p.id)?.has(query.attention))&&
     (!term||p.title.toLocaleLowerCase("en-IN").includes(term)))
     .sort((a,b)=>b.updatedAt.getTime()-a.updatedAt.getTime()||
@@ -57,6 +60,7 @@ export function mentorReportsHref(query:MentorReportsQuery){
   const params=new URLSearchParams();
   if(query.status!=="ALL")params.set("status",query.status);
   if(query.attention!=="ALL")params.set("attention",query.attention);
+  if(query.assignment!=="ALL")params.set("assignment",query.assignment);
   if(query.search)params.set("search",query.search);
   if(query.page>1)params.set("page",String(query.page));
   return "/mentor/reports"+(params.size?"?"+params.toString():"");

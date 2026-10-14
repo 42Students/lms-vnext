@@ -181,3 +181,6 @@
 
 ## Round 3 AD — Team coverage status filter (PARTIAL)
 - Registered lifecycle status filter on current project staffing, with unit test updates; gates unexecuted.
+
+## Round 3 AE — Assignment-role report filters (PARTIAL)
+- Primary/supporting Mentor report filters on page and capped CSV, unit tests authored but not executed.
