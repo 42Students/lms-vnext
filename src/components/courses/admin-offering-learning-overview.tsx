@@ -3,6 +3,7 @@ import type {
   getAdminOfferingLearningWorkspace,
 } from "@/modules/courses/admin-offering-learning-workspace";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import { CollegeLessonReorderActions } from "./college-lesson-reorder-actions";
 import { FacultyItemActions } from "./faculty-item-actions";
 import {
   AdminQuizResultsActions,
@@ -433,6 +434,13 @@ export function AdminOfferingLearningOverview({
                       <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                         {itemCount} items
                       </span>
+                      <CollegeLessonReorderActions
+                        learningPathId={learningPath.id}
+                        lessonId={lesson.id}
+                        expectedSequence={lesson.sequence}
+                        canMoveUp={lessonIndex > 0}
+                        canMoveDown={lessonIndex < workspace.lessons.length - 1}
+                      />
                       <LessonActions
                         lesson={lesson}
                       />
