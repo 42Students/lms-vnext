@@ -53,9 +53,13 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   const grid=page.getByRole("region",{name:"IST month schedule grid"});
   await expect(grid.getByText(title,{exact:true})).toHaveCount(1);
   const day=page.getByRole("region",{name:"2026-10-"+view.day+" IST"});
-  await expect(day.getByText(title,{exact:true})).toBeVisible();
-  await expect(day.getByText(new RegExp(startHour+":00.*IST"))).toBeVisible();
-  await expect(day.getByRole("link",{name:"Course Section"})).toHaveAttribute(
+  const createdCard=day.locator("article").filter({hasText:title});
+  await expect(createdCard).toBeVisible();
+  const expectedIst=new Intl.DateTimeFormat("en-IN",{
+   timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+  }).format(new Date("2026-10-"+view.day+"T"+hour+":00:00+05:30"));
+  await expect(createdCard).toContainText(expectedIst+" IST");
+  await expect(createdCard.getByRole("link",{name:"Course Section"})).toHaveAttribute(
    "href","/teacher/courses/"+deliveryId+"/home",
   );
   await page.getByRole("link",{name:"Previous month"}).click();
@@ -74,8 +78,12 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await viewSelect.selectOption("month");
   await page.goto("/teacher/calendar?month=2026-13");
   await expect(page.getByRole("alert")).toContainText("Invalid month or Section filter");
-  const denied=await page.goto("/teacher/calendar?month=2026-10&deliveryId="+SEED_IDS.collegeB);
-  expect(denied?.status()).toBeGreaterThanOrEqual(400);
+  // App Router can stream an authorization error boundary with HTTP 200.
+  // Verify denied content, rather than treating the transport status as auth.
+  await page.goto("/teacher/calendar?month=2026-10&deliveryId="+SEED_IDS.collegeB);
+  await expect(page.getByRole("alert")).toContainText("Unable to load Class Schedule");
+  await expect(page.getByText(title,{exact:true})).toHaveCount(0);
+  await expect(page.getByRole("region",{name:"IST month schedule grid"})).toHaveCount(0);
   if(view.name==="mobile"){
    await page.goto("/teacher/calendar?month=2026-10&deliveryId="+deliveryId);
    const width=await page.evaluate(()=>document.documentElement.scrollWidth);
