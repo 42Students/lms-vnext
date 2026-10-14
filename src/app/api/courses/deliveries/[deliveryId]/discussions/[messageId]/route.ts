@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {facultyDiscussionModerationSchema} from "@/modules/courses/faculty-discussion-moderation-model";
 import {
   deleteCourseDiscussionMessage,
   toggleCourseDiscussionPin,
@@ -30,10 +31,12 @@ export async function DELETE(
   try {
     const context = await getCurrentRequestContext();
     const { deliveryId, messageId } = await params;
+    const version=facultyDiscussionModerationSchema.parse(await request.json());
     const deleted = await deleteCourseDiscussionMessage(
       context,
       messageId,
       deliveryId,
+      version,
     );
 
     return NextResponse.json({ deleted });
@@ -57,11 +60,13 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { deliveryId, messageId } = await params;
+    const version=facultyDiscussionModerationSchema.parse(await request.json());
     const message =
       await toggleCourseDiscussionPin(
         context,
         messageId,
         deliveryId,
+        version,
       );
 
     return NextResponse.json({ message });

@@ -33,6 +33,8 @@ import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-a
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import {getFacultyDiscussionParticipation} from "@/modules/courses/faculty-discussion-participation-service";
 import {getFacultySessionCoverage} from "@/modules/courses/faculty-session-coverage-service";
+import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage}
+ from "@/modules/courses/discussion-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -326,6 +328,36 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       and event_type in ('courses.assignment.created','courses.assignment.updated')`,[created.id]);
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.assignment.created","courses.assignment.updated",
+    ]);
+  });
+  it("pins and deletes own-Section discussion with microsecond CAS, audit and denial",async()=>{
+    const {delivery}=await fixture();
+    const posted=await createCourseDiscussionMessage(facultyOnly,delivery.id,{
+      messageText:"Moderated course thread "+runId,
+    });
+    const version={expectedUpdatedAt:posted.updatedAt.toISOString(),confirmed:true};
+    const pinned=await toggleCourseDiscussionPin(facultyOnly,posted.id,delivery.id,version);
+    expect(pinned.pinned).toBe(true);
+    await expect(toggleCourseDiscussionPin(facultyOnly,posted.id,delivery.id,version))
+      .rejects.toBeDefined();
+    await expect(toggleCourseDiscussionPin(learner,posted.id,delivery.id,{
+      expectedUpdatedAt:pinned.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(deleteCourseDiscussionMessage(facultyOnly,posted.id,SEED_IDS.collegeB,{
+      expectedUpdatedAt:pinned.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(deleteCourseDiscussionMessage(facultyOnly,posted.id,delivery.id,version))
+      .rejects.toBeDefined();
+    const deleted=await deleteCourseDiscussionMessage(facultyOnly,posted.id,delivery.id,{
+      expectedUpdatedAt:pinned.updatedAt.toISOString(),confirmed:true,
+    });
+    expect(deleted.id).toBe(posted.id);
+    const events=await pool.query<{event_type:string}>(`
+      select event_type from activity_events where subject_id=$1::text
+      and event_type like 'courses.discussion.%'`,[posted.id]);
+    expect(events.rows.map(x=>x.event_type).sort()).toEqual([
+      "courses.discussion.deleted","courses.discussion.pin_changed",
+      "courses.discussion.posted",
     ]);
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{

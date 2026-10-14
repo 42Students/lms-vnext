@@ -400,3 +400,12 @@ restores correct answers and browser-local due times, validates questions
 before the server mutation and prevents editing published quiz questions.
 Added model unit and own-Faculty PostgreSQL create/edit/publish/stale/foreign/
 wrong-role/audit assertions. No DONE promotion pending execution/browser parity.
+
+## 2026-10-14 C2 — Course Discussions (PARTIAL)
+Existing create/reply and moderation were present; **new** required confirmed
+client token on PATCH/DELETE and SQL millisecond CAS prevent stale moderation
+writes against PostgreSQL microsecond timestamps. Shared Learner own-delete
+flow still sends a token; Faculty pin/unpin requires confirmation. Error feedback
+is visible without inventing deleted text. Test fixtures authored for create,
+pin, stale denial, wrong role, forged delivery and deletion audit. Full
+browser/database execution and legacy reply-tree parity remain open.
