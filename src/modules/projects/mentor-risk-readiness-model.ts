@@ -3,6 +3,7 @@ import {z} from "zod";
 export const mentorRiskReadinessQuerySchema=z.object({
   projectId:z.string().uuid(),
   focus:z.enum(["ALL","RISK","READINESS"]).default("ALL"),
+  taskPriority:z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorRiskReadinessQuery=z.infer<typeof mentorRiskReadinessQuerySchema>;
@@ -37,6 +38,8 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
     items.push({category,key,title,detail,href});
   };
   const active=facts.projectStatus!=="ARCHIVED"&&facts.projectStatus!=="COMPLETED";
+  const priorityTasks=facts.tasks.filter(task=>
+    query.taskPriority==="ALL"||task.priority===query.taskPriority);
   const incompleteTasks=facts.tasks.filter(task=>task.status!=="DONE");
   const blockedTasks=facts.tasks.filter(task=>task.status==="BLOCKED");
   const reviewTasks=facts.tasks.filter(task=>task.status==="IN_REVIEW");
@@ -47,11 +50,11 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
     istCalendarKey(row.startsAt)<istToday);
   const sprintTitle=new Map(facts.sprints.map(sprint=>[sprint.id,sprint.title]));
   if(active){
-    for(const task of blockedTasks)add("RISK","blocked:"+task.id,
+    for(const task of blockedTasks.filter(task=>priorityTasks.includes(task)))add("RISK","blocked:"+task.id,
       task.title,"Blocked task · "+task.priority+" priority · "+
       (sprintTitle.get(task.sprintId)??"Unknown Sprint"),
       base+"?tab=board#mentor-task-"+encodeURIComponent(task.id));
-    for(const task of reviewTasks)add("RISK","review:"+task.id,
+    for(const task of reviewTasks.filter(task=>priorityTasks.includes(task)))add("RISK","review:"+task.id,
       task.title,"Task submission awaits recorded review",
       base+"?tab=board#mentor-task-"+encodeURIComponent(task.id));
     for(const meeting of scheduledPastDay)add("RISK","scheduled-past:"+meeting.id,
@@ -77,7 +80,7 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
       "Sprint status: "+sprint.status+" (not completed)",base+"?tab=sprints");
   if(!facts.tasks.length)add("READINESS","tasks-none","No registered tasks",
     "Task completion is unknown until tasks exist",base+"?tab=board");
-  else for(const task of incompleteTasks)add("READINESS","task:"+task.id,task.title,
+  else for(const task of incompleteTasks.filter(task=>priorityTasks.includes(task)))add("READINESS","task:"+task.id,task.title,
     "Task status: "+task.status+" · "+task.priority+" priority",
     base+"?tab=board#mentor-task-"+encodeURIComponent(task.id));
   if(!facts.finalApproved)add("READINESS","delivery","No approved final delivery",
@@ -105,6 +108,7 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
 export function mentorRiskReadinessHref(query:MentorRiskReadinessQuery){
   const p=new URLSearchParams();
   if(query.focus!=="ALL")p.set("focus",query.focus);
+  if(query.taskPriority!=="ALL")p.set("taskPriority",query.taskPriority);
   if(query.page>1)p.set("page",String(query.page));
   const suffix=p.toString();
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+

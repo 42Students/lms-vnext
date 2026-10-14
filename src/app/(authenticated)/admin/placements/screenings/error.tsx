@@ -1,0 +1,1 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";export default function Error({reset}:{error:Error & {digest?:string};reset:()=>void}){return <ErrorState title="Screening queue unavailable" description="The selected-college screening records were not loaded." action={<Button onClick={reset}>Retry</Button>}/>;}

@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
+import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const root:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"root",
@@ -93,6 +94,9 @@ describe("Mentor pending task review triage PostgreSQL",()=>{
     expect(high.enabled).toBe(true);
     expect(high.total).toBe(1);
     expect(high.items[0]?.priority).toBe("HIGH");
+    const csv=mentorPendingTaskReviewCsv(high.items,0);
+    expect(csv).toContain("IST");
+    expect(csv).not.toContain("submission_url");
     const all=await getMentorTaskReviews(mentor,{...query,priority:"ALL"});
     expect(all.total).toBe(2);
     expect(all.items.map(row=>row.priority)).toEqual(["HIGH","LOW"]);

@@ -12,7 +12,6 @@ import {
   tpoCompaniesQuerySchema,
 } from "@/modules/placements/tpo-companies-view-service";
 import type { TpoCompanyRow } from "@/modules/placements/tpo-companies-view-model";
-import { tpoCompanyDraftHref } from "@/modules/placements/tpo-company-action-model";
 
 type PageProps = {
   searchParams: Promise<{
@@ -246,7 +245,6 @@ export default async function TpoCompanyMemoryPage({
                   <th scope="col" className="px-4 py-3">Offers</th>
                   <th scope="col" className="px-4 py-3">Accepted</th>
                   <th scope="col" className="px-4 py-3">Confirmed joins</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,20 +297,6 @@ export default async function TpoCompanyMemoryPage({
                     </td>
                     <td className="px-4 py-4 tabular-nums">
                       {company.confirmedJoinedLearners}
-                    </td>
-                    <td className="px-4 py-4">
-                      {tpoCompanyDraftHref(company) ? (
-                        <Link
-                          href={tpoCompanyDraftHref(company)!}
-                          className="inline-flex min-h-10 items-center whitespace-nowrap rounded-md border border-border px-3 text-xs font-semibold text-primary-text hover:border-primary"
-                        >
-                          Create draft drive
-                        </Link>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">
-                          Link company first
-                        </span>
-                      )}
                     </td>
                   </tr>
                 ))}

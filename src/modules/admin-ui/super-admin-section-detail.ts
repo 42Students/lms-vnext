@@ -8,7 +8,10 @@ import { resourceVisibleInAdminScope } from "./super-admin-resource-scope-model"
 import { requirePermission } from "@/modules/permissions/policy";
 
 export async function resolveSuperAdminSectionDetail(context: RequestContext, rawId: unknown) {
-  requirePermission(context, "academics.read");
+  requirePermission(context, "academics.read", {
+    collegeId: context.adminScope?.collegeId ?? undefined,
+    organizationId: context.adminScope?.organizationId ?? undefined,
+  });
   const id = sectionIdSchema.safeParse(rawId);
   if (!id.success || !context.adminScope?.collegeId) return null;
   try {

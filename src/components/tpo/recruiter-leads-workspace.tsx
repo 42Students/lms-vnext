@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { tpoDraftCompanyNameHref } from "@/modules/placements/tpo-draft-company-prefill-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
@@ -354,7 +353,7 @@ export function RecruiterLeadsWorkspace({
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
                     <tr>
-                      {["Company", "Contacts", "Drives run", "Accepted-offer drives", "Students placed", "Actions"].map(label => (
+                      {["Company", "Contacts", "Drives run", "Accepted-offer drives", "Students placed"].map(label => (
                         <th key={label} scope="col" className="px-4 py-3 font-semibold">{label}</th>
                       ))}
                     </tr>
@@ -380,18 +379,6 @@ export function RecruiterLeadsWorkspace({
                         <td className="px-4 py-3">{company.acceptedOfferDrives}</td>
                         <td className="px-4 py-3">
                           {company.studentsPlaced ?? "Pending placement-policy verification"}
-                        </td>
-                        <td className="px-4 py-3">
-                          {tpoDraftCompanyNameHref(company.name) ? (
-                            <Link
-                              href={tpoDraftCompanyNameHref(company.name)!}
-                              className="inline-flex min-h-10 items-center whitespace-nowrap rounded-md border border-border px-3 text-xs font-semibold text-primary-text hover:border-primary"
-                            >
-                              Create draft drive
-                            </Link>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Company name unavailable</span>
-                          )}
                         </td>
                       </tr>
                     ))}
