@@ -195,3 +195,17 @@ pre-migration history is not fabricated. Pure model and PostgreSQL denial
 tests are authored but not run, and exact legacy team-management actions,
 complete audit history and browser acceptance remain OPEN. No parity row or
 checklist is marked DONE.
+
+## Mentor completed delivery decision history (2026-10-14)
+
+Read-only `/mentor/review-history` aggregates persisted
+`project_submission_reviews` across projects that have current, same-college
+Mentor assignment membership. It uses only migrated Project P6 review,
+submission and project-instance tables, central projects.read and active role
+scope, bounded Zod decision/pagination filters, and an honest empty or
+module-disabled state. Records describe project review decisions, not decisions
+personally made by the viewing Mentor; names, raw feedback and learner details
+are omitted. Linked from the existing pending delivery-review queue; writes
+remain exclusively inside the authorized workspace. Unit and disposable DB
+denial tests are authored but not executed; former assignments, pre-migration
+history and full legacy/browsers parity remain OPEN and PARTIAL.

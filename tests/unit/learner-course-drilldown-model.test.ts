@@ -53,7 +53,7 @@ describe("Learner course attendance month summaries", () => {
       title: "Future scheduled", status: "SCHEDULED" as const,
     },
     {
-      id: "prev", startsAt: new Date("2026-09-30T17:50:00Z"),
+      id: "prev", startsAt: new Date("2026-09-30T18:40:00Z"),
       title: "IST October", status: "PRESENT" as const,
     },
   ];
