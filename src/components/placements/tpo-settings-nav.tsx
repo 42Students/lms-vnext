@@ -36,6 +36,11 @@ const SETTINGS_LINKS = [
     label: "My Notifications",
     href: "/tpo/settings/notifications",
   },
+  {
+    id: "recruiters",
+    label: "Recruiter Access",
+    href: "/tpo/settings/recruiters",
+  },
 ] as const;
 
 export function TpoSettingsNav({
@@ -48,7 +53,8 @@ export function TpoSettingsNav({
     | "team"
     | "trusted"
     | "branding"
-    | "notifications";
+    | "notifications"
+    | "recruiters";
 }) {
   return (
     <nav
