@@ -7,6 +7,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Students" path="/admin/students" statuses={statuses}
+  exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Read-only learner memberships in the selected college, without private contact details. Use the scoped membership detail for authorized contact."
   searchParams={searchParams} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/>;
 }
