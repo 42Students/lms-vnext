@@ -11,6 +11,7 @@ import type {
   getTpoRoundDriveDay,
 } from "@/modules/placements/tpo-round-drive-day-service";
 import { TpoRoundResultRecorder } from "./tpo-round-result-recorder";
+import { TpoBulkRoundResultRecorder } from "./tpo-bulk-round-result-recorder";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -219,6 +220,12 @@ export function TpoRoundDriveDayReadOnly({
         </p>
       </section>
 
+      <TpoBulkRoundResultRecorder
+        roundId={data.round.id}
+        round={{ kind: data.round.kind, status: data.round.status }}
+        rows={data.rows}
+      />
+
       <section
         aria-label="Round applicant roster"
         className="overflow-hidden rounded-xl border border-border bg-surface"
@@ -334,8 +341,10 @@ export function TpoRoundDriveDayReadOnly({
         TPO operators can stage a PASS (shortlisted), FAIL (not selected),
         HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:
         only completed rounds permit explicit, audited apply. Existing
-        coordinator attendance controls and bulk result workflows remain
-        separate; no offer or final hiring selection is inferred.
+        coordinator attendance controls remain separate. Bulk initial-result
+        staging processes entries in individual audited transactions and may
+        partly succeed; neither stage nor bulk stage implies an offer or
+        final hiring selection.
       </p>
     </div>
   );
