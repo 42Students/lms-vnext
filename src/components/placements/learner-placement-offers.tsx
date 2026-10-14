@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
 import {learnerOfferResponseTiming,prioritizeLearnerOffers} from "@/modules/placements/learner-offer-response-timing-model";
+import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
+  from "@/modules/placements/learner-offer-pending-request-model";
 import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -68,10 +71,11 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,snapshotNowIso,
+  offers,snapshotNowIso,extensionRequests=[],
 }: {
   offers: readonly LearnerPlacementOfferItem[];
   snapshotNowIso:string;
+  extensionRequests?:readonly LearnerOfferRequestStatus[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -85,6 +89,7 @@ export function LearnerPlacementOffers({
   const [extensionReason,setExtensionReason]=useState("");
   const [extensionError,setExtensionError]=useState<string|null>(null);
   const sortedOffers=prioritizeLearnerOffers(offers,snapshotNowIso);
+  const pendingExtensions=learnerPendingOfferExtensions(extensionRequests);
   const preview = confirmOffer
     ? learnerOfferAcceptancePreview({
         offerId: confirmOffer.offerId,
@@ -293,6 +298,14 @@ export function LearnerPlacementOffers({
               </p>
             </div>
 
+            {pendingExtensions.has(item.offerId) ? (
+              <p role="status" className="mt-4 text-sm font-semibold text-body">
+                Offer deadline extension requested. Your placement team has not approved it yet.
+                {" "}
+                <Link href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
+                  className="text-primary-text underline">Review pending request</Link>
+              </p>
+            ) : null}
             {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
                 The recorded response deadline has passed. You cannot respond to this offer.
@@ -328,7 +341,7 @@ export function LearnerPlacementOffers({
                 >
                   Decline offer
                 </Button>
-                {item.expiresAt ? (
+                {item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
                       setExtensionOffer(item);

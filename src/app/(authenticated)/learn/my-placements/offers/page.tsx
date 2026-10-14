@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
+import {listOwnPlacementRequests} from "@/modules/placements/request-service";
 import {
   learnerOfferViewSchema,
   type LearnerOfferView,
@@ -25,7 +26,9 @@ export default async function LearnerOffersPage({
   const validView = learnerOfferViewSchema.safeParse(requested);
   const view = validView.success ? validView.data : "all";
   const context = await getCurrentRequestContext();
-  const offers = await getOwnLearnerOfferBrowse(context, view);
+  const [offers,requests] = await Promise.all([
+    getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
+  ]);
   const snapshotNowIso = new Date().toISOString();
 
   return (
@@ -75,6 +78,10 @@ export default async function LearnerOffersPage({
         </section>
       ) : (
         <LearnerPlacementOffers
+          extensionRequests={requests.map(row=>({
+            offerId:row.request.offerId,status:row.request.status,
+            requestType:row.request.requestType,
+          }))}
           snapshotNowIso={snapshotNowIso}
           offers={offers.items.map((row) => ({
             offerId: row.offer.id,
