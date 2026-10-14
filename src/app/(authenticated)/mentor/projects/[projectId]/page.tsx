@@ -65,6 +65,10 @@ export default async function MentorProjectPage({
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Delivery review summary
         </Link>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Resource link directory
+        </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"

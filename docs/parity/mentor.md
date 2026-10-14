@@ -734,3 +734,81 @@ filter aggregation, zero-task semantics, CSV neutralization/capping, wrong-role,
 foreign-scope and forged selectors. This is read-only, so stale write tokens
 are not applicable. **PARTIAL:** execute typecheck, lint, PostgreSQL, unit and
 browser download checks, then compare the legacy Sprint/Board summary UX.
+
+## 2026-10-14 chat-11 N — Assigned Mentor project reports (PARTIAL)
+
+New read-only /mentor/reports aggregates persisted status counts across
+currently assigned Mentor projects (PLANNED, ACTIVE, COMPLETED, ARCHIVED),
+primary Mentor assignments and a per-project count of actual registered
+review/stalled/meeting-request/meeting-soon attention signals. Strict Zod
+status, attention, literal title filters and 20-row pages provide mobile cards
+and exact workspace/risk drill-down links. Reads require current active Mentor
+membership, central projects.read, live same-college project assignment and
+optional Projects enablement. No learner contacts, inferred pass rates,
+workload/effort, velocity or fictitious readiness score. Loading/error/empty
+states, pure model/unit and independently created PostgreSQL positive, forged,
+wrong-role, disabled and foreign-college non-leaking fixtures are authored.
+No mutation or external sending; stale token is not applicable. **PARTIAL:**
+execute PG, tsc, lint, unit, mobile/desktop and verify the legacy report UX.
+
+## 2026-10-14 chat-11 O — Mentor resource-link directory (PARTIAL)
+
+New exact-project read-only Resource Directory filters active registered
+resource metadata by required/optional and literal title/description text;
+shows only credential-free HTTPS links (rejecting javascript/http and embedded
+credentials). The capped, formula-neutralized 200-row CSV explicitly reports
+truncation and excludes all raw URLs, private notes, learner contact and file
+metadata. The service rechecks active current Mentor assignment, same-college
+scope, central projects.read and Projects enablement. Mobile cards, loading,
+error and empty states are provided. Model/unit tests and a disposable own-
+project PostgreSQL fixture cover safe link handling, CSV formula escaping,
+positive persisted reads, foreign-scope, disabled/wrong-role and forged input
+denials. No file-backed functionality, member mutation or external sending
+was added; no mutation stale token applies. **PARTIAL:** independent PG,
+TypeScript, lint, browser, and legacy Resources interaction parity remain.
+
+## 2026-10-14 chat-11 P — Mentor activity decision-category drill-ins (PARTIAL)
+
+The current exact-project sanitized Activity history and its capped 200-row
+formula-neutralized CSV can now filter by registered Project lifecycle,
+review decisions, meeting decisions, and task activity as well as importance.
+An explicit fixed event-type allowlist filters SQL before pagination/counts;
+no raw activity summaries, actor identities, notes, feedback or arbitrary
+metadata filters are exposed. The same current Mentor, college, project,
+projects.read and module gates are reused. Pure Zod/allowlist tests and
+in-test-project PostgreSQL assertions verify real creation events, no fabricated
+review history, forged filters, wrong role and foreign-scope denial. Read-only,
+so optimistic mutation tokens are not applicable. **PARTIAL:** execute real PG,
+TypeScript, ESLint, responsive browser and legacy activity completeness checks.
+
+## 2026-10-14 chat-11 Q — final-delivery review filters/CSV (PARTIAL)
+
+The currently assigned Mentor Delivery review overview now filters persisted
+project_submissions by registered DRAFT/SUBMITTED/APPROVED/CHANGES_REQUESTED
+status and actual nonblank review-feedback presence/absence. SQL count, paging
+and rows use the identical same-project review join/filters; the responsive
+UI links each filtered version to the existing secure exact-version detail.
+A 200-row formula-neutralized CSV reports versions, recorded decision labels,
+IST timestamps and feedback presence but deliberately does not export raw
+feedback, submission URLs, learner contact or reviewer identities. Existing
+current-Mentor college and projects.read scope is reused. Pure model/unit
+and own-project PostgreSQL fixtures cover stored draft+review evidence,
+filter accuracy, forged selector, wrong-role, disabled and foreign denials.
+Read-only: no new mutation stale token applies. **PARTIAL:** independent
+PG/tsc/eslint/browser execution and legacy feedback-history parity remain.
+
+## 2026-10-14 chat-11 R — scoped Mentor portfolio report CSV (PARTIAL)
+
+The assigned-project /mentor/reports view now exports up to 100 matching
+current same-college Mentor project records using its strict status, attention
+and title filters. The UTF-8 CSV formula-neutralizes potentially unsafe project
+titles, includes only registered project ID/title/status, current primary-
+Mentor flag, safe attention category labels and IST update time, and reports
+omitted matches both in the file and HTTP header. No learner contacts,
+unaudited student data, inferred scores, or raw alert descriptions are sent.
+The existing active Mentor role, projects.read, persisted assignment and
+module guards are reused; no new write path, new permission or external send.
+Unit-model cap/neutralization tests and an own-project PostgreSQL fixture
+cover persisted positive selection and wrong-role/disabled/foreign/forged
+denial. Read-only, so no stale write token applies. **PARTIAL:** real typecheck,
+lint, PostgreSQL, browser download and legacy reports acceptance remain open.
