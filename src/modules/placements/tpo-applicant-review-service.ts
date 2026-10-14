@@ -19,6 +19,7 @@ export async function reviewTpoApplicant(
     applicationId: placementApplications.id,
     applicationStatus: placementApplications.status,
     screeningStatus: placementApplicationScreenings.status,
+    screeningUpdatedAt: placementApplicationScreenings.updatedAt,
   }).from(placementApplications)
     .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
     .leftJoin(placementApplicationScreenings,
@@ -28,6 +29,10 @@ export async function reviewTpoApplicant(
       eq(placementApplications.id, params.applicationId),
       eq(placementJobs.status, "PUBLISHED"))).limit(1);
   if (!owned) throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+  if (!owned.screeningUpdatedAt ||
+      owned.screeningUpdatedAt.toISOString() !== input.expectedUpdatedAt) {
+    throw new PlacementsServiceError("PLACEMENT_SCREENING_STALE");
+  }
   if (!canReviewApplicant(owned.applicationStatus, owned.screeningStatus)) {
     throw new PlacementsServiceError("PLACEMENT_SCREENING_INVALID_TRANSITION");
   }
