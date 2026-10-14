@@ -63,6 +63,7 @@ export function FacultyQuizReview({
   status,
   resultsPublished,
   deliveryOwned,
+  updatedAt,
 }: {
   quizId: string;
   deliveryId: string;
@@ -73,6 +74,7 @@ export function FacultyQuizReview({
     | "ARCHIVED";
   resultsPublished: boolean;
   deliveryOwned: boolean;
+  updatedAt:string;
 }) {
   const router = useRouter();
   const actions = quizReviewActions({
@@ -132,12 +134,9 @@ export function FacultyQuizReview({
   async function setResults(
     published: boolean,
   ) {
-    if (
-      !published &&
-      !window.confirm(
-        "Hide published Quiz results from learners?",
-      )
-    ) {
+    if (!window.confirm(published
+      ? "Publish closed Quiz results and scores to eligible learners?"
+      : "Hide published Quiz results from learners?")) {
       return;
     }
 
@@ -146,7 +145,7 @@ export function FacultyQuizReview({
 
     try {
       const response = await fetch(
-        `/api/courses/quizzes/${quizId}/results`,
+        `/api/courses/quizzes/${quizId}/faculty-results`,
         {
           method: "POST",
           headers: {
@@ -154,7 +153,10 @@ export function FacultyQuizReview({
               "application/json",
           },
           body: JSON.stringify({
-            published,
+            deliveryId,
+            action:published?"PUBLISH":"HIDE",
+            expectedUpdatedAt:updatedAt,
+            confirmed:true,
           }),
         },
       );

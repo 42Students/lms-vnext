@@ -19,6 +19,7 @@ import { createCourseAssignment, transitionCourseAssignment } from "@/modules/co
 import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
+import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
@@ -431,6 +432,35 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       order by created_at desc limit 1`,[session.id]);
     expect(audit.rows[0]?.metadata.correction).toBe(true);
     expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
+  });
+  it("toggles CLOSED Quiz result visibility with an audited SQL-default token",async()=>{
+   const {delivery,quiz}=await fixture();
+   const closed=await transitionCourseQuiz(faculty,quiz.id,{action:"CLOSE"});
+   const row=await pool.query<{updated_at:Date}>(
+    "update course_quizzes set updated_at=now() where id=$1 returning updated_at",[closed.id]);
+   const token={deliveryId:delivery.id,action:"PUBLISH" as const,
+    expectedUpdatedAt:row.rows[0]!.updated_at.toISOString(),confirmed:true as const};
+   await expect(commandFacultyQuizResults(learner,quiz.id,token)).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults({
+    ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+   },quiz.id,token)).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,deliveryId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
+   })).rejects.toMatchObject({code:"QUIZ_RESULTS_STALE_VERSION"});
+   const published=await commandFacultyQuizResults(facultyOnly,quiz.id,token);
+   expect(published.resultsPublished).toBe(true);
+   await expect(commandFacultyQuizResults(facultyOnly,quiz.id,token)).rejects.toBeDefined();
+   const hidden=await commandFacultyQuizResults(facultyOnly,quiz.id,{
+    ...token,action:"HIDE",expectedUpdatedAt:published.updatedAt.toISOString(),
+   });
+   expect(hidden.resultsPublished).toBe(false);
+   const events=await pool.query<{n:string}>(`
+    select count(*)::text as n from activity_events where subject_id=$1::text
+     and event_type='courses.quiz.results_changed'`,[quiz.id]);
+   expect(events.rows[0]?.n).toBe("2");
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();

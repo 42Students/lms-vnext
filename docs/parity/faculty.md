@@ -843,3 +843,15 @@ instruction. Pure-model and test-created Faculty+Learner Section PG fixtures
 cover default SQL now microseconds, successful correction, stale replay,
 foreign-scoped and wrong-role denial, audit. PARTIAL until tsc/lint/PG/unit,
 mobile browser and actual legacy correction history are independently verified.
+
+## 2026-10-14 Faculty Quiz result publication command — PARTIAL
+The Faculty-owned CLOSED quiz report's Publish/Hide controls now send a
+confirmation and persisted millisecond timestamp to a same-origin scoped
+command. The service rechecks active Faculty teaching delivery, locks the
+exact quiz, forbids draft/open or unchanged transitions, and writes the
+visibility change with immutable activity audit in one transaction.
+No manual score override or unpublished score disclosure was added.
+Pure model/unit and fresh Faculty/Learner Section PG case covers
+SQL default now(), publish/hide, forged delivery, wrong role, stale token
+and two audit events. Still PARTIAL: executed PG/TS/lint, responsive
+browser, legacy result-publication and learner masking acceptance.
