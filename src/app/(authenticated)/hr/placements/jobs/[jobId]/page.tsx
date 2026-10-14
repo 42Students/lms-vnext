@@ -1,4 +1,6 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
+import { PlacementsServiceError } from "@/modules/placements/errors";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
@@ -33,8 +35,17 @@ export default async function HrPlacementJobPage({
 
   const { jobId } = await params;
   const query = await searchParams;
-  const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } =
-    await getHrJobRead(context, jobId, query);
+  let hiring: Awaited<ReturnType<typeof getHrJobRead>>;
+  try {
+    hiring = await getHrJobRead(context, jobId, query);
+  } catch (error) {
+    if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
+        (error instanceof z.ZodError && !z.string().uuid().safeParse(jobId).success)) {
+      notFound();
+    }
+    throw error;
+  }
+  const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
 
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
