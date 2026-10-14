@@ -1,0 +1,89 @@
+import Link from "next/link";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {EmptyState} from "@/components/ui/empty-state";
+import {mentorBoardReviewHref,mentorBoardReviewQuerySchema}
+  from "@/modules/projects/mentor-board-review-model";
+import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
+type Params={status?:string|string[];search?:string|string[];page?:string|string[]};
+const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+export default async function MentorBoardReviewPage({
+  params,searchParams,
+}:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}){
+  const [{projectId},raw]=await Promise.all([params,searchParams]);
+  const validated=mentorBoardReviewQuerySchema.safeParse({
+    projectId,status:first(raw.status)??undefined,
+    search:first(raw.search)??undefined,page:first(raw.page)??undefined,
+  });
+  if(!validated.success)return <section role="alert" className="space-y-3">
+    <h1>Invalid board filters</h1>
+    <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+  </section>;
+  const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
+  const base="/mentor/projects/"+encodeURIComponent(projectId);
+  return <div className="space-y-5">
+    <PageHeader eyebrow="Mentor · Project" title="Task board status"
+      description={data.projectTitle}
+      actions={<Link href={base+"?tab=board"}
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Full task workspace
+      </Link>}/>
+    {!data.enabled?
+      <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        Projects access is disabled; no tasks were loaded.
+      </section>:<>
+      <section aria-label="Registered task counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
+          <article key={status} className="rounded-xl border border-border bg-surface p-3">
+            <h2 className="text-xs font-semibold text-muted-foreground">{status.replaceAll("_"," ")}</h2>
+            <p className="mt-2 text-xl font-bold tabular-nums">{data.totals[status]}</p>
+          </article>)}
+      </section>
+      <p className="text-sm text-body">{data.count} registered tasks ·
+        {data.completedPercent===null?" Completion unknown (no tasks)":
+          " "+data.completedPercent+"% recorded DONE tasks"}
+      </p>
+      <form method="get" action={base+"/board-review"}
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm">Search tasks or sprints
+          <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
+            className="min-h-10 rounded border border-border bg-background p-2"/>
+        </label>
+        <label className="grid gap-1 text-sm">Status
+          <select name="status" defaultValue={data.query.status}
+            className="min-h-10 rounded border border-border bg-background p-2">
+            {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
+              <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+          Filter
+        </button>
+        <Link href={base+"/board-review"} className="px-3 py-2 text-primary-text underline">Clear</Link>
+      </form>
+      {data.items.length===0?<EmptyState
+        title={data.count===0?"No registered project tasks":"No tasks match these filters"}
+        description={data.count===0?
+          "This project has no stored tasks. No workload or assignment is inferred.":
+          "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
+        <ol className="grid gap-3">{data.items.map(row=><li key={row.id}
+          className="rounded-xl border border-border bg-surface p-4">
+          <h2 className="break-words font-semibold">{row.title}</h2>
+          <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
+            {row.priority} priority · {row.sprintTitle}</p>
+        </li>)}</ol>}
+      <nav aria-label="Board status pages" className="flex items-center justify-between gap-3">
+        <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
+        <div className="flex gap-3">
+          {data.page>1?<Link href={mentorBoardReviewHref({...data.query,page:data.page-1})}
+            className="text-sm text-primary-text underline">Previous</Link>:null}
+          {data.page<data.totalPages?<Link href={mentorBoardReviewHref({...data.query,page:data.page+1})}
+            className="text-sm text-primary-text underline">Next</Link>:null}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs text-muted-foreground">Only registered task status, priority
+      and sprint linkage are shown. No task assignee, effort or workload values
+      are persisted in this DB version. Use the full workspace for authorized actions.</p>
+  </div>;
+}

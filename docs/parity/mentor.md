@@ -468,3 +468,14 @@ team controls and historic membership view, never raw private member data.
 Pure unit and seeded positive/role/foreign-denial PostgreSQL assertions
 are authored but not locally executed; mobile/browser and product parity
 remain PARTIAL.
+
+## 2026-10-14 Mentor project task-board read overview (PARTIAL)
+
+Added `/mentor/projects/[projectId]/board-review`: scoped active Mentor,
+college, optional Projects module and exact project access; registered
+task-state totals, a completion percentage only when tasks exist, status and
+title/sprint search, 20-row pages with honest no-match and no-task states.
+The page links back to existing task workspace, exposes no private learner
+submission and **does not invent task assignees, estimates or workloads**.
+A pure model and unique-fixture disposable PostgreSQL read/role/foreign-selector
+test are authored. Browser, eslint/TypeScript and PostgreSQL evidence remain open.
