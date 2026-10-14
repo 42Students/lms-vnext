@@ -415,6 +415,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     });
     expect(graded.gradePublished).toBe(false);
     await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:7,feedback:"Good",expectedVersion:graded.version,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_GRADE_NO_CHANGE"});
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
       pointsAwarded:9,expectedVersion:0,
     })).rejects.toBeDefined();
     const published=await publishAssignmentGrade(facultyOnly,id,{
