@@ -370,6 +370,8 @@ Legacy includes:
 - [ ] Extend Deadline modal validation matches.
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.
+
+**W49 B — PARTIAL:** The TPO drive workspace now has a separate confirmed publish/close/reopen control using only registered season, company-relationship, active role-option, evaluative-round, eligibility-policy, applied result and accepted-offer records. Publish/reopen refuse unready or expired-deadline drives; reopen also refuses any applied round result or accepted offer. CLOSE remains a distinct step from completing rounds. Status and blockers are rechecked under a job row lock with an optimistic expected status, and every successful change appends a college-scoped actor audit. The existing generic non-TPO lifecycle endpoint is preserved; uniform legacy behavior, browser/positive PostgreSQL execution and immutable historical snapshots remain open.
 - [ ] Messages drawer matches recruiter conversation workflow.
 
 ## Page: Global Drive Day
