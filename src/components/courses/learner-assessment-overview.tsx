@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
+import { learnerAssessmentClock } from "@/modules/courses/learner-assessment-clock-model";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -76,6 +78,7 @@ function formatDate(value: string | null) {
   }
 
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -113,6 +116,21 @@ export function LearnerAssessmentOverview({
   kind: "ASSIGNMENT" | "QUIZ";
   snapshotNowMs: number;
 }) {
+  const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
+  const currentNowMs = learnerAssessmentClock(snapshotNowMs,
+    clock.snapshotNowMs === snapshotNowMs ? clock.elapsedMs : 0);
+  useEffect(() => {
+    const startedAt = performance.now();
+    const tick = () => setClock({ snapshotNowMs, elapsedMs: performance.now() - startedAt });
+    const interval = window.setInterval(tick, 1000);
+    const onVisibility = () => { if (document.visibilityState === "visible") tick(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [snapshotNowMs]);
+
   const [courseId, setCourseId] =
     useState("");
   const [page, setPage] = useState(1);
@@ -245,8 +263,8 @@ export function LearnerAssessmentOverview({
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
-                ? { ...assignmentOverviewState(item, snapshotNowMs), review: false }
-                : quizOverviewActionState(item);
+                ? { ...assignmentOverviewState(item, currentNowMs), review: false }
+                : quizOverviewActionState(item, currentNowMs);
             const href =
               item.kind === "QUIZ"
                 ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review ? "&review=true" : ""}`
@@ -297,15 +315,15 @@ export function LearnerAssessmentOverview({
                     {item.kind === "ASSIGNMENT" ? (
                       <p className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden"
                         role="status">
-                        {learnerAssignmentMobileState(item,snapshotNowMs).label}
-                        {" · "}{learnerAssignmentMobileState(item,snapshotNowMs).detail}
+                        {learnerAssignmentMobileState(item,currentNowMs).label}
+                        {" · "}{learnerAssignmentMobileState(item,currentNowMs).detail}
                       </p>
                     ) : null}
                     {item.kind === "QUIZ" ? (
                       <p role="status"
                         className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden">
-                        {learnerQuizMobileState(item,snapshotNowMs).label}
-                        {" · "}{learnerQuizMobileState(item,snapshotNowMs).detail}
+                        {learnerQuizMobileState(item,currentNowMs).label}
+                        {" · "}{learnerQuizMobileState(item,currentNowMs).detail}
                       </p>
                     ) : null}
                     {item.description ? (
@@ -506,7 +524,7 @@ export function LearnerAssessmentOverview({
               <>
                 {selectedAssignment.dueAt &&
                 new Date(selectedAssignment.dueAt).getTime() <
-                  snapshotNowMs ? (
+                  currentNowMs ? (
                   <div
                     role="status"
                     className="rounded-lg border border-warning bg-[var(--lms-warning-subtle)] p-4 text-sm text-body"

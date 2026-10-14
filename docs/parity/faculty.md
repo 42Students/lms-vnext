@@ -74,7 +74,7 @@ Evidence: `1f374255579a3e2e09cc65a69c14c11276abb3be` CI [38595677626](https://gi
 Tabs: All Contacts, Teachers, Students.
 
 - [ ] All Contacts tab fields/columns match.
-- [ ] Teachers tab fields/columns match.
+- [x] Teachers tab matches the approved public directory fields (name, active role and department; private email/phone/profile withheld), with exact same-college role detail.
 - [ ] Students tab fields/columns match.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
 - [ ] Contact actions/deep links are matched.
@@ -882,3 +882,28 @@ append-only activity_events or their referenced actor/membership rows.
 These are source changes targeting proven failing CI cases, **not yet a
 successful rerun at this revision**. Run targeted authenticated Chromium,
 then full CI, before marking Discussions/Contacts/Notifications DONE.
+
+## Faculty Contacts — Teachers: DONE (2026-10-14)
+
+The approved 2026-10-14 privacy decision limits contact visibility to
+need-to-know actors. This Teachers public directory is read-only: active
+Faculty membership, public name, department and current college roles, never
+unrelated learner contact information, identity, document or private profile.
+It retains legacy Teachers navigation, same-college role filtering, bounded
+server search, 10/20/50 paging, exact role-checked detail and return link,
+responsive cards, empty/loading/error/retry and stale/foreign denial.
+
+**Executed acceptance (immutable source SHA
+`c9e5a8d2e2c416a99708d8f9d1581b2fd18373e7`):**
+[GitHub CI 38599250226](https://github.com/42Students/lms-vnext/actions/runs/38599250226)
+ran `tests/integration/faculty-contacts-teachers-acceptance.test.ts`
+**3/3 PASS** (positive listing/detail, name search/phone-email non-disclosure,
+wrong-role/suspended/disabled/foreign-college and forged scope denial).
+`tests/e2e/faculty-contacts-teachers.spec.ts` passed both **desktop and
+mobile** authenticated user journeys, including list→detail→back, same-college
+teacher-only cards, search/no-match, public-only visibility, mobile
+horizontal-scroll check and no uncaught page errors. Typecheck, unit and build
+also passed at that source SHA. Overall CI still has failures in other
+modules and a pre-existing repository lint violation; this DONE designation
+is scoped exclusively to **Faculty Contacts — Teachers**, not All Contacts,
+Contacts — Students, whole Faculty or database/release certification.
