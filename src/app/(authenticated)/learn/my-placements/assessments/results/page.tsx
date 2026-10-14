@@ -36,10 +36,10 @@ export default async function LearnerAssessmentResultsPage({
   const context = await getCurrentRequestContext();
   const results = await getOwnLearnerAssessmentResults(context, view);
   const paged=pageLearnerAssessmentResults(results.items,parsed.data);
-  function href(nextView:string,pageNumber=1) {
+  function href(nextView:string,pageNumber=1,search=q) {
     const query=new URLSearchParams();
     if(nextView!=="all")query.set("view",nextView);
-    if(q)query.set("q",q);
+    if(search)query.set("q",search);
     if(pageNumber>1)query.set("page",String(pageNumber));
     const tail=query.toString();
     return "/learn/my-placements/assessments/results"+(tail?"?"+tail:"");
@@ -81,7 +81,7 @@ export default async function LearnerAssessmentResultsPage({
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Search
         </button>
-        {q?<Link href={href(view).replace(/([?&])q=[^&]*&?/,"$1").replace(/[?&]$/,"")}
+        {q?<Link href={href(view,1,"")}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">

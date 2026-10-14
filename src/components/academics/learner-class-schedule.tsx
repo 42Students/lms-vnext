@@ -90,6 +90,7 @@ function timeRange(event: LearnerScheduleEvent) {
     {
       hour: "numeric",
       minute: "2-digit",
+      timeZone: "Asia/Kolkata",
     },
   );
 
@@ -255,12 +256,13 @@ export function LearnerClassSchedule({
   const monthKeys=useMemo(()=>istMonthGridKeys(anchor.getFullYear(),anchor.getMonth()+1),[anchor]);
   const agenda=useMemo(()=>istDayAgenda(filteredEvents,chosenDay),[filteredEvents,chosenDay]);
   function movePeriod(direction:-1|1) {
-    setAnchor(current=>{
-      const next=shiftCalendarAnchor(current,view,direction);
-      if(view==="month") setChosenDay(istMonthGridKeys(next.getFullYear(),next.getMonth()+1)
-        .find(key=>key.startsWith(next.getFullYear()+"-"+String(next.getMonth()+1).padStart(2,"0"))) ?? istCalendarDay(next));
-      return next;
-    });
+    const next=shiftCalendarAnchor(anchor,view,direction);
+    setAnchor(next);
+    if(view==="month") {
+      const year=next.getFullYear();
+      const month=String(next.getMonth()+1).padStart(2,"0");
+      setChosenDay(year+"-"+month+"-01");
+    }
   }
 
 
@@ -301,6 +303,7 @@ export function LearnerClassSchedule({
                   weekday: "short",
                   hour: "numeric",
                   minute: "2-digit",
+                  timeZone: "Asia/Kolkata",
                 }).format(
                   new Date(nextEvent.startsAt),
                 )} · ${nextEvent.courseName || nextEvent.title}`
