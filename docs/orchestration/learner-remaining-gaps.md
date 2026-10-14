@@ -927,3 +927,28 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L14-008: authorized Applications header now surfaces saved screened stages with own-ID detail links; does not invent urgent times or recruiter decisions. Skipped L15-014 provider submitted reminder as non-authoritative without external receipt and L18-007 opt-in because registration-consent policy not approved. Unit/isolated-PG and browser acceptance pending.
 
 2026-10-14 L14-019: Applications now opens the exact learner-owned shortlisted interview by persisted application/round ID, preserving generic fallback where no scheduled interview exists. Independent learner PostgreSQL read+denial tests authored. Skipped L16-006 interview confirmation: no registered receipt/attendance state transition; L13-016 private per-drive resume upload: storage and consent approval required. Runtime and browser acceptance pending.
+
+## 2026-10-14 learner batch: explicitly skipped ledger rows and blocking dependencies
+
+The rows below were considered but intentionally not promoted to PARTIAL; they require infrastructure, migrated evidence, or a product decision not delivered by this batch:
+
+- **L1-021:** No trusted migrated course-thumbnail/image association or fallback asset contract.
+- **L2-023:** No authored introduction-content field in the migrated course model.
+- **L2-024:** No migrated rich-overview HTML field or approved sanitizer/content authoring contract.
+- **L2-025:** No authored takeaways-list field; lesson titles cannot be presented as authored outcomes.
+- **L12-013:** No verified membership-scoped persisted saved-job write/read contract.
+- **L12-014:** No verified membership-scoped persisted saved-job write/read contract or unsave audit.
+- **L13-016:** Private resume object storage, upload authorization and consent policy need approval.
+- **L15-002:** External assessment provider completion receipts are not migrated; scheduled elapsed time is not a result.
+- **L16-006:** No registered learner interview-attendance confirmation state or audit/decision contract.
+- **L18-007:** Placement-cell opt-in/consent state transitions and applicable privacy policy are not approved.
+- **L30-034:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-035:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-036:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-037:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-038:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-039:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-040:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-041:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-042:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-043:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
