@@ -388,7 +388,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-004 | Search with URL state | JobsListContent | learner jobs | UNCHECKED |
 | L12-005 | Browser Back/Forward search hydration | jobs route | learner jobs | UNCHECKED |
 | L12-006 | Sort by deadline | JobsListContent | learner jobs | UNCHECKED |
-| L12-007 | Sort newest | JobsListContent | learner jobs | UNCHECKED |
+| L12-007 | Sort newest | learner jobs | persisted `placement_jobs.published_at` descending (missing timestamps last), available on Drives; PARTIAL pending fresh PostgreSQL service/negative-case execution, browser sort and Back/Forward verification | PARTIAL |
 | L12-008 | Sort highest CTC | JobsListContent | learner jobs | UNCHECKED |
 | L12-009 | Job/employment type filter | JobsListContent | learner jobs | UNCHECKED |
 | L12-010 | Location filter | JobsListContent | learner jobs | UNCHECKED |
