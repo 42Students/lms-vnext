@@ -448,3 +448,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter hiring activity feed — PARTIAL:** New read-only /hr/activity filters persisted PLACEMENTS job-published/closed audit events by exact company+college-owned job IDs, replacing raw audit summaries with fixed non-sensitive event labels and IST timestamps. No applicant contacts, new sends or table changes. Pure unit and disposable PG own/foreign/wrong-role tests authored but unexecuted. Remaining notification unread/read, message threads, browser acceptance.
+
+
+**2026-10-15 chat-10 / HR round schedule overlap — PARTIAL:** Drive Rounds now displays owned persisted round start/end, venue/mode and conservative potential overlap warnings only with known positive durations; IST labels, no invented SLOT or write actions. Unit/isolated PG own-company, foreign-company and wrong-role fixtures authored; unexecuted. Remains true resource/slot conflict checks and browser acceptance.
