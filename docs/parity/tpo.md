@@ -352,6 +352,8 @@ Legacy:
 
 ### Tab: Applicants
 - [ ] applicant table/search/filter/stage views match.
+**W66-4 PARTIAL — Candidate detail:** A focused TPO applicant detail route now shows persisted application identity, eligibility and screening stage, latest applied round outcomes and recorded offer/accepted joining evidence with a scoped college/drive/application lookup. It links from the existing applicant stage table, with mobile, loading, error and non-leaking not-found states. Does not disclose private screening notes, staged results or fabricate employer selection. Remaining: legacy side drawer/modal, richer candidate sections/filters, positive PG/browser evidence and visual parity.
+
 - [ ] candidate detail drawer matches.
 - [ ] bulk actions match.
 - [ ] external-registration/company-id state matches.
