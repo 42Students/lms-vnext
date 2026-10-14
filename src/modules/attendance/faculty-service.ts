@@ -398,6 +398,18 @@ export async function createFacultyAttendanceSession(
         deliveryId: delivery.deliveryId,
       });
 
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_CLASS_SCHEDULED,
+        collegeId: context.membership!.collegeId,
+        organizationId: context.membership!.organizationId,
+        subjectType: "attendance_session",
+        subjectId: created!.id,
+        summary: "Faculty class session scheduled",
+        metadata: { deliveryId: delivery.deliveryId,
+          startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString() },
+        groupKey: "attendance-session:" + created!.id,
+        dedupeKey: "faculty-class:" + created!.id + ":scheduled",
+      });
       return created!;
     });
   } catch (error) {
