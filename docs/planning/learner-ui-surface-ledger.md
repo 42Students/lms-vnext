@@ -423,7 +423,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L13-012 | Closed/not-open state | VerifiedJobDetailContent | job detail | UNCHECKED |
 | L13-013 | Not-eligible state | DriveEligibilityPanel | job detail | FIXED |
 | L13-014 | Not-found/access handling | job route | job detail | FIXED |
-| L13-015 | Back to Drives/navigation | job detail | job detail | UNCHECKED |
+| L13-015 | Back to Drives/navigation | job detail | job links preserve validated bounded Drives filter/page state in a `back` query and the job detail breadcrumb returns to it; arbitrary tenant/user selectors removed; exact published job still server-scoped. PARTIAL pending PG/unit/tsc/lint, Next app-router and browser Back/Forward acceptance | PARTIAL |
 | L13-016 | Application uses the Profile resume; no per-drive resume upload | jobDetailProfileResumeOnly.test.jsx | learner job detail/application | GAP |
 
 ## L14 — Applications
