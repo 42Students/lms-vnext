@@ -83,7 +83,7 @@ describe.skipIf(!enabled)("TPO results entry PostgreSQL",()=>{
   await expect(confirmTpoRoundResult(tpo,q.roundId,body))
    .rejects.toMatchObject({code:"PLACEMENT_RESULT_NOT_FOUND"});
   const audit=await pool.query<{n:number}>(
-   "SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND module='PLACEMENTS'",[q.roundId]);
+   "SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_RESULT_STAGED'",[saved.id]);
   expect(audit.rows[0]?.n).toBeGreaterThanOrEqual(1);
  });
 });
