@@ -94,6 +94,8 @@ it("lists a real draft and fences off foreign colleges and wrong roles", async (
       id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB } };
     await expect(getTpoDriveLifecycleList(foreign, { seasonId: SEED_IDS.placementSeasonA }))
       .rejects.toMatchObject({ code: "PLACEMENT_SEASON_NOT_FOUND" });
+    const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+    await expect(getTpoDriveLifecycleList(forged,{})).rejects.toBeInstanceOf(AuthorizationError);
     const wrong: RequestContext = { ...tpo, membership: { ...tpo.membership!, roles: ["LEARNER"] } };
     await expect(getTpoDriveLifecycleList(wrong, {})).rejects.toBeInstanceOf(AuthorizationError);
   });

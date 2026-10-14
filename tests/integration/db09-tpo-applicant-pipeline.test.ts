@@ -93,6 +93,8 @@ expect(withdrawn.rows.map(row=>row.id)).toEqual([extraApps[0]]);
 expect(withdrawn.counts.pending).toBe(25);
 const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
 await expect(getTpoApplicantPipeline(foreign,{jobId})).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+await expect(getTpoApplicantPipeline(forged,{jobId})).rejects.toBeInstanceOf(AuthorizationError);
 const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
 await expect(getTpoApplicantPipeline(wrong,{jobId})).rejects.toBeInstanceOf(AuthorizationError);
 });

@@ -7,6 +7,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
+import { requireTpoJobActor } from "./tpo-job-write-base";
 import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
@@ -21,6 +22,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const input=tpoApplicantPipelineParams.parse(raw);
   await requirePlacementManageScope(context,collegeId);
   const db=getDb();
+  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
   const [job]=await db.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status})
     .from(placementJobs)
     .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,collegeId),
