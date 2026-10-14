@@ -1,10 +1,10 @@
 import "server-only";
-import { and, asc, count, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, colleges, membershipRoles, users } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUsersPageCount } from "./admin-user-directory-model";
+import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUsersPageCount, roleForPeopleTab } from "./admin-user-directory-model";
 export async function listSuperAdminUsers(context: RequestContext, raw: unknown) {
  const query=adminUsersQuerySchema.parse(raw);
  if(!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
@@ -17,9 +17,10 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  else if(selected?.organizationId)conditions.push(eq(colleges.organizationId,selected.organizationId));
  if(query.membershipStatus!=="ALL")conditions.push(eq(collegeMemberships.status,query.membershipStatus));
  if(query.platformStatus!=="ALL")conditions.push(eq(users.platformStatus,query.platformStatus));
- if(query.role!=="ALL") {
+ const role=roleForPeopleTab(query);
+ if(role!=="ALL") {
   const roleIds=getDb().select({id:membershipRoles.membershipId}).from(membershipRoles)
-   .where(eq(membershipRoles.role,query.role));
+   .where(eq(membershipRoles.role,role as "LEARNER"|"FACULTY"|"COLLEGE_ADMIN"|"MENTOR"|"TPO"));
   conditions.push(inArray(collegeMemberships.id,roleIds));
  }
  if(query.q) {
@@ -31,6 +32,8 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
   membershipId:collegeMemberships.id,
   userId:users.id,
   displayName:users.displayName,
+  email:sql<string|null>`case when ${Boolean(selected?.collegeId)} then ${users.email} else null::text end`.as("scoped_email"),
+  phoneE164:sql<string|null>`case when ${Boolean(selected?.collegeId)} then ${users.phoneE164} else null::text end`.as("scoped_phone"),
   platformStatus:users.platformStatus,
   membershipStatus:collegeMemberships.status,
   collegeName:colleges.name,
@@ -51,7 +54,7 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  const byId=new Map<string,string[]>();
  for(const row of roleRows)byId.set(row.membershipId,[...(byId.get(row.membershipId)??[]),row.role]);
  return {
-  query,total:totals[0]?.n??0,totalPages:adminUsersPageCount(totals[0]?.n??0),
+  query,contactVisible:Boolean(selected?.collegeId),total:totals[0]?.n??0,totalPages:adminUsersPageCount(totals[0]?.n??0),
   items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
  };
 }

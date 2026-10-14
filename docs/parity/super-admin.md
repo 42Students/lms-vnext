@@ -577,3 +577,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Activity entity and college filters — PARTIAL:** Super Admin Activity Center now exposes college selector (only authorized active colleges) plus exact Subject ID filter; both persist through cursor pagination and the capped IST CSV download. Caller-supplied college ID is validated by the existing central activity scope resolver, rejecting forged foreign scopes; export request schema rejects organization/scope override and malformed filters. Unit and isolated PG fixture denial expectations updated, unexecuted. Remaining: dedicated actor/name search and taxonomy-specific UI, browser/performance acceptance.
+
+
+**2026-10-14 Chat 6 / People tabs and scoped contacts — PARTIAL:** Added All/Faculty/Students contact-view tabs with persisted role filter and stable pagination. SQL returns NULL for email and phone outside explicitly selected-college Super Admin scope; in-scope contacts are permitted, with no CSV exposure. Unit and PG in-test success/foreign-scope/wrong-role tests extended to cover tabs and global masked vs scoped contact (unexecuted). Remaining: legacy contact/detail drawer, lifecycle actions and browser/PG gates.
