@@ -20,6 +20,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     Object.fromEntries(Object.entries({
       q: first(params.q), status: first(params.status),
       offeringStatus: first(params.offeringStatus), courseCode: first(params.courseCode)||undefined,
+      programCode:first(params.programCode)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
