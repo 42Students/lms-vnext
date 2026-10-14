@@ -846,3 +846,6 @@ period filters, caps at 200 rows and formula-neutralizes human-supplied text.
 No join URLs, learner contacts, meeting notes or external sends. The same role,
 college and Projects-module gates are checked; model/unit and own-project PG
 assertions authored. **PARTIAL:** browser and executed DB/typecheck still open.
+
+## chat-11 backlog X — project-attention type filters (PARTIAL)
+Current authorized Mentor project-attention signals can be filtered by recorded kind without changing personal notifications, producer/scope, or external sends. Pure unit cases authored. PARTIAL pending PG, browser and legacy checks.

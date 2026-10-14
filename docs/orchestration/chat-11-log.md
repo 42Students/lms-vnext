@@ -160,3 +160,6 @@
 
 ## V — Mentor global meeting calendar CSV
 - 200-row sanitized CSV from scoped filtered meetings, model/PG tests authored.
+
+## X — Mentor project attention kind filters
+- Strict recorded-kind selection, server UI and pure tests authored; PARTIAL.
