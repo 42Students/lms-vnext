@@ -38,6 +38,9 @@ describe("College Admin lessons and course progress pure models", () => {
     const lifecycle = collegeLessonQuerySchema.parse({ offeringStatus: "ARCHIVED" });
     expect(collegeLearningHref("LESSONS", lifecycle)).toContain("offeringStatus=ARCHIVED");
     expect(collegeLessonQuerySchema.safeParse({ offeringStatus: "SUSPENDED" }).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({ courseCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({courseCode:"CS 101"})))
+      .toContain("courseCode=CS+101");
     expect(progress.searchParams.has("collegeId")).toBe(false);
     expect(collegeLearningHref("LESSONS", {
       q: "", status: "ACTIVE", page: 1,

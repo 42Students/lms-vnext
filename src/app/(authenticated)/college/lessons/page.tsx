@@ -19,7 +19,8 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
       q: first(params.q), status: first(params.status),
-      offeringStatus: first(params.offeringStatus), page: first(params.page),
+      offeringStatus: first(params.offeringStatus), courseCode: first(params.courseCode)||undefined,
+      page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
