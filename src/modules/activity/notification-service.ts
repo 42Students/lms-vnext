@@ -433,13 +433,24 @@ export async function markOwnNotificationRead(
  * beyond the first page of the UI. Never accept a client-supplied recipient ID.
  * Concurrent calls are idempotent: each row is acknowledged at most once.
  */
-export async function markAllOwnNotificationsRead(context: RequestContext) {
+export async function markAllOwnNotificationsRead(
+  context: RequestContext,
+  options: { collegeId?: string } = {},
+) {
+  const ownCollege = options.collegeId
+    ? z.string().uuid().parse(options.collegeId)
+    : null;
   const rows = await getDb()
     .update(inAppNotifications)
     .set({ readAt: new Date() })
     .where(and(
       eq(inAppNotifications.userId, context.user.id),
       isNull(inAppNotifications.readAt),
+      ...(ownCollege ? [
+        inArray(inAppNotifications.eventId,
+          getDb().select({ id: activityEvents.id }).from(activityEvents)
+            .where(eq(activityEvents.collegeId, ownCollege))),
+      ] : []),
     ))
     .returning({ id: inAppNotifications.id });
 

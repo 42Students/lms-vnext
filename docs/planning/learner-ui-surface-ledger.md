@@ -729,7 +729,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-014 | Loading state | NotificationsContent | notification page | UNCHECKED |
 | L29-015 | Empty state | NotificationsContent | notification list | FIXED |
 | L29-016 | Error/stale/retry behavior | NotificationsContent | notification page | UNCHECKED |
-| L29-017 | No cross-college/cross-role leakage | notification API | notification service | UNCHECKED |
+| L29-017 | No cross-college/cross-role leakage | notification API | current persisted Learner membership, event college-scoped inbox/history and single/bulk read actions; DB success/denial tests authored, not run | FIXED |
 | L29-018 | Mobile notification list | NotificationsContent responsive | notification page | UNCHECKED |
 
 ## L30 — Profile: `/learn/profile`
