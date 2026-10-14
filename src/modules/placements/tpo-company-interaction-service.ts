@@ -78,6 +78,20 @@ export async function createConfirmedTpoCompanyInteraction(
       throw new TpoCompanyInteractionConflict();
     }
 
+    // Advance the row version while holding the same lead lock so a
+    // repeated POST after a lost response cannot insert the same event again.
+    // This does not alter manualStage or claim any outbound delivery.
+    const nextUpdatedAt = new Date(Math.max(
+      Date.now(),
+      lead.updatedAt.getTime() + 1,
+    ));
+    await tx.update(placementTpoLeads).set({
+      updatedAt: nextUpdatedAt,
+    }).where(and(
+      eq(placementTpoLeads.id, lead.id),
+      eq(placementTpoLeads.collegeId, collegeId),
+    ));
+
     const [created] = await tx.insert(placementTpoLeadActivities).values({
       collegeId,
       leadId: lead.id,
@@ -96,6 +110,7 @@ export async function createConfirmedTpoCompanyInteraction(
       leadId: lead.id,
       type: input.type,
       occurredAt: created.createdAt.toISOString(),
+      leadUpdatedAt: nextUpdatedAt.toISOString(),
     };
   });
 }
