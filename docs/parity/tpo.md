@@ -682,6 +682,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] trusted domains list matches.
 - [ ] add/normalize domain behavior matches.
 - [ ] remove trust confirmation matches.
+
+**W55 PARTIAL — college-company relationship trust only:** The Trusted Companies page now offers a TPO-only, explicitly confirmed, reason-required `isTrusted` toggle for each ACTIVE college-company relationship in registered P1 data. Strict Zod rejects duplicate/no-op input; a locked expected-state check denies stale writes. Each successful change inserts a PLACEMENTS activity event with actor and before/after trust flags in the same transaction. This is NOT the unmigrated recruiter-domain allowlist and does not claim grant/approval-policy parity. Real PostgreSQL and browser certification remain open.
 - [ ] trust effect on request approval matches.
 
 ## Settings: Templates
