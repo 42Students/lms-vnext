@@ -1404,3 +1404,6 @@ The integration fixture now filters by its actual CO_TEACHER assignment, verifie
 
 ## 2026-10-15 R4 persisted Faculty user-status teaching-list fence — PARTIAL
 The Faculty Courses list now joins the persisted `users` row and requires `platform_status=ACTIVE` even if a cached RequestContext still claims ACTIVE. The PostgreSQL fixture disables the actual Faculty user and checks an empty delivery list after reactivating a teaching assignment. No other role reads are changed. PG execution pending.
+
+## 2026-10-15 R4 Faculty persisted-role revocation test — PARTIAL
+The PostgreSQL acceptance fixture now removes a real persisted FACULTY membership-role row while retaining the stale caller role, asserts the Course list is empty, then restores the role and checks that the authorized Section returns. This verifies the existing SQL join rather than trusting cached role claims. Execution pending.

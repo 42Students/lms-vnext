@@ -563,6 +563,15 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const disabled=await getFacultyCourseList(facultyOnly,{});
     expect(disabled.items).toEqual([]);
     await pool.query("update users set platform_status='ACTIVE' where id=$1",[facultyOnlyUserId]);
+    // Revoke the persisted FACULTY role while keeping stale identity claims.
+    await pool.query("delete from membership_roles where id=$1",[facultyOnlyRoleId]);
+    expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
+    await pool.query(
+      "insert into membership_roles (id,membership_id,role) values($1,$2,'FACULTY')",
+      [facultyOnlyRoleId,facultyOnlyMembershipId],
+    );
+    expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items.map(row=>row.deliveryId))
+      .toEqual([delivery.id]);
   });
   it("projects real submission content from an authorized Faculty reader without widening scope",async()=>{
     const {delivery,assignment}=await fixture();
