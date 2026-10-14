@@ -7,9 +7,10 @@ import { useMemo, useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
-import { filterLearnerInbox,learnerNotificationInboxQuerySchema,learnerNotificationTarget,
+import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
   type LearnerInboxQuery } from "@/modules/activity/learner-notification-inbox-model";
 import { NotificationList, type NotificationListItem } from "./notification-list";
+import {learnerNotificationAssessmentAction} from "@/modules/activity/learner-notification-assessment-action-model";
 import {
   learnerNotificationCategories,
   learnerNotificationCategoryCounts,
@@ -140,7 +141,11 @@ export function LearnerNotificationsInbox({
           ) : null}
         </div>
       ) : (
-        <NotificationList items={visible.map(item=>({...item,actionHref:learnerNotificationTarget(item.actionHref)}))}
+        <NotificationList items={visible.map(item=>({
+            ...item,
+            actionHref:learnerNotificationAssessmentAction(item.actionHref)?.href??null,
+            actionLabel:learnerNotificationAssessmentAction(item.actionHref)?.label,
+          }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
       <Dialog
@@ -150,13 +155,13 @@ export function LearnerNotificationsInbox({
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>
-            {learnerNotificationTarget(selected?.actionHref) ? (
+            {learnerNotificationAssessmentAction(selected?.actionHref) ? (
               <Link
-                href={learnerNotificationTarget(selected?.actionHref)!}
+                href={learnerNotificationAssessmentAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
                 className="inline-flex min-h-10 items-center rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text"
               >
-                Open details
+                {learnerNotificationAssessmentAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             <Button onClick={() => setSelected(null)}>Got it</Button>
