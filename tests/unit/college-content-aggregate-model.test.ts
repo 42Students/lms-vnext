@@ -27,6 +27,7 @@ describe("College Admin content aggregate model", () => {
       { page: 0 },
       { page: 1001 },
       { q: "a".repeat(101) },
+      { courseCode: "x".repeat(65) },
     ]) {
       expect(collegeContentQuerySchema.safeParse(invalid).success).toBe(false);
     }
@@ -37,11 +38,12 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentQuerySchema.safeParse(
       collegeContentSearchParams({ status: ["DRAFT"] }),
     ).success).toBe(false);
-    const href = collegeContentHref("VIDEO", { q: "a & b", status: "ARCHIVED", format: "YOUTUBE", page: 2 });
+    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", page: 2 });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/videos");
     expect(url.searchParams.get("q")).toBe("a & b");
     expect(url.searchParams.get("format")).toBe("YOUTUBE");
+    expect(url.searchParams.get("courseCode")).toBe("CS-101");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(collegeContentHref("RESOURCE", {
       q: "", status: "ALL", format: "ALL", page: 1,

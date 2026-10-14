@@ -36,6 +36,12 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Course code (exact)
+            <input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode ?? ""}
+              placeholder="e.g. CS101"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
