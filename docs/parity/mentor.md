@@ -937,3 +937,6 @@ The current assigned Mentor exact-project delivery review overview now filters b
 
 ## 2026-10-15 chat-11 round 6 AV — team assignment history chronology (PARTIAL)
 The current authorized Mentor exact-project Team history supports earliest/latest recorded membership start order, stable UUID tie-break, scope-aware SQL pagination and view/role/primary filters retained in page links. Former/inactive names remain masked; no membership changes. Strict-selector source tests authored; CLI/PG/browser and complete historic data coverage unverified.
+
+## 2026-10-15 chat-11 round 6 AW — project reports ordering (PARTIAL)
+Registered currently assigned Mentor project reports now allow updated-first and title A–Z/Z–A sort, consistently before pagination and capped formula-neutralized CSV. Strict URL validation and deterministic tie-break preserve status/attention/assignment filters and whole-scope totals. Model tests authored; CI/PG/browser and full reports parity remain open.
