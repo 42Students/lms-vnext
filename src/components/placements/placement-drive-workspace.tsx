@@ -278,10 +278,12 @@ export async function PlacementDriveWorkspace({
               </Link>
             ) : null}
             <Link
-              href={`/api/placements/jobs/${encodeURIComponent(jobId)}/applicants/export`}
+              href={isTpo
+                ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
+                : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
             >
-              Export applicants (CSV)
+              {isTpo ? "Preview capped applicant CSV" : "Export applicants (CSV)"}
             </Link>
           </div>
         }

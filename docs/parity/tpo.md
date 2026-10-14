@@ -359,6 +359,7 @@ Legacy:
 - [ ] bulk actions match.
 - [ ] external-registration/company-id state matches.
 - [ ] share-applicant workflow is available.
+**W67-4 PARTIAL — Drive applicant CSV:** The TPO applicant table and workspace now link to /tpo/placements/jobs/[jobId]/applications-export. College-scoped persisted application/screening/role/channel data are projected into a formula-neutralized CSV, capped at 500 rows with an explicit TRUNCATED row when more exist. No private screening notes, phone numbers or staged round outcomes are exported. The existing shared exporter is unchanged for non-TPO roles. Remaining: exact legacy columns and filters, pagination past 500, browser/PG acceptance, and reconciliation with the shared export.
 - [ ] export behavior matches.
 - [ ] empty/error states match.
 
