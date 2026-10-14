@@ -3,6 +3,7 @@ import {
   collegeContentDuration,
   collegeContentHref,
   collegeContentPageCount,
+  collegeContentScopeLabel,
   collegeContentQuerySchema,
   collegeContentSearchParams,
   collegeContentTypes,
@@ -51,6 +52,8 @@ describe("College Admin content aggregate model", () => {
   });
 
   it("renders only observed duration and paginated record counts", () => {
+    expect(collegeContentScopeLabel(null)).toBe("Shared offering");
+    expect(collegeContentScopeLabel("delivery-id")).toBe("Section-specific");
     expect(collegeContentDuration(null)).toBe("Not recorded");
     expect(collegeContentDuration(90)).toBe("1:30");
     expect(collegeContentDuration(3600)).toBe("60:00");

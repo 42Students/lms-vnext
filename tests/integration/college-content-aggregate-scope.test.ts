@@ -170,6 +170,7 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(youtubeOnly.items.map((item) => item.id)).not.toContain(ids.video);
     expect(videos.items.find((item) => item.id === ids.video)).toMatchObject({
       title: label, lessonName: label, learningPathTitle: label,
+      deliveryId: null,
       courseName: label, cohortName: label, periodName: label, offeringId: ids.offering,
     });
     expect(resources.items.find((item) => item.id === ids.resource)).toMatchObject({

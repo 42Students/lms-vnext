@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {
   collegeContentDuration,
   collegeContentHref,
+  collegeContentScopeLabel,
 } from "@/modules/courses/college-content-aggregate-model";
 import type { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
 
@@ -83,7 +84,32 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               : "No records on this page. Select an earlier page."}
           </p>
         ) : (
-          <table className="w-full min-w-[50rem] text-left text-sm">
+          <>
+            <div className="divide-y divide-border sm:hidden">
+              {data.items.map(item => (
+                <article key={item.id} className="min-w-0 space-y-2 p-4" aria-label={item.title}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-muted-foreground">{item.contentType}</span>
+                    <span className="text-xs font-semibold text-body">{item.status}</span>
+                  </div>
+                  <h2 className="break-words text-base font-semibold text-foreground">{item.title}</h2>
+                  <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
+                    className="block break-words font-semibold text-primary-text hover:underline">
+                    {item.courseName} ({item.courseCode})
+                  </Link>
+                  <p className="break-words text-sm text-body">{item.cohortName} · {item.periodName}</p>
+                  <p className="break-words text-sm text-body">
+                    Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {collegeContentScopeLabel(item.deliveryId)}
+                    {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
+                  </p>
+                </article>
+              ))}
+            </div>
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="w-full min-w-[50rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">Content</th>
@@ -114,13 +140,15 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     <p className="mt-1 text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</p>
                   </td>
                   <td className="px-4 py-4 text-body">
-                    {item.deliveryId ? "Section-specific" : "Shared offering"}
+                    {collegeContentScopeLabel(item.deliveryId)}
                   </td>
                   <td className="px-4 py-4 text-body">{item.status}</td>
                 </tr>
               ))}
             </tbody>
-          </table>
+              </table>
+            </div>
+          </>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">

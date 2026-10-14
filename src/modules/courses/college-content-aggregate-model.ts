@@ -28,6 +28,10 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   return params.size ? base + "?" + params.toString() : base;
 }
 
+export function collegeContentScopeLabel(deliveryId: string | null) {
+  return deliveryId ? "Section-specific" : "Shared offering";
+}
+
 export function collegeContentDuration(seconds: number | null) {
   if (seconds === null) return "Not recorded";
   const minutes = Math.floor(seconds / 60);
