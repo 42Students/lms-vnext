@@ -114,3 +114,11 @@
 - Reused scoped Board service and capped 100-row formula-neutralized CSV.
 - Own-project PostgreSQL and pure export model tests authored; not executed.
 - PARTIAL pending CLI/PG/browser and legacy parity verification.
+
+## N — Mentor portfolio report summaries (2026-10-14)
+- New Mentor-only assigned-project status/attention summary with scoped filters,
+  responsive drill-ins and explicit no-signal semantics.
+- Current persisted role+college and projects.read authorization, no private contacts.
+- Pure model and in-test-project PostgreSQL success/role/foreign/disabled tests
+  authored, not executed. Read-only, no stale-token mutation.
+- PARTIAL pending independent CLI/PG and browser verification.

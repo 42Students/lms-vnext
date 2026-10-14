@@ -734,3 +734,19 @@ filter aggregation, zero-task semantics, CSV neutralization/capping, wrong-role,
 foreign-scope and forged selectors. This is read-only, so stale write tokens
 are not applicable. **PARTIAL:** execute typecheck, lint, PostgreSQL, unit and
 browser download checks, then compare the legacy Sprint/Board summary UX.
+
+## 2026-10-14 chat-11 N — Assigned Mentor project reports (PARTIAL)
+
+New read-only /mentor/reports aggregates persisted status counts across
+currently assigned Mentor projects (PLANNED, ACTIVE, COMPLETED, ARCHIVED),
+primary Mentor assignments and a per-project count of actual registered
+review/stalled/meeting-request/meeting-soon attention signals. Strict Zod
+status, attention, literal title filters and 20-row pages provide mobile cards
+and exact workspace/risk drill-down links. Reads require current active Mentor
+membership, central projects.read, live same-college project assignment and
+optional Projects enablement. No learner contacts, inferred pass rates,
+workload/effort, velocity or fictitious readiness score. Loading/error/empty
+states, pure model/unit and independently created PostgreSQL positive, forged,
+wrong-role, disabled and foreign-college non-leaking fixtures are authored.
+No mutation or external sending; stale token is not applicable. **PARTIAL:**
+execute PG, tsc, lint, unit, mobile/desktop and verify the legacy report UX.
