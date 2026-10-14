@@ -571,3 +571,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Template assignment scoped detail — PARTIAL:** Fixed global-template detail and Colleges subview to restrict active assignment IDs/counts/names by selected college AND organization at the SQL level. Global reads retain global counts. Assignment and version timestamps display IST. Added pure scope-model tests and isolated PG in-test template assignment/foreign-college/wrong-role tests (not run). Remains: legacy assignment UX and browser/database acceptance.
+
+
+**2026-10-14 Chat 6 / Tenant Setup stages — PARTIAL:** /admin/tenants/setup implements explicit Create and Set up navigation; reuses existing authorized organization/college creation forms while disabling creation in selected-college scope. Set up uses server-selected college readiness and links to the existing readiness gate, tenant domains, branding without changing scope. Unknown checks never become ready. Pure model and isolated PG in-test tenant readiness/foreign-scope/wrong-role denial tests authored (unexecuted). Remaining: automatic scope selection on newly created college, precise legacy modal/unsaved behavior, status-refresh browser gates.

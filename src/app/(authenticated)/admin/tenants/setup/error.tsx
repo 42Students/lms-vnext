@@ -1,0 +1,1 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";export default function ErrorPage({reset}:{error:Error;reset:()=>void}){return <ErrorState title="Could not load tenant setup" description="Retry the selected setup stage." action={<Button onClick={reset}>Retry</Button>}/>;}
