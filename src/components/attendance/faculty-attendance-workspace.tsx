@@ -863,8 +863,9 @@ export function FacultyAttendanceWorkspace({
         </>
       )}
 
+      {selectedLearner ? (
       <Drawer
-        open={selectedLearner !== null}
+        open={true}
         onOpenChange={(open) => { if (!open) setSelectedLearnerId(null); }}
         title={selectedLearner ? learnerName(selectedLearner) + " attendance" : "Learner attendance"}
         description={`Recorded class sessions for ${month}. Unmarked and upcoming sessions are not included in the attendance percentage.`}
@@ -944,6 +945,7 @@ export function FacultyAttendanceWorkspace({
           </div>
         ) : null}
       </Drawer>
+      ) : null}
 
       <Drawer
         open={scheduleOpen}
