@@ -1,5 +1,7 @@
 import "server-only";
 
+import { z } from "zod";
+
 import {
   and,
   asc,
@@ -69,7 +71,7 @@ export async function getLearnerClassSchedule(
       eq(membershipRoles.membershipId, collegeMemberships.id),
       eq(membershipRoles.role, "LEARNER"),
     ))
-    .where(eq(collegeMemberships.id, membership.id))
+    .where(eq(collegeMemberships.id, z.string().uuid().parse(membership.id)))
     .limit(1);
   if (!actor || actor.userId !== context.user.id ||
       actor.collegeId !== membership.collegeId || actor.status !== "ACTIVE" ||

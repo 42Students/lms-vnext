@@ -243,7 +243,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-011 | Submitted late state | AssignmentsContent | state mapping | CLOSED |
 | L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
 | L6-013 | View/submit primary action | AssignmentsContent | aggregate component | FIXED |
-| L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer + direct detail | FIXED |
+| L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer + own-delivery detail; text/link submission and atomic PII-free audit (PG tests authored, not run) | FIXED |
 | L6-015 | Submission text/link/file fields | AssignmentsContent | text/link in aggregate drawer; file awaits secure storage | BLOCKED |
 | L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
 | L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | CLOSED |
@@ -269,7 +269,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L7-009 | Due/close timing | QuizzesContent | aggregate rows | CLOSED |
 | L7-010 | Attempt count/limit | QuizzesContent | aggregate rows | CLOSED |
 | L7-011 | Take Quiz action | QuizzesContent | `/quiz?quizId=...` | FIXED |
-| L7-012 | View Result action | QuizzesContent | standalone review | FIXED |
+| L7-012 | View Result action | QuizzesContent | standalone quiz review + own attempt history/results gated by published grades (PG tests authored, not run) | FIXED |
 | L7-013 | Correct delivery in deep link | QuizzesContent | quiz URL | CLOSED |
 | L7-014 | Loading skeleton | QuizzesContent | aggregate page | CLOSED |
 | L7-015 | Request failure/retry | QuizzesContent | aggregate page | CLOSED |
@@ -318,7 +318,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L9-008 | Previous navigation | ClassScheduleContent | learner schedule | CLOSED |
 | L9-009 | Today navigation | ClassScheduleContent | learner schedule | CLOSED |
 | L9-010 | Next navigation | ClassScheduleContent | learner schedule | CLOSED |
-| L9-011 | Course filters | ClassScheduleContent | learner schedule | CLOSED |
+| L9-011 | Course filters | ClassScheduleContent | schedule filters + validated month/week/course deep link scoped to persisted delivery (PG tests authored, not run) | CLOSED |
 | L9-012 | Event title/time | CalendarEvents | event card | CLOSED |
 | L9-013 | Course/faculty/location/section context | CalendarEvents | event card | CLOSED |
 | L9-014 | Event link to course | CalendarEvents | event card | CLOSED |
@@ -737,7 +737,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L30-001 | User summary/name/program | Profile/About | persisted own-user profile and active program/cohort/department identity card | FIXED |
-| L30-002 | Profile completeness | ProfileCompleteness | profile workspace | FIXED |
+| L30-002 | Profile completeness | ProfileCompleteness | profile workspace + read-only all/filled/missing saved-field checklist (PG tests authored, not run) | FIXED |
 | L30-003 | Profile image view | About/userInfo | profile workspace | UNCHECKED |
 | L30-004 | Profile image upload/remove | profile image flow | secure storage | BLOCKED |
 | L30-005 | Resume view/status | About | profile workspace | UNCHECKED |
