@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
+import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
 import {
@@ -601,6 +602,16 @@ export function ProjectWorkspace({
                                   <p className="mt-1 text-xs leading-5 text-body">
                                     {task.description}
                                   </p>
+                                ) : null}
+                                {mode === "LEARNER" && learnerTaskCriteriaPreview(task.acceptanceCriteria) ? (
+                                  <details className="mt-2 rounded-lg border border-border bg-surface-subtle px-3 py-2">
+                                    <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-primary-text">
+                                      Acceptance criteria
+                                    </summary>
+                                    <p className="mt-2 whitespace-pre-wrap break-words text-xs leading-5 text-body">
+                                      {learnerTaskCriteriaPreview(task.acceptanceCriteria)}
+                                    </p>
+                                  </details>
                                 ) : null}
                                 {latestAttempt ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
