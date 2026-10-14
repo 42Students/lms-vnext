@@ -29,7 +29,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         title={title}
         description={semesters
           ? "Manage registered program terms with semester names, credit totals, status and dependency-guarded deletion."
-          : "Read-only batch directory with recorded academic progression and active class/enrollment counts."}
+          : "Create or edit planned batches and review recorded academic progression and active class/enrollment counts."}
         actions={
           <Link href="/college/academics"
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
