@@ -147,6 +147,7 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     ]);
     expect(semestersA.items.find((row) => row.id === ids.term)).toMatchObject({
       mappedCourses: 1, totalCredits: 18, termNumber: 1,
+      name: label, programId: ids.program, programName: label,
     });
     expect(batchesA.items.find((row) => row.id === ids.cohort)).toMatchObject({
       currentTermNumber: 1, currentAcademicYearStart: 2026, activeSections: 1,
