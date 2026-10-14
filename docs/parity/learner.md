@@ -1056,3 +1056,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-014 PARTIAL:** Calendar export now respects the visible validated IST date window and event-kind selector, preserving UTC schedule instants in the .ics payload rather than exporting unrelated months. Sensitive round meeting URLs remain excluded. Unit and own-fixture PG coverage authored; execution and real calendar import remain open.
+
+
+**2026-10-15 chat-5 L11-002 PARTIAL:** First-run Learner Placements now offers explicit mobile-friendly next steps to review placement rules, browse published drives and open the existing job-preferences editor. It appears only with confirmed empty own application history, never when journey availability is unknown; completion state is not invented. Unit and fresh-learner PG authorization coverage authored; execution/browser/source comparison outstanding.
