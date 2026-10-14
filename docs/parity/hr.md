@@ -460,3 +460,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter notification acknowledgement — PARTIAL:** Same-origin POST marks only own-recipient, exact-company job-lifecycle notification readAt using strict createdAt optimistic CAS and no new external send or noisy audit event. Foreign-company notification resolves non-leaking PLACEMENT_JOB_NOT_FOUND; duplicate or stale becomes declared PLACEMENT_RECRUITER_NOTIFICATION_STALE. Read button refreshes inbox. Unit + isolated PG own/foreign/wrong-role/stale tests authored, unexecuted. Remaining legacy thread-level read semantics and browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter offers CSV — PARTIAL:** Authorized own-company Offers tab now exports filtered, SQL-paginated, 200-row capped and formula-neutralized CSV (including persisted reply deadline and joining outcome). Recruiter CSV never includes contact regardless of shortlist. Endpoint rechecks company+college job before each page and sets no-store/omitted header. Pure unit and isolated PG own/foreign/wrong-role tests authored, unexecuted. Remaining LOI/selection writes and complete browser/export acceptance.

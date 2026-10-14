@@ -288,7 +288,13 @@ export default async function HrPlacementJobPage({
       ) : null}
       {filters.tab === "offers" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
-          <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
+            <Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              Export offers CSV
+            </Link>
+          </div>
           <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. LOI is not stored in the registered schema.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
