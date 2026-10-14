@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
+import { transitionCohort } from "@/modules/academics/cohort-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
@@ -223,7 +224,7 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
     );
     expect(audits.rows[0]?.count).toBe(2);
     await pool!.query("DELETE FROM sections WHERE id=$1", [fixtures.section]);
-    await pool!.query("UPDATE cohorts SET status='ACTIVE' WHERE id=$1", [row.id]);
+    await transitionCohort(adminA, row.id, { action: "ACTIVATE" });
     await expect(updateCollegeCohort(adminA, row.id, change))
       .rejects.toMatchObject({ code: "BATCH_NOT_EDITABLE" });
   });
