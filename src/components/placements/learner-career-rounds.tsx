@@ -1,8 +1,12 @@
+"use client";
+
+import {useEffect,useState} from "react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { isCareerRoundVisible } from "@/modules/placements/learner-round-visibility-policy";
 import { learnerRoundTimeLabel, learnerRoundTimeSignal } from "@/modules/placements/learner-round-time-signal";
+import {learnerInterviewCountdown} from "@/modules/placements/learner-interview-countdown-model";
 
 export type LearnerCareerRound = {
   applicationId: string;
@@ -63,6 +67,12 @@ export function LearnerCareerRounds({
   snapshotNowIso?: string;
   highlightedKey?: string | null;
 }) {
+  const [clockMs,setClockMs]=useState(()=>snapshotNowIso?Date.parse(snapshotNowIso):Number.NaN);
+  useEffect(()=>{
+    if(!snapshotNowIso)return;
+    const timer=window.setInterval(()=>setClockMs(Date.now()),60_000);
+    return ()=>window.clearInterval(timer);
+  },[snapshotNowIso]);
   const filtered = rounds.filter((round) =>
     isCareerRoundVisible(kind, round.roundKind),
   );
@@ -82,7 +92,7 @@ export function LearnerCareerRounds({
         const schedule = round.exception ?? round;
         const meetingUrl = safeHref(schedule.meetingUrl);
         const assessmentLink = kind === "ASSESSMENT" ? safeHref(round.testUrl) : null;
-        const snapshot= snapshotNowIso ? Date.parse(snapshotNowIso) : Number.NaN;
+        const snapshot=clockMs;
         const timeSignal=Number.isFinite(snapshot)
           ? learnerRoundTimeSignal({scheduledAt:schedule.scheduledAt,
               durationMinutes:round.durationMinutes},snapshot)
@@ -102,6 +112,15 @@ export function LearnerCareerRounds({
               </div>
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">{schedule.mode === "VIRTUAL" ? "Virtual" : schedule.mode === "ON_CAMPUS" ? "On campus" : "Scheduled"}</StatusBadge>
+                {kind==="INTERVIEW"&&Number.isFinite(snapshot) ? (
+                  <StatusBadge tone={learnerInterviewCountdown({
+                    scheduledAt:schedule.scheduledAt,durationMinutes:round.durationMinutes,
+                  },snapshot).phase==="UPCOMING"?"info":"neutral"}>
+                    {learnerInterviewCountdown({
+                      scheduledAt:schedule.scheduledAt,durationMinutes:round.durationMinutes,
+                    },snapshot).label}
+                  </StatusBadge>
+                ) : null}
                 {timeSignal ? <StatusBadge tone={timeSignal==="UPCOMING"?"info":"neutral"}>
                   {learnerRoundTimeLabel(timeSignal)}
                 </StatusBadge> : null}

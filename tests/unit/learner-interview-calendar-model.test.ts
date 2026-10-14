@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
+import { learnerInterviewCalendarArtifacts,foldLearnerCalendarLine } from "@/modules/placements/learner-interview-calendar-model";
 const raw={
   applicationId:"81818181-8181-4818-8818-818181818181",
   roundId:"82828282-8282-4828-8828-828282828282",
@@ -26,6 +26,16 @@ describe("learner calendar export for recorded interview only",()=>{
     expect(()=>learnerInterviewCalendarArtifacts(forged,timestamp)).toThrow();
     expect(()=>learnerInterviewCalendarArtifacts({...raw,durationMinutes:1441},timestamp)).toThrow();
   });
+  it("folds long UTF-8 calendar fields without splitting emoji or exceeding 75 octets",()=>{
+    const long="SUMMARY:"+("Interview résumé 🎓 — ".repeat(12));
+    const folded=foldLearnerCalendarLine(long);
+    const lines=folded.split("\r\n");
+    expect(lines.length).toBeGreaterThan(1);
+    expect(lines.every(line=>Buffer.byteLength(line,"utf8")<=75)).toBe(true);
+    expect(lines.slice(1).every(line=>line.startsWith(" "))).toBe(true);
+    expect(lines.map((line,index)=>index===0?line:line.slice(1)).join("")).toBe(long);
+  });
+
   it("prevents CRLF event injection in provider-entered titles",()=>{
     const result=learnerInterviewCalendarArtifacts({...raw,roundName:"Interview\r\nATTENDEE:attacker"},timestamp)!;
     expect(result.ics).toContain("Interview\\nATTENDEE:attacker");

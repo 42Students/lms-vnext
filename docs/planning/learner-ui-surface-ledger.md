@@ -361,7 +361,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-002 | First-run onboarding hero | placements dashboard | placements home | UNCHECKED |
 | L11-003 | Partial-source error alert | placements home | authenticated learner gate before parallel independent settled source reads; warns of failed sections, retry button, preserves loaded sections, masks failed dashboard metrics as unknown rather than zero; pure and fresh-learner PostgreSQL tests authored. PARTIAL pending CI, error-injection and browser recovery acceptance | PARTIAL |
 | L11-004 | Hero greeting | placements dashboard | placements home | UNCHECKED |
-| L11-005 | Next-action priority | placements dashboard | placements home | UNCHECKED |
+| L11-005 | Next-action priority | placements dashboard | issued still-actionable offer expiring within 24h takes priority over planned round; expired/accepted offers excluded, existing assessment/interview logic otherwise unchanged; on offer-read failure hero remains unknown rather than misleading. PARTIAL pending fresh-PG/tsc/eslint and real expiry-boundary/browser acceptance | PARTIAL |
 | L11-006 | Assessment urgency action | placements dashboard | placements home | UNCHECKED |
 | L11-007 | Interview urgency action | placements dashboard | placements home | UNCHECKED |
 | L11-008 | Next scheduled event action | placements dashboard | placements home | UNCHECKED |
@@ -402,7 +402,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-018 | Eligibility state on card | JobsListContent | learner jobs | FIXED |
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |
 | L12-020 | Saved-jobs failure distinct from all-jobs failure | JobsListContent | learner jobs | UNCHECKED |
-| L12-021 | First-run/filtered-empty | JobsListContent | learner jobs | UNCHECKED |
+| L12-021 | First-run/filtered-empty | JobsListContent | distinct persisted no-published-drives state (dashboard link) vs active filter mismatch with eligibility/deadline explanations and reset, no inferred employer offers. PARTIAL pending fresh PostgreSQL/tsc/lint and mobile/browser empty-state acceptance | PARTIAL |
 | L12-022 | Mobile jobs list/filters | JobsListContent responsive | accessible mobile-only collapsible drive filters with active-filter count, 44px control, desktop always visible and preserved own authorized URL filters; PARTIAL pending Playwright/mobile screen reader, PostgreSQL/test execution, tsc/eslint acceptance | PARTIAL |
 
 ## L13 — Job Detail: `/learn/my-placements/jobs/[jobId]`
@@ -420,7 +420,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L13-009 | Existing application state | VerifiedJobDetailContent | learner jobs control | FIXED |
 | L13-010 | External application mode | VerifiedJobDetailContent | learner jobs control | UNCHECKED |
 | L13-011 | Registration requirements | VerifiedJobDetailContent | learner jobs control | UNCHECKED |
-| L13-012 | Closed/not-open state | VerifiedJobDetailContent | job detail | UNCHECKED |
+| L13-012 | Closed/not-open state | VerifiedJobDetailContent | learner-scoped drive detail now explains genuinely closed, submitted, withdrawn, missing-evidence, not-open and open-role states without changing server application guards; PARTIAL pending fresh-PG/unit, responsive screen-reader and expiry/eligibility browser acceptance | PARTIAL |
 | L13-013 | Not-eligible state | DriveEligibilityPanel | job detail | FIXED |
 | L13-014 | Not-found/access handling | job route | job detail | FIXED |
 | L13-015 | Back to Drives/navigation | job detail | job links preserve validated bounded Drives filter/page state in a `back` query and the job detail breadcrumb returns to it; arbitrary tenant/user selectors removed; exact published job still server-scoped. PARTIAL pending PG/unit/tsc/lint, Next app-router and browser Back/Forward acceptance | PARTIAL |
@@ -447,7 +447,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-015 | Withdrawal request modal + reason | ApplicationsContent | confirmed direct self-withdrawal/reason built in drawer; separate legacy approval-request semantics require owner decision | GAP |
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
-| L14-018 | Assessment deep link | ApplicationsContent | placement assessment | UNCHECKED |
+| L14-018 | Assessment deep link | ApplicationsContent | drawer now links to exact own-application shortlisted persisted assessment via scoped request-workspace rounds (approved reschedule respected), generic fallback only when none; PARTIAL pending executed unit/fresh-PG, lint/tsc, browser drawer navigation and cross-tenant validation | PARTIAL |
 | L14-019 | Interview deep link | ApplicationsContent | drawer resolves exact active own application+interview round from membership-scoped persisted scheduled rounds, nearest upcoming first; fallback general interview list where no round exists. No invented outcome. PARTIAL pending fresh PostgreSQL, unit, tsc/lint and browser deep-link checks | PARTIAL |
 | L14-020 | Job/similar roles deep link | ApplicationsContent | own persisted application now carries exact job ID to published drive detail and its role options from cards and drawer; unauthorized/unpublished jobs still enforce server scope. PARTIAL: similar-role recommendation ranking not registered; pending PG/unit/tsc/lint/mobile/browser acceptance | PARTIAL |
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
@@ -487,17 +487,17 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-002 | Upcoming / Past views | InterviewsContent | per-learner schedule tabs with actual upcoming, past and unscheduled counts, URL-backed view choice and browser navigation, preserving own round deep links; past schedule explicitly not attendance/completion. PARTIAL: fresh PG, ts/lint, mobile and Back/Forward runtime acceptance pending | PARTIAL |
 | L16-003 | Search | InterviewsContent | searchable authorized shortlisted interview round list now has bounded Zod-backed shareable `q` URL, preserves `view` and exact application/round link, restores query on Back/Forward; no other-college records. PARTIAL: isolated PostgreSQL, unit, typecheck/lint and mobile/browser acceptance pending | PARTIAL |
 | L16-004 | Highlight deep link | InterviewsContent | exact validated own-round deep link now highlights corresponding interview card and reports when filters hide it, with explicit reveal control; no forged ID can highlight a non-owned card. PARTIAL: fresh PG, unit, tsc/eslint and browser/keyboard drawer/filter acceptance pending | PARTIAL |
-| L16-005 | Countdown/live/past badges | InterviewsContent | career rounds | GAP |
+| L16-005 | Countdown/live/past badges | InterviewsContent | countdown from persisted UTC interview instant with minute refresh, active scheduled window label, pending and past badges; never claims interview began or learner attended. PARTIAL: TypeScript/eslint, disposable PG and browser/screen-reader/timezone acceptance pending | PARTIAL |
 | L16-006 | Confirm interview | InterviewsContent | interviews page | GAP |
 | L16-007 | Join now | InterviewsContent | career rounds | FIXED |
 | L16-008 | Interview Detail modal | InterviewsContent | interviews page | GAP |
-| L16-009 | .ics download | InterviewsContent | interviews page | GAP |
+| L16-009 | .ics download | InterviewsContent | existing own persisted interview ICS export hardened with UTF-8 codepoint-safe RFC 5545 75-octet folding, calendar properties and injection-safe authored labels; no external send or fabricated duration. PARTIAL pending fresh-PG, typecheck/lint, native calendar import/browser verification | PARTIAL |
 | L16-010 | Google Calendar link | InterviewsContent | interviews page | GAP |
 | L16-011 | Request new slot | InterviewsContent | learner requests | GAP |
 | L16-012 | Reschedule reason | InterviewsContent | learner requests | GAP |
 | L16-013 | Preferred date/daypart/details | InterviewsContent | learner requests | GAP |
 | L16-014 | Cancel reschedule request | InterviewsContent | learner requests | GAP |
-| L16-015 | Reschedule summary + copy | InterviewsContent | interviews page | GAP |
+| L16-015 | Reschedule summary + copy | InterviewsContent | approved own application-round exception displayed with original and new IST date plus venue; copyable sanitized personal schedule excludes meeting credentials and does not send employer messages. PARTIAL pending actual PG/tsc/eslint, clipboard permission and browser/mobile acceptance | PARTIAL |
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
 | L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
