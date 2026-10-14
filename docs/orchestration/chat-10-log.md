@@ -90,3 +90,5 @@
 - 2026-10-15 — HR draft round reordering PARTIAL: immutable boundary-safe move up/down with unit coverage; execution pending.
 
 - 2026-10-15 — Draft preview PARTIAL: ordered round names/kinds and compensation/eligibility, static field descriptors; tests authored not executed.
+
+- 2026-10-15 — HR Team CSV PARTIAL: 200 cap and formula-neutralized exact-company roster export; tests authored, unexecuted.

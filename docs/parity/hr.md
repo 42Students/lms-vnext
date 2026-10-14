@@ -505,3 +505,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Request Drive student preview sequence — PARTIAL:** Local-only validated preview now enumerates round sequence/kind/name and compensation/eligibility (not just count), using top-level const for display fields. Pure model/unit ensures round order; no misleading approval or storage. Remaining real student-facing schema integration and browser acceptance.
+
+
+**2026-10-15 chat-10 / Company Team roster export — PARTIAL:** Adds scoped recruiter-team CSV (200 cap, formula-neutralized, no-store) from getRecruiterCompanyTeam's exact company+college active grant read. Shows existing authorized recruiter name/designation/email only; no learner contacts. Pure model/unit authored, PG scope remains covered by existing team reads but not re-executed. Remaining browser acceptance and large-team paging.
