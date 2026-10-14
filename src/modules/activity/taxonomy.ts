@@ -89,6 +89,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_QUIZ_CREATED:"courses.quiz.created",
   COURSES_QUIZ_UPDATED:"courses.quiz.updated",
   COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
+  COURSES_QUIZ_ARCHIVED:"courses.quiz.archived",
   COURSES_ASSIGNMENT_SUBMITTED:
     "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:
@@ -124,6 +125,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "projects.readiness.overridden",
   PROJECTS_SPRINT_UPDATED:
     "projects.sprint.updated",
+  PROJECTS_MEETING_DECIDED: "projects.meeting.decided",
+  PROJECTS_DELIVERY_REVIEWED: "projects.delivery.reviewed",
   PROJECTS_TASK_CREATED:
     "projects.task.created",
   PROJECTS_TASK_DETAILS_UPDATED:
