@@ -86,3 +86,5 @@
 - 2026-10-15 — Self-review: moved activity filter labels to module-level const; documented deliberately ignored unavailable sessionStorage clear. No runtime gates in connector-only lane.
 
 - 2026-10-15 — Hiring activity export PARTIAL: 200-record formula-safe fixed-label employer history CSV; tests unexecuted.
+
+- 2026-10-15 — HR draft round reordering PARTIAL: immutable boundary-safe move up/down with unit coverage; execution pending.

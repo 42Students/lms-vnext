@@ -5,6 +5,7 @@ import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
+import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
 
 export function HrDriveDraftForm({
   initial,
@@ -169,6 +170,14 @@ export function HrDriveDraftForm({
                       ? { ...item, name: event.target.value } : item),
                   }))} />
               </label>
+              <div className="flex items-end gap-2">
+                <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
+                <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
+              </div>
               <button type="button" disabled={draft.rounds.length <= 1}
                 className="self-end rounded-md border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
                 onClick={() => setDraft((current) => ({
