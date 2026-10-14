@@ -99,7 +99,7 @@ export async function getFacultyReportCsvForDownload(
   // The notice is seven CSV fields like ordinary rows; numeric, server
   // authored metadata only. It cannot introduce a spreadsheet formula.
   const noteRow=notice?
-    '"' + notice.replaceAll('"','""') + '","","","","","",""\\r\\n':"";
+    '"' + notice.replaceAll('"','""') + '","","","","","",""\r\n':"";
   return {
     filename:facultyReportCsvFilename(input.kind,input.title,input.sectionName),
     csv:facultyReportCsv(input)+noteRow,
