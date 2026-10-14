@@ -2,6 +2,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  collegeMemberships,
   placementApplications, placementApplicationScreenings, placementJobs,
   placementOffers, placementJoiningOutcomes,
 } from "@/db/schema";
@@ -41,11 +42,14 @@ export async function getTpoDriveCloseout(
     screeningStatus: placementApplicationScreenings.status,
   }).from(placementApplications)
     .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, placementApplications.membershipId))
     .leftJoin(placementApplicationScreenings, eq(
       placementApplicationScreenings.applicationId, placementApplications.id,
     )).where(and(
       eq(placementJobs.id, jobId),
       eq(placementJobs.collegeId, collegeId),
+      eq(collegeMemberships.collegeId, collegeId),
     ));
   const offers = await db.select({
     id: placementOffers.id, applicationId: placementOffers.applicationId,
@@ -54,9 +58,12 @@ export async function getTpoDriveCloseout(
   }).from(placementOffers)
     .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
     .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, placementApplications.membershipId))
     .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
     .where(and(
       eq(placementJobs.id, jobId), eq(placementJobs.collegeId, collegeId),
+      eq(collegeMemberships.collegeId, collegeId),
     ));
   return { job, counts: projectTpoDriveCloseout(applications, offers) };
 }
