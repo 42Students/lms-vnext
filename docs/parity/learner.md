@@ -1233,3 +1233,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-019 PARTIAL (round 5):** Every learner placement dashboard numeric card now explicitly distinguishes an authorized successful zero from a failed source as the word Unknown, with a source-specific accessible action/description to open its own list and retry. Screen readers no longer hear only a dash or falsely imply no records. Pure zero/null/positive state regressions authored; CI/PG/browser acceptance still open.
+
+
+**2026-10-15 chat-5 L12-002 PARTIAL (round 6):** Drives browser explicitly summarizes all owned-visible published drives separately from their role-option count and distinct drives with actual recorded learner applications. This avoids presenting role rows as a drive count; filters still apply to the role list below. Model regression for multi-role duplicate applications authored; CI/mobile/PG acceptance pending.
