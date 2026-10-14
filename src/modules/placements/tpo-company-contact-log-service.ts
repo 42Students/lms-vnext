@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,
@@ -85,6 +85,7 @@ export async function getTpoCompanyContactLog(
   }).from(placementTpoLeads).where(and(
     eq(placementTpoLeads.collegeId, collegeId),
     eq(placementTpoLeads.companyRelationshipId, company.relationshipId),
+    isNull(placementTpoLeads.unsubscribedAt),
   )).orderBy(placementTpoLeads.name, placementTpoLeads.id);
 
   const scope = and(
