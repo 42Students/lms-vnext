@@ -580,3 +580,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Calendar next-visible-event correctness — PARTIAL:** Upcoming event highlight now compares real round/deadline starts against recorded results-due timestamps and honors selected calendar category; selected-category empty states use visible count rather than unfiltered totals. Pure model/unit for priority and unsupported SLOT types authored; execution/browser validation pending.
+
+
+**2026-10-15 chat-10 R6 / Request a Drive duplicate round — PARTIAL:** Recruiter can duplicate a local hiring round with a generated collision-free editable name, insertion after the source, and a strict 12-round cap; previews are invalidated without saving or sending. Pure unit/Zod checks authored, runtime acceptance pending.
