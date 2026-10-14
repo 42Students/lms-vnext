@@ -510,7 +510,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L17-001 | Route is materialized, not placeholder | CareerCalendarContent | calendar page | FIXED |
 | L17-002 | Agenda mode | career calendar | distinct rolling 30-day agenda anchored to selected IST date, with 30-day navigation and actual chronologically ordered own rounds rather than mirroring month view; pure unit + owned PG test authored. PARTIAL pending execution, browser navigation and source-parity acceptance | PARTIAL |
-| L17-003 | Month mode | CareerCalendarContent | career calendar | GAP |
+| L17-003 | Month mode | career calendar | dedicated 42-cell month grid now summarizes scoped actual assessment/interview/other rounds in the current IST month; month totals reflect persisted event selection, not job deadlines guessed from unknown sources. Pure and self-fixtured PostgreSQL tests authored; PARTIAL until execution, desktop/mobile browser and legacy source verification | PARTIAL |
 | L17-004 | Week mode | CareerCalendarContent | career calendar | GAP |
 | L17-005 | Day mode | CareerCalendarContent | career calendar | GAP |
 | L17-006 | Previous / Today / Next | CareerCalendarContent | career calendar | GAP |
