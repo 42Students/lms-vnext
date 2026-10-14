@@ -128,7 +128,9 @@ export function LearnerPlacementsDashboard({
           label="Upcoming assessments"
           value={display.assessments}
           href="/learn/my-placements/assessments"
-          detail="View scheduled employer assessments"
+          detail={display.thisWeekAssessments===null
+            ?"Assessment schedule unavailable"
+            :`${display.thisWeekAssessments} in next seven IST calendar dates · not employer completion`}
         />
         <Metric
           label="Upcoming interviews"

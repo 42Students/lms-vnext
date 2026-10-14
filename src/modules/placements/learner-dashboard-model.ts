@@ -146,6 +146,7 @@ export function learnerPlacementDashboard(
         .map((row) => row.jobId),
     ).size,
     upcomingAssessmentCount: events.filter((event) => event.kind === "ASSESSMENT").length,
+    thisWeekAssessmentCount:weekEvents.filter(event=>event.kind==="ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
     thisWeekInterviewCount:weekEvents.filter(event=>event.kind==="INTERVIEW").length,
     activeOfferCount: input.offers.filter((row) => row.status === "ISSUED" &&

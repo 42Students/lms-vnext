@@ -1167,3 +1167,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-012 PARTIAL (round 5):** Interview snapshot distinguishes all future authorized scheduled interview/GD rounds from those in the next seven Asia/Kolkata calendar dates. It respects approved reschedules and never calls schedules confirmed attendance. Fixed-clock unit regression authored; executable PG, lint and browser checks pending.
+
+
+**2026-10-15 chat-5 L11-013 PARTIAL (round 5):** Upcoming-assessments card differentiates all future authorized TEST/VENDOR_TEST schedules from assessments in the next seven IST calendar dates, reusing approved reschedule instants. The metric does not claim employer submission or a provider deadline. Fixed-clock unit regression authored; PG, lint and browser checks pending.
