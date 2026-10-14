@@ -8,18 +8,18 @@ import {
 describe("College Admin Faculty/Students directory helpers", () => {
   it("parses status/search/page filters and forbids caller-controlled college", () => {
     expect(collegeRoleDirectoryQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", page: 1,
     });
     expect(collegeRoleDirectoryQuerySchema.parse({
-      q: "  test  ", status: "SUSPENDED", page: "3",
+      q: "  test  ", status: "SUSPENDED", accountStatus: "DISABLED", page: "3",
     })).toEqual({
-      q: "test", status: "SUSPENDED", page: 3,
+      q: "test", status: "SUSPENDED", accountStatus: "DISABLED", page: 3,
     });
     for (const invalid of [
       { collegeId: "foreign" },
       { page: 0 },
       { page: 10001 },
-      { status: "DISABLED" },
+      { status: "DISABLED" }, { accountStatus: "SUSPENDED" },
       { q: "x".repeat(101) },
     ]) {
       expect(collegeRoleDirectoryQuerySchema.safeParse(invalid).success).toBe(false);
@@ -27,16 +27,17 @@ describe("College Admin Faculty/Students directory helpers", () => {
   });
 
   it("builds only role-specific relative routes with escaped parameters", () => {
-    const query = { q: "a & b", status: "ACTIVE" as const, page: 2 };
+    const query = { q: "a & b", status: "ACTIVE" as const, accountStatus: "DISABLED" as const, page: 2 };
     const faculty = new URL(collegeRoleDirectoryHref("FACULTY", query), "https://example.test");
     const students = new URL(collegeRoleDirectoryHref("LEARNER", query), "https://example.test");
     expect(faculty.pathname).toBe("/college/faculty");
     expect(students.pathname).toBe("/college/students");
     expect(students.searchParams.get("q")).toBe("a & b");
     expect(students.searchParams.get("page")).toBe("2");
+    expect(students.searchParams.get("accountStatus")).toBe("DISABLED");
     expect(students.searchParams.has("collegeId")).toBe(false);
     expect(collegeRoleDirectoryHref("LEARNER", {
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", page: 1,
     })).toBe("/college/students");
   });
 

@@ -513,6 +513,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+**Account-status filter PARTIAL (2026-10-15):** Faculty memberships now filter persisted ACTIVE/DISABLED platform account status independently from membership lifecycle, with strict Zod, URL-persisted pagination and isolated PG role/tenant checks. Browser and legacy profile/edit parity remain open.
 
 **Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.
 **Legacy:** `/college-admin/teachers`
@@ -556,6 +557,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Account-status filter PARTIAL (2026-10-15):** Learner memberships now filter persisted ACTIVE/DISABLED platform account status independently from cohort/class context, with the same college-only query, URL-persisted pagination and PG isolation witness. Browser and full learner lifecycle parity remain open.
 
 **Class-move guard PARTIAL (2026-10-14):** Directory move now returns the same non-leaking `STUDENT_NOT_FOUND` code for a foreign or absent membership, resets stale destination selection on reopening, and distinguishes no alternative eligible section. Persisted move remains version-checked, same-cohort and same-period, transactionally audited. Legacy modal/browser acceptance remains outstanding.
 **Legacy:** `/college-admin/students`

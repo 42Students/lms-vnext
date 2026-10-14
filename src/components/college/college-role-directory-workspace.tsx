@@ -44,6 +44,7 @@ export async function CollegeRoleDirectoryWorkspace({
   const input = {
     q: first(params.q),
     status: first(params.status),
+    accountStatus: first(params.accountStatus),
     page: first(params.page),
   };
   const parsed = collegeRoleDirectoryQuerySchema.safeParse(
@@ -123,6 +124,15 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ACTIVE">Active</option>
               <option value="SUSPENDED">Suspended</option>
               <option value="ENDED">Ended</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Platform account
+            <select name="accountStatus" defaultValue={result.filter.accountStatus}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All accounts</option>
+              <option value="ACTIVE">Active accounts</option>
+              <option value="DISABLED">Disabled accounts</option>
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">

@@ -69,6 +69,7 @@ export async function listCollegeRoleDirectory(
       filter.status === "ALL"
         ? undefined
         : eq(collegeMemberships.status, filter.status),
+      filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),

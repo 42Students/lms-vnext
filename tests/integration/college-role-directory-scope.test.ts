@@ -68,6 +68,17 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     }
   });
 
+  it("filters account lifecycle in both role directories without changing tenant scope", async () => {
+    for (const kind of ["FACULTY", "LEARNER"] as const) {
+      const active = await listCollegeRoleDirectory(collegeAdmin, kind, {accountStatus:"ACTIVE"});
+      expect(active.items.every(row => row.userStatus === "ACTIVE")).toBe(true);
+      expect(active.items.every(row => row.membershipId !== SEED_IDS.facultyCollegeBMembership)).toBe(true);
+      const disabled = await listCollegeRoleDirectory(collegeAdmin, kind, {accountStatus:"DISABLED"});
+      expect(disabled.items.every(row => row.userStatus === "DISABLED")).toBe(true);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {accountStatus:"ACTIVE"}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {
