@@ -10,6 +10,7 @@ import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-pr
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
+import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -333,5 +334,22 @@ describe("L21-012 protected learner Project detail read",()=>{
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toMatchObject({
       code:"PROJECT_ACCESS_DENIED",
     });
+  });
+});
+
+describe("L22-002 authored project Overview from own immutable template version",()=>{
+  it("loads only the learner-assigned persisted template-version goals",async()=>{
+    await pool.query("update project_template_versions set blueprint=$2::jsonb where id=$1",[
+      ids.version,JSON.stringify({overview:{goal:"Build service",deliverables:["Release code"]}}),
+    ]);
+    expect(await getLearnerProjectGoals(context,ids.project)).toMatchObject({
+      goal:"Build service",deliverables:["Release code"],
+    });
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getLearnerProjectGoals(actor,ids.project)).rejects.toBeDefined();
+    await expect(getLearnerProjectGoals(context,randomUUID())).rejects.toBeDefined();
   });
 });

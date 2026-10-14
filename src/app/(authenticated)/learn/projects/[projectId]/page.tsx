@@ -7,6 +7,8 @@ import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
 import { LearnerBoardTaskIndex } from "@/components/projects/learner-board-task-index";
+import { LearnerProjectGoals } from "@/components/projects/learner-project-goals";
+import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
@@ -62,6 +64,9 @@ export default async function LearnerProjectPage({
     throw error;
   });
 
+  const goals = activeSection === "overview"
+    ? await getLearnerProjectGoals(context,projectId)
+    : null;
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";
   const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
@@ -93,6 +98,7 @@ export default async function LearnerProjectPage({
           task={selectedTask}
           sprintTitle={workspace.sprints.find(sprint=>sprint.id===selectedTask.sprintId)?.title??null} />
       ) : null}
+      {goals ? <LearnerProjectGoals overview={goals} /> : null}
       <ProjectWorkspace
       workspace={shownWorkspace}
       backHref="/learn/projects"
