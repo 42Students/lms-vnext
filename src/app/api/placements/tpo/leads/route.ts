@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
+import { confirmedCreateTpoLeadSchema } from "@/modules/placements/tpo-crm-validation";
 import {
   createTpoLead,
   listTpoLeads,
@@ -28,7 +29,8 @@ export async function POST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const lead = await createTpoLead(context, await request.json());
+    const payload = confirmedCreateTpoLeadSchema.parse(await request.json());
+    const lead = await createTpoLead(context, payload.lead);
     return NextResponse.json({ lead }, { status: 201 });
   } catch (error) {
     return tpoCrmApiErrorResponse(error);
