@@ -742,7 +742,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-004 | Profile image upload/remove | profile image flow | secure storage | BLOCKED |
 | L30-005 | Resume view/status | About | profile workspace | UNCHECKED |
 | L30-006 | Resume upload/import/remove | About | secure storage | BLOCKED |
-| L30-007 | Contacts | contacts | profile workspace | FIXED |
+| L30-007 | Contacts | contacts | mobile confirmation for alternate phone/contact email only; strict same-origin PATCH, live membership/role, transactional JSONB section update + PII-free audit; PG tests authored | FIXED |
 | L30-008 | Social profiles | socialProfiles | profile workspace | FIXED |
 | L30-009 | Address | address | profile workspace | FIXED |
 | L30-010 | Personal details | personalDetails | profile workspace | FIXED |

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
+import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import type { LearnerProfileDocument } from "@/modules/people/profile-validation";
+import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
 
 type CollectionKey =
   | "experiences"
@@ -162,6 +163,10 @@ export function LearnerProfileWorkspace(props: {
   const [document, setDocument] = useState(props.initialDocument);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsDraft, setDetailsDraft] = useState<LearnerProfileDocument>(props.initialDocument);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [contactDraft, setContactDraft] = useState(props.initialDocument.contacts);
+  const [contactPending, setContactPending] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
   const [collection, setCollection] = useState<CollectionKey | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
@@ -195,6 +200,45 @@ export function LearnerProfileWorkspace(props: {
       onDone?.();
       showToast({ tone: "success", title: "Profile updated" });
     });
+  }
+
+  function openContacts() {
+    setContactDraft({ ...document.contacts });
+    setContactError(null);
+    setContactOpen(true);
+  }
+
+  async function saveContacts() {
+    if (contactPending) return;
+    const parsed = learnerContactEditSchema.safeParse({
+      confirmed: true, contacts: contactDraft,
+    });
+    if (!parsed.success) {
+      setContactError(parsed.error.issues[0]?.message ?? "Check your contact details.");
+      return;
+    }
+    setContactPending(true);
+    setContactError(null);
+    try {
+      const response = await fetch("/api/profile/me/contacts", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.contacts) {
+        throw new Error("Contact details could not be saved. Your existing details are unchanged.");
+      }
+      const savedContacts = learnerProfileDocumentSchema.parse({ contacts: payload.contacts }).contacts;
+      setDocument(current => ({ ...current, contacts: savedContacts }));
+      setDetailsDraft(current => ({ ...current, contacts: savedContacts }));
+      setContactOpen(false);
+      showToast({ tone: "success", title: "Contact details saved" });
+    } catch (error) {
+      setContactError(error instanceof Error ? error.message : "Could not save contact details.");
+    } finally {
+      setContactPending(false);
+    }
   }
 
   function openCollection(section: CollectionKey, item?: Record<string, unknown>) {
@@ -297,7 +341,9 @@ export function LearnerProfileWorkspace(props: {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <Card id="contacts" title="Contacts">
+        <Card id="contacts" title="Contacts"
+          action={<Button variant="secondary" onClick={openContacts}>Edit contact details</Button>}
+        >
           <div className="grid gap-4 sm:grid-cols-2">
             <Value label="Primary mobile" value={props.primaryPhone} />
             <Value label="Alternate phone" value={document.contacts.alternatePhone} />
@@ -373,6 +419,61 @@ export function LearnerProfileWorkspace(props: {
 
 
       <Dialog
+        open={contactOpen}
+        onOpenChange={(open) => {
+          if (!open && contactPending) return;
+          setContactOpen(open);
+          if (!open) setContactError(null);
+        }}
+        title="Confirm contact details"
+        description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
+        footer={
+          <>
+            <Button variant="secondary" disabled={contactPending}
+              onClick={() => { setContactOpen(false); setContactError(null); }}>
+              Keep current details
+            </Button>
+            <Button disabled={contactPending || !learnerContactEditSchema.safeParse({
+              confirmed: true, contacts: contactDraft,
+            }).success}
+              onClick={() => { void saveContacts(); }}>
+              {contactPending ? "Saving…" : "Confirm changes"}
+            </Button>
+          </>
+        }
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="text-sm font-semibold text-foreground">
+            Alternate phone
+            <Input className="mt-1.5" inputMode="tel" autoComplete="tel-national"
+              value={contactDraft.alternatePhone} maxLength={32}
+              disabled={contactPending}
+              onChange={(event) => setContactDraft(current => ({
+                ...current, alternatePhone: event.target.value,
+              }))} />
+          </label>
+          <label className="text-sm font-semibold text-foreground">
+            Contact email
+            <Input className="mt-1.5" type="email" autoComplete="email"
+              value={contactDraft.contactEmail} maxLength={320}
+              disabled={contactPending}
+              onChange={(event) => setContactDraft(current => ({
+                ...current, contactEmail: event.target.value,
+              }))} />
+          </label>
+          <p className="text-xs text-body sm:col-span-2">
+            Both fields are optional and may be cleared. These are contact
+            preferences, not verified credentials and not a login recovery method.
+          </p>
+          {contactError ? (
+            <p role="alert" className="text-sm font-semibold text-error sm:col-span-2">
+              {contactError}
+            </p>
+          ) : null}
+        </div>
+      </Dialog>
+
+      <Dialog
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
         title="Edit learner profile"
@@ -388,8 +489,10 @@ export function LearnerProfileWorkspace(props: {
 
           <fieldset className="grid gap-4 sm:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Contacts</legend>
-            <label className="text-xs font-semibold text-body">Alternate phone<Input className="mt-1.5" value={detailsDraft.contacts.alternatePhone} onChange={(event) => setDetailsDraft({ ...detailsDraft, contacts: { ...detailsDraft.contacts, alternatePhone: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">Contact email<Input className="mt-1.5" type="email" value={detailsDraft.contacts.contactEmail} onChange={(event) => setDetailsDraft({ ...detailsDraft, contacts: { ...detailsDraft.contacts, contactEmail: event.target.value } })} /></label>
+            <p className="text-sm text-body sm:col-span-2">
+              Alternate phone and contact email are edited separately from the Contacts card,
+              with their own confirmation and audit. Primary login contacts remain unchanged.
+            </p>
           </fieldset>
 
           <fieldset className="grid gap-4 sm:grid-cols-2">
