@@ -502,3 +502,19 @@ ten/twenty/fifty pagination and exact tab links remain enforced. Existing
 PostgreSQL tenant test search is updated from private email to display name.
 Private contact actions are intentionally not offered. Parent parity
 remains PARTIAL until browser/DB acceptance of this exact revision.
+
+## IST-safe Faculty Class Schedule month grid (2026-10-14)
+
+`/teacher/calendar` now includes a 42-cell server-rendered month grid keyed to
+the authoritative Asia/Kolkata dates of persisted Section schedule sessions,
+including sessions crossing IST midnight; dates do not depend on browser
+timezone. Course/Section filtering is limited to current Faculty teaching
+deliveries through the existing scoped schedule service and central courses.read
+authorization. Exact course-linked sessions link to their real delivery Home;
+Section-wide sessions are explicitly unlinked rather than guessed. Strict Zod
+month/delivery selectors, previous/next month, mobile horizontal scrolling and
+existing loading/error/empty states apply. The existing week/day interface is
+preserved. Unit tests cover timezone boundaries, and the existing unique-
+fixture disposable PG suite now authors a real crossing-midnight Section
+session, success, foreign-delivery and wrong-role denials with full session
+cleanup. Browser execution and independent current-SHA CI remain PARTIAL.

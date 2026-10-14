@@ -23,6 +23,8 @@ import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-
 import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report-csv-service";
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
+import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
+import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -74,6 +76,10 @@ const learner:RequestContext={
 async function cleanup() {
   // Clean in reverse FK order, exclusively fixture rows identified by C4POS
   // course / program codes; do not modify shared seeded people or tenants.
+  // Linked course rows cascade from the dedicated fixture schedule events.
+  await pool.query(`delete from section_schedule_events where section_id in (
+    select s.id from sections s join cohorts ch on ch.id=s.cohort_id
+    join programs p on p.id=ch.program_id where p.code like $1)`, [codePattern]);
   await pool.query(`delete from in_app_notifications where event_id in
     (select ev.id from activity_events ev where ev.subject_id in
       (select a.id::text from course_assignments a join course_lessons l on l.id=a.lesson_id
@@ -192,7 +198,7 @@ async function fixture() {
   });
   await transitionCourseAssignment(faculty,assignment.id,{action:"PUBLISH"});
   await transitionCourseQuiz(faculty,quiz.id,{action:"PUBLISH"});
-  return {delivery,assignment,quiz};
+  return {delivery,section,assignment,quiz};
 }
 async function seedFacultyOnly() {
   // The seeded learner already belongs to a programme. DB02 explicitly
@@ -236,8 +242,26 @@ afterAll(async()=>{
 });
 
 describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
-  it("reads live self-profile Section and registered learner contact",async()=>{
-    const {delivery}=await fixture();
+  it("reads live self-profile Section, IST sessions and registered learner contact",async()=>{
+    const {delivery,section}=await fixture();
+    const session=await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,
+      title:"Chat4 IST midnight Session "+runId,
+      startsAt:"2026-10-13T18:15:00.000Z",
+      endsAt:"2026-10-13T19:00:00.000Z",
+    });
+    const month=await getFacultyIstMonth(facultyOnly,{
+      month:"2026-10",deliveryId:delivery.id,
+    });
+    expect(month.grid.days.find(day=>day.key==="2026-10-13")?.events)
+      .toEqual(expect.arrayContaining([expect.objectContaining({id:session.id})]));
+    expect(month.grid.days.find(day=>day.key==="2026-10-14")?.events)
+      .toEqual(expect.arrayContaining([expect.objectContaining({id:session.id})]));
+    await expect(getFacultyIstMonth(facultyOnly,{
+      month:"2026-10",deliveryId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+    await expect(getFacultyIstMonth(learner,{month:"2026-10"}))
+      .rejects.toBeDefined();
     // The seeded College A actor is FACULTY + MENTOR, intentionally rejected
     // from the Faculty-only self-profile. Exercise the success path with a
     // separately persisted, active FACULTY-only user in the SAME college.
