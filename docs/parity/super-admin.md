@@ -553,3 +553,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Super Admin Batch Promotion preview read-first — PARTIAL:** Added /admin/batch-promotion explicit selected-college context, persisted program/cohort selection, academic year override, no-write blocker/learner preview and capped mobile learner cards. Shared preview service now accepts active Super Admin college-scoped `academics.read`; the separate execute service still requires active College Admin membership, so no promotion write privilege is granted. Pure model/unit and in-test isolated PG success/foreign-scope/wrong-role tests authored, not executed. Remains: exact legacy multi-cohort promotion UX, execution/confirmation parity, school-year policies, full learner lists, browser and PostgreSQL gates, independent readiness audit.
+
+
+**2026-10-14 Chat 6 template scope action guard — PARTIAL:** Scoped Super Admins no longer see global-only Publish/Unpublish/Duplicate/Archive controls on template detail; selected-college assignment controls remain. Server mutation fences unchanged. Unit permission assertion authored but execution/browser verification remain open.

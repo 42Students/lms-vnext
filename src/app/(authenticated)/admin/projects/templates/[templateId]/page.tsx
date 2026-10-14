@@ -62,6 +62,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
               selectedCollegeId={
                 context.adminScope?.collegeId ?? null
               }
+              allowGlobalActions={can(context, "project-template.manage")}
               assignedToSelectedCollege={
                 Boolean(
                   context.adminScope?.collegeId &&
