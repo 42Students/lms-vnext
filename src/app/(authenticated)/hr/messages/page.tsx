@@ -7,14 +7,14 @@ import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-
 import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-button";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 export default async function HrMessagesPage({searchParams}:{
- searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[]}>
+ searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[]}>
 }) {
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const query=hrNotificationsQuerySchema.safeParse({
-  collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),
+  collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),
  });
  if(!query.success)return <div className="space-y-4">
   <PageHeader eyebrow="Employer Recruiter" title="Messages & Notifications"/>
@@ -43,7 +43,7 @@ export default async function HrMessagesPage({searchParams}:{
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
-   <p className="text-sm text-body">{result.unread} unread in this loaded set · {result.rows.length} displayed</p>
+   <p className="text-sm text-body">{result.unread} unread · {result.total} authorized notifications</p>
    {result.rows.length?<ol className="grid gap-3">{result.rows.map(row=>
     <li key={row.id} className="rounded-lg border border-border bg-surface p-4">
      <div className="flex flex-wrap justify-between gap-3">
@@ -56,7 +56,18 @@ export default async function HrMessagesPage({searchParams}:{
         expectedCreatedAt={row.createdAt.toISOString()}/>:null}
     </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
-   {result.truncated?<p className="text-sm text-muted-foreground">Showing newest 100 notifications only.</p>:null}
+   <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
+      <p className="text-xs text-muted-foreground">
+       {result.first?result.first+"–"+result.last:"No rows on this page"}
+       {" of "+(query.data.unreadOnly==="true"?result.unread:result.total)}
+      </p>
+      <div className="flex flex-wrap gap-2">
+       {result.page>1?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&page="+(result.page-1)}
+        className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
+       {result.page<result.pages?<Link href={"/hr/messages?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&page="+(result.page+1)}
+        className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
+      </div>
+    </nav>
    <p className="text-xs text-muted-foreground">Conversation threads and replies remain unavailable. Read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
