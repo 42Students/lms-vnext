@@ -57,6 +57,10 @@ export default async function MentorProjectPage({
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Task board status
         </Link>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          At-risk &amp; readiness
+        </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Delivery review summary

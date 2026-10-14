@@ -26,3 +26,13 @@
 - Team meeting log deep links; loading/error, mobile forms and isolated
   positive/foreign/wrong-role/stale PostgreSQL tests authored, not executed.
 - PARTIAL: browser, lint/typecheck, PostgreSQL and history/privacy signoff.
+
+## D — exact-project risk/readiness drill-in (2026-10-14)
+- Added Mentor-only /mentor/projects/[projectId]/risk-readiness linked from
+  project workspace; exact current Mentor permission and college scope.
+- Evidence-only state-based attention and readiness checkpoints with deep links,
+  filters, pagination, responsive cards and missing-evidence honesty. Read-only.
+- Pure projection and positive/foreign/wrong-role PostgreSQL test fixtures
+  authored but not run in this session.
+- PARTIAL: real test/browser/legacy verification; no predictive score, assignee,
+  workload or unregistered staleness claims.

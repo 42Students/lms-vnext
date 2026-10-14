@@ -556,3 +556,22 @@ dialog and loading/error states, pure unit and isolated PostgreSQL role/foreign/
 stale/audit tests are authored. **PARTIAL:** runtime/typecheck/lint, desktop and
 mobile verification, product privacy review and historic versioned meeting
 minutes remain open; no separate notes/version table is invented.
+
+
+## 2026-10-14 chat-11 D — Mentor exact-project risk and readiness drill-ins (PARTIAL)
+
+New `/mentor/projects/[projectId]/risk-readiness` shows persisted same-project
+blocked tasks, submitted task reviews, requested meetings, and pending latest
+final-delivery review as actionable attention signals, with exact workspace
+links and paginated ALL/RISK/READINESS views. Missing/unshipped Releases,
+missing/incomplete Sprints, missing/open tasks, absence of approved final
+delivery and post-approval missing evaluation are presented as evidence-based
+readiness checkpoints rather than as a fabricated score or probability.
+Zero tasks/Sprints/Releases mean unknown—not 100% complete. The service verifies
+active current assigned-Mentor membership, central projects.read, college/
+organization scope and optional Projects enablement before scoped reads.
+Loading/error, mobile cards, filter/empty states, pure-model tests and an
+isolated PostgreSQL success/wrong-role/foreign-scope fixture were authored.
+This is read-only: stale mutation token is not applicable. **PARTIAL:** tsc,
+eslint, unit/PG/browser acceptance, exact legacy risk semantics, historical
+activity/staleness and missing task assignee/workload data remain open.
