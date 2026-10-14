@@ -18,7 +18,7 @@ import { createCourseSectionDelivery } from "@/modules/courses/delivery-service"
 import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
-import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
+import { createCourseAssignment, transitionCourseAssignment, updateCourseAssignment } from "@/modules/courses/assignment-service";
 import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
@@ -338,11 +338,25 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"ARCHIVE",assignmentId:created.id,
       expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
     })).rejects.toBeDefined();
+    await expect(updateCourseAssignment(facultyOnly,created.id,{title:"Unversioned bypass"})).rejects.toBeDefined();
+    const throughDrawer=await updateCourseAssignment(facultyOnly,created.id,{
+      title:"Confirmed drawer draft "+runId, expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    });
+    expect(throughDrawer.title).toContain("Confirmed drawer draft");
+    await expect(updateCourseAssignment(facultyOnly,created.id,{
+      title:"Stale drawer replay",expectedUpdatedAt:edited.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+    await expect(updateCourseAssignment(learner,created.id,{
+      title:"Wrong role",expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
+    await expect(updateCourseAssignment({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},created.id,{
+      title:"Foreign drawer",expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toBeDefined();
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type in ('courses.assignment.created','courses.assignment.updated')`,[created.id]);
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
-      "courses.assignment.created","courses.assignment.updated",
+      "courses.assignment.created","courses.assignment.updated","courses.assignment.updated",
     ]);
   });
   it("filters actual Faculty reply audit with exact Section and non-leaking denial",async()=>{

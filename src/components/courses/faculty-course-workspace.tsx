@@ -225,6 +225,7 @@ function AssignmentItem({
               description: item.description,
               dueAt: item.dueAt,
               status: item.status,
+              updatedAt: item.updatedAt,
               maxPoints: item.maxPoints,
             }}
           />
@@ -326,6 +327,7 @@ function QuizItem({
               description: item.description,
               dueAt: item.dueAt,
               status: item.status,
+              updatedAt: item.updatedAt,
               maxAttempts: item.maxAttempts,
             }}
           />

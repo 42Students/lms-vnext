@@ -1,3 +1,5 @@
+import { commandFacultyAssignment } from "./faculty-assignment-authoring-service";
+import { facultyAssignmentLegacyEdit } from "./faculty-assignment-authoring-model";
 import {
   and,
   asc,
@@ -74,17 +76,17 @@ async function authorizeAssignmentMutation(
   >,
 ) {
   if (assignment.deliveryId) {
-    await requireDeliveryContentMutation(
+    return requireDeliveryContentMutation(
       context,
       assignment.deliveryId,
     );
-    return;
   }
 
   requirePermission(context, "courses.manage", {
     organizationId: assignment.organizationId,
     collegeId: assignment.collegeId,
   });
+  return "ADMIN" as const;
 }
 
 export async function listCourseAssignments(
@@ -261,10 +263,15 @@ export async function updateCourseAssignment(
       assignmentId,
     );
 
-  await authorizeAssignmentMutation(
+  const actor = await authorizeAssignmentMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyAssignment(context, {deliveryId: current.deliveryId},
+      facultyAssignmentLegacyEdit(current, input));
+  }
 
   if (
     input.maxPoints !== undefined &&

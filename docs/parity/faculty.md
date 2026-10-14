@@ -1092,3 +1092,15 @@ Pure tests cover count deltas, duplicate/reordered sets, no-op and invalid
 rosters. The fresh-Section PostgreSQL correction fixture derives the preview
 from its persisted absence while retaining stale, foreign/role and audit tests.
 Remaining: PostgreSQL execution and mobile/keyboard/legacy correction acceptance.
+
+## 2026-10-14 Faculty generic Assignment edit bypass closed — PARTIAL
+The existing partial Assignment PATCH now forwards authorized Faculty edits
+to the same published-state guarded, confirmed, versioned and audited command
+as the dedicated editor. Admin behavior is preserved. Omitted fields retain
+persisted values; explicit deadline clearing remains supported; sequence
+changes use the separate lesson-order workflow. Both Faculty drawer call sites
+carry the actual persisted updatedAt token and require edit confirmation.
+Pure adapter tests and the fresh Faculty Section PostgreSQL fixture cover
+successful generic edit, missing/stale tokens, wrong/foreign-role denials and
+the additional immutable update audit. Remaining: database/browser acceptance
+and generic Quiz/assessment lifecycle bypass review; no DONE promotion.
