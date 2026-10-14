@@ -217,3 +217,18 @@ describe("L25-006 own persisted task Board search",()=>{
       await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
+
+describe("L25-002 learner priority filter from own persisted task rows",()=>{
+  it("only returns actual high priority tasks from own workspace",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'priority-release','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'priority-sprint','Sprint',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,priority) values($1,$2,$3,'priority-a','Own high task',0,'HIGH'),($4,$2,$3,'priority-b','Own low task',1,'LOW')",[ids.taskA,ids.project,ids.sprint,ids.taskB]);
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    expect(filterLearnerBoardTasks(workspace.tasks,"",{priority:"HIGH"}).map(task=>task.id)).toEqual([ids.taskA]);
+    for(const denied of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["MENTOR"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(denied,ids.project)).rejects.toBeDefined();
+  });
+});
