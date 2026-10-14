@@ -13,6 +13,7 @@ import {
 import {
   listActivityEvents,
 } from "@/modules/activity/service";
+import { listColleges } from "@/modules/colleges/service";
 import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_MODULES,
@@ -61,6 +62,7 @@ export default async function ActivityPage({
   const importanceValue = one(
     params.importance,
   );
+  const collegeOptions = isSuperAdmin(context) ? await listColleges(context) : [];
   const result =
     await listActivityEvents(
       context,
@@ -71,6 +73,7 @@ export default async function ActivityPage({
         importance: importanceValue as
           | (typeof ACTIVITY_IMPORTANCE)[number]
           | undefined,
+        collegeId: one(params.collegeId),
         actorUserId: one(
           params.actorUserId,
         ),
@@ -80,6 +83,7 @@ export default async function ActivityPage({
         subjectType: one(
           params.subjectType,
         ),
+        subjectId: one(params.subjectId),
         from: one(params.from),
         to: one(params.to),
         beforeOccurredAt: one(
@@ -138,6 +142,8 @@ export default async function ActivityPage({
     "actorUserId",
     "eventType",
     "subjectType",
+    "subjectId",
+    "collegeId",
     "from",
     "to",
   ]) {
@@ -175,6 +181,17 @@ export default async function ActivityPage({
       />
 
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-4">
+        {isSuperAdmin(context) ? (
+          <label>
+            <span className="mb-1 block text-xs font-semibold text-body">College</span>
+            <select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
+              <option value="">Current admin safety scope</option>
+              {collegeOptions.map(college => <option key={college.id} value={college.id}>
+                {college.name} ({college.code})
+              </option>)}
+            </select>
+          </label>
+        ) : null}
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Module
@@ -274,6 +291,11 @@ export default async function ActivityPage({
             )}
             placeholder="placement_offer"
           />
+        </label>
+        <label>
+          <span className="mb-1 block text-xs font-semibold text-body">Subject / entity ID</span>
+          <input className={inputClass} name="subjectId" maxLength={500}
+            defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">

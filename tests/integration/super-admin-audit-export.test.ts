@@ -19,8 +19,12 @@ describe.skipIf(!enabled)("Super Admin audit filtered CSV (PostgreSQL)",()=>{
   const own=await exportSuperAdminActivity(admin,{eventType:"platform.fixture",subjectType:"college"});
   expect(own.csv).toContain(token);
   expect(own.csv).toContain("'=SUM");
+  expect((await exportSuperAdminActivity(admin,{subjectId:token})).csv).toContain(token);
+  expect((await exportSuperAdminActivity(admin,{subjectId:"no-such-subject-"+token})).csv).not.toContain(token);
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
   expect((await exportSuperAdminActivity(foreign,{eventType:"platform.fixture",subjectType:"college"})).csv).not.toContain(token);
+  await expect(exportSuperAdminActivity(foreign,{collegeId:SEED_IDS.collegeA,subjectId:token}))
+    .rejects.toBeInstanceOf(AuthorizationError);
   await expect(exportSuperAdminActivity({...admin,user:{...admin.user,systemRoles:[]}},{}))
    .rejects.toBeInstanceOf(AuthorizationError);
  });
