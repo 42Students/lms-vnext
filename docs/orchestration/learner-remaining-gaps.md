@@ -760,7 +760,7 @@ legacy-to-vNext descriptions remain in the canonical linked ledger.
 | L30-004 | Profile image upload/remove | BLOCKED | owner decision | Secure storage, privacy retention, or attachment pipeline requires approved implementation disposition. |
 | L30-005 | Resume view/status | UNCHECKED | buildable | Inspect current implementation and close missing behavior, tests, mobile and source-of-truth verification. |
 | L30-006 | Resume upload/import/remove | BLOCKED | owner decision | Secure storage, privacy retention, or attachment pipeline requires approved implementation disposition. |
-| L30-007 | Contacts | FIXED | buildable | Source implementation recorded; execute focused DB/UI/mobile verification and finalize family acceptance. |
+| L30-007 | Contacts | FIXED | buildable | Implemented confirm-only optional alternate-phone/contact-email edit with active own-college/role validation, JSONB section update, audit privacy and fresh PostgreSQL success/denial tests; execute focused PG/browser acceptance. Login contact changes are not included. |
 | L30-008 | Social profiles | FIXED | buildable | Source implementation recorded; execute focused DB/UI/mobile verification and finalize family acceptance. |
 | L30-009 | Address | FIXED | buildable | Source implementation recorded; execute focused DB/UI/mobile verification and finalize family acceptance. |
 | L30-010 | Personal details | FIXED | buildable | Source implementation recorded; execute focused DB/UI/mobile verification and finalize family acceptance. |
@@ -850,3 +850,17 @@ acceptance evidence. The older approval-style withdrawal **request**
 remains unresolved under L14-015 and is not represented as equivalent.
 All account matrix parent rows remain PARTIAL; `docs/tracker.json`
 is unchanged.
+
+## 2026-10-14 Learner contact-only write
+
+L30-007 now includes an explicit mobile confirmation to edit the persisted
+alternate phone and contact email. The dedicated same-origin PATCH accepts
+only those two values and `confirmed: true`, validates the active
+persisted Learner's own membership and account, edits only the contacts
+JSONB section in a transaction, and records a PII-free activity audit.
+A fresh PostgreSQL fixture with isolated membership/profile tests validates
+success, preserving unrelated sections, audit, forged college, suspended
+membership, wrong role and persisted live revocation. These tests are
+authored; executed test/browser evidence remains outstanding. Do not
+mistake this for changing primary OTP/login phone or account email, which
+requires a separate verified-credential workflow. Profile is still PARTIAL.
