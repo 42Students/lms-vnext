@@ -743,3 +743,12 @@ tests and independent Section/role/forged-selector PostgreSQL assertions in the
 fresh-Faculty fixture. No table created, no write route or fabricated notice.
 The DB10 Section notices store is still unregistered; read/write remains blocked.
 Real PG, eslint/tsc and responsive browser execution still open: PARTIAL only.
+
+## 2026-10-14 assignment editor recovery — PARTIAL
+The current legacy All Assignments row now preserves persisted due instants in
+browser-local datetime controls, rejects malformed local time, blocks archived
+actions and provides accessible write feedback; server transaction/audit and
+same-origin guards remain authoritative. A dedicated pure model test and
+unique-fixture PostgreSQL command tests cover success, stale, cross-Section,
+wrong-role and audit. **Not DONE:** browser/keyboard/mobile and exact
+legacy edit/submission-grade modal acceptance plus executed PG/lint/tsc.

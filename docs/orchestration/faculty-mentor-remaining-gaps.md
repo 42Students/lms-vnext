@@ -382,3 +382,13 @@ cases; then perform authenticated mobile/browser and legacy-oracle acceptance.
 These tests have been authored and reviewed as source, but are not claimed as
 executed. Existing PARTIAL rows remain PARTIAL, existing RETIRED decisions
 remain RETIRED; no DONE parity row was changed.
+
+## 2026-10-14 A2 — All Assignments (PARTIAL)
+Hardened the existing Section assignment authoring editor: device-local due date
+round-trips the persisted ISO instant, invalid local dates fail client-side,
+archived actions are disabled, and mutations give accessible status/error text.
+Existing transaction + immutable audit and row-lock optimistic token are
+unchanged. Pure model unit test and own-Faculty fixture PostgreSQL
+create/edit/stale/foreign/wrong-role/audit checks were added.
+Still open: execute tests, real browser create/edit/archive/grade modal and
+legacy lesson-order parity; no claim of DONE.
