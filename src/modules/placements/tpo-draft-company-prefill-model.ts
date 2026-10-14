@@ -28,3 +28,10 @@ export function resolveTpoDraftCompanyByName(
   );
   return matches.length === 1 ? matches[0].relationshipId : null;
 }
+
+/** CRM company names are free text; this is only a hint to a server-verified relationship. */
+export function tpoDraftCompanyNameHref(value: string): string | null {
+  const name = value.trim();
+  if (!name || name.length > 200) return null;
+  return "/tpo/placements/new/draft?company=" + encodeURIComponent(name);
+}

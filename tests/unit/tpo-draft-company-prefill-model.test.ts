@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   resolveTpoDraftCompanyRelationshipId,
   resolveTpoDraftCompanyByName,
+  tpoDraftCompanyNameHref,
   tpoDraftCompanyPrefillSchema,
 } from "@/modules/placements/tpo-draft-company-prefill-model";
 
@@ -17,6 +18,13 @@ describe("TPO draft company prefill", () => {
       .toBeNull();
     expect(resolveTpoDraftCompanyRelationshipId(id, []))
       .toBeNull();
+  });
+
+  it("makes a safe recruiter-company draft link without asserting a relationship", () => {
+    expect(tpoDraftCompanyNameHref(" ACME & Co "))
+      .toBe("/tpo/placements/new/draft?company=ACME%20%26%20Co");
+    expect(tpoDraftCompanyNameHref("  ")).toBeNull();
+    expect(tpoDraftCompanyNameHref("x".repeat(201))).toBeNull();
   });
 
   it("requires one exact active college relationship for recruiter name prefill", () => {
