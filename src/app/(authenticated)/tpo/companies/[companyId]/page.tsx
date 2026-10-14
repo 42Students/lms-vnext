@@ -97,6 +97,12 @@ export default async function TpoCompanyDetailPage({
 
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link
+          href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+        >
+          Manage contact people
+        </Link>
+        <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/contact-log"}
           className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
         >
