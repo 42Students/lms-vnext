@@ -109,3 +109,10 @@ export function facultyRemoveQuizOption<T extends {correct:boolean}>(
  }
  return remaining;
 }
+
+/** A confirmation applies to the exact metadata the Faculty member reviewed. */
+export function facultyQuizConfirmationAfterEdit<T>(
+ confirmed:boolean,previous:T,next:T,
+):boolean {
+ return Object.is(previous,next)?confirmed:false;
+}

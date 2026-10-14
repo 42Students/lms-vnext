@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -120,23 +120,23 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    </select></label>
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
-   <select value={lessonId} onChange={e=>setLessonId(e.target.value)}
+   <select value={lessonId} onChange={e=>{setConfirmed(false);setLessonId(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </select></label>:null}
   <label className="grid min-w-0 gap-1 text-sm">Quiz title
-   <input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>setTitle(e.target.value)}
+   <input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setTitle(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Instructions
    <textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
-    onChange={e=>setDescription(e.target.value)}
+    onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDescription(e.target.value);}}
     className="min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Due date (IST, optional)
-   <input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>setDueAt(e.target.value)}
+   <input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDueAt(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
    <input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
-    onChange={e=>setMaxAttempts(Number(e.target.value))}
+    onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setMaxAttempts(Number(e.target.value));}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   {questions.map((q,i)=><fieldset key={i} disabled={!editable}
    className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
