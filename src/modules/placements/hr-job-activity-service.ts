@@ -5,7 +5,7 @@ import {activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrActivityQuerySchema,hrActivityEventFilter,projectHrJobActivity} from "./hr-job-activity-model";
+import {hrActivityQuerySchema,hrActivityEventFilter,hrActivityHasNext,projectHrJobActivity} from "./hr-job-activity-model";
 export async function listRecruiterJobActivity(context:RequestContext,raw:unknown={}) {
  const query=hrActivityQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)
@@ -28,7 +28,9 @@ export async function listRecruiterJobActivity(context:RequestContext,raw:unknow
   eq(activityEvents.collegeId,collegeId),eq(activityEvents.module,"PLACEMENTS"),
   eq(activityEvents.subjectType,"placement_job"),inArray(activityEvents.subjectId,ids),
   inArray(activityEvents.eventType,[...hrActivityEventFilter(query.kind)]),
- )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(query.limit):[];
+ )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+   .limit(query.limit+1).offset((query.page-1)*query.limit):[];
  return {status:"READY" as const,choices:grants,collegeId,
-   events:projectHrJobActivity(rows,jobs)};
+   events:projectHrJobActivity(rows.slice(0,query.limit),jobs),page:query.page,
+   hasNext:hrActivityHasNext(rows.length,query.limit)};
 }

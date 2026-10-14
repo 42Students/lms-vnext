@@ -34,6 +34,10 @@ describe.skipIf(!enabled)("HR job activity PG scopes",()=>{
   expect(result.status).toBe("READY");
   expect(result.events.some(e=>e.jobId===own.id)).toBe(true);
   expect(result.events.some(e=>e.jobId===other.id)).toBe(false);
+  const second=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
+    {collegeId:SEED_IDS.collegeA,page:2,limit:40});
+  expect(second.status).toBe("READY");
+  expect(second.events).toEqual([]);
   const published=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
     {collegeId:SEED_IDS.collegeA,kind:"PUBLISHED"});
   expect(published.events.every(e=>e.status==="Published")).toBe(true);
