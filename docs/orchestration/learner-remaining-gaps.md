@@ -868,3 +868,12 @@ requires a separate verified-credential workflow. Profile is still PARTIAL.
 ## 2026-10-14 temporary chat-4 Learner assignment
 
 PARTIAL — Implemented registered placement-only notification choice mutation and confirmation UI, backed by `placement_candidate_preferences` booleans. No generic notification-preferences table, saved-job persistence or application-note column was invented; the saved-jobs source remains staged and is not journal-confirmed. Positive-path/denial PostgreSQL fixtures, unit tests and audit checks authored; independent lint/tsc/DB/browser evidence remains outstanding. The original snapshot counts are unchanged.
+
+## 2026-10-14 buildability skips for this learner batch
+
+- L1-021 course thumbnail: canonical course-image field not verified in migrated schema; requires a registered image association before a real thumbnail source can be rendered. Do not fabricate image links.
+- L3-017/018/020/021 uploaded playback/download: private storage integration, byte range streaming and authenticated object retrieval acceptance are required; excluded from this no-storage batch.
+- L2-024 rich HTML overview: no registered authored rich overview field/sanitization contract; requires migrated content source and XSS-safe rendering policy.
+- L30-034 through L30-043 learner verification: no confirmed vNext verification state machine/private document schema or approved upload workflow. Do not invent verified badges or statuses.
+
+L17-007: date picker uses only persisted learner-scoped placement rounds, converted to ISO strings at the client boundary; acceptance remains PARTIAL until fresh disposable PostgreSQL, static checks and mobile/browser timezone review.

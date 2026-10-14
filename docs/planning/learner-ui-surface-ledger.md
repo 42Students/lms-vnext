@@ -514,7 +514,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-004 | Week mode | CareerCalendarContent | career calendar | GAP |
 | L17-005 | Day mode | CareerCalendarContent | career calendar | GAP |
 | L17-006 | Previous / Today / Next | CareerCalendarContent | career calendar | GAP |
-| L17-007 | Date picker | CareerCalendarContent | career calendar | GAP |
+| L17-007 | Date picker | learner career calendar | date input with strict valid YYYY-MM-DD IST day keys; existing owned persisted round filter remains; pure and fresh-learner PG tests authored. PARTIAL pending executed PostgreSQL, Vitest, TypeScript/ESLint, calendar browser/mobile and timezone acceptance | PARTIAL |
 | L17-008 | Event-type filters | CareerCalendarContent | career calendar | GAP |
 | L17-009 | Event chips | CareerCalendarContent | career calendar | GAP |
 | L17-010 | Selected-event detail drawer | CareerCalendarContent | career calendar | GAP |
