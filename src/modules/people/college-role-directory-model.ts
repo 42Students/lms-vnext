@@ -8,6 +8,7 @@ export type CollegeDirectoryKind = z.infer<typeof collegeDirectoryKindSchema>;
 export const collegeRoleDirectoryQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "SUSPENDED", "ENDED"]).default("ALL"),
+  accountStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 
@@ -52,6 +53,7 @@ export function collegeRoleDirectoryHref(
   const params = new URLSearchParams();
   if (filter.q) params.set("q", filter.q);
   if (filter.status !== "ALL") params.set("status", filter.status);
+  if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
   if (filter.page > 1) params.set("page", String(filter.page));
   const base = kind === "FACULTY" ? "/college/faculty" : "/college/students";
   return params.size ? base + "?" + params.toString() : base;
