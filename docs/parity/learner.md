@@ -1134,3 +1134,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L15-010 PARTIAL:** The past-scheduled assessment bucket now explicitly separates saved round start times from employer submission, attendance, overdue policy, or completion. A real CTA opens the existing authorized, applied-results workspace rather than treating elapsed time as a failed attempt. Pure fixed-UTC-clock model and own-learner PostgreSQL denial tests authored; browser/source and executed CI still pending.
+
+
+**2026-10-15 chat-5 L29-005 PARTIAL:** Learner Notifications now highlights up to three genuinely college-pinned, learner-visible announcements with a mobile-wrapping, accessible detail action. Pins are sourced solely from the existing authorized college announcement reader; personal notifications cannot be promoted to a pinned college notice even with a forged client flag. Announcement-read status remains separate from personal receipts, and source failure never fabricates a zero. Pure unit and persisted own-learner authorization/notification tests authored; runtime, announcement-producer and browser checks pending.
