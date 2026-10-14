@@ -1,5 +1,6 @@
 import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
@@ -51,6 +52,14 @@ export default async function MentorProjectPage({
       <MentorProjectTabs
         projectId={projectId}
       />
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+        >
+          Team membership history
+        </Link>
+      </div>
       {tab === "performance" ? (
         <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
           Legacy Task Allocation includes persisted task assignees and workload balancing.

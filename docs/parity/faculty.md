@@ -334,3 +334,17 @@ Added an authenticated Faculty browser scenario that creates a real Section-scop
 ### Faculty notification inbox cursor and role boundary (2026-10-14)
 
 The Faculty notifications page now requires an active persisted Faculty membership before either announcements or personal notifications are fetched. It exposes the shared unread/all filter, mark-all-read action and member-owned keyset pagination rather than silently truncating to 60 messages; expired, malformed or partial URL cursors give an explicit recovery link instead of a false empty feed. Navigation remains under `/teacher/notifications`; shared inbox Toolbar retains its original default `/notifications` for other accounts. The existing server-owned notification read/write routes still enforce recipient ownership and same-origin mutation checks. Unit and authenticated browser tests are added; full parity remains PARTIAL until exact-SHA execution and source comparison.
+
+## Faculty Contacts detail reader (2026-10-14)
+
+A read-only detail route `/teacher/contacts/[contactsTab]/[membershipId]`
+now opens from each listed same-college Faculty contact. It repeats the
+authoritative persisted active Faculty-role membership check and restricts the
+target to an active same-college contact with the requested directory role.
+Only existing public-to-college directory fields (name, email, phone, current
+college roles) are selected; private profile documents, identity and academic
+verification records are not loaded. Zod rejects forged tabs/IDs and cross-tenant
+selectors. Loading/error, pure-model tests and PostgreSQL denial cases are
+authored; independent execution and legacy full Contact/Profile coverage remain
+OPEN. Preserve all previously authored Faculty attendance, roster and assessment
+parity sections. No checkbox is marked DONE by this source-only work.

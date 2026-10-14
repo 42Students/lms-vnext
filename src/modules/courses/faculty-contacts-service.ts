@@ -17,6 +17,12 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
+import { can } from "@/modules/permissions/policy";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  facultyContactDetailParamsSchema,
+  facultyContactTabMatches,
+} from "./faculty-contact-detail-model";
 
 const querySchema = z.object({
   tab: z.enum(["ALL", "FACULTY", "LEARNER"]),
@@ -189,5 +195,59 @@ export async function listFacultyContacts(
       ...item,
       roles: rolesByMembership.get(item.membershipId) ?? [],
     })),
+  };
+}
+
+/**
+ * A single same-college active contact exposed by the Faculty directory.
+ * This deliberately does not load private profile files, identities, or
+ * role-specific records beyond the existing directory columns.
+ */
+export async function getFacultyContactDetail(
+  context: RequestContext,
+  rawParams: unknown,
+) {
+  const params = facultyContactDetailParamsSchema.parse(rawParams);
+  const membership = context.membership;
+  if (!membership || !hasMembershipRole(context, "FACULTY") ||
+      !can(context, "courses.read", {
+        organizationId: membership.organizationId,
+        collegeId: membership.collegeId,
+      })) {
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  }
+  const actor = await requirePersistedFaculty(context);
+  const db = getDb();
+  const [contact] = await db.select({
+    membershipId: collegeMemberships.id,
+    displayName: users.displayName,
+    email: users.email,
+    phoneE164: users.phoneE164,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(collegeMemberships.id, params.membershipId),
+      eq(collegeMemberships.collegeId, actor.collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+    )).limit(1);
+
+  if (!contact) {
+    // Same denial for an inactive or other-college membership.
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  }
+  const roleRows = await db.select({
+    role: membershipRoles.role,
+  }).from(membershipRoles).where(
+    eq(membershipRoles.membershipId, contact.membershipId),
+  ).orderBy(asc(membershipRoles.role));
+  const roles = roleRows.map(row => row.role);
+  if (!facultyContactTabMatches(params.contactsTab, roles)) {
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  }
+  return {
+    ...contact,
+    roles,
+    contactsTab: params.contactsTab,
   };
 }
