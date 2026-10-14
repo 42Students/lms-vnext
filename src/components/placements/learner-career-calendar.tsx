@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
 import {
   careerCalendarEvents,
   careerCalendarPeriod,
@@ -151,6 +152,16 @@ export function LearnerCareerCalendar({
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
+        <label className="mt-3 block max-w-xs text-xs font-semibold text-body">
+          Jump to date (IST)
+          <input type="date" aria-label="Choose career calendar date"
+            min="2000-01-01" max="2100-12-31" value={anchor}
+            onChange={(event)=>{
+              const day=parseLearnerCareerDate(event.target.value);
+              if(day)setAnchor(day);
+            }}
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+        </label>
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter career events">
           {filters.map((option) => (
             <button
