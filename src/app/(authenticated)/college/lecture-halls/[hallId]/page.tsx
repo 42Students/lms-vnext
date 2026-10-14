@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
+import { CollegeHallBookingAction } from "@/components/academics/college-hall-booking-action";
+import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 import { collegeHallAvailabilitySchema } from "@/modules/academics/college-hall-availability-model";
 import { getCollegeHallAvailability, CollegeHallAvailabilityNotFoundError }
   from "@/modules/academics/college-hall-availability-service";
@@ -32,6 +34,8 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       throw error;
     }
   }
+  const bookingOptions = result?.hall.status === "ACTIVE"
+    ? await listRecurringPreviewOptions(await getCurrentRequestContext()) : null;
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
@@ -58,6 +62,9 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>
         </section>
+        {bookingOptions ? <CollegeHallBookingAction hallId={result.hall.id}
+          classes={bookingOptions.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
+          faculty={bookingOptions.faculty} /> : null}
         <section aria-label="Hall scheduled sessions" className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
