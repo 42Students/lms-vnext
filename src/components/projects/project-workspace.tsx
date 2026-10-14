@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {
   ReleaseLifecycleActions,
   SprintLifecycleActions,
@@ -528,14 +529,24 @@ export function ProjectWorkspace({
                         >
                           {label(sprint.status)}
                         </StatusBadge>
-                        {mode !== "LEARNER" && !readOnly ? (
+                        {mode !== "LEARNER" && !readOnly ? <>
+                          {["PLANNED","ACTIVE"].includes(sprint.status) &&
+                            release.status !== "SHIPPED" ? (
+                              <MentorSprintDetailsEdit
+                                projectId={workspace.project.id}
+                                sprintId={sprint.id}
+                                title={sprint.title}
+                                description={sprint.description}
+                                updatedAt={sprint.updatedAt.toISOString()}
+                              />
+                            ) : null}
                           <SprintLifecycleActions
                             projectId={workspace.project.id}
                             sprintId={sprint.id}
                             status={sprint.status}
                             releaseStatus={release.status}
                           />
-                        ) : null}
+                        </> : null}
                       </div>
                     </div>
 
