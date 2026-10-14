@@ -78,6 +78,22 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               )}
             </select>
           </label>
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
+              Recorded academic year (start)
+              <input name="yearStart" type="number" min={1900} max={9998} step={1}
+                defaultValue={data.query.yearStart ?? ""} placeholder="All academic years"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
+              Semester number
+              <input type="number" name="termNumber" min={1} max={24} step={1}
+                defaultValue={data.query.termNumber ?? ""} placeholder="All semesters"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter

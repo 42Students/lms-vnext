@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, ilike, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, gt, gte, ilike, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -96,6 +96,7 @@ export const listLectureHallsSchema = z.object({
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
   departmentId: z.string().uuid().optional(),
+  minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(100),
   offset: z.coerce.number().int().min(0).default(0),
 });
@@ -177,6 +178,7 @@ export async function listLectureHalls(
     )] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
+    ...(query.minimumCapacity !== undefined ? [gte(lectureHalls.capacity, query.minimumCapacity)] : []),
     ...(query.departmentId
       ? [eq(lectureHalls.departmentId, query.departmentId)]
       : []),
