@@ -178,3 +178,6 @@
 
 ## Round 3 AC — Resource link filter (PARTIAL)
 - Filter unsafe/unavailable versus safe HTTPS resource links before paging/CSV, with unit tests authored but not run.
+
+## Round 3 AD — Team coverage status filter (PARTIAL)
+- Registered lifecycle status filter on current project staffing, with unit test updates; gates unexecuted.
