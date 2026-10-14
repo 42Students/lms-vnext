@@ -12,6 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 
 async function mutate(
   path: string,
@@ -156,12 +157,11 @@ export function ProgramActions({
                     mutate(
                       `/api/academics/programs/${program.id}`,
                       "PATCH",
-                      {
+                      updateCollegeProgramSchema.parse({
                         name,
                         code,
-                        durationTerms:
-                          Number(durationTerms),
-                      },
+                        durationTerms: Number(durationTerms),
+                      }),
                     ),
                   "Program updated",
                   () => setEditOpen(false),
@@ -221,7 +221,7 @@ export function ProgramActions({
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
         title={`Archive ${program.name}?`}
-        description="Programs with non-archived Cohorts cannot be archived."
+        description="Archive removes the program from active directories. Any linked semester, cohort (including archived cohorts), or learner enrollment blocks archival. Confirm only if all dependencies have been cleared."
         confirmLabel="Archive program"
         pending={pending}
         onConfirm={() =>
@@ -230,6 +230,7 @@ export function ProgramActions({
               mutate(
                 `/api/academics/programs/${program.id}`,
                 "DELETE",
+                { confirm: true },
               ),
             "Program archived",
             () => setArchiveOpen(false),
