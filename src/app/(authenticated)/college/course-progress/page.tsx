@@ -21,6 +21,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       q: first(params.q), status: first(params.status),courseCode:first(params.courseCode)||undefined,
       programCode:first(params.programCode)||undefined,
       periodCode:first(params.periodCode)||undefined,
+      cohortCode:first(params.cohortCode)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
