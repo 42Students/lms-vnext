@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -43,7 +44,7 @@ export default async function CollegeBatchPromotionPage({
     : null;
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion Preview"
-      description="Server-authored, read-only eligibility preview. No learner progression or graduation will be changed."
+      description="Server-authored eligibility preview. A confirmed promotion rechecks blockers in one transaction; graduation remains unavailable."
       actions={<Link href="/college/batches"
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Batches</Link>} />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -120,8 +121,17 @@ export default async function CollegeBatchPromotionPage({
           </p>}
           <p className="text-sm font-semibold text-body">
             Preview indicates {preview.simulatedReadiness ? "no detected blockers" : "detected blockers"}.
-            Promotion and graduation remain unavailable here.
+            Graduation remains unavailable here.
           </p>
+          {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
+            preview.batch.version !== null ? (
+              <CollegePromotionConfirmation cohortId={preview.batch.id}
+                programId={preview.batch.programId}
+                expectedVersion={preview.batch.version}
+                yearStart={parsed.data.yearStart}
+                targetTerm={preview.plan.targetTermNumber!}
+                learnerCount={preview.checkedLearners} />
+            ) : null}
         </section>
         <section aria-label="Learner-level preview" className="overflow-x-auto rounded-xl border border-border bg-surface">
           <h2 className="border-b border-border p-4 text-lg font-semibold text-foreground">Learner blockers</h2>
@@ -150,9 +160,8 @@ export default async function CollegeBatchPromotionPage({
       </>
     )}
     <p className="text-xs leading-5 text-muted-foreground">
-      No database write occurs during preview. The selected year is not persisted.
-      This page does not create an approval or call a promote/graduate endpoint.
-      A complete server-side transactional promotion with revalidation is still required.
+      Preview never writes. Confirming promotion requires an unchanged version and rechecks
+      blockers in a transaction. Graduation and automatic class movement remain unavailable.
     </p>
   </div>;
 }

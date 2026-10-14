@@ -231,7 +231,7 @@ Legacy contract audited:
 ## Page: Batch Promotion
 **Legacy:** `/college-admin/batch-promotion`
 
-**Read-first PARTIAL (2026-10-14):** `/college/batch-promotion` provides a server-authored, college-scoped preview of a selected cohort's registered progression state, next program term, proposed PROMOTE/GRADUATE action, displayed academic-year override, and per-learner persisted membership/enrollment/class blockers. The preview checks up to 2,000 learner enrollments and explicitly blocks completeness above that limit. It performs no database writes and does not offer promotion or graduation controls. Exact legacy modal/editable academic year, promotion confirmation, atomic write, rollback and full DB/browser acceptance remain open.
+**Write-side PARTIAL (2026-10-14):** `/college/batch-promotion` retains the server-authored preview of up to 2,000 learner blocker checks and adds explicit confirmation for eligible **PROMOTE** cases. Same-origin POST requires strict Zod, College Admin and college scope. The transaction locks cohort/progression/enrollments, reruns the preview, rejects blockers and stale expected versions, updates term/year and version (+1), inserts registered cohort progression history and college-scoped immutable activity audit. No inferred period/class transfer. **GRADUATE** remains unavailable because registered history only permits PROMOTION (+1) and CORRECTION (same term); exact legacy/browser/runtime acceptance remains open.
 
 
 Legacy contract:
