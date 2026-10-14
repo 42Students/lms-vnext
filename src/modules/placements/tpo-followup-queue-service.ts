@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, isNull, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
@@ -44,6 +44,9 @@ export async function getTpoDueFollowupQueue(
   const { collegeId, ownerMembershipId } = await requireTpo(context);
   const query=tpoFollowupQueueQuerySchema.parse(rawQuery);
   const db = getDb();
+  const weekEnd=new Date(now.getTime()+7*86400000);
+  const timeConditions=query.window==="DUE"?[lte(placementTpoFollowups.dueAt,now)]:
+    [gte(placementTpoFollowups.dueAt,now),lte(placementTpoFollowups.dueAt,weekEnd)];
   const facts = await db.select({
     id: placementTpoFollowups.id,
     leadId: placementTpoFollowups.leadId,
@@ -60,7 +63,7 @@ export async function getTpoDueFollowupQueue(
       eq(placementTpoFollowups.collegeId, collegeId),
       eq(placementTpoLeads.collegeId, collegeId),
       isNull(placementTpoFollowups.doneAt),
-      lte(placementTpoFollowups.dueAt, now),
+      ...timeConditions,
       ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
     ))
     .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id))
@@ -83,6 +86,7 @@ export async function getTpoDueFollowupQueue(
     ...projectTpoFollowupQueue(facts.slice(0, 200), now),
     hasMoreDue: facts.length > 200,
     scope: query.scope,
+    window: query.window,
     leads: leads.slice(0, 200),
     hasMoreLeads: leads.length > 200,
   };
