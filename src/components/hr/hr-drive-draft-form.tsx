@@ -6,6 +6,7 @@ import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-d
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
+import {duplicateHrDraftRound} from "@/modules/placements/hr-draft-round-duplicate-model";
 import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
 import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compensation-review-model";
 
@@ -191,6 +192,12 @@ export function HrDriveDraftForm({
                   className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
               </div>
+              <button type="button" disabled={draft.rounds.length>=12}
+                aria-label={"Duplicate "+round.name}
+                className="self-end rounded-md border border-border px-3 py-3 text-sm text-primary-text disabled:opacity-50"
+                onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
+                Duplicate
+              </button>
               <button type="button" disabled={draft.rounds.length <= 1}
                 className="self-end rounded-md border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
                 onClick={() => setDraft((current) => ({
