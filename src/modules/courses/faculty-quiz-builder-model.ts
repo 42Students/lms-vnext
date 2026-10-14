@@ -61,3 +61,9 @@ export function facultyChangeQuizChoiceType<T extends { correct: boolean }>(
 export function facultyQuizDraftEditable(status: string | null | undefined): boolean {
   return status == null || status === "DRAFT";
 }
+
+/** The API accepts title/instructions/due-date updates after publication,
+ * but the question bank and attempt limit are sealed. */
+export function facultyQuizMetadataEditable(status: string | null | undefined): boolean {
+  return status == null || status === "DRAFT" || status === "PUBLISHED" || status === "CLOSED";
+}
