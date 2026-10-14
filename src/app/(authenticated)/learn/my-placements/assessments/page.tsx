@@ -6,15 +6,18 @@ import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-ca
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerAssessmentBrowse } from "@/modules/placements/learner-assessment-browse-service";
 import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
+import {learnerAssessmentDueBucketSchema} from "@/modules/placements/learner-assessment-due-buckets";
 
 export default async function LearnerPlacementAssessmentsPage({searchParams}: {
-  searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[]}>;
+  searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[];due?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const workspace = await getOwnLearnerAssessmentBrowse(context);
   const query=await searchParams;
   const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
   if(!search.success)notFound();
+  const due=learnerAssessmentDueBucketSchema.safeParse(query.due??"all");
+  if(!due.success)notFound();
   const link=resolveOwnAssessmentDeepLink(workspace.rounds,{
     applicationId:query.applicationId,roundId:query.roundId,
   });
@@ -58,6 +61,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
         key={link.key ?? "all-assessments"}
         initialSelectedKey={link.key}
         initialSearch={search.data.q}
+        initialDueBucket={due.data}
         kind="ASSESSMENT"
         rounds={rounds}
         snapshotNowIso={new Date().toISOString()}

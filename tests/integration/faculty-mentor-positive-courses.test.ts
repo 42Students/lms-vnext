@@ -324,12 +324,22 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const questionIdsPublished=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
     expect(questionIdsPublished.rows).toEqual(questionIdsBefore.rows);
     expect(published.status).toBe("PUBLISHED");
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{
+      maxAttempts:3,expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type like 'courses.quiz.%'`,[draft.id]);
     expect(events.rows.map(row=>row.event_type).sort()).toEqual([
       "courses.quiz.created","courses.quiz.published","courses.quiz.updated","courses.quiz.updated",
     ]);
+    await pool.query("delete from membership_roles where id=$1",[facultyOnlyRoleId]);
+    await expect(commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
+      action:"EDIT",quizId:draft.id,expectedUpdatedAt:published.updatedAt.toISOString(),
+      title:"Revoked Faculty cannot edit",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
+    await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+      [facultyOnlyRoleId,facultyOnlyMembershipId]);
   });
   it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{
     const {delivery}=await fixture();
@@ -558,6 +568,16 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     const revoked=await getFacultyCourseList(facultyOnly,{});
     expect(revoked.items).toEqual([]);
+    await pool.query("update course_teaching_assignments set ended_at=null where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
+    await pool.query("update users set platform_status='DISABLED' where id=$1",[facultyOnlyUserId]);
+    expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
+    await pool.query("update users set platform_status='ACTIVE' where id=$1",[facultyOnlyUserId]);
+    await pool.query("delete from membership_roles where id=$1",[facultyOnlyRoleId]);
+    expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
+    await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+      [facultyOnlyRoleId,facultyOnlyMembershipId]);
+    expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items.map(row=>row.deliveryId))
+      .toEqual([delivery.id]);
   });
   it("projects real submission content from an authorized Faculty reader without widening scope",async()=>{
     const {delivery,assignment}=await fixture();

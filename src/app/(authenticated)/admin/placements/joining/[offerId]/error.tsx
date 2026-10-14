@@ -1,0 +1,1 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){return <ErrorState title="Joining detail unavailable" description="Could not read selected-college joining outcome." action={<Button onClick={reset}>Retry</Button>}/>;}

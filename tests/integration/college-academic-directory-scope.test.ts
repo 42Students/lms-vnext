@@ -161,6 +161,12 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     ]);
     expect(matchedTerm.items.map((row) => row.id)).toContain(ids.term);
     expect(otherTerm.items).toEqual([]);
+    const [min18,min19]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,minimumCredits:18}),
+      listCollegeSemesters(adminA,{q:label,minimumCredits:19}),
+    ]);
+    expect(min18.items.map(r=>r.id)).toContain(ids.term);
+    expect(min19.items).toEqual([]);
     expect(semestersB.items).toEqual([]);
     const [year2026, year2027] = await Promise.all([
       listCollegeBatches(adminA, { q: label, yearStart: 2026 }),
@@ -169,6 +175,12 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(year2026.items.map((row) => row.id)).toContain(ids.cohort);
     expect(year2027.items).toEqual([]);
     expect(batchesB.items).toEqual([]);
+    const [termOne,termTwo]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,currentTerm:1}),
+      listCollegeBatches(adminA,{q:label,currentTerm:2}),
+    ]);
+    expect(termOne.items.map(r=>r.id)).toContain(ids.cohort);
+    expect(termTwo.items).toEqual([]);
   });
 
   it("denies Faculty and forged college controls before querying private rows", async () => {

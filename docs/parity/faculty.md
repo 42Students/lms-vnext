@@ -1371,3 +1371,78 @@ Server-owned gradebook CSV now caps export at 500 learner rows, appending a form
 
 ## 2026-10-15 Faculty published Quiz metadata editor parity — PARTIAL
 The Quiz builder now exposes confirmed, optimistic EDIT of title/instructions/IST deadline for PUBLISHED and CLOSED Section quizzes while keeping the question bank and attempt limit locked. The UI omits sealed questions in metadata-only writes; ARCHIVED remains immutable. Pure tests cover lifecycle and Zod commands. PG positive/denial and mobile browser verification remain pending.
+
+## 2026-10-15 Faculty Section Reports strict URL selectors — PARTIAL
+The Section reports hub rejects duplicate or unknown query parameters instead of selecting the first value and silently widening a filter. Typed Zod query parsing preserves legitimate assessment-type and bounded page selectors; existing per-Section scope remains authoritative. Unit tests authored; PG and mobile browser acceptance not executed.
+
+## 2026-10-15 Faculty Discussion history strict URL selectors — PARTIAL
+The same-Section moderation history viewer now rejects duplicate actions/pages, forged scope IDs and invalid page strings rather than selecting one value. Existing audited event, pagination and role-scope readers are unchanged; pure parsing tests authored. Browser/PG acceptance remains open.
+
+## 2026-10-15 Faculty individual Gradebook private 404 — PARTIAL
+Learner gradebook drill-ins validate both UUID path IDs and map unassigned Section or absent learner membership to `notFound()` without leaking learner presence. Unexpected service errors still reach the boundary; pure classifier tests authored. PostgreSQL foreign/role and browser verification remain pending.
+
+## 2026-10-15 Faculty Assignment report private route boundary — PARTIAL
+The Assignment report now rejects malformed, duplicate or forged exact-Section parameters, validates the assessment path UUID, and maps unavailable/foreign-Section records to a non-leaking 404. Database faults still propagate; pure tests cover both parsed and denied selectors. Existing DONE report workflow untouched, new guard remains PARTIAL pending executed PG/browser acceptance.
+
+## 2026-10-15 Faculty Quiz report private route boundary — PARTIAL
+The Quiz summary/report now validates the path-owned Quiz UUID and entire Section query, refusing duplicate or extra user-provided scope selectors; unassigned, missing or wrong-Section Quiz reports respond with a private 404 instead of leaking identity. Does not alter published-score visibility; pure tests authored. Actual PG/browser validation remains outstanding.
+
+## 2026-10-15 Faculty Quiz single-choice correct-answer fence — PARTIAL
+The Quiz choice editor prevents unchecking the sole correct option for single-choice questions while letting Faculty switch the correct answer atomically. Multi-choice editing remains flexible pending the existing Zod save-time rule. Pure single/multiple interaction tests authored; no DB/browser acceptance claimed.
+
+## 2026-10-15 Faculty Quiz option deletion answer consistency — PARTIAL
+Removing a correct option from a single-choice quiz draft now transfers correctness to the first remaining option rather than leaving an impossible unanswered selection. Two-option minimum and unchanged source state are preserved; multi-choice options keep their remaining correctness. Pure model and regression test authored. Executed PG/browser acceptance remains open.
+
+## 2026-10-15 Faculty Quiz metadata no-op audit fence — PARTIAL
+A locked, version-checked Faculty Quiz metadata-only EDIT now returns a typed 409 for semantically unchanged values instead of bumping the version or writing a misleading immutable activity event. Comparing due dates uses the same instant across IST/UTC inputs; the client shows a helpful no-change error. Typed pure tests authored; real PG stale-token/audit count and mobile/browser validation remain open.
+
+## 2026-10-15 R4 published Quiz question-bank denial fixture — PARTIAL
+The integration fixture now asserts that replacing the question bank after publication is forbidden, while metadata-only edits remain legal. Existing stale-token, learner-role and wrong-Section expectations remain. Awaiting executed PostgreSQL verification.
+
+## 2026-10-15 R4 teaching-list fixture role alignment — PARTIAL
+The integration fixture now filters by its actual CO_TEACHER assignment, verifies another user's PRIMARY assignment is not returned, and retains the persisted revocation and foreign-college checks. Awaiting executed PostgreSQL verification.
+
+## 2026-10-15 R4 persisted Faculty user-status teaching-list fence — PARTIAL
+The Faculty Courses list now joins the persisted `users` row and requires `platform_status=ACTIVE` even if a cached RequestContext still claims ACTIVE. The PostgreSQL fixture disables the actual Faculty user and checks an empty delivery list after reactivating a teaching assignment. No other role reads are changed. PG execution pending.
+
+## 2026-10-15 R4 Faculty persisted-role revocation test — PARTIAL
+The PostgreSQL acceptance fixture now removes a real persisted FACULTY membership-role row while retaining the stale caller role, asserts the Course list is empty, then restores the role and checks that the authorized Section returns. This verifies the existing SQL join rather than trusting cached role claims. Execution pending.
+
+## 2026-10-15 R4 transactional persisted Faculty Quiz actor fence — PARTIAL
+The Section Quiz authoring transaction now checks persisted ACTIVE user, ACTIVE exact-college membership, FACULTY role and live teaching assignment before any CREATE/EDIT/PUBLISH/ARCHIVE write or audit. It no longer relies exclusively on a cached active role plus assignment alone. A PostgreSQL fixture revokes the actual membership-role row and expects a teaching-scope denial. Execution pending.
+
+## 2026-10-15 R4 Quiz multiple-choice answer interaction fence — PARTIAL
+The Faculty Quiz question editor now refuses a toggle that would leave multi-choice with zero correct answers or with every option correct. Normal changes to multiple correct options remain allowed, and the existing strict save schema still validates the final question. Pure regression tests cover both two-option boundaries and a valid three-option transition. Browser/PG run pending.
+
+## 2026-10-15 R4 Quiz multiple-choice deletion consistency — PARTIAL
+Removing a multi-choice option now preserves the server's requirement for at least one correct and at least one incorrect remaining option. If Faculty removes the sole selected or sole unselected option, the editor repairs the two-option draft deterministically without mutating its original data. New pure regression cases authored; browser confirmation pending.
+
+## 2026-10-15 R4 published Faculty Quiz attempt-limit contract — PARTIAL
+Faculty Quiz authoring now forbids changing a published, closed or archived Quiz's maximum attempt count even before the first learner attempt. This matches the locked Faculty editor and preserves the announced learner attempt policy; DRAFT changes remain allowed. A pure status matrix and a PostgreSQL published-Quiz denial were authored. Live PG/browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Contacts strict selectors — PARTIAL
+Faculty Contacts now refuses duplicate, malformed, unknown or forged directory query selectors rather than silently truncating search terms or resetting page and size. A recoverable in-tab filter error preserves role/tab scope; tests cover valid defaults and rejected selectors. Executed browser/PG acceptance pending.
+
+## 2026-10-15 Round 5 private Faculty Contact drill-in — PARTIAL
+Faculty directory details now validate their route IDs and produce the same non-leaking 404 for missing, foreign or tab-incompatible memberships. Unrelated database failures still reach the error boundary; pure classifier tests authored. Registered service scoping is unchanged. PG and browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Course default-route ID guard — PARTIAL
+The `/teacher/courses/[deliveryId]` landing route validates the Section UUID before canonicalizing to Overview, preventing malformed/legacy arbitrary segments from becoming misleading instructor links. Tests cover valid and invalid IDs. Persisted teaching-scope authorization remains enforced on the destination; browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz metadata reconfirmation — PARTIAL
+Editing Quiz title, instructions, IST deadline, max attempts or a new draft's lesson selector now invalidates the previous confirmation. The server continues requiring explicit confirmed writes. Pure confirmation-state regression tests added; browser keyboard/mobile acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz question structure — PARTIAL
+Quiz add/remove-question actions now invalidate earlier confirmation and enforce at least one and at most 100 questions, using pure immutable helpers. Unit test authored; PG and browser verification remain pending.
+
+## 2026-10-15 Round 5 Quiz unavailable question-bank write fence — PARTIAL
+If the selected draft's persisted question bank fails to load, Faculty cannot EDIT or PUBLISH it until an explicit fresh load succeeds; the server's own scope and version checks remain authoritative. Published metadata-only edits remain possible. Pure action matrix tests authored; browser retry acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Courses concurrent-revocation recovery — PARTIAL
+After the initial persisted Faculty Course list is resolved, a single concurrently revoked/ended Section no longer crashes all Course cards when its workspace is read. Only typed missing/unassigned delivery errors are omitted; genuine database failures still surface. Pure error-boundary tests added. Pagination can require refresh during concurrent revocation; PG/browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz metadata preflight — PARTIAL
+Quiz CREATE and EDIT now validate title, instructions, bounded integer attempt count and exact IST due-date calendar values before the destructive confirmation/API call; invalid values show field-specific guidance instead of generic write failure. Server-side Zod and persisted authorization remain mandatory. Unit cases authored; mobile and PG acceptance pending.
+
+## 2026-10-15 Round 5 Contacts Zod 4 default typing repair — PARTIAL
+Contacts selector defaults now use input-side Zod prefault values before numeric transforms, so the parser still returns numeric page/size without a mismatched output-default type. Unit/default and browser verification pending.

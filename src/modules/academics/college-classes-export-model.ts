@@ -9,11 +9,12 @@ export type ClassExportRow = {
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; minimumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" }) {
+export function classesExportHref(raw: { q: string; programId?: string; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
   if (raw.minimumCapacity !== undefined) params.set("minimumCapacity", String(raw.minimumCapacity));
+  if (raw.maximumCapacity !== undefined) params.set("maximumCapacity",String(raw.maximumCapacity));
   if (raw.status !== "ACTIVE") params.set("status", raw.status);
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }

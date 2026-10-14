@@ -65,7 +65,7 @@ describe("DB09 audited TPO follow-up model", () => {
       rows: [{
         id: uuid, leadId: uuid, leadName: "Recruiter",
         companyName: null, dueAt: "2026-12-18T04:30:00.000Z",
-        note: null, overdue: true,
+        note: null, phoneNorm: null, canContact: true, overdue: true,
       }],
     });
     expect(projectTpoFollowupQueue([], new Date()).rows).toEqual([]);

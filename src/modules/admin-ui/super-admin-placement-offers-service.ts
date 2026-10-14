@@ -41,6 +41,6 @@ export async function listSuperAdminOffers(context:RequestContext,raw:unknown):P
    "Joining date: "+(r.joiningDate??"Not set"),
    "Issued: "+fmt.format(r.issuedAt)+" IST",
    "Expires: "+(r.expiresAt?fmt.format(r.expiresAt)+" IST":"Not recorded")],
-  href:`/admin/placements/jobs/${encodeURIComponent(r.jobId)}`,
+  href:`/admin/placements/offers/${encodeURIComponent(r.id)}`,
  }))};
 }

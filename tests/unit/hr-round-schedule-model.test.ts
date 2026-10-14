@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {hrScheduledRoundRows,type RoundScheduleRow} from "@/modules/placements/hr-round-schedule-model";
+import {hrScheduledRoundRows,hrRoundConflictLabels,type RoundScheduleRow} from "@/modules/placements/hr-round-schedule-model";
 function round(id:string,offset:number,durationMinutes:number|null):RoundScheduleRow{
  return {id,name:id,sequence:offset,status:"SCHEDULED",
  scheduledAt:new Date(Date.UTC(2026,9,20,10,offset)),durationMinutes,mode:"VIRTUAL",venue:null};
@@ -15,4 +15,10 @@ describe("Recruiter round schedule",()=>{
   expect(rows.find(x=>x.id==="a")?.endsAt).toBeNull();
   expect(rows.find(x=>x.id==="b")?.conflicts).toEqual([]);
  });
+ it("names only overlapping authorized rounds without exposing unknown identifiers",()=>{
+  const rows=hrScheduledRoundRows([round("alpha",0,60),round("beta",30,30)]);
+  expect(hrRoundConflictLabels(rows,rows[0]!.conflicts)).toEqual(["beta (#30)"]);
+  expect(hrRoundConflictLabels(rows,["foreign-id"])).toEqual([]);
+ });
+
 });

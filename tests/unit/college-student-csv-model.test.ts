@@ -33,6 +33,17 @@ describe("College student CSV import model", () => {
     expect(parseStudentCsv(oversized).structuralErrors).toContain("ROW_LIMIT_EXCEEDED");
   });
 
+  it("flags case-variant duplicate emails in one upload before provisioning", () => {
+    const csv = [header,
+      `One,+919876543210,STUDENT@Example.EDU,${programId},${cohortId}`,
+      `Two,+919876543211,student@example.edu,${programId},${cohortId}`,
+    ].join("\n");
+    const parsed = parseStudentCsv(csv);
+    expect(parsed.structuralErrors).toEqual([]);
+    expect(parsed.entries[0].errors).toEqual([]);
+    expect(parsed.entries[1].errors).toContain("DUPLICATE_EMAIL_IN_FILE");
+  });
+
   it("requires confirmation and refuses injected selection fields", () => {
     expect(studentCsvRequestSchema.safeParse({
       action: "IMPORT", csv: header, confirm: false,

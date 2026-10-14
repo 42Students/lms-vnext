@@ -81,8 +81,11 @@ export function parseStudentCsv(raw: string): {
     if (seenPhones.has(data.phoneE164)) errors.push("DUPLICATE_PHONE_IN_FILE");
     seenPhones.add(data.phoneE164);
     if (data.email) {
-      if (seenEmails.has(data.email)) errors.push("DUPLICATE_EMAIL_IN_FILE");
-      seenEmails.add(data.email);
+      // Email identity matching is case-insensitive; rejecting case variants in
+      // the same upload avoids a partial import across separate identity calls.
+      const canonicalEmail = data.email.toLowerCase();
+      if (seenEmails.has(canonicalEmail)) errors.push("DUPLICATE_EMAIL_IN_FILE");
+      seenEmails.add(canonicalEmail);
     }
     return { row, data, errors };
   });

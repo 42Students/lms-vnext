@@ -695,3 +695,27 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Read-first oversight verification — PARTIAL:** Added an isolated PostgreSQL in-test CLOSED placement season fixture with explicit UUID/text raw parameter casts to prevent ambiguous inferred parameter type, cross-college/org non-leaking empty result and wrong-role denial; corrected placements-navigation JSX indentation. Authored, not executed; the full 8-route PostgreSQL, lint, TypeScript and 375px browser gates still require orchestration run. Prior unrelated test repairs remain main-owned.
+
+
+**2026-10-15 chat-6 round 5 / Application detail — PARTIAL:** Added `/admin/placements/applications/[applicationId]` read-only drill-in with exact selected-college/org SQL guards, UUID validation, non-leaking 404 for absent/foreign IDs, course role/job/eligibility/lifecycle dates (IST), and directory deep links. Contact and screening notes deliberately withheld. Pure UUID/time unit tests authored; PG/browser acceptance and legacy actions remain open.
+
+
+**2026-10-15 chat-6 round 5 / Interview round detail — PARTIAL:** New `/admin/placements/interviews/[roundId]` with UUID-validated exact college/organization join, 404 for unknown/foreign rounds, persisted kind/sequence/schedule/status/duration/results-due in IST, no meeting link/venue or recruiter commentary; directory now drills into this route. Pure ID/IST unit authored; mutating interview scheduling and PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 5 / Offer detail — PARTIAL:** Added `/admin/placements/offers/[offerId]` for scoped, versioned offer lifecycle (issue/respond/withdraw dates IST, joining date, INR CTC). Directory deep-links to offer, and view links to applicant application. Both job and membership are SQL-college fenced with org, UUID/foreign/absent → non-leaking 404; no evidence/private contact. Pure ID/date tests authored, PG and browser acceptance remain.
+
+
+**2026-10-15 chat-6 round 5 / Joining outcome detail — PARTIAL:** Added `/admin/placements/joining/[offerId]` backed by actual persisted joining outcome, linked accepted offer and exact scoped applicant/job/organization. Displays status, joining/recorded dates, offer state and safe offer deep link; excludes private reason. Invalid, foreign or absent outcome returns 404, not synthetic PENDING. Unit model tests authored; history/mutation and PG/browser parity remain.
+
+
+**2026-10-15 chat-6 round 5 / Placement season detail — PARTIAL:** Added `/admin/placements/seasons/[seasonId]`, selected-college+organization SQL-filtered season detail with registered dates, lifecycle, IST created/updated/closed, UUID validation and unknown/foreign 404. Season directory deep-links and safe back navigation. No season mutation/closeout or implied cross-college season. Pure ID/date tests authored; DB/browser gates remain.
+
+
+**2026-10-15 chat-6 round 5 / Job Settings detail — PARTIAL:** Added `/admin/placements/job-settings/[jobId]` as read-only persisted eligibility/deadline detail; exact selected-college/org SQL guard and 404 for unknown/foreign job UUID. Distinguishes absent policy vs unrestricted fields, includes past/active backlog, CGPA, gap, allowed program/cohort count (no identity leakage), missing evidence handling and IST update. Directory deep-linked; unit authored, full editor and PG/browser acceptance remain.
+
+
+**2026-10-15 chat-6 round 5 / Shortlisted detail — PARTIAL:** Added `/admin/placements/shortlisted/[applicationId]` requiring actual persisted SHORTLISTED screening and exact job/role/applicant membership college/org match; wrong status, unknown UUID and foreign scope return same 404. Displays application status, channel, IST submission/decision dates and safe application link, no internal comments/contact. Directory deep-link, pure ID/date unit authored; actions, PG and browser parity open.
+
+
+**2026-10-15 chat-6 round 5 / Screening Queue detail — PARTIAL:** Added `/admin/placements/screenings/[applicationId]` with exact selected-college/org membership and job guard, PENDING/HOLD/REJECTED persisted screening statuses, application eligibility/channel/IST decision and submission dates. UUID malformed/foreign/missing or a now-shortlisted record returns non-leaking 404; internalReason and candidate contacts excluded. Directory deep-link and pure ID/date tests authored; decision writes/PG/browser parity still open.

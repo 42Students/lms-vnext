@@ -1,9 +1,10 @@
 import Link from "next/link";
+import {notFound} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
-import { facultyContactRoleLabel } from "@/modules/courses/faculty-contact-detail-model";
+import { facultyContactRoleLabel,facultyContactDetailParamsSchema,facultyContactDetailHidden } from "@/modules/courses/faculty-contact-detail-model";
 
 export default async function FacultyContactDetailPage({
   params,
@@ -11,7 +12,15 @@ export default async function FacultyContactDetailPage({
   params: Promise<{ contactsTab: string; membershipId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  const contact = await getFacultyContactDetail(context, await params);
+  const parsed=facultyContactDetailParamsSchema.safeParse(await params);
+  if(!parsed.success)notFound();
+  let contact:Awaited<ReturnType<typeof getFacultyContactDetail>>;
+  try {
+    contact=await getFacultyContactDetail(context,parsed.data);
+  } catch(error) {
+    if(facultyContactDetailHidden(error))notFound();
+    throw error;
+  }
   const name = contact.displayName?.trim() || "Unnamed contact";
   const back = "/teacher/contacts/" + contact.contactsTab;
 

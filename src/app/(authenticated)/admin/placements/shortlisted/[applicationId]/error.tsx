@@ -1,0 +1,1 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){return <ErrorState title="Shortlisted detail unavailable" description="This scoped record could not be loaded." action={<Button onClick={reset}>Retry</Button>}/>;}
