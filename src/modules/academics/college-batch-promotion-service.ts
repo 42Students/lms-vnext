@@ -9,7 +9,7 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   batchPromotionPlan, collegePromotionQuerySchema, collegePromotionExecuteSchema, promotionReady, promotionLearnerBlockers,
@@ -23,6 +23,16 @@ export class CollegePromotionPreviewError extends Error {
 }
 
 function ownCollege(context: RequestContext) {
+  // This module's exported preview functions do not write. Execute lives in
+  // college-batch-promotion-execute.ts and still requires COLLEGE_ADMIN.
+  if (isSuperAdmin(context) && context.adminScope?.collegeId) {
+    requirePermission(context, "academics.read", {
+      organizationId: context.adminScope.organizationId,
+      collegeId: context.adminScope.collegeId,
+    });
+    return { collegeId: context.adminScope.collegeId,
+      organizationId: context.adminScope.organizationId };
+  }
   const member = context.membership;
   if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "academics.manage", {
