@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -427,22 +428,21 @@ export function FacultyAssignmentReview({
     }
   }
 
-  if (!open) {
-    return (
+  return (
+    <>
       <div className="mt-3">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={load}
-        >
-          Review submissions
+        <Button type="button" size="sm" variant="secondary"
+          onClick={() => void load()}>
+          View submissions
         </Button>
       </div>
-    );
-  }
-
-  return (
-    <div className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4">
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        title="Assignment submissions"
+        description="Review authorized Section work. Grades stay private until explicitly published."
+      >
+      <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
@@ -462,13 +462,9 @@ export function FacultyAssignmentReview({
           >
             Refresh
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setOpen(false)}
-          >
-            Close
-          </Button>
+          <span className="text-xs text-muted-foreground">
+            Use the drawer close control or Escape to return to the assessment list.
+          </span>
         </div>
       </div>
 
@@ -496,7 +492,7 @@ export function FacultyAssignmentReview({
         </p>
       ) : null}
 
-      {submissions &&
+      {!loading && submissions &&
       submissions.length > 0 ? (
         <div className="mt-4 space-y-3">
           {submissions.map(
@@ -519,6 +515,8 @@ export function FacultyAssignmentReview({
           )}
         </div>
       ) : null}
-    </div>
+      </div>
+      </Drawer>
+    </>
   );
 }
