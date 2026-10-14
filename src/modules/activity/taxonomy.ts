@@ -23,6 +23,8 @@ export type ActivityImportance =
 export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
+  PLATFORM_COLLEGE_CONTACT_UPDATED:
+    "platform.college.contact_updated",
   IDENTITY_PERSON_ONBOARDED:
     "identity.person.onboarded",
   IDENTITY_ROLES_CHANGED:
@@ -51,6 +53,8 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_BATCH_PROMOTED: "academics.batch.promoted",
   ACADEMICS_CLASS_CREATED: "academics.class.created",
   ACADEMICS_CLASS_UPDATED: "academics.class.updated",
+  ACADEMICS_ELECTIVE_SLOT_CREATED: "academics.elective_slot.created",
+  ACADEMICS_ELECTIVE_SLOT_UPDATED: "academics.elective_slot.updated",
   ACADEMICS_LECTURE_HALL_CREATED: "academics.lecture_hall.created",
   ACADEMICS_LECTURE_HALL_UPDATED: "academics.lecture_hall.updated",
   ACADEMICS_GROUP_CREATED: "academics.group.created",
@@ -73,6 +77,12 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.teaching_assignment.ended",
   COURSES_LEARNER_CONTENT_COMPLETED:
     "courses.learner_content.completed",
+  COURSES_QUIZ_CREATED:"courses.quiz.created",
+  COURSES_QUIZ_UPDATED:"courses.quiz.updated",
+  COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
+  COURSES_ASSIGNMENT_CREATED:"courses.assignment.created",
+  COURSES_ASSIGNMENT_UPDATED:"courses.assignment.updated",
+  COURSES_ASSIGNMENT_ARCHIVED:"courses.assignment.archived",
   COURSES_ASSIGNMENT_SUBMITTED:
     "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:

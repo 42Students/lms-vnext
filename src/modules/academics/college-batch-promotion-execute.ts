@@ -3,7 +3,6 @@ import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  cohortProgressionEvents,
   cohortProgressionState,
   cohorts,
   departments,
@@ -48,7 +47,8 @@ export async function executeCollegeBatchPromotion(
     organizationId: member.organizationId,
   });
 
-  return transaction(async (tx: Tx) => {
+  try {
+    return await transaction(async (tx: Tx) => {
     const [batch] = await tx.select({
       id: cohorts.id,
       programId: cohorts.programId,
@@ -99,19 +99,8 @@ export async function executeCollegeBatchPromotion(
     if (!updated || updated.version !== input.expectedVersion + 1)
       throw new CollegePromotionExecuteError("PROMOTION_STALE");
 
-    await tx.insert(cohortProgressionEvents).values({
-      cohortId: batch.id,
-      fromTermNumber: previous.currentTermNumber,
-      toTermNumber: updated.currentTermNumber,
-      fromAcademicYearStart: previous.currentAcademicYearStart,
-      toAcademicYearStart: updated.currentAcademicYearStart,
-      fromPeriodId: previous.currentPeriodId,
-      toPeriodId: updated.currentPeriodId,
-      actorUserId: context.user.id,
-      eventKind: "PROMOTION",
-      reason: "Confirmed College Admin promotion",
-      stateVersion: updated.version,
-    });
+    // DB-0051 AFTER UPDATE trigger owns the immutable progression event.
+    // Inserting a second application event would violate its immutability guard.
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_PROMOTED,
       organizationId: member.organizationId,
@@ -134,5 +123,20 @@ export async function executeCollegeBatchPromotion(
       version: updated.version,
       checkedLearners: preview.checkedLearners,
     };
-  });
+    });
+  } catch (error) {
+    if (error instanceof CollegePromotionExecuteError || error instanceof AuthorizationError) throw error;
+    // Drizzle wraps database errors. Always inspect the deepest PostgreSQL cause.
+    let cause: unknown = error;
+    const seen = new Set<unknown>();
+    while (cause instanceof Error && "cause" in cause && cause.cause && !seen.has(cause.cause)) {
+      seen.add(cause);
+      cause = cause.cause;
+    }
+    const pgCode = (cause as { code?: unknown } | null)?.code;
+    if (pgCode === "23514" || pgCode === "23503") {
+      throw new CollegePromotionExecuteError("PROMOTION_BLOCKED");
+    }
+    throw error;
+  }
 }
