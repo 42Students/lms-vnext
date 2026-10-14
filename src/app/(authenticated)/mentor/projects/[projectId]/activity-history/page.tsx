@@ -1,0 +1,90 @@
+import Link from "next/link";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import {
+  mentorProjectActivityHref,mentorProjectActivityQuerySchema,
+} from "@/modules/projects/mentor-project-activity-model";
+import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
+
+type Params={importance?:string|string[];page?:string|string[]};
+const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+
+export default async function MentorProjectActivityHistoryPage({
+  params,searchParams,
+}:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}) {
+  const [{projectId},raw]=await Promise.all([params,searchParams]);
+  const parsed=mentorProjectActivityQuerySchema.safeParse({
+    projectId,importance:first(raw.importance)??undefined,
+    page:first(raw.page)??undefined,
+  });
+  if(!parsed.success)return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid activity filters</h1>
+    <Link href="/mentor/projects" className="text-primary-text underline">
+      Return to projects
+    </Link>
+  </section>;
+  const context=await getCurrentRequestContext();
+  const data=await getMentorProjectActivityHistory(context,parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
+      description={data.title+" · Events linked to this assigned project."}
+      actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Project activity workspace
+      </Link>} />
+    {!data.enabled ?
+      <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        Projects access is disabled. No project activity was loaded.
+      </section> : <>
+      <form method="get"
+        action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Event importance
+          <select name="importance" defaultValue={data.query.importance}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="ALL">All</option><option value="LOW">Low</option>
+            <option value="NORMAL">Normal</option><option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Filter
+        </button>
+        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",page:1})}
+          className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+      </form>
+      <p className="text-sm text-body">
+        {data.total} matching persisted event{data.total===1?"":"s"}
+      </p>
+      {data.items.length===0 ? <EmptyState title="No recorded project activity"
+        description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred." />
+        : <ol className="grid gap-3">{data.items.map(event=>
+          <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">{event.label}</p>
+              <span className="text-xs text-body">{event.importance}</span>
+            </div>
+            <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
+              {new Intl.DateTimeFormat("en-IN",{
+                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+              }).format(event.occurredAt)} IST
+            </time>
+          </li>)}</ol>}
+      <nav aria-label="Project activity history pages" className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+        <div className="flex gap-3">
+          {data.page>1 && <Link href={mentorProjectActivityHref({...data.query,page:data.page-1})}
+            className="text-sm font-semibold text-primary-text">Previous</Link>}
+          {data.page<data.totalPages && <Link href={mentorProjectActivityHref({...data.query,page:data.page+1})}
+            className="text-sm font-semibold text-primary-text">Next</Link>}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      This safe timeline shows only registered event types and timestamps;
+      raw summaries, metadata, actor identities and private project details are withheld.
+      It does not claim to contain every historic action.
+    </p>
+  </div>;
+}

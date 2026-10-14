@@ -436,3 +436,17 @@ The client-only CSV exporter is replaced with an authenticated same-origin
 GET link; no write method was introduced. Unit and PostgreSQL denial tests
 are authored but not executed; real browser download and full legacy output
 parity remain PARTIAL.
+
+## Faculty self-profile current teaching assignments (2026-10-14)
+
+The read-only `/teacher/profile/teaching` subpage is linked from Faculty self
+Profile. It uses the existing persisted self-profile identity guard and current
+FACULTY teaching-assignment reader to show Course/Section, active assignment
+role and academic-period labels only in the signed-in college. Central
+courses.read, strict Zod search/page limits, server pagination and
+loading/error/empty recovery are source-authored. College-managed academic
+title/employment fields are read-only. No historic experience, rich profile
+document, social/identity secrets, degree, skills or file records are invented.
+Pure-model and disposable PostgreSQL denial tests are authored. This improves
+the Self Profile PARTIAL row, but does not close rich legacy About/profile
+storage parity or authenticated browser/DB acceptance.

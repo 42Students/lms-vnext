@@ -256,3 +256,17 @@ submission URLs or individual reviewer claims are exposed. The pending queue
 links to the new history and existing authorized Board review controls.
 Pure-model/unit and disposable PostgreSQL denial tests are authored, not
 executed. Full legacy Board functionality and browser evidence stay PARTIAL.
+
+## Mentor exact-project activity history (2026-10-14)
+
+The new read-only `/mentor/projects/[projectId]/activity-history` subpage is
+linked from the existing Mentor Project workspace. The reader checks active
+Mentor role, central projects.read and persisted exact-project assignment
+through requireProjectReadAccess, plus optional Projects enablement; a strict
+Zod UUID/importance/page query limits input. Registered `activity_events`
+are filtered to the same college, organization and exact project by subject
+or persisted metadata projectId, with SQL pagination and a known safe label
+mapping. Raw event summaries, metadata, actor names and IDs are never shown.
+Loading/error, disabled/empty and pagination states are authored, as are
+unit and disposable PostgreSQL denial tests. This remains PARTIAL: audit
+producer completeness, legacy event coverage and browser verification are open.
