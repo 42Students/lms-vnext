@@ -55,6 +55,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "academics.learner.enrolled",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
+  COURSES_LEARNING_PATH_UNPUBLISHED: "courses.learning_path.unpublished",
   COURSES_LESSON_CREATED: "courses.lesson.created",
   COURSES_LESSON_UPDATED: "courses.lesson.updated",
   COURSES_LESSON_REORDERED: "courses.lesson.reordered",
