@@ -26,3 +26,5 @@
 - 2026-10-14 — Embedded Round Results PARTIAL: safe same-job round/outcome URL filters, shortlist-only read cards, unit + PG fixtures authored, not executed.
 
 - 2026-10-14 — Today results due PARTIAL: company/college-authorized upcoming result deadlines on Today, no external notifications; pure/unit + isolated PG tests authored, unexecuted.
+
+- 2026-10-14 — HR round contact privacy PARTIAL: user ACTIVE + same-college membership + submission/shortlist + company identity; defense-in-depth model and PG guard tests authored, gates pending.

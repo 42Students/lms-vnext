@@ -20,6 +20,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { isRecruiterJobVisible } from "./recruiter-job-visibility-model";
+import { isRecruiterSharedCandidateAllowed } from "./recruiter-shared-candidate-policy";
 import { PlacementsServiceError } from "./errors";
 import { placementJobIdSchema } from "./validation";
 
@@ -128,6 +129,11 @@ export async function getRecruiterPlacementWorkspace(
             placementApplications.id,
           displayName: users.displayName,
           email: users.email,
+          applicationStatus: placementApplications.status,
+          screeningStatus: placementApplicationScreenings.status,
+          membershipStatus: collegeMemberships.status,
+          membershipCollegeId: collegeMemberships.collegeId,
+          platformStatus: users.platformStatus,
         })
         .from(placementApplications)
         .innerJoin(
@@ -173,6 +179,7 @@ export async function getRecruiterPlacementWorkspace(
               collegeMemberships.collegeId,
               scope.job.collegeId,
             ),
+            eq(users.platformStatus, "ACTIVE"),
           ),
         )
         .orderBy(
@@ -232,9 +239,21 @@ export async function getRecruiterPlacementWorkspace(
     ]),
   );
 
+  const visibleCandidates = candidates.filter(candidate =>
+    isRecruiterSharedCandidateAllowed({
+      companyId: context.recruiter?.companyId ?? null,
+      jobCompanyId: scope.companyId,
+      jobCollegeId: scope.job.collegeId,
+      membershipCollegeId: candidate.membershipCollegeId,
+      applicationStatus: candidate.applicationStatus,
+      screeningStatus: candidate.screeningStatus,
+      membershipStatus: candidate.membershipStatus,
+      userPlatformStatus: candidate.platformStatus,
+    }),
+  );
   const gatingRoundIds: string[] = [];
   const roundViews = rounds.map((round) => {
-    const participants = candidates.filter(
+    const participants = visibleCandidates.filter(
       (candidate) =>
         gatingRoundIds.every(
           (previousRoundId) => {

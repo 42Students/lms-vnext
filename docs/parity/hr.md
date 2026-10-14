@@ -415,3 +415,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Today result deadline task cards — PARTIAL:** Today now includes this-week results-due count and IST links for persisted employer-owned rounds, filtered again to the selected college job allowlist; no candidate identities/external notifications. Pure projection unit and in-test PG foreign-company/college/wrong-role fixtures authored, unexecuted. Remaining legacy Today task taxonomy, actual requests and waiting states, stale-last-success, browser/mobile acceptance.
+
+
+**2026-10-14 Chat 10 / Shared candidate contact privacy — PARTIAL:** Recruiter round read now explicitly requires an ACTIVE learner user, ACTIVE same-college membership, SUBMITTED application, SHORTLISTED screening, exact employer company and previously authorized job. Applies SQL active-user filter and pure post-query disclosure guard before round participant names/emails are projected. Unit privacy matrix + disposable PG own/foreign-company/college/wrong-role tests authored, unexecuted. Remaining genuine shortlist user fixture, share-marker parity, runtime/browser privacy acceptance.
