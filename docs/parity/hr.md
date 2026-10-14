@@ -544,3 +544,30 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / Drives IST-day and past-deadline filters — PARTIAL:** Drives adds Today (Asia/Kolkata calendar day) and recorded deadline-passed filters atop authorized published/closed jobs. Past deadline is a timestamp fact, never claimed to indicate a live application or auto-closed drive. Filters preserve URL/search and cap. Pure date-boundary and query tests authored but unexecuted; browser review pending.
+
+
+**2026-10-15 chat-10 R5 / Hiring Activity loading and hard error — PARTIAL:** Activity history has route-local loading skeleton and explicit retryable read error; failed reads are not disguised as no activity. Pending runtime/browser error boundary verification and legacy stale-last-success.
+
+
+**2026-10-15 chat-10 R5 / Messages loading and hard error — PARTIAL:** Scoped notifications now have a route-local loading skeleton and retryable error state that distinguishes failed reads from empty inbox or zero unread. No additional recipients, messages or data exposure. Browser and stale-refresh acceptance open.
+
+
+**2026-10-15 chat-10 R5 / Drive Detail hard error — PARTIAL:** Added retryable route-local error state and Back to Drives option for operational loading failures, separate from existing 404 and loading skeleton. Error copy never displays raw denial codes or private applicant data. Browser permission/error verification pending.
+
+
+**2026-10-15 chat-10 R5 / Company Team filtered export — PARTIAL:** Team CSV now uses the same bounded name/designation/email search as the visible team page, applied only after exact persisted employer-college team authorization. Export link retains selected college and search; no unshared candidate contacts are added. Pure filter unit extended; PG/browser download proof remains.
+
+
+**2026-10-15 chat-10 R5 / Round calendar filter taxonomy — PARTIAL:** Fixed Rounds-only display to include exactly registered ROUND events rather than all non-deadline records. Unregistered or future SLOT/GENERAL items cannot be silently mislabeled as interviews. Pure regression test authored; existing employer-scoped calendar service remains the authorization boundary. Full legacy slot taxonomy still pending.
+
+
+**2026-10-15 chat-10 R5 / Request Drive compensation review — PARTIAL:** Validated local preview now flags potentially inconsistent fixed+variable total versus stated min/max CTC, and one-sided bond amounts/durations. Warnings are informational, never fabricated application rejections or server submissions. Pure boundary unit authored; review does not alter draft persistence. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Drive-grouped notification page — PARTIAL:** Read-only Messages screen groups its current 25 authorized notification rows by drive, showing per-page unread totals while preserving record-level mark-read actions. Explicitly states this is *not* persisted conversation threads or cross-page totals. Pure model/unit added; recipient/company/college query remains the same. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Round conflict deep links — PARTIAL:** Existing within-drive, known-duration overlap indicators now deep-link each *authorized persisted* conflicting round to the Rounds selector using an encoded roundId. Unknown IDs are filtered rather than projected, and this does not infer interviewer or room conflicts. Pure model regression authored; foreign-company not-found behavior remains with existing job resolver. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Activity query typing repair — PARTIAL:** Read-only HR Activity route now declares `page` in the typed Next searchParams and parses it through the existing strict Zod schema, preserving bounded numeric page validation. Additional unit bounds authored; runtime TypeScript/browser gates still pending. Avoids the reported TS property error while retaining company/college authorization.
