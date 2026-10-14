@@ -343,6 +343,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Video Content
 **Legacy:** `/college-admin/lesson-content?type=video`
 
+**Read-first PARTIAL (2026-10-14):** `/college/videos` now lists owned, migrated VIDEO/YOUTUBE authoring metadata across offerings, with search/status filters and 25-row pagination. Neither media playback nor signed file authorization is implemented; storage keys and external video URLs are intentionally omitted. The existing offering editor remains the authoring surface. Exact legacy/browser and disposable-DB acceptance remain open.
+
 - [ ] Video aggregate list/filter matches.
 - [ ] Create/edit video metadata matches.
 - [ ] Schedule/visibility controls match.
@@ -353,6 +355,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Resources
 **Legacy:** `lesson-content?type=resources`
+
+**Read-first PARTIAL (2026-10-14):** `/college/resources` lists migrated RESOURCE authoring metadata by lesson/offering with search/status filters and 25-row pagination, excluding text notes, external URLs, private object paths and signed downloads. The offering workspace remains the editor; exact legacy/browser and disposable-DB acceptance remain open.
 
 - [ ] Resource aggregate list/filter matches.
 - [ ] Link/file fields match.
