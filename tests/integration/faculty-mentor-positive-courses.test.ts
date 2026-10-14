@@ -319,7 +319,10 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"PUBLISH",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
     });
     await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"CLOSE",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
-    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{
+      title:"Published question bank replacement",questions,
+      expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     expect(published.status).toBe("PUBLISHED");
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
