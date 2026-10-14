@@ -363,6 +363,8 @@ Legacy includes:
 - [ ] bulk result/attendance actions match.
 
 **W41 PARTIAL:** The TPO round overview now provides an authorized, formula-safe CSV export of its current persisted attendance roster. It includes per-learner recorded attendance and only APPLIED result outcomes, without inventing missing marks or exporting recruiter contact details. Bulk attendance/result mutations, legacy CSV columns, completed-round historical snapshots and browser/DB acceptance remain open.
+
+**W43 PARTIAL:** The round overview also links to a no-show reconciliation page that counts only persisted ABSENT marks among progression-eligible applicants; WAITING/unmarked and unrecognized statuses remain separately reported and are not inferred as absences. It flags non-completed rounds as a live snapshot. Historical immutable attendance snapshots, bulk corrections, exact legacy no-show taxonomy, positive PostgreSQL and browser acceptance remain open.
 - [ ] progress/summary counts match.
 - [ ] coordinator vs TPO permission differences match.
 - [ ] completion confirmation matches.
@@ -412,6 +414,8 @@ Legacy columns:
 - [ ] shortcut filters match.
 - [ ] table columns/derived journey values match.
 - [ ] search/export/saved table behavior matches.
+
+**W43 PARTIAL:** Each Students roster row now links to an authenticated, college-scoped placement history for that learner. The detail includes paginated applications across persisted seasons, applied round outcomes, offer versions, package evidence and explicit joining results. Unknown/foreign membership IDs reveal no data; registration choices and external placement offers are not inferred. Offer-version counts are not unique placed-student metrics. Exact legacy student drawer, academic/eligibility drill-ins, browser and positive PostgreSQL acceptance remain open.
 
 ### Bulk actions
 - Add to Drive;

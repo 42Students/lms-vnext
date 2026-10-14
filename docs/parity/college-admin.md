@@ -318,6 +318,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Lessons
 **Legacy:** `/college-admin/lessons`
 
+**Read-first PARTIAL:** `/college/lessons` lists migrated lessons with course, cohort, academic-period and learning-path context, status filter/search, 25-row pagination and persisted authored/published content counts. No create/edit/reorder/upload or learner-permission equivalence is claimed; detailed legacy and browser parity remain unverified.
+
 - [ ] Aggregate Lessons list/search/filter matches.
 - [ ] Course/lesson path context is visible.
 - [ ] Create Lesson flow matches.
@@ -382,6 +384,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Course Progress
 **Legacy:** `/college-admin/course-progress`
+
+**Read-first PARTIAL:** `/college/course-progress` reports persisted per-offering learner-content activity, completed content records and distinct learners with any progress records. Absent activity displays zero recorded rows, not zero learner completion. Cohort/section eligibility denominators, detailed learner breakdown, completion rate, export, exact legacy and browser parity remain open.
 
 - [ ] Program/course/class filters match.
 - [ ] Learner progress table/metrics match.
