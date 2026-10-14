@@ -51,11 +51,17 @@ describe.skipIf(!enabled)("College notices: registered own-recipient PostgreSQL"
     const view = await getCollegeNoticeInbox(own);
     expect(view.items.map(item => item.id)).toContain(ids.notificationA);
     expect(view.items.map(item => item.id)).not.toContain(ids.notificationB);
+    const unread = await getCollegeNoticeInbox(own, { unreadOnly:"1" });
+    expect(unread.items.map(item => item.id)).toContain(ids.notificationA);
+    expect(unread.items.every(item => item.readAt === null)).toBe(true);
+    expect(unread.items.map(item => item.id)).not.toContain(ids.notificationB);
   });
   it("a foreign admin does not see the other recipient's event and a learner role is denied", async () => {
     const other = await getCollegeNoticeInbox(foreign);
     expect(other.items.map(item => item.id)).not.toContain(ids.notificationA);
     await expect(getCollegeNoticeInbox(wrongRole)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getCollegeNoticeInbox(own,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await expect(getCollegeNoticeInbox(wrongRole,{unreadOnly:"1"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
   });
 });

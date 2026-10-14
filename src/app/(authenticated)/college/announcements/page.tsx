@@ -16,11 +16,16 @@ import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-in
 export default async function AnnouncementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ deleted?: string; beforeCreatedAt?: string; beforeId?: string }>;
+  searchParams: Promise<{ deleted?: string; beforeCreatedAt?: string; beforeId?: string; unread?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const params = await searchParams;
-  const ownInbox = await getCollegeNoticeInbox(context);
+  const ownInbox = await getCollegeNoticeInbox(context, {unreadOnly: params.unread ?? "0"});
+  const unreadQuery = new URLSearchParams({
+    ...(params.deleted === "1" ? {deleted:"1"} : {}),
+    ...(params.unread === "1" ? {} : {unread:"1"}),
+  });
+  const unreadHref = "/college/announcements" + (unreadQuery.size ? "?" + unreadQuery.toString() : "");
 
   if (!announcementsRuntimeEnabled()) {
     return (
@@ -31,9 +36,14 @@ export default async function AnnouncementsPage({
           description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
         />
       <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+          <Link href={unreadHref} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            {params.unread === "1" ? "Show all notifications" : "Unread only"}
+          </Link>
+        </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">No persisted notifications for your account in this college.</p>
+        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
           : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-md border border-border p-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
@@ -100,6 +110,7 @@ export default async function AnnouncementsPage({
   const next = page.nextCursor
     ? "/college/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
+        ...(params.unread === "1" ? { unread: "1" } : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -121,9 +132,14 @@ export default async function AnnouncementsPage({
         }
       />
       <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
+          <Link href={unreadHref} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            {params.unread === "1" ? "Show all notifications" : "Unread only"}
+          </Link>
+        </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">No persisted notifications for your account in this college.</p>
+        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
           : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-md border border-border p-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>

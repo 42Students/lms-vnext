@@ -4,7 +4,9 @@ import { collegeNoticeInboxProjection, collegeNoticeInboxQuerySchema }
 
 describe("College notice inbox read-only projection", () => {
   it("requires no client-selected user or college scope", () => {
-    expect(collegeNoticeInboxQuerySchema.parse({})).toEqual({});
+    expect(collegeNoticeInboxQuerySchema.parse({})).toEqual({unreadOnly:"0"});
+    expect(collegeNoticeInboxQuerySchema.parse({unreadOnly:"1"})).toEqual({unreadOnly:"1"});
+    expect(collegeNoticeInboxQuerySchema.safeParse({unreadOnly:"true"}).success).toBe(false);
     expect(collegeNoticeInboxQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   });
   it("serializes persisted dates and distinguishes unread from missing notices", () => {

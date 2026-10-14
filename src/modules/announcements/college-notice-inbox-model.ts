@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const collegeNoticeInboxQuerySchema = z.strictObject({});
+export const collegeNoticeInboxQuerySchema = z.strictObject({
+  unreadOnly: z.enum(["0", "1"]).default("0"),
+});
 
 export type CollegeNoticeSource = {
   id: string;
