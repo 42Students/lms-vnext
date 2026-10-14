@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -143,6 +143,11 @@ describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
     expect(data.rows.every(row=>row.deliveryId===ids.delivery)).toBe(true);
   });
   it("distinguishes future scheduled, missing months and a status filter",async()=>{
+    // The 2026-11 class stays future even when this fixture is rerun after
+    // the seeded cohort academic period; fake Date only, not PG timers.
+    vi.useFakeTimers({toFake:["Date"]});
+    vi.setSystemTime(new Date("2026-10-14T06:00:00Z"));
+    try {
     const future=await getOwnLearnerAttendanceCalendar(fixture.context,{
       month:"2026-11",deliveryId:ids.delivery,status:"ALL",
     });
@@ -159,6 +164,9 @@ describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
     expect(empty.rows).toEqual([]);
     expect(empty.hasAnyRecords).toBe(true);
     expect(empty.summary.percentage).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
   it("rejects forged college, suspended, wrong-role and forged actor",async()=>{
     const context=fixture.context;
