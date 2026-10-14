@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -125,4 +125,23 @@ export async function saveTpoCompanyLifecycle(
     });
     return { ...saved, updatedAt: saved.updatedAt.toISOString() };
   });
+}
+
+
+export async function listArchivedTpoCompanyRelationships(context: RequestContext) {
+  const { collegeId } = await companyScope(context);
+  const rows = await getDb().select({
+    companyId: placementCompanyRelationships.companyId,
+    name: placementCompanies.name,
+    archivedAt: placementCompanyRelationships.archivedAt,
+  }).from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .where(and(
+      eq(placementCompanyRelationships.collegeId, collegeId),
+      eq(placementCompanyRelationships.status, "ARCHIVED"),
+    ))
+    .orderBy(asc(placementCompanies.name))
+    .limit(101);
+  return { rows: rows.slice(0, 100), truncated: rows.length > 100 };
 }
