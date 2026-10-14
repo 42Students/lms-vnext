@@ -2,13 +2,13 @@ import "server-only";
 import {and,asc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,collegeMemberships,departments,lmsGroupMembers,lmsGroupMemberEvents,
-  lmsGroupRules,lmsGroups,membershipRoles,programs} from "@/db/schema";
+  lmsGroupRules,lmsGroups,membershipRoles,programs,users} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertPersistedGroupActor,GroupActorAccessError} from "./actor-access";
-import {collegeGroupDetailIdSchema,collegeGroupDetailWriteSchema} from "./college-group-detail-write-model";
+import {collegeGroupDetailIdSchema,collegeGroupDetailWriteSchema,collegeWaitlistPromotionBlocker} from "./college-group-detail-write-model";
 
 export class CollegeGroupDetailWriteError extends Error {
   constructor(public readonly code:"GROUP_NOT_FOUND"|"GROUP_STALE"|
@@ -81,31 +81,33 @@ export async function writeCollegeGroupDetail(context:RequestContext,rawId:unkno
     }
     if(group.status!=="ACTIVE")throw new CollegeGroupDetailWriteError("GROUP_NOT_ACTIVE");
     const [membership]=await tx.select({
-      id:collegeMemberships.id,status:collegeMemberships.status,
+      id:collegeMemberships.id,status:collegeMemberships.status,accountStatus:users.platformStatus,
     }).from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
         eq(membershipRoles.role,"LEARNER")))
       .where(and(eq(collegeMemberships.id,input.memberId),
         eq(collegeMemberships.collegeId,actor.collegeId)))
-      .for("share",{of:collegeMemberships}).limit(1);
-    if(!membership||membership.status!=="ACTIVE")
+      .for("share").limit(1);
+    if(!membership||membership.status!=="ACTIVE"||membership.accountStatus!=="ACTIVE")
       throw new CollegeGroupDetailWriteError("MEMBER_NOT_FOUND");
     const [member]=await tx.select().from(lmsGroupMembers)
       .where(and(eq(lmsGroupMembers.groupId,group.id),
         eq(lmsGroupMembers.membershipId,input.memberId))).for("update").limit(1);
-    if(!member||member.state!=="WAITLISTED"||member.isLocked||member.memberType!=="LEARNER")
+    if(!member)
       throw new CollegeGroupDetailWriteError("MEMBER_NOT_FOUND");
-    if(member.version!==input.expectedMemberVersion)
-      throw new CollegeGroupDetailWriteError("MEMBER_STALE");
     const [front]=await tx.select({id:lmsGroupMembers.id})
       .from(lmsGroupMembers).where(and(eq(lmsGroupMembers.groupId,group.id),
         eq(lmsGroupMembers.state,"WAITLISTED")))
       .orderBy(asc(lmsGroupMembers.waitlistPosition),asc(lmsGroupMembers.createdAt),asc(lmsGroupMembers.id))
       .limit(1);
-    if(!front||front.id!==member.id)
-      throw new CollegeGroupDetailWriteError("WAITLIST_OUT_OF_ORDER");
-    if(group.capacity!==null&&group.activeCount>=group.capacity)
-      throw new CollegeGroupDetailWriteError("GROUP_CAPACITY_FULL");
+    const blocker=collegeWaitlistPromotionBlocker({
+      accountStatus:membership.accountStatus,membershipStatus:membership.status,
+      state:member.state,memberType:member.memberType,locked:member.isLocked,
+      memberVersion:member.version,expectedMemberVersion:input.expectedMemberVersion,
+      firstInQueue:front?.id===member.id,capacity:group.capacity,activeCount:group.activeCount,
+    });
+    if(blocker)throw new CollegeGroupDetailWriteError(blocker);
     const now=new Date();
     await tx.update(lmsGroupMembers).set({
       state:"ACTIVE",waitlistPosition:null,joinedAt:now,

@@ -23,7 +23,9 @@ export async function getFacultyDiscussionHistory(context:RequestContext,raw:unk
   const {delivery}=await getFacultyDeliveryRoster(context,query.deliveryId);
   const kinds=query.action==="PIN"?["courses.discussion.pin_changed"]:
     query.action==="DELETE"?["courses.discussion.deleted"]:
-    ["courses.discussion.pin_changed","courses.discussion.deleted"];
+    query.action==="REPLY"?["courses.discussion.replied"]:
+    ["courses.discussion.pin_changed","courses.discussion.deleted",
+      "courses.discussion.replied"];
   const filter=and(
     eq(activityEvents.collegeId,membership.collegeId),
     eq(activityEvents.organizationId,membership.organizationId),

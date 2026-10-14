@@ -674,9 +674,9 @@ export function ProjectWorkspace({
                                   <TaskReviewActions
                                     projectId={workspace.project.id}
                                     taskId={task.id}
-                                    submissionId={
-                                      latestAttempt.id
-                                    }
+                                    submissionId={latestAttempt.id}
+                                    mode={mode}
+                                    expectedUpdatedAt={latestAttempt.updatedAt.toISOString()}
                                   />
                                 ) : null}
                               </div>

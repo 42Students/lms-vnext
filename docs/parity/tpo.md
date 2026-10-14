@@ -1,4 +1,4 @@
-# TPO — Detailed Page Parity Spec
+**chat-8 L552/L556 Offers and Joining reports drill-down — PARTIAL (2026-10-14):** Persisted season/drive-filtered TPO reports now link scoped drive offer registers, joining workspaces, and company histories. UUID-gated bounded 100-link mobile-friendly lists, empty/cap disclosures, pure unit and isolated PG report success/foreign/wrong-role tests authored, not executed. Existing neutralized capped CSV unchanged. Remaining: exact legacy report columns/filter persistence, historical company season drill filters, >100 navigation pagination, PG/browser/privacy approval.\n\n**chat-8 L195 Company KPI/hiring pulse — PARTIAL (2026-10-14):** Canonical same-college company detail now shows currently published drives, distinct seasons with recorded drives, distinct accepted-offer learners, distinct explicitly joined learners and latest persisted event, with honest null recency. Pure-model and scoped isolated PG tests authored, not executed. Remaining: exact legacy KPI formula/season history, CRM recency and owner activity, browser/PG acceptance, large-company performance, frozen-oracle parity.\n\n**chat-8 L326 Offer evidence drill-in — PARTIAL (2026-10-14):** Authorized TPO-only offer detail reads registered status and joining transition histories and internal reasons in college scope. Pure model and isolated PG success/foreign/wrong-role/unmatched tests authored, not executed. Remaining: exact legacy release/selection UX, historical offer versions, missing evidence reconciliation, scale, browser/PG/privacy acceptance.\n\n**chat-8 L323 Offer register — PARTIAL (2026-10-14):** TPO-only per-drive persisted offer versions, status filters/counts and mobile rows, response date, explicit joining and learner links. Pure unit and isolated PG success/foreign/wrong-role tests authored, not executed. Remaining: exact legacy selection verification, full offer lifecycle/history, >200 pagination, browser/PG execution and privacy review.\n\n# TPO — Detailed Page Parity Spec
 
 **W65 D / Joining Status follow-up drill-in — PARTIAL:** College-TPO-scoped season report shows ACCEPTED-offer pending/unrecorded, DEFERRED and explicit JOINED/DID_NOT_JOIN evidence, with date-only IST due semantics (missing date is unknown). Mobile follow-up rows deep-link to the existing drive joining record; strict filter and formula-neutralized capped CSV. This is read-only, no artificial learner communication/decision. 500-offer source cap and CSV truncation are disclosed; full scale pagination, employer confirmation, historical branch/season attribution, exact legacy filters, executed PG/browser and privacy review remain open.
 
@@ -255,6 +255,8 @@ Legacy contract:
 # Drives
 
 ## Page: Drives List
+
+**Work Mode drive-list scale follow-up — PARTIAL:** Lifecycle listing now searches persisted company/drive names literally, pages 25 drives at a time, and derives complete scoped season/search counts in a repeatable-read transaction instead of truncating the first 500. Previous/Next retain season, lifecycle and search; stale page requests clamp to the last page. Pure pagination tests cover records beyond 500; isolated PG fixtures exercise two-page completeness, correct counts, literal wildcard search and role/foreign-season denials. PG runtime and desktop/mobile browser acceptance remain open, as do persisted Requests workflow and exact legacy columns/export parity.
 **Legacy:** `/tpo/drives`
 
 Legacy lifecycle tabs:
@@ -310,6 +312,8 @@ Legacy table:
 
 ## Page: Edit Drive
 
+**Work Mode follow-up — PARTIAL:** Edit Drive now canonicalizes offset ISO optimistic tokens before its locked millisecond CAS, so the same version expressed in IST is accepted. Unit regression executed; integration regression authored against the existing in-test drive fixture. Typecheck, changed-file ESLint and complete unit suite are required before this push. PostgreSQL execution is blocked by sandbox account creation/user switching (apt and embedded-postgres attempted). Full legacy fields, dirty navigation, desktop/mobile browser acceptance and independently executed PG evidence remain open.
+
 **W66-1 PARTIAL — Edit Drive:** New `/tpo/placements/jobs/[jobId]/edit` edits title, description, locations, openings and INR CTC on active-season DRAFT jobs only. TPO college-actor scope, confirmed PATCH, row lock, millisecond-safe timestamp CAS, synchronized active primary role and immutable activity audit. Unit and disposable PG tests authored, unrun. Remaining: full legacy fields, navigation dirty-state checks, browser validation and independent PG certification.
 
 **Legacy:** `/tpo/drives/[jobId]/edit`
@@ -324,6 +328,8 @@ Legacy table:
 **Legacy:** `/tpo/drives/[jobId]`
 
 ### Header / mission control
+
+**Work Mode lifecycle follow-up — PARTIAL:** Deadline extension and consequence-preview closure canonicalize equivalent offset ISO tokens before timestamp checks; closure consequence rows are defined outside JSX. Existing preview keeps applications, rounds and offers intact and rejects changed counts. Unit offset regressions executed before push; corresponding PostgreSQL success/stale/foreign/wrong-role fixtures updated, runtime blocked by sandbox non-root account setup. Exact cancellation semantics, full legacy fields and desktop/mobile browser parity remain open.
 Legacy:
 - job title/company/status;
 - needs-attention cards;
@@ -351,13 +357,19 @@ Legacy:
 - [ ] navigation into filtered Applicants/other tabs matches.
 
 ### Tab: Applicants
+
+**Work Mode filtered CSV — PARTIAL:** Export preview/download preserve pipeline stage and literal student/role search. Filters execute in scoped SQL before the 501-record truncation probe; newest matching rows export first, capped at 500 with a truncation row. CSV submitted dates display IST and every cell still uses canonical formula neutralization. Unit tests and PG fixtures cover wildcard escaping, null screening/PENDING, WITHDRAWN separation, filters and tenant/role denials. PostgreSQL runtime and browser download verification remain open, along with exact legacy columns and pagination beyond the cap.
+
+**Work Mode review drawer — PARTIAL:** Pipeline rows now open a native modal drawer with persisted role, application, screening, eligibility, channel and IST submitted time. Pending/held submitted applications in published drives expose the existing confirmed shortlist/reject writer with required note and timestamp token. Escape/Close restores native dialog focus; mobile scroll is bounded. Successful saves disable repeat submission; version tokens accept equivalent ISO offsets. Pure availability and offset tests plus PG pipeline/read/write/foreign/wrong-role/stale fixtures authored; PG runtime blocked by sandbox account setup. Full candidate profile/history, exact legacy visual layout and browser acceptance remain open.
 - [ ] applicant table/search/filter/stage views match.
 **W66-4 PARTIAL — Candidate detail:** A focused TPO applicant detail route now shows persisted application identity, eligibility and screening stage, latest applied round outcomes and recorded offer/accepted joining evidence with a scoped college/drive/application lookup. It links from the existing applicant stage table, with mobile, loading, error and non-leaking not-found states. Does not disclose private screening notes, staged results or fabricate employer selection. Remaining: legacy side drawer/modal, richer candidate sections/filters, positive PG/browser evidence and visual parity.
 
+**W67-1 PARTIAL — Applicant review:** A scoped applicant detail action now supports confirmed shortlist/reject with a required note, stale screening updatedAt token (millisecond-safe CAS), existing transactional screening history and immutable activity audit. Rejection note is candidate-visible; shortlist note stays internal. Only active submitted applicants in published drives can transition from pending/hold. Tests authored but not executed; full legacy drawer, decision history UI, mobile/browser proof and product consent parity remain open.
 - [ ] candidate detail drawer matches.
 - [ ] bulk actions match.
 - [ ] external-registration/company-id state matches.
 - [ ] share-applicant workflow is available.
+**W67-4 PARTIAL — Drive applicant CSV:** The TPO applicant table and workspace now link to /tpo/placements/jobs/[jobId]/applications-export. College-scoped persisted application/screening/role/channel data are projected into a formula-neutralized CSV, capped at 500 rows with an explicit TRUNCATED row when more exist. No private screening notes, phone numbers or staged round outcomes are exported. The existing shared exporter is unchanged for non-TPO roles. Remaining: exact legacy columns and filters, pagination past 500, browser/PG acceptance, and reconciliation with the shared export.
 - [ ] export behavior matches.
 - [ ] empty/error states match.
 
@@ -366,11 +378,17 @@ Legacy:
 **W61 D PARTIAL:** The operational shortlist now links to /tpo/placements/jobs/[jobId]/share-preview, a TPO-only read-only report and formula-neutralized capped CSV using exclusively the same application ID, display name and email candidate fields already returned by the authorized recruiter round workspace. Current submitted/shortlisted applications and active same-college memberships only; only published/closed drives. No send, share grant, token, file, score, phone, roll number or private comments are exposed. The CSV notes truncation above 500 rows. Actual secure sharing, user consent/disclosure snapshots, live PostgreSQL/browser acceptance and legacy sharing UI remain open.
 
 ### Tab: Rounds
+
+**Work Mode shared venue booking — PARTIAL:** Interview rescheduling and the generic calendar scheduling writer now use one transaction-scoped college/venue advisory lock and conflict query. Unknown duration/time and over-cap venue occupancy fail closed; adjacent half-open intervals remain allowed. Generic scheduling locks the parent drive to serialize with closure and advances version timestamps by at least one millisecond. ISO offset tokens normalize and TPO meeting links accept HTTP(S) only (unsafe URL schemes intentionally rejected). Unit and PG cross-writer collision/adjacency/denial/stale fixtures authored; sandbox non-root setup still blocks PG execution. Concurrent DB certification, candidate/interviewer conflicts, full notifications and browser acceptance remain open.
+
+**Work Mode results follow-up — PARTIAL:** Result entry now validates form data through the canonical confirmed-result Zod contract, requires HOLD rank only when selected, separates internal PASS notes from candidate-visible feedback, and disables repeated submission after save. Closed/draft/archived drives show read-only entries. Result staging locks the parent drive before round/application locks to serialize against closure. Unit tests and PG fixtures cover boundaries, optimistic identity, wrong-role denial and closed-drive state; PG execution remains blocked by sandbox account setup. Full bulk/apply UX, cross-writer concurrency certification, pagination and desktop/mobile browser verification remain open.
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
 
 **W60 D — PARTIAL / blocked write:** A TPO-only candidate round schedule view at /tpo/placements/jobs/[jobId]/candidate-schedule shows only persisted round-level times/venues and current progression-eligible applicants, with the existing 90-day venue-collision warnings and explicit unknown/incomplete states. Candidate-specific panel assignments, interviewer IDs and individual time slots have no migrated table, so no assignment POST or fictional candidate booking is introduced. Existing round-level scheduling can still be managed from the registered calendar round writer; individual-slot persistence, concurrency exclusion, actor audit and owner-approved conflict semantics remain missing.
+**W67-3 PARTIAL — Interview reschedule:** Added confirmed IST rescheduling directly to the interview readiness page for SCHEDULED INTERVIEW rounds. Transactionally locks the round, uses millisecond-safe updatedAt CAS, serializes venue-specific writes via advisory lock, refuses occupied/unknown-duration same-college campus venues and writes immutable round history plus actor-attributed activity audit. Other scheduling writers do not yet share this advisory lock; full cross-writer collision safety, individual candidate slots, interviewers, notifications, executed PG/browser and legacy overlay parity remain open.
 - [ ] round kind/date/time/mode/location fields match.
+**W67-2 PARTIAL — Round result entry:** The TPO drive workspace now links to a mobile round-results entry table for shortlisted submitted applicants, with per-round staged/applied counts and individual PASS/FAIL/HOLD/ABSENT input. It calls the existing origin-guarded confirmed-result route, which uses current result-ID optimistic guards, locked eligibility/progression checks, versioned result history and immutable audit. Never auto-applies. Tests authored, unrun. Remaining: bulk editing, pagination, apply/reconciliation UX, browser verification and exact legacy table parity.
 - [ ] auto-apply/results state matches.
 - [ ] conflict/blocker states match.
 

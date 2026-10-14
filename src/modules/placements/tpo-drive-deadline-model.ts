@@ -1,6 +1,7 @@
 import {z} from "zod";
 export const tpoDriveDeadlineSchema=z.object({
- confirmed:z.literal(true),expectedUpdatedAt:z.string().datetime({offset:true}),
+ confirmed:z.literal(true),expectedUpdatedAt:z.iso.datetime({offset:true})
+  .transform(value=>new Date(value).toISOString()),
  reason:z.string().trim().min(10).max(1000),
  newDeadlineIso:z.string().datetime({offset:true}),
 }).strict();

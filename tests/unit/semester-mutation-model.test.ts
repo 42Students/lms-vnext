@@ -37,10 +37,15 @@ describe("College Admin semester mutation boundaries", () => {
   });
 
   it("only allows mutable edit fields and nonempty names", () => {
+    const version = "2026-10-14T12:12:00.123Z";
     expect(updateCollegeSemesterSchema.parse({
       name: " Final ", totalCredits: 20, isActive: false,
-    })).toEqual({ name: "Final", totalCredits: 20, isActive: false });
+      expectedUpdatedAt:version,confirm:true,
+    })).toEqual({ name: "Final", totalCredits: 20, isActive: false,
+      expectedUpdatedAt:version,confirm:true });
     for (const input of [
+      { name:"Good",totalCredits:null,isActive:true,expectedUpdatedAt:version,confirm:false },
+      { name:"Good",totalCredits:null,isActive:true,expectedUpdatedAt:"bad",confirm:true },
       { name: " ", totalCredits: null, isActive: true },
       { name: "Good", totalCredits: -1, isActive: true },
       { name: "Good", totalCredits: null, isActive: true, programId },

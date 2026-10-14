@@ -1,0 +1,1 @@
+export default function Loading(){return <p role="status" className="rounded border border-border bg-surface p-6">Loading offer evidence…</p>}

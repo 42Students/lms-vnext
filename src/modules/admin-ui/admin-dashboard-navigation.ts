@@ -65,7 +65,17 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
 
 /** Legacy Super Admin dropped the big setup guide by deliberate decision. */
 export const SUPER_ADMIN_GLOBAL_LINKS = [
-  { label: "Tenant Setup", href: null },
-  { label: "Feature Controls", href: null },
-  { label: "Activity Log", href: "/activity" },
+  { label: "Tenant Setup", href: "/admin/tenants/setup" },
+  { label: "Feature Controls", href: "/admin/features" },
+  { label: "Activity Log", href: "/admin/audit" },
+] as const;
+
+/** Dedicated college-scoped Super Admin shortcuts, not a restored setup guide. */
+export const SUPER_ADMIN_COLLEGE_LINKS = [
+  { label: "Tenant Setup", href: "/admin/tenants/setup?tab=setup" },
+  { label: "Academic Setup", href: "/admin/academics" },
+  { label: "Courses & Content", href: "/admin/courses" },
+  { label: "People", href: "/admin/people" },
+  { label: "Placements", href: "/admin/placements" },
+  { label: "Project Templates", href: "/admin/projects/templates" },
 ] as const;

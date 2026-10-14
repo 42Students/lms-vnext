@@ -60,7 +60,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
-  const [replyTo, setReplyTo] = useState<{ id: string; text: string } | null>(null);
+  const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
@@ -228,14 +228,22 @@ export function LearnerCourseDiscussion({
     setPosting(true);
     try {
       const response = await fetch(
-        `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`,
+        `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`+
+          (moderate&&replyTo?"/faculty-reply":""),
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ messageText, ...(replyTo ? { replyToMessageId: replyTo.id } : {}) }),
+          body: JSON.stringify({messageText,...(replyTo?{
+            replyToMessageId:replyTo.id,
+            ...(moderate?{expectedParentUpdatedAt:replyTo.updatedAt,confirmed:true}:{}),
+          }:{})}),
         },
       );
-      if (!response.ok) throw new Error("discussion_post_failed");
+      if (!response.ok) throw new Error(
+        moderate&&replyTo?
+         "The parent discussion changed or was removed. Refresh and retry the reply.":
+         "discussion_post_failed",
+      );
       setDraft("");
       setReplyTo(null);
       forceBottomOnNextLoad.current = true;
@@ -243,8 +251,8 @@ export function LearnerCourseDiscussion({
       window.requestAnimationFrame(() =>
         composerRef.current?.focus(),
       );
-    } catch {
-      setLoadError(true);
+    } catch(e) {
+      setModerationError(e instanceof Error?e.message:"Could not post reply.");
     } finally {
       setPosting(false);
     }
@@ -466,7 +474,7 @@ export function LearnerCourseDiscussion({
                     {canPost ? <button type="button"
                       className="mt-2 text-xs font-semibold text-primary-text underline"
                       onClick={() => {
-                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100)});
+                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         composerRef.current?.focus();
                       }}>
                       Reply

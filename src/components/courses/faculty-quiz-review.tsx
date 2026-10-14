@@ -64,6 +64,7 @@ export function FacultyQuizReview({
   status,
   resultsPublished,
   deliveryOwned,
+  updatedAt,
 }: {
   quizId: string;
   deliveryId: string;
@@ -74,6 +75,7 @@ export function FacultyQuizReview({
     | "ARCHIVED";
   resultsPublished: boolean;
   deliveryOwned: boolean;
+  updatedAt:string;
 }) {
   const router = useRouter();
   const actions = quizReviewActions({
@@ -145,7 +147,7 @@ export function FacultyQuizReview({
 
     try {
       const response = await fetch(
-        `/api/courses/quizzes/${quizId}/results`,
+        `/api/courses/quizzes/${quizId}/faculty-results`,
         {
           method: "POST",
           headers: {
@@ -153,7 +155,10 @@ export function FacultyQuizReview({
               "application/json",
           },
           body: JSON.stringify({
-            published,
+            deliveryId,
+            action:published?"PUBLISH":"HIDE",
+            expectedUpdatedAt:updatedAt,
+            confirmed:true,
           }),
         },
       );

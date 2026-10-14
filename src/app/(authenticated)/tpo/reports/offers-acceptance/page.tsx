@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   ReportCsvLink,
@@ -140,6 +141,7 @@ export default async function TpoOffersAcceptanceReportPage({
         ])}
         emptyDescription="No companies have recorded offers for these filters."
       />
+      <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />
     </div>
   );
 }

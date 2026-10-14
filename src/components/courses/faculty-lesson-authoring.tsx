@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
 
 type Mode =
@@ -44,17 +45,6 @@ const initialQuestion = (): QuizQuestionDraft => ({
     { id: 2, text: "", correct: false },
   ],
 });
-
-function localDateTimeToIso(
-  value: string,
-) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-  return date.toISOString();
-}
 
 function FieldLabel({
   children,
@@ -306,9 +296,9 @@ export function FacultyLessonAuthoring({
 
       if (mode === "LIVE_CLASS") {
         const startIso =
-          localDateTimeToIso(startsAt);
+          authoringDueInstant(startsAt);
         const endIso =
-          localDateTimeToIso(endsAt);
+          authoringDueInstant(endsAt);
 
         if (!startIso || !endIso) {
           throw new Error(
@@ -355,7 +345,7 @@ export function FacultyLessonAuthoring({
             description:
               notes.trim() || null,
             dueAt:
-              localDateTimeToIso(dueAt),
+              authoringDueInstant(dueAt),
             maxPoints: points,
             sequence:
               nextAssignmentSequence,
@@ -386,7 +376,7 @@ export function FacultyLessonAuthoring({
             description:
               notes.trim() || null,
             dueAt:
-              localDateTimeToIso(dueAt),
+              authoringDueInstant(dueAt),
             maxAttempts: attempts,
             sequence: nextQuizSequence,
             questions: quizPayload(),
@@ -753,7 +743,7 @@ export function FacultyLessonAuthoring({
               <div className="mt-4 grid gap-4 lg:grid-cols-2">
                 <label className="block">
                   <FieldLabel>
-                    Starts
+                    Starts (IST)
                   </FieldLabel>
                   <Input
                     type="datetime-local"
@@ -768,7 +758,7 @@ export function FacultyLessonAuthoring({
                 </label>
                 <label className="block">
                   <FieldLabel>
-                    Ends
+                    Ends (IST)
                   </FieldLabel>
                   <Input
                     type="datetime-local"
@@ -788,7 +778,7 @@ export function FacultyLessonAuthoring({
             mode === "QUIZ" ? (
               <label className="mt-4 block">
                 <FieldLabel>
-                  Due date (optional)
+                  Due date (IST, optional)
                 </FieldLabel>
                 <Input
                   type="datetime-local"
