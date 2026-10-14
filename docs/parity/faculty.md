@@ -1023,3 +1023,15 @@ The mobile grading drawer disables Save when no revision exists. Pure model
 unit and the disposable Faculty/Learner grading PG fixture verify rejection
 alongside valid regrading, stale version, role/scope denial and audit event
 counts. Remains PARTIAL: CI and mobile/keyboard/legacy UI acceptance.
+
+## 2026-10-14 Faculty discussion reply moderation history — PARTIAL
+The exact-Section Faculty moderation audit now includes the registered
+`courses.discussion.replied` event and a strict REPLY filter, alongside pin
+changes and deletions. Pagination remains capped, and history only renders
+sanitized action labels, event time and actor-presence indicators: never reply
+body, archived deleted text, or learner contact. The mobile read page exposes
+a Faculty replies filter, with no new file or external-send features.
+Pure model/unit and own-Section disposable PG test cover real audited reply,
+wrong-role and foreign-scope/forged selector denial. As a GET read, no stale
+write token applies; the underlying Faculty POST retains its parent token.
+PARTIAL until test gates and authenticated responsive/legacy validation.

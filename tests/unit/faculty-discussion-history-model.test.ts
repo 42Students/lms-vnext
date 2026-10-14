@@ -9,11 +9,13 @@ describe("Faculty discussion audit history",()=>{
     expect(discussionHistoryLabel("courses.discussion.pin_changed",true)).toBe("Pinned by moderator");
     expect(discussionHistoryLabel("courses.discussion.pin_changed",false)).toBe("Unpinned by moderator");
     expect(discussionHistoryLabel("courses.discussion.deleted",null)).toBe("Discussion deletion recorded");
+    expect(discussionHistoryLabel("courses.discussion.replied",null)).toBe("Faculty reply recorded");
   });
   it("strictly refuses forged college/subject and invalid cursor",()=>{
     expect(facultyDiscussionHistorySchema.safeParse({deliveryId:id,collegeId:id}).success).toBe(false);
     expect(facultyDiscussionHistorySchema.safeParse({deliveryId:id,subjectId:id}).success).toBe(false);
     expect(facultyDiscussionHistorySchema.safeParse({deliveryId:id,action:"EDIT"}).success).toBe(false);
+    expect(facultyDiscussionHistorySchema.safeParse({deliveryId:id,action:"REPLY"}).success).toBe(true);
     expect(facultyDiscussionHistorySchema.safeParse({deliveryId:id,page:0}).success).toBe(false);
   });
   it("clamps stale pages and constructs delivery-only links",()=>{
@@ -21,5 +23,7 @@ describe("Faculty discussion audit history",()=>{
     expect(discussionHistoryPagination(21,90).page).toBe(2);
     expect(facultyDiscussionHistoryHref({deliveryId:id,action:"PIN",page:3}))
       .toBe("/teacher/courses/"+id+"/discussion-history?action=PIN&page=3");
+    expect(facultyDiscussionHistoryHref({deliveryId:id,action:"REPLY",page:1}))
+      .toBe("/teacher/courses/"+id+"/discussion-history?action=REPLY");
   });
 });

@@ -37,6 +37,7 @@ import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service"
 import {getFacultyDiscussionParticipation} from "@/modules/courses/faculty-discussion-participation-service";
 import {getFacultySessionCoverage} from "@/modules/courses/faculty-session-coverage-service";
 import {postFacultyDiscussionReply} from "@/modules/courses/faculty-discussion-reply-service";
+import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-history-service";
 import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage}
  from "@/modules/courses/discussion-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
@@ -338,6 +339,31 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(events.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.assignment.created","courses.assignment.updated",
     ]);
+  });
+  it("filters actual Faculty reply audit with exact Section and non-leaking denial",async()=>{
+    const {delivery}=await fixture();
+    const parent=await createCourseDiscussionMessage(facultyOnly,delivery.id,{
+      messageText:"Question from registered Section",
+    });
+    const reply=await postFacultyDiscussionReply(facultyOnly,delivery.id,{
+      replyToMessageId:parent.id,expectedParentUpdatedAt:parent.updatedAt.toISOString(),
+      confirmed:true,messageText:"Answer using the course reading",
+    });
+    const history=await getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:delivery.id,action:"REPLY",
+    });
+    expect(history.total).toBe(1);
+    expect(history.items[0]).toMatchObject({subjectId:reply.id,
+      action:"Faculty reply recorded"});
+    expect(JSON.stringify(history.items)).not.toContain("Answer using the course reading");
+    await expect(getFacultyDiscussionHistory(learner,{deliveryId:delivery.id,action:"REPLY"}))
+      .rejects.toBeDefined();
+    await expect(getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:SEED_IDS.collegeB,action:"REPLY",
+    })).rejects.toBeDefined();
+    await expect(getFacultyDiscussionHistory(facultyOnly,{
+      deliveryId:delivery.id,action:"REPLY",collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
   });
   it("writes version-checked Faculty reply against locked Section parent, with immutable audit",async()=>{
     const {delivery}=await fixture();

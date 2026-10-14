@@ -33,9 +33,10 @@ export default async function FacultyDiscussionHistoryPage({
       <label className="grid gap-1 text-sm font-semibold text-body">Recorded action
         <select name="action" defaultValue={data.query.action}
           className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
-          <option value="ALL">All moderation-related actions</option>
+          <option value="ALL">All moderation and reply actions</option>
           <option value="PIN">Pin/unpin</option>
           <option value="DELETE">Deletions</option>
+          <option value="REPLY">Faculty replies</option>
         </select>
       </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
@@ -44,7 +45,7 @@ export default async function FacultyDiscussionHistoryPage({
     </form>
     <p className="text-sm text-body">{data.total} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
-      description="No persisted pin or deletion events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
+      description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol className="grid gap-3">{data.items.map(item=>
         <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{item.action}</p>
@@ -65,7 +66,7 @@ export default async function FacultyDiscussionHistoryPage({
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">
-      This is an audit of registered pin changes and deletions, not a full message history.
+      This is an audit of registered pin changes, deletions and Faculty replies, not a full message history.
       A learner may delete their own message; deletion events cannot prove that Faculty
       performed the action. Removed message text and personal details are not exposed.
     </p>
