@@ -52,6 +52,12 @@ export default async function HrMessagesPage({searchParams}:{
      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Search</button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
+   <div className="flex justify-end">
+     <Link href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+       Export scoped notifications CSV
+     </Link>
+   </div>
    {result.rows.length?<ol className="grid gap-3">{result.rows.map(row=>
     <li key={row.id} className="rounded-lg border border-border bg-surface p-4">
      <div className="flex flex-wrap justify-between gap-3">
