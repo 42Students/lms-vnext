@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import {exportCollegeContentMetadata} from "@/modules/courses/college-content-export-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -157,6 +158,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
     ]);
+    const exported=await exportCollegeContentMetadata(adminA,"VIDEO",{q:label});
+    expect(exported.csv).toContain(label);
+    expect(exported.csv).not.toContain("test-only-private-key");
+    expect(exported.csv).not.toContain("youtube.com/watch");
+    const foreignCsv=await exportCollegeContentMetadata(adminB,"VIDEO",{q:label});
+    expect(foreignCsv.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"VIDEO",{})).rejects.toBeInstanceOf(AuthorizationError);
     expect(videos.items.map((item) => item.id)).toEqual(
       expect.arrayContaining([ids.video, ids.youtube]),
     );
