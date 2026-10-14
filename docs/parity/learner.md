@@ -815,6 +815,9 @@ mobile/browser proof remain open.
 
 ## Page: Learner Profile
 
+**2026-10-14 career-profile coverage (PARTIAL):** The learner Profile page now reports progress across the 15 non-sensitive career sections, excluding optional Aadhaar/PAN fields from the completion denominator. It recommends an actual missing editable section through a learner-only profile deep link without claiming that fields are verified or that the learner is placement-eligible. The original 16-section detailed checklist remains unchanged. Unit tests and a PostgreSQL read test use a fresh learner and cover foreign-college/suspended/wrong-role denials. Remaining: executed unit/PG/tsc/eslint and responsive/keyboard/browser acceptance, plus separately approved verification-storage workflows.
+
+
 **2026-10-14 confirmed alternate contact edit (PARTIAL, L30-007):**
 The Contacts card now has a mobile-friendly Edit contact details dialog for
 the optional **alternate phone** and **contact email** only. It requires a
