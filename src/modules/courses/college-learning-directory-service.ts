@@ -167,6 +167,7 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.q ? sql`(${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)} or
         ${cohorts.name} ilike ${searchLike(query.q)})` : undefined,
