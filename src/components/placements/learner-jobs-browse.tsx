@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
 import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
+import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 
 const PAGE_SIZE = 20;
 
@@ -75,6 +77,7 @@ export function LearnerJobsBrowse({
   const page = Number.isInteger(parsedPage) && parsedPage > 0
     ? Math.min(parsedPage, totalPages) : 1;
   const paged = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const empty=learnerDrivesEmptyState(items.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
   return (
@@ -191,19 +194,23 @@ export function LearnerJobsBrowse({
           : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, visible.length)} of ${visible.length} matching roles`}
       </p>
 
-      {items.length === 0 ? (
-        <EmptyState
-          title="No published drives yet"
-          description="Your placement team’s published opportunities will appear here."
-        />
-      ) : visible.length === 0 ? (
-        <div className="rounded-xl border border-border bg-surface p-6 text-center">
-          <p className="font-semibold text-foreground">No drives match these filters</p>
-          <p className="mt-2 text-sm text-body">Try a different keyword, location or eligibility filter.</p>
-          <button type="button" onClick={() => { setSearch(""); router.push(pathname, {scroll: false}); }}
-            className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
-            View all drives
-          </button>
+      {empty.kind==="NO_PUBLISHED" ? (
+        <div className="space-y-3">
+          <EmptyState title={empty.title} description={empty.description} />
+          <Link href="/learn/my-placements"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+            Review placement dashboard →
+          </Link>
+        </div>
+      ) : empty.kind==="FILTERED_OUT" ? (
+        <div className="rounded-xl border border-border bg-surface p-6 text-center" role="status">
+          <p className="font-semibold text-foreground">{empty.title}</p>
+          <p className="mt-2 text-sm text-body">{empty.description}</p>
+          {empty.showReset ? <button type="button"
+            onClick={()=>{setSearch("");router.push(pathname,{scroll:false});}}
+            className="mt-3 min-h-11 text-sm font-semibold text-primary-text hover:underline">
+            Clear all filters
+          </button>:null}
         </div>
       ) : (
         <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} />
