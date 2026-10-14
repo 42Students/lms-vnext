@@ -1377,3 +1377,6 @@ The Section reports hub rejects duplicate or unknown query parameters instead of
 
 ## 2026-10-15 Faculty Discussion history strict URL selectors — PARTIAL
 The same-Section moderation history viewer now rejects duplicate actions/pages, forged scope IDs and invalid page strings rather than selecting one value. Existing audited event, pagination and role-scope readers are unchanged; pure parsing tests authored. Browser/PG acceptance remains open.
+
+## 2026-10-15 Faculty individual Gradebook private 404 — PARTIAL
+Learner gradebook drill-ins validate both UUID path IDs and map unassigned Section or absent learner membership to `notFound()` without leaking learner presence. Unexpected service errors still reach the boundary; pure classifier tests authored. PostgreSQL foreign/role and browser verification remain pending.
