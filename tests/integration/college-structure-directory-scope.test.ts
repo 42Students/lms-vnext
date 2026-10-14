@@ -1,0 +1,162 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import {
+  listCollegeClasses,
+  listCollegeElectives,
+} from "@/modules/academics/college-structure-directory-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+
+const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
+const pool = enabled
+  ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 })
+  : null;
+
+const adminA: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "college-structure-admin-a",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const adminB: RequestContext = {
+  user: {
+    id: SEED_IDS.facultyUser,
+    identityUid: "college-structure-admin-b",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.facultyCollegeBMembership,
+    collegeId: SEED_IDS.collegeB,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const nonAdmin: RequestContext = {
+  ...adminA,
+  membership: { ...adminA.membership!, roles: ["FACULTY"] },
+};
+const ids = {
+  period: randomUUID(),
+  program: randomUUID(),
+  cohort: randomUUID(),
+  section: randomUUID(),
+  elective: randomUUID(),
+};
+const key = "W-Structure-" + ids.program.slice(0, 8);
+
+describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL scope", () => {
+  beforeAll(async () => {
+    if (!pool) throw new Error("A disposable PostgreSQL connection is required");
+    const relations = await pool.query(
+      "SELECT to_regclass('public.sections') AS sections, " +
+      "to_regclass('public.elective_slots') AS slots, " +
+      "to_regclass('public.elective_offerings') AS offerings",
+    );
+    for (const value of Object.values(relations.rows[0] ?? {})) {
+      if (!value) throw new Error("Registered academic and DB-0037 elective migrations required");
+    }
+    await pool.query(
+      "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
+      "VALUES($1,$2,$3,$4,'2026-07-01','2026-12-31')",
+      [ids.period, SEED_IDS.collegeA, key, key],
+    );
+    await pool.query(
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,8)",
+      [ids.program, SEED_IDS.departmentA, key, key],
+    );
+    await pool.query(
+      "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
+      [ids.cohort, ids.program, key, key, ids.period],
+    );
+    await pool.query(
+      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code,capacity) " +
+      "VALUES($1,$2,$3,$4,$5,36)",
+      [ids.section, ids.cohort, ids.period, key, key],
+    );
+    await pool.query(
+      "INSERT INTO elective_slots(id,college_id,program_id,academic_period_id,semester_number,name,credits,min_pick,max_pick) " +
+      "VALUES($1,$2,$3,$4,1,$5,3,1,2)",
+      [ids.elective, SEED_IDS.collegeA, ids.program, ids.period, key],
+    );
+  });
+
+  afterAll(async () => {
+    try {
+      if (pool) {
+        const deletions: ReadonlyArray<readonly [string, string]> = [
+          ["elective_slots", ids.elective],
+          ["sections", ids.section],
+          ["cohorts", ids.cohort],
+          ["programs", ids.program],
+          ["academic_periods", ids.period],
+        ];
+        for (const [table, id] of deletions) {
+          // Fixed test-owned table names; UUID remains a bound parameter.
+          await pool.query(`DELETE FROM ${table} WHERE id=$1`, [id]);
+        }
+      }
+    } finally {
+      await pool?.end();
+      await closeDatabaseConnection();
+    }
+  });
+
+  it("shows persisted own-college class and elective slots with honest counts", async () => {
+    const [classes, electives] = await Promise.all([
+      listCollegeClasses(adminA, { q: key }),
+      listCollegeElectives(adminA, { q: key }),
+    ]);
+    expect(classes.items.find(item => item.id === ids.section))
+      .toMatchObject({ capacity: 36, activeLearners: 0 });
+    expect(electives.items.find(item => item.id === ids.elective))
+      .toMatchObject({ semesterNumber: 1, minPick: 1, maxPick: 2, activeOfferings: 0 });
+  });
+
+  it("does not expose either registered record to a different college", async () => {
+    const [classes, electives] = await Promise.all([
+      listCollegeClasses(adminB, { q: key }),
+      listCollegeElectives(adminB, { q: key }),
+    ]);
+    expect(classes.items).toEqual([]);
+    expect(electives.items).toEqual([]);
+  });
+
+  it("denies faculty and caller-injected college IDs", async () => {
+    await expect(listCollegeClasses(nonAdmin, {}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeElectives(nonAdmin, {}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeClasses(adminA, { collegeId: SEED_IDS.collegeB }))
+      .rejects.toBeDefined();
+    await expect(listCollegeElectives(adminA, { collegeId: SEED_IDS.collegeB }))
+      .rejects.toBeDefined();
+  });
+
+  it("does not fabricate missing class/elective records", async () => {
+    const [classes, electives] = await Promise.all([
+      listCollegeClasses(adminA, { q: "absent-w42-class" }),
+      listCollegeElectives(adminA, { q: "absent-w42-elective" }),
+    ]);
+    expect(classes.total).toBe(0);
+    expect(electives.total).toBe(0);
+    expect(classes.items).toEqual([]);
+    expect(electives.items).toEqual([]);
+  });
+});

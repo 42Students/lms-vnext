@@ -1,0 +1,58 @@
+import { describe, expect, it } from "vitest";
+import {
+  classCapacityLabel,
+  collegeStructureHref,
+  collegeStructureQuerySchema,
+  collegeStructureTotalPages,
+  electiveSelectionLabel,
+  readCollegeStructureParams,
+} from "@/modules/academics/college-structure-directory-model";
+
+describe("College Admin classes/electives read-only filters", () => {
+  it("parses bounded filters and refuses a caller-controlled college", () => {
+    expect(collegeStructureQuerySchema.parse({})).toEqual({
+      q: "", status: "ACTIVE", page: 1,
+    });
+    expect(collegeStructureQuerySchema.parse({
+      q: "  Science  ", status: "ARCHIVED", page: "3",
+    })).toEqual({ q: "Science", status: "ARCHIVED", page: 3 });
+    for (const invalid of [
+      { collegeId: "00000000-0000-4000-8000-000000000001" },
+      { page: "0" },
+      { page: "1001" },
+      { status: "DISABLED" },
+      { q: "x".repeat(101) },
+      { programId: "not-a-uuid" },
+    ]) {
+      expect(collegeStructureQuerySchema.safeParse(invalid).success).toBe(false);
+    }
+  });
+
+  it("handles empty program picker and refuses duplicate query values", () => {
+    expect(readCollegeStructureParams({ programId: "", status: "ACTIVE" }))
+      .toEqual({ status: "ACTIVE" });
+    expect(readCollegeStructureParams({ page: ["1", "2"] })).toBeNull();
+    expect(collegeStructureQuerySchema.safeParse(
+      readCollegeStructureParams({ page: ["1", "2"] }),
+    ).success).toBe(false);
+  });
+
+  it("builds fixed relative routes with escaped search text", () => {
+    const query = { q: "x & y", status: "ALL" as const, page: 2 };
+    const url = new URL(collegeStructureHref("CLASSES", query), "https://example.test");
+    expect(url.pathname).toBe("/college/classes");
+    expect(url.searchParams.get("q")).toBe("x & y");
+    expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeStructureHref("ELECTIVES", { q: "", status: "ACTIVE", page: 1 }))
+      .toBe("/college/electives");
+    expect(collegeStructureTotalPages(0)).toBe(1);
+    expect(collegeStructureTotalPages(26)).toBe(2);
+  });
+
+  it("does not fabricate capacity or elective choice rules", () => {
+    expect(classCapacityLabel(null)).toBe("Not configured");
+    expect(classCapacityLabel(60)).toBe("60");
+    expect(electiveSelectionLabel(1, 1)).toBe("Select 1");
+    expect(electiveSelectionLabel(1, 3)).toBe("Select 1–3");
+  });
+});
