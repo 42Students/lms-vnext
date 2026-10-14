@@ -7,9 +7,10 @@ import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-serv
 import { facultyContactRoleLabel,facultyContactDetailParamsSchema,facultyContactDetailHidden } from "@/modules/courses/faculty-contact-detail-model";
 
 export default async function FacultyContactDetailPage({
-  params,
+  params,searchParams,
 }: {
   params: Promise<{ contactsTab: string; membershipId: string }>;
+  searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const context = await getCurrentRequestContext();
   const parsed=facultyContactDetailParamsSchema.safeParse(await params);
@@ -22,7 +23,8 @@ export default async function FacultyContactDetailPage({
     throw error;
   }
   const name = contact.displayName?.trim() || "Unnamed contact";
-  const back = "/teacher/contacts/" + contact.contactsTab;
+  const back = "/teacher/contacts/" + contact.contactsTab +
+    facultyContactDirectoryQuery(await searchParams);
 
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty · Contacts" title={name}
