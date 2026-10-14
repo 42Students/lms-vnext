@@ -440,7 +440,7 @@ function JobActions({
         }
       >
         <p className="text-sm leading-6 text-body">
-          Only confirm after completing the employer's form. This records a
+          Only confirm after completing the employer&apos;s form. This records a
           learner-declared external application, not an employer receipt or verified submission.
         </p>
       </Dialog>

@@ -120,3 +120,26 @@ export function mergeDiscussionHistory<T extends DiscussionHistoryItem>(
     a.id.localeCompare(b.id),
   );
 }
+
+/**
+ * A live refresh is authoritative for its newest server page. Retain older
+ * pages that are outside that window, but discard posts removed from the
+ * current latest page (including a concurrent moderator deletion).
+ */
+export function reconcileLatestDiscussionPage<T extends DiscussionHistoryItem>(
+  previous: readonly T[],
+  latest: readonly T[],
+  serverPageCount = latest.length,
+  pageLimit = 60,
+): T[] {
+  const sortedLatest = mergeDiscussionHistory([], latest);
+  if (serverPageCount < pageLimit || sortedLatest.length === 0) {
+    return sortedLatest;
+  }
+  const oldest = sortedLatest[0]!;
+  const older = previous.filter((row) =>
+    row.createdAtExact < oldest.createdAtExact ||
+    (row.createdAtExact === oldest.createdAtExact && row.id < oldest.id),
+  );
+  return mergeDiscussionHistory(older, sortedLatest);
+}
