@@ -8,6 +8,7 @@ import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-car
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
+import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next-action-model";
 
 const PAGE_SIZE = 48;
 
@@ -387,6 +388,12 @@ export function LearnerCourseList({
                       </div>
                     </div>
                     </Link>
+                    {learnerCourseNextItemHref(row) ? (
+                      <Link href={learnerCourseNextItemHref(row)!}
+                        className="mt-2 flex min-h-11 items-center justify-center rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
+                        Continue at next learning item →
+                      </Link>
+                    ) : null}
                   </div>
                 </Fragment>
               );
