@@ -66,6 +66,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     if(attempt && input.action!=="CLOSE")
      throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT"){
+     if(input.questions){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
       .where(eq(quizQuestions.quizId,current.id));
      const ids=oldQuestions.map(x=>x.id);
@@ -73,11 +74,12 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       await tx.delete(quizOptions).where(inArray(quizOptions.questionId,ids));
       await tx.delete(quizQuestions).where(eq(quizQuestions.quizId,current.id));
      }
+     }
      const now=new Date(Math.max(Date.now(),current.updatedAt.getTime()+1));
      const [edited]=await tx.update(courseQuizzes).set({
       title:input.title,description:input.description,
       dueAt:input.dueAt?new Date(input.dueAt):null,maxAttempts:input.maxAttempts,
-      totalPoints:sumQuizPoints(input.questions),updatedAt:now,
+      ...(input.questions?{totalPoints:sumQuizPoints(input.questions)}:{}),updatedAt:now,
      }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId),
       eq(courseQuizzes.status,current.status),
       sql`date_trunc('milliseconds', ${courseQuizzes.updatedAt}) =
@@ -106,7 +108,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       ACTIVITY_EVENT_TYPES.COURSES_QUIZ_PUBLISHED;
     }
    }
-   if(input.action==="CREATE"||input.action==="EDIT"){
+   if((input.action==="CREATE"||input.action==="EDIT")&&input.questions){
     for(const question of input.questions){
      const [q]=await tx.insert(quizQuestions).values({
       quizId:result.id,questionType:question.type,prompt:question.prompt,

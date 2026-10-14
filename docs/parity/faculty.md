@@ -1104,3 +1104,17 @@ Pure adapter tests and the fresh Faculty Section PostgreSQL fixture cover
 successful generic edit, missing/stale tokens, wrong/foreign-role denials and
 the additional immutable update audit. Remaining: database/browser acceptance
 and generic Quiz/assessment lifecycle bypass review; no DONE promotion.
+
+## 2026-10-14 Faculty generic Quiz edit bypass closed — PARTIAL
+Faculty metadata/question PATCH now forwards to the confirmed, versioned,
+publication/attempt guarded command and immutable audit. Metadata-only edits
+preserve persisted question IDs, choices and total points; only explicitly
+provided valid questions replace the bank. CREATE still requires questions.
+The question drawer captures the loaded draft token, refuses missing/currently
+published drafts and confirms replacement before PATCH. The metadata drawer
+already sends its persisted token. Admin behavior stays on its prior writer.
+Pure adapter tests and own-Section PostgreSQL assertions cover missing/stale
+version, publication, role/foreign denial, preserved question IDs and update
+audit; affected prior Quiz PG tests now supply the client token.
+Remaining: PostgreSQL execution, responsive browser/legacy builder acceptance,
+and generic lifecycle writer review. No DONE promotion.
