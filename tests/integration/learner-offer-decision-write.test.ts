@@ -4,32 +4,31 @@ import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
+import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { newLearnerCourseWriteFixture, seedLearnerCourseWriteFixture,
-  cleanupLearnerCourseWriteFixture, type LearnerCourseWriteFixture } from "../support/learner-course-write-fixture";
+import { newLearnerPlacementWriteFixture, seedLearnerPlacementWriteFixture,
+  cleanupLearnerPlacementWriteFixture, type LearnerPlacementWriteFixture } from "../support/learner-placement-write-fixture";
 
 if (!process.env.TEST_DATABASE_URL) throw new Error("Disposable TEST_DATABASE_URL is required");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
-type Owned={actor:LearnerCourseWriteFixture;company:string;relation:string;job:string;role:string;application:string;offer:string};
+type Owned={actor:LearnerPlacementWriteFixture;season:string;company:string;relation:string;job:string;role:string;application:string;offer:string};
 let fixture:Owned|null=null;
 beforeEach(async()=>{
-  const actor=newLearnerCourseWriteFixture();
-  fixture={actor,company:randomUUID(),relation:randomUUID(),job:randomUUID(),
+  const actor=newLearnerPlacementWriteFixture();
+  fixture={actor,season:randomUUID(),company:randomUUID(),relation:randomUUID(),job:randomUUID(),
     role:randomUUID(),application:randomUUID(),offer:randomUUID()};
   const x=fixture;
-  await seedLearnerCourseWriteFixture(pool,actor);
-  await pool.query(`INSERT INTO module_access_rules(scope_type,scope_id,module,enabled,locked)
-    VALUES('MEMBERSHIP',$1,'placements',true,false)`,[actor.ids.membership]);
-  await pool.query(`INSERT INTO placement_eligibility_decisions(college_id,scope_type,scope_id,status,decided_by_user_id)
-    VALUES($1,'MEMBERSHIP',$2,'ELIGIBLE',$3)`,[SEED_IDS.collegeA,actor.ids.membership,SEED_IDS.collegeAdminUser]);
+  await seedLearnerPlacementWriteFixture(pool,actor);
+  await pool.query("INSERT INTO placement_seasons(id,college_id,name,code,start_date,end_date,created_by_user_id) VALUES($1,$2,$3,$4,'2026-07-01','2027-12-31',$5)",
+    [x.season,actor.ids.college,"Offer season "+actor.suffix,"LO-S-"+actor.suffix,SEED_IDS.collegeAdminUser]);
   await pool.query("INSERT INTO placement_companies(id,name,created_by_user_id) VALUES($1,$2,$3)",
     [x.company,"Decision "+x.company,SEED_IDS.collegeAdminUser]);
   await pool.query("INSERT INTO placement_company_relationships(id,college_id,company_id,created_by_user_id) VALUES($1,$2,$3,$4)",
-    [x.relation,SEED_IDS.collegeA,x.company,SEED_IDS.collegeAdminUser]);
+    [x.relation,actor.ids.college,x.company,SEED_IDS.collegeAdminUser]);
   await pool.query(`INSERT INTO placement_jobs(id,college_id,season_id,company_relationship_id,title,description,
       employment_type,work_mode,status,published_at,created_by_user_id)
       VALUES($1,$2,$3,$4,$5,'Owned learner offer','FULL_TIME','REMOTE','PUBLISHED',now(),$6)`,
-    [x.job,SEED_IDS.collegeA,SEED_IDS.placementSeasonA,x.relation,"Decision "+x.job,SEED_IDS.collegeAdminUser]);
+    [x.job,actor.ids.college,x.season,x.relation,"Decision "+x.job,SEED_IDS.collegeAdminUser]);
   await pool.query("INSERT INTO placement_job_role_options(id,job_id,title,employment_type,work_mode,is_primary) VALUES($1,$2,$3,'FULL_TIME','REMOTE',true)",
     [x.role,x.job,"Engineer"]);
   await pool.query(`INSERT INTO placement_applications(id,job_id,role_option_id,membership_id,channel,status,
@@ -52,16 +51,16 @@ afterEach(async()=>{
     await pool.query("DELETE FROM placement_jobs WHERE id=$1",[x.job]);
     await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[x.relation]);
     await pool.query("DELETE FROM placement_companies WHERE id=$1",[x.company]);
+    await pool.query("DELETE FROM placement_seasons WHERE id=$1",[x.season]);
   }
-  await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='MEMBERSHIP' AND scope_id=$1",[x.actor.ids.membership]);
-  await pool.query("DELETE FROM module_access_rules WHERE scope_type='MEMBERSHIP' AND scope_id=$1 AND module='placements'",[x.actor.ids.membership]);
-  await cleanupLearnerCourseWriteFixture(pool,x.actor);
+  await cleanupLearnerPlacementWriteFixture(pool,x.actor);
 },45000);
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
 describe("own learner offer responses on isolated PostgreSQL",()=>{
   it.each(["ACCEPT","DECLINE"] as const)("records %s exactly once, with immutable audit and stale-state denial",async action=>{
     const x=fixture!;
     const input=action==="DECLINE"?{action,reason:"Pursuing studies"}:{action};
+    expect((await requireLearnerPlacementAccess(x.actor.context)).id).toBe(x.actor.ids.membership);
     const result=await actOnPlacementOffer(x.actor.context,x.offer,input,new Date("2026-10-14T00:00:00Z"),"ISSUED");
     expect(result.status).toBe(action==="ACCEPT"?"ACCEPTED":"DECLINED");
     await expect(actOnPlacementOffer(x.actor.context,x.offer,input,

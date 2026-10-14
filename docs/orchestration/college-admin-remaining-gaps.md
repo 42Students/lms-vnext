@@ -36,7 +36,7 @@
 | 4.3 | Course Progress | PARTIAL | Buildable — defined enrollment denominator, learner-level completion semantics, export and browser evidence. |
 | 4.4 | Faculty | PARTIAL | Buildable — invite/create/edit, lifecycle, profile detail and full teaching workload with role/tenant checks. |
 | 4.4 | Faculty Assignment | PARTIAL | Buildable — assign/reassign/remove, duplicate/conflict checks and scheduling-side effects. |
-| 4.4 | Students | PARTIAL | Buildable — import/enroll/edit/lifecycle, academic moves and learner profile drill-in. |
+| 4.4 | Students | PARTIAL | Buildable — CSV import preview + confirmed per-row onboarding/enrollment authored; lifecycle, academic moves and learner profile drill-in remain, as do executed PG/browser checks. |
 | 4.4 | Student Groups list | PARTIAL | Buildable — group create/edit/status changes, CSV import and dynamic rule controls. |
 | 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, eligibility rules and denial paths. |
 | 4.5 | Drives landing | PARTIAL | Buildable — legacy tab/list/filter parity and College Admin scoped placement operations. |

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { isCareerRoundVisible } from "@/modules/placements/learner-round-visibility-policy";
+import { learnerRoundTimeLabel, learnerRoundTimeSignal } from "@/modules/placements/learner-round-time-signal";
 
 export type LearnerCareerRound = {
   applicationId: string;
@@ -10,6 +11,7 @@ export type LearnerCareerRound = {
   roundKind: string;
   testUrl: string | null;
   sequence: number;
+  durationMinutes?: number | null;
   scheduledAt: string | null;
   timezone: string | null;
   mode: string | null;
@@ -52,10 +54,12 @@ export function LearnerCareerRounds({
   rounds,
   kind,
   onSelect,
+  snapshotNowIso,
 }: {
   rounds: readonly LearnerCareerRound[];
   kind: "ASSESSMENT" | "INTERVIEW" | "CALENDAR";
   onSelect?: (round: LearnerCareerRound) => void;
+  snapshotNowIso?: string;
 }) {
   const filtered = rounds.filter((round) =>
     isCareerRoundVisible(kind, round.roundKind),
@@ -76,6 +80,11 @@ export function LearnerCareerRounds({
         const schedule = round.exception ?? round;
         const meetingUrl = safeHref(schedule.meetingUrl);
         const assessmentLink = kind === "ASSESSMENT" ? safeHref(round.testUrl) : null;
+        const snapshot= snapshotNowIso ? Date.parse(snapshotNowIso) : Number.NaN;
+        const timeSignal=Number.isFinite(snapshot)
+          ? learnerRoundTimeSignal({scheduledAt:schedule.scheduledAt,
+              durationMinutes:round.durationMinutes},snapshot)
+          : null;
         return (
           <article key={round.applicationId + ":" + round.roundId} className="rounded-xl border border-border bg-surface p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -84,7 +93,12 @@ export function LearnerCareerRounds({
                 <h2 className="mt-1 text-lg font-semibold text-foreground">{round.roleTitle}</h2>
                 <p className="mt-1 text-sm font-semibold text-body">Round {round.sequence} · {round.roundName}</p>
               </div>
-              <StatusBadge tone="info">{schedule.mode === "VIRTUAL" ? "Virtual" : schedule.mode === "ON_CAMPUS" ? "On campus" : "Scheduled"}</StatusBadge>
+              <div className="flex flex-wrap gap-2">
+                <StatusBadge tone="info">{schedule.mode === "VIRTUAL" ? "Virtual" : schedule.mode === "ON_CAMPUS" ? "On campus" : "Scheduled"}</StatusBadge>
+                {timeSignal ? <StatusBadge tone={timeSignal==="UPCOMING"?"info":"neutral"}>
+                  {learnerRoundTimeLabel(timeSignal)}
+                </StatusBadge> : null}
+              </div>
             </div>
             <div className="mt-4 grid gap-2 text-sm text-body sm:grid-cols-2">
               <p className="m-0"><span className="font-semibold text-foreground">When:</span> {formatWhen(schedule.scheduledAt)}</p>

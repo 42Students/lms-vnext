@@ -1177,6 +1177,7 @@ export async function getLearnerPlacementRequestWorkspace(
           testUrl: placementJobRounds.testUrl,
           sequence:
             placementJobRounds.sequence,
+          durationMinutes: placementJobRounds.durationMinutes,
           scheduledAt:
             placementJobRounds.scheduledAt,
           timezone:

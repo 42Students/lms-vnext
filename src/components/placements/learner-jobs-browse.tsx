@@ -56,7 +56,7 @@ export function LearnerJobsBrowse({
     return () => window.clearTimeout(handle);
   }, [search, params, updateQuery]);
 
-  const validSort: LearnerJobBrowseFilters["sort"][] = ["deadline", "ctc", "title"];
+  const validSort: LearnerJobBrowseFilters["sort"][] = ["deadline", "ctc", "title", "newest"];
   const rawSort = params.get("sort") ?? "deadline";
   const filters: LearnerJobBrowseFilters = {
     ...DEFAULT_LEARNER_JOB_FILTERS,
@@ -144,6 +144,7 @@ export function LearnerJobsBrowse({
               onChange={(event) => updateQuery({ sort: event.target.value })}
               className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="deadline">Deadline soonest</option>
+              <option value="newest">Newest published</option>
               <option value="ctc">Highest CTC</option>
               <option value="title">Role A–Z</option>
             </select>
