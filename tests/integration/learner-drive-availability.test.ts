@@ -20,7 +20,7 @@ describe("learner published drive grouping, own persisted college",()=>{
   it("marks published own roles as closed after their real stored deadlines",async()=>{
     const {learner,ids}=fixture!;
     const rows=await listLearnerPlacementJobs(learner.context,new Date("2026-10-20T00:00:00Z"));
-    const own=rows.filter(r=>r.job.id===ids.olderJob||r.job.id===ids.newerJob);
+    const own=JSON.parse(JSON.stringify(rows.filter(r=>r.job.id===ids.olderJob||r.job.id===ids.newerJob))) as unknown as Parameters<typeof learnerDriveAvailabilityCounts>[0][number][];
     expect(own).toHaveLength(2);
     expect(learnerDriveAvailabilityCounts(own)).toMatchObject({
       all:2,open:0,closed:2,

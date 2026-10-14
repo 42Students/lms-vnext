@@ -80,12 +80,18 @@ export async function CollegeRoleDirectoryWorkspace({
             : "College-scoped Learner role memberships with active academic enrollment context."
         }
         actions={
-          <Link
-            href="/college/people"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
-          >
-            People directory
-          </Link>
+          <>
+            {kind === "LEARNER" ? (
+              <Link href="/college/students/import"
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+                Import CSV
+              </Link>
+            ) : null}
+            <Link href="/college/people"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+              People directory
+            </Link>
+          </>
         }
       />
 
