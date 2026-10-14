@@ -5,7 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoDueFollowupWorkspace } from "@/components/tpo/tpo-due-followup-workspace";
 import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-service";
-import { tpoFollowupQueueHref } from "@/modules/placements/tpo-followup-queue-model";
+import { tpoFollowupQueueHref,tpoFollowupQueueExportHref } from "@/modules/placements/tpo-followup-queue-model";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +53,10 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
-      {data ? <><TpoDueFollowupWorkspace data={data} />
+      {data ? <><a href={tpoFollowupQueueExportHref({scope,window,q})}
+          className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          Export filtered follow-ups CSV
+        </a><TpoDueFollowupWorkspace data={data} />
         <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span>
           <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-primary-text">← Previous</Link>:null}

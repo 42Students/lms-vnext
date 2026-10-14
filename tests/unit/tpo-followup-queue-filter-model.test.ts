@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {tpoFollowupQueueQuerySchema,tpoFollowupQueueHref,tpoFollowupContactLinks,projectTpoFollowupQueue} from "@/modules/placements/tpo-followup-queue-model";
+import {tpoFollowupQueueQuerySchema,tpoFollowupQueueHref,tpoFollowupContactLinks,projectTpoFollowupQueue,tpoFollowupCsv,tpoFollowupQueueExportHref} from "@/modules/placements/tpo-followup-queue-model";
 describe("TPO follow-up ownership query",()=>{
  it("defaults to team and strictly validates the view",()=>{
   expect(tpoFollowupQueueQuerySchema.parse({})).toEqual({scope:"TEAM",window:"DUE",q:"",page:1});
@@ -26,5 +26,27 @@ describe("safe TPO follow-up contact preflight",()=>{
   const result=projectTpoFollowupQueue([{id:"x",leadId:"a",leadName:"A",companyName:null,dueAt:new Date("2026-10-01T00:00:00Z"),note:null,
     phoneNorm:"+919876543210",unsubscribedAt:new Date(),recruiterUserId:null}],new Date("2026-10-02T00:00:00Z"));
   expect(result.rows[0]?.canContact).toBe(false);
+ });
+});
+
+describe("capped and neutralized TPO follow-up export",()=>{
+ it("does not evaluate recruiter and preparation-note spreadsheet formulas",()=>{
+  const row={id:"id-1",leadId:"lead-1",leadName:"=HYPERLINK(1)",companyName:"+Company",
+   dueAt:new Date("2026-10-15T00:00:00Z"),note:"@SUM(2)"};
+  const out=tpoFollowupCsv([row],{scope:"TEAM",window:"DUE",q:""});
+  expect(out.csv).toContain("'=HYPERLINK(1)");
+  expect(out.csv).toContain("'+Company");
+  expect(out.csv).toContain("'@SUM(2)");
+  expect(out.truncated).toBe(false);
+  expect(tpoFollowupQueueExportHref({scope:"MINE",window:"NEXT_7_DAYS",q:"A & B"}))
+   .toBe("/api/placements/tpo/follow-up-queue/export?scope=MINE&window=NEXT_7_DAYS&q=A+%26+B");
+ });
+ it("discloses a 500-row export cap",()=>{
+  const rows=Array.from({length:501},(_,i)=>({id:String(i),leadId:"l",leadName:"A",companyName:null,
+    dueAt:new Date("2026-10-15T00:00:00Z"),note:null}));
+  const out=tpoFollowupCsv(rows,{scope:"TEAM",window:"DUE",q:""});
+  expect(out.truncated).toBe(true);
+  expect(out.visible).toBe(500);
+  expect(out.csv).toContain("TRUNCATED");
  });
 });

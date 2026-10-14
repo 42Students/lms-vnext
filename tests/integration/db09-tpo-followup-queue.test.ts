@@ -9,6 +9,7 @@ import {
   createConfirmedTpoFollowup,
   completeConfirmedTpoFollowup,
   getTpoDueFollowupQueue,
+  getTpoFollowupQueueCsv,
 } from "@/modules/placements/tpo-followup-queue-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -117,6 +118,9 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     });
     expect(created.leadId).toBe(leadId);
     const queue = await getTpoDueFollowupQueue(tpo);
+    const exportData=await getTpoFollowupQueueCsv(tpo,{});
+    expect(exportData.csv).toContain("Follow-up ID");
+    expect(exportData.csv).toContain("Follow-up");
     expect(queue.rows.some((row) => row.id === created.id)).toBe(true);
     const mine=await getTpoDueFollowupQueue(tpo,undefined,{scope:"MINE"});
     expect(mine.rows.some(row=>row.id===created.id)).toBe(true);
@@ -200,6 +204,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
       confirmed: true, leadId, dueAt,
     })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getTpoDueFollowupQueue(learner)).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoFollowupQueueCsv(learner,{})).rejects.toBeInstanceOf(AuthorizationError);
     await expect(createConfirmedTpoFollowup(foreign, {
       confirmed: true, leadId, dueAt,
     })).rejects.toBeDefined();
@@ -207,6 +212,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     const created = await createConfirmedTpoFollowup(tpo, {
       confirmed: true, leadId, dueAt,
     });
+    expect((await getTpoFollowupQueueCsv(foreign,{})).csv).not.toContain(leadId);
     await expect(completeConfirmedTpoFollowup(learner, created.id, {
       confirmed: true, expectedDueAt: created.dueAt,
       outcome: "OTHER", note: "Wrong role",
