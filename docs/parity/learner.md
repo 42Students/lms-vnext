@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 Semester-switch recovery (PARTIAL):** Switching the learner Course list semester now clears the prior search, resets the 48-card window, and crucially clears an elective-only filter. This avoids a hidden filter with no visible selector in a semester without electives. Pure-model regression authored; browser acceptance remains pending.
+
 **2026-10-15 chat-7 Course list instructor search (PARTIAL):** The learner Course list search now matches the already scoped course's instructor display names alongside code, name, section, programme and period. It does not retrieve or reveal contact information; the trimmed bounded pure model has authored unit checks. Scoped course PG and responsive browser acceptance remain open.
 
 **2026-10-15 chat-7 Course cards fallback media (PARTIAL):** Course tiles now render a bundled local decorative course illustration rather than a media-empty header, with a pure, tested fallback source. This does not claim authored course thumbnail parity: the canonical course image field and producer, runtime/PG acceptance, and legacy visual comparison remain open.
