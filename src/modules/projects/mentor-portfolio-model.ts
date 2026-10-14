@@ -41,6 +41,7 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.mentor.reassigned": return "Mentor reassigned";
     case "projects.readiness.overridden": return "Readiness decision updated";
     case "projects.sprint.updated": return "Sprint details updated";
+    case "projects.task.created": return "Project task created";
     case "projects.task.details_updated": return "Task details updated";
     case "projects.task.submitted": return "Task submission";
     case "projects.task.reviewed": return "Task review decision recorded";

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
+import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
+import { getCollegeSetupChecklist } from "@/modules/admin-ui/college-setup-checklist-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -19,7 +21,7 @@ export default async function CollegeOverviewPage() {
     context,
     membership.organizationId,
   );
-  const college = colleges[0];
+  const college = colleges.find((item) => item.id === membership.collegeId);
 
   if (!college) {
     return (
@@ -29,6 +31,8 @@ export default async function CollegeOverviewPage() {
       />
     );
   }
+
+  const setup = await getCollegeSetupChecklist(context, {});
 
   return (
     <div className="space-y-6">
@@ -86,6 +90,7 @@ export default async function CollegeOverviewPage() {
           </p>
         </div>
       </section>
+      <CollegeSetupChecklist phases={setup.phases} />
     </div>
   );
 }

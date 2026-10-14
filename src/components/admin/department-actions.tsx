@@ -28,11 +28,11 @@ export function DepartmentActions({
   function rename() {
     startTransition(async () => {
       const response = await fetch(
-        `/api/departments/${departmentId}`,
+        `/api/college/departments/${departmentId}`,
         {
           method: "PATCH",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ name: nextName }),
+          body: JSON.stringify({ name: nextName, confirm: true }),
         },
       );
       const payload = await response.json().catch(() => null);
@@ -61,8 +61,8 @@ export function DepartmentActions({
   function archive() {
     startTransition(async () => {
       const response = await fetch(
-        `/api/departments/${departmentId}`,
-        { method: "DELETE" },
+        `/api/college/departments/${departmentId}`,
+        { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ confirm: true }) },
       );
       const payload =
         await response.json().catch(() => null);

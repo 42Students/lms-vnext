@@ -14,7 +14,10 @@ Every page below also requires:
 # Operations
 
 ## Page: Dashboard
-**Legacy:** `/college-admin/dashboard`  
+**Legacy:** `/college-admin/dashboard`
+
+**Setup evidence PARTIAL:** `/college` now renders the canonical dashboard setup phases with registered, college-scoped persisted counts for departments, courses, active lessons, published lesson content, programs, program terms, curriculum mappings, cohorts, sections, faculty/student role memberships, active teaching assignments, lecture halls and published jobs. Each step deep-links to its actual College Admin page. Nonzero count means source records exist, never that the complete legacy job or all setup prerequisites are finished. Counts load atomically as a response (no silent partial failure), with dashboard loading/error states. Exact KPI/attention cards, full readiness rules and browser acceptance remain open.
+  
 Legacy route maps dashboard quick actions to Departments, Courses, Programs, Faculty, Students, Lessons, Content, Semesters, Semester-Course Mapping, Batches, Classes, Batch Promotion, Faculty Assignment, Lecture Halls, Jobs, Hiring Dashboard, Attendance, Assignments, Quizzes and People.
 
 - [ ] Dashboard KPI/summary cards match the legacy AdminDashboardView.
@@ -67,6 +70,8 @@ Uses the shared Faculty-profile schema.
 
 ## Page: Departments
 **Legacy:** `/college-admin/departments` using shared `Departments` component.
+
+**College Admin hardening PARTIAL:** Create, rename and archive now use dedicated same-origin-guarded, context-derived College Admin routes with strict Zod, row locks, same-transaction immutable audit and actual historic program/course/faculty-profile dependency guards before archive. A new confirmed restore action is available for archived Programs with active-department/name/code-conflict checks. Legacy UI/browser and independent PG acceptance remain open.
 
 Legacy contract:
 - Create New Department card;
@@ -435,6 +440,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 **Legacy:** `/college-admin/teachers`
 
 **Read-first PARTIAL:** `/college/faculty` lists persisted Faculty-role college memberships with search, status/pagination, user status, and count of active college-owned teaching assignments. The College Admin shell and dashboard link to it. This is not the legacy faculty onboarding, edit or complete-profile workflow; exact legacy and browser acceptance remain open.
+
+**Lifecycle PARTIAL:** Faculty rows now include a confirmed deactivate/reactivate action. The transaction locks the same-college FACULTY membership, requires the expected status, blocks deactivation while any live course teaching or section faculty assignment remains, and writes the state transition plus immutable actor-scoped activity event. No cross-college lifecycle writes are permitted. Legacy complete profile editing and independent runtime/browser evidence remain open.
 
 - [ ] Faculty list columns/profile metadata match.
 - [ ] Search/filter/pagination match.
