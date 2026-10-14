@@ -78,7 +78,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </select></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Deadline
         <select name="deadline" defaultValue={query.data.deadline} className="min-h-11 rounded-md border border-border bg-surface px-3">
-          <option value="ALL">Any</option><option value="SOON">Within 7 days</option><option value="UNKNOWN">Not recorded</option>
+          <option value="ALL">Any</option><option value="TODAY">Today (IST)</option><option value="SOON">Within 7 days</option><option value="PAST">Recorded deadline passed</option><option value="UNKNOWN">Not recorded</option>
         </select></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Sort
         <select name="sort" defaultValue={query.data.sort} className="min-h-11 rounded-md border border-border bg-surface px-3">
