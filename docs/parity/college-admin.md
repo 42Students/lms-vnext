@@ -132,6 +132,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Term edit concurrency PARTIAL (2026-10-14):** The existing semester edit action now requires an explicit confirmed millisecond-safe updatedAt token and rejects stale writes. Deactivating a registered program term is blocked when its mapped curriculum courses exist or any active/non-archived cohort progression currently references its term number. Parent scope and immutable activity audit remain transactional; unit and in-test-fixture PostgreSQL stale/foreign-role/dependency checks updated. Exact legacy parity and executed gates remain open.
+
 **Legacy:** `/college-admin/semesters`
 
 **Academic-period lifecycle PARTIAL:** The separate `/college/academics` Academic Period table now requires confirmation for close/reopen. Registered `academic_periods` rows are locked in one transaction, active sections/scheduled sessions block closure, a stale or foreign-college target is rejected, and the same transaction writes immutable activity events. Reopen is explicit CLOSED → ACTIVE, distinct from PLANNED → ACTIVE. This does not equate an academic period with a numbered semester; browser/real-DB execution remains pending.

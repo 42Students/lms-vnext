@@ -14,6 +14,8 @@ export const updateCollegeSemesterSchema = z.object({
   name: semesterName,
   totalCredits: credits,
   isActive: z.boolean(),
+  expectedUpdatedAt: z.iso.datetime({offset:true}),
+  confirm: z.literal(true),
 }).strict();
 
 export const deleteCollegeSemesterSchema = z.object({

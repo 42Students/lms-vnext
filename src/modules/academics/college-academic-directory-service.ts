@@ -65,6 +65,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   const db = getDb();
   const source = db.select({
     id: programTerms.id,
+    updatedAt: sql<Date>`${programTerms.updatedAt}`.mapWith(programTerms.updatedAt).as("term_updated_at"),
     name: programTerms.name,
     termNumber: programTerms.termNumber,
     totalCredits: programTerms.totalCredits,
