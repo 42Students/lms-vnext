@@ -11,7 +11,7 @@ describe("Learner withdrawal UX and backend write contracts", () => {
     expect(ui).toContain("Keep application");
     expect(ui).toContain("Withdraw application");
     expect(ui).toContain("learnerApplicationWithdrawalSchema.safeParse");
-    expect(ui).toContain('"confirmed: true"'.replaceAll('"', ""));
+    expect(ui).toContain("confirmed: true");
     expect(ui).toContain("/api/placements/applications/");
     expect(ui).toContain("withdrawPending");
     expect(ui).toContain("sm:grid-cols-3");

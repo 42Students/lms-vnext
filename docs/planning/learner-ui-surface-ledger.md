@@ -444,7 +444,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-012 | Application Detail modal | ApplicationsContent | applications page | UNCHECKED |
 | L14-013 | Application History modal | ApplicationsContent | dedicated read-only history route from applications drawer | FIXED |
 | L14-014 | Company Preview modal + retry | ApplicationsContent | dedicated read-only company route with error boundary | FIXED |
-| L14-015 | Withdrawal request modal + reason | ApplicationsContent | learner requests | UNCHECKED |
+| L14-015 | Withdrawal request modal + reason | ApplicationsContent | confirmed direct self-withdrawal/reason built in drawer; separate legacy approval-request semantics require owner decision | GAP |
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-018 | Assessment deep link | ApplicationsContent | placement assessment | UNCHECKED |
