@@ -17,6 +17,8 @@ const deliveredRoutes = [
   "batches",
   "classes",
   "electives",
+  "attendance/departments",
+  "placements/readiness-by-department",
 ] as const;
 
 const pagesRoot = join(process.cwd(), "src/app/(authenticated)/college");
