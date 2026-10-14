@@ -21,6 +21,8 @@ import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
   indiaAttendanceDayKey,
+  indiaAttendanceMonthKey,
+  shiftIndiaAttendanceMonth,
 } from "@/modules/attendance/faculty-grid-model";
 
 type Course = {
@@ -77,17 +79,6 @@ export type FacultyAttendanceWorkspaceData = {
   records: RecordRow[];
 };
 
-function monthKey(value: Date) {
-  return `${value.getFullYear()}-${String(
-    value.getMonth() + 1,
-  ).padStart(2, "0")}`;
-}
-
-function shiftMonth(value: string, amount: number) {
-  const [year, month] = value.split("-").map(Number);
-  return monthKey(new Date(year!, month! - 1 + amount, 1));
-}
-
 function sameMonth(value: string, selected: string) {
   return indiaAttendanceDayKey(value).slice(0, 7) === selected;
 }
@@ -141,7 +132,7 @@ export function FacultyAttendanceWorkspace({
     return () => window.clearInterval(timer);
   }, []);
   const [month, setMonth] = useState(
-    () => monthKey(new Date()),
+    () => indiaAttendanceMonthKey(new Date()),
   );
   const [selectedSessionId, setSelectedSessionId] =
     useState(workspace.sessions[0]?.id ?? "");
@@ -481,7 +472,7 @@ export function FacultyAttendanceWorkspace({
                   aria-label="Previous month"
                   onClick={() =>
                     setMonth((value) =>
-                      shiftMonth(value, -1),
+                      shiftIndiaAttendanceMonth(value, -1),
                     )
                   }
                 >
@@ -504,7 +495,7 @@ export function FacultyAttendanceWorkspace({
                   aria-label="Next month"
                   onClick={() =>
                     setMonth((value) =>
-                      shiftMonth(value, 1),
+                      shiftIndiaAttendanceMonth(value, 1),
                     )
                   }
                 >

@@ -297,3 +297,7 @@ The All Assignments and All Quizzes aggregate cards now use the same canonical d
 ## Faculty Attendance learner-session history (2026-10-14)
 
 The monthly grid's learner name now opens a read-only detail drawer that breaks down each persisted class session as Present, Absent, Unmarked or Upcoming, includes stored notes/timestamps, computes percentage only for definitively marked sessions, and opens the existing constrained Faculty marking flow only while the actual college correction window remains OPEN. Records originate from the already authorized exact Section service and are never refetched by arbitrary learner ID. A pure model has unit tests for future/unmarked math, cross-learner record isolation and historic absence evidence. Full authenticated browser acceptance remains OPEN; do not close the parent Attendance surface without it.
+
+### India-local month selector consistency (2026-10-14)
+
+The Faculty monthly attendance report now initializes and shifts its month in Asia/Kolkata, matching the established session grouping and avoiding false empty grids at UTC/local month boundaries. The pure grid-model regressions exercise midnight and year rollover. Full visual/role and exact-SHA acceptance remains pending.
