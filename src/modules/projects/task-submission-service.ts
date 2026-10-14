@@ -3,8 +3,10 @@ import {
   asc,
   desc,
   eq,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {mentorTaskReviewTokenMatches} from "./mentor-task-review-token-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { can } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -297,6 +299,10 @@ export async function reviewProjectTaskSubmission(
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
       );
     }
+    if(scope.access==="MENTOR"&&(!input.confirmed||!input.expectedUpdatedAt))
+      throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_STALE_VERSION");
+    if(input.expectedUpdatedAt&&!mentorTaskReviewTokenMatches(submission.updatedAt,input.expectedUpdatedAt))
+      throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_STALE_VERSION");
 
     const [task] = await tx
       .select({
@@ -335,6 +341,8 @@ export async function reviewProjectTaskSubmission(
           eq(projectTaskSubmissions.id, submission.id),
           eq(projectTaskSubmissions.projectId, scope.project.id),
           eq(projectTaskSubmissions.status, "SUBMITTED"),
+          input.expectedUpdatedAt?sql`date_trunc('milliseconds', ${projectTaskSubmissions.updatedAt}) =
+            ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`:undefined,
         ),
       )
       .returning();

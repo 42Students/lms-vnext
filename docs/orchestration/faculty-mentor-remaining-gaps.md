@@ -432,3 +432,67 @@ row locks, microsecond-safe optimistic CAS, persisted review insert and
 immutable activity event. Other roles retain prior workflow. Tests authored
 with fresh Mentor/Learner memberships and audit-preserving cleanup.
 Remaining: executed test/build and browser/legacy acceptance, revision cycle.
+
+## 2026-10-14 Faculty All Assignments grade publication fence — PARTIAL
+No new writer introduced. Existing `gradeAssignmentSubmission` and
+`publishAssignmentGrade` now lock the parent Course Assignment and reject
+writes unless status remains PUBLISHED at transaction time, including when a
+concurrent ARCHIVE starts. Pure policy + unit; own-Section PostgreSQL
+grade/publish/stale/foreign/role/archived/audit tests authored. Remains:
+executed tests, responsive browser and exact legacy grading modal parity.
+
+## 2026-10-14 Faculty Course Attendance correction state fence — PARTIAL
+Added session markedAt optimistic token for repeat marking, leaving first-mark
+payload backward compatible. Existing correction-window, roster, schedule,
+Faculty-role scope and immutable attendance audit remain authoritative.
+Audit now includes before/after markedAt, without private learner identifiers.
+New pure unit and self-created Faculty/Learner PG test includes SQL now default,
+success/foreign/role/stale/audit. Remaining: execute tests and browser/mobile,
+legacy correction modal parity and correction-request storage decision.
+
+## 2026-10-14 Mentor task-review optimistic feedback (PARTIAL)
+Existing same-origin review POST now requires Mentor decisions to include a confirmed
+submission update token. The stored row lock and SQL millisecond predicate fence
+a stale review without bypassing existing immutable task-review audit; Admin
+direct calls remain compatible. The responsive review dialog supplies the token.
+Added pure model/unit tests and an own-project disposable PostgreSQL test for
+default SQL now(), Mentor success, stale replay, wrong-role, non-leaking foreign
+scope and single review audit event. Still PARTIAL: CI/PG/browser/mobile and
+legacy review-history verification; do not fabricate task-comments storage.
+
+## 2026-10-14 Faculty Quiz result publication command — PARTIAL
+The Faculty-owned CLOSED quiz report's Publish/Hide controls now send a
+confirmation and persisted millisecond timestamp to a same-origin scoped
+command. The service rechecks active Faculty teaching delivery, locks the
+exact quiz, forbids draft/open or unchanged transitions, and writes the
+visibility change with immutable activity audit in one transaction.
+No manual score override or unpublished score disclosure was added.
+Pure model/unit and fresh Faculty/Learner Section PG case covers
+SQL default now(), publish/hide, forged delivery, wrong role, stale token
+and two audit events. Still PARTIAL: executed PG/TS/lint, responsive
+browser, legacy result-publication and learner masking acceptance.
+
+## 2026-10-14 Faculty correction explanation and no-op guard — PARTIAL
+The existing same-origin, optimistic, correction-window checked Faculty mark
+transaction now requires a short explanation when an already-MARKED session
+actually changes. It derives a persisted absence delta before mutating,
+rejects no-op corrections, and writes only counts plus a reason to its existing
+immutable activity audit (no learner IDs or names in metadata). First marks are
+unchanged. A mobile-friendly textarea and explicit error messages were added.
+Pure-model unit and fresh Section PG fixtures cover real correction, no-op,
+missing reason, wrong role, foreign Section, stale token and audit.
+Still PARTIAL: executed tests, mobile/keyboard/browser, correction-request
+workflow and legacy report acceptance.
+
+## 2026-10-14 Faculty version-checked moderation replies — PARTIAL
+A distinct, same-origin Faculty-only reply POST uses existing discussion
+storage and an authorized teaching-Section scope. The parent message is
+re-read with a shared row lock in the insert transaction, rejecting deleted,
+foreign-Section or stale parent versions before a reply can be created.
+A new immutable `courses.discussion.replied` event records only parent ID,
+Section and role (not private message text). Learner replies retain their
+existing route. Shared mobile composer displays a clear stale-parent error.
+Pure model/unit and own-Faculty PostgreSQL tests authored for success,
+wrong-role, non-leaking foreign parent, stale, delete race and single audit.
+Still PARTIAL: execution/browser, genuine threaded-reply storage absent,
+and a locked-thread flag is not migrated; no fictitious lock implemented.

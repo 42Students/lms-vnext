@@ -1,3 +1,4 @@
+import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import {
   afterAll,
   beforeEach,
@@ -433,7 +434,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
     await transitionCourseAssignment(
       faculty,
       exact.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",exact.id),  action: "PUBLISH" },
     );
 
     const learnerAssignments =
@@ -651,7 +652,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
     await transitionCourseAssignment(
       faculty,
       assignment.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id),  action: "PUBLISH" },
     );
 
     const submitted =

@@ -120,7 +120,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <textarea value={description} maxLength={10000} rows={2}
     onChange={e=>setDescription(e.target.value)}
     className="rounded border border-border p-2"/></label>
-  <label className="grid gap-1 text-sm">Due date (optional)
+  <label className="grid gap-1 text-sm">Due date (IST, optional)
    <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
     className="min-h-10 rounded border border-border p-2"/></label>
   <label className="grid gap-1 text-sm">Maximum attempts

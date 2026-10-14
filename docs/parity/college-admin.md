@@ -132,6 +132,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Term edit concurrency PARTIAL (2026-10-14):** The existing semester edit action now requires an explicit confirmed millisecond-safe updatedAt token and rejects stale writes. Deactivating a registered program term is blocked when its mapped curriculum courses exist or any active/non-archived cohort progression currently references its term number. Parent scope and immutable activity audit remain transactional; unit and in-test-fixture PostgreSQL stale/foreign-role/dependency checks updated. Exact legacy parity and executed gates remain open.
+
 **Legacy:** `/college-admin/semesters`
 
 **Academic-period lifecycle PARTIAL:** The separate `/college/academics` Academic Period table now requires confirmation for close/reopen. Registered `academic_periods` rows are locked in one transaction, active sections/scheduled sessions block closure, a stale or foreign-college target is rejected, and the same transaction writes immutable activity events. Reopen is explicit CLOSED → ACTIVE, distinct from PLANNED → ACTIVE. This does not equate an academic period with a numbered semester; browser/real-DB execution remains pending.
@@ -210,6 +212,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Section lifecycle PARTIAL (2026-10-14):** The College Admin Classes directory now adds confirmed ACTIVE/ARCHIVED transitions for persisted Sections. Dedicated same-origin PATCH uses exact college and role permission, row lock, millisecond-truncated updatedAt token, an all-history dependency blocker covering enrollments, Faculty assignments, schedules and course deliveries, parent eligibility/active name-code collision on restore, and same-transaction immutable audit. Authored pure unit and disposable PG success, cross-college NOT_FOUND, wrong-role, stale-token and dependency tests. Executed real DB/browser acceptance and legacy/archive versus hard-delete semantics remain open.
+
 **Legacy:** `/college-admin/classes`
 
 **Recurring execution PARTIAL (2026-10-14):** `/college/classes/recurring-preview` adds an explicit, confirm-gated execution of its IST weekday pattern with a section-updatedAt millisecond token; the server rechecks current Section/Period/Faculty/Hall college scope, persisted section/faculty/hall overlaps and aborts the entire transaction on any conflict. The inserted session IDs and immutable section activity audit are returned only for a full success. Pure-model tests and disposable-PG fixture success/foreign-college/wrong-role/stale-token tests authored. Limits: the advisory lock serializes this writer by college+Section, but independently managed faculty/hall scheduling writers require broader shared lock policy or exclusion constraints; no cross-writer race guarantee or real CI/browser closure is claimed. Recurrence editing, bulk failure reports and course attachment remain outstanding.
@@ -247,6 +251,8 @@ Legacy contract audited:
 - [ ] Schedule conflicts are surfaced, not silently dropped.
 
 ## Page: Batch Promotion
+**Preview-binding PARTIAL (2026-10-14):** A confirmed PROMOTE now supplies the exact server-preview learner count, next term and academic year, and the transactional apply rechecks these after its normal blocker/version checks. A changed preview rejects with PROMOTION_PREVIEW_CHANGED instead of silently promoting a different cohort state. Unit and disposable PG stale-preview tests authored; the existing all-or-nothing progression history/audit remains. Graduation and independently executed browser/PG gates remain outstanding.
+
 **Legacy:** `/college-admin/batch-promotion`
 
 **Write-side PARTIAL (2026-10-14):** `/college/batch-promotion` retains the server-authored preview of up to 2,000 learner blocker checks and adds explicit confirmation for eligible **PROMOTE** cases. Same-origin POST requires strict Zod, College Admin and college scope. The transaction locks cohort/progression/enrollments, reruns the preview, rejects blockers and stale expected versions, updates term/year and version (+1), inserts registered cohort progression history and college-scoped immutable activity audit. No inferred period/class transfer. **GRADUATE** remains unavailable because registered history only permits PROMOTION (+1) and CORRECTION (same term); exact legacy/browser/runtime acceptance remains open.
@@ -276,6 +282,10 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Hall cancellation PARTIAL (2026-10-14):** A confirmed per-session Cancel action on the hall availability page now persists SCHEDULED→CANCELLED, takes a required reason and millisecond-safe updatedAt token, locks the owning college hall and session, and blocks sessions already started or linked to attendance/course-delivery evidence. One immutable section audit event is written transactionally. Same-origin PATCH, pure-model test and disposable-PostgreSQL cross-college, wrong-role, stale/evidence and positive fixtures authored. Rescheduling, cross-writer universal Hall locking and real browser/database execution remain open; PARTIAL only.
+
+**Hall booking PARTIAL (2026-10-14):** The per-hall IST availability page adds a confirmed single-session write with a validated IST-local date/time/title, same-college Section and optional Faculty, millisecond-normalized Section optimistic token, configured class capacity vs hall capacity guard, and fresh persisted SCHEDULED overlap checks for hall, Section or Faculty. It locks Section then Hall through the audit/insert transaction and advances the Section token; appends a college-scoped immutable event. Dedicated same-origin POST, pure time/capacity model tests and disposable PostgreSQL success, cross-college denial, wrong role, stale and overlap tests authored. Other scheduling writers without shared Hall locks or exclusion constraints can still race; exact legacy workflow and real DB/browser proof remain open; this is not guaranteed booking availability.
+
 
 **IST hall availability PARTIAL (2026-10-14):** Each hall links to `/college/lecture-halls/[hallId]` for a strict 1–31-day IST date-range read of registered SCHEDULED section sessions. Own-college hall and academic lineage checks, not-found tenant concealment, persisted hall capacity, nullable configured class capacity, overlapping booking flags and configured capacity conflict badges are included. Overlap is a diagnostic of current persisted records, not guaranteed bookability or actual student occupancy. Rows are capped at 500 with truncation warning; pure tests and gated disposable-PostgreSQL read/denial fixtures authored. Runtime and browser acceptance remain open.
 **Legacy:** `/college-admin/lecture-halls`
@@ -292,6 +302,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Lifecycle PARTIAL (2026-10-14):** College Admin elective slot rows expose confirmation-gated ARCHIVE/RESTORE using strict Zod, same-origin PATCH, college-scoped active role and revalidated persisted actor, integer version CAS and immutable activity audit. Archive is blocked when any active offering or persisted learner selection exists; restore requires a currently active parent program and eligible IST academic period. The registered slot only supports ACTIVE/ARCHIVED; selection FINALIZE was intentionally not invented. Pure-model/unit and disposable PG own/foreign/wrong-role/stale tests authored, unexecuted. Full selection/finalization mechanics, UI/browser acceptance and real PG gates remain open.
+
 **Legacy:** `/college-admin/electives`
 
 **Write-side PARTIAL:** `/college/electives` includes confirmed slot create/edit via same-origin POST/PATCH, own-college program/period checks, versioned update, enrollment-impacting edit guard, atomic audit, unit and gated DB tests. Feature enablement, full offering capacity, learner choice/finalize and exact legacy/browser parity remain open.
@@ -366,6 +378,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Detail / Offering
+**Offering metadata PARTIAL (2026-10-14):** College Admin `/college/courses` offers confirmation-gated edit of persisted offering CORE/ELECTIVE type, optional credits and display order. Dedicated same-origin PATCH uses College Admin college scope, row and parent guards, millisecond-truncated optimistic updatedAt comparison, an active-delivery dependency fence for credit/type changes, monotonic write token, and immutable same-transaction audit. Pure-model and isolated PostgreSQL success/foreign/wrong-role/stale/dependency tests authored; executed CI/browser acceptance and exact legacy action parity remain open.
+
 **Legacy:** `/college-admin/courses/[id]`
 
 - [ ] Course identity/metadata sections match.
@@ -481,6 +495,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Faculty Assignment
 
+**Reassignment actor safety PARTIAL (2026-10-14):** The transaction now rechecks the persisted acting account, membership and College Admin role under SHARE locks and rejects revoked actors even with a cached active request context. Replacement Faculty account, membership and role are locked through commit; disabled accounts return TARGET_NOT_FOUND. Pure policy coverage and PostgreSQL revocation/no-side-effect fixtures added using a dedicated admin. PostgreSQL execution is blocked in this sandbox by OS user creation/switch restrictions; timetable conflicts, legacy/browser verification and remaining reassignment variants remain open.
+
 **Atomic reassignment PARTIAL (2026-10-14):** Active rows on `/college/faculty-assignment` now offer a confirmation-gated replacement Faculty selector. The College Admin service requires same-college live delivery plus active FACULTY membership, an exact old-membership expectation and millisecond-normalized PostgreSQL timestamp token, locks the live delivery/assignment, checks duplicate/primary role policy, ends the old row, inserts one same-role successor and writes immutable audit within one transaction. Foreign/missing assignments return the same NOT_FOUND. Unit and disposable-PostgreSQL success/foreign/wrong-role/stale fixtures authored. Different delivery/role reassignment, timetable workload checks, executed database/browser evidence and legacy dialog parity remain open.
 
 **Legacy:** `/college-admin/faculty-assignment`
@@ -551,6 +567,11 @@ Audited contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Student Group Detail
+
+**Waitlist eligibility safety PARTIAL (2026-10-14):** Promotion now locks the learner account, membership and learner role through commit and rejects disabled accounts without changing the seat count, queue row/version or member history. A pure decision model preserves lock, stale-member, FIFO and capacity denials; PostgreSQL fixtures cover disabled-account no-side-effects and stale member tokens. Local type/lint/unit evidence is required before publishing; PostgreSQL remains blocked by sandbox OS user restrictions. Rule refresh, automatic scheduling, legacy/browser proof and remaining waitlist workflows stay open.
+
+**Waitlist and rule writes PARTIAL (2026-10-14):** `/college/groups/[groupId]` now exposes version-checked, confirmed manual promotion of the first unlocked WAITLISTED learner when group capacity permits, and scoped V1 criteria rule editing with a clearly identified autoRefresh setting (saving never executes refresh). Dedicated same-origin PATCH uses the persisted College Admin actor check, own-college STUDY_GROUP lock, integer group/member optimistic versions, exact learner role/capacity/FIFO guards and one atomic membership change plus immutable member event and activity audit. Rule changes validate linked programs/cohorts stay in college and reject unsupported rule versions, then audit atomically. Pure unit and disposable-PostgreSQL success/foreign/wrong-role/stale tests authored. Full rule refresh UI, automatic refresh scheduling, learner consent/queue fairness edge cases, complete legacy/browsers and independently executed database gates remain open; parity stays PARTIAL.
+
 
 **PARTIAL read-only dynamic rule preview:** College Admin can open `/college/groups/[groupId]/rule-preview` from the group detail for configured supported V1 rules. Shows persisted criteria and a bounded candidate eligibility projection without writing memberships or exposing applicant evidence. No assertion of capacity/waitlist outcome or full college-wide counts above cap. Rule edit/refresh controls, original legacy behavior, PG execution and browser verification remain open.
 

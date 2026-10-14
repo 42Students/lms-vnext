@@ -51,6 +51,7 @@ export function LearnerCourseDiscussion({
     messageText: string;
     senderName: string | null;
     createdAt: string;
+    updatedAt: string;
   } | null>(null);
   const [canPost, setCanPost] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -59,7 +60,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
-  const [replyTo, setReplyTo] = useState<{ id: string; text: string } | null>(null);
+  const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
@@ -227,14 +228,22 @@ export function LearnerCourseDiscussion({
     setPosting(true);
     try {
       const response = await fetch(
-        `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`,
+        `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`+
+          (moderate&&replyTo?"/faculty-reply":""),
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ messageText, ...(replyTo ? { replyToMessageId: replyTo.id } : {}) }),
+          body: JSON.stringify({messageText,...(replyTo?{
+            replyToMessageId:replyTo.id,
+            ...(moderate?{expectedParentUpdatedAt:replyTo.updatedAt,confirmed:true}:{}),
+          }:{})}),
         },
       );
-      if (!response.ok) throw new Error("discussion_post_failed");
+      if (!response.ok) throw new Error(
+        moderate&&replyTo?
+         "The parent discussion changed or was removed. Refresh and retry the reply.":
+         "discussion_post_failed",
+      );
       setDraft("");
       setReplyTo(null);
       forceBottomOnNextLoad.current = true;
@@ -242,8 +251,8 @@ export function LearnerCourseDiscussion({
       window.requestAnimationFrame(() =>
         composerRef.current?.focus(),
       );
-    } catch {
-      setLoadError(true);
+    } catch(e) {
+      setModerationError(e instanceof Error?e.message:"Could not post reply.");
     } finally {
       setPosting(false);
     }
@@ -276,7 +285,10 @@ export function LearnerCourseDiscussion({
 
   async function togglePin(messageId: string) {
     if (!moderate || pinningId) return;
-    const current=messages.find(row=>row.id===messageId);
+    const current=messages.find(row=>row.id===messageId) ??
+      (highlightedPinned?.id===messageId
+        ? {id:highlightedPinned.id,pinned:true,updatedAt:highlightedPinned.updatedAt}
+        : null);
     if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
     if(!window.confirm((current.pinned?"Unpin":"Pin")+" this Section message?"))return;
     setPinningId(messageId);setModerationError(null);
@@ -291,6 +303,8 @@ export function LearnerCourseDiscussion({
       }
       const payload = await response.json();
       const updated = payload?.message;
+      if(updated?.id===highlightedPinned?.id && !updated.pinned)
+        setHighlightedPinned(null);
       if (updated?.id) {
         setMessages((current) =>
           current.map((item) =>
@@ -339,6 +353,13 @@ export function LearnerCourseDiscussion({
           <p className="mt-1 text-xs text-muted-foreground">
             {pinned.senderName} · {formatTime(pinned.createdAt)}
           </p>
+          {moderate && canPost ? (
+            <button type="button" disabled={pinningId!==null}
+              onClick={()=>void togglePin(pinned.id)}
+              className="mt-3 min-h-10 rounded-md border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+              {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
+            </button>
+          ) : null}
         </section>
       ) : null}
 
@@ -373,10 +394,29 @@ export function LearnerCourseDiscussion({
               </Button>
             </div>
           ) : messages.length === 0 ? (
-            <EmptyState
-              title="No messages yet"
-              description="Ask the first question — your classmates and faculty will see it here."
-            />
+            moderate && canPost ? (
+              <div className="flex min-h-64 flex-col items-center justify-center gap-4 p-4 text-center">
+                <h3 className="text-base font-semibold text-foreground">Start the conversation</h3>
+                <p className="text-sm text-body">Welcome your class or share the week&apos;s focus.</p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Button type="button" size="sm" variant="secondary"
+                    onClick={()=>{
+                      setDraft("Welcome! Use this space for questions about the course.");
+                      composerRef.current?.focus();
+                    }}>Post a welcome message</Button>
+                  <Button type="button" size="sm" variant="secondary"
+                    onClick={()=>{
+                      setDraft("This week we are focusing on: ");
+                      composerRef.current?.focus();
+                    }}>Share this week&apos;s focus</Button>
+                </div>
+              </div>
+            ) : (
+              <EmptyState
+                title="No messages yet"
+                description="Ask the first question — your classmates and faculty will see it here."
+              />
+            )
           ) : (
             <div className="space-y-2" role="log" aria-live="polite" aria-relevant="additions">
               {olderCursor ? (
@@ -434,7 +474,7 @@ export function LearnerCourseDiscussion({
                     {canPost ? <button type="button"
                       className="mt-2 text-xs font-semibold text-primary-text underline"
                       onClick={() => {
-                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100)});
+                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         composerRef.current?.focus();
                       }}>
                       Reply
