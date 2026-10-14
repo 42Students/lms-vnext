@@ -91,7 +91,7 @@ export default async function LearnerProjectPage({
     ? filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById})
     : workspace.tasks;
   const selectedTask=activeSection==="tasks"
-    ? findOwnLearnerBoardTask(workspace.tasks,taskId)
+    ? findOwnLearnerBoardTask(boardTasks,taskId)
     : null;
   const boardFilters={taskSearch:search,priority,status,sprintId,releaseId};
   const selectionNotice = activeSection === "tasks"
