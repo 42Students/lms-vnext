@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
 import {reviewTpoApplicant} from "@/modules/placements/tpo-applicant-review-service";
+import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=process.env.DB09_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
@@ -57,13 +58,23 @@ describe.skipIf(!enabled)("TPO review scoped PG",()=>{
  afterAll(async()=>{await cleanup();if(pool){for(const id of addedRoles)await pool.query("DELETE FROM membership_roles WHERE id=$1",[id]);await pool.end();}await closeDatabaseConnection();});
  it("shortlists with history/audit; rejects foreign, wrong role, stale microsecond token",async()=>{
   if(!pool)throw Error("PG required");
-  const params=await fixture(),body={confirmed:true,expectedUpdatedAt:params.expectedUpdatedAt,
+  const fixtureState=await fixture(),params={jobId:fixtureState.jobId,applicationId:fixtureState.applicationId};
+  const body={confirmed:true,expectedUpdatedAt:fixtureState.expectedUpdatedAt,
    decision:"SHORTLISTED",note:"Meets required hiring conditions"};
   const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
   await expect(reviewTpoApplicant(foreign,params,body)).rejects.toMatchObject({code:"PLACEMENT_APPLICATION_NOT_FOUND"});
   const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
   await expect(reviewTpoApplicant(wrong,params,body)).rejects.toBeInstanceOf(AuthorizationError);
-  const saved=await reviewTpoApplicant(tpo,params,body);
+  const snapshot=await getTpoApplicantPipeline(tpo,{jobId:params.jobId});
+  expect(snapshot.rows.find(row=>row.id===params.applicationId)).toMatchObject({
+   screeningUpdatedAt:body.expectedUpdatedAt,eligibilityStatus:"ELIGIBLE",channel:"INTERNAL",
+  });
+  await expect(getTpoApplicantPipeline(foreign,{jobId:params.jobId}))
+   .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+  await expect(getTpoApplicantPipeline(wrong,{jobId:params.jobId})).rejects.toBeInstanceOf(AuthorizationError);
+  const offsetToken=new Date(new Date(body.expectedUpdatedAt).getTime()+19800000)
+   .toISOString().replace("Z","+05:30");
+  const saved=await reviewTpoApplicant(tpo,params,{...body,expectedUpdatedAt:offsetToken});
   expect(saved.status).toBe("SHORTLISTED");
   await expect(reviewTpoApplicant(tpo,params,body)).rejects.toMatchObject({code:"PLACEMENT_SCREENING_STALE"});
   const history=await pool.query<{n:number}>("SELECT count(*)::int n FROM placement_application_screening_history WHERE application_id=$1",[ids.app]);

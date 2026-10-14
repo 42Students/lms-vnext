@@ -15,8 +15,8 @@ export function applicantStage(fact: ApplicantPipelineFact) {
     fact.screeningStatus === "HOLD" ? "HOLD" :
     fact.screeningStatus === "REJECTED" ? "REJECTED" : "PENDING";
 }
-export function projectTpoApplicantPipeline(
-  facts: readonly ApplicantPipelineFact[],
+export function projectTpoApplicantPipeline<T extends ApplicantPipelineFact>(
+  facts: readonly T[],
   stage: z.infer<typeof tpoApplicantPipelineParams>["stage"],
   search: string,
 ) {

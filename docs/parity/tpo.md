@@ -355,6 +355,8 @@ Legacy:
 - [ ] navigation into filtered Applicants/other tabs matches.
 
 ### Tab: Applicants
+
+**Work Mode review drawer — PARTIAL:** Pipeline rows now open a native modal drawer with persisted role, application, screening, eligibility, channel and IST submitted time. Pending/held submitted applications in published drives expose the existing confirmed shortlist/reject writer with required note and timestamp token. Escape/Close restores native dialog focus; mobile scroll is bounded. Successful saves disable repeat submission; version tokens accept equivalent ISO offsets. Pure availability and offset tests plus PG pipeline/read/write/foreign/wrong-role/stale fixtures authored; PG runtime blocked by sandbox account setup. Full candidate profile/history, exact legacy visual layout and browser acceptance remain open.
 - [ ] applicant table/search/filter/stage views match.
 **W66-4 PARTIAL — Candidate detail:** A focused TPO applicant detail route now shows persisted application identity, eligibility and screening stage, latest applied round outcomes and recorded offer/accepted joining evidence with a scoped college/drive/application lookup. It links from the existing applicant stage table, with mobile, loading, error and non-leaking not-found states. Does not disclose private screening notes, staged results or fabricate employer selection. Remaining: legacy side drawer/modal, richer candidate sections/filters, positive PG/browser evidence and visual parity.
 
