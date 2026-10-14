@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users } from "@/db/schema";
@@ -7,7 +7,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
-import { tpoApplicantPipelinePage, tpoApplicantPipelineParams } from "./tpo-applicant-pipeline-model";
+import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
@@ -27,7 +27,9 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       isNull(placementJobs.archivedAt))).limit(1);
   if(!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const projection=await db.transaction(async tx=>{
+   const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
    const scope=and(eq(placementApplications.jobId,job.id),
+    since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
     input.search?or(
@@ -86,5 +88,5 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,...projection};
 }
