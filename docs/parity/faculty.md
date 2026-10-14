@@ -1337,3 +1337,6 @@ Pure tests cover semantic equality, real edits, precision and safe error copy.
 Fresh Section PG fixtures assert stale-before-no-op, unchanged version and the
 same two actual-change audits alongside scope/role denial. Remaining: executed
 PostgreSQL and browser/mobile reschedule acceptance. DONE evidence is preserved.
+
+## 2026-10-15 Faculty route boundary — PARTIAL
+Added a shared active-Faculty plus central `courses.read` predicate and an authenticated `/teacher` layout redirecting other roles, disabled users, and inactive memberships to `/dashboard`. Unit fixtures cover granted/denied actors. This is a source-authored boundary; browser/PG run and independent acceptance remain outstanding. No DONE promotion.
