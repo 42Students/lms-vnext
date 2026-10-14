@@ -177,6 +177,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Subquery column collision repair PARTIAL (2026-10-15):** Batch directory now aliases cohort/program/starting-period IDs, names and codes individually before pagination (PostgreSQL 42702); the existing tenant-isolated fixture asserts joined identity and progression shape. No executed PostgreSQL/browser closure or legacy cohort form parity is claimed.
+
 
 **Guarded batch removal PARTIAL (2026-10-14):** The Batches directory now offers an explicitly confirmed Remove action only for PLANNED cohorts. It archives the cohort instead of hard-deleting registered progression/state history; the transaction locks the college-owned cohort, applies millisecond-normalized optimistic updatedAt token, blocks any section, learner enrollment, course offering, progression event or advanced progression state, and appends immutable activity audit. Strict same-origin DELETE, unit model and gated disposable-PostgreSQL success/foreign/wrong-role/stale/dependency fixtures are authored. Remediation for retired batch codes (unique codes remain reserved), full legacy hard-delete policy and browser/real PG acceptance remain open; not DONE.
 

@@ -152,6 +152,8 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(batchesA.items.find((row) => row.id === ids.cohort)).toMatchObject({
       currentTermNumber: 1, currentAcademicYearStart: 2026, activeSections: 1,
       activeEnrolledLearners: 0,
+      name: label, code: label, programId: ids.program,
+      programName: label, programCode: label, startPeriodId: ids.period,
     });
     expect(semestersB.items).toEqual([]);
     expect(batchesB.items).toEqual([]);

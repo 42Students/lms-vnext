@@ -134,18 +134,18 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
   const collegeId = requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
-    id: cohorts.id,
-    name: cohorts.name,
-    code: cohorts.code,
+    id: sql<string>`${cohorts.id}`.mapWith(cohorts.id).as("college_batch_id"),
+    name: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_batch_name"),
+    code: sql<string>`${cohorts.code}`.mapWith(cohorts.code).as("college_batch_code"),
     status: cohorts.status,
     updatedAt: cohorts.updatedAt,
     expectedEndPeriodId: cohorts.expectedEndPeriodId,
-    programId: programs.id,
-    programName: programs.name,
-    programCode: programs.code,
-    startPeriodName: academicPeriods.name,
+    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_batch_program_id"),
+    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_batch_program_name"),
+    programCode: sql<string>`${programs.code}`.mapWith(programs.code).as("college_batch_program_code"),
+    startPeriodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_batch_start_period_name"),
     startDate: academicPeriods.startDate,
-    startPeriodId: academicPeriods.id,
+    startPeriodId: sql<string>`${academicPeriods.id}`.mapWith(academicPeriods.id).as("college_batch_start_period_id"),
     currentTermNumber: cohortProgressionState.currentTermNumber,
     currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
   }).from(cohorts)
