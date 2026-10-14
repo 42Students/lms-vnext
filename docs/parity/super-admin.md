@@ -683,3 +683,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Offers oversight — PARTIAL:** Added `/admin/placements/offers`, read-only persisted offer versions, ISSUED/ACCEPTED/DECLINED/WITHDRAWN, INR compensation, joining date and expiry, IST issue, selected-college job/applicant membership and organization joins, search, 25-row cards and safe job link. No recruiter/TPO writes or evidence keys. Pure query tests authored; PG/browser gates, full offers action/detail parity remain open.
+
+
+**2026-10-15 chat-6 round 4 / Joining Outcomes oversight — PARTIAL:** `/admin/placements/joining` read-only persisted offer joining-outcome rows with PENDING/JOINED/DID_NOT_JOIN/DEFERRED, joining date/IST recorded date, applicant/job search and 25-row pagination. Explicitly excludes missing records from pending and hides internal reason/contact; exact college/org joins, mobile loading/error states. Pure unit authored; mutations, history/detail, PG/browser acceptance remain open.
