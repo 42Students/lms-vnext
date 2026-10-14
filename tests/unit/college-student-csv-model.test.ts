@@ -22,6 +22,16 @@ describe("College student CSV import model", () => {
     expect(result.entries[0].data?.displayName).toBe("Last, First");
   });
 
+  it("rejects junk after a closing quote rather than silently changing learner identity", () => {
+    const malformed = header + "\n" + `"Alice"junk,+919876543210,,${programId},${cohortId}`;
+    expect(parseStudentCsv(malformed).structuralErrors).toContain("INVALID_CSV_FORMAT");
+    expect(parseStudentCsv(header+"\n"+`"Alice" ,+919876543210,,${programId},${cohortId}`).structuralErrors)
+      .toContain("INVALID_CSV_FORMAT");
+    expect(parseStudentCsv(header+"\n"+`"Alice",+919876543210,,${programId},${cohortId}`).structuralErrors)
+      .toEqual([]);
+    expect(parseStudentCsv(header+"\n"+`"Alice, A",+919876543210,,${programId},${cohortId}`).structuralErrors)
+      .toEqual([]);
+  });
   it("enforces maximum rows, unique contacts and canonical header", () => {
     const csv = [header, row("A", "+919876543210"), row("B", "+919876543210")].join("\n");
     const result = parseStudentCsv(csv);
