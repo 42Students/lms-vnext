@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeElectives } from "@/modules/academics/college-elective-export-service";
 import {
   listCollegeClasses,
   listCollegeElectives,
@@ -129,6 +130,12 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     ]);
     expect(capacityFit.items.map(item => item.id)).toContain(ids.section);
     expect(capacityTooHigh.items).toEqual([]);
+    const [max36,max35]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,maximumCapacity:36}),
+      listCollegeClasses(adminA,{q:key,maximumCapacity:35}),
+    ]);
+    expect(max36.items.map(r=>r.id)).toContain(ids.section);
+    expect(max35.items).toEqual([]);
     expect(classes.items.find(item => item.id === ids.section))
       .toMatchObject({ capacity: 36, activeLearners: 0 });
     const [firstTerm, secondTerm] = await Promise.all([
@@ -137,10 +144,24 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     ]);
     expect(firstTerm.items.map(item => item.id)).toContain(ids.elective);
     expect(secondTerm.items).toEqual([]);
+    const [credits3,credits4]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,minimumCredits:3}),
+      listCollegeElectives(adminA,{q:key,minimumCredits:4}),
+    ]);
+    expect(credits3.items.map(r=>r.id)).toContain(ids.elective);
+    expect(credits4.items).toEqual([]);
     expect(electives.items.find(item => item.id === ids.elective))
       .toMatchObject({ semesterNumber: 1, minPick: 1, maxPick: 2, activeOfferings: 0 });
   });
 
+  it("exports registered elective slots within the signed-in college only",async()=>{
+    const own=await exportCollegeElectives(adminA,{q:key});
+    const foreign=await exportCollegeElectives(adminB,{q:key});
+    expect(own.csv).toContain(key);
+    expect(own.csv).toContain("Minimum picks");
+    expect(foreign.csv).not.toContain(key);
+    await expect(exportCollegeElectives(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("does not expose either registered record to a different college", async () => {
     const [classes, electives] = await Promise.all([
       listCollegeClasses(adminB, { q: key }),

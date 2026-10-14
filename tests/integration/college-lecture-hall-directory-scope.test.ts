@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import type { MembershipRole } from "@/modules/identity/constants";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeLectureHalls } from "@/modules/academics/college-lecture-halls-export-service";
 import {
   createLectureHall,
   listLectureHalls,
@@ -90,6 +91,12 @@ describe.skipIf(!enabled)("College Admin lecture hall directory scoped PostgreSQ
     ]);
     expect(fits.items.map(row => row.id)).toContain(hall.id);
     expect(tooSmall.items).toEqual([]);
+
+    const csv=await exportCollegeLectureHalls(own,{q:hallName});
+    expect(csv.csv).toContain(hallName);
+    const foreignCsv=await exportCollegeLectureHalls(other,{q:hallName});
+    expect(foreignCsv.csv).not.toContain(hallName);
+    await expect(exportCollegeLectureHalls(learner,{})).rejects.toBeInstanceOf(AuthorizationError);
 
     const wrongType = await listLectureHalls(own, {
       collegeId: SEED_IDS.collegeA,

@@ -2,9 +2,15 @@
 
 import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-request";
 import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
+import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/modules/placements/learner-assessment-link-state-model";
+import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-assessment-external-launch-model";
+import {learnerAssessmentDueHref,readLearnerAssessmentDueFromUrl} from "@/modules/placements/learner-assessment-bucket-url-model";
+import {learnerAssessmentMissingSchedule} from "@/modules/placements/learner-assessment-missing-schedule-model";
+import {learnerAssessmentPastReview} from "@/modules/placements/learner-assessment-past-review-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
   from "@/modules/placements/learner-round-search-query-model";
 import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
@@ -68,6 +74,7 @@ export function LearnerCareerRoundsWorkspace({
   initialSelectedKey = null,
   initialSearch = "",
   initialTimeView = "all",
+  initialDueBucket = "all",
   withdrawalTargets = [],
 }: {
   kind: Kind;
@@ -78,10 +85,13 @@ export function LearnerCareerRoundsWorkspace({
   initialSelectedKey?: string | null;
   initialSearch?: string;
   initialTimeView?: LearnerInterviewScheduleView;
+  initialDueBucket?:LearnerAssessmentDueBucket;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
-  const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
+  const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>(initialDueBucket);
+  const [missingLinkOnly,setMissingLinkOnly]=useState(false);
+  const [confirmExternalTest,setConfirmExternalTest]=useState<string|null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
@@ -107,6 +117,13 @@ export function LearnerCareerRoundsWorkspace({
       );
       if(view.success)setFilters(current=>({...current,time:view.data}));
     };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  useEffect(()=>{
+    if(kind!=="ASSESSMENT")return;
+    const onPop=()=>setDueBucket(readLearnerAssessmentDueFromUrl(window.location.search));
     window.addEventListener("popstate",onPop);
     return ()=>window.removeEventListener("popstate",onPop);
   },[kind]);
@@ -163,6 +180,8 @@ export function LearnerCareerRoundsWorkspace({
     key: K, value: LearnerRoundBrowseFilters[K],
   ) => {
     setDueBucket("all");
+    if(kind==="ASSESSMENT")window.history.replaceState(null,"",learnerAssessmentDueHref(window.location.href,"all"));
+    setMissingLinkOnly(false);
     setFilters((current) => ({ ...current, [key]: value }));
   };
   const rows = useMemo(
@@ -181,16 +200,23 @@ export function LearnerCareerRoundsWorkspace({
     () => learnerAssessmentDueBuckets(relevant, nowMs),
     [relevant, nowMs],
   );
-  const visibleRows = useMemo(
-    () => kind === "ASSESSMENT"
-      ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs)
-      : rows,
-    [rows, dueBucket, nowMs, kind],
-  );
+  const missingSchedule=kind==="ASSESSMENT"
+    ? learnerAssessmentMissingSchedule(dueCounts.unscheduled):null;
+  const pastReview=kind==="ASSESSMENT" ? learnerAssessmentPastReview(dueCounts.past,nowMs) : null;
+  const visibleRows = useMemo(() => {
+    const dueRows = kind === "ASSESSMENT"
+      ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs) : rows;
+    return kind === "ASSESSMENT" && missingLinkOnly
+      ? filterLearnerAssessmentsMissingLink(dueRows) : dueRows;
+  },[rows,dueBucket,nowMs,kind,missingLinkOnly]);
   function selectDueBucket(rawBucket: unknown) {
     const parsed = learnerAssessmentDueBucketSchema.safeParse(rawBucket);
     if (!parsed.success) return;
     setDueBucket(parsed.data);
+    if(kind==="ASSESSMENT"){
+      window.history.pushState(null,"",learnerAssessmentDueHref(window.location.href,parsed.data));
+    }
+    setMissingLinkOnly(false);
     // A quick bucket must not accidentally combine with a conflicting
     // schedule or urgency filter and silently show an empty result.
     setFilters(defaults);
@@ -252,6 +278,10 @@ export function LearnerCareerRoundsWorkspace({
   }
   const employerTest = kind === "ASSESSMENT"
     ? externalLink(selected?.testUrl ?? null) : null;
+  const externalAssessment=employerTest && selected ? learnerAssessmentExternalLaunch({
+    href:employerTest,scheduledAt:selected.exception?.scheduledAt??selected.scheduledAt,
+    roundName:selected.roundName,
+  },nowMs):null;
   const selectedReminderId = selected && kind === "ASSESSMENT"
     ? learnerAssessmentReminderId(selected.applicationId, selected.roundId)
     : null;
@@ -297,6 +327,13 @@ export function LearnerCareerRoundsWorkspace({
                 ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
               All assessment rounds ({relevant.length})
+            </button>
+            <button type="button" aria-pressed={missingLinkOnly}
+              onClick={()=>{const next=!missingLinkOnly;selectDueBucket("all");setMissingLinkOnly(next);}}
+              className={missingLinkOnly
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              Waiting on employer link ({relevant.filter(row=>learnerAssessmentLinkState(row)==="MISSING").length})
             </button>
             <button type="button" aria-pressed={dueBucket === "today"}
               onClick={() => selectDueBucket("today")}
@@ -376,6 +413,31 @@ export function LearnerCareerRoundsWorkspace({
         </div>
       </section>
 
+      {kind==="ASSESSMENT"&&dueBucket==="past"&&pastReview&&pastReview.count>0 ? (
+        <aside role="status" aria-label="Past scheduled assessments"
+          className="rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground">
+            {pastReview.count} assessment schedule{pastReview.count===1?"":"s"} passed
+          </h3>
+          <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
+          <Link href="/learn/my-placements/assessments/results"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Check officially applied results →
+          </Link>
+        </aside>
+      ):null}
+      {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
+        <aside role="status" aria-label="Assessments without a recorded date"
+          className="rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground">{missingSchedule.count} assessment round{missingSchedule.count===1?"":"s"} without a recorded schedule</h3>
+          <p className="mt-2 text-sm text-body">{missingSchedule.notice}</p>
+          {missingSchedule.missingLinkCount>0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {missingSchedule.missingLinkCount} also {missingSchedule.missingLinkCount===1?"lacks an":"lack"} actionable provider link.
+            </p>
+          ):null}
+        </aside>
+      ):null}
       {kind==="INTERVIEW"&&focus.hiddenByFilters ? (
         <aside role="status" className="rounded-xl border border-primary bg-primary-subtle p-4">
           <p className="text-sm font-semibold text-foreground">
@@ -393,7 +455,7 @@ export function LearnerCareerRoundsWorkspace({
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <button type="button"
-            onClick={() => { setFilters(defaults); setDueBucket("all"); }}
+            onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
             className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
             Clear filters
           </button>
@@ -500,11 +562,11 @@ export function LearnerCareerRoundsWorkspace({
               </section>
             ) : null}
             <div className="flex flex-wrap gap-3">
-              {employerTest ? (
-                <a href={employerTest} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              {externalAssessment ? (
+                <button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
                   Open employer assessment ↗
-                </a>
+                </button>
               ) : null}
               {meeting ? (
                 <a href={meeting} target="_blank" rel="noopener noreferrer"
@@ -571,6 +633,19 @@ export function LearnerCareerRoundsWorkspace({
           </div>
         ) : null}
       </Drawer>
+      <Dialog open={confirmExternalTest!==null} onOpenChange={open=>{if(!open)setConfirmExternalTest(null);}}
+        title="Open employer assessment?"
+        description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
+        footer={<>
+          <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
+          {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
+            onClick={()=>setConfirmExternalTest(null)}
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            Open external assessment ↗
+          </a>:null}
+        </>}>
+        <p className="text-sm text-body">{externalAssessment?.notice??"Confirm the provider instructions before proceeding."}</p>
+      </Dialog>
     </div>
   );
 }

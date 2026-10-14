@@ -6,33 +6,64 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
-export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[]}>}){
+export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
  const raw=Array.isArray(q.status)?q.status[0]:q.status;
- const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL"});
+ const page=Array.isArray(q.page)?q.page[0]:q.page;
+ const qterm=Array.isArray(q.q)?q.q[0]:q.q;
+ const joiningRaw=Array.isArray(q.joining)?q.joining[0]:q.joining;
+ const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{})});
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e}
+ const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
+ const searchQuery=parsed.data.q;
+ const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"");
+ const csvFilters=new URLSearchParams({status:data.status,joining:parsed.data.joining});
+ if(searchQuery)csvFilters.set("q",searchQuery);
+ const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
  const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn]] as const;
  return <div className="space-y-6">
   <Link href={root} className="text-sm font-semibold text-primary-text">← Back to drive</Link>
-  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."/>
+  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
+   actions={<a href={csvHref} className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Export filtered CSV</a>}/>
   <nav aria-label="Offer status" className="flex flex-wrap gap-2">{tabs.map(([value,label,count])=>
-   <Link key={value} href={root+"/offers?status="+value} aria-current={data.status===value?"page":undefined}
+   <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
     className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-primary-text">{label} ({count})</Link>)}</nav>
-  {data.truncated?<p role="status" className="rounded border border-border p-3 text-sm">Showing first 200 of {data.totalMatching} records; pagination is outstanding.</p>:null}
+  <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   <input type="hidden" name="status" value={data.status}/>
+   <label className="grid gap-1 text-sm font-semibold text-body">Joining outcome
+    <select name="joining" defaultValue={parsed.data.joining} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">All joining outcomes</option><option value="PENDING">Accepted / pending</option>
+     <option value="JOINED">Confirmed joined</option><option value="DEFERRED">Deferred</option>
+     <option value="DID_NOT_JOIN">Did not join</option>
+    </select>
+   </label>
+   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner or role
+    <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+   </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+   {searchQuery||parsed.data.joining!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
+  </form>
+  <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role}</p></div><strong className="text-sm">{row.status}</strong></div>
-    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd>{row.issued.slice(0,10)}</dd></div><div><dt>Responded</dt><dd>{row.responded?.slice(0,10)??"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div></dl>
+    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
+    <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div>
+    {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>
     <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="text-primary-text" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
     <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="text-primary-text" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
    </article>)}</section>}
-  <p className="text-xs text-muted-foreground">Counts include offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <nav aria-label="Offer register pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <span className="text-body">Page {data.page} of {data.totalPages}</span>
+   <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-primary-text">← Previous</Link>:null}
+    {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-primary-text">Next →</Link>:null}</div>
+  </nav>
+  <p className="text-xs text-muted-foreground">The CSV includes at most 500 matching offer versions with a truncation row, formula-neutralized cells and no contact details. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }

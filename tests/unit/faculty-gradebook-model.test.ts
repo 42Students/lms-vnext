@@ -1,13 +1,21 @@
 import {describe,expect,it} from "vitest";
+import {CoursesServiceError} from "@/modules/courses/errors";
 import {facultyGradebookCsv,facultyGradebookParamsSchema,facultyPublishedGradeRows,
   facultyPublishedLearnerBreakdown,facultyGradebookViewQuerySchema,
-  paginateFacultyGradebookRows,facultyGradebookViewHref}
+  paginateFacultyGradebookRows,facultyGradebookViewHref,facultyGradebookPrivateNotFound}
   from "@/modules/courses/faculty-gradebook-model";
 const roster=[
   {membershipId:"a",displayName:" =NOW()",email:"+unsafe@x.y",rollNumber:"@SUM(1,2)"},
   {membershipId:"b",displayName:"Student B",email:null,rollNumber:null},
 ];
 describe("Faculty published Section gradebook",()=>{
+  it("hides unassigned and unknown learner detail IDs without swallowing server faults",()=>{
+    for(const code of ["MEMBERSHIP_NOT_FOUND","SECTION_DELIVERY_NOT_FOUND",
+      "FACULTY_TEACHING_SCOPE_REQUIRED","LEARNING_ACCESS_DENIED"] as const){
+      expect(facultyGradebookPrivateNotFound(new CoursesServiceError(code))).toBe(true);
+    }
+    expect(facultyGradebookPrivateNotFound(new Error("Database offline"))).toBe(false);
+  });
   it("totals only passed published scores and does not invent zeros",()=>{
     const rows=facultyPublishedGradeRows(roster,[
       {membershipId:"a",earned:8,possible:10,kind:"ASSIGNMENT",assessmentId:"q1"},

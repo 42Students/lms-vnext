@@ -48,14 +48,18 @@ export async function CollegeRoleDirectoryWorkspace({
     status: first(params.status),
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
+    cohortId: first(params.cohortId),
+    classPresence: first(params.classPresence),
     teaching: first(params.teaching),
+    teachingRole: first(params.teachingRole),
     facultyDepartmentId: first(params.facultyDepartmentId),
+    employmentType: first(params.employmentType),
     sort: first(params.sort),
     page: first(params.page),
   };
   const parsed = collegeRoleDirectoryQuerySchema.safeParse(
     Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined),
+      Object.entries(input).filter(([, value]) => value !== undefined && value !== ""),
     ),
   );
 
@@ -154,6 +158,28 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="NONE">No active program enrollment</option>
             </select>
           </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active batch
+            <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All batches</option>
+              {result.cohortOptions.map(cohort=><option key={cohort.id} value={cohort.id}>
+                {cohort.programName} · {cohort.name}
+              </option>)}
+            </select>
+            {result.cohortOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              First 200 batches shown; search by name for others.
+            </span> : null}
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active class placement
+            <select name="classPresence" defaultValue={result.filter.classPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="ASSIGNED">Has active class</option>
+              <option value="NONE">No active class</option>
+            </select>
+          </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Department
             <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
@@ -166,12 +192,33 @@ export async function CollegeRoleDirectoryWorkspace({
             </span> : null}
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Employment type
+            <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All employment types</option>
+              {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
+            </select>
+            {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              First 100 distinct types shown.
+            </span> : null}
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching
             <select name="teaching" defaultValue={result.filter.teaching}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Has active teaching</option>
               <option value="NONE">No active teaching</option>
+            </select>
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active course teaching role
+            <select name="teachingRole" defaultValue={result.filter.teachingRole}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any role</option>
+              <option value="PRIMARY">Primary</option>
+              <option value="CO_TEACHER">Co-teacher</option>
+              <option value="TA">Teaching assistant</option>
             </select>
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">

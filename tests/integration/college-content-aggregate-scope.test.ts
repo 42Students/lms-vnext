@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import {exportCollegeContentMetadata} from "@/modules/courses/college-content-export-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -60,6 +61,7 @@ const ids = {
   resource: randomUUID(),
   video: randomUUID(),
   youtube: randomUUID(),
+  live: randomUUID(),
 };
 const label = "W-CONTENT-" + ids.period.slice(0, 8);
 
@@ -118,12 +120,18 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       "VALUES($1,$2,'YOUTUBE',$3,'https://www.youtube.com/watch?v=example',70,2,$4)",
       [ids.youtube, ids.lesson, label, SEED_IDS.collegeAdminUser],
     );
+    await pool.query(
+      "INSERT INTO lesson_contents(id,lesson_id,content_type,title,external_url,starts_at,ends_at,sequence,created_by_user_id,status) " +
+      "VALUES($1,$2,'LIVE_CLASS',$3,'https://meet.example.test/private','2026-11-01T05:00:00Z','2026-11-01T06:00:00Z',3,$4,'PUBLISHED')",
+      [ids.live,ids.lesson,label,SEED_IDS.collegeAdminUser],
+    );
   });
 
   afterAll(async () => {
     try {
       if (pool) {
         const owned: ReadonlyArray<readonly [string, string]> = [
+          ["lesson_contents", ids.live],
           ["lesson_contents", ids.youtube],
           ["lesson_contents", ids.video],
           ["lesson_contents", ids.resource],
@@ -150,10 +158,30 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
     ]);
+    const resourceCsv=await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label});
+    expect(resourceCsv.csv).toContain(label);
+    expect(resourceCsv.csv).not.toContain("test-only private notes");
+    expect(resourceCsv.csv).not.toContain("test-only-private-key");
+    const foreignResources=await exportCollegeContentMetadata(adminB,"RESOURCE",{q:label});
+    expect(foreignResources.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"RESOURCE",{})).rejects.toBeInstanceOf(AuthorizationError);
+    const exported=await exportCollegeContentMetadata(adminA,"VIDEO",{q:label});
+    expect(exported.csv).toContain(label);
+    expect(exported.csv).not.toContain("test-only-private-key");
+    expect(exported.csv).not.toContain("youtube.com/watch");
+    const foreignCsv=await exportCollegeContentMetadata(adminB,"VIDEO",{q:label});
+    expect(foreignCsv.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"VIDEO",{})).rejects.toBeInstanceOf(AuthorizationError);
     expect(videos.items.map((item) => item.id)).toEqual(
       expect.arrayContaining([ids.video, ids.youtube]),
     );
     expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    const [shared,sectionOnly]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,scope:"SHARED"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,scope:"SECTION"}),
+    ]);
+    expect(shared.items.map(row=>row.id)).toContain(ids.resource);
+    expect(sectionOnly.items).toEqual([]);
     const [scopedResource, absentCourse] = await Promise.all([
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: "UNKNOWN-COURSE" }),
@@ -184,6 +212,50 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(serialized).not.toContain("youtube.com/watch");
   });
 
+  it("shows owned live-class schedule without private meeting URLs",async()=>{
+    const [mine,theirs]=await Promise.all([
+      listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label}),
+      listCollegeContentAggregate(adminB,"LIVE_CLASS",{q:label}),
+    ]);
+    expect(mine.items.find(r=>r.id===ids.live)).toMatchObject({
+      title:label,courseName:label,offeringId:ids.offering,status:"PUBLISHED",
+    });
+    expect(mine.items.find(r=>r.id===ids.live)?.startsAt).toBeInstanceOf(Date);
+    const dated=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,from:"2026-11-01",to:"2026-11-01"});
+    const otherDay=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,from:"2026-11-02",to:"2026-11-02"});
+    expect(dated.items.map(r=>r.id)).toContain(ids.live);
+    expect(otherDay.items).toEqual([]);
+    const exact=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:label});
+    const unknown=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:"NEVER-MATCH"});
+    expect(exact.items.map(r=>r.id)).toContain(ids.live);
+    expect(unknown.items).toEqual([]);
+    const liveCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label});
+    expect(liveCsv.csv).toContain(label);
+    expect(liveCsv.csv).toContain("Starts at (UTC)");
+    expect(liveCsv.csv).not.toContain("meet.example.test");
+    const datedCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,from:"2026-11-01",to:"2026-11-01"});
+    const wrongDayCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,from:"2026-11-02",to:"2026-11-02"});
+    expect(datedCsv.csv).toContain(label);
+    expect(wrongDayCsv.csv).not.toContain(label);
+    const historicalCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
+    const futureCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
+    const wasPast = Date.now() >= Date.parse("2026-11-01T06:00:00Z");
+    expect(historicalCsv.csv.includes(label)).toBe(wasPast);
+    expect(futureCsv.csv.includes(label)).toBe(!wasPast);
+    const foreignLiveCsv=await exportCollegeContentMetadata(adminB,"LIVE_CLASS",{q:label});
+    expect(foreignLiveCsv.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"LIVE_CLASS",{})).rejects.toBeInstanceOf(AuthorizationError);
+    const past=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
+    expect(past.items.some(r=>r.id===ids.live)).toBe(wasPast);
+    const upcoming=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
+    expect(upcoming.items.some(r=>r.id===ids.live)).toBe(!wasPast);
+    expect(theirs.items).toEqual([]);
+    expect(JSON.stringify(mine)).not.toContain("meet.example.test");
+    await expect(listCollegeContentAggregate(nonAdmin,"LIVE_CLASS",{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeContentAggregate(adminA,"LIVE_CLASS",{collegeId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+  });
   it("enforces tenant and role denials for both kinds", async () => {
     for (const kind of ["VIDEO", "RESOURCE"] as const) {
       const other = await listCollegeContentAggregate(adminB, kind, { q: label });
