@@ -14,6 +14,7 @@ import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-s
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-service";
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
+import { getMentorProjectReviewCompleteness } from "@/modules/projects/mentor-review-completeness-service";
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { recordActivityEvent } from "@/modules/activity/service";
@@ -112,6 +113,16 @@ afterAll(async()=>{
 describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
   it("reads persisted assigned-project team, sprint, coverage and activity",async()=>{
     const {project,sprint}=await fixture();
+    const review=await getMentorProjectReviewCompleteness(mentor,{projectId:project.id,page:1});
+    expect(review).toMatchObject({
+      enabled:true,total:0,items:[],projectTitle:project.title,
+    });
+    await expect(getMentorProjectReviewCompleteness(learner,{
+      projectId:project.id,
+    })).rejects.toBeDefined();
+    await expect(getMentorProjectReviewCompleteness(mentor,{
+      projectId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
     const members=await getMentorTeamHistory(mentor,{
       projectId:project.id,view:"OPEN",page:1,
     });

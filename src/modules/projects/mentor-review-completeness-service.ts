@@ -58,6 +58,12 @@ export async function getMentorProjectReviewCompleteness(
   return {
     enabled:true as const,query,projectTitle:scope.project.title,
     projectStatus:scope.project.status,...paging,
-    items:computed.map(({feedback,...row})=>row),
+    items:computed.map(row=>({
+      id:row.id,version:row.version,status:row.status,
+      submittedAt:row.submittedAt,decision:row.decision,
+      reviewedAt:row.reviewedAt,reviewRecorded:row.reviewRecorded,
+      writtenFeedbackRecorded:row.writtenFeedbackRecorded,
+      reviewLabel:row.reviewLabel,
+    })),
   };
 }
