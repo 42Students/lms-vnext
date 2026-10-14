@@ -159,6 +159,7 @@ export default async function FacultyContactsPage({
       <FacultyContactsTable
         items={result.items}
         showRoles={selected.value === "ALL"}
+        detailBaseHref={baseHref}
       />
       <FacultyContactsPagination
         page={result.page}

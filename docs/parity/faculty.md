@@ -326,3 +326,17 @@ parity remain OPEN. No checklist item is closed solely from source work.
 ### Faculty aggregate Assessment search and editor draft recovery (2026-10-14)
 
 All Assignments and All Quizzes now search by title, course, Section, lesson and description in already-authorized teaching data, combining with persisted status/delivery filters and resetting pagination when the search changes. The Edit drawer restores current server-provided values on every open; closing an unsaved edit can no longer inadvertently persist stale draft fields on subsequent re-open. Pure filter unit tests and complete authenticated Assignment create/edit/archive browser coverage are added; no aggregate surface is marked DONE without executed evidence.
+
+## Faculty Contacts detail reader (2026-10-14)
+
+A read-only detail route `/teacher/contacts/[contactsTab]/[membershipId]`
+now opens from each listed same-college Faculty contact. It repeats the
+authoritative persisted active Faculty-role membership check and restricts the
+target to an active same-college contact with the requested directory role.
+Only existing public-to-college directory fields (name, email, phone, current
+college roles) are selected; private profile documents, identity and academic
+verification records are not loaded. Zod rejects forged tabs/IDs and cross-tenant
+selectors. Loading/error, pure-model tests and PostgreSQL denial cases are
+authored; independent execution and legacy full Contact/Profile coverage remain
+OPEN. Preserve all previously authored Faculty attendance, roster and assessment
+parity sections. No checkbox is marked DONE by this source-only work.
