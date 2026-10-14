@@ -32,3 +32,19 @@ export function learnerAssignmentFilePayload(deliveryId: string, receiptId: stri
     deliveryId, uploadReceiptId: receiptId, submissionType: "FILE", confirmed,
   });
 }
+
+export const learnerAssignmentReadGrantSchema = z.object({ grant: z.object({
+  readUrl: z.string().url().refine(value => {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
+  }, "A secure file URL is required"),
+  expiresAt: z.iso.datetime({ offset: true }), originalName: z.string().min(1).max(255),
+  mimeType: z.string().min(1).max(128), sizeBytes: z.number().int().min(1).max(50 * 1024 * 1024),
+}).strict() }).strict();
+
+export function validateLearnerAssignmentReadGrant(input: unknown, nowMs: number) {
+  const { grant } = learnerAssignmentReadGrantSchema.parse(input);
+  const lifetimeMs = Date.parse(grant.expiresAt) - nowMs;
+  if (lifetimeMs <= 0 || lifetimeMs > 15 * 60 * 1000) throw new Error("File link is expired or invalid. Prepare a new link.");
+  return grant;
+}
