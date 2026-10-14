@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -6,25 +7,32 @@ import {
   type ProjectParticipantListQuery,
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
+import { LearnerProjectMobileFilters } from "@/components/projects/learner-project-mobile-filters";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
+import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+const searchSchema = z.string().trim().max(100);
+const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
+const attentionSchema = z.literal("LEARNER_ACTION");
+
 function parsePageSize(value: string | undefined) {
-  const parsed = Number(value);
-  return parsed === 50 || parsed === 100 ? parsed : 25;
+  const parsed = z.coerce.number().int().safeParse(value);
+  return parsed.success && (parsed.data === 50 || parsed.data === 100)
+    ? parsed.data : 25;
 }
 
 function parsePage(value: string | undefined) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
+  const parsed = z.coerce.number().int().min(1).max(100000).safeParse(value);
+  return parsed.success ? parsed.data : 1;
 }
 
 export default async function LearnerProjectsPage({
@@ -41,16 +49,9 @@ export default async function LearnerProjectsPage({
   const status = one(params.status);
   const attention = one(params.attention);
   const query: ProjectParticipantListQuery = {
-    search: one(params.search)?.trim() || undefined,
-    status:
-      status === "CURRENT" ||
-      status === "PLANNED" ||
-      status === "ACTIVE" ||
-      status === "COMPLETED" ||
-      status === "ARCHIVED"
-        ? status
-        : undefined,
-    attention: attention === "LEARNER_ACTION" ? attention : undefined,
+    search: searchSchema.safeParse(one(params.search)).data || undefined,
+    status: statusSchema.safeParse(status).data,
+    attention: attentionSchema.safeParse(attention).data,
     page: parsePage(one(params.page)),
     pageSize: parsePageSize(one(params.pageSize)),
   };
@@ -110,6 +111,9 @@ export default async function LearnerProjectsPage({
     });
 
   const total = filtered.length;
+  const emptyState = learnerProjectListEmptyState(
+    allRows.filter(row => row.memberRole === "LEARNER").length, total,
+  );
   const size = query.pageSize ?? 25;
   const totalPages = Math.max(1, Math.ceil(total / size));
   const page = Math.min(query.page ?? 1, totalPages);
@@ -123,11 +127,14 @@ export default async function LearnerProjectsPage({
         description="Your active Project workspaces, team responsibilities and final delivery progress."
       />
 
-      <ProjectParticipantListControls
-        basePath="/learn/projects"
-        query={{ ...query, page }}
-        learner
-      />
+      <LearnerProjectMobileFilters query={{ ...query, page }} />
+      <div className="hidden sm:block">
+        <ProjectParticipantListControls
+          basePath="/learn/projects"
+          query={{ ...query, page }}
+          learner
+        />
+      </div>
 
       <ProjectList
         items={rows.map((row) => {
@@ -159,25 +166,19 @@ export default async function LearnerProjectsPage({
           };
         })}
         basePath="/learn/projects"
-        emptyTitle={
-          query.search || query.status || query.attention
-            ? "No Projects match these filters"
-            : "No Projects yet"
-        }
-        emptyDescription={
-          query.search || query.status || query.attention
-            ? "Clear or change the filters to see other assigned Projects."
-            : "Projects will appear here after your college assigns you to a Project team."
-        }
+        emptyTitle={emptyState.title}
+        emptyDescription={emptyState.description}
       />
 
-      <ProjectParticipantPagination
-        basePath="/learn/projects"
-        query={query}
-        page={page}
-        totalPages={totalPages}
-        total={total}
-      />
+      <div className="[&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:justify-center">
+        <ProjectParticipantPagination
+          basePath="/learn/projects"
+          query={query}
+          page={page}
+          totalPages={totalPages}
+          total={total}
+        />
+      </div>
 
       <p className="m-0 text-xs leading-5 text-muted-foreground">
         Legacy also exposes explicit workspace blocker attention. DB07 vNext does not yet persist that blocker field, so this page does not infer a false Blocked signal from unrelated task states.

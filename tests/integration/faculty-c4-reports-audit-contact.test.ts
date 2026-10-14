@@ -37,7 +37,8 @@ const learner:RequestContext={
  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
 };
 type Fixture={programId:string;periodId:string;cohortId:string;sectionId:string;
- courseId:string;offeringId:string;deliveryId:string;enrollmentId:string};
+ courseId:string;offeringId:string;deliveryId:string;enrollmentId:string;
+ learnerUserId:string;learnerMembershipId:string};
 let active:Fixture|null=null;
 
 async function cleanup(){
@@ -55,6 +56,16 @@ async function cleanup(){
  await pool.query("delete from cohorts where id=$1",[f.cohortId]);
  await pool.query("delete from programs where id=$1",[f.programId]);
  await pool.query("delete from academic_periods where id=$1",[f.periodId]);
+ // Preserve append-only actor identity references if any writer added one.
+ const audit=await pool.query(
+  "select 1 from activity_events where actor_user_id=$1::uuid or actor_membership_id=$2::uuid limit 1",
+  [f.learnerUserId,f.learnerMembershipId],
+ );
+ if(!audit.rowCount){
+  await pool.query("delete from membership_roles where membership_id=$1",[f.learnerMembershipId]);
+  await pool.query("delete from college_memberships where id=$1",[f.learnerMembershipId]);
+  await pool.query("delete from users where id=$1",[f.learnerUserId]);
+ }
  active=null;
 }
 async function fixture(){
@@ -75,11 +86,30 @@ async function fixture(){
  const delivery=await createCourseSectionDelivery(admin,{offeringId:offering.id,sectionId:section.id});
  await createCourseTeachingAssignment(admin,{deliveryId:delivery.id,
   membershipId:SEED_IDS.facultyCollegeAMembership,role:"PRIMARY"});
+ // The seeded learner can have an active program in another test/fixture.
+ // Use an isolated learner so this test proves the intended Section outcome
+ // instead of failing on learner_program_enrollments_active_membership_uq.
+ const learnerUserId=randomUUID();
+ const learnerMembershipId=randomUUID();
+ await pool.query(
+  "insert into users (id,identity_uid,email,display_name,platform_status) values ($1::uuid,$2::text,$3::text,$4::text,'ACTIVE')",
+  [learnerUserId,"faculty-c4-roster-"+learnerUserId,
+   "faculty-c4-roster-"+learnerUserId+"@example.invalid","Faculty C4 Roster Learner"],
+ );
+ await pool.query(
+  "insert into college_memberships (id,user_id,college_id,status) values ($1::uuid,$2::uuid,$3::uuid,'ACTIVE')",
+  [learnerMembershipId,learnerUserId,SEED_IDS.collegeA],
+ );
+ await pool.query(
+  "insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,'LEARNER')",
+  [randomUUID(),learnerMembershipId],
+ );
  const enrollment=await createLearnerProgramEnrollment(admin,{
-  membershipId:SEED_IDS.learnerCollegeAMembership,programId:program.id,cohortId:cohort.id});
+  membershipId:learnerMembershipId,programId:program.id,cohortId:cohort.id});
  await assignLearnerToSection(admin,{learnerEnrollmentId:enrollment.id,sectionId:section.id});
  active={programId:program.id,periodId:period.id,cohortId:cohort.id,sectionId:section.id,
-  courseId:course.id,offeringId:offering.id,deliveryId:delivery.id,enrollmentId:enrollment.id};
+  courseId:course.id,offeringId:offering.id,deliveryId:delivery.id,enrollmentId:enrollment.id,
+  learnerUserId,learnerMembershipId};
  return active;
 }
 afterEach(cleanup);
