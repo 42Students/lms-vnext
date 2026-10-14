@@ -22,3 +22,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L21-009: legacy meetings-to-team compatibility implemented, tests authored but not executed.
 - L25-007: task metadata (status, priority, sprint) on index from authorized workspace; unit/PG written; unexecuted.
 - L21-010: learner Final Delivery nav tab and exact URL state; unit/PG authored, unexecuted.
+- L20-014: explicit archived/read-only Project list card status, pure/PG authored; runtime unexecuted.
