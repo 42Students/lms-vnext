@@ -547,3 +547,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Hiring Activity loading and hard error — PARTIAL:** Activity history has route-local loading skeleton and explicit retryable read error; failed reads are not disguised as no activity. Pending runtime/browser error boundary verification and legacy stale-last-success.
+
+
+**2026-10-15 chat-10 R5 / Messages loading and hard error — PARTIAL:** Scoped notifications now have a route-local loading skeleton and retryable error state that distinguishes failed reads from empty inbox or zero unread. No additional recipients, messages or data exposure. Browser and stale-refresh acceptance open.
