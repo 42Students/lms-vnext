@@ -28,3 +28,18 @@ export function hrRoundConflictLabels(
     return match?[match.name+" (#"+match.sequence+")"]:[];
   });
 }
+
+export function hrRoundConflictLinks(
+  rows:ReturnType<typeof hrScheduledRoundRows>,ids:readonly string[],jobId:string
+){
+ const byId=new Map(rows.map(row=>[row.id,row]));
+ return ids.flatMap(id=>{
+  const found=byId.get(id);
+  if(!found)return [];
+  return [{
+   id:found.id,
+   label:found.name+" (#"+found.sequence+")",
+   href:"/hr/placements/jobs/"+encodeURIComponent(jobId)+"?tab=rounds&roundId="+encodeURIComponent(found.id),
+  }];
+ });
+}
