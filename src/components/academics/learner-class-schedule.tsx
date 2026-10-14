@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { istCalendarDay, istDayAgenda, istMonthGridKeys } from "./learner-ist-month-model";
 import {
   calendarDays,
   eventsForDay,
@@ -89,6 +90,7 @@ function timeRange(event: LearnerScheduleEvent) {
     {
       hour: "numeric",
       minute: "2-digit",
+      timeZone: "Asia/Kolkata",
     },
   );
 
@@ -216,6 +218,7 @@ export function LearnerClassSchedule({
 }) {
   const [view, setView] =
     useState<LearnerScheduleView>(initialView);
+  const [chosenDay, setChosenDay] = useState(() => istCalendarDay(initialAnchor ?? new Date()));
   const [anchor, setAnchor] = useState(
     () => initialAnchor ?? new Date(),
   );
@@ -250,6 +253,18 @@ export function LearnerClassSchedule({
   const selected = new Set(
     selectedDeliveryIds,
   );
+  const monthKeys=useMemo(()=>istMonthGridKeys(anchor.getFullYear(),anchor.getMonth()+1),[anchor]);
+  const agenda=useMemo(()=>istDayAgenda(filteredEvents,chosenDay),[filteredEvents,chosenDay]);
+  function movePeriod(direction:-1|1) {
+    const next=shiftCalendarAnchor(anchor,view,direction);
+    setAnchor(next);
+    if(view==="month") {
+      const year=next.getFullYear();
+      const month=String(next.getMonth()+1).padStart(2,"0");
+      setChosenDay(year+"-"+month+"-01");
+    }
+  }
+
 
   function toggleCourse(deliveryId: string) {
     setSelectedDeliveryIds((current) =>
@@ -288,6 +303,7 @@ export function LearnerClassSchedule({
                   weekday: "short",
                   hour: "numeric",
                   minute: "2-digit",
+                  timeZone: "Asia/Kolkata",
                 }).format(
                   new Date(nextEvent.startsAt),
                 )} · ${nextEvent.courseName || nextEvent.title}`
@@ -328,15 +344,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               aria-label="Previous period"
-              onClick={() =>
-                setAnchor((current) =>
-                  shiftCalendarAnchor(
-                    current,
-                    view,
-                    -1,
-                  ),
-                )
-              }
+              onClick={() => movePeriod(-1)}
             >
               ←
             </Button>
@@ -344,7 +352,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               onClick={() =>
-                setAnchor(new Date())
+                { const now=new Date();setAnchor(now);setChosenDay(istCalendarDay(now)); }
               }
             >
               Today
@@ -353,15 +361,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               aria-label="Next period"
-              onClick={() =>
-                setAnchor((current) =>
-                  shiftCalendarAnchor(
-                    current,
-                    view,
-                    1,
-                  ),
-                )
-              }
+              onClick={() => movePeriod(1)}
             >
               →
             </Button>
@@ -447,7 +447,7 @@ export function LearnerClassSchedule({
           </div>
         ) : null}
 
-        {filteredEvents.length === 0 ? (
+        {filteredEvents.length === 0 && view !== "month" ? (
           <div className="mt-5">
             <EmptyState
               title="No scheduled classes in this view"
@@ -456,7 +456,45 @@ export function LearnerClassSchedule({
           </div>
         ) : (
           <>
-            <div className="mt-5 hidden md:block">
+            {view === "month" ? (
+              <div className="mt-5 space-y-4" aria-label="Monthly class schedule">
+                <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-border bg-border"
+                  role="group" aria-label="42 day month grid">
+                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>(
+                    <span key={day} className="bg-surface p-1 text-center text-[10px] font-semibold text-muted-foreground sm:p-2 sm:text-xs">
+                      {day}
+                    </span>
+                  ))}
+                  {monthKeys.map(day=>{
+                    const dayItems=istDayAgenda(filteredEvents,day);
+                    const inside=day.slice(0,7)===
+                      anchor.getFullYear()+"-"+String(anchor.getMonth()+1).padStart(2,"0");
+                    const selected=chosenDay===day;
+                    return <button key={day} type="button"
+                      aria-label={day+", "+dayItems.length+" classes"}
+                      aria-pressed={selected}
+                      onClick={()=>setChosenDay(day)}
+                      className={"min-h-16 min-w-0 bg-surface p-1 text-left focus-visible:outline-2 focus-visible:outline-primary sm:min-h-24 sm:p-2 "+
+                        (selected?"ring-2 ring-inset ring-primary ":"")+
+                        (!inside?"text-muted-foreground opacity-60":"text-foreground")}>
+                      <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
+                      {dayItems.length ? <span className="mt-1 block break-words text-[10px] font-semibold text-primary-text sm:text-xs">
+                        {dayItems.length} {dayItems.length===1?"class":"classes"}
+                      </span> : null}
+                    </button>;
+                  })}
+                </div>
+                <section className="rounded-xl border border-border bg-surface-subtle p-3 sm:p-4" aria-label="Selected day agenda">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
+                  </h3>
+                  {agenda.length ? <div className="mt-3 grid gap-3 md:grid-cols-2">
+                    {agenda.map(event=><EventCard key={event.id} event={event} courseBasePath={courseBasePath}/>)}
+                  </div> : <p className="mt-2 text-sm text-muted-foreground">No classes on this day.</p>}
+                </section>
+              </div>
+            ) : null}
+            <div className={view==="month" ? "hidden" : "mt-5 hidden md:block"}>
               {view === "month" ? (
                 <>
                   <div className="grid grid-cols-7 border-b border-border text-center text-xs font-semibold text-muted-foreground">
@@ -580,7 +618,7 @@ export function LearnerClassSchedule({
               )}
             </div>
 
-            <div className="mt-5 space-y-4 md:hidden">
+            <div className={view==="month" ? "hidden" : "mt-5 space-y-4 md:hidden"}>
               {days
                 .map((day) => ({
                   day,

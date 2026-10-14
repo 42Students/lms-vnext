@@ -4,6 +4,7 @@ import {
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
 import { PageHeader } from "@/components/ui/page-header";
+import { learnerCourseListSignals } from "@/modules/courses/learner-course-overview-model";
 import {
   getLearnerCourseWorkspace,
   listLearnerCourseDeliveries,
@@ -30,7 +31,11 @@ export default async function LearnerCoursesPage() {
         ),
       ]);
 
+      const signals=learnerCourseListSignals(workspace.lessons,workspace.summary,
+        new Date(workspace.snapshotNowMs));
       return {
+        lastActivity:signals.lastActivity,
+        nextDue:signals.nextDue,
         course: {
           deliveryId: course.deliveryId,
           courseId: course.courseId,
@@ -52,7 +57,7 @@ export default async function LearnerCoursesPage() {
           (instructor) => instructor.name?.trim() || "Instructor",
         ),
         summary: {
-          overallPercent: workspace.summary.overallPercent,
+          overallPercent: signals.percentage,
           itemsCompleted: workspace.summary.itemsCompleted,
           itemsTotal: workspace.summary.itemsTotal,
         },
