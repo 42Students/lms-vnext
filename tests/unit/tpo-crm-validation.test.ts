@@ -39,6 +39,21 @@ describe("DB09 recruiter CRM input contracts", () => {
     })).toThrow();
   });
 
+  it("applies normalization before the strict email validator for create and edit", () => {
+    expect(createTpoLeadSchema.parse({
+      collegeId, name: "Contact", email: "  Person@Example.COM  ",
+    }).email).toBe("person@example.com");
+    expect(updateTpoLeadSchema.parse({
+      collegeId, email: "  HELLO@Example.com ",
+    }).email).toBe("hello@example.com");
+    expect(updateTpoLeadSchema.safeParse({
+      collegeId, email: "  not-an-email ",
+    }).success).toBe(false);
+    expect(createTpoLeadSchema.safeParse({
+      collegeId, name: "Contact", email: "x".repeat(151) + "@example.com",
+    }).success).toBe(false);
+  });
+
   it("preserves V161 recruiter lead source codes and human labels", () => {
     expect(createTpoLeadSchema.parse({
       collegeId, name: "Source A", email: "a@example.org",

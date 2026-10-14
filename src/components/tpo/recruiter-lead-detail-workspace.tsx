@@ -174,6 +174,10 @@ export function RecruiterLeadDetailWorkspace({
 
   async function saveEdit(event: React.FormEvent) {
     event.preventDefault();
+    if (!window.confirm(
+      "Save updated recruiter details? Contact identity changes may affect " +
+      "duplicate checks and outreach. The update will be recorded in the activity log.",
+    )) return;
     const ok = await mutate(base, "PATCH", {
       collegeId,
       name: edit.name,

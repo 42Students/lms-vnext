@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const id = z.string().uuid();
-const email = z.string().trim().toLowerCase().email().max(150);
+const email = z.string().trim().toLowerCase().pipe(z.email().max(150));
 const phone = z.string().trim()
   .min(7).max(30)
   .regex(/^\+?[0-9() .-]+$/, "Enter a phone number");
