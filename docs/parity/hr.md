@@ -538,3 +538,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / recruiter calendar CSV — PARTIAL:** Export the selected persisted calendar week/month/agenda view as a category-filtered, IST-timestamped CSV, capped at 200 and formula-neutralized. It calls the existing recruiter-scoped job/round calendar service; no student contacts, placement-cell private notes or fictional interview slots. Pure unit cases authored, not executed; browser download and PG acceptance remain.
+
+
+**2026-10-15 chat-10 round 4 / Today live hiring-drive operational cards — PARTIAL:** Today now shows up to three company+college-filtered, non-archived published drives with the earliest recorded application deadlines, safe deep links, and an honest no-live-drive state. No fictitious recruiter attribution or offers are inferred. Pure model/unit covers wrong company/college, archived, closed, sorting and limits; execution and browser proof pending.

@@ -10,6 +10,7 @@ import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/re
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
 import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
+import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
@@ -66,6 +67,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
+  const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -89,6 +91,24 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
+    <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-semibold text-foreground">Live hiring drives</h2>
+        <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
+          className="text-sm text-primary-text">See all live drives</Link>
+      </div>
+      {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {liveDrives.map(row=><Link key={row.job.id}
+          href={"/hr/placements/jobs/"+encodeURIComponent(row.job.id)}
+          className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
+          <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
+          </span>
+          <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
+        </Link>)}
+      </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
+    </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
