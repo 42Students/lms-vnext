@@ -11,8 +11,9 @@ import {reassignCollegeTeaching}
 const enabled=!!process.env.TEST_DATABASE_URL&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
-const own:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUid:"reassign-admin",platformStatus:"ACTIVE",systemRoles:[]},
-  membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
+const actorIds={user:randomUUID(),member:randomUUID(),role:randomUUID()};
+const own:RequestContext={user:{id:actorIds.user,identityUid:actorIds.user,platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:actorIds.member,collegeId:SEED_IDS.collegeA,
     organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]}};
 const foreign:RequestContext={...own,membership:{...own.membership!,
   collegeId:SEED_IDS.collegeB,id:SEED_IDS.facultyCollegeBMembership}};
@@ -28,6 +29,12 @@ const payload=()=>({expectedMembershipId:ids.firstMember,replacementMembershipId
 describe.skipIf(!enabled)("College Faculty reassign PostgreSQL fixtures",()=>{
   beforeAll(async()=>{
     if(!pool)throw Error("Disposable PostgreSQL required");
+    await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2::text,$3::text)",
+      [actorIds.user,actorIds.user,key]);
+    await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+      [actorIds.member,actorIds.user,SEED_IDS.collegeA]);
+    await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'COLLEGE_ADMIN')",
+      [actorIds.role,actorIds.member]);
     for(const [user,member,role] of [
       [ids.firstUser,ids.firstMember,ids.firstRole],[ids.nextUser,ids.nextMember,ids.nextRole],
     ]) {
@@ -74,6 +81,26 @@ describe.skipIf(!enabled)("College Faculty reassign PostgreSQL fixtures",()=>{
       .rejects.toBeInstanceOf(AuthorizationError);
     await expect(reassignCollegeTeaching(own,ids.oldAssignment,{...payload(),collegeId:SEED_IDS.collegeB}))
       .rejects.toBeDefined();
+    await pool!.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[ids.nextUser]);
+    await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
+      .rejects.toMatchObject({code:"TARGET_NOT_FOUND"});
+    await pool!.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[ids.nextUser]);
+    await pool!.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[actorIds.user]);
+    await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await pool!.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[actorIds.user]);
+    await pool!.query("UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",[actorIds.member]);
+    await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await pool!.query("UPDATE college_memberships SET status='ACTIVE' WHERE id=$1",[actorIds.member]);
+    await pool!.query("DELETE FROM membership_roles WHERE id=$1",[actorIds.role]);
+    await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await pool!.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'COLLEGE_ADMIN')",
+      [actorIds.role,actorIds.member]);
+    const untouched=await pool!.query("SELECT membership_id,ended_at FROM course_teaching_assignments WHERE delivery_id=$1",
+      [ids.delivery]);
+    expect(untouched.rows).toEqual([{membership_id:ids.firstMember,ended_at:null}]);
     await pool!.query("UPDATE course_teaching_assignments SET updated_at=updated_at + interval '1 millisecond' WHERE id=$1",
       [ids.oldAssignment]);
     await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
