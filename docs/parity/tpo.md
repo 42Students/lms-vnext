@@ -142,6 +142,8 @@ Filters/actions:
 - [ ] Company search/export match.
 - [ ] Detail deep link works.
 
+**W54 PARTIAL — TPO Lead details:** Existing single-create and editable lead forms remain canonical; the edit dialog now requires explicit confirmation, and the shared strict Zod email field trims/lowercases before validation for both create and edit. The migrated DB09 create/edit writers retain duplicate contact checks and an immutable CRM activity audit. Exact legacy duplicate-open overlay, executed browser validation and owner sign-off remain open.
+
 ### Overlays
 - Add Lead modal: Email/Phone, Name, Company;
 - duplicate-lead confirmation with Open action;
@@ -204,6 +206,8 @@ Legacy contract:
 - Drives;
 - Timeline.
 
+**W54 PARTIAL — Company directory create:** The Companies directory now links a confirmed Add company modal to a TPO-scoped same-origin POST. The existing canonical employer identity/college relationship transaction enforces case-insensitive name/domain reuse and conflicting-identity denial; each successful college link writes an actor activity event in the same transaction. Imported contacts, legacy Create Drive prefill, exact duplicate review, executed PG/browser verification remain open.
+
 - [ ] Company lookup is tenant-safe and case/identity stable.
 - [ ] Create Drive prefill matches.
 - [ ] Add Contact opens Leads add flow with company prefill.
@@ -263,6 +267,8 @@ Legacy table:
 
 ## Page: New Drive
 **Legacy:** `/tpo/drives/new`
+
+**W54 PARTIAL — Step 1 quick draft:** The TPO new-drive page links to /tpo/placements/new/draft, a lightweight create-draft first step using an active season, existing college company relationship, role title and description, employment/work mode, and optional explicit-IST deadline. Strict Zod, confirmation and signed-in TPO college scope guard an origin-checked POST. The existing job transaction creates one primary role and now records an immutable actor activity event; no publication occurs. Legacy multi-step wizard parity, schedule constraints, retries, runtime PG/browser acceptance and additional role/eligibility configuration are still open.
 
 - [ ] Company/recruiter source context matches.
 - [ ] Role/title/description/location/mode/category fields match.
@@ -464,6 +470,8 @@ Legacy columns:
 - Debar.
 
 - [ ] Add to Drive modal matches.
+
+**W54 PARTIAL — Students list bulk add:** The TPO Students roster now offers a current-page learner selection (up to 100 displayed learners), published ACTIVE-season internal drive selector and active role dropdown. Its confirmed POST reuses the established bulk-add service and strict 200-ID Zod contract, which checks exact college membership, academic eligibility, participation, deadlines and existing applications per learner and audits successful insertions. Per-learner results explain added/already-added/ineligible. Selections do not persist across roster page navigation; exact legacy bulk modal, multi-page selection, positive PG/browser verification remain open.
 - [ ] Nudge text + confirmation matches.
 - [ ] Prepared WhatsApp messages workflow matches.
 - [ ] Assign Prep modal/course selection matches.
