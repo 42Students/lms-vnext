@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { facultyRosterCsv, facultyRosterFileName } from "@/modules/courses/faculty-roster-export";
 
 export type FacultyCourseRosterLearner = {
   membershipId: string;
@@ -98,6 +99,22 @@ export function FacultyCourseRoster({
       Boolean(learner.email || learner.phoneE164),
   ).length;
 
+  function exportFiltered() {
+    // CSV contains exactly the active Section roster already authorized for
+    // this Faculty view; filtering does not widen the permission boundary.
+    const csv = facultyRosterCsv(filtered);
+    const url = URL.createObjectURL(new Blob(["\uFEFF", csv], {
+      type: "text/csv;charset=utf-8",
+    }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = facultyRosterFileName(sectionName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  }
+
   if (learners.length === 0) {
     return (
       <EmptyState
@@ -139,6 +156,16 @@ export function FacultyCourseRoster({
               {sectionName}
             </h2>
           </div>
+          <div className="flex w-full flex-wrap items-end gap-3 lg:w-auto">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={filtered.length === 0}
+            onClick={exportFiltered}
+            aria-label="Download roster CSV"
+          >
+            Download roster CSV
+          </Button>
           <label className="w-full max-w-md text-xs font-semibold text-body">
             Search students
             <Input
@@ -152,6 +179,7 @@ export function FacultyCourseRoster({
               aria-label="Search students"
             />
           </label>
+          </div>
         </div>
         {search.trim() ? (
           <p
