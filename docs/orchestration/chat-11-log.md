@@ -41,3 +41,12 @@
 - Converted CSV download anchors to Next Link on the two Mentor export pages.
 - Moved readiness metric descriptors outside JSX to match repository lint rules.
 - No behavior or scope changes; CI/tooling still unexecuted in this session.
+
+
+## E — Mentor latest-version review notifications (2026-10-14)
+- Replaced filtered-only historical SUBMITTED selection with latest registered
+  project submission version selection before creating REVIEW attention.
+- Pure model/units and disposable PostgreSQL project/mentor fixture authored,
+  with positive, foreign, wrong-role, disabled role-grant assertions.
+- Read-only: no isSameOriginRequest or mutation token required.
+- PARTIAL pending executed tools, browser and alert-producer regression proof.

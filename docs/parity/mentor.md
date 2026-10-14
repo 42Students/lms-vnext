@@ -585,3 +585,19 @@ isolated PostgreSQL success/wrong-role/foreign-scope fixture were authored.
 This is read-only: stale mutation token is not applicable. **PARTIAL:** tsc,
 eslint, unit/PG/browser acceptance, exact legacy risk semantics, historical
 activity/staleness and missing task assignee/workload data remain open.
+
+
+## 2026-10-14 chat-11 E — Mentor final-review notification latest-version safety (PARTIAL)
+
+The assigned-project Mentor attention and Notifications feed now selects the
+highest persisted final-delivery version for each current Mentor project before
+deciding whether a review is pending. A historic SUBMITTED row cannot create a
+phantom pending-review notification after a later approved, revised or draft
+version; only the latest SUBMITTED row with a real submittedAt is actionable.
+This corrects review-queue notifications without creating new external sends,
+exposing private learner contact information, or changing the existing read
+permission. A pure unordered-version model/unit suite and a disposable
+PostgreSQL unique-project fixture cover latest-status suppression, newly
+submitted version, foreign-college non-leakage, wrong role and disabled user.
+No mutating route is added; stale-token denial does not apply. **PARTIAL:**
+TypeScript/ESLint/unit/PG/browser and legacy notification parity remain open.
