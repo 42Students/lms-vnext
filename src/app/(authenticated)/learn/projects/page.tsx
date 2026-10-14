@@ -6,6 +6,7 @@ import {
   type ProjectParticipantListQuery,
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
+import { LearnerProjectMobileFilters } from "@/components/projects/learner-project-mobile-filters";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
@@ -42,7 +43,7 @@ export default async function LearnerProjectsPage({
   const status = one(params.status);
   const attention = one(params.attention);
   const query: ProjectParticipantListQuery = {
-    search: one(params.search)?.trim() || undefined,
+    search: one(params.search)?.trim().slice(0, 100) || undefined,
     status:
       status === "CURRENT" ||
       status === "PLANNED" ||
@@ -127,11 +128,14 @@ export default async function LearnerProjectsPage({
         description="Your active Project workspaces, team responsibilities and final delivery progress."
       />
 
-      <ProjectParticipantListControls
-        basePath="/learn/projects"
-        query={{ ...query, page }}
-        learner
-      />
+      <LearnerProjectMobileFilters query={{ ...query, page }} />
+      <div className="hidden sm:block">
+        <ProjectParticipantListControls
+          basePath="/learn/projects"
+          query={{ ...query, page }}
+          learner
+        />
+      </div>
 
       <ProjectList
         items={rows.map((row) => {
@@ -167,13 +171,15 @@ export default async function LearnerProjectsPage({
         emptyDescription={emptyState.description}
       />
 
-      <ProjectParticipantPagination
-        basePath="/learn/projects"
-        query={query}
-        page={page}
-        totalPages={totalPages}
-        total={total}
-      />
+      <div className="[&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:justify-center">
+        <ProjectParticipantPagination
+          basePath="/learn/projects"
+          query={query}
+          page={page}
+          totalPages={totalPages}
+          total={total}
+        />
+      </div>
 
       <p className="m-0 text-xs leading-5 text-muted-foreground">
         Legacy also exposes explicit workspace blocker attention. DB07 vNext does not yet persist that blocker field, so this page does not infer a false Blocked signal from unrelated task states.
