@@ -3,9 +3,11 @@
 import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-request";
 import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/modules/placements/learner-assessment-link-state-model";
+import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-assessment-external-launch-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
   from "@/modules/placements/learner-round-search-query-model";
 import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
@@ -84,6 +86,7 @@ export function LearnerCareerRoundsWorkspace({
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
   const [missingLinkOnly,setMissingLinkOnly]=useState(false);
+  const [confirmExternalTest,setConfirmExternalTest]=useState<string|null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
@@ -256,6 +259,10 @@ export function LearnerCareerRoundsWorkspace({
   }
   const employerTest = kind === "ASSESSMENT"
     ? externalLink(selected?.testUrl ?? null) : null;
+  const externalAssessment=employerTest && selected ? learnerAssessmentExternalLaunch({
+    href:employerTest,scheduledAt:selected.exception?.scheduledAt??selected.scheduledAt,
+    roundName:selected.roundName,
+  },nowMs):null;
   const selectedReminderId = selected && kind === "ASSESSMENT"
     ? learnerAssessmentReminderId(selected.applicationId, selected.roundId)
     : null;
@@ -511,11 +518,11 @@ export function LearnerCareerRoundsWorkspace({
               </section>
             ) : null}
             <div className="flex flex-wrap gap-3">
-              {employerTest ? (
-                <a href={employerTest} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              {externalAssessment ? (
+                <button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
                   Open employer assessment ↗
-                </a>
+                </button>
               ) : null}
               {meeting ? (
                 <a href={meeting} target="_blank" rel="noopener noreferrer"
@@ -582,6 +589,19 @@ export function LearnerCareerRoundsWorkspace({
           </div>
         ) : null}
       </Drawer>
+      <Dialog open={confirmExternalTest!==null} onOpenChange={open=>{if(!open)setConfirmExternalTest(null);}}
+        title="Open employer assessment?"
+        description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
+        footer={<>
+          <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
+          {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
+            onClick={()=>setConfirmExternalTest(null)}
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            Open external assessment ↗
+          </a>:null}
+        </>}>
+        <p className="text-sm text-body">{externalAssessment?.notice??"Confirm the provider instructions before proceeding."}</p>
+      </Dialog>
     </div>
   );
 }

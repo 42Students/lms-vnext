@@ -1116,3 +1116,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L15-008 PARTIAL:** Assessment rounds can isolate those without an actionable web employer test URL, including dated rounds lacking a link. Filter uses existing own scoped rounds; no submission status is inferred. Pure model and own-fixture PostgreSQL tests authored; execution and mobile/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L15-013 PARTIAL:** Clicking an authorized employer assessment URL now opens a confirmation dialog before any external navigation. It explains that leaving LMS is not assessment submission, and a time-critical note comes from the saved round start with an explicit no-official-deadline caveat. HTTP(S) URLs only; no external sending. Pure fixed-clock model and own-fixture PostgreSQL denial tests authored; executed browser focus/window, timezone and producer checks pending.
