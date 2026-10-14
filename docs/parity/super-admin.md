@@ -626,3 +626,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 Chat 6 / template overview detail missing-ID handling — PARTIAL:** `/admin/projects/templates/[templateId]` validates UUID and translates PROJECT_TEMPLATE_NOT_FOUND to a route 404 (preserving other errors), for global and scoped template reads. Regression unit and in-test persisted PG fixture authored, not executed; full overview editing and browser parity remain open.
+
+
+**2026-10-15 Chat 6 / audit filter route validation — PARTIAL:** `/admin/audit` now applies strict Zod URL validation, handles blank inputs safely, enforces paired cursor and correct IST date ranges, rejects arrays/unrecognized params without a 500, and keeps an explicit Super Admin-only entry fence. Authored pure model and disposable PG audit-scope tests (not executed). Exact legacy filters, browser/mobile and high-volume acceptance remain open.
