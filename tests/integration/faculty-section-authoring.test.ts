@@ -303,6 +303,53 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
     kind:"quiz",assessmentId:created.id,deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
    })).rejects.toBeDefined();
  });
+ it("edits published and closed quiz metadata without mutating its immutable question bank",async()=>{
+  const {delivery,lesson}=await fixture();
+  const questions=[{type:"SINGLE_CHOICE" as const,prompt:"Immutable prompt?",points:5,sequence:0,
+   options:[{text:"Yes",correct:true,sequence:0},{text:"No",correct:false,sequence:1}]}];
+  const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"CREATE",lessonId:lesson.id,sequence:7,title:"Metadata Quiz "+tag,
+   description:"Before publication",dueAt:null,maxAttempts:2,questions,confirmed:true,
+  });
+  const published=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"PUBLISH",quizId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),confirmed:true,
+  });
+  await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
+   title:"Illegal bank rewrite",description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
+  })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+  const metadata=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
+   title:"Published metadata "+tag,description:"Safe summary",dueAt:null,maxAttempts:2,confirmed:true,
+  });
+  expect(metadata.status).toBe("PUBLISHED");
+  expect(metadata.title).toBe("Published metadata "+tag);
+  await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
+   title:"Stale metadata",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+  })).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
+  const count=await pool.query<{n:string}>(`select count(*)::text as n from quiz_questions where quiz_id=$1`,[created.id]);
+  expect(count.rows[0]?.n).toBe("1");
+  const optionCount=await pool.query<{n:string}>(`select count(*)::text as n from quiz_options
+   where question_id in(select id from quiz_questions where quiz_id=$1)`,[created.id]);
+  expect(optionCount.rows[0]?.n).toBe("2");
+  const closed=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"CLOSE",quizId:created.id,expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
+  });
+  const renamed=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   action:"EDIT",quizId:created.id,expectedUpdatedAt:closed.updatedAt.toISOString(),
+   title:"Closed metadata "+tag,description:"Preserved learner history",dueAt:null,maxAttempts:2,confirmed:true,
+  });
+  expect(renamed.status).toBe("CLOSED");
+  expect(renamed.title).toBe("Closed metadata "+tag);
+  await expect(commandFacultyQuiz(learner,{deliveryId:delivery.id},{
+   action:"EDIT",quizId:created.id,expectedUpdatedAt:renamed.updatedAt.toISOString(),
+   title:"Foreign edit",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+  })).rejects.toBeDefined();
+  const audit=await pool.query<{n:string}>(`select count(*)::text as n from activity_events
+   where subject_id=$1::text and event_type='courses.quiz.updated'`,[created.id]);
+  expect(audit.rows[0]?.n).toBe("2");
+ });
  it("rejects SQL microsecond-stale Quiz question replacement with one audited edit",async()=>{
    const {delivery,lesson}=await fixture();
    const questions=[{type:"SINGLE_CHOICE" as const,prompt:"FIFO?",points:5,sequence:0,
