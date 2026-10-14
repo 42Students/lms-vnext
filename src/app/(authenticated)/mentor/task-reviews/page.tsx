@@ -13,6 +13,8 @@ type Params = {
   search?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
+  priority?: string | string[];
+  order?: string | string[];
 };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -27,6 +29,8 @@ export default async function MentorTaskReviewsPage({
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
+    priority: first(raw.priority) ?? undefined,
+    order: first(raw.order) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid task review filters</h1>
@@ -66,6 +70,20 @@ export default async function MentorTaskReviewsPage({
           <select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Priority
+          <select name="priority" defaultValue={data.query.priority}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
+              <option key={priority} value={priority}>{priority}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Review order
+          <select name="order" defaultValue={data.query.order}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="NEWEST">Newest first</option>
+            <option value="OLDEST">Oldest first</option>
           </select>
         </label>
         <button type="submit"
