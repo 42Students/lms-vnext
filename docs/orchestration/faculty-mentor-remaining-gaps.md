@@ -205,3 +205,11 @@ write to staged faculty profile documents. A role-scoped read-only status
 page is provided, with loading/error states and exact blocker. Follow-up
 requires DB migration, privacy policy, optimistic version and transaction
 audit specifications. No fake create/edit action is enabled. PARTIAL.
+
+## D — Mentor project review overview (2026-10-14)
+
+Read-only exact assigned Mentor project review/feedback completeness view over
+migrated project_submissions and project_submission_reviews, with no raw
+feedback or private learner data, 20-version pagination and explicit gaps.
+No invented history, no new write route. PARTIAL pending executed PostgreSQL,
+browser and full legacy project overview acceptance.

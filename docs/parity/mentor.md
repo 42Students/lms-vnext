@@ -437,3 +437,19 @@ The reviewed-task history links to this exact-project page. Full comments,
 replies, attachments, notification producers and parity remain blocked until
 the DB owner promotes an authoritative schema and the product owner approves
 visibility and edit/delete rules. This does **not** certify Board parity.
+
+## Mentor project delivery review completeness (2026-10-14)
+
+PARTIAL: `/mentor/projects/[projectId]/review-overview` reads registered
+`project_submissions` and optional `project_submission_reviews` for the
+exact project currently assigned to the active Mentor. It requires central
+projects.read, persisted same-college project access and enabled Projects.
+Twenty delivery versions per page show actual DRAFT/SUBMITTED/APPROVED/
+CHANGES_REQUESTED state, review timestamp, and only the presence/absence of
+written feedback. The page distinguishes no delivery, submitted without
+review, approved without feedback and changes requested with feedback.
+Raw feedback text, private URLs and reviewer identity are not shown. Counts
+are explicitly page-local, not invented lifetime metrics. Zod, loading/error,
+honest empty states and existing authorized Delivery workspace navigation are
+provided. Former-assignment history, missing producers, full privacy/browser
+verification and exact legacy parity remain open.
