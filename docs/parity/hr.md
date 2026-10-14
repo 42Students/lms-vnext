@@ -481,3 +481,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Company Team search — PARTIAL:** Company & Team now has college-preserving GET name/designation/email search applied solely to exact company+relationship authorized active team returned by existing service, with explicit matching count and pure model/unit test. No new disclosure, company mutation or external messaging. Remaining DB paging at scale and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR Calendar event-category filters — PARTIAL:** Week/month/agenda calendar now filters presentation across authorized Rounds, Application deadlines, Results due or All, preserving category in prior/today/next and view URLs; no fabricated interview slots and no new candidate disclosure. Pure model/unit tests authored; PG auth continues through existing listRecruiterCalendarEvents and remains to be executed. Browser viewport validation open.
