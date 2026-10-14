@@ -9,6 +9,8 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   attendancePolicies,
   attendanceRecords,
@@ -588,6 +590,26 @@ export async function markFacultyAttendance(
         updatedAt: now,
       });
     }
+
+    // A correction may remove the last absence row; retain the history
+    // independently of the current absence-only record representation.
+    // Counts and scope are safe audit metadata; omit private learner identities.
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_ATTENDANCE_MARKED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "attendance_session",
+      subjectId: scheduleEventId,
+      subjectLabel: event.id,
+      summary: existingSession ? "Class attendance corrected" : "Class attendance marked",
+      metadata: {
+        deliveryId: delivery.deliveryId,
+        markedAbsent: input.absentMembershipIds.length,
+        markedPresent: input.presentMembershipIds.length,
+        correction: Boolean(existingSession),
+      },
+      groupKey: `attendance-session:${scheduleEventId}`,
+    });
 
     return {
       scheduleEventId,
