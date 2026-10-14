@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 round-5 inline Board task acceptance criteria (PARTIAL):** Learner task cards display authenticated authored acceptance criteria in an expandable plain-text disclosure beside task actions, without changing Mentor authoring behavior. Unit model regression authored; PostgreSQL/browser acceptance pending.
+
 **2026-10-15 chat-7 round-5 Board acceptance-criteria search (PARTIAL):** Project Board searches authorized task titles, descriptions **and persisted acceptance criteria**, allowing learners to locate tasks by their definition of done while still applying sprint/priority/status/release filters. No new data retrieval is introduced. Pure model regression authored; PostgreSQL/browser acceptance open.
 
 **2026-10-15 chat-7 round-4 Project Board priority drill-ins (PARTIAL):** The Board displays interactive Low/Medium/High/Critical task counts sourced only from the authorized persisted workspace, with status, sprint, release and search carried through on selection. Unknown priorities are not counted and this introduces no write or authorization bypass. Pure model tests authored; DB/browser acceptance outstanding.
