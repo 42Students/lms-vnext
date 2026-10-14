@@ -45,3 +45,9 @@ export function assignmentFieldsChanged(
   if(current.maxPoints!==next.maxPoints)changed.push("maxPoints");
   return changed;
 }
+
+/** SQL now() is microsecond-precise, but JS Date snapshots use milliseconds. */
+export function facultyAssignmentVersionMatches(current:Date,expected:string){
+ const given=new Date(expected);
+ return Number.isFinite(given.getTime())&&current.getTime()===given.getTime();
+}
