@@ -445,3 +445,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter shared-applicant CSV — PARTIAL:** Added GET export from exact recruiter-owned job, capped at 200 rows through per-page shortlist-and-active-user-scoped existing reads, formula-neutralized quoted CSV, IST submission time, explicit omitted count, and all contact fields masked (never exported for recruiters). No new permission or mutation. Pure unit and in-test isolated PG own/foreign-company/wrong-role fixtures authored but not run. Remaining real shortlisted applicant positive fixture, concurrent revocation snapshot behavior, browser file acceptance.
+
+
+**2026-10-15 chat-10 / recruiter hiring activity feed — PARTIAL:** New read-only /hr/activity filters persisted PLACEMENTS job-published/closed audit events by exact company+college-owned job IDs, replacing raw audit summaries with fixed non-sensitive event labels and IST timestamps. No applicant contacts, new sends or table changes. Pure unit and disposable PG own/foreign/wrong-role tests authored but unexecuted. Remaining notification unread/read, message threads, browser acceptance.

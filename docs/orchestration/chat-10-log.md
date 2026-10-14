@@ -46,3 +46,5 @@
 - 2026-10-14 — HR Calendar mobile cards PARTIAL: narrow-screen day group layout for rounds/deadlines/results, unit/PG tests extended. Offers paging total label fixed. Execution pending.
 
 - 2026-10-15 — HR applicant CSV PARTIAL: existing grant-scoped applicant pages, formula-neutralized capped CSV, contact always masked; unit+PG authored, not executed.
+
+- 2026-10-15 — HR hiring activity PARTIAL: employer-scoped publish/close timeline, no applicant data. Unit+PG fixtures authored; gates pending.

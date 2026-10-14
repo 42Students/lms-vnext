@@ -1,0 +1,17 @@
+import {z} from "zod";
+export const hrActivityQuerySchema=z.strictObject({
+  collegeId:z.string().uuid().optional(),
+  limit:z.coerce.number().int().min(1).max(100).default(40),
+});
+export const HR_JOB_EVENT_TYPES=["placements.job.published","placements.job.closed"] as const;
+export type HrJobEvent={id:string;subjectId:string;eventType:string;occurredAt:Date};
+export function projectHrJobActivity(
+ events:readonly HrJobEvent[],jobs:readonly {id:string;title:string}[]
+) {
+ const names=new Map(jobs.map(job=>[job.id,job.title]));
+ return events.filter(e=>names.has(e.subjectId)&&
+  HR_JOB_EVENT_TYPES.some(type=>type===e.eventType)).map(e=>({
+  id:e.id,jobId:e.subjectId,title:names.get(e.subjectId)!,
+  status:e.eventType===HR_JOB_EVENT_TYPES[0]?"Published":"Closed",occurredAt:e.occurredAt,
+ })).sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()||b.id.localeCompare(a.id));
+}
