@@ -34,6 +34,7 @@ export function learnerDashboardPartialState(
     attentionOverflow:availability.rounds
       ? Math.max(0,snapshot.fullAttentionCount-snapshot.needsAttention.length):null,
     weekEvents:availability.rounds?snapshot.weekEvents:null,
+    weekDays:availability.rounds?snapshot.weekDays:null,
     fullWeekEventCount:availability.rounds?snapshot.fullWeekEventCount:null,
     nextAction:availability.jobs&&availability.journey&&availability.rounds&&availability.offers
       ? snapshot.nextAction:null,

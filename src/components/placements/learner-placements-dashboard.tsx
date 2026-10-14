@@ -216,22 +216,25 @@ export function LearnerPlacementsDashboard({
           </div>
           {display.weekEvents===null ? (
             <p role="status" className="text-sm text-body">Schedule data unavailable; please retry.</p>
-          ) : display.weekEvents.length ? (
-            <ul className="divide-y divide-border">
-              {display.weekEvents.map((event) => (
-                <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-                    <p className="text-sm font-semibold text-foreground">{event.companyName} · {event.roundName}</p>
-                    <p className="mt-1 text-xs text-body">{formatWhen(event.when)} · {event.roleTitle}</p>
-                  </Link>
+          ) : display.weekDays ? (
+            <ol className="divide-y divide-border">
+              {display.weekDays.map(day=>(
+                <li key={day.date} className="py-3 first:pt-0 last:pb-0">
+                  <p className="text-xs font-semibold text-foreground">{day.label} · {day.total} {day.total===1?"event":"events"}</p>
+                  {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
+                    <ul className="mt-2 space-y-2">{day.events.map(event=>(
+                      <li key={event.applicationId+":"+event.roundId}>
+                        <Link href={event.href} className="block min-h-11 rounded-md text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                          {event.companyName} · {event.roundName}
+                          <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
+                        </Link>
+                      </li>
+                    ))}</ul>}
+                  {day.total>day.events.length?<p className="mt-1 text-xs text-muted-foreground">{day.total-day.events.length} more that day · open full calendar</p>:null}
                 </li>
               ))}
-            </ul>
-          ) : (
-            <p className="text-sm leading-6 text-body">
-              No scheduled placement events in the coming week.
-            </p>
-          )}
+            </ol>
+          ) : null}
           {display.fullWeekEventCount !== null && display.weekEvents !== null && display.fullWeekEventCount > display.weekEvents.length ? (
             <p className="text-xs text-muted-foreground">
               And {display.fullWeekEventCount - display.weekEvents.length} more scheduled events.

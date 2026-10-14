@@ -1,5 +1,6 @@
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
 import {learnerExpiringOffer} from "./learner-dashboard-offer-priority-model";
+import {learnerDashboardIstWeekDays} from "./learner-dashboard-ist-week-model";
 
 /** Use only learner-scoped source rows; never infer employer outcomes or
  * "confirmed" attendance from a scheduled round. Dates are UTC instants. */
@@ -90,7 +91,8 @@ export function learnerPlacementDashboard(
     a.applicationId.localeCompare(b.applicationId) ||
     a.roundId.localeCompare(b.roundId));
 
-  const weekEvents = events.filter((event) => event.when.getTime() <= weekEndMs);
+  const weekDays=learnerDashboardIstWeekDays(events,now);
+  const weekEvents=weekDays.flatMap(day=>day.events);
   // The timeline is already in effective-schedule order; grouping by round
   // kind here hid earlier interviews behind later assessments.
   const attentionEvents=weekEvents.filter(event=>
@@ -155,6 +157,7 @@ export function learnerPlacementDashboard(
     needsAttention:attentionEvents.slice(0,3),
     fullAttentionCount:attentionEvents.length,
     weekEvents: weekEvents.slice(0, 7),
+    weekDays: weekDays.map(day=>({...day,events:day.events.slice(0,2)})),
     fullWeekEventCount: weekEvents.length,
   };
 }
