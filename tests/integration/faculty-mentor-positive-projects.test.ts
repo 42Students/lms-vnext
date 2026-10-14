@@ -16,6 +16,12 @@ import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-serv
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { recordActivityEvent } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import {
+  deliverInAppNotification, markOwnNotificationRead,
+} from "@/modules/activity/notification-service";
+import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Requires disposable PostgreSQL TEST_DATABASE_URL (never production DATABASE_URL)");
@@ -129,6 +135,34 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
     await expect(getMentorTeamHistory(learner,{
       projectId:project.id,view:"ALL",page:1,
     })).rejects.toBeDefined();
+  });
+
+  it("delivers and pages an owned Mentor notification from a test-created event",async()=>{
+    const {project}=await fixture();
+    const event=await recordActivityEvent(mentor,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_SUBMITTED,
+      collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
+      subjectType:"project",subjectId:project.id,
+      summary:"Chat4 Mentor inbox positive fixture",
+      metadata:{projectId:project.id},
+      groupKey:"project:"+project.id+":inbox",
+      dedupeKey:"chat4-positive-mentor-inbox:"+project.id,
+    });
+    await deliverInAppNotification(event.id,[SEED_IDS.facultyUser],{
+      title:"Chat4 Mentor Inbox Proof",body:"A persisted own-recipient test event.",
+      actionHref:"/mentor/projects/"+project.id,
+    });
+    const inbox=await getMentorPersonalInbox(mentor,{view:"unread"});
+    expect(inbox.cursor.invalid).toBe(false);
+    const message=inbox.page.items.find(row=>
+      row.notification.title==="Chat4 Mentor Inbox Proof");
+    expect(message?.notification).toMatchObject({title:"Chat4 Mentor Inbox Proof"});
+    expect(inbox.unreadCount).toBeGreaterThanOrEqual(1);
+    if (!message) throw new Error("Missing seeded Mentor message");
+    await markOwnNotificationRead(mentor,message.notification.id);
+    const unread=await getMentorPersonalInbox(mentor,{view:"unread"});
+    expect(unread.page.items.some(row=>row.notification.id===message.notification.id)).toBe(false);
+    await expect(getMentorPersonalInbox(learner,{})).rejects.toBeDefined();
   });
 
   it("reviews a real task, persists one audit event, and exposes reviewed history",async()=>{
