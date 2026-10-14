@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -19,14 +20,19 @@ function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+const searchSchema = z.string().trim().max(100);
+const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
+const attentionSchema = z.literal("LEARNER_ACTION");
+
 function parsePageSize(value: string | undefined) {
-  const parsed = Number(value);
-  return parsed === 50 || parsed === 100 ? parsed : 25;
+  const parsed = z.coerce.number().int().safeParse(value);
+  return parsed.success && (parsed.data === 50 || parsed.data === 100)
+    ? parsed.data : 25;
 }
 
 function parsePage(value: string | undefined) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
+  const parsed = z.coerce.number().int().min(1).max(100000).safeParse(value);
+  return parsed.success ? parsed.data : 1;
 }
 
 export default async function LearnerProjectsPage({
@@ -43,16 +49,9 @@ export default async function LearnerProjectsPage({
   const status = one(params.status);
   const attention = one(params.attention);
   const query: ProjectParticipantListQuery = {
-    search: one(params.search)?.trim().slice(0, 100) || undefined,
-    status:
-      status === "CURRENT" ||
-      status === "PLANNED" ||
-      status === "ACTIVE" ||
-      status === "COMPLETED" ||
-      status === "ARCHIVED"
-        ? status
-        : undefined,
-    attention: attention === "LEARNER_ACTION" ? attention : undefined,
+    search: searchSchema.safeParse(one(params.search)).data || undefined,
+    status: statusSchema.safeParse(status).data,
+    attention: attentionSchema.safeParse(attention).data,
     page: parsePage(one(params.page)),
     pageSize: parsePageSize(one(params.pageSize)),
   };
