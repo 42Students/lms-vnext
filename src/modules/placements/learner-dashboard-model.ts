@@ -44,8 +44,6 @@ export type PlacementDashboardEvent = {
   href: string;
 };
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-
 export function learnerPlacementDashboard(
   input: {
     jobs: readonly PlacementDashboardJob[];
@@ -56,7 +54,6 @@ export function learnerPlacementDashboard(
   now: Date = new Date(),
 ) {
   const nowMs = now.getTime();
-  const weekEndMs = nowMs + WEEK_MS;
   const openJobIds = new Set(
     input.jobs.filter((row) => !row.deadlinePassed).map((row) => row.jobId),
   );
