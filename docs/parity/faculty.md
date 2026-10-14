@@ -1340,3 +1340,6 @@ PostgreSQL and browser/mobile reschedule acceptance. DONE evidence is preserved.
 
 ## 2026-10-15 Faculty route boundary — PARTIAL
 Added a shared active-Faculty plus central `courses.read` predicate and an authenticated `/teacher` layout redirecting other roles, disabled users, and inactive memberships to `/dashboard`. Unit fixtures cover granted/denied actors. This is a source-authored boundary; browser/PG run and independent acceptance remain outstanding. No DONE promotion.
+
+## 2026-10-15 Legacy /teach role parity — PARTIAL
+The legacy `/teach` subtree now uses the exact `/teacher` active Faculty and central college-scoped read predicate, so disabled members cannot keep access merely through a cached FACULTY role. Shared unit fixtures cover the predicate. Runtime browser role redirects and persisted membership revocation are pending independent acceptance; not DONE.
