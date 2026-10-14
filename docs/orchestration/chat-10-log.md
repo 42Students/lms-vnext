@@ -24,3 +24,5 @@
 - 2026-10-14 — HOTFIX: exact employer filter relocated from TPO grant listing (incorrect) to recruiter-owned jobs SQL. Added regression test. Must gate before merge.
 
 - 2026-10-14 — Embedded Round Results PARTIAL: safe same-job round/outcome URL filters, shortlist-only read cards, unit + PG fixtures authored, not executed.
+
+- 2026-10-14 — Today results due PARTIAL: company/college-authorized upcoming result deadlines on Today, no external notifications; pure/unit + isolated PG tests authored, unexecuted.

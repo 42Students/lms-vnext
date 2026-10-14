@@ -412,3 +412,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Embedded HR round results table — PARTIAL:** Rounds tab now includes Results from table selector and validated outcome filtering using the same recruiter-grant-protected, SHORTLISTED candidate projection as the standalone view; stages distinguish STAGED from APPLIED with no private notes. Responsive cards and explicit zero/empty states. Pure model/unit and isolated PG success/foreign company/college/wrong-role tests authored, not executed. Remaining legacy bulk result workflow, interviewer slot UI, stale-result concurrency, browser acceptance.
+
+
+**2026-10-14 Chat 10 / Today result deadline task cards — PARTIAL:** Today now includes this-week results-due count and IST links for persisted employer-owned rounds, filtered again to the selected college job allowlist; no candidate identities/external notifications. Pure projection unit and in-test PG foreign-company/college/wrong-role fixtures authored, unexecuted. Remaining legacy Today task taxonomy, actual requests and waiting states, stale-last-success, browser/mobile acceptance.
