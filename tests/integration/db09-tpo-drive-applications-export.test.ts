@@ -56,10 +56,17 @@ describe.skipIf(!enabled)("TPO scoped application export PostgreSQL",()=>{
  afterAll(async()=>{await cleanup();if(pool){for(const id of roleIds)await pool.query("DELETE FROM membership_roles WHERE id=$1",[id]);
   await pool.end();}await closeDatabaseConnection();});
  it("includes persisted scoped applications, neutralizes formula and denies foreign/wrong role",async()=>{
+  if(!pool)throw Error("PG required");
   const jobId=await fixture();
   const report=await getTpoDriveApplicationsExport(tpo,{jobId});
   expect(report.rows.find(row=>row.applicationId===ids.application)?.status).toBe("SUBMITTED");
   expect(report.csv).toContain("'=FORMULA(1)");
+  expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"PENDING",search:"FORMULA"})).rows).toHaveLength(1);
+  expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"REJECTED"})).rows).toHaveLength(0);
+  expect((await getTpoDriveApplicationsExport(tpo,{jobId,search:"%"})).rows).toHaveLength(0);
+  await pool.query("UPDATE placement_applications SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",[ids.application]);
+  expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"PENDING"})).rows).toHaveLength(0);
+  expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"WITHDRAWN"})).rows).toHaveLength(1);
   const foreign:RequestContext={...tpo,membership:{...tpo.membership!,
    id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
   await expect(getTpoDriveApplicationsExport(foreign,{jobId}))

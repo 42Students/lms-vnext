@@ -1,7 +1,17 @@
 import {describe,expect,it} from "vitest";
 import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
- TPO_DRIVE_APPLICATION_EXPORT_LIMIT} from "@/modules/placements/tpo-drive-applications-export-model";
+ TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "@/modules/placements/tpo-drive-applications-export-model";
 describe("TPO applicant CSV cap and injection safety",()=>{
+ it("validates filters, escapes SQL wildcard characters and displays IST dates",()=>{
+  const id="550e8400-e29b-41d4-a716-446655440000";
+  expect(tpoDriveApplicationsExportQuerySchema.parse({jobId:id})).toMatchObject({stage:"ALL",search:""});
+  expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,stage:"SELECTED"}).success).toBe(false);
+  expect(tpoApplicantExportSearchPattern("50%_\\")).toBe("%50\\%\\_\\\\%");
+  const csv=projectTpoDriveApplicationsExport([{applicationId:"a",studentName:"Candidate",roleTitle:"Role",
+   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",submittedAt:"2026-10-14T20:00:00Z"}],"Drive").csv;
+  expect(csv).toContain("Submitted (IST)");
+  expect(csv).toContain("15/10/2026");
+ });
  it("neutralizes malicious student and role spreadsheet prefixes",()=>{
   const report=projectTpoDriveApplicationsExport([{
    applicationId:"a",studentName:"=HYPERLINK(1)",roleTitle:"+ROLE",
