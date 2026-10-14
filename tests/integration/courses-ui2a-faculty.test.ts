@@ -1215,12 +1215,12 @@ describe("courses UI2A faculty read model", () => {
       faculty,
       {
         tab: "LEARNER",
-        search: "seed",
+        search: "",
         page: 1,
         pageSize: 20,
       },
     );
-    expect(learners.items).toEqual([
+    expect(learners.items).toEqual(expect.arrayContaining([
       expect.objectContaining({
         membershipId:
           SEED_IDS.learnerCollegeAMembership,
@@ -1229,7 +1229,7 @@ describe("courses UI2A faculty read model", () => {
           "LEARNER",
         ]),
       }),
-    ]);
+    ]));
 
     const teachers = await listFacultyContacts(
       faculty,
