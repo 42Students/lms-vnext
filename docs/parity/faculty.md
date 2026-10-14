@@ -632,3 +632,17 @@ delete events lack an actor-role snapshot and therefore show the neutral
 label **Discussion deletion recorded**, not an invented Faculty moderator.
 Historic actions before the event producer existed, full moderation analytics,
 browser and DB proof remain OPEN.
+
+## Faculty current-Section Reports hub (2026-10-14)
+
+PARTIAL: `/teacher/courses/[deliveryId]/reports` reuses the canonical exact
+teaching-Section assessment-health, Faculty assessment overview and attendance
+workspace readers. It displays actual registered total/published Quiz and
+Assignment counts, scheduled/marked class sessions, and up to five published
+assessment report summaries per page. Assignment/Quiz detailed reports, the
+published-gradebook reader and attendance workspace are linked directly.
+Unknown, unmarked or private grades are never shown as zero or as final
+weighted results. Strict Zod delivery/type/page filters, mobile cards,
+loading/error/empty recovery and current Faculty college/Section scope are
+present. Complete legacy reports/export, executed DB/browser acceptance and
+weighted-grade semantics remain OPEN.
