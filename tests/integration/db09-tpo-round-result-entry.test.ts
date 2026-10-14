@@ -78,6 +78,7 @@ describe.skipIf(!enabled)("TPO results entry PostgreSQL",()=>{
    result:{applicationId:ids.app,outcome:"PASS",internalComment:"Candidate passed interview"}};
   await expect(confirmTpoRoundResult(foreign,q.roundId,body))
    .rejects.toMatchObject({code:"PLACEMENT_ROUND_NOT_FOUND"});
+  await expect(confirmTpoRoundResult(wrong,q.roundId,body)).rejects.toBeInstanceOf(AuthorizationError);
   const saved=await confirmTpoRoundResult(tpo,q.roundId,body);
   expect(saved.status).toBe("STAGED");
   await expect(confirmTpoRoundResult(tpo,q.roundId,body))
@@ -85,5 +86,10 @@ describe.skipIf(!enabled)("TPO results entry PostgreSQL",()=>{
   const audit=await pool.query<{n:number}>(
    "SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_RESULT_STAGED'",[saved.id]);
   expect(audit.rows[0]?.n).toBeGreaterThanOrEqual(1);
+  await pool.query("UPDATE placement_jobs SET status='CLOSED',closed_at=now() WHERE id=$1",[q.jobId]);
+  const closed=await getTpoRoundResultTable(tpo,q);
+  expect(closed.rows.every(row=>!row.editable)).toBe(true);
+  await expect(confirmTpoRoundResult(tpo,q.roundId,{...body,expectedCurrentResultId:saved.id}))
+   .rejects.toMatchObject({code:"PLACEMENT_JOB_READ_ONLY"});
  });
 });

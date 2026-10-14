@@ -7,12 +7,12 @@ export type RoundResultEntry={
  applicationStatus:string;screeningStatus:string|null;
  resultId:string|null;resultStatus:string|null;outcome:string|null;
 };
-export function projectTpoRoundResultTable(rows:readonly RoundResultEntry[],round:{kind:string;status:string}){
+export function projectTpoRoundResultTable(rows:readonly RoundResultEntry[],round:{kind:string;status:string;jobStatus:string}){
  const eligible=rows.filter(row=>row.applicationStatus==="SUBMITTED"&&
    row.screeningStatus==="SHORTLISTED");
  return {
   rows:eligible.map(row=>({...row,
-   editable:round.kind!=="TALK"&&(round.status==="SCHEDULED"||round.status==="COMPLETED")&&
+   editable:round.jobStatus==="PUBLISHED"&&round.kind!=="TALK"&&(round.status==="SCHEDULED"||round.status==="COMPLETED")&&
      row.resultStatus!=="APPLIED"})),
   counts:{eligible:eligible.length,
    staged:eligible.filter(row=>row.resultStatus==="STAGED").length,
