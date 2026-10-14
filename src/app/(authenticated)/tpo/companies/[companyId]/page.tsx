@@ -67,6 +67,7 @@ export default async function TpoCompanyDetailPage({
     contactsAvailable,
     activitiesAvailable,
     relationship,
+    hiringPulse,
   } = detail;
 
   return (
@@ -180,6 +181,30 @@ export default async function TpoCompanyDetailPage({
             </p>
           </div>
         ))}
+      </section>
+
+      <section aria-label="College employer hiring pulse" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Employer hiring pulse</h2>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">
+          Current college-linked drives and stored offer versions. Season counts reflect drives,
+          not confirmed hires. A later activity timestamp is unavailable when no event exists.
+        </p>
+        <dl className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          {[
+            ["Currently published drives", String(hiringPulse.activeDrives)],
+            ["Seasons with recorded drives", String(hiringPulse.seasonsWithDrives)],
+            ["Distinct learners with accepted offers", String(hiringPulse.distinctAcceptedLearners)],
+            ["Distinct confirmed joined learners", String(hiringPulse.distinctConfirmedJoinedLearners)],
+            ["Latest recorded event", hiringPulse.latestRecordedEventIso
+              ? dateLabel(new Date(hiringPulse.latestRecordedEventIso)) + " IST"
+              : "Not recorded"],
+          ].map(([name, value]) => (
+            <div key={name} className="rounded-lg border border-border p-3">
+              <dt className="text-xs font-semibold text-muted-foreground">{name}</dt>
+              <dd className="mt-2 break-words text-sm font-semibold tabular-nums text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <div className="grid gap-6 xl:grid-cols-2">

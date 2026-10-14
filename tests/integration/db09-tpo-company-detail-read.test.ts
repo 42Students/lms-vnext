@@ -72,6 +72,10 @@ describe.skipIf(!enabled)("TPO read-only company detail on isolated PostgreSQL",
     expect(found?.company.drives).toBe(1);
     expect(found?.contacts).toHaveLength(1);
     expect(found?.drives).toHaveLength(1);
+    expect(found?.hiringPulse.activeDrives).toBe(1);
+    expect(found?.hiringPulse.seasonsWithDrives).toBe(1);
+    expect(found?.hiringPulse.distinctAcceptedLearners).toBe(0);
+    expect(found?.hiringPulse.latestRecordedEventIso).toBeTruthy();
     const foreign: RequestContext = { ...tpo, membership: { ...tpo.membership!,
       id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB } };
     await expect(getTpoCompanyDetailReadOnly(foreign, companyId)).resolves.toBeNull();
