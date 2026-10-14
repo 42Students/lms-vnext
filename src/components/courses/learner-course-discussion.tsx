@@ -57,6 +57,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  const [replyTo, setReplyTo] = useState<{ id: string; text: string } | null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
@@ -215,11 +216,12 @@ export function LearnerCourseDiscussion({
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ messageText }),
+          body: JSON.stringify({ messageText, ...(replyTo ? { replyToMessageId: replyTo.id } : {}) }),
         },
       );
       if (!response.ok) throw new Error("discussion_post_failed");
       setDraft("");
+      setReplyTo(null);
       forceBottomOnNextLoad.current = true;
       await load(true);
       window.requestAnimationFrame(() =>
@@ -401,6 +403,14 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
+                    {canPost ? <button type="button"
+                      className="mt-2 text-xs font-semibold text-primary-text underline"
+                      onClick={() => {
+                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100)});
+                        composerRef.current?.focus();
+                      }}>
+                      Reply
+                    </button> : null}
                     {canPost &&
                     (moderate || row.item.isMine) ? (
                       <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -460,6 +470,11 @@ export function LearnerCourseDiscussion({
               ? "Post an announcement, answer a learner, or add class context."
               : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
+          {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
+            <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
+            <button type="button" className="text-xs font-semibold text-primary-text underline"
+              onClick={() => setReplyTo(null)}>Cancel reply</button>
+          </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
             Write a message
           </label>
