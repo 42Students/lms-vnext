@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
+import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
   useMemo,
   useState,
@@ -111,6 +112,17 @@ function dayHeading(date: Date) {
   }).format(date);
 }
 
+function EventNotes({description}: {description:string|null}) {
+  const notes=learnerClassSessionNotes(description);
+  if(!notes)return null;
+  return (
+    <details className="border-t border-border px-3 py-2 text-sm text-body">
+      <summary className="min-h-10 cursor-pointer py-2 font-semibold text-primary-text">Session details</summary>
+      <p className="mt-2 whitespace-pre-wrap break-words leading-6">{notes}</p>
+    </details>
+  );
+}
+
 function EventCard({
   event,
   courseBasePath,
@@ -167,6 +179,7 @@ function EventCard({
       >
         {content}
       </Link>
+      <EventNotes description={event.description} />
       {courseBasePath === "/teacher/courses" ? (
         <Link
           href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
@@ -178,7 +191,10 @@ function EventCard({
       ) : null}
     </div>
   ) : (
-    content
+    <div className="min-w-0 overflow-hidden rounded-lg border border-border bg-surface">
+      {content}
+      <EventNotes description={event.description} />
+    </div>
   );
 }
 
