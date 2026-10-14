@@ -6,6 +6,7 @@ import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { TpoTrustToggle } from "@/components/placements/tpo-trust-toggle";
 import {
   getTpoTrustedCompanies,
 } from "@/modules/placements/tpo-settings-people-service";
@@ -31,7 +32,7 @@ export default async function TpoTrustedCompaniesPage() {
       <PageHeader
         eyebrow="TPO · Settings"
         title="Trusted Companies"
-        description="Review college-specific employer trust flags and explicitly persisted recruiter-domain allowlist entries. This page does not modify company trust."
+        description="Review and confirm changes to college-specific employer trust flags. Explicit recruiter-domain allowlist entries remain read-only and independent."
         actions={
           <Link
             href="/tpo/settings/team"
@@ -157,6 +158,11 @@ export default async function TpoTrustedCompaniesPage() {
                           ? "Trusted"
                           : "Not trusted"}
                       </StatusBadge>
+                      <TpoTrustToggle
+                        relationshipId={company.relationshipId}
+                        companyName={company.name}
+                        isTrusted={company.isTrusted}
+                      />
                     </td>
                     <td className="px-4 py-4 text-body">
                       {company.primaryDomain ?? "Not recorded"}
