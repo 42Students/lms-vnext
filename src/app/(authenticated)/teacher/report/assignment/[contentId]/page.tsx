@@ -1,5 +1,7 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import {notFound} from "next/navigation";
+import {parseFacultyAssessmentReportRoute,facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
@@ -19,8 +21,15 @@ export default async function FacultyAssignmentReportPage({
 }) {
   const context = await getCurrentRequestContext();
   const { contentId } = await params;
-  const { deliveryId } = await searchParams;
-  const report = await getFacultyAssignmentReport(context, contentId, deliveryId ?? null);
+  const parsed=parseFacultyAssessmentReportRoute(contentId,await searchParams);
+  if(!parsed) notFound();
+  let report:Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
+  try {
+    report=await getFacultyAssignmentReport(context,parsed.assessmentId,parsed.deliveryId);
+  } catch(error) {
+    if(facultyAssignmentReportHidden(error)) notFound();
+    throw error;
+  }
   const {
     assignment,
     submissions,

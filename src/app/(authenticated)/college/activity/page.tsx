@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema } from "@/modules/activity/college-activity-model";
+import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 
@@ -44,9 +44,18 @@ export default async function CollegeActivityPage({
         Export filtered CSV (max 1,000)
       </a>} />
     <p className="text-xs text-muted-foreground">
-      The export uses severity, module, action, actor, entity type, entity UUID and IST date filters from the newest event,
+      The export uses severity, module, action, actor, entity type, entity identifier and IST date filters from the newest event,
       with a 1,000-row cap and an explicit CSV footer if truncated.
     </p>
+    <div className="flex flex-wrap items-center gap-3 text-sm">
+      <span className="text-muted-foreground">IST date shortcuts:</span>
+      <Link href={collegeActivityRecentHref(data.query,7,new Date())}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Last 7 days</Link>
+      <Link href={collegeActivityRecentHref(data.query,30,new Date())}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Last 30 days</Link>
+      <Link href={collegeActivityHref({...data.query,from:undefined,to:undefined})}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Clear date range</Link>
+    </div>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
@@ -98,9 +107,9 @@ export default async function CollegeActivityPage({
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
-          Entity UUID
+          Entity identifier
           <input name="subjectId" defaultValue={data.query.subjectId ?? ""}
-            placeholder="Optional entity UUID"
+            maxLength={500} placeholder="Persisted entity identifier"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">

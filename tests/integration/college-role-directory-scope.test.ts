@@ -196,6 +196,56 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{facultyDepartmentId:foreignId}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("partitions college learners by live class placement before pagination", async () => {
+    const all=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    const assigned=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{classPresence:"ASSIGNED"});
+    const none=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{classPresence:"NONE"});
+    expect(assigned.total+none.total).toBe(all.total);
+    expect(assigned.items.every(row=>row.sections.length>0)).toBe(true);
+    expect(none.items.every(row=>row.sections.length===0)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{classPresence:"ASSIGNED"}))
+      .rejects.toThrow("FACULTY_CLASS_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{classPresence:"NONE"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("filters registered live teaching by exact role within the college", async () => {
+    const any=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{teaching:"ASSIGNED"});
+    const role=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{teachingRole:"PRIMARY"});
+    expect(role.total).toBeLessThanOrEqual(any.total);
+    expect(role.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{teachingRole:"PRIMARY"}))
+      .rejects.toThrow("LEARNER_TEACHING_ROLE_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{teachingRole:"TA"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("filters active student batch membership under own-college ancestry",async()=>{
+    const unfiltered=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    for(const option of unfiltered.cohortOptions.slice(0,3)){
+      const result=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{cohortId:option.id});
+      expect(result.total).toBeLessThanOrEqual(unfiltered.total);
+      expect(result.items.every(person=>person.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    }
+    const missing=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{cohortId:SEED_IDS.collegeB});
+    expect(missing.total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{cohortId:SEED_IDS.collegeB}))
+      .rejects.toThrow("FACULTY_COHORT_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{cohortId:SEED_IDS.collegeB}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("filters own-college Faculty by persisted exact employment type",async()=>{
+    const all=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{});
+    for(const employmentType of all.employmentOptions.slice(0,3)){
+      const result=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{employmentType});
+      expect(result.total).toBeLessThanOrEqual(all.total);
+      expect(result.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    }
+    const missing=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{employmentType:"NO-SUCH-TYPE-987"});
+    expect(missing.total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{employmentType:"VISITING"}))
+      .rejects.toThrow("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{employmentType:"VISITING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {

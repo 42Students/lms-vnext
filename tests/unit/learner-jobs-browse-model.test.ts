@@ -3,6 +3,7 @@ import {
   availableLearnerJobFacets,
   learnerDriveAvailability,
   learnerDriveAvailabilityCounts,
+  learnerDriveCtcSortKey,
   learnerDriveAvailabilitySchema,
   filterLearnerPlacementJobs,
   DEFAULT_LEARNER_JOB_FILTERS as defaults,
@@ -41,13 +42,33 @@ describe("Learner job browsing filters", () => {
   it("sorts by earliest deadline with missing deadlines last", () => {
     expect(filterLearnerPlacementJobs(jobs,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
   });
-  it("supports compensation and title sorting", () => {
+  it("sorts actionable deadlines before closed or malformed dates",()=>{
+    const rows=[
+      {...jobs[0]!,job:{...jobs[0]!.job,applicationDeadline:"bad-date"}},
+      {...jobs[1]!,job:{...jobs[1]!.job,applicationDeadline:"2026-10-10T00:00:00Z"},deadlinePassed:true},
+      {...jobs[2]!,job:{...jobs[2]!.job,applicationDeadline:"2026-10-17T00:00:00Z"},deadlinePassed:false},
+    ];
+    expect(filterLearnerPlacementJobs(rows,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
+    expect(rows[0]!.job.applicationDeadline).toBe("bad-date");
+  });
+    it("supports compensation and title sorting", () => {
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"ctc"}).map(x=>x.job.id))
       .toEqual(["b","a","c"]);
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"title"}).map(x=>x.job.id))
       .toEqual(["a","b","c"]);
   });
-  it("sorts newest from persisted publication time, with unknown timestamps last", () => {
+  it("ranks valid upper compensation and never promotes invalid or undisclosed pay",()=>{
+    const input=[
+      {...jobs[0]!,roleOption:{...jobs[0]!.roleOption,minimumAnnualCtcInr:800000,maximumAnnualCtcInr:700000}},
+      {...jobs[1]!,roleOption:{...jobs[1]!.roleOption,minimumAnnualCtcInr:null,maximumAnnualCtcInr:null}},
+      {...jobs[2]!,roleOption:{...jobs[2]!.roleOption,minimumAnnualCtcInr:-10,maximumAnnualCtcInr:Number.NaN}},
+    ];
+    expect(learnerDriveCtcSortKey(input[0]!)).toBe(800000);
+    expect(filterLearnerPlacementJobs(input,{...defaults,sort:"ctc"}).map(x=>x.job.id))
+      .toEqual(["a","b","c"]);
+    expect(input[0]!.roleOption.minimumAnnualCtcInr).toBe(800000);
+  });
+    it("sorts newest from persisted publication time, with unknown timestamps last", () => {
     const withPublished = [
       {...jobs[0]!, job: {...jobs[0]!.job, publishedAt: "2026-10-01T00:00:00Z"}},
       {...jobs[1]!, job: {...jobs[1]!.job, publishedAt: null}},

@@ -38,6 +38,8 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
       className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
       <option value="DEFERRED">Deferred</option><option value="DATE_DUE">Dated and due</option>
+      <option value="DATE_MISSING">Missing joining date</option>
+      <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
      </select></label>
     <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary">Apply</button>
   </form>
@@ -50,7 +52,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     </div>)}
    </section>
    <p className="rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
-    Due means a persisted joining date on or before {report.todayIst} IST. No date is unknown, never late.
+    Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.
    </p>
    {report.truncated?<p role="status" className="text-sm text-body">First 500 accepted offers examined; counts may be incomplete.</p>:null}

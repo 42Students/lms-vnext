@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { z } from "zod";
+import { facultyGradebookPrivateNotFound } from "@/modules/courses/faculty-gradebook-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -10,7 +13,15 @@ export default async function FacultyLearnerGradebookPage({
 }:{params:Promise<{deliveryId:string;learnerMembershipId:string}>}){
   const query=await params;
   const context=await getCurrentRequestContext();
-  const data=await getFacultyPublishedGradebookLearner(context,query);
+  if(!z.string().uuid().safeParse(query.deliveryId).success ||
+     !z.string().uuid().safeParse(query.learnerMembershipId).success) notFound();
+  let data:Awaited<ReturnType<typeof getFacultyPublishedGradebookLearner>>;
+  try {
+    data=await getFacultyPublishedGradebookLearner(context,query);
+  } catch(error) {
+    if(facultyGradebookPrivateNotFound(error)) notFound();
+    throw error;
+  }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
   return <div className="space-y-6">
     <Link href={root} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">

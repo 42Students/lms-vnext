@@ -1,3 +1,4 @@
+import {z} from "zod";
 export const facultyCourseTabs = [
   { path: "home", label: "Overview" },
   { path: "blueprint", label: "Blueprint" },
@@ -20,4 +21,8 @@ export function facultyCourseTabHref(deliveryId: string, tab: FacultyCourseTab) 
 export function facultyCourseTabFromPath(pathname: string): FacultyCourseTab {
   const segment = pathname.split("/").filter(Boolean).at(-1) ?? "";
   return isFacultyCourseTab(segment) ? segment : "home";
+}
+
+export function validFacultyDefaultDeliveryId(raw:unknown):raw is string {
+ return z.string().uuid().safeParse(raw).success;
 }

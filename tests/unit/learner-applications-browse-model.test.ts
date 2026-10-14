@@ -43,7 +43,17 @@ describe("Learner placement application browser", () => {
     expect(browseLearnerApplications(records,{...defaults,sort:"company"}).map(x=>x.applicationId))
       .toEqual(["a","c","b","d"]);
   });
-  it("sorts by persisted screening stage with stable recent-activity and ID tie breaks",()=>{
+  it("sorts company titles naturally, case-insensitively and without mutating original rows",()=>{
+    const named=[
+      app("x","Company 10","UNDER_REVIEW","2026-10-10T00:00:00Z"),
+      app("y","company 2","UNDER_REVIEW","2026-10-10T00:00:00Z"),
+      app("z","COMPANY 1","UNDER_REVIEW","2026-10-10T00:00:00Z"),
+    ];
+    expect(browseLearnerApplications(named,{...defaults,sort:"company"}).map(x=>x.applicationId))
+      .toEqual(["z","y","x"]);
+    expect(named.map(x=>x.applicationId)).toEqual(["x","y","z"]);
+  });
+    it("sorts by persisted screening stage with stable recent-activity and ID tie breaks",()=>{
     expect(browseLearnerApplications(records,{...defaults,sort:"stage"}).map(x=>x.applicationId))
       .toEqual(["c","b","a","d"]);
     expect(browseLearnerApplications(records,{...defaults,sort:"stage",stage:"SHORTLISTED"})

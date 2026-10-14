@@ -30,5 +30,6 @@ export async function listSuperAdminPlacementSeasons(context:RequestContext,raw:
  return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
   id:r.id,title:r.name,subtitle:"Placement season "+r.code,status:r.status,
   details:["From: "+r.startDate,"To: "+r.endDate,"Closed: "+(r.closedAt?fmt.format(r.closedAt)+" IST":"Not closed")],
+  href:`/admin/placements/seasons/${encodeURIComponent(r.id)}`,
  }))};
 }

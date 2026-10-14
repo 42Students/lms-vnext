@@ -15,7 +15,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   actorUserId: z.string().uuid().optional(),
   actorName: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
-  subjectId: z.string().uuid().optional(),
+  subjectId: z.string().trim().min(1).max(500).optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),
@@ -56,6 +56,22 @@ export function collegeActivityHref(
     params.set("beforeId", cursor.beforeId);
   }
   return "/college/activity" + (params.size ? "?" + params.toString() : "");
+}
+
+/** IST calendar-day shortcuts keep all current filters but discard stale cursors. */
+export function collegeActivityRecentHref(
+  filter: CollegeActivityQuery, days: 7 | 30, asOf: Date,
+) {
+  if (Number.isNaN(asOf.getTime())) throw new RangeError("INVALID_DATE");
+  const pieces = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", year:"numeric", month:"2-digit", day:"2-digit",
+  }).formatToParts(asOf);
+  const value=(part: "year"|"month"|"day")=>pieces.find(entry=>entry.type===part)?.value ?? "";
+  const year=Number(value("year")),month=Number(value("month")),day=Number(value("day"));
+  const start=new Date(Date.UTC(year,month-1,day-days+1));
+  const from=start.toISOString().slice(0,10);
+  const to=`${value("year")}-${value("month")}-${value("day")}`;
+  return collegeActivityHref({...filter,from,to});
 }
 
 export function activitySearchParams(
