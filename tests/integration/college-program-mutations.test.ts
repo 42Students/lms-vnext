@@ -122,6 +122,18 @@ describe.skipIf(!enabled)("College Admin program create/edit/archive transaction
     });
     expect(updated).toMatchObject({ id: created.id, name: label + "REVISED", durationTerms: 6 });
 
+    // A freshly created program has no children even when the seeded DB has
+    // cohorts and terms belonging to *other* programs.
+    const childCounts = await pool!.query(
+      "SELECT " +
+      "(SELECT count(*)::int FROM cohorts WHERE program_id=$1) AS cohorts, " +
+      "(SELECT count(*)::int FROM learner_program_enrollments WHERE program_id=$1) AS enrollments, " +
+      "(SELECT count(*)::int FROM program_terms WHERE program_id=$1) AS semesters",
+      [created.id],
+    );
+    expect(childCounts.rows[0]).toMatchObject({
+      cohorts: 0, enrollments: 0, semesters: 0,
+    });
     await expect(archiveCollegeProgram(adminA, created.id, {})).rejects.toBeDefined();
     const archived = await archiveCollegeProgram(adminA, created.id, { confirm: true });
     expect(archived.status).toBe("ARCHIVED");
@@ -210,6 +222,13 @@ describe.skipIf(!enabled)("College Admin program create/edit/archive transaction
     await expect(updateCollegeProgram(adminA, first.id, {
       name: first.name, code: first.code, durationTerms: 6,
     })).rejects.toMatchObject({ code: "PROGRAM_DURATION_HAS_DEPENDENCIES" });
+    // Curriculum without a cohort must report its own dependency, not an
+    // unrelated cohort belonging to another seeded program.
+    const beforeCohort = await pool!.query(
+      "SELECT count(*)::int AS total FROM cohorts WHERE program_id=$1",
+      [first.id],
+    );
+    expect(beforeCohort.rows[0]?.total).toBe(0);
     await expect(archiveCollegeProgram(adminA, first.id, { confirm: true }))
       .rejects.toMatchObject({ code: "PROGRAM_HAS_SEMESTERS" });
 
