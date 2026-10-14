@@ -1,4 +1,6 @@
 # TPO — Remaining Parity Gaps
+**W64 B PARTIAL:** /tpo/reports/placed-branch derives season/drive-scoped unique accepted-offer learners and explicitly confirmed JOINED learners from persisted offers/outcomes; uses current active academic enrollment for branch and exposes unmatched students as Unassigned. CSV is formula-neutralized, capped to 200 branch rows with total+notice. Unit and isolated PostgreSQL tests authored; runtime PG/browser acceptance and historically accurate branch snapshots remain open.
+
 
 - **W62 D / L45 — PARTIAL:** Season funnel/CSV authored; selected requires canonical persisted evidence, and PG/browser acceptance outstanding.
 - **W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.

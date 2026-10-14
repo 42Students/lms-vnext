@@ -1,4 +1,6 @@
 # LMS vNext — Account Surface Parity Matrix v2
+**W64 B PARTIAL:** /tpo/reports/placed-branch derives season/drive-scoped unique accepted-offer learners and explicitly confirmed JOINED learners from persisted offers/outcomes; uses current active academic enrollment for branch and exposes unmatched students as Unassigned. CSV is formula-neutralized, capped to 200 branch rows with total+notice. Unit and isolated PostgreSQL tests authored; runtime PG/browser acceptance and historically accurate branch snapshots remain open.
+
 
 > **Freshness gate — 2026-10-05:** this matrix was built against FE `38cdd38e...`, while current observed FE is `1d563f75...` and BE is `94af997f...`. The matrix is still useful for work tracking but is not final cutover proof until `docs/planning/clone-parity-protocol.md` is satisfied, the route manifest is refreshed, and family evidence is VERIFIED against the frozen oracle.
 
