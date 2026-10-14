@@ -390,3 +390,19 @@ An actively assigned Mentor can create a registered TODO task within an active/p
 ## Mentor team & meeting log (2026-10-14)
 
 The read-only /mentor/projects/[projectId]/team-meetings page combines exact-project current Learner/Mentor role-backed member counts and registered project_meetings records with REQUESTED/SCHEDULED/COMPLETED/CANCELLED filters and 20-row pagination. The live Mentor project grant, central projects.read and optional Projects enablement are checked before querying. The UI shows meeting type, status, recorded start time and timezone, and whether an outcome exists without exposing raw outcome text, meeting URLs or personal member contacts. Loading/error, mobile cards, disabled and honest zero-meeting states exist. An isolated PostgreSQL integration test inserts a real REQUESTED meeting and checks counts, filtering and wrong-role/foreign-project denials. Tests are authored, not executed in this chat. Lifecycle writes, complete history and browser parity remain PARTIAL.
+
+## Mentor project closeout to registered COMPLETED status (2026-10-14)
+
+An assigned active Mentor can inspect the exact-project closeout checklist at
+`/mentor/projects/[projectId]/closeout` and confirm the registered ACTIVE →
+COMPLETED transition by submitting three affirmative declarations. The
+authoritative service locks the project row, verifies an optimistic
+updatedAt token, checks latest final delivery APPROVED and verifies that all
+persisted Tasks are DONE, Sprints COMPLETED, and Releases SHIPPED. The
+transaction records one immutable projects.project.completed actor/college
+audit. Strict Zod, projects.read/active assignment/module guards and
+same-origin POST are included; forged scopes and stale tokens are denied.
+An in-test project/template fixture and PostgreSQL success/denial tests are
+authored. The registered enum has no REVIEWED or CLOSED values, so distinct
+review-state closeout and sign-off remain BLOCKED pending schema/product
+disposition. Positive PG/browser evidence is pending; parity remains PARTIAL.
