@@ -90,6 +90,34 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("combobox",{name:"Choose draft or create new"})
    .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   await expect(page.getByRole("button",{name:"Save draft"})).toBeDisabled();
+
+  // The legacy Faculty All Assignments surface is more than the authoring
+  // form: verify persisted aggregate list, scoped status/search, review drawer
+  // and report link against this real published Section assignment.
+  await page.goto("/teacher/allAssignments");
+  await expect(page.getByRole("heading",{level:1,name:"All Assignments"})).toBeVisible();
+  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
+  await page.getByRole("combobox",{name:"Status"}).selectOption("DRAFT");
+  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await page.getByRole("combobox",{name:"Status"}).selectOption("PUBLISHED");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(baseTitle+" revised");
+  const publishedCard=page.locator("article").filter({
+   has:page.getByRole("heading",{name:baseTitle+" revised"}),
+  });
+  await expect(publishedCard).toBeVisible();
+  await expect(publishedCard.getByText("This Section")).toBeVisible();
+  await publishedCard.getByRole("button",{name:"View submissions"}).click();
+  const drawer=page.getByRole("dialog",{name:"Assignment submissions"});
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByText("No learners have submitted this Assignment yet.")).toBeVisible();
+  await page.getByRole("button",{name:"Close drawer"}).click();
+  await publishedCard.getByRole("link",{name:"View Report"}).click();
+  await expect(page).toHaveURL(new RegExp(
+   "/teacher/report/assignment/"+assignmentId+"\\?deliveryId="+deliveryId,
+  ));
+  await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
+  await page.getByRole("combobox",{name:"Choose draft or create new"})
+   .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   await confirmation.check();
   const archive=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
