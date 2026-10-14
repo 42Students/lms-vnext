@@ -53,7 +53,7 @@ export default async function MentorProjectPage({
         projectId={projectId}
       />
       <div className="flex flex-wrap gap-3">
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-completeness"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Delivery review summary
         </Link>

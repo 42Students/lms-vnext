@@ -440,7 +440,7 @@ visibility and edit/delete rules. This does **not** certify Board parity.
 
 ## Mentor project delivery review completeness (2026-10-14)
 
-PARTIAL: `/mentor/projects/[projectId]/review-overview` reads registered
+PARTIAL: `/mentor/projects/[projectId]/review-completeness` reads registered
 `project_submissions` and optional `project_submission_reviews` for the
 exact project currently assigned to the active Mentor. It requires central
 projects.read, persisted same-college project access and enabled Projects.
