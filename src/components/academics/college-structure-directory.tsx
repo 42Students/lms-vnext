@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
+import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   classCapacityLabel,
@@ -15,7 +16,13 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
   | Awaited<ReturnType<typeof listCollegeElectives>>;
 
-export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
+export function CollegeStructureDirectory({ data, electiveOptions }: {
+  data: DirectoryData;
+  electiveOptions?: {
+    programs: { id: string; name: string; durationTerms: number }[];
+    periods: { id: string; name: string }[];
+  };
+}) {
   const classes = data.kind === "CLASSES";
   const title = classes ? "Classes" : "Electives";
   const path = classes ? "/college/classes" : "/college/electives";
@@ -26,7 +33,7 @@ export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
         title={title}
         description={classes
           ? "Read-only college classes with program, batch, term and recorded active learner enrollments."
-          : "Read-only registered elective slots with semester, choice constraints and active course offerings."}
+          : "Registered elective slots with guarded creation, editing, choice constraints and active course offerings."}
         actions={<Link href="/college/academics"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Academic workspace
@@ -123,6 +130,7 @@ export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
                   <th scope="col" className="px-4 py-3">Credits / choices</th>
                   <th scope="col" className="px-4 py-3">Active offerings</th>
                   <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Manage</th>
                 </tr></thead>
                 <tbody>{data.items.map(item => (
                   <tr key={item.id} className="border-t border-border align-top">
@@ -137,6 +145,11 @@ export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
                     </td>
                     <td className="px-4 py-4 text-body">{item.activeOfferings}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
+                    <td className="px-4 py-4">
+                      {electiveOptions && item.status === "ACTIVE"
+                        ? <CollegeSlotManager options={electiveOptions} row={item} />
+                        : "—"}
+                    </td>
                   </tr>
                 ))}</tbody>
               </>
