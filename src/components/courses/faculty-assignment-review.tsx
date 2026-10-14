@@ -163,6 +163,11 @@ function SubmissionGradeCard({
 
   async function publishGrade() {
     setError(null);
+    if (!window.confirm(
+      "Publish this grade and feedback to the learner? Verify both before continuing.",
+    )) {
+      return;
+    }
     setPublishing(true);
 
     try {
