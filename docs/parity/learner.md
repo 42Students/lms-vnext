@@ -1182,3 +1182,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L29-014 PARTIAL (round 5):** Learner Notifications now shows responsive route loading skeletons for independent personal-inbox and college-announcement sources, keeping filter controls noninteractive until their actual scoped data arrives. Accessible loading text does not fabricate a zero inbox, announcement count or unread receipts. Static-section regression authored; hydrated screen-reader/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-019 PARTIAL (round 5):** Every learner placement dashboard numeric card now explicitly distinguishes an authorized successful zero from a failed source as the word Unknown, with a source-specific accessible action/description to open its own list and retry. Screen readers no longer hear only a dash or falsely imply no records. Pure zero/null/positive state regressions authored; CI/PG/browser acceptance still open.
