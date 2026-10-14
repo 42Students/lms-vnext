@@ -556,3 +556,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 template scope action guard — PARTIAL:** Scoped Super Admins no longer see global-only Publish/Unpublish/Duplicate/Archive controls on template detail; selected-college assignment controls remain. Server mutation fences unchanged. Unit permission assertion authored but execution/browser verification remain open.
+
+
+**2026-10-14 Chat 6 / Platform tenant directory/detail — PARTIAL:** New /admin/tenants active-college directory (query/organization filters, 20-row paging, mobile cards), /admin/colleges/[collegeId] read-only scoped detail and setup links. Uses authorized listColleges/listOrganizations; non-leaking COLLEGE_NOT_FOUND for inaccessible IDs. Pure unit plus isolated PG in-test success/foreign-scope/wrong-role tests authored, unexecuted. Remaining: onboarding Create/Set up tabs, archived tenants, lifecycle management, scope switch browser verification, test execution.
