@@ -6,19 +6,19 @@ import { LearnerNotificationsInbox } from "@/components/activity/learner-notific
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnNotifications } from "@/modules/activity/notification-service";
-import { requireLearnerNotificationsAccess } from "@/modules/activity/learner-notifications-access";
+import { requirePersistedLearnerNotificationMembership } from "@/modules/activity/learner-notification-membership-service";
 
 export default async function NotificationsPage() {
   const context =
     await getCurrentRequestContext();
-  requireLearnerNotificationsAccess(context);
+  const membership = await requirePersistedLearnerNotificationMembership(context);
   const announcementsEnabled =
     announcementsRuntimeEnabled();
   const [rows, announcements] =
     await Promise.all([
       listOwnNotifications(
         context,
-        { limit: 60 },
+        { limit: 60, collegeId: membership.collegeId },
       ),
       announcementsEnabled
         ? listVisibleAnnouncementsForMembership(
