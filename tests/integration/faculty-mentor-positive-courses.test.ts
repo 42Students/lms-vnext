@@ -17,6 +17,8 @@ import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
+import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
+import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report-csv-service";
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
@@ -181,6 +183,14 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       deliveryId:delivery.id,kind:"ALL",page:1,
     });
     expect(health.rosterSize).toBe(1);
+    const results=await getFacultyAssessmentResults(faculty,{});
+    expect(results.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({id:assignment.id,kind:"ASSIGNMENT",eligible:1,responded:0}),
+      expect.objectContaining({id:quiz.id,kind:"QUIZ",eligible:1,responded:0}),
+    ]));
+    const dueFollowUps=await getFacultyResponseFollowUps(faculty,{});
+    expect(dueFollowUps.items).toEqual([]);
+    expect(dueFollowUps.total).toBe(0);
     expect(health.items).toEqual(expect.arrayContaining([
       expect.objectContaining({id:assignment.id,kind:"ASSIGNMENT",
         eligible:1,responded:0,outstanding:1,coveragePercent:0}),
