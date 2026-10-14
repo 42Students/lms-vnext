@@ -111,14 +111,14 @@ export function LearnerPlacementJourney({
         {items.map((item) => (
           <article
             key={item.applicationId}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
-                <h3 className="mt-1 text-lg font-semibold text-foreground">
+                <h3 className="mt-1 break-words text-lg font-semibold text-foreground">
                   {item.jobTitle}
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -235,7 +235,7 @@ export function LearnerPlacementJourney({
             ) : null}
             <Link
               href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
-              className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
             >
               View application details →
             </Link>

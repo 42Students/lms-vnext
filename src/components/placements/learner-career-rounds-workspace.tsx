@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
+  from "@/modules/placements/learner-round-search-query-model";
+import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
+  learnerInterviewViewHref,type LearnerInterviewScheduleView }
+  from "@/modules/placements/learner-interview-view-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -55,19 +60,62 @@ export function LearnerCareerRoundsWorkspace({
   snapshotNowIso,
   membershipId = null,
   initialSelectedKey = null,
+  initialSearch = "",
+  initialTimeView = "all",
 }: {
   kind: Kind;
   rounds: readonly LearnerCareerRound[];
   snapshotNowIso: string;
   membershipId?: string | null;
   initialSelectedKey?: string | null;
+  initialSearch?: string;
+  initialTimeView?: LearnerInterviewScheduleView;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
-  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(defaults);
+  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
+
+  useEffect(()=>{
+    if(kind!=="ASSESSMENT"&&kind!=="INTERVIEW")return;
+    const onPop=()=>{
+      const incoming=learnerRoundSearchQuerySchema.safeParse({
+        q:new URLSearchParams(window.location.search).get("q")??"",
+      });
+      if(incoming.success)setFilters(current=>({...current,search:incoming.data.q}));
+    };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  useEffect(()=>{
+    if(kind!=="INTERVIEW")return;
+    const onPop=()=>{
+      const view=learnerInterviewScheduleViewSchema.safeParse(
+        new URLSearchParams(window.location.search).get("view")??"all",
+      );
+      if(view.success)setFilters(current=>({...current,time:view.data}));
+    };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  function chooseTimeView(value:LearnerRoundTimeBucket){
+    setFilter("time",value);
+    if(kind==="INTERVIEW") {
+      const parsed=learnerInterviewScheduleViewSchema.safeParse(value);
+      if(parsed.success)window.history.pushState(null,"",
+        learnerInterviewViewHref(window.location.href,parsed.data));
+    }
+  }
+
+  function saveSearchInUrl(){
+    const parsed=learnerRoundSearchQuerySchema.safeParse({q:filters.search});
+    if(!parsed.success)return;
+    window.history.pushState(null,"",learnerRoundSearchHref(window.location.href,parsed.data.q));
+  }
 
   useEffect(() => {
     if (kind !== "ASSESSMENT" || !membershipId) return;
@@ -115,6 +163,10 @@ export function LearnerCareerRoundsWorkspace({
   const relevant = useMemo(
     () => browseLearnerCareerRounds(rounds, kind, defaults, nowMs),
     [rounds, kind, nowMs],
+  );
+  const interviewCounts=useMemo(
+    ()=>kind==="INTERVIEW" ? learnerInterviewScheduleCounts(relevant,nowMs) : null,
+    [kind,relevant,nowMs],
   );
   const dueCounts = useMemo(
     () => learnerAssessmentDueBuckets(relevant, nowMs),
@@ -185,13 +237,20 @@ export function LearnerCareerRoundsWorkspace({
               type="button"
               key={value}
               aria-pressed={filters.time === value}
-              onClick={() => setFilter("time", value)}
+              onClick={() => chooseTimeView(value)}
               className={filters.time === value
                 ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"}
-            >{label}</button>
+            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</button>
           ))}
         </div>
+        {kind==="INTERVIEW" ? (
+          <p role="status" className="text-xs text-muted-foreground">
+            Upcoming and past refer only to scheduled interview times. Past does
+            not confirm attendance, recruiter feedback or a completed interview.
+            Unscheduled interviews remain visible under Awaiting schedule.
+          </p>
+        ) : null}
         {kind === "ASSESSMENT" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Assessment due buckets">
             <button type="button" aria-pressed={dueBucket === "all"}
@@ -215,9 +274,23 @@ export function LearnerCareerRoundsWorkspace({
                 : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
               Due this week ({dueCounts.week.length})
             </button>
+            {([
+              ["later","Later",dueCounts.later.length],
+              ["past","Scheduled time passed",dueCounts.past.length],
+              ["unscheduled","Awaiting employer schedule",dueCounts.unscheduled.length],
+            ] as const).map(([value,label,count])=>(
+              <button type="button" key={value} aria-pressed={dueBucket===value}
+                onClick={()=>selectDueBucket(value)}
+                className={dueBucket===value
+                  ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                  : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+                {label} ({count})
+              </button>
+            ))}
             <p className="w-full text-xs text-muted-foreground">
-              Scheduled upcoming rounds in IST. This week means Monday to Sunday
-              and includes due-today rounds; it does not indicate employer submission.
+              IST schedule categories: Today and this week refer to the published
+              round time; Later is a future week. A past scheduled time is not
+              evidence of employer submission, attendance or completion.
             </p>
           </div>
         ) : null}
@@ -226,6 +299,7 @@ export function LearnerCareerRoundsWorkspace({
             Search employers or rounds
             <input
               type="search" value={filters.search}
+              maxLength={100}
               onChange={(event) => setFilter("search", event.target.value)}
               placeholder="Search rounds…"
               className={selectClass}
@@ -251,6 +325,16 @@ export function LearnerCareerRoundsWorkspace({
               <option value="company">Employer A–Z</option>
             </select>
           </label>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="button" onClick={saveSearchInUrl}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Save {kind==="INTERVIEW"?"interview":"assessment"} search link
+          </button>
+          <p className="text-xs text-muted-foreground">
+            Search filters your own shortlisted rounds as you type. Save the query in the URL
+            to revisit it without sharing another learner&apos;s records.
+          </p>
         </div>
       </section>
 

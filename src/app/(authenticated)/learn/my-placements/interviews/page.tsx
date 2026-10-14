@@ -3,19 +3,29 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { resolveOwnInterviewDeepLink } from "@/modules/placements/learner-interview-deeplink-model";
+import { learnerInterviewScheduleViewSchema } from "@/modules/placements/learner-interview-view-model";
+import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
 export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   searchParams: Promise<{
     applicationId?: string | string[];
     roundId?: string | string[];
+    view?: string | string[];
+    q?: string | string[];
   }>;
 }) {
   const context = await getCurrentRequestContext();
   // Rows are membership-scoped in the placement service, not selected by a caller ID.
   const workspace = await getLearnerPlacementRequestWorkspace(context);
   const query = await searchParams;
-  const link = resolveOwnInterviewDeepLink(workspace.rounds, query);
+  const view=learnerInterviewScheduleViewSchema.safeParse(query.view??"all");
+  const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
+  if(!search.success)notFound();
+  if(!view.success)notFound();
+  const link = resolveOwnInterviewDeepLink(workspace.rounds, {
+    applicationId:query.applicationId,roundId:query.roundId,
+  });
   if (!link.valid) notFound();
 
   return (
@@ -26,6 +36,8 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
         key={link.key ?? "all-interviews"}
         kind="INTERVIEW"
         initialSelectedKey={link.key}
+        initialTimeView={view.data}
+        initialSearch={search.data.q}
         snapshotNowIso={new Date().toISOString()}
         rounds={workspace.rounds.map(row => ({
           ...row,

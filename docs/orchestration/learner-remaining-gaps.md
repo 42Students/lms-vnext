@@ -893,3 +893,21 @@ L11-003: partial-source placements dashboard now distinguishes read failures fro
 2026-10-14 L2-022: responsive Course Overview navigation targets only sections present for an authorized course; no fake mobile content or storage. Unit and fresh-learner PG assertions authored; browser/device and accessibility review remains.
 
 Skipped in this batch for missing canonical source or external dependencies: L1-021 course thumbnail (no verified migrated image association); L12-013/014 saved job (saved-job persistence unconfirmed in registered journal); L13-016 per-drive resume upload (storage/private-object handling missing); L30-034..L30-043 profile verification (no verified state machine, document upload or review process); external sends intentionally untouched without provider/consent contracts.
+
+2026-10-14 L15-003: assessment search saves an own-scoped filter in the page URL without trusting query-selected learners, and restores on browser navigation. No employer submission state inferred. Skip L15-002 provider Completed view: migrated schedule does not record actual provider submissions; requires registered provider receipt/outcome mapping.
+
+2026-10-14 L15-004: expanded assessment urgency controls to include later, past scheduled time, and missing employer date using migrated shortlisted placement rounds and approved-reschedule instants. Skipped provider-completed/received status (L15-002) because no migrated authoritative submission receipt exists. Authored unit and own-learner PG tests; execution and browser acceptance remain.
+
+2026-10-14 L16-002: own interview schedule now has explicit upcoming/past/unscheduled counts with navigable URL view state; past time never treated as confirmed attendance or employer outcome. L16-006 confirmation remains blocked by absence of a registered learner confirmation event. Pure and independently seeded PG tests authored but not executed here.
+
+2026-10-14 L16-003: interview name/employer search is now shareable and recoverable through the URL, bounded to 100 characters and applied only to persisted own shortlisted interviews. Requires executed fresh PostgreSQL, TypeScript/ESLint and Back/Forward browser acceptance. No external messages or provider confirmations attempted.
+
+Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted registered image association); L13-016 per-drive resume upload (private storage policy); L15-002 provider Completed view (no authoritative submission receipt); L16-006 employer interview confirmation (no registered confirmation state); L18-007 placement-cell consent workflow (no approved consent-state transition/opt-in policy); L30-034..043 verification (private document storage and moderation/verification tables not confirmed). No fake statuses or URLs created.
+
+2026-10-14 L14-002: application filters use URL history and bounded parsing with own-membership-scoped source data. Skipped L1-021 (no canonical image association), L13-016 (private storage/upload approval), L30-034..043 (unmigrated verification/review document state). Fresh-PG and browser acceptance pending.
+
+2026-10-14 L12-022: mobile Drives filters collapse with active-filter count and remain accessible while desktop controls stay shown. Persisted own-college read and pure test authored; browser and disposable-DB execution outstanding. Skipped L13-016: private resume-object upload policy/storage approval absent.
+
+2026-10-14 L14-024: mobile applications filters reveal active URL selections; cards and drawer links use full-width accessible actions. No external sends/storage. Own learner PG and unit tests authored, browser/runtime acceptance pending.
+
+2026-10-14 L5-012: touch-friendly own-course discussion composer with explicit Post and safe message wrapping; does not change write permissions or faculty moderation. Independent learner PostgreSQL test authored; device keyboard/CI acceptance pending. Skipped L2-024 rich authored HTML (unmigrated authoring schema and sanitization contract).

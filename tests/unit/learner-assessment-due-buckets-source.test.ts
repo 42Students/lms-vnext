@@ -16,6 +16,8 @@ describe("Learner assessment due bucket page wiring", () => {
     expect(ui).toContain("Assessment due buckets");
     expect(ui).toContain("Due today");
     expect(ui).toContain("Due this week");
+    expect(ui).toContain("Scheduled time passed");
+    expect(ui).toContain("Awaiting employer schedule");
     expect(ui).toContain("learnerAssessmentDueBucketSchema.safeParse");
     expect(ui).toContain("visibleRows.length === 0");
     expect(ui).toContain("sm:grid-cols-3");

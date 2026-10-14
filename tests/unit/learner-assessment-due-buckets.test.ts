@@ -59,6 +59,22 @@ describe("Learner assessment due buckets", () => {
     expect(filterLearnerAssessmentDueBucket(rows, "all", now)).toHaveLength(3);
   });
 
+  it("distinguishes later, past and awaiting employer schedule without inventing completion",()=>{
+    const later=make("later","2026-10-18T18:30:00Z");
+    const past=make("past","2026-10-10T10:00:00Z");
+    const waiting=make("waiting",null);
+    const counts=learnerAssessmentDueBuckets([base,later,past,waiting],now);
+    expect(counts.later.map(x=>x.roundId)).toEqual(["later"]);
+    expect(counts.past.map(x=>x.roundId)).toEqual(["past"]);
+    expect(counts.unscheduled.map(x=>x.roundId)).toEqual(["waiting"]);
+    expect(filterLearnerAssessmentDueBucket([base,later,past,waiting],"later",now).map(x=>x.roundId))
+      .toEqual(["later"]);
+    expect(filterLearnerAssessmentDueBucket([base,later,past,waiting],"past",now).map(x=>x.roundId))
+      .toEqual(["past"]);
+    expect(filterLearnerAssessmentDueBucket([base,later,past,waiting],"unscheduled",now).map(x=>x.roundId))
+      .toEqual(["waiting"]);
+  });
+
   it("rejects unknown quick-filter values with Zod", () => {
     expect(learnerAssessmentDueBucketSchema.parse("today")).toBe("today");
     expect(learnerAssessmentDueBucketSchema.safeParse("other-learner").success).toBe(false);
