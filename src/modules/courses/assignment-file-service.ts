@@ -9,6 +9,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import {
+  PrivateObjectStorageError,
   createPrivateUploadGrant,
   createPrivateReadGrant,
   readPrivateObjectAttestation,
@@ -252,7 +253,12 @@ export async function prepareAssignmentFileReceipt(
         uploadTokenHash:
           receipt.uploadTokenHash,
       },
-    );
+    ).catch(error => {
+      if (error instanceof PrivateObjectStorageError && error.code === "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED") {
+        throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
+      }
+      throw error;
+    });
 
   if (
     attestation.contentType !==
@@ -408,6 +414,11 @@ export async function createAssignmentFileReadGrant(
       collegeId: submission.collegeId,
       ownerMembershipId:
         submission.membershipId,
+    }).catch(error => {
+      if (error instanceof PrivateObjectStorageError && error.code === "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED") {
+        throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
+      }
+      throw error;
     });
 
   return {

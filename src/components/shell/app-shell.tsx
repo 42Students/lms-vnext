@@ -91,7 +91,7 @@ export async function AppShell({
 
       <div className="min-h-screen md:pl-64">
         <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
-          <div className="mx-auto flex min-h-20 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto X sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <MobileNavigation items={navigation} />
               <div className="min-w-0">
@@ -109,7 +109,7 @@ export async function AppShell({
                 </p>
               </div>
             </div>
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
               {learner ? <LearnerTopbarTools /> : null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher

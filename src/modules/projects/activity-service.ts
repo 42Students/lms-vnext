@@ -19,7 +19,7 @@ import {
   requireProjectReadAccess,
 } from "./access";
 
-export async function listProjectActivity(
+export async function getProjectActivityPage(
   context: RequestContext,
   projectIdInput: string,
   filterInput: unknown = {},
@@ -51,6 +51,8 @@ export async function listProjectActivity(
         activityEvents.summary,
       occurredAt:
         activityEvents.occurredAt,
+      // Preserve PostgreSQL microseconds; JS Date only serializes milliseconds.
+      cursorOccurredAt: sql<string>`to_char(${activityEvents.occurredAt} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`.as("cursor_occurred_at"),
       actorDisplayName:
         users.displayName,
     })
@@ -64,6 +66,11 @@ export async function listProjectActivity(
     )
     .where(
       and(
+        filters.beforeTime && filters.beforeId ? or(
+          sql`${activityEvents.occurredAt} < ${filters.beforeTime}::timestamptz`,
+          and(sql`${activityEvents.occurredAt} = ${filters.beforeTime}::timestamptz`,
+            lt(activityEvents.id, filters.beforeId)),
+        ) : undefined,
         bounds.from ? gte(activityEvents.occurredAt, bounds.from) : undefined,
         bounds.until ? lt(activityEvents.occurredAt, bounds.until) : undefined,
         prefixes.length ? or(...prefixes.map(prefix => ilike(activityEvents.eventType, prefix + "%"))) : undefined,
@@ -96,7 +103,20 @@ export async function listProjectActivity(
       ),
       desc(activityEvents.id),
     )
-    .limit(100);
+    .limit(101);
 
-  return rows;
+  return { events: rows.slice(0, 100), hasMore: rows.length > 100 };
+}
+
+/** Preserve the original bounded array contract for existing shared workspaces. */
+export async function listProjectActivity(
+  context: RequestContext, projectIdInput: string, filterInput: unknown = {},
+) {
+  const page = await getProjectActivityPage(context, projectIdInput, filterInput);
+  return page.events.map(event => ({
+    id: event.id, eventType: event.eventType, importance: event.importance,
+    subjectType: event.subjectType, subjectId: event.subjectId,
+    subjectLabel: event.subjectLabel, summary: event.summary,
+    occurredAt: event.occurredAt, actorDisplayName: event.actorDisplayName,
+  }));
 }

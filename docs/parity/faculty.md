@@ -107,18 +107,19 @@ Legacy contract:
 
 
 **Executed acceptance — [Faculty All Assignments workflow 38625377461](https://github.com/42Students/lms-vnext/actions/runs/38625377461)** at `12b1e1575d5f1d0fd5cad99677a1d09fdd6ecb37` passed **7/7 registered PostgreSQL** tests in `faculty-section-authoring.test.ts` and **2/2 authenticated desktop/mobile Playwright** tests in `faculty-all-assignments.spec.ts`. The browser creates, edits, publishes and archives persisted text assignments with confirmation and stale-token denial; navigates the Faculty aggregate list, exact Section/status/search filters, accessible submissions drawer, privacy-safe report link, and verifies absence from the active manager after Archive. Scope is consciously text-only: no file uploads, storage receipts, or external sending under the approved no-file-features decision. This DONE does not certify unsupported file-backed parity or full repository CI.\n
-## Page: All Quizzes
+## Page: All Quizzes — PARTIAL (registered choice lifecycle accepted)
 Legacy `QuizzesContent` runs in Faculty mode.
 
-- [x] Aggregate quiz list, Section scope, course filter and status filter source-implemented.
-- [x] Aggregate quiz list uses 20-row pagination; browser regression still pending.
-- [ ] Create quiz workflow matches.
-- [ ] Edit quiz workflow matches.
-- [ ] Delete/close lifecycle actions match.
-- [ ] View attempts and result publish use existing FacultyQuizReview panel; legacy overlay/report UI behavior not fully verified.
-- [ ] Quiz Report deep link works.
-- [ ] Schedule/attempt/result-publication controls match.
-- [ ] Loading/error/empty states are verified.
+- [x] Aggregate quiz list, exact active teaching Section, Course/status/title filters and source-owned 20-row pagination are implemented.
+- [x] Registered single/multiple-choice quiz CREATE (private draft), answer correctness, point validation and Section lesson selection; browser and PostgreSQL acceptance executed.
+- [x] DRAFT quiz question/options and metadata EDIT, plus metadata-only title/description/deadline EDIT after publication or closing, with optimistic version and immutable question history; attempts prohibit changing answer bank or allowed attempt count.
+- [x] Confirmed PUBLISH, CLOSE, no-attempt ARCHIVE, stale/foreign denial and transaction audit are exercised in PostgreSQL and the browser.
+- [x] Review attempts drawer, no-attempt state, closed-Quiz result publication, report deep link and persisted results view pass real browser tests.
+- [x] Due/attempt limits, result publication controls, and 390px mobile quiz builder layout are exercised on actual Chromium.
+- [ ] Legacy `shuffleQuestions`/`shuffleOptions` authoring, storage and learner shuffle semantics require a **registered DB06 migration**. Only the isolated SQL candidate `docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql` and staging test exist; never substitute an unregistered schema or claim completed legacy shuffle.
+- [ ] Remaining empty/error/retry and attempt-bearing learner-to-Faculty review browser coverage are not yet independently completed.
+
+**Executed evidence:** [Faculty All Quizzes CI 38634315601](https://github.com/42Students/lms-vnext/actions/runs/38634315601) at source SHA `91c66ac63e39e558ec4f9957f5fc374224f27818`: **8/8 PostgreSQL** and **2/2 desktop/mobile Chromium**, all focused jobs PASS. Earlier run `38633631624` passed PG but uncovered mobile overflow, repaired at this SHA. This is **not** full legacy parity, global CI certification or DATABASE promotion; the All Quizzes row correctly remains PARTIAL.
 
 ## Page: Class Schedule — DONE (2026-10-14)
 - [x] Faculty schedule is sourced from registered active Section teaching assignments and current Faculty grants; role/foreign-college denial is enforced.
