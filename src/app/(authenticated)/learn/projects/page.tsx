@@ -15,6 +15,7 @@ import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
+import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -144,6 +145,7 @@ export default async function LearnerProjectsPage({
             title: row.project.title,
             summary: row.project.summary,
             status: row.project.status,
+            readOnlyLabel: learnerProjectArchiveState(row.project.status).label,
             updatedAt: row.project.updatedAt,
             participation: "Learner",
             mentorName: teamsByProject.get(row.project.id)?.mentorName ?? null,
