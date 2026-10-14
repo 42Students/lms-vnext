@@ -1074,3 +1074,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L14-005 PARTIAL:** Applications Recent Activity sorting now uses the saved withdrawn timestamp alongside submission, screening decision and round-result activity, so an actual later withdrawal is not incorrectly sorted by the older submission date. Stable tie breaks and tenant-scoped source remain unchanged. Pure model/own-learner DB denial coverage authored; executed tests and browser Back/Forward acceptance pending.
+
+
+**2026-10-15 chat-5 L29-018 PARTIAL:** Learner Notifications mobile filter tabs now wrap into a two-column layout rather than requiring horizontal scrolling, expose a concise active-filter/result summary, and constrain long notification text and action links at 375px. Only the learner inbox wrapper changes; other role lists are unaffected. Pure model and own-inbox PG tests authored; device/browser/keyboard execution pending.
