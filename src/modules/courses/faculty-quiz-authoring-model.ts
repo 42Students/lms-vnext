@@ -65,3 +65,12 @@ export function facultyQuizMetadataUnchanged(
   (current.dueAt?.getTime()??null)===dueTime &&
   current.maxAttempts===input.maxAttempts;
 }
+
+/** Attempt limits are part of a published Quiz's announced conditions.
+ * Only an unpublished draft may revise them. */
+export function facultyQuizAttemptLimitLocked(
+ status:"DRAFT"|"PUBLISHED"|"CLOSED"|"ARCHIVED",
+ persisted:number,requested:number,
+){
+ return status!=="DRAFT" && persisted!==requested;
+}

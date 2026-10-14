@@ -12,7 +12,7 @@ import {requireDeliveryContentMutation} from "./learning-access";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints,
- facultyQuizVersionMatches,facultyQuizMetadataUnchanged} from "./faculty-quiz-authoring-model";
+ facultyQuizVersionMatches,facultyQuizMetadataUnchanged,facultyQuizAttemptLimitLocked} from "./faculty-quiz-authoring-model";
 
 /** Choice-question authoring with transaction, locked token, audit and no edits
  * after the quiz publishes or any registered attempt exists. */
@@ -84,6 +84,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    if(input.action==="EDIT" && facultyQuizAttemptLimitLocked(
+      current.status,current.maxAttempts,input.maxAttempts,
+    ))throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const [attempt]=await tx.select({id:quizAttempts.id}).from(quizAttempts)
      .where(eq(quizAttempts.quizId,current.id)).limit(1);
     // Once a learner has attempted, the question bank, allowed attempt count
