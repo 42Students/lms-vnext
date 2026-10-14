@@ -82,6 +82,12 @@ export function facultyToggleQuizAnswer<T extends {correct:boolean}>(
   if(!checked)return [...question.options];
   return question.options.map((option,i)=>({...option,correct:i===index}));
  }
+ const correct=question.options.filter(option=>option.correct).length;
+ // Multi-choice requires at least one selected and one unselected option.
+ if(!checked && question.options[index]?.correct && correct===1)
+  return [...question.options];
+ if(checked && !question.options[index]?.correct && correct===question.options.length-1)
+  return [...question.options];
  return question.options.map((option,i)=>i===index?{...option,correct:checked}:option);
 }
 
