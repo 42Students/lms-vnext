@@ -69,3 +69,22 @@ export function promotionLearnerBlockers(input: {
   if (input.periodConfigured && !input.hasActiveClass) blockers.push("NO_ACTIVE_CLASS");
   return blockers;
 }
+
+export const collegePromotionExecuteSchema = z.object({
+  cohortId: z.string().uuid(),
+  programId: z.string().uuid(),
+  expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+  yearStart: z.number().int().min(1900).max(9998).optional(),
+  confirm: z.literal(true),
+  action: z.literal("PROMOTE"),
+}).strict();
+
+export function promotionReady(preview: {
+  simulatedReadiness: boolean;
+  blockedLearners: number;
+  completePreview: boolean;
+  plan: { action: string };
+}): boolean {
+  return preview.simulatedReadiness && preview.completePreview &&
+    preview.blockedLearners === 0 && preview.plan.action === "PROMOTE";
+}

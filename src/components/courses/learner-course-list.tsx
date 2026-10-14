@@ -27,10 +27,12 @@ export type LearnerCourseListRow = {
   };
   instructorNames: string[];
   summary: {
-    overallPercent: number;
+    overallPercent: number | null;
     itemsCompleted: number;
     itemsTotal: number;
   };
+  lastActivity: string | null;
+  nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
   nextItem: {
@@ -325,10 +327,10 @@ export function LearnerCourseList({
                             Progress
                           </span>
                           <span className="text-xs font-bold text-foreground">
-                            {row.summary.overallPercent}%
+                            {row.summary.overallPercent === null ? "Not available" : row.summary.overallPercent+"%"}
                           </span>
                         </div>
-                        <div
+                        {row.summary.overallPercent !== null ? <div
                           className="h-2 overflow-hidden rounded-full bg-muted"
                           role="progressbar"
                           aria-label="Course progress"
@@ -340,6 +342,19 @@ export function LearnerCourseList({
                             className="h-full rounded-full bg-primary"
                             style={{ width: `${row.summary.overallPercent}%` }}
                           />
+                        </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
+                        <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
+                          <p className="m-0">
+                            Last recorded activity: {row.lastActivity
+                              ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.lastActivity))
+                              : "Not recorded"}
+                          </p>
+                          <p className="m-0">
+                            Next due: {row.nextDue
+                              ? row.nextDue.kind+" · "+row.nextDue.title+" · "+
+                                new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.nextDue.dueAt))
+                              : "No upcoming due dates"}
+                          </p>
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
