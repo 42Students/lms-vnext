@@ -6,6 +6,12 @@ export function learnerProfileCanRefresh(input:ProfileRefreshInput){
    input.nowMs-input.lastRefreshMs>=45_000;
 }
 /** Only replace a local profile if it is still the exact last server snapshot. */
-export function learnerProfileReconcile<T>(local:T,priorServer:T,nextServer:T){
- return JSON.stringify(local)===JSON.stringify(priorServer)?nextServer:local;
+export function learnerProfileReconcile<T extends object>(local:T,priorServer:T,nextServer:T):T {
+ const result={...local};
+ for(const key of Object.keys(nextServer) as (keyof T)[]){
+   if(JSON.stringify(local[key])===JSON.stringify(priorServer[key])){
+     result[key]=nextServer[key];
+   }
+ }
+ return result;
 }

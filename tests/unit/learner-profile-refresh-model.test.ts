@@ -14,5 +14,9 @@ describe("learner profile refresh without unsaved-data loss",()=>{
   expect(learnerProfileReconcile(base,base,incoming)).toEqual(incoming);
   const draft={...base,headline:"My unsaved change"};
   expect(learnerProfileReconcile(draft,base,incoming)).toEqual(draft);
+  const newContacts={...base,contacts:{alternatePhone:"+918888888888"}};
+  expect(learnerProfileReconcile(draft,base,newContacts)).toEqual({
+    ...draft,contacts:{alternatePhone:"+918888888888"},
+  });
  });
 });
