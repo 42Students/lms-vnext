@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   getLearnerContentProgress,
   saveLearnerContentProgress,

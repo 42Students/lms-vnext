@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   createCourseDiscussionMessage,
   deleteCourseDiscussionMessage,
@@ -27,12 +26,14 @@ beforeEach(async () => {
   await seedLearnerCourseWriteFixture(pool, fixture);
 }, 45_000);
 afterEach(async () => {
+  const cleanupOther = foreign;
+  const cleanupOwn = fixture;
+  foreign = null;
+  fixture = null;
   try {
-    if (foreign) await cleanupLearnerCourseWriteFixture(pool, foreign);
-    if (fixture) await cleanupLearnerCourseWriteFixture(pool, fixture);
+    if (cleanupOther) await cleanupLearnerCourseWriteFixture(pool, cleanupOther);
   } finally {
-    foreign = null;
-    fixture = null;
+    if (cleanupOwn) await cleanupLearnerCourseWriteFixture(pool, cleanupOwn);
   }
 }, 45_000);
 afterAll(async () => {
