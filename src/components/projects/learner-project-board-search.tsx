@@ -1,7 +1,7 @@
 import Link from "next/link";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, shown, total,
-}: {projectId:string;search:string;priority:string;shown:number;total:number}) {
+  projectId, search, priority, sprintId, sprints, shown, total,
+}: {projectId:string;search:string;priority:string;sprintId:string;sprints:readonly {id:string;title:string}[];shown:number;total:number}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   return (
     <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
@@ -22,6 +22,14 @@ export function LearnerProjectBoardSearch({
             <option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-foreground">
+          Sprint
+          <select name="sprintId" defaultValue={sprintId}
+            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            <option value="">All sprints</option>
+            {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </select>
         </label>
         <button type="submit" className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>

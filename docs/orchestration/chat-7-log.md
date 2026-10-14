@@ -10,3 +10,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - Final source-review repair: test-created academic parents/program enrollment added to isolated PG fixture; Zod validates learner Project list query boundary; TypeScript tuple inference made explicit. Original four rows remain PARTIAL; no runtime gates executed.
 - L25-006: searchable learner Board using authorized Project task rows; pure/unit/PG authored, runtime tests unexecuted.
 - L25-002: persisted task priority Board filter, combined with search; authored unit and own-learner PG; validation unexecuted.
+- L25-003: persisted sprint filter for learner Board; pure model/unit and unique-learner PG, tests not executed here.
