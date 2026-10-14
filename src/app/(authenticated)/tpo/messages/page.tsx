@@ -146,12 +146,20 @@ export default async function TpoMessagesPage({
         title="Messages"
         description="A read-only view of persisted, college-scoped placement communication evidence. Times are displayed in IST."
         actions={
-          <Link
-            href="/tpo/more"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-          >
-            More TPO tools
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/tpo/messages/notifications"
+              className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+            >
+              My placement notifications
+            </Link>
+            <Link
+              href="/tpo/more"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              More TPO tools
+            </Link>
+          </div>
         }
       />
 
