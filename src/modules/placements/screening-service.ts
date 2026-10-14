@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -277,6 +278,7 @@ export async function decidePlacementScreening(
   context: RequestContext,
   applicationIdInput: string,
   rawInput: PlacementScreeningDecisionInput,
+  expectedUpdatedAt?: string,
 ) {
   const applicationId =
     placementApplicationIdSchema.parse(
@@ -310,6 +312,10 @@ export async function decidePlacementScreening(
 
   const from =
     current.screening.status as ScreeningStatus;
+  if (expectedUpdatedAt !== undefined &&
+      current.screening.updatedAt.toISOString() !== expectedUpdatedAt) {
+    throw new PlacementsServiceError("PLACEMENT_SCREENING_STALE");
+  }
   if (from === input.decision) {
     return current.screening;
   }
@@ -367,11 +373,18 @@ export async function decidePlacementScreening(
             placementApplicationScreenings.status,
             from,
           ),
+          ...(expectedUpdatedAt !== undefined ? [
+            sql`date_trunc('milliseconds', ${placementApplicationScreenings.updatedAt}) =
+              ${expectedUpdatedAt}::timestamptz`,
+          ] : []),
         ),
       )
       .returning();
 
     if (!updated) {
+      if (expectedUpdatedAt !== undefined) {
+        throw new PlacementsServiceError("PLACEMENT_SCREENING_STALE");
+      }
       const [concurrent] = await tx
         .select()
         .from(placementApplicationScreenings)
