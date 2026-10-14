@@ -90,6 +90,36 @@ export function LearnerCourseDiscussion({
     }
   }, [deliveryId, mergeHistory]);
 
+  const loadOlder = useCallback(async () => {
+    if (!olderCursor || loadingOlder) return;
+    setLoadingOlder(true);
+    setOlderError(false);
+    try {
+      const params = new URLSearchParams({
+        beforeCreatedAt: olderCursor.beforeCreatedAt,
+        beforeId: olderCursor.beforeId,
+      });
+      const response = await fetch(
+        "/api/courses/deliveries/" + encodeURIComponent(deliveryId) + "/discussions?" + params,
+        { cache: "no-store" },
+      );
+      if (!response.ok) throw new Error("discussion_history_failed");
+      const result = await response.json();
+      const previousHeight = scrollRef.current?.scrollHeight ?? 0;
+      historyPrepend.current = true;
+      setMessages((previous) => mergeHistory(previous, Array.isArray(result.messages) ? result.messages : []));
+      setOlderCursor(result.nextCursor ?? null);
+      window.requestAnimationFrame(() => {
+        const scroller = scrollRef.current;
+        if (scroller) scroller.scrollTop += scroller.scrollHeight - previousHeight;
+      });
+    } catch {
+      setOlderError(true);
+    } finally {
+      setLoadingOlder(false);
+    }
+  }, [deliveryId, loadingOlder, mergeHistory, olderCursor]);
+
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
     const first = window.setTimeout(() => void load(), 0);
@@ -320,6 +350,17 @@ export function LearnerCourseDiscussion({
             />
           ) : (
             <div className="space-y-2" role="log" aria-live="polite" aria-relevant="additions">
+              {olderCursor ? (
+                <div className="flex flex-col items-center gap-2 pb-3">
+                  <Button size="sm" variant="secondary" disabled={loadingOlder}
+                    onClick={() => void loadOlder()}>
+                    {loadingOlder ? "Loading earlier messages…" : "Load earlier messages"}
+                  </Button>
+                  {olderError ? <p role="alert" className="text-xs font-semibold text-error">
+                    Earlier messages could not be loaded. Retry to continue.
+                  </p> : null}
+                </div>
+              ) : null}
               {feed.map((row) =>
                 row.kind === "day" ? (
                   <div
