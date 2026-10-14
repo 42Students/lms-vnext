@@ -2,8 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
-import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
-import { listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -25,12 +23,5 @@ export default async function CollegeElectivesPage({
       description="The search, program, status or page is invalid. No elective slots were loaded."
       action={<Link href="/college/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
-  const [data, options] = await Promise.all([
-    listCollegeElectives(context, parsed.data),
-    listCollegeElectiveSlotOptions(context),
-  ]);
-  return <div className="space-y-4">
-    <CollegeSlotManager options={options} />
-    <CollegeStructureDirectory data={data} electiveOptions={options} />
-  </div>;
+  return <CollegeStructureDirectory data={await listCollegeElectives(context, parsed.data)} />;
 }

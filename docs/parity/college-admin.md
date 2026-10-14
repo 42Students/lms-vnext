@@ -518,6 +518,9 @@ Audited contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Student Group Detail
+
+**PARTIAL read-only dynamic rule preview:** College Admin can open `/college/groups/[groupId]/rule-preview` from the group detail for configured supported V1 rules. Shows persisted criteria and a bounded candidate eligibility projection without writing memberships or exposing applicant evidence. No assertion of capacity/waitlist outcome or full college-wide counts above cap. Rule edit/refresh controls, original legacy behavior, PG execution and browser verification remain open.
+
 **Legacy:** `/college-admin/student-groups/[id]`
 
 Audited contract:

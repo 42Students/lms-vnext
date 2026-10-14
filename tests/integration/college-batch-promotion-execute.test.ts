@@ -37,8 +37,7 @@ describe.skipIf(!enabled)("College batch promotion execute, rollback-only dispos
     const ids = {
       user: randomUUID(), membership: randomUUID(), role: randomUUID(),
       period: randomUUID(), program: randomUUID(), term1: randomUUID(),
-      term2: randomUUID(), course: randomUUID(), termCourse: randomUUID(),
-      cohort: randomUUID(), section: randomUUID(),
+      term2: randomUUID(), cohort: randomUUID(), section: randomUUID(),
       enrollment: randomUUID(), sectionEnrollment: randomUUID(),
     };
     const marker = "promotion-execute-" + ids.cohort.slice(0, 8);
@@ -58,11 +57,6 @@ describe.skipIf(!enabled)("College batch promotion execute, rollback-only dispos
       await tx.execute(sql`insert into program_terms(id,program_id,term_number,name)
         values (${ids.term1},${ids.program},1,${marker + " I"}),
           (${ids.term2},${ids.program},2,${marker + " II"})`);
-      await tx.execute(sql`insert into courses(id,department_id,name,code)
-        values (${ids.course},${SEED_IDS.departmentA},${marker},${marker})`);
-      await tx.execute(sql`insert into program_term_courses
-        (id,program_term_id,course_id,type,credits,display_order)
-        values (${ids.termCourse},${ids.term2},${ids.course},'CORE',3,1)`);
       await tx.execute(sql`insert into cohorts(id,program_id,name,code,start_period_id,status)
         values (${ids.cohort},${ids.program},${marker},${marker},${ids.period},'ACTIVE')`);
       await tx.execute(sql`insert into cohort_progression_state

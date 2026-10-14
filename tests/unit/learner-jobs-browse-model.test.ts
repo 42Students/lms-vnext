@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   availableLearnerJobFacets,
+  learnerDriveAvailability,
+  learnerDriveAvailabilityCounts,
+  learnerDriveAvailabilitySchema,
   filterLearnerPlacementJobs,
   DEFAULT_LEARNER_JOB_FILTERS as defaults,
 } from "@/modules/placements/learner-jobs-browse-model";
@@ -53,6 +56,22 @@ describe("Learner job browsing filters", () => {
     expect(filterLearnerPlacementJobs(withPublished,{...defaults,sort:"newest"})
       .map(x=>x.job.id)).toEqual(["c","a","b"]);
     expect(withPublished.map(x=>x.job.id)).toEqual(["a","b","c"]);
+  });
+  it("separates open, unavailable and expired from persisted learner eligibility", () => {
+    const a=jobs[0]!, b=jobs[1]!, c=jobs[2]!;
+    const grouped=[
+      {...a, deadlinePassed:false,canApply:true},
+      {...b, deadlinePassed:false,canApply:false},
+      {...c, deadlinePassed:true,canApply:false},
+    ];
+    expect(grouped.map(learnerDriveAvailability)).toEqual(["open","not-open","closed"]);
+    expect(learnerDriveAvailabilityCounts(grouped)).toEqual({
+      all:3,open:1,"not-open":1,closed:1,
+    });
+    expect(filterLearnerPlacementJobs(grouped,{
+      ...defaults,availability:"not-open",
+    }).map(x=>x.job.id)).toEqual(["b"]);
+    expect(learnerDriveAvailabilitySchema.safeParse("other").success).toBe(false);
   });
   it("derives facets from real job rows", () => {
     expect(availableLearnerJobFacets(jobs)).toEqual({

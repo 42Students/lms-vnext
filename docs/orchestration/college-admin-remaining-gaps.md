@@ -38,7 +38,7 @@
 | 4.4 | Faculty Assignment | PARTIAL | Buildable — assign/reassign/remove, duplicate/conflict checks and scheduling-side effects. |
 | 4.4 | Students | PARTIAL | Buildable — CSV import preview + confirmed per-row onboarding/enrollment authored; lifecycle, academic moves and learner profile drill-in remain, as do executed PG/browser checks. |
 | 4.4 | Student Groups list | PARTIAL | Buildable — group create/edit/status changes, CSV import and dynamic rule controls. |
-| 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, eligibility rules and denial paths. |
+| 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, read-only bounded rule eligibility preview authored; rule writes, waitlist actions and executed denial acceptance remain. |
 | 4.5 | Drives landing | PARTIAL | Buildable — legacy tab/list/filter parity and College Admin scoped placement operations. |
 | 4.5 | Drive Overview | PARTIAL | Buildable — complete job detail sections, statuses, actions and browser parity. |
 | 4.5 | Applications | PARTIAL | Buildable — dedicated applicant list, screening actions, export and cross-college denial tests. |
