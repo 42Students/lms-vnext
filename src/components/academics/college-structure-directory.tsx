@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
+import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
 import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
 import { PageHeader } from "@/components/ui/page-header";
@@ -118,7 +119,13 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4 text-body">{classCapacityLabel(item.capacity)}</td>
                     <td className="px-4 py-4 text-body">{item.activeLearners}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
-                    <td className="px-4 py-4"><CollegeClassRowActions row={item} /></td>
+                    <td className="px-4 py-4"><div className="flex flex-wrap items-start gap-2">
+                      <CollegeClassRowActions row={item} />
+                      <CollegeSectionLifecycleAction row={{
+                        id:item.id,name:item.name,status:item.status,
+                        updatedAt:item.updatedAt.toISOString(),
+                      }}/>
+                    </div></td>
                   </tr>
                 ))}</tbody>
               </>

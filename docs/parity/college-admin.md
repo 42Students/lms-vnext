@@ -210,6 +210,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Section lifecycle PARTIAL (2026-10-14):** The College Admin Classes directory now adds confirmed ACTIVE/ARCHIVED transitions for persisted Sections. Dedicated same-origin PATCH uses exact college and role permission, row lock, millisecond-truncated updatedAt token, an all-history dependency blocker covering enrollments, Faculty assignments, schedules and course deliveries, parent eligibility/active name-code collision on restore, and same-transaction immutable audit. Authored pure unit and disposable PG success, cross-college NOT_FOUND, wrong-role, stale-token and dependency tests. Executed real DB/browser acceptance and legacy/archive versus hard-delete semantics remain open.
+
 **Legacy:** `/college-admin/classes`
 
 **Recurring execution PARTIAL (2026-10-14):** `/college/classes/recurring-preview` adds an explicit, confirm-gated execution of its IST weekday pattern with a section-updatedAt millisecond token; the server rechecks current Section/Period/Faculty/Hall college scope, persisted section/faculty/hall overlaps and aborts the entire transaction on any conflict. The inserted session IDs and immutable section activity audit are returned only for a full success. Pure-model tests and disposable-PG fixture success/foreign-college/wrong-role/stale-token tests authored. Limits: the advisory lock serializes this writer by college+Section, but independently managed faculty/hall scheduling writers require broader shared lock policy or exclusion constraints; no cross-writer race guarantee or real CI/browser closure is claimed. Recurrence editing, bulk failure reports and course attachment remain outstanding.
