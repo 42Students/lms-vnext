@@ -169,3 +169,6 @@
 
 ## Z — Positive team coverage filters
 - Has active learners / has primary Mentor, pure and own-project PG checks authored.
+
+## AA — Recorded task-priority risk/readiness drill-ins
+- Strict task priority selector, stable non-task facts and tests authored; PARTIAL.
