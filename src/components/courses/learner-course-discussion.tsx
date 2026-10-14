@@ -430,14 +430,14 @@ export function LearnerCourseDiscussion({
                                 : "Pin"}
                           </button>
                         ) : null}
-                        <button
+                        {(moderate || !row.item.pinned) ? <button
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => void remove(row.item.id)}
                           className="text-xs font-semibold text-error hover:underline disabled:opacity-50"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}
-                        </button>
+                        </button> : null}
                       </div>
                     ) : null}
                   </article>
