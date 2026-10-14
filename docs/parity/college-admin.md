@@ -462,6 +462,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Faculty
 
+**Dedicated onboarding PARTIAL (chat-9, 2026-10-14):** `/college/faculty` now exposes Add faculty using canonical, audited People onboarding with a locked FACULTY-only role selection and no outbound invite. Underlying onboarding enforces College Admin college scope, identity collision guards and persisted membership. Pure role model and disposable-PG success/foreign/wrong-role tests authored. Legacy faculty invitation delivery, complete profile edit, duplicate/error form parity, independently executed tests and browser acceptance remain open.
+
 **Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.
 **Legacy:** `/college-admin/teachers`
 
