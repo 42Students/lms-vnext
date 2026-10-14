@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeOfferingMappings } from "@/modules/academics/college-mapping-export-service";
 import {
   listCollegeFacultyAssignments,
   listCollegeSemesterCourseMappings,
@@ -156,6 +157,14 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     expect(otherTeaching.items).toEqual([]);
   });
 
+  it("exports only own-college offerings with role denial", async () => {
+    const ours=await exportCollegeOfferingMappings(admin,{q:code});
+    const theirs=await exportCollegeOfferingMappings(foreign,{q:code});
+    expect(ours.csv).toContain(code);
+    expect(theirs.csv).not.toContain(code);
+    await expect(exportCollegeOfferingMappings(faculty,{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("denies non-admin roles and caller-supplied college IDs", async () => {
     await expect(listCollegeSemesterCourseMappings(faculty, {}))
       .rejects.toBeInstanceOf(AuthorizationError);
