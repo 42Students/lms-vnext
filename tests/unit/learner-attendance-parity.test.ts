@@ -50,7 +50,7 @@ describe("learner attendance parity surface", () => {
       "utf8",
     );
 
-    expect(workspace).toContain("courses[0]?.deliveryId");
+    expect(workspace).toContain("resolveLearnerAttendanceFilters");
     expect(workspace).toContain('type="month"');
     expect(workspace).toContain('className="space-y-3 md:hidden"');
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerAttendanceIstMonth } from "@/modules/attendance/learner-attendance-filter-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerAttendanceWorkspace,
@@ -30,6 +31,7 @@ export default async function LearnerAttendancePage() {
         </Link>
       </div>
       <LearnerAttendanceWorkspace
+        defaultMonth={learnerAttendanceIstMonth(new Date())}
         courses={workspace.courses}
         summaries={workspace.summaries}
         threshold={
