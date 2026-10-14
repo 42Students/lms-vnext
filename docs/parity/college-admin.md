@@ -516,6 +516,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+**Role-restricted CSV export PARTIAL (2026-10-15):** Faculty directory links to the canonical college people CSV exporter with FACULTY role fixed and current search/membership status. Teaching/account-status filters are not applied and UI discloses the difference. Unit and existing isolated PG role/tenant coverage extended; detailed legacy roster/browser checks remain open.
 **Teaching-presence filter PARTIAL (2026-10-15):** Faculty directory adds server-filtered ASSIGNED/NONE for persisted non-ended teaching assignments on live course deliveries in the admin’s college, before pagination. Counts are assignments, not teaching hours. Own/foreign/wrong-role and URL/model PG fixtures authored; browser evidence and legacy scheduling parity remain open.
 **Account-status filter PARTIAL (2026-10-15):** Faculty memberships now filter persisted ACTIVE/DISABLED platform account status independently from membership lifecycle, with strict Zod, URL-persisted pagination and isolated PG role/tenant checks. Browser and legacy profile/edit parity remain open.
 
@@ -561,6 +562,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Role-restricted CSV export PARTIAL (2026-10-15):** Students directory now exposes the existing, signed-in-college export with LEARNER role fixed and current name/email and membership-status selectors. Contacts are visible only with College Admin permissions; 1,000-record cap, truncation footer and CSV formula neutralization remain. Enrollment/account-status filters are explicitly *not* reflected in export. Unit and existing isolated PG role/tenant tests extended; browser and legacy report parity remain open.
 **Enrollment-presence filter PARTIAL (2026-10-15):** Student directory can distinguish an active college-owned program enrollment from no active enrollment using a correlated registered-table EXISTS predicate *before pagination*. It does not infer missing enrollment as a failed student record. Pure URL/Zod and isolated PG partition/role/tenant tests authored; full legacy moves and browser acceptance remain open.
 **Account-status filter PARTIAL (2026-10-15):** Learner memberships now filter persisted ACTIVE/DISABLED platform account status independently from cohort/class context, with the same college-only query, URL-persisted pagination and PG isolation witness. Browser and full learner lifecycle parity remain open.
 
