@@ -82,7 +82,15 @@ describe("Mentor scoped recorded activity CSV PostgreSQL",()=>{
     expect(view.items).toEqual(expect.arrayContaining([
       expect.objectContaining({importance:expect.any(String),label:expect.any(String)}),
     ]));
-    const csv=mentorActivityCsv(view.items,0);
+    const lifecycle=await getMentorProjectActivityHistory(mentor,{
+      ...query,view:"PROJECT",
+    });
+    expect(lifecycle.items.some(row=>row.label==="Project created")).toBe(true);
+    const decisions=await getMentorProjectActivityHistory(mentor,{
+      ...query,view:"REVIEWS",
+    });
+    expect(decisions.total).toBe(0);
+    const csv=mentorActivityCsv(lifecycle.items,0);
     expect(csv).toContain("Recorded event");
     expect(csv).toContain("IST");
     expect(csv).not.toContain("actor_user_id");
