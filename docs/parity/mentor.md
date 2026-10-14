@@ -270,3 +270,19 @@ mapping. Raw event summaries, metadata, actor names and IDs are never shown.
 Loading/error, disabled/empty and pagination states are authored, as are
 unit and disposable PostgreSQL denial tests. This remains PARTIAL: audit
 producer completeness, legacy event coverage and browser verification are open.
+
+## Mentor positive PostgreSQL fixture coverage and audited task decisions — authored, not executed (2026-10-14)
+
+Added test-owned `chat4-positive-*` template/project fixtures that exercise
+successful active Mentor team history/coverage, sprint status,
+task-review queue/history, exact-project activity, owned notifications and
+read acknowledgment. Real task submissions are reviewed with both APPROVED
+and CHANGES_REQUESTED, and the tests assert one persisted
+`projects.task.reviewed` event per successful decision with scoped actor,
+college, project/task/version/decision metadata. Unauthorized or repeated
+reviews must produce no additional audit row. The existing same-origin
+POST route, strict Zod validator, persisted Mentor lifecycle authority and
+transaction-locked task/submission updates are retained; the decision audit
+is inserted into that transaction, with no raw feedback in metadata.
+Positive cases remain unexecuted pending disposable DB, CI and browser proof.
+Mentor Board and notifications parity remain PARTIAL.
