@@ -124,8 +124,11 @@ export function RecruiterLeadsWorkspace({
 
   useEffect(() => {
     const controller = new AbortController();
-    void load(controller.signal);
-    return () => controller.abort();
+    const timer = setTimeout(() => void load(controller.signal), 0);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [load]);
 
   const loadCompanies = useCallback(async (signal?: AbortSignal) => {
@@ -164,8 +167,11 @@ export function RecruiterLeadsWorkspace({
   useEffect(() => {
     if (view !== "companies") return;
     const controller = new AbortController();
-    void loadCompanies(controller.signal);
-    return () => controller.abort();
+    const timer = setTimeout(() => void loadCompanies(controller.signal), 0);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [view, loadCompanies]);
 
   const visible = useMemo(() => rows.filter(lead => {
@@ -212,6 +218,12 @@ export function RecruiterLeadsWorkspace({
       setSaveError("Enter a name and at least one contact method.");
       return;
     }
+    if (!window.confirm(
+      "Create recruiter lead for " + form.name.trim() +
+      (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
+      "? This saves a new college contact and records an auditable creation event.",
+    )) return;
+
     setSaving(true);
     setSaveError("");
     try {
@@ -219,13 +231,16 @@ export function RecruiterLeadsWorkspace({
         method: "POST", credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          collegeId,
-          name: form.name.trim(),
-          ...(form.email.trim() ? { email: form.email.trim() } : {}),
-          ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
-          ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
-          ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
-          ...(form.source ? { source: form.source } : {}),
+          confirmed: true,
+          lead: {
+            collegeId,
+            name: form.name.trim(),
+            ...(form.email.trim() ? { email: form.email.trim() } : {}),
+            ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
+            ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
+            ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
+            ...(form.source ? { source: form.source } : {}),
+          },
         }),
       });
       const data = await response.json() as { error?: string };
