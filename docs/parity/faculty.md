@@ -126,14 +126,13 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [ ] Schedule/attempt/result-publication controls match.
 - [ ] Loading/error/empty states are verified.
 
-## Page: Class Schedule
-- [x] Faculty schedule is source-derived from **persisted active course teaching assignments** and active Faculty role.
-- [x] Day/week/month navigation reuses the learner calendar component, with distinct Faculty course links.
-- [x] Exact Faculty course/Section filters are populated by active teacher deliveries.
-- [x] Active Section event time, faculty/location, Course title and class context are rendered from authorized Section events.
-- [ ] Empty calendar state exists; loading/error/retry need a real browser acceptance pass.
-- [ ] Date formatting currently uses en-IN client locale; verify authored source timezone, IST boundary and per-college timezone policy.
-- [ ] Mobile calendar and navigation require Playwright/browser proof.
+## Page: Class Schedule — DONE (2026-10-14)
+- [x] Faculty schedule is sourced from registered active Section teaching assignments and current Faculty grants; role/foreign-college denial is enforced.
+- [x] Day/week/month agenda, 42-day IST month grid, previous/current/next month controls and distinct Course Section links work.
+- [x] Exact current teaching-Section filters show only persisted scheduled class events; invalid month and forged Section render non-disclosing error/clear states.
+- [x] Course/session metadata, IST date and 12-hour time, overnight boundary and real scheduling/rescheduling/audit are registered and tested.
+- [x] Empty, loading, error and retry states exist; both desktop and mobile authenticated journeys exercised them, with no browser errors or horizontal overflow.
+- [x] [Dedicated Faculty Class Schedule run 38621557113](https://github.com/42Students/lms-vnext/actions/runs/38621557113) completed **2/2 PostgreSQL and 2/2 Chromium PASS** at source commit `769bc395468002e9fa6098c44b85bf8aee58e06a`; the 2026-10-14 default decision is IST everywhere.
 
 ## Page: Assignment Report
 **Legacy:** `/teacher/report/assignment/[contentId]`
@@ -1243,3 +1242,18 @@ rows remain separate.
 ## Faculty closure evidence reconciliation (2026-10-14)
 
 Course Overview is restored to DONE in the master matrix, matching the already completed detailed Overview checklist and the two green independent CI jobs in [run 38615289795](https://github.com/42Students/lms-vnext/actions/runs/38615289795) (5 registered PostgreSQL and 2 browser). Quiz Report is closed on [run 38618101294](https://github.com/42Students/lms-vnext/actions/runs/38618101294) (7 PostgreSQL, 14 unit, 2 browser). Neither row claims global CI release readiness.
+
+## Faculty Class Schedule closure evidence (2026-10-14)
+
+**DONE** for Faculty `/teacher/calendar` and live authenticated Section
+schedule navigation, not the separate Attendance marking/correction or
+LIVE_CLASS file/provider integrations. [CI run 38621557113](https://github.com/42Students/lms-vnext/actions/runs/38621557113)
+ran on commit `769bc395468002e9fa6098c44b85bf8aee58e06a` with **2/2 PostgreSQL**
+(schedule create/reschedule, collision, audit, exact IST midnight and
+cross-college/role denial) and **2/2 Chromium desktop/mobile** (persisted
+class displayed on exact IST day, month and Section filters, authorized link,
+day/week/month view selection, invalid request and stream-rendered foreign
+scope error, mobile no-overflow). Both jobs succeeded. React's streaming
+error boundary can return 200 while refusing foreign scope; the browser
+assertions check the error section and absence of leaked month records.
+No completion of Course Attendance or overall CI is claimed.
