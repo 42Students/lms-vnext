@@ -18,7 +18,11 @@ describe("own-college persisted application stage chips",()=>{
   const f=fixture!;
   const rows=await getLearnerPlacementJourney(f.drive.learner.context);
   const own=rows.filter(row=>row.applicationId===f.applicationId);
-  expect(learnerApplicationStageCounts(own)).toEqual([
+  expect(learnerApplicationStageCounts(own.map(row=>({
+    applicationId:row.applicationId,companyName:row.company.name,jobTitle:row.job.title,
+    applicationStatus:row.applicationStatus,submittedAt:row.submittedAt,
+    withdrawnAt:row.withdrawnAt,screening:row.screening,results:row.results,
+  })))).toEqual([
    {stage:"all",count:1},{stage:"SHORTLISTED",count:1},
   ]);
  },30000);
