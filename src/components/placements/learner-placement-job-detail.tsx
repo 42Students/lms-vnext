@@ -5,6 +5,7 @@ import {
   learnerJobDetailSummary,
   safeLearnerPlacementUrl,
 } from "@/modules/placements/learner-job-detail-model";
+import {learnerJobAvailabilityBanner} from "@/modules/placements/learner-job-availability-banner-model";
 
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
@@ -34,6 +35,7 @@ export function LearnerPlacementJobDetail({
   if (!summary) return null; // route has already returned notFound()
   const item = items[0]!;
   const website = safeLearnerPlacementUrl(item.company.websiteUrl);
+  const availability=learnerJobAvailabilityBanner(items);
   const failed = items.filter((row) => row.eligibility.status === "INELIGIBLE");
 
   return (
@@ -103,6 +105,25 @@ export function LearnerPlacementJobDetail({
           ) : null}
         </div>
       </section>
+      {availability ? (
+        <aside role="status" aria-label="Application availability"
+          className="rounded-xl border border-border bg-surface-subtle p-4 sm:p-5">
+          <h2 className="text-base font-semibold text-foreground">{availability.title}</h2>
+          <p className="mt-2 text-sm leading-6 text-body">{availability.detail}</p>
+          {availability.kind!=="OPEN" ? (
+            <div className="mt-3 flex flex-wrap gap-4">
+              <Link href="/learn/my-placements/applications"
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                Check my applications →
+              </Link>
+              <Link href="/learn/profile"
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                Review my profile →
+              </Link>
+            </div>
+          ) : null}
+        </aside>
+      ) : null}
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section className="rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="about-drive">

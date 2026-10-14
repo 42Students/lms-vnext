@@ -964,3 +964,17 @@ Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence
 Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt-in policy/consent state not approved; L30-034..043 verification lacks reviewed documents and trusted state machine.
 
 2026-10-14 L16-004: selected owned interview from persisted scoped rounds is highlighted, and filtered-out deep links can be revealed without leaking foreign records. Fresh learner PG and pure-model tests authored. Browser/runtime acceptance pending. Skips: L1-021 has no trusted course image association; L13-016 requires private resume storage; L16-006 lacks audited learner attendance confirmation state; L30-034..043 lack migrated verification review/document contracts.
+
+2026-10-14 L16-005: refreshed minute-by-minute own interview countdown and honest time-window badge from persisted scheduled time and optional duration. No employer attendance/completion inferred. Pure model and self-owned learner PG authored; runtime/browser acceptance pending.
+
+2026-10-14 L16-015: copyable approved-reschedule summary uses persisted scoped exception with original/approved IST times; never includes private join URL, consent, or employer send. Pure model and fresh-learner PG test with own approved request/exception authored; runtime/clipboard acceptance outstanding.
+
+2026-10-14 L16-009: own interview .ics export now folds UTF-8 content lines to RFC5545 75-octet limit and includes calendar method/scale, preserving exact UTC persisted schedule/duration and excluding join links. Pure and fresh-learner PG authored; manual import/CI acceptance outstanding.
+
+2026-10-14 L14-018: own-application assessment action resolves an exact persisted TEST round; does not guess assessment IDs from result history. Skips: L1-021 course thumbnail (no migrated image association); L13-016 resume upload (private-storage authorization absent); L30-034..043 profile verification (private proof/review states not migrated).
+
+2026-10-14 L11-005: own issued offers expiring in the next 24 hours now take hero priority; missing/expired offers are not fabricated. Added fresh-learner offer read and denial PG coverage, pure model tests. Skip L13-016 per-drive resumes (private storage/consent not registered); L30-034..043 verification (document review tables not migrated).
+
+2026-10-14 L12-021: own published Drives distinguish zero published opportunities from filter-excluded opportunities. No fabricated jobs or saved-job state. Skip L12-003/013/014/020 saved favorites: registered private saved-job table not verified; L13-016 per-drive upload: private storage/consent approval missing. Pure and own-fixture PG authored; execution pending.
+
+2026-10-14 L13-012: authorized published job detail displays an honest no-new-application reason from scoped role and deadline state; never treats a withdrawn or rejected application as a new entitlement. Fresh-learner PG and pure-model coverage authored, not yet executed.
