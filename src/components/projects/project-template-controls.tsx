@@ -276,7 +276,7 @@ export function CreateProjectTemplateControl() {
             </Button>
           </div>
         </form>
-      </Dialog> : null}
+      </Dialog>
     </>
   );
 }
@@ -535,7 +535,7 @@ export function ProjectTemplateActions({
         <p className="m-0 text-sm leading-6 text-body">
           Existing project workspaces remain pinned to their materialized template version.
         </p>
-      </Dialog>
+      </Dialog> : null}
     </>
   );
 }

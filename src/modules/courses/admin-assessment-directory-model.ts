@@ -14,6 +14,6 @@ export function adminAssessmentHref(kind: AdminAssessmentKind, query: z.infer<ty
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params : base;
 }
-export function adminAssessmentStats(items: readonly CollegeAssessmentAggregateItem[]) {
+export function adminAssessmentStats(items: readonly Pick<CollegeAssessmentAggregateItem, "status" | "activityCount">[]) {
   return collegeAssessmentSummary(items);
 }
