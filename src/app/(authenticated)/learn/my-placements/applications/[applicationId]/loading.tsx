@@ -1,15 +1,7 @@
-import { LoadingState } from "@/components/ui/loading-state";
-import { PageHeader } from "@/components/ui/page-header";
-
-export default function LearnerApplicationDetailLoading() {
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="My Placements"
-        title="Application information"
-        description="Checking your own placement application."
-      />
-      <LoadingState label="Loading application details…" />
-    </div>
-  );
+export default function LearnerApplicationDetailLoading(){
+  return <div aria-busy="true" className="animate-pulse space-y-4">
+    <div className="h-8 w-60 max-w-full rounded bg-muted"/>
+    <div className="h-32 rounded-xl border border-border bg-surface"/>
+    <div className="h-64 rounded-xl border border-border bg-surface"/>
+  </div>;
 }
