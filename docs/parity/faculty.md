@@ -1452,3 +1452,6 @@ The Course list now accepts only bounded positive integer page selectors (or ord
 
 ## 2026-10-15 R6 Faculty Course invalid-filter recovery — PARTIAL
 Unknown/duplicated/malformed Course filters now show an explicit reset action rather than allowing a generic Zod exception or silently loading a widened Section list. Only the pure query parser is used for recovery; valid requests still traverse the same persisted Faculty teaching reader. Unit tests authored; browser verification open.
+
+## 2026-10-15 R6 Faculty Quiz write-denial messages — PARTIAL
+A pure model now translates typed stale-version, attempt, lifecycle, deadline and no-op failures into actionable feedback while deliberately giving the same message for missing and foreign teaching scope. Unit tests authored; UI integration and browser acceptance remain pending.
