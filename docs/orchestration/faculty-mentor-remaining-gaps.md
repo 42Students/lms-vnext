@@ -253,3 +253,37 @@ active team coverage; revoked-role rows are now excluded. The view separates
 no assigned projects from filter no-match, adds aggregate counts and links
 to the scoped registered meeting log. No new write, no audit. Pure/PG tests
 authored, not executed; owner approval of staffing rules remains blocked.
+
+## 2026-10-14 Faculty published gradebook learner breakdown — PARTIAL
+
+The read-only gradebook now links to an exact-current-Section, per-learner
+breakdown of published assignment/quiz scores. Nonpublished or missing grades
+are Unknown rather than zero; unauthorized learner identifiers do not
+reveal cross-Section records. An isolated PostgreSQL fixture already creating
+its own Learner and Faculty membership exercises positive and role/foreign/
+forged-input denials. Pure-model tests were extended. Runtime PostgreSQL,
+TypeScript, lint and responsive browser evidence still required; no DONE row.
+
+## 2026-10-14 Faculty attendance create/reschedule editor polish — PARTIAL
+
+The UI no longer offers other co-teachers' Section events as reschedulable.
+Existing owned sessions prefill metadata and local clock values; invalid,
+empty or reversed windows are rejected before confirmation, and success/error
+messages are accessible. Server-side permission/scope/version/audit and the
+previously authored PostgreSQL schedule test remain unchanged. Runtime/browser
+evidence and final conflict-policy acceptance remain open.
+
+## 2026-10-14 A — JavaScript/PostgreSQL optimistic token precision audit (PARTIAL)
+
+Checked all `faculty-*.ts` under courses and attendance and all `mentor-*.ts`
+under projects for direct `eq(table.updatedAt, Date)` predicates: **none found**.
+Their existing row-lock + `getTime()` millisecond checks do not compare a
+microsecond-precision SQL column with an unrepresentable JavaScript Date.
+Hardened the Mentor task-details UPDATE with a second normalized, server-side
+`date_trunc('milliseconds', updated_at) = expectedIso::timestamptz` predicate
+to defend the read/write boundary. A disposable PostgreSQL test inserts its
+own temporary row with SQL `DEFAULT now()` and checks first write success,
+stale replay denial, and unchanged record. Existing Mentor task-details
+service-level PG success/foreign/stale coverage remains in place.
+No independent PostgreSQL execution or tsc/eslint evidence in this chat;
+do not promote any parity row to DONE.

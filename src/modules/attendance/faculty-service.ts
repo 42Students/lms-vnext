@@ -230,6 +230,7 @@ export async function getFacultyAttendanceWorkspace(
   const sessions = await getDb()
     .select({
       id: sectionScheduleEvents.id,
+      facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
       title: sectionScheduleEvents.title,
       description: sectionScheduleEvents.description,
       startsAt: sectionScheduleEvents.startsAt,
