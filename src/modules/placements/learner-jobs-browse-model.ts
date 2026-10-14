@@ -27,6 +27,15 @@ export type BrowseJobShape = {
   deadlinePassed: boolean;
 };
 
+/** Missing/invalid compensation is unknown, never treated as a high offer. */
+export function learnerDriveCtcSortKey(row:BrowseJobShape):number{
+ const values=[
+   row.roleOption.minimumAnnualCtcInr,
+   row.roleOption.maximumAnnualCtcInr,
+ ].filter((v):v is number=>typeof v==="number"&&Number.isFinite(v)&&v>=0);
+ return values.length>0?Math.max(...values):-1;
+}
+
 export type LearnerJobBrowseFilters = {
   search: string;
   employmentType: string;
@@ -104,9 +113,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
     if (filters.sort === "ctc") {
-      const ctc = (row: T) => row.roleOption.maximumAnnualCtcInr ??
-        row.roleOption.minimumAnnualCtcInr ?? -1;
-      return ctc(b) - ctc(a) || a.roleOption.id.localeCompare(b.roleOption.id);
+      return learnerDriveCtcSortKey(b)-learnerDriveCtcSortKey(a) ||
+        a.roleOption.id.localeCompare(b.roleOption.id);
     }
     if (filters.sort === "title") {
       return a.roleOption.title.localeCompare(b.roleOption.title) ||

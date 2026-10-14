@@ -3,6 +3,7 @@ import {
   availableLearnerJobFacets,
   learnerDriveAvailability,
   learnerDriveAvailabilityCounts,
+  learnerDriveCtcSortKey,
   learnerDriveAvailabilitySchema,
   filterLearnerPlacementJobs,
   DEFAULT_LEARNER_JOB_FILTERS as defaults,
@@ -56,7 +57,18 @@ describe("Learner job browsing filters", () => {
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"title"}).map(x=>x.job.id))
       .toEqual(["a","b","c"]);
   });
-  it("sorts newest from persisted publication time, with unknown timestamps last", () => {
+  it("ranks valid upper compensation and never promotes invalid or undisclosed pay",()=>{
+    const input=[
+      {...jobs[0]!,roleOption:{...jobs[0]!.roleOption,minimumAnnualCtcInr:800000,maximumAnnualCtcInr:700000}},
+      {...jobs[1]!,roleOption:{...jobs[1]!.roleOption,minimumAnnualCtcInr:null,maximumAnnualCtcInr:null}},
+      {...jobs[2]!,roleOption:{...jobs[2]!.roleOption,minimumAnnualCtcInr:-10,maximumAnnualCtcInr:Number.NaN}},
+    ];
+    expect(learnerDriveCtcSortKey(input[0]!)).toBe(800000);
+    expect(filterLearnerPlacementJobs(input,{...defaults,sort:"ctc"}).map(x=>x.job.id))
+      .toEqual(["a","b","c"]);
+    expect(input[0]!.roleOption.minimumAnnualCtcInr).toBe(800000);
+  });
+    it("sorts newest from persisted publication time, with unknown timestamps last", () => {
     const withPublished = [
       {...jobs[0]!, job: {...jobs[0]!.job, publishedAt: "2026-10-01T00:00:00Z"}},
       {...jobs[1]!, job: {...jobs[1]!.job, publishedAt: null}},

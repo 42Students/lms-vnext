@@ -1176,3 +1176,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L14-007 PARTIAL (round 5):** Learner Applications' Company A–Z sort now uses stable case-insensitive natural ordering (e.g., Company 2 before Company 10), breaks ties by role then application ID, and never mutates the own scoped input. Real application screening/status filters remain unchanged. Pure-model regression authored; CI/browser/PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-008 PARTIAL (round 5):** Highest-CTC learner Drives sorting now computes an actual highest valid disclosed min/max annual pay among registered own-visible role options. Missing, negative, or nonfinite compensation never ranks above known valid salary; ties stay deterministic and no pay amount is inferred for incomplete employer data. Pure model regression authored; PG/browser acceptance pending.
