@@ -21,12 +21,21 @@ describe("calendar URL filters over persisted own rounds",()=>{
     expect(learnerCalendarSelectedEvents(rows,state).map(x=>x.roundId)).toEqual([fixture.roundId]);
     expect(learnerCalendarSelectedEvents(rows,{...state,kind:"ASSESSMENT"})).toHaveLength(0);
   },30000);
+  it("selects persisted learner rounds in rolling 30-day agenda, not the whole month",async()=>{
+    const ctx=fixture.drive.learner.context;
+    const workspace=await getLearnerPlacementRequestWorkspace(ctx);
+    const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
+    expect(learnerCalendarSelectedEvents(rows,{date:"2026-10-15",view:"agenda",kind:"INTERVIEW"}).map(x=>x.roundId)).toEqual([fixture.roundId]);
+    expect(learnerCalendarSelectedEvents(rows,{date:"2026-10-18",view:"agenda",kind:"INTERVIEW"})).toHaveLength(0);
+    const foreign:RequestContext={...ctx,membership:{...ctx.membership!,collegeId:SEED_IDS.collegeB}};
+    await expect(getLearnerPlacementRequestWorkspace(foreign)).rejects.toBeDefined();
+  },30000);
   it("shows only own persisted round labels in month/week cell chips",async()=>{
     const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
     const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
     const selected=learnerCalendarSelectedEvents(rows,{date:"2026-10-17",view:"week",kind:"INTERVIEW"});
     const chips=learnerCareerDayChips(selected);
-    expect(chips.visible.map(x=>x.key)).toEqual([fixture.drive.applicationId+":"+fixture.roundId]);
+    expect(chips.visible.map(x=>x.key)).toEqual([fixture.applicationId+":"+fixture.roundId]);
     expect(chips.hidden).toBe(0);
     const foreign:RequestContext={...fixture.drive.learner.context,membership:{...fixture.drive.learner.context.membership!,collegeId:SEED_IDS.collegeB}};
     await expect(getLearnerPlacementRequestWorkspace(foreign)).rejects.toBeDefined();

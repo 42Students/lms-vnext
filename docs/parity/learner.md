@@ -1038,3 +1038,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-009 PARTIAL:** Month/week desktop calendar cells display up to two real scoped rounds as labelled chips plus an honest overflow count. The entire day opens its schedule; direct chip-to-drawer action and runtime/mobile/browser parity remain to verify. Pure-model and own-fixture PostgreSQL tests authored; not executed.
+
+
+**2026-10-15 chat-5 L17-002 PARTIAL:** Agenda now spans 30 days starting from the chosen IST day (not a disguised month mode) and Previous/Next move 30-day windows. Events remain scoped through the existing own-learner PostgreSQL read. Runtime and browser verification outstanding.

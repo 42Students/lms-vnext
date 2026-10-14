@@ -46,7 +46,8 @@ export function shiftCareerCalendarDay(
   dayKey: string, view: CareerCalendarView, step: number,
 ): string {
   const value = dateUtc(dayKey);
-  if (view === "week") value.setUTCDate(value.getUTCDate() + step * 7);
+  if (view === "agenda") value.setUTCDate(value.getUTCDate() + step * 30);
+  else if (view === "week") value.setUTCDate(value.getUTCDate() + step * 7);
   else if (view === "day") value.setUTCDate(value.getUTCDate() + step);
   else {
     const initialDay = value.getUTCDate();
@@ -94,6 +95,10 @@ export function careerCalendarPeriod(
   let start: string, end: string;
   if (view === "day") {
     start = end = anchor;
+  } else if (view === "agenda") {
+    start = anchor;
+    date.setUTCDate(date.getUTCDate() + 29);
+    end = date.toISOString().slice(0, 10);
   } else if (view === "week") {
     const offset = (date.getUTCDay() + 6) % 7; // ISO Monday
     date.setUTCDate(date.getUTCDate() - offset);

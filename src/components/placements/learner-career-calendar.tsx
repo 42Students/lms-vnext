@@ -268,7 +268,7 @@ export function LearnerCareerCalendar({
       <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 md:block" : "space-y-3"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-base font-semibold text-foreground">
-            {view === "agenda" ? "Agenda" : "Events"} · {period.events.length}
+            {view === "agenda" ? "30-day agenda" : "Events"} · {period.events.length}
           </h3>
           <span className="text-xs text-muted-foreground">
             Times shown in Indian Standard Time
