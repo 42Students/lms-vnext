@@ -1,0 +1,32 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
+import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { collegeLearningQuerySchema } from "@/modules/courses/college-learning-directory-model";
+import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
+
+type Search = Record<string, string | string[] | undefined>;
+const first = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
+export default async function CollegeCourseProgressPage({ searchParams }: { searchParams: Promise<Search> }) {
+  const context = await getCurrentRequestContext();
+  if (!context.membership) redirect("/dashboard");
+  const params = await searchParams;
+  const parsed = collegeLearningQuerySchema.safeParse(
+    Object.fromEntries(Object.entries({
+      q: first(params.q), status: first(params.status), page: first(params.page),
+    }).filter(([, value]) => value !== undefined)),
+  );
+  if (!parsed.success) return (
+    <div className="space-y-5">
+      <PageHeader eyebrow="College Admin · Courses & Content" title="Course Progress" />
+      <ErrorState title="Invalid course progress filters"
+        description="The search, offering status or page is invalid. No activity was loaded."
+        action={<Link href="/college/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
+    </div>
+  );
+  return <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />;
+}
