@@ -14,7 +14,7 @@ export function buildHrOfferOverview(
     issued:offers.filter(offer=>offer.status==="ISSUED").length,
     accepted:offers.filter(offer=>offer.status==="ACCEPTED").length,
     declined:offers.filter(offer=>offer.status==="DECLINED").length,
-    joined:offers.filter(offer=>offer.joiningStatus==="JOINED").length,
+    joined:offers.filter(offer=>offer.status==="ACCEPTED" && offer.joiningStatus==="JOINED").length,
     awaitingReply:offers.filter(offer=>offer.status==="ISSUED" &&
       (offer.expiresAt===null || offer.expiresAt.getTime()>=now.getTime())).length,
     overdue:offers.filter(offer=>offer.status==="ISSUED" &&
@@ -31,7 +31,18 @@ export type HrRoundRead = {
 export function hrSelectionReadyApplicationIds(rounds: readonly HrRoundRead[]) {
   const evaluative=rounds.filter(round=>round.kind!=="TALK");
   if(evaluative.length===0 || evaluative.some(round=>round.status!=="COMPLETED")) return [];
-  const finalRound=evaluative[evaluative.length-1]!;
-  return finalRound.participants.filter(person=>person.result?.status==="APPLIED" &&
-    person.result.outcome==="PASS").map(person=>person.applicationId);
+  const firstRound=evaluative[0]!;
+  const qualified=new Set(
+    firstRound.participants.filter(person=>person.result?.status==="APPLIED" &&
+      person.result.outcome==="PASS").map(person=>person.applicationId),
+  );
+  for(const round of evaluative.slice(1)) {
+    const passed=new Set(round.participants.filter(person=>
+      person.result?.status==="APPLIED" && person.result.outcome==="PASS",
+    ).map(person=>person.applicationId));
+    for(const applicationId of qualified) {
+      if(!passed.has(applicationId)) qualified.delete(applicationId);
+    }
+  }
+  return [...qualified];
 }

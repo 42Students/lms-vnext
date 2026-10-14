@@ -418,3 +418,27 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Shared candidate contact privacy — PARTIAL:** Recruiter round read now explicitly requires an ACTIVE learner user, ACTIVE same-college membership, SUBMITTED application, SHORTLISTED screening, exact employer company and previously authorized job. Applies SQL active-user filter and pure post-query disclosure guard before round participant names/emails are projected. Unit privacy matrix + disposable PG own/foreign-company/college/wrong-role tests authored, unexecuted. Remaining genuine shortlist user fixture, share-marker parity, runtime/browser privacy acceptance.
+
+
+**2026-10-14 chat-10 HR Calendar RESULTS_DUE day placement — PARTIAL:** Persisted recruiter-scope results-due events now appear in the IST week/month day columns and agenda, including due-only calendar days and round deep links. No invented SLOT data. Unit and prior in-test PostgreSQL authorization fixture extended but not executed. Remaining slot table, mobile/browser acceptance, and stale-load distinctions.
+
+
+**2026-10-14 chat-10 Selection readiness across all evaluative rounds — PARTIAL:** Recruiter offers selection preview now requires APPLIED/PASS in every non-TALK round, with every round COMPLETED; final-round-only PASS no longer confers readiness. JOINED offer count requires ACCEPTED offer state and explicit JOINED outcome. Pure unit regression and existing in-test PG scope fixture updated; tests not executed. Remaining persisted recruiter selection/LOI workflow (no registered table), full offers pagination, desktop/mobile confirmation.
+
+
+**2026-10-14 chat-10 / Shared applicant pagination — PARTIAL:** Recruiter job Applicants tab uses exact-grant scoped DB aggregation for all SUBMITTED/WITHDRAWN shortlisted application counts and DB limit/offset pages of 25 (rather than silent 200-row truncation). Mobile previous/next controls retain stage and drawer page; status/college/active-user filters remain enforced before count and list. Pure-model and in-test PG foreign-company/wrong-role tests updated, not executed. Remaining deep private share marker parity, cursor pagination at scale and browser acceptance.
+
+
+**2026-10-14 chat-10 / Request a Drive read-first draft — PARTIAL:** New `/hr/drives/new` page with authorized college chooser, local form for role/work/CTC/CGPA/rounds, validation, student-visible preview, Start Over and clipboard copy. `?from=` copies only an exact company/college-authorized published/closed drive for Hire Again preview; `?fix=` explicitly blocked until request-change persistence exists. No draft persisted, external sending, fake approval or file feature. Pure model/unit + in-test PG success/foreign-company/college/wrong-role tests authored, not executed. Remaining full legacy agreement/JD/eligibility and request submission lifecycle, restored draft, fix/send, browser acceptance.
+
+
+**2026-10-14 chat-10 / Request Drive / Hire Again deep links — PARTIAL:** Recruiter Today and Drives pages now advertise their scoped local Request a Drive preview; authorized Drive Detail exposes Hire Again preview from exact company-owned job. Every generated link validates UUID and carries selected college; target server rechecks grant and relationship before job clone. Pure model plus in-test PG own-company fixture extended; not executed. Remaining full persisted submission/fix/resend and browser acceptance.
+
+
+**2026-10-14 chat-10 / Request Drive compensation and eligibility preview — PARTIAL:** Local draft adds fixed/variable CTC, bond months/amount and active-backlog eligibility, Zod validation and a student-view preview. No request is saved or sent. Unit tests and existing isolated PG owned-company preview fixture updated but not executed. Remaining complete persisted approval lifecycle, JD attachment, and verified legacy acceptance.
+
+
+**2026-10-14 chat-10 / HR offer status counts and database paging — PARTIAL:** Offers tab now uses exact company-shared shortlist SQL aggregate totals (ISSUED/ACCEPTED/DECLINED/WITHDRAWN, awaiting, overdue and ACCEPTED+JOINED) with separate filtered 25-offer DB pages. Status and previous/next links are read-only; LOI and external sending remain unsupported. Pure pagination tests and in-test PG foreign-company/wrong-role fixture extended, unexecuted. Remaining full selection/issuance workflow and browser acceptance.
+
+
+**2026-10-14 chat-10 / HR Calendar narrow-screen views — PARTIAL:** Week and month now render date-grouped mobile cards without the desktop seven-column horizontal grid, preserving separate persisted rounds, deadlines and results due with exact recruiter job links. Desktop grid remains. Pure unit and PG fixture updated, unexecuted. Also corrected Offers pagination display to use exact selected-state total. Remaining browser viewport/scroll validation and legacy interview-slot surface.
