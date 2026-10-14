@@ -9,6 +9,8 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   courseLearningPaths,
+  courseLessons, lessonContents, learnerContentProgress,
+  courseAssignments, assignmentSubmissions, courseQuizzes, quizAttempts,
   courseOfferings,
   courses,
   departments,
@@ -16,6 +18,7 @@ import {
   organizations,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { canPublishPath, canUnpublishPath } from "./college-learning-path-transition-policy";
 import {
   can,
   requirePermission,
@@ -313,14 +316,13 @@ export async function transitionLearningPath(
     collegeId: current.collegeId,
   });
 
-  const nextStatus =
-    input.action === "PUBLISH"
-      ? "PUBLISHED"
-      : "ARCHIVED";
+  const nextStatus = input.action === "PUBLISH" ? "PUBLISHED"
+    : input.action === "UNPUBLISH" ? "DRAFT" : "ARCHIVED";
 
   if (
     (input.action === "PUBLISH" &&
       current.status !== "DRAFT") ||
+    (input.action === "UNPUBLISH" && current.status !== "PUBLISHED") ||
     (input.action === "ARCHIVE" &&
       current.status === "ARCHIVED")
   ) {
@@ -339,7 +341,9 @@ export async function transitionLearningPath(
         eq(courseLearningPaths.offeringId, current.offeringId),
         input.action === "PUBLISH"
           ? eq(courseLearningPaths.status, "DRAFT")
-          : ne(courseLearningPaths.status, "ARCHIVED"),
+          : input.action === "UNPUBLISH"
+            ? eq(courseLearningPaths.status, "PUBLISHED")
+            : ne(courseLearningPaths.status, "ARCHIVED"),
       ))
       .for("update")
       .limit(1);
@@ -383,6 +387,33 @@ export async function transitionLearningPath(
       throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
     }
 
+    // Fail closed: publishing empty structure and hiding learner work are unsafe.
+    if (input.action === "PUBLISH") {
+      const [lesson] = await tx.select({ id: courseLessons.id })
+        .from(courseLessons)
+        .where(and(eq(courseLessons.learningPathId, learningPathId), eq(courseLessons.status, "ACTIVE")))
+        .limit(1);
+      if (!canPublishPath(Boolean(lesson))) throw new CoursesServiceError("INVALID_LEARNING_PATH_TRANSITION");
+    }
+    if (input.action === "UNPUBLISH") {
+      const [progress, submissions, attempts] = await Promise.all([
+        tx.select({ id: learnerContentProgress.id }).from(learnerContentProgress)
+          .innerJoin(lessonContents, eq(lessonContents.id, learnerContentProgress.lessonContentId))
+          .innerJoin(courseLessons, eq(courseLessons.id, lessonContents.lessonId))
+          .where(eq(courseLessons.learningPathId, learningPathId)).limit(1),
+        tx.select({ id: assignmentSubmissions.id }).from(assignmentSubmissions)
+          .innerJoin(courseAssignments, eq(courseAssignments.id, assignmentSubmissions.assignmentId))
+          .innerJoin(courseLessons, eq(courseLessons.id, courseAssignments.lessonId))
+          .where(eq(courseLessons.learningPathId, learningPathId)).limit(1),
+        tx.select({ id: quizAttempts.id }).from(quizAttempts)
+          .innerJoin(courseQuizzes, eq(courseQuizzes.id, quizAttempts.quizId))
+          .innerJoin(courseLessons, eq(courseLessons.id, courseQuizzes.lessonId))
+          .where(eq(courseLessons.learningPathId, learningPathId)).limit(1),
+      ]);
+      if (!canUnpublishPath({ progressRows: progress.length, submissionRows: submissions.length, attemptRows: attempts.length })) {
+        throw new CoursesServiceError("INVALID_LEARNING_PATH_TRANSITION");
+      }
+    }
     const [updated] = await tx
       .update(courseLearningPaths)
       .set({
@@ -394,7 +425,9 @@ export async function transitionLearningPath(
         eq(courseLearningPaths.offeringId, current.offeringId),
         input.action === "PUBLISH"
           ? eq(courseLearningPaths.status, "DRAFT")
-          : ne(courseLearningPaths.status, "ARCHIVED"),
+          : input.action === "UNPUBLISH"
+            ? eq(courseLearningPaths.status, "PUBLISHED")
+            : ne(courseLearningPaths.status, "ARCHIVED"),
       ))
       .returning();
 
@@ -427,10 +460,18 @@ export async function transitionLearningPath(
           },
           groupKey:
             `course-offering:${updated.offeringId}:publishing`,
-          dedupeKey:
-            `course-learning-path:${updated.id}:published`,
         },
       );
+    }
+
+    if (input.action === "UNPUBLISH") {
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_LEARNING_PATH_UNPUBLISHED,
+        collegeId: current.collegeId, organizationId: current.organizationId,
+        subjectType: "course_learning_path", subjectId: updated.id,
+        subjectLabel: updated.title, summary: "Learning path unpublished",
+        metadata: { offeringId: updated.offeringId },
+      });
     }
 
     return updated;

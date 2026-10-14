@@ -317,6 +317,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # Courses & Content
 
+**Offering lifecycle PARTIAL (2026-10-14):** The existing offering page supports confirmed path publish/unpublish, denying publish without active lessons and unpublish once learner progress/submissions/attempts are present. Mutation and audit share a transaction; exact legacy behavior and browser/real-PG acceptance are not yet confirmed.
+
 ## Page: Courses
 **Legacy:** `/college-admin/courses`
 
