@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAcademicDirectory } from "@/components/academics/college-academic-directory";
+import { CollegeCohortCreateForm } from "@/components/academics/college-cohort-management";
+import { listAcademicPeriods } from "@/modules/academics/period-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -27,5 +29,15 @@ export default async function CollegeBatchesPage({
         action={<Link href="/college/batches" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
-  return <CollegeAcademicDirectory data={await listCollegeBatches(context, parsed.data)} />;
+  const [directory, periods] = await Promise.all([
+    listCollegeBatches(context, parsed.data),
+    listAcademicPeriods(context, context.membership.collegeId),
+  ]);
+  const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
+    id: period.id, name: period.name, code: period.code,
+  }));
+  return <div className="space-y-6">
+    <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
+    <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices} />
+  </div>;
 }

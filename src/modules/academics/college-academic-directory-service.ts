@@ -49,6 +49,7 @@ function availablePrograms(collegeId: string) {
     id: programs.id,
     name: programs.name,
     code: programs.code,
+    status: programs.status,
   }).from(programs)
     .innerJoin(departments, and(
       eq(departments.id, programs.departmentId),
