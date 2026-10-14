@@ -59,6 +59,8 @@ Closure checklist:
 ## Page: Leads
 **Legacy:** `/tpo/leads`
 
+**W62 B PARTIAL:** The existing recruiter leads report now shows college-scoped actionable stage counts and contact-health: 14-day recent/quiet/no-contact, pending/due next steps and owner assignment from registered DB09 facts. Rates and latest contact are null without evidence. Pure-model and PG checks authored, not executed; legacy drill-ins and browser sign-off remain open.
+
 ### Header / health summaries
 - Add Lead;
 - Import;

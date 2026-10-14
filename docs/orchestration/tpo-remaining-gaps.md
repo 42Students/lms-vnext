@@ -1,5 +1,7 @@
 # TPO — Remaining Parity Gaps
 
+- **W62 B — Buildable / PARTIAL:** Existing Leads stage/source report extended with persisted DB09 recent-contact health and honest null semantics; tests authored, not executed. Legacy drill-in, full activity health UX and browser proof remain.
+
 - **W61 C — Buildable / PARTIAL:** TPO calendar now offers a future scheduled-round CSV by validated 1–93-day IST interval, capped at 500 with notice. Uses only registered company/job/round facts; no ICS, external sync, private meeting URL, positive DB or browser acceptance.
 - **W61 D — Buildable / PARTIAL:** TPO current shortlist now has a recruiter-minimal report/CSV with application ID, display name and email, the only candidate identity fields in the current recruiter round workspace. No outbound share, grant, token or broader disclosure. Consent, legacy column/share workflow and positive DB/browser acceptance remain open.
 

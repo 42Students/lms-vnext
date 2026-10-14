@@ -367,6 +367,8 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 # 6. TPO
 
+**W62 B PARTIAL:** Existing Leads report adds college-scoped contact recency, quiet/missing evidence, open follow-up, no-next-step and unassigned summaries. Unit/PG tests authored, unrun; exact legacy filters and browser approval remain open.
+
 Detailed page contract: `docs/parity/tpo.md`.
 
 ## 6.1 Home / CRM / Students
