@@ -734,3 +734,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 6 / Semesters CSV — PARTIAL:** Added `/api/admin/semesters/export` and status/search-matched download for selected-college program semesters, with registered names, term number and credits, CSV formula-neutralization and 250-row bounded truncation disclosure. Strict request rejects duplicated params, explicit tenant/college/page override and unsupported statuses; authorized scoped-read service and pending/error UI reused. Unit authored; PostgreSQL/browser and full semester editing parity open.
+
+
+**2026-10-15 chat-6 round 6 / Semester–Course Mapping CSV — PARTIAL:** Added `/api/admin/semester-courses/export` and in-page filtered CSV download; mapping records use the authorized selected-college SQL joins for program AND course department, term state, course code, mapping credits/type. Strict filters forbid tenant/college/page override and duplicates. CSV capped to 250 with truncation footer and formula neutralization, no-store and pending/error states. Unit authored; mapping write UI and PG/browser parity remain open.
