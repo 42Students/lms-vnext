@@ -197,6 +197,7 @@ export function LearnerApplicationsBrowse({
               className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="activity">Recent activity</option>
               <option value="company">Company A–Z</option>
+              <option value="stage">Screening stage A–Z</option>
               <option value="oldest">Oldest application</option>
             </select>
           </label>
