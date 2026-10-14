@@ -135,6 +135,23 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
     expect(coverage.items).toEqual(expect.arrayContaining([
       expect.objectContaining({projectId:project.id,learners:1,mentors:1,hasPrimaryMentor:true}),
     ]));
+    expect(coverage.projectCount).toBeGreaterThanOrEqual(1);
+    expect(coverage.summary).toMatchObject({
+      zeroLearnerProjects:expect.any(Number),
+      withoutPrimaryMentor:expect.any(Number),
+    });
+    const filtered=await getMentorTeamCoverage(mentor,{
+      filter:"NO_LEARNERS",search:project.title,page:1,
+    });
+    expect(filtered.projectCount).toBeGreaterThanOrEqual(1);
+    expect(filtered.items).toEqual([]);
+    await expect(getMentorTeamCoverage(learner,{})).rejects.toBeDefined();
+    await expect(getMentorTeamCoverage(mentor,{
+      collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+    const disabled:RequestContext={...mentor,
+      user:{...mentor.user,platformStatus:"DISABLED"}};
+    await expect(getMentorTeamCoverage(disabled,{})).rejects.toBeDefined();
     const sprints=await getMentorSprintProgress(mentor,{});
     expect(sprints.items).toEqual(expect.arrayContaining([
       expect.objectContaining({id:sprint.id,projectId:project.id,
