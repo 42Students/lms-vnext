@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   browseLearnerApplications,
+  learnerApplicationLatestActivity,
   learnerApplicationStage,
   learnerApplicationStageOptions,
   DEFAULT_LEARNER_APPLICATION_FILTERS as defaults,
@@ -52,5 +53,24 @@ describe("Learner placement application browser", () => {
     expect(learnerApplicationStageOptions(records)).toEqual([
       "REJECTED","SHORTLISTED","UNDER_REVIEW","WITHDRAWN",
     ]);
+  });
+});
+
+
+describe("learner application recent activity includes the actual withdrawal",()=>{
+  it("sorts a recently withdrawn application ahead of earlier screening without inventing current status",()=>{
+    const base={
+      applicationId:"a",jobTitle:"Software",companyName:"Company",
+      applicationStatus:"SUBMITTED",submittedAt:new Date("2026-10-01T00:00:00Z"),
+      withdrawnAt:null,screening:{status:"UNDER_REVIEW",decidedAt:new Date("2026-10-10T00:00:00Z")},
+      results:[],
+    };
+    const withdrawn={...base,applicationId:"b",applicationStatus:"WITHDRAWN",
+      withdrawnAt:new Date("2026-10-14T00:00:00Z"),screening:{...base.screening,decidedAt:null}};
+    const sorted=browseLearnerApplications([base,withdrawn],{
+      search:"",view:"all",stage:"all",sort:"activity"
+    });
+    expect(sorted.map(item=>item.applicationId)).toEqual(["b","a"]);
+    expect(learnerApplicationLatestActivity(withdrawn)).toBe(new Date("2026-10-14T00:00:00Z").getTime());
   });
 });
