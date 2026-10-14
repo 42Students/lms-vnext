@@ -8,6 +8,7 @@ import {addProjectMember} from "@/modules/projects/member-service";
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege} from "@/modules/projects/template-service";
 import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
+import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error(
   "Mentor create test requires isolated disposable TEST_DATABASE_URL",
@@ -81,12 +82,48 @@ async function fixture(){
   await addProjectMember(admin,project.id,{
     membershipId:SEED_IDS.facultyCollegeAMembership,role:"MENTOR",isPrimary:true,
   });
+  await addProjectMember(admin,project.id,{
+    membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+  });
   const workspace=await getProjectInstanceWorkspace(mentor,project.id);
   const sprint=workspace.sprints[0];
   if(!sprint)throw new Error("Fixture missing registered sprint");
   return {project,sprint};
 }
 describe("Mentor task create — migrated PostgreSQL",()=>{
+  it("reads actual team counts and one registered requested meeting",async()=>{
+    const {project}=await fixture();
+    const meetingId=randomUUID();
+    await pool.query(`insert into project_meetings
+      (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,
+       requested_by_membership_id,created_by_user_id)
+       values ($1,$2,'REQUESTED','GENERAL',$3,
+        '2026-11-01T10:00:00Z','2026-11-01T11:00:00Z','Asia/Kolkata',$4,$5)`,[
+      meetingId,project.id,"Unique Mentor meeting",
+      SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,
+    ]);
+    const view=await getMentorTeamMeetings(mentor,{projectId:project.id});
+    expect(view).toMatchObject({
+      enabled:true,total:1,
+      team:{learners:1,mentors:1,primaryRecorded:true},
+    });
+    expect(view.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({id:meetingId,status:"REQUESTED",hasOutcome:false}),
+    ]));
+    const completed=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,status:"COMPLETED",
+    });
+    expect(completed.items).toEqual([]);
+    expect(completed.total).toBe(0);
+    await expect(getMentorTeamMeetings(learner,{projectId:project.id}))
+      .rejects.toBeDefined();
+    await expect(getMentorTeamMeetings(mentor,{projectId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+    await expect(getMentorTeamMeetings(mentor,{
+      projectId:project.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
+
   it("creates a TODO task exactly once, audits and rejects forged/foreign/stale writes",async()=>{
     const {project,sprint}=await fixture();
     const params={projectId:project.id};
