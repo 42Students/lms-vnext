@@ -13,6 +13,7 @@ import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/p
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
+import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -142,6 +143,7 @@ export function LearnerApplicationsBrowse({
   };
   const rows = browseLearnerApplications(items, filters);
   const viewCounts=learnerApplicationViewCounts(items);
+  const emptyKind=learnerApplicationEmptyKind(items.length,rows.length);
   const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
   const requested = url.page;
   const page = Number.isInteger(requested) && requested > 0
@@ -276,9 +278,19 @@ export function LearnerApplicationsBrowse({
         ):null}
       </div>
 
-      {items.length===0 ? (
-        <LearnerPlacementJourney items={[]} />
-      ) : rows.length===0 ? (
+      {emptyKind==="NO_APPLICATIONS" ? (
+        <div className="space-y-3">
+          <LearnerPlacementJourney items={[]} />
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <p className="text-sm text-body">No applications have been recorded for this learner yet.
+              Browse your published college drives and check eligibility before applying.</p>
+            <Link href="/learn/my-placements/jobs"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Browse available drives →
+            </Link>
+          </div>
+        </div>
+      ) : emptyKind==="FILTERED_OUT" ? (
         <div className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="font-semibold text-foreground">No applications match these filters.</p>
           <button type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}

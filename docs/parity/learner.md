@@ -1251,3 +1251,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L14-004 PARTIAL (round 6):** All/In Progress/Final Recorded Status learner application views now show counts from the same own-authorized application history and explain exactly that rejected/withdrawn are final saved statuses. Shortlists, applied round results, and interview scheduling are not mislabeled hired/offer-completed. Read-side unit cases added, URL state/role scope retained; browser/PG gate pending.
+
+
+**2026-10-15 chat-5 L14-023 PARTIAL (round 6):** Learner Applications now distinguishes a true first-run zero-record history from a filtered zero-match view using a dedicated deterministic empty-state model. First run links to authorized published Drives; only a filtered mismatch offers reset. No missing source is converted to an empty account (server read failures remain errors). Pure-model regression authored; PG/browser/mobile acceptance outstanding.
