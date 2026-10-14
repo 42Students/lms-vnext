@@ -6,6 +6,7 @@ import {
   collegeMemberships,
   membershipRoles,
   placementApplications,
+  placementApplicationStatusHistory,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRoleOptions,
@@ -13,6 +14,7 @@ import {
   placementJobs,
   placementJoiningOutcomes,
   placementOffers,
+  placementOfferStatusHistory,
   placementRoundResults,
   placementSeasons,
   users,
@@ -114,8 +116,8 @@ export async function getTpoStudentPlacementHistory(
     .offset((query.page - 1) * 25);
 
   const applicationIds = applications.map((item) => item.id);
-  const [offers, rounds] = applicationIds.length === 0
-    ? [[], []] as const
+  const [offers, rounds, applicationEvents] = applicationIds.length === 0
+    ? [[], [], []] as const
     : await Promise.all([
       db.select({
         id: placementOffers.id,
@@ -147,6 +149,9 @@ export async function getTpoStudentPlacementHistory(
         name: placementJobRounds.name,
         outcome: placementRoundResults.outcome,
         appliedAt: placementRoundResults.appliedAt,
+        status: placementRoundResults.status,
+        version: placementRoundResults.version,
+        submittedAt: placementRoundResults.submittedAt,
       })
         .from(placementRoundResults)
         .innerJoin(
@@ -160,11 +165,50 @@ export async function getTpoStudentPlacementHistory(
         .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
         .where(and(
           inArray(placementRoundResults.applicationId, applicationIds),
-          eq(placementRoundResults.status, "APPLIED"),
+          eq(placementApplications.membershipId, learner.membershipId),
+          eq(placementJobs.collegeId, college.id),
+        )),
+      db.select({
+        id: placementApplicationStatusHistory.id,
+        applicationId: placementApplicationStatusHistory.applicationId,
+        fromStatus: placementApplicationStatusHistory.fromStatus,
+        toStatus: placementApplicationStatusHistory.toStatus,
+        createdAt: placementApplicationStatusHistory.createdAt,
+      })
+        .from(placementApplicationStatusHistory)
+        .innerJoin(placementApplications, eq(
+          placementApplications.id, placementApplicationStatusHistory.applicationId,
+        ))
+        .innerJoin(placementJobs, eq(
+          placementJobs.id, placementApplications.jobId,
+        ))
+        .where(and(
+          inArray(placementApplicationStatusHistory.applicationId, applicationIds),
           eq(placementApplications.membershipId, learner.membershipId),
           eq(placementJobs.collegeId, college.id),
         )),
     ]);
+
+  const offerIds = offers.map((offer) => offer.id);
+  const offerEvents = offerIds.length === 0 ? [] : await db.select({
+    id: placementOfferStatusHistory.id,
+    offerId: placementOfferStatusHistory.offerId,
+    fromStatus: placementOfferStatusHistory.fromStatus,
+    toStatus: placementOfferStatusHistory.toStatus,
+    createdAt: placementOfferStatusHistory.createdAt,
+  }).from(placementOfferStatusHistory)
+    .innerJoin(placementOffers, eq(
+      placementOffers.id, placementOfferStatusHistory.offerId,
+    ))
+    .innerJoin(placementApplications, eq(
+      placementApplications.id, placementOffers.applicationId,
+    ))
+    .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .where(and(
+      inArray(placementOfferStatusHistory.offerId, offerIds),
+      eq(placementApplications.membershipId, learner.membershipId),
+      eq(placementJobs.collegeId, college.id),
+    ));
 
   const total = countRow?.total ?? 0;
   return {
@@ -173,7 +217,9 @@ export async function getTpoStudentPlacementHistory(
       displayName: learner.displayName?.trim() || "Unnamed learner",
       membershipStatus: learner.membershipStatus,
     },
-    ...projectTpoStudentPlacementHistory(applications, offers, rounds),
+    ...projectTpoStudentPlacementHistory(
+      applications, offers, rounds, applicationEvents, offerEvents,
+    ),
     total,
     page: query.page,
     totalPages: Math.max(1, Math.ceil(total / 25)),

@@ -743,6 +743,31 @@ describe("courses C4A assignments against PostgreSQL", () => {
       version: 2,
     });
 
+    // Published idempotency is allowed only at the CURRENT version.
+    // A stale browser token must not silently succeed or create an audit.
+    await expect(publishAssignmentGrade(
+      faculty,submitted.id,{expectedVersion:1},
+    )).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_CONFLICT"});
+    const repeated = await publishAssignmentGrade(
+      faculty,submitted.id,{expectedVersion:2},
+    );
+    expect(repeated.version).toBe(2);
+    await expect(publishAssignmentGrade(
+      learner,submitted.id,{expectedVersion:2},
+    )).rejects.toBeDefined();
+    await expect(gradeAssignmentSubmission(
+      learner,submitted.id,{
+        pointsAwarded:10,feedback:"Forged",expectedVersion:2,
+      },
+    )).rejects.toBeDefined();
+    const injectedGrade = {
+      pointsAwarded:10,feedback:"Forged",expectedVersion:2,
+      collegeId:SEED_IDS.collegeB,
+    };
+    await expect(gradeAssignmentSubmission(
+      faculty,submitted.id,injectedGrade,
+    )).rejects.toBeDefined();
+
     const visible =
       await getMyAssignmentSubmission(
         learner,

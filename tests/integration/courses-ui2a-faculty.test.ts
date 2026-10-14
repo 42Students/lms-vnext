@@ -131,6 +131,25 @@ async function cleanupUI2A() {
         join programs p on p.id = c.program_id
         where p.code like 'FUI2A-%'
       )`);
+  // Remove fixture-owned immutable events before their target rows disappear.
+  await pool.query(`delete from activity_events
+    where event_type in ('courses.attendance.marked', 'courses.class.scheduled')
+      and subject_type = 'attendance_session'
+      and subject_id in (
+        select e.id::text from section_schedule_events e
+        join sections s on s.id = e.section_id
+        join cohorts c on c.id = s.cohort_id
+        join programs p on p.id = c.program_id
+        where p.code like 'FUI2A-%'
+      )`);
+  await pool.query(`delete from activity_events
+    where event_type like 'courses.discussion.%'
+      and metadata->>'deliveryId' in (
+        select d.id::text from course_section_deliveries d
+        join course_offerings co on co.id=d.offering_id
+        join courses c on c.id=co.course_id
+        where c.code like 'FUI2A-%'
+      )`);
   // Schedule link FKs must go before the Section and delivery fixtures.
   await pool.query(`delete from section_schedule_event_courses
    where schedule_event_id in (
@@ -683,6 +702,18 @@ describe("courses UI2A faculty read model", () => {
       },
     );
 
+    const scheduleAudit = await pool.query(
+      `select event_type, actor_user_id, metadata from activity_events
+        where event_type = 'courses.class.scheduled' and subject_id = $1`,
+      [session.id],
+    );
+    expect(scheduleAudit.rows).toHaveLength(1);
+    expect(scheduleAudit.rows[0]).toMatchObject({
+      event_type: "courses.class.scheduled",
+      actor_user_id: faculty.user.id,
+      metadata: { deliveryId: structure.deliveryA.id },
+    });
+
     const initial =
       await getFacultyAttendanceWorkspace(
         faculty,
@@ -1071,6 +1102,29 @@ describe("courses UI2A faculty read model", () => {
         (message) => message.id,
       ),
     ).toEqual([facultyMessage.id]);
+    const history = await pool.query(
+      `select event_type, college_id, actor_user_id, metadata
+         from activity_events
+        where subject_type='course_discussion_message'
+          and subject_id in ($1, $2)`,
+      [learnerMessage.id, facultyMessage.id],
+    );
+    expect(history.rows).toHaveLength(6);
+    expect(history.rows.map(row => row.event_type).sort()).toEqual([
+      "courses.discussion.deleted",
+      "courses.discussion.pin_changed",
+      "courses.discussion.pin_changed",
+      "courses.discussion.pin_changed",
+      "courses.discussion.posted",
+      "courses.discussion.posted",
+    ]);
+    expect(history.rows.every(row =>
+      row.college_id === SEED_IDS.collegeA &&
+      row.metadata.deliveryId === structure.deliveryA.id
+    )).toBe(true);
+    expect(JSON.stringify(history.rows)).not.toContain("Can you explain the queue example?");
+    expect(JSON.stringify(history.rows)).not.toContain("Yes — I will pin");
+
 
     await expect(
       listCourseDiscussionMessages(
@@ -1081,6 +1135,79 @@ describe("courses UI2A faculty read model", () => {
       code:
         "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
+  });
+
+  it("pages a busy Faculty discussion without skipping microsecond-neighbor messages", async () => {
+    const structure = await createStructure();
+    const messages: string[] = [];
+    for (let index = 0; index < 7; index++) {
+      const message = await createCourseDiscussionMessage(faculty, structure.deliveryA.id, {
+        messageText: "Paged class discussion " + index,
+      });
+      messages.push(message.id);
+      // All seven are inside the same millisecond. The server must retain
+      // PostgreSQL's microsecond precision in its cursor, not a JS Date.
+      await pool.query(
+        "update course_discussion_messages set created_at = $2::timestamptz + ($3::int * interval '1 microsecond') where id = $1",
+        [message.id, "2026-10-14T08:00:00.123000Z", index],
+      );
+    }
+    const first = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, { limit: 3 });
+    expect(first.messages.map(message => message.id)).toEqual(messages.slice(4));
+    expect(first.nextCursor).toMatchObject({ beforeId: messages[4] });
+    expect(first.nextCursor!.beforeCreatedAt).toMatch(/\.123004Z$/);
+    expect(first.messages.map(row => row.createdAtExact)).toEqual([
+      "2026-10-14T08:00:00.123004Z",
+      "2026-10-14T08:00:00.123005Z",
+      "2026-10-14T08:00:00.123006Z",
+    ]);
+    expect(first.highlightedPinned).toBeNull();
+
+    // A moderator can pin a message well outside the most recent page.
+    // All authorized readers should still see the pin banner immediately.
+    await toggleCourseDiscussionPin(faculty, messages[0]!, structure.deliveryA.id);
+    const withPinned = await listCourseDiscussionMessages(
+      faculty, structure.deliveryA.id, { limit: 3 },
+    );
+    expect(withPinned.messages.map(row => row.id)).toEqual(messages.slice(4));
+    expect(withPinned.highlightedPinned).toMatchObject({
+      id: messages[0],
+      messageText: "Paged class discussion 0",
+    });
+    const learnerPinned = await listCourseDiscussionMessages(
+      learner, structure.deliveryA.id, { limit: 2 },
+    );
+    expect(learnerPinned.highlightedPinned?.id).toBe(messages[0]);
+    await toggleCourseDiscussionPin(faculty, messages[0]!, structure.deliveryA.id);
+    const noPinned = await listCourseDiscussionMessages(
+      faculty, structure.deliveryA.id, { limit: 3 },
+    );
+    expect(noPinned.highlightedPinned).toBeNull();
+
+    const second = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, {
+      limit: 3, ...first.nextCursor!,
+    });
+    expect(second.messages.map(message => message.id)).toEqual(messages.slice(1, 4));
+    const third = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, {
+      limit: 3, ...second.nextCursor!,
+    });
+    expect(third.messages.map(message => message.id)).toEqual([messages[0]]);
+    expect(third.nextCursor).toBeNull();
+    expect(new Set([...first.messages, ...second.messages, ...third.messages].map(m => m.id)).size).toBe(7);
+
+    for (const invalid of [
+      { limit: 0 },
+      { limit: 101 },
+      { beforeId: messages[1] },
+      { beforeCreatedAt: first.nextCursor!.beforeCreatedAt },
+      { unknownField: "other college" },
+    ]) {
+      await expect(listCourseDiscussionMessages(faculty, structure.deliveryA.id, invalid))
+        .rejects.toBeDefined();
+    }
+    await expect(listCourseDiscussionMessages(faculty, structure.deliveryB.id, {
+      limit: 3, ...first.nextCursor!,
+    })).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
   });
 
   it("keeps Faculty Contacts same-college and role-filtered", async () => {

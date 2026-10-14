@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { CollegeTermMappingManager } from "@/components/academics/college-term-mapping-manager";
+import { listCollegeTermMappings } from "@/modules/academics/college-term-mapping-service";
 import { semesterCourseQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeSemesterCourseMappings } from "@/modules/academics/college-mapping-service";
 
@@ -34,8 +36,11 @@ export default async function CollegeSemesterCoursesPage({
         action={<Link href="/college/semester-courses" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
-  const { query, items, total, totalPages, programs, periods } =
-    await listCollegeSemesterCourseMappings(context, parsed.data);
+  const [offeringData, curriculumData] = await Promise.all([
+    listCollegeSemesterCourseMappings(context, parsed.data),
+    listCollegeTermMappings(context),
+  ]);
+  const { query, items, total, totalPages, programs, periods } = offeringData;
   return (
     <div className="space-y-6">
       <PageHeader
@@ -47,6 +52,7 @@ export default async function CollegeSemesterCoursesPage({
           Course offerings
         </Link>}
       />
+      <CollegeTermMappingManager data={curriculumData} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/semester-courses" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
+import { TpoOfferLifecyclePanel } from "./tpo-offer-lifecycle-panel";
 
 type OfferStatus =
   | "ISSUED"
@@ -337,6 +338,18 @@ export function PlacementOfferControls({
           Issue offers only after every evaluative round has a confirmed pass. Learners accept or decline; the placement team records joining outcomes.
         </p>
       </div>
+
+      {isTpo ? (
+        <TpoOfferLifecyclePanel
+          jobId={jobId}
+          choices={candidates.flatMap((item) => item.offer ? [{
+            id: item.offer.id,
+            label: item.displayName ?? "Unnamed learner",
+            status: item.offer.status,
+            joiningStatus: item.joining?.status ?? null,
+          }] : [])}
+        />
+      ) : null}
 
       {isTpo ? (
         <PlacementBulkOfferWithdraw
