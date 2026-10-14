@@ -90,7 +90,7 @@ Detailed page contract: `docs/parity/faculty.md`.
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Courses list | `/teacher/courses` | `/teacher/courses` | Exact Faculty Section-scoped listing, search and canonical tabs authored; independent full legacy acceptance still needed. | DONE |
-| Course Overview | course `home` | faculty workspace | Exact overview parity pending. | PARTIAL |
+| Course Overview | course `home` | faculty workspace | Exact overview parity pending. Section notices link now honestly reports unpromoted DB10 storage with exact Faculty scope; Discussions stays available. | PARTIAL |
 | Blueprint | course `blueprint` | learning-path authoring | Core authoring exists; exact controls/states pending. | PARTIAL |
 | Course Attendance | course `attendanceDetail` | `/teacher/courses/[deliveryId]/attendanceDetail` | Section monthly report, class scheduling, roster search and marking. Persisted absence selections now initialize per session and reset on explicit session change without effect races; audit/admin-policy/browser evidence remain. | PARTIAL |
 | Course Discussions | course `discussions` | `/teacher/courses/[deliveryId]/discussions` | Delivery-scoped polling feed, Faculty post/pin/unpin/delete moderation, historical read-only state and recovery states are source-authored; DB/browser execution remains. | PARTIAL |
