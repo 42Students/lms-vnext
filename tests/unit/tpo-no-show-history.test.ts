@@ -76,11 +76,12 @@ describe("TPO learner placement history projection", () => {
       [{
         id: "round-1", applicationId: "app-1", name: "Interview",
         outcome: "PASS", appliedAt: new Date("2026-01-10T11:00:00Z"),
+        status: "APPLIED", version: 1, submittedAt: new Date("2026-01-10T10:30:00Z"),
       }],
     );
     expect(value.pageFacts).toEqual({
-      applications: 1, offerVersions: 2,
-      acceptedOfferVersions: 1, confirmedJoins: 1,
+      applications: 1, resultVersions: 1, stagedResults: 0,
+      offerVersions: 2, acceptedOfferVersions: 1, confirmedJoins: 1,
     });
     expect(value.items[0]?.offers[0]?.status).toBe("ACCEPTED");
     expect(value.items[0]?.applicationStatus).toBe("WITHDRAWN");
@@ -102,7 +103,44 @@ describe("TPO learner placement history projection", () => {
     expect(value.items[0]?.appliedRounds).toEqual([]);
   });
 
-  it("rejects forged college parameters and invalid pagination", () => {
+  it("distinguishes staged/superseded versions from applied decisions", () => {
+    const value = projectTpoStudentPlacementHistory(
+      [application],
+      [],
+      [
+        {
+          id: "staged", applicationId: "app-1", name: "Interview",
+          outcome: "PASS", status: "STAGED", version: 3,
+          submittedAt: new Date("2026-01-11T09:00:00Z"), appliedAt: null,
+        },
+        {
+          id: "superseded", applicationId: "app-1", name: "Interview",
+          outcome: "FAIL", status: "SUPERSEDED", version: 2,
+          submittedAt: new Date("2026-01-10T10:00:00Z"), appliedAt: null,
+        },
+        {
+          id: "final", applicationId: "app-1", name: "Interview",
+          outcome: "PASS", status: "APPLIED", version: 1,
+          submittedAt: new Date("2026-01-10T09:00:00Z"),
+          appliedAt: new Date("2026-01-10T12:00:00Z"),
+        },
+      ],
+      [{
+        id: "app-event", applicationId: "app-1",
+        fromStatus: null, toStatus: "SUBMITTED",
+        createdAt: new Date("2026-01-10T09:00:00Z"),
+      }],
+    );
+    expect(value.pageFacts.resultVersions).toBe(3);
+    expect(value.pageFacts.stagedResults).toBe(1);
+    expect(value.items[0]?.resultVersions.map((result) => result.status))
+      .toEqual(["STAGED", "SUPERSEDED", "APPLIED"]);
+    expect(value.items[0]?.appliedRounds).toHaveLength(1);
+    expect(value.items[0]?.appliedRounds[0]?.outcome).toBe("PASS");
+    expect(value.items[0]?.applicationEvents[0]?.toStatus).toBe("SUBMITTED");
+  });
+
+    it("rejects forged college parameters and invalid pagination", () => {
     const membershipId = "00000000-0000-4000-8000-000000000011";
     expect(tpoStudentHistoryQuerySchema.parse({ membershipId, page: "2" }))
       .toEqual({ membershipId, page: 2 });
