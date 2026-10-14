@@ -28,6 +28,11 @@ describe.skipIf(!enabled)("HR offer read scope PG",()=>{
       grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel}]}});
   const ownRead=await getHrJobRead(hr(own.company.id,own.relationship.id,SEED_IDS.collegeA),job.id,{tab:"offers"});
   expect(buildHrOfferOverview(ownRead.offers,new Date()).recorded).toBe(0);
+  expect(ownRead.offerSummary.recorded).toBe(0);
+  const nextPage=await getHrJobRead(hr(own.company.id,own.relationship.id,SEED_IDS.collegeA),job.id,
+    {tab:"offers",offerState:"ISSUED",offerPage:"2"});
+  expect(nextPage.offers).toEqual([]);
+  expect(nextPage.offersPage.page).toBe(2);
   expect(hrSelectionReadyApplicationIds(ownRead.workspace.rounds)).toEqual([]);
   await expect(getHrJobRead(hr(other.company.id,other.relationship.id,SEED_IDS.collegeA),job.id,{tab:"offers"}))
     .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});

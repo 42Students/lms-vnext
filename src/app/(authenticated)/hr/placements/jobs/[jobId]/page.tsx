@@ -8,7 +8,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
-import { buildHrOfferOverview, hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
+import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
+import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
@@ -32,6 +33,7 @@ export default async function HrPlacementJobPage({
 }: {
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
+    offerPage?:string; offerState?:string;
     roundId?:string; outcome?:string }>;
 }) {
   const context =
@@ -52,11 +54,11 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsPage, offers, offersTruncated } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
-  const offerSummary = buildHrOfferOverview(offers, now);
+
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
@@ -161,7 +163,7 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
-              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant counts use all authorized shared records; offer counts cover the newest 200 offers at most.</p></div>
+              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant counts use all authorized shared records; offer counts reflect all authorized shared offer versions.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
                 {driveOverview.deadlineState.replaceAll("_"," ")}
@@ -277,7 +279,7 @@ export default async function HrPlacementJobPage({
       {filters.tab === "offers" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
-          <p className="text-sm text-body">Only offers associated with candidates already shared with your company appear here. Offer records represent persisted versions; LOI is not stored in the registered schema and is not represented as an offer.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. LOI is not stored in the registered schema.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -297,6 +299,17 @@ export default async function HrPlacementJobPage({
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
+          <nav aria-label="Offer status" className="flex flex-wrap gap-2">
+            {HR_OFFER_STATES.map((status) => (
+              <Link key={status} href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+status}
+                aria-current={status===filters.offerState ? "page" : undefined}
+                className={status===filters.offerState ?
+                  "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
+                  "rounded-full border border-border px-3 py-2 text-xs text-body"}>
+                {status==="ALL" ? "All statuses" : status}
+              </Link>
+            ))}
+          </nav>
           {offers.length ? <div className="grid gap-3 md:grid-cols-2">{offers.map(offer => (
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
@@ -308,7 +321,28 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xs text-muted-foreground">Reply by {offer.expiresAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt) : "Not set"} · Joining outcome {offer.joiningStatus ?? "Not recorded"}</p>
             </article>
           ))}</div> : <p className="text-sm text-muted-foreground">No offers recorded for shared applicants.</p>}
-          {offersTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 offers only.</p> : null}
+          <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            <span className="text-xs text-muted-foreground">
+              {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
+              {" of "+(filters.offerState==="ALL" ? offersTotal :
+                filters.offerState==="ISSUED" ? offerSummary.issued :
+                filters.offerState==="ACCEPTED" ? offerSummary.accepted :
+                filters.offerState==="DECLINED" ? offerSummary.declined :
+                offersPage.pageSize * (offersPage.pages - 1) + Math.max(0, offersPage.last - (offersPage.pages - 1) * offersPage.pageSize))}
+            </span>
+            <div className="flex gap-2">
+              {filters.offerPage > 1 ? <Link
+                href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
+                Previous
+              </Link> : null}
+              {filters.offerPage < offersPage.pages ? <Link
+                href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
+                Next
+              </Link> : null}
+            </div>
+          </nav>
         </section>
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>

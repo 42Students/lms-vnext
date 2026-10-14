@@ -436,3 +436,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / Request Drive compensation and eligibility preview — PARTIAL:** Local draft adds fixed/variable CTC, bond months/amount and active-backlog eligibility, Zod validation and a student-view preview. No request is saved or sent. Unit tests and existing isolated PG owned-company preview fixture updated but not executed. Remaining complete persisted approval lifecycle, JD attachment, and verified legacy acceptance.
+
+
+**2026-10-14 chat-10 / HR offer status counts and database paging — PARTIAL:** Offers tab now uses exact company-shared shortlist SQL aggregate totals (ISSUED/ACCEPTED/DECLINED/WITHDRAWN, awaiting, overdue and ACCEPTED+JOINED) with separate filtered 25-offer DB pages. Status and previous/next links are read-only; LOI and external sending remain unsupported. Pure pagination tests and in-test PG foreign-company/wrong-role fixture extended, unexecuted. Remaining full selection/issuance workflow and browser acceptance.

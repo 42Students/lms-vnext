@@ -40,3 +40,5 @@
 - 2026-10-14 — Request Drive links PARTIAL: Today/Drives CTA and exact-job Hire Again preview navigation; test extensions unexecuted.
 
 - 2026-10-14 — Request Drive compensation/eligibility PARTIAL: local-only CTC breakdown, bond, backlogs and preview; tests authored, execution pending.
+
+- 2026-10-14 — HR Offers DB pages PARTIAL: 25-row filtered status pages and all-shared aggregate totals, no LOI; tests authored/extended, execution pending.
