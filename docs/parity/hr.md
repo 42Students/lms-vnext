@@ -490,3 +490,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Hiring activity server pagination — PARTIAL:** Read-only /hr/activity now pages allowlisted employer/college audit events using stable occurredAt/id sort, capped limit+1 lookahead, bounded numeric page and filter-preserving previous/next links. No private metadata. Pure-model and in-test PG page bounds extended, unexecuted. Remaining keyset paging at large offsets and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR Drives sorting — PARTIAL:** Authorized published/closed drives list supports URL-persisted newest, deadline-first (missing deadlines last), and title sorting before 20-row client pages. Sorting operates after exact recruiter college/company filtering and does not mutate source. Unit test for validation, deterministic tie and sort authored, unexecuted. Remaining server keyset sorting at scale and browser acceptance.

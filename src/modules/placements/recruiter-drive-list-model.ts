@@ -8,13 +8,15 @@ export const recruiterDriveListQuerySchema = z.object({
   mode: z.enum(["ALL","ONSITE","HYBRID","REMOTE"]).default("ALL"),
   deadline: z.enum(["ALL","SOON","UNKNOWN"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  sort:z.enum(["RECENT","DEADLINE","TITLE"]).default("RECENT"),
 }).strict();
 export type RecruiterDriveListQuery = z.infer<typeof recruiterDriveListQuerySchema>;
 
 export type RecruiterDriveListItem = {
   collegeId: string;
   job: { id: string; title: string; status: string; archivedAt: Date | null;
-    employmentType?: string; workMode?: string; applicationDeadline?: Date | null };
+    employmentType?: string; workMode?: string; applicationDeadline?: Date | null;
+    createdAt?:Date;publishedAt?:Date|null };
 };
 
 export function summarizeRecruiterDrives<T extends RecruiterDriveListItem>(rows: readonly T[]) {
@@ -58,6 +60,7 @@ export function recruiterDrivesHref(query: RecruiterDriveListQuery) {
   if (query.mode !== "ALL") p.set("mode", query.mode);
   if (query.deadline !== "ALL") p.set("deadline", query.deadline);
   if (query.page > 1) p.set("page", String(query.page));
+  if (query.sort !== "RECENT") p.set("sort", query.sort);
   const s = p.toString();
   return "/hr/drives" + (s ? "?" + s : "");
 }
@@ -67,4 +70,17 @@ export function paginateRecruiterDrives<T>(rows:readonly T[],page:number) {
   const first=(page-1)*HR_DRIVE_PAGE_SIZE;
   return {total:rows.length,page,pageSize:HR_DRIVE_PAGE_SIZE,
     pages:Math.ceil(rows.length/HR_DRIVE_PAGE_SIZE),rows:rows.slice(first,first+HR_DRIVE_PAGE_SIZE)};
+}
+
+export function sortRecruiterDrives<T extends RecruiterDriveListItem>(rows:readonly T[],sort:RecruiterDriveListQuery["sort"]):T[]{
+ const value=(date:Date|null|undefined)=>date?.getTime()??0;
+ return [...rows].sort((a,b)=>{
+  if(sort==="TITLE")return a.job.title.localeCompare(b.job.title)||a.job.id.localeCompare(b.job.id);
+  if(sort==="DEADLINE"){
+   const aDeadline=a.job.applicationDeadline?value(a.job.applicationDeadline):Number.MAX_SAFE_INTEGER;
+   const bDeadline=b.job.applicationDeadline?value(b.job.applicationDeadline):Number.MAX_SAFE_INTEGER;
+   return aDeadline-bDeadline||a.job.id.localeCompare(b.job.id);
+  }
+  return value(b.job.createdAt??b.job.publishedAt)-value(a.job.createdAt??a.job.publishedAt)||a.job.id.localeCompare(b.job.id);
+ });
 }
