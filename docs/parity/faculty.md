@@ -1058,3 +1058,14 @@ CREATE/EDIT deadlines alongside existing stale, foreign-scope and role denial.
 Existing publication guards, version checks and immutable audit are unchanged.
 Remaining: PostgreSQL execution (sandbox UID restriction), browser/mobile and
 legacy-oracle deadline acceptance; no DONE promotion.
+
+## 2026-10-14 Faculty CSV contact fallback and roster cap — PARTIAL
+Assignment/Quiz report CSV no longer uses email as a missing-name fallback.
+Roster CSV now exports names and roll numbers only, omits phone/email and
+membership identifiers, caps at 500 learners with an explicit omission notice,
+and neutralizes invisible-prefix formulas using the shared serializer.
+The download control labels its exported fields. Pure regression tests cover
+missing names, privacy, UTF-8, quoting, formulas and cap notice. The own-Section
+PostgreSQL CSV fixture now tests actual persisted learners with no display name
+alongside existing role/foreign-selector denials. GET-only; no stale token.
+Remaining: database execution, browser downloads and legacy acceptance.

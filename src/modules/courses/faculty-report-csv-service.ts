@@ -8,7 +8,7 @@ import {
 } from "./faculty-assessment-report-service";
 import {
   facultyReportCsv, facultyReportCsvFilename, capFacultyReportCsvRows,
-  type FacultyReportCsvInput,
+  type FacultyReportCsvInput, facultyCsvLearnerLabel,
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
 import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
@@ -45,7 +45,7 @@ export async function getFacultyReportCsvForDownload(
           const scored = submission.gradingStatus === "GRADED" &&
             submission.pointsAwarded !== null && assignment.maxPoints > 0;
           return {
-            name:submission.learnerDisplayName || submission.learnerEmail || "Learner",
+            name:facultyCsvLearnerLabel(submission.learnerDisplayName),
             email:null,
             status:"SUBMITTED" as const,
             score:scored ? submission.pointsAwarded + "/" + assignment.maxPoints : null,
@@ -59,7 +59,7 @@ export async function getFacultyReportCsvForDownload(
         }),
         ...(query.filter===undefined||query.filter==="ALL" ? missingLearners : [])
           .map(learner => ({
-          name:learner.displayName || learner.email || "Learner",
+          name:facultyCsvLearnerLabel(learner.displayName),
           email:null,
           status:"NOT_SUBMITTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded submission",
@@ -79,7 +79,7 @@ export async function getFacultyReportCsvForDownload(
       kind:"quiz",title:quiz.title,sectionName:quiz.sectionName,
       rows:[
         ...capped.selectedAttempts.map(attempt => ({
-          name:attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
+          name:facultyCsvLearnerLabel(attempt.learnerDisplayName),
           email:null,
           status:"ATTEMPTED" as const,
           score:attempt.score + "/" + attempt.maxScore,
@@ -89,7 +89,7 @@ export async function getFacultyReportCsvForDownload(
           note:"Attempt " + attempt.attemptNumber,
         })),
         ...capped.selectedMissing.map(learner => ({
-          name:learner.displayName || learner.email || "Learner",
+          name:facultyCsvLearnerLabel(learner.displayName),
           email:null,
           status:"NOT_ATTEMPTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded attempt",

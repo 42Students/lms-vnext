@@ -625,9 +625,12 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       values($1,$2,$3,'TEXT','Learner response') returning id`,
       [assignment.id,delivery.id,testLearnerMembershipId]);
     expect(row.rows[0]?.id).toBeTruthy();
+    // Contact must not escape via the name fallback when the real name is missing.
+    await pool.query("update users set display_name=null where id=$1", [testLearnerUserId]);
     const exported=await getFacultyReportCsvForDownload(facultyOnly,{
       kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id});
     expect(exported.csv).toContain("Submitted at (IST)");
+    expect(exported.csv).toContain("Learner (name unavailable)");
     expect(exported.csv).not.toContain('"Email"');
     const identity=await pool.query<{email:string}>("select email from users where id=$1",
       [testLearnerUserId]);
@@ -635,6 +638,7 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const quizCsv=await getFacultyReportCsvForDownload(facultyOnly,{
       kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id});
     expect(quizCsv.csv).not.toContain(identity.rows[0]!.email);
+    expect(quizCsv.csv).toContain("Learner (name unavailable)");
     await expect(getFacultyReportCsvForDownload(learner,{
       kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,
     })).rejects.toBeDefined();

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   facultyReportCsv, facultyReportCsvFilename,
   facultyReportCsvSchema, neutralizeFacultyCsvCell,
-  capFacultyReportCsvRows,facultyCsvIstTimestamp,
+  capFacultyReportCsvRows,facultyCsvIstTimestamp,facultyCsvLearnerLabel,
 } from "@/modules/courses/faculty-report-csv";
 
 const basic = {
@@ -70,6 +70,11 @@ describe("Faculty authorized assessment CSV",() => {
     expect(text).toContain("HYPERLINK(1)");
     expect(text).not.toContain("secret0@example.edu");
     expect(text).not.toContain("Learner 501");
+  });
+  it("never substitutes contact fields for missing learner names", () => {
+    expect(facultyCsvLearnerLabel(null)).toBe("Learner (name unavailable)");
+    expect(facultyCsvLearnerLabel("  ")).toBe("Learner (name unavailable)");
+    expect(facultyCsvLearnerLabel("  Asha  ")).toBe("Asha");
   });
   it("creates deterministic safe filenames",() => {
     expect(facultyReportCsvFilename("quiz","Java / \\ Test","Section A"))
