@@ -957,3 +957,5 @@ The rows below were considered but intentionally not promoted to PARTIAL; they r
 
 2026-10-14 L13-015: published Drive detail now preserves only schema-allowed filter/sort/page state when returning to Drives; no caller-college/actor selector. Authored own-learner PG and URL-model tests; app-router/browser and static acceptance pending.
 Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence not verified; do not fake saved state. Skipped L13-016 private per-drive resume: storage/consent policy unresolved.
+
+2026-10-14 L16-019: mobile interview drawer prioritizes effective IST persisted schedule and full-width actions; date-only status never implies attendance/completion. Own-learner PG and model tests authored; mobile/CI acceptance remains. Skipped L16-006 confirm attendance: no migrated learner acknowledgement state or employer acceptance record.
