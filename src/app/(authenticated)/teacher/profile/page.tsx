@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnFacultyProfileWithRuntime } from "@/modules/people/runtime";
@@ -22,6 +23,12 @@ export default async function FacultyProfilePage() {
         title="Profile"
         description="Your college identity and teaching details."
       />
+      <div className="flex justify-end">
+        <Link href="/teacher/profile/teaching"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Current teaching assignments →
+        </Link>
+      </div>
       <section aria-label="Faculty profile details" className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-base font-semibold text-foreground">About</h2>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
