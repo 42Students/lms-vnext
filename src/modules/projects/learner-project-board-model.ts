@@ -30,3 +30,10 @@ export function learnerBoardEmptyState(total: number, shown: number): LearnerBoa
   if (total === 0) return "NO_TASKS";
   return shown === 0 ? "FILTERED_EMPTY" : "RESULTS";
 }
+
+export function learnerBoardActiveFilterCount(filters: {
+  search: string; priority: string; sprintId: string; releaseId: string;
+}): number {
+  return [filters.search.trim(), filters.priority, filters.sprintId, filters.releaseId]
+    .filter(Boolean).length;
+}

@@ -1,10 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { filterLearnerBoardTasks, learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 const tasks=[
   {id:"1",title:"Implement API",description:"Write authorized read"},
   {id:"2",title:"Mobile board",description:null},
   {id:"3",title:"Regression test",description:"API consistency"},
 ];
+describe("L25-014 mobile Board controls",()=>{
+  it("counts active URL filters without inferring absent ones",()=>{
+    expect(learnerBoardActiveFilterCount({search:"",priority:"",sprintId:"",releaseId:""})).toBe(0);
+    expect(learnerBoardActiveFilterCount({search:" fix ",priority:"HIGH",sprintId:"",releaseId:"some-id"})).toBe(3);
+  });
+});
 describe("L25-013 truthful learner Board empty states",()=>{
   it("distinguishes no persisted tasks from filtered-out tasks",()=>{
     expect(learnerBoardEmptyState(0,0)).toBe("NO_TASKS");

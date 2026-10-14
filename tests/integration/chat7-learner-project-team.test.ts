@@ -9,7 +9,7 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
-import { filterLearnerBoardTasks, learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -283,5 +283,18 @@ describe("L25-013 source-backed empty Board on own learner project",()=>{
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
       {...context,membership:{...context.membership!,roles:["FACULTY"]}},
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(denied,ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L25-014 responsive Board filters use own task data",()=>{
+  it("shows truthful counts from an authorized project snapshot",async()=>{
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    expect(workspace.project.id).toBe(ids.project);
+    expect(learnerBoardActiveFilterCount({search:"",priority:"",sprintId:"",releaseId:""})).toBe(0);
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
