@@ -644,3 +644,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Semesters — PARTIAL:** `/admin/semesters` presents selected-college read-only registered program terms with search, active/inactive filter, 25-row pagination, mobile cards, loading/error/empty states and no cross-college fallback. New pure query tests and disposable PG in-test term fixture including wrong-role and foreign-scope denial authored (not executed). Also repaired the stale section-detail unit import identifier to match the exported helper. Full semester edit/create parity and browser acceptance still outstanding.
+
+
+**2026-10-15 chat-6 round 3 / Batches — PARTIAL:** `/admin/batches` now has explicit selected-college read-only registered cohorts, program/start period, name/code search, lifecycle filter, 25-row paging, mobile cards, empty/error/loading and no cross-scope fallback. Pure model plus in-test disposable PG fixture including foreign-scope/wrong-role denial authored, not executed. Promotion/edit/student transfer and browser acceptance remain open.
