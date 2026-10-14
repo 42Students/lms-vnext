@@ -324,6 +324,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
     })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     expect(published.status).toBe("PUBLISHED");
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{
+      maxAttempts:3,expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type like 'courses.quiz.%'`,[draft.id]);

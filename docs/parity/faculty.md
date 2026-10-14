@@ -1416,3 +1416,6 @@ The Faculty Quiz question editor now refuses a toggle that would leave multi-cho
 
 ## 2026-10-15 R4 Quiz multiple-choice deletion consistency — PARTIAL
 Removing a multi-choice option now preserves the server's requirement for at least one correct and at least one incorrect remaining option. If Faculty removes the sole selected or sole unselected option, the editor repairs the two-option draft deterministically without mutating its original data. New pure regression cases authored; browser confirmation pending.
+
+## 2026-10-15 R4 published Faculty Quiz attempt-limit contract — PARTIAL
+Faculty Quiz authoring now forbids changing a published, closed or archived Quiz's maximum attempt count even before the first learner attempt. This matches the locked Faculty editor and preserves the announced learner attempt policy; DRAFT changes remain allowed. A pure status matrix and a PostgreSQL published-Quiz denial were authored. Live PG/browser acceptance pending.

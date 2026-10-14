@@ -1,5 +1,5 @@
 import { facultyQuizMetadataEditable } from "@/modules/courses/faculty-quiz-builder-model";
-import { facultyQuizCommandSchema } from "@/modules/courses/faculty-quiz-authoring-model";
+import { facultyQuizCommandSchema,facultyQuizAttemptLimitLocked } from "@/modules/courses/faculty-quiz-authoring-model";
 import { describe, expect, it } from "vitest";
 import { facultyQuizDraftEditable } from "@/modules/courses/faculty-quiz-builder-model";
 
@@ -29,4 +29,14 @@ describe("published Faculty Quiz metadata-only authoring",()=>{
     expect(facultyQuizCommandSchema.safeParse(input).success).toBe(true);
     expect(facultyQuizCommandSchema.safeParse({...input,questions:[]}).success).toBe(false);
   });
+});
+
+describe("Faculty published Quiz attempt policy seal",()=>{
+ it("locks published, closed and archived attempt caps while allowing draft revision",()=>{
+  expect(facultyQuizAttemptLimitLocked("DRAFT",2,3)).toBe(false);
+  for(const status of ["PUBLISHED","CLOSED","ARCHIVED"] as const){
+   expect(facultyQuizAttemptLimitLocked(status,2,3)).toBe(true);
+   expect(facultyQuizAttemptLimitLocked(status,2,2)).toBe(false);
+  }
+ });
 });
