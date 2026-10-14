@@ -338,16 +338,25 @@ export async function listOwnNotifications(
 
 export async function countOwnUnreadNotifications(
   context: RequestContext,
+  options: { collegeId?: string } = {},
 ) {
-  const [row] = await getDb()
-    .select({ total: count() })
-    .from(inAppNotifications)
-    .where(
-      and(
-        eq(inAppNotifications.userId, context.user.id),
-        isNull(inAppNotifications.readAt),
-      ),
-    );
+  const collegeId = options.collegeId
+    ? z.string().uuid().parse(options.collegeId)
+    : null;
+  const db = getDb();
+  const [row] = collegeId
+    ? await db.select({ total: count() }).from(inAppNotifications)
+        .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
+        .where(and(
+          eq(inAppNotifications.userId, context.user.id),
+          isNull(inAppNotifications.readAt),
+          eq(activityEvents.collegeId, collegeId),
+        ))
+    : await db.select({ total: count() }).from(inAppNotifications)
+        .where(and(
+          eq(inAppNotifications.userId, context.user.id),
+          isNull(inAppNotifications.readAt),
+        ));
   return row?.total ?? 0;
 }
 
