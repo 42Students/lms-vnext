@@ -144,3 +144,7 @@ are transactional and idempotent. The isolated fresh-user PostgreSQL fixture
 covers success, cross-college exclusion, wrong-role, suspended actor, no-op
 and clean teardown; tests have been authored, not independently executed.
 Final mobile/browser and legacy producer parity remain open.
+
+## Mentor task creation and assignment blocker (2026-10-14)
+
+A confirmation-gated Mentor task creation endpoint and UI are authored using registered project_tasks and an exact live Mentor project/sprint scope. Assignment/workload balancing remains blocked because no migrated assignee/effort field exists, and extra Zod keys are denied. The isolated positive/denial test intentionally retains append-only activity history and cleans mutable fixture records only. Real PostgreSQL and browser evidence and legacy edit/control parity remain open.

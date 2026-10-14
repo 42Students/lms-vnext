@@ -382,3 +382,7 @@ this view; Delivery remains the only write path. Unit/helper tests and
 same-project positive empty/foreign-role denial in the existing unique-fixture
 PostgreSQL suite are authored. Execution/browser and full legacy Overview
 acceptance remain PARTIAL.
+
+## Mentor Project task creation (2026-10-14)
+
+An actively assigned Mentor can create a registered TODO task within an active/planned Sprint with persisted title, description, acceptance criteria, priority and sequence. Confirmation UI explains that this changes the Board and records an audit event. POST /api/projects/[projectId]/tasks validates strict Zod inputs and same origin, requires a persisted current Mentor project grant and central projects.read, and uses a locked project/Sprint transaction with optimistic sprint timestamp and immutable projects.task.created audit. Sequence uniqueness is enforced by the migrated table. PostgreSQL success/foreign/wrong-role/stale tests have been authored using unique project/template fixtures, cleaning mutable test records but never deleting from append-only audit tables. Assignment and workload fields remain explicitly blocked by the missing registered columns. Browser/real-DB execution and complete legacy parity remain PARTIAL.
