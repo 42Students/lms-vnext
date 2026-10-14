@@ -184,6 +184,7 @@ export async function getCollegeGroupDetail(
         state: lmsGroupMembers.state,
         source: lmsGroupMembers.source,
         isLocked: lmsGroupMembers.isLocked,
+        version: lmsGroupMembers.version,
         waitlistPosition: lmsGroupMembers.waitlistPosition,
         joinedAt: lmsGroupMembers.joinedAt,
       })

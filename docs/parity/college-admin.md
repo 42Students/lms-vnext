@@ -557,6 +557,8 @@ Audited contract:
 
 ## Page: Student Group Detail
 
+**Atomic Remove & Lock PARTIAL (chat-9, 2026-10-14):** Admin can confirm one stale-version-checked Remove & Lock action on a Study Group member. Member removal, persistent lock, append-only member history, activity audit and eligible waitlist seat promotion commit in one transaction. Other colleges see the same unmanageable denial; wrong role is forbidden. Member version is read from the registered roster, with no second mutation race. Pure-model and isolated PG positive/foreign/wrong-role/stale tests authored. Remaining: exact legacy rule forms/waitlist manual moderation, list pagination beyond 500, independently executed PG/browser/type/lint acceptance and legacy action UX reconciliation.
+
 **PARTIAL read-only dynamic rule preview:** College Admin can open `/college/groups/[groupId]/rule-preview` from the group detail for configured supported V1 rules. Shows persisted criteria and a bounded candidate eligibility projection without writing memberships or exposing applicant evidence. No assertion of capacity/waitlist outcome or full college-wide counts above cap. Rule edit/refresh controls, original legacy behavior, PG execution and browser verification remain open.
 
 **Legacy:** `/college-admin/student-groups/[id]`

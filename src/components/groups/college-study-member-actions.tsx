@@ -15,7 +15,7 @@ export function CollegeStudyMemberActions({
   name: string;
   members: readonly {
     membershipId: string; displayName: string | null;
-    state: string; isLocked: boolean;
+    state: string; isLocked: boolean; version: number;
   }[];
   available: readonly { id: string; label: string }[];
 }) {
@@ -93,6 +93,11 @@ export function CollegeStudyMemberActions({
               onClick={() => setAction({ action: "REMOVE", membershipId: member.membershipId })}>
               Remove
             </Button>
+            <Button size="sm" variant="danger" disabled={pending}
+              onClick={() => setAction({ action: "REMOVE_AND_LOCK",
+                membershipId: member.membershipId, expectedVersion: member.version, confirm: true })}>
+              Remove &amp; lock
+            </Button>
           </div>
         </div>,
       )}
@@ -100,9 +105,9 @@ export function CollegeStudyMemberActions({
     {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={action !== null} onOpenChange={(value) => { if (!value && !pending) setAction(null); }}
       title={action ? collegeStudyMemberLabel(action) : "Confirm membership action"}
-      description={`Study group: ${name}. Changes are audited; removing an active member may promote a waitlisted learner.`}
-      confirmLabel={action?.action === "REMOVE" ? "Remove member" : "Confirm"}
-      confirmVariant={action?.action === "REMOVE" ? "danger" : "primary"}
+      description={`Study group: ${name}. Changes are audited; removing an active member may promote a waitlisted learner. Remove & lock also blocks self-rejoining until an admin changes the lock.`}
+      confirmLabel={action?.action === "REMOVE_AND_LOCK" ? "Remove & lock" : action?.action === "REMOVE" ? "Remove member" : "Confirm"}
+      confirmVariant={action?.action === "REMOVE" || action?.action === "REMOVE_AND_LOCK" ? "danger" : "primary"}
       pending={pending} onConfirm={confirm} />
   </div>;
 }
