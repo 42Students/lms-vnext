@@ -135,6 +135,11 @@ export default async function TpoAuditPage({
         eyebrow="TPO · Oversight"
         title="Audit Log"
         description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
+        actions={
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            Actor / entity filters and CSV →
+          </Link>
+        }
       />
 
       <section

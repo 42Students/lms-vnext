@@ -217,8 +217,8 @@ export const updateLearningPathInputSchema =
 
 export const learningPathTransitionSchema =
   z.object({
-    action: z.enum(["PUBLISH", "ARCHIVE"]),
-  });
+    action: z.enum(["PUBLISH", "UNPUBLISH", "ARCHIVE"]),
+  }).strict();
 
 export const createCourseLessonInputSchema =
   z.object({
