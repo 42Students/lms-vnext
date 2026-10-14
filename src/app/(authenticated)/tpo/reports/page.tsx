@@ -56,7 +56,7 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placed-branch",
         },
         {
-                    title: "Season pipeline",
+          title: "Season pipeline",
           description: "Recorded applied, shortlisted, offer and joining stages, with unavailable final selection and capped CSV.",
           path: "/tpo/reports/season-pipeline",
         },
