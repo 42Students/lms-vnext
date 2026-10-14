@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h1>Unable to load task feedback</h1><p>A failed read is not an empty review history.</p><button type="button" onClick={reset} className="rounded border border-border p-2">Retry</button></section>}

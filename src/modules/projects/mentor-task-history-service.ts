@@ -24,7 +24,7 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
   const empty=(enabled:boolean)=>({
     enabled,query,...mentorTaskHistoryPage(0,1),
     items:[] as {
-      id:string;projectId:string;projectTitle:string;taskTitle:string;
+      id:string;projectId:string;taskId:string;projectTitle:string;taskTitle:string;
       status:string;version:number;reviewedAt:Date|null;
     }[],
   });
@@ -57,6 +57,7 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
   const paging=mentorTaskHistoryPage(Number(summary?.total??0),query.page);
   const items=await db.select({
     id:projectTaskSubmissions.id,projectId:projectInstances.id,
+    taskId:projectTasks.id,
     projectTitle:projectInstances.title,taskTitle:projectTasks.title,
     status:projectTaskSubmissions.status,version:projectTaskSubmissions.version,
     reviewedAt:projectTaskSubmissions.reviewedAt,
