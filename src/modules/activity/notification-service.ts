@@ -274,6 +274,7 @@ export async function listOwnNotifications(
   options: {
     unreadOnly?: boolean;
     limit?: number;
+    collegeId?: string;
   } = {},
 ) {
   const limit = z
@@ -284,11 +285,11 @@ export async function listOwnNotifications(
     .default(40)
     .parse(options.limit);
   const conditions = [
-    eq(
-      inAppNotifications.userId,
-      context.user.id,
-    ),
+    eq(inAppNotifications.userId, context.user.id),
   ];
+  if (options.collegeId) {
+    conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
+  }
   if (options.unreadOnly) {
     conditions.push(
       isNull(
@@ -457,6 +458,7 @@ export async function listOwnNotificationPage(
     limit?: number;
     beforeCreatedAt?: Date;
     beforeId?: string;
+    collegeId?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -465,6 +467,7 @@ export async function listOwnNotificationPage(
     throw new Error("NOTIFICATION_CURSOR_INVALID");
   }
   const conditions = [eq(inAppNotifications.userId, context.user.id)];
+  if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
   if (options.unreadOnly) {
     conditions.push(isNull(inAppNotifications.readAt));
   }

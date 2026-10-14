@@ -93,7 +93,7 @@ export function LearnerNotificationsInbox({
           ) : null}
         </div>
       ) : (
-        <NotificationList items={visible} onSelect={setSelected} />
+        <NotificationList items={visible} onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
       <Dialog
         open={selected !== null}
