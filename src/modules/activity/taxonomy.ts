@@ -55,10 +55,15 @@ export const ACTIVITY_EVENT_TYPES = {
     "academics.learner.enrolled",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
+  COURSES_LESSON_CREATED: "courses.lesson.created",
+  COURSES_LESSON_UPDATED: "courses.lesson.updated",
+  COURSES_LESSON_REORDERED: "courses.lesson.reordered",
   COURSES_TEACHING_ASSIGNED:
     "courses.teaching_assignment.assigned",
   COURSES_TEACHING_ENDED:
     "courses.teaching_assignment.ended",
+  COURSES_LEARNER_CONTENT_COMPLETED:
+    "courses.learner_content.completed",
   COURSES_ASSIGNMENT_SUBMITTED:
     "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:

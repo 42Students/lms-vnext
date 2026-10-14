@@ -235,7 +235,7 @@ export const createCourseLessonInputSchema =
       .int()
       .min(0)
       .max(10000),
-  });
+  }).strict();
 
 export const updateCourseLessonInputSchema =
   z
@@ -260,7 +260,7 @@ export const updateCourseLessonInputSchema =
           (item) => item !== undefined,
         ),
       "At least one lesson field is required",
-    );
+    ).strict();
 
 const lessonContentBaseSchema = z.object({
   lessonId: courseLessonIdSchema,
