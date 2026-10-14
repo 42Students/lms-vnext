@@ -43,13 +43,19 @@ const tracked:{projectIds:string[];templateIds:string[]}={projectIds:[],template
 
 async function cleanup() {
   const projectIds=[...tracked.projectIds];
-  if(projectIds.length) {
-    // Remove only events and project rows created by this test invocation.
+  const templateIds=[...tracked.templateIds];
+  const allIds=[...projectIds,...templateIds];
+  if(allIds.length) {
+    // Fully clean project AND template audit/notification rows owned by this fixture.
     await pool.query(`delete from in_app_notifications where event_id in
       (select id from activity_events where subject_id = any($1::text[])
-      or metadata ->> 'projectId' = any($1::text[]))`,[projectIds]);
+        or metadata ->> 'projectId' = any($1::text[])
+        or metadata ->> 'templateId' = any($1::text[]))`,[allIds]);
     await pool.query(`delete from activity_events where subject_id = any($1::text[])
-      or metadata ->> 'projectId' = any($1::text[])`,[projectIds]);
+      or metadata ->> 'projectId' = any($1::text[])
+      or metadata ->> 'templateId' = any($1::text[])`,[allIds]);
+  }
+  if(projectIds.length) {
     for(const table of [
       "project_task_submissions","project_submission_reviews","project_submissions",
       "project_meetings","project_members","project_resources",
@@ -60,7 +66,6 @@ async function cleanup() {
     await pool.query("delete from project_instances where id = any($1::uuid[])",[projectIds]);
     tracked.projectIds=[];
   }
-  const templateIds=[...tracked.templateIds];
   if(templateIds.length) {
     await pool.query("delete from project_template_college_assignments where template_id = any($1::uuid[])",[templateIds]);
     await pool.query("delete from project_template_versions where template_id = any($1::uuid[])",[templateIds]);
