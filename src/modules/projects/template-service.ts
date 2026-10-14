@@ -5,7 +5,6 @@ import {
   desc,
   eq,
   isNull,
-  ne,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -13,6 +12,7 @@ import {
   projectTemplateCollegeAssignments,
   projectTemplates,
   projectTemplateVersions,
+  colleges,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -130,24 +130,16 @@ export async function getProjectTemplateDetail(
           desc(projectTemplateVersions.version),
         ),
       getDb()
-        .select()
+        .select({ assignment: projectTemplateCollegeAssignments })
         .from(projectTemplateCollegeAssignments)
-        .where(
-          and(
-            eq(
-              projectTemplateCollegeAssignments.templateId,
-              templateId,
-            ),
-            isNull(
-              projectTemplateCollegeAssignments.revokedAt,
-            ),
-          ),
-        )
-        .orderBy(
-          asc(
-            projectTemplateCollegeAssignments.assignedAt,
-          ),
-        ),
+        .innerJoin(colleges, eq(colleges.id, projectTemplateCollegeAssignments.collegeId))
+        .where(and(
+          eq(projectTemplateCollegeAssignments.templateId, templateId),
+          isNull(projectTemplateCollegeAssignments.revokedAt),
+          context.adminScope?.collegeId ? eq(colleges.id, context.adminScope.collegeId) : undefined,
+          context.adminScope?.organizationId ? eq(colleges.organizationId, context.adminScope.organizationId) : undefined,
+        ))
+        .orderBy(asc(projectTemplateCollegeAssignments.assignedAt)),
     ]);
 
   const currentVersion =
@@ -160,7 +152,7 @@ export async function getProjectTemplateDetail(
     template,
     currentVersion,
     versions,
-    assignments,
+    assignments: assignments.map(row => row.assignment),
   };
 }
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
@@ -94,6 +95,10 @@ export default async function SuperAdminPeoplePage({
           title="Select a college scope"
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
+        <Link href="/admin/people/directory"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Browse all permitted Users &amp; Roles without selecting a college →
+        </Link>
       </div>
     );
   }
@@ -118,6 +123,9 @@ export default async function SuperAdminPeoplePage({
         description="Canonical people and memberships inside the selected college safety scope."
         actions={<PersonOnboardDialog collegeId={collegeId} />}
       />
+      <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Browse platform users & roles →
+      </Link>
       <DataTable
         columns={columns}
         rows={people.items}

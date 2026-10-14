@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { ErrorState } from "@/components/ui/error-state";
+import { getSuperAdminTemplateVersionHistory } from "@/modules/projects/template-version-history-service";
+import { templateVersionHistoryQuerySchema, templateVersionHistoryHref, type templateVersionHistoryPage } from "@/modules/projects/template-version-history-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -17,10 +20,13 @@ import {
   TEMPLATE_SUBVIEW_TABS,
   type TemplateReadSubview,
 } from "@/modules/projects/template-subview-model";
+import { templateVersionComparisonHref } from "@/modules/projects/template-version-comparison-model";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 
 function formatDate(value: Date) {
-  return value.toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata", dateStyle: "medium",
+  }).format(value) + " IST";
 }
 
 function DetailField({
@@ -60,9 +66,11 @@ function NoItems({
 export async function SuperAdminTemplateSubviewPage({
   templateId,
   section,
+  historyQuery = {},
 }: {
   templateId: string;
   section: TemplateReadSubview;
+  historyQuery?: unknown;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -79,8 +87,17 @@ export async function SuperAdminTemplateSubviewPage({
     ReturnType<typeof getSuperAdminTemplateSubview>
   >;
 
+  let historyPaging: ReturnType<typeof templateVersionHistoryPage> | null = null;
+  if (section === "versions" && !templateVersionHistoryQuerySchema.safeParse(historyQuery).success) {
+    return <ErrorState title="Invalid version page" description="Choose a valid positive page number."
+      action={<Link href={templateVersionHistoryHref(templateId, 1)}>First page</Link>} />;
+  }
   try {
-    detail =
+    if (section === "versions") {
+      const history = await getSuperAdminTemplateVersionHistory(context, templateId, historyQuery);
+      detail = history.detail;
+      historyPaging = history.paging;
+    } else detail =
       await getSuperAdminTemplateSubview(
         context,
         templateId,
@@ -582,7 +599,7 @@ export async function SuperAdminTemplateSubviewPage({
                 Version history
               </h2>
               <StatusBadge>
-                {detail.versions.length} versions
+                {historyPaging?.total ?? detail.versions.length} versions
               </StatusBadge>
             </div>
 
@@ -638,6 +655,11 @@ export async function SuperAdminTemplateSubviewPage({
                     </div>
                   </div>
 
+                  <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
+                    className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                    Compare changes and inspect snapshot →
+                  </Link>
+
                   {version.summary ? (
                     <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
                       {version.summary}
@@ -670,6 +692,13 @@ export async function SuperAdminTemplateSubviewPage({
                 </article>
               );
             })}
+            {historyPaging ? <nav aria-label="Template version pages" className="flex flex-wrap items-center gap-4 text-sm">
+              <span className="text-muted-foreground">Page {historyPaging.page} of {historyPaging.totalPages} · 25 per page</span>
+              {historyPaging.page > 1 ? <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text"
+                href={templateVersionHistoryHref(templateId, historyPaging.page - 1)}>Previous</Link> : null}
+              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text"
+                href={templateVersionHistoryHref(templateId, historyPaging.page + 1)}>Next</Link> : null}
+            </nav> : null}
           </section>
         )
       ) : null}
