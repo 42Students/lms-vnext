@@ -33,6 +33,7 @@ export type LearnerJobBrowseFilters = {
   location: string;
   eligibleOnly: boolean;
   closingSoon: boolean;
+  availability: z.infer<typeof learnerDriveAvailabilitySchema>;
   sort: "deadline" | "ctc" | "title" | "newest";
 };
 
