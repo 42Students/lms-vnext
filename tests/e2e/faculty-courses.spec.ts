@@ -190,6 +190,24 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   const sessionId: string = (await scheduleResponse.json()).session.id;
   expect(sessionId).toBeTruthy();
 
+  // A second class cannot overlap this exact Section; show an actionable
+  // validation message instead of the previous generic 500.
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  const conflicting = page.getByRole("dialog", { name: "Schedule Class" });
+  await conflicting.getByLabel("Class title").fill("Overlapping class should fail");
+  await conflicting.getByLabel("Starts at").fill(localTime(started));
+  await conflicting.getByLabel("Ends at").fill(localTime(ended));
+  const collisionResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty");
+  await conflicting.getByRole("button", { name: "Schedule Class" }).click();
+  const overlap = await collisionResponse;
+  expect(overlap.status(), await overlap.text()).toBe(409);
+  await expect(conflicting.getByRole("alert")).toContainText(
+    "Another class overlaps this time in the Section",
+  );
+  await conflicting.getByRole("button", { name: "Close drawer" }).click();
+
   await page.goto("/teacher/calendar");
   await page.getByLabel("View", { exact: true }).selectOption("day");
   await page.getByRole("button", { name: "Today", exact: true }).click();
