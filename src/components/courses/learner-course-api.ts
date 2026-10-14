@@ -6,6 +6,12 @@ export type CourseApiErrorBody = {
 };
 
 const errorLabels: Record<string, string> = {
+  ASSIGNMENT_FILE_NOT_READY:
+    "The file has not passed its required security checks. Try again later or contact your College.",
+  ASSIGNMENT_UPLOAD_RECEIPT_INVALID:
+    "The upload permission is no longer valid. Upload the file again.",
+  DB06_ASSIGNMENT_FILES_MIGRATIONS_PENDING:
+    "File uploads are currently unavailable. Use a written response or an HTTPS link.",
   INVALID_REQUEST:
     "Please check the information and try again.",
   INVALID_ORIGIN:

@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -438,6 +439,7 @@ function AssignmentCard({
 
       {!readOnly && interaction.canSubmit ? (
         <AssignmentSubmissionControl
+          fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}
           deliveryId={deliveryId}
         />

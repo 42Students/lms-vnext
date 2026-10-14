@@ -110,11 +110,13 @@ export function LearnerAssessmentOverview({
   items,
   kind,
   snapshotNowMs,
+  fileUploadsEnabled = false,
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
   kind: "ASSIGNMENT" | "QUIZ";
   snapshotNowMs: number;
+  fileUploadsEnabled?: boolean;
 }) {
   const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
   const currentNowMs = learnerAssessmentClock(snapshotNowMs,
@@ -537,6 +539,7 @@ export function LearnerAssessmentOverview({
                 ) : null}
 
                 <AssignmentSubmissionControl
+                  fileUploadsEnabled={fileUploadsEnabled}
                   assignmentId={selectedAssignment.id}
                   deliveryId={selectedAssignment.deliveryId}
                 />

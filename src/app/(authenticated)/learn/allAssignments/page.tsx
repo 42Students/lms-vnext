@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerAssessmentOverview,
@@ -67,6 +68,7 @@ export default async function LearnerAssignmentsPage() {
         description="Every published assignment across your active Courses, with submission and grade status."
       />
       <LearnerAssessmentOverview
+        fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
         courses={overview.courses}
         items={items}
         kind="ASSIGNMENT"
