@@ -12,6 +12,8 @@ describe("Faculty report download GET request",()=>{
       .toBe("/api/courses/faculty/reports/quiz/"+id+"/csv?deliveryId="+other);
     expect(facultyReportCsvHref({kind:"assignment",assessmentId:other,deliveryId:id}))
       .toContain("/reports/assignment/"+other+"/csv?deliveryId="+id);
+    expect(facultyReportCsvHref({kind:"assignment",assessmentId:other,deliveryId:id,filter:"LATE"}))
+      .toContain("deliveryId="+id+"&filter=LATE");
   });
   it("rejects missing/untrusted tenant, kind, delivery and assessment selectors",()=>{
     expect(facultyReportCsvRequestSchema.safeParse({kind:"quiz",assessmentId:id}).success).toBe(false);
@@ -24,10 +26,18 @@ describe("Faculty report download GET request",()=>{
     const route="https://lms.example/api/courses/faculty/reports/quiz/"+id+"/csv";
     expect(parseFacultyCsvDownloadUrl(route+"?deliveryId="+other,path))
       .toEqual({kind:"quiz",assessmentId:id,deliveryId:other});
+    const assignment="https://lms.example/api/courses/faculty/reports/assignment/"+id+"/csv";
+    expect(parseFacultyCsvDownloadUrl(assignment+"?deliveryId="+other+"&filter=GRADED",{
+      kind:"assignment",assessmentId:id,
+    })).toEqual({
+      kind:"assignment",assessmentId:id,deliveryId:other,filter:"GRADED",
+    });
+    expect(()=>parseFacultyCsvDownloadUrl(route+"?deliveryId="+other+"&filter=LATE",path)).toThrow();
     for(const query of [
       "", "?deliveryId="+other+"&deliveryId="+id,
       "?deliveryId="+other+"&collegeId="+id,
       "?audience=all&deliveryId="+other,
+      "?deliveryId="+other+"&filter=GRADED&filter=LATE",
     ]) {
       expect(()=>parseFacultyCsvDownloadUrl(route+query,path)).toThrow();
     }

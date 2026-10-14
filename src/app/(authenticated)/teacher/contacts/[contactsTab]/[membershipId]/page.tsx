@@ -23,23 +23,10 @@ export default async function FacultyContactDetailPage({
         Back to Contacts
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
-      <h2 className="text-lg font-semibold text-foreground">Contact details</h2>
-      <dl className="mt-5 grid gap-5 sm:grid-cols-2">
-        <div><dt className="text-xs font-semibold text-muted-foreground">Email</dt>
-          <dd className="mt-1 break-all text-sm text-foreground">
-            {contact.email ? <a href={"mailto:" + contact.email}
-              className="font-semibold text-primary-text hover:underline">{contact.email}</a>
-              : "Not available"}
-          </dd>
-        </div>
-        <div><dt className="text-xs font-semibold text-muted-foreground">Phone</dt>
-          <dd className="mt-1 break-all text-sm text-foreground">
-            {contact.phoneE164 ? <a href={"tel:" + contact.phoneE164}
-              className="font-semibold text-primary-text hover:underline">{contact.phoneE164}</a>
-              : "Not available"}
-          </dd>
-        </div>
-      </dl>
+      <h2 className="text-lg font-semibold text-foreground">Public department</h2>
+      <p className="mt-3 text-sm text-body">
+        {contact.departmentName ?? "No department recorded"}
+      </p>
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-foreground">Current college roles</h2>
@@ -52,7 +39,7 @@ export default async function FacultyContactDetailPage({
           </li>)}</ul>}
     </section>
     <p className="text-xs leading-5 text-muted-foreground">
-      Only directory-listed contact information is shown. Private profile sections,
+      Only the public name, role and department are shown. Private contact details, profile sections,
       documents, identity verification and role-specific academic records are not exposed here.
       Inactive or outside-college contacts are not visible.
     </p>
