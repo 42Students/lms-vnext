@@ -307,12 +307,16 @@ Legacy:
 - [ ] export behavior matches.
 - [ ] empty/error states match.
 
+**W46 PARTIAL:** TPO drive workspace now links to a standalone current-shortlist view and formula-neutralized CSV at /tpo/placements/jobs/[jobId]/shortlist. Only persisted SUBMITTED applications with current SHORTLISTED screening, a same-job role option, and active same-college learner membership are shown; names, roll numbers, role options and known decision times are displayed without private screening comments. Counts reflect applications, not distinct learners. Legacy drawer/filter/share/export layout, historical shortlist versions, positive DB/browser acceptance remain open.
+
 ### Tab: Rounds
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
 - [ ] round kind/date/time/mode/location fields match.
 - [ ] auto-apply/results state matches.
 - [ ] conflict/blocker states match.
+
+**W46 PARTIAL:** TPO placement operations now links to /tpo/placements/schedule-conflicts. It checks only upcoming non-cancelled/non-completed rounds of published drives against persisted on-campus venue, start and positive duration and reports true overlapping [start,end) intervals. Virtual rounds are excluded and missing mode/venue/duration are explicitly unassessable, not conflict-free; results cap at 1,000 rounds with a truncation warning. This is not candidate/faculty overlap detection or a schedule-edit blocker. Exact legacy scheduling conflict taxonomy, job-level warnings, runtime/browser tests remain open.
 - [ ] result progression into next stages matches.
 
 ### Tab: Offers
