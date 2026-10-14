@@ -425,3 +425,10 @@ for Mentor COMPLETE/CANCEL actions. Existing Admin/Learner API unchanged.
 PG suite uses test-created Mentor/learner IDs, audit-safe cleanup guards,
 and denial/replay assertions. Outstanding: independently execute all tests,
 mobile dialog and legacy meeting schedule/reschedule history parity.
+
+## 2026-10-14 Mentor Project Delivery/review command — PARTIAL
+Added mentor-only `mentor-decision` route with same-origin, strict confirmation,
+row locks, microsecond-safe optimistic CAS, persisted review insert and
+immutable activity event. Other roles retain prior workflow. Tests authored
+with fresh Mentor/Learner memberships and audit-preserving cleanup.
+Remaining: executed test/build and browser/legacy acceptance, revision cycle.
