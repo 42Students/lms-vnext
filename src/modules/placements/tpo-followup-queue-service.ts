@@ -71,6 +71,9 @@ export async function getTpoDueFollowupQueue(
     companyName:placementTpoLeads.companyName,
     dueAt:placementTpoFollowups.dueAt,
     note:placementTpoFollowups.note,
+    phoneNorm:placementTpoLeads.phoneNorm,
+    unsubscribedAt:placementTpoLeads.unsubscribedAt,
+    recruiterUserId:placementTpoLeads.recruiterUserId,
   }).from(placementTpoFollowups)
     .innerJoin(placementTpoLeads,and(
       eq(placementTpoFollowups.leadId,placementTpoLeads.id),
