@@ -701,3 +701,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Interview round detail — PARTIAL:** New `/admin/placements/interviews/[roundId]` with UUID-validated exact college/organization join, 404 for unknown/foreign rounds, persisted kind/sequence/schedule/status/duration/results-due in IST, no meeting link/venue or recruiter commentary; directory now drills into this route. Pure ID/IST unit authored; mutating interview scheduling and PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 5 / Offer detail — PARTIAL:** Added `/admin/placements/offers/[offerId]` for scoped, versioned offer lifecycle (issue/respond/withdraw dates IST, joining date, INR CTC). Directory deep-links to offer, and view links to applicant application. Both job and membership are SQL-college fenced with org, UUID/foreign/absent → non-leaking 404; no evidence/private contact. Pure ID/date tests authored, PG and browser acceptance remain.
