@@ -919,3 +919,6 @@ Across currently assigned Mentor projects, the safe activity feed now filters pe
 
 ## 2026-10-15 chat-11 AP — report projects without recorded attention (PARTIAL)
 Mentor assigned-project reporting can now isolate projects with no current review/stalled/meeting-request/meeting-soon alert emitted by registered producers. The filter applies consistently to paginated UI and existing safe 100-row CSV, and does not equate missing alerts with verified health or reconstruct unmigrated activity. Tenant/assignment scope unchanged; model regression authored, execution/browser and legacy acceptance open.
+
+## 2026-10-15 chat-11 AQ — Resource Directory recorded sequence vs title order (PARTIAL)
+Scoped Resource Directory now supports deterministic recorded-sequence and title A–Z sorting, consistently before pagination and the existing capped formula-neutralized metadata CSV. Registered resource fields only; safe HTTPS filtering, required flags, access checks and no raw URL export remain unchanged. Strict Zod and unit regression cases authored; independently executed tests/browser and full legacy Resource parity open.
