@@ -519,6 +519,8 @@ Legacy event types include rounds, talks, deadlines and recruiter follow-ups.
 - [ ] create Follow-up modal matches.
 - [ ] move Follow-up modal matches.
 
+**W58 B — PARTIAL:** The TPO calendar links to a managed round scheduling page for existing migrated pending/scheduled drive rounds. A confirmed same-origin write uses IST wall-clock conversion, registered round action transactions/events, strict college-scoped permission, updated-at optimistic checks and conservative same-venue overlap assessment (unassessable venue durations are blocked). Creation means scheduling an existing pending round; it does not create a new arbitrary event or round. Cross-writer venue-lock serialization, room resources, owner confirmation of exact legacy UX, PostgreSQL/browser acceptance and comprehensive calendar modes remain open.
+
 **W38 PARTIAL:** The TPO calendar now offers a small create form for existing CRM leads and an IST reschedule form on each open follow-up event card, gated by the DB09 CRM write readiness flag. Same-origin POST/PATCH routes derive the college exclusively from the active TPO membership, validate payloads, and reuse the existing centralized placements scope and CRM follow-up mutations. Completion remains terminal. The legacy create/move modal UX, optimistic concurrency (no persisted follow-up version/update timestamp), browser acceptance, and executed disposable PostgreSQL tests are still open.
 - [ ] empty/loading/partial-failure states match.
 - [ ] timezone handling is verified.
