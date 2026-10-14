@@ -15,7 +15,7 @@ export default async function HrJobActivityPage({searchParams}:{
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const input=hrActivityQuerySchema.safeParse({collegeId:first(raw.collegeId),kind:first(raw.kind),page:first(raw.page)});
  if(!input.success)return <div className="space-y-4"><PageHeader eyebrow="Recruiter" title="Hiring activity"/>
-  <p role="alert">Invalid college filter.</p><Link href="/hr/activity">Choose again</Link></div>;
+  <p role="alert">Invalid activity filters.</p><Link href="/hr/activity">Choose again</Link></div>;
  const result=await listRecruiterJobActivity(context,input.data);
  const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
