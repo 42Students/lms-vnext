@@ -8,7 +8,7 @@ import {
   mentorTeamHistoryQuerySchema,
 } from "@/modules/projects/mentor-team-history-model";
 
-type Raw = { view?: string | string[]; role?: string | string[]; page?: string | string[] };
+type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; page?: string | string[] };
 const one = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -25,6 +25,7 @@ export default async function MentorTeamHistoryPage({
   const [{ projectId }, raw] = await Promise.all([params, searchParams]);
   const parsed = mentorTeamHistoryQuerySchema.safeParse({
     projectId, view: one(raw.view) ?? undefined, role: one(raw.role) ?? undefined,
+    primary: one(raw.primary) ?? undefined,
     page: one(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -57,6 +58,12 @@ export default async function MentorTeamHistoryPage({
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </select>
           </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
+            <select name="primary" defaultValue={data.query.primary}
+              className="min-h-10 rounded-md border border-border bg-background px-3">
+              <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
+            </select>
+          </label>
           <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Filter role
           </button>
@@ -67,7 +74,7 @@ export default async function MentorTeamHistoryPage({
             ["OPEN", "Open membership records"],
             ["ENDED", "Ended membership records"],
           ] as const).map(([view, label]) =>
-            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,role:data.query.role,page:1})}
+            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,page:1})}
               aria-current={data.query.view === view ? "page" : undefined}
               className={data.query.view === view
                 ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
@@ -99,9 +106,9 @@ export default async function MentorTeamHistoryPage({
         <nav aria-label="Team history pagination" className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
           <div className="flex gap-3">
-            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,page:data.page-1})}
+            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,page:data.page-1})}
               className="text-sm font-semibold text-primary-text">Previous</Link> : null}
-            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,page:data.page+1})}
+            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,page:data.page+1})}
               className="text-sm font-semibold text-primary-text">Next</Link> : null}
           </div>
         </nav>

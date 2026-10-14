@@ -901,3 +901,6 @@ The cross-assignment sanitized activity feed now supports registered event impor
 
 ## 2026-10-15 chat-11 AJ — reviewed task priority triage (PARTIAL)
 Reviewed task-submission history now filters registered task priority alongside decision and literal search in the scoped SQL count/page, including the capped sanitized CSV. Pure model and positive own-project PostgreSQL assertions are authored. No new writes, learner contact or feedback export; runtime/PG/browser and legacy verification remain OPEN.
+
+## 2026-10-15 chat-11 AK — registered primary Mentor history (PARTIAL)
+Exact-project Team membership history can isolate registered primary Mentor assignment records, preserving role/open-ended/paging filters in authorized SQL. It does not grant role editing, expose former names or reconstruct missing history. Pure and fixture PostgreSQL assertions authored, including correction of a pre-existing two-meeting count assertion. CI/PG/browser acceptance remains open.
