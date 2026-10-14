@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitle:string|null;updatedAt:string}) {
  const router=useRouter();
@@ -8,7 +8,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
- async function save(event:React.FormEvent<HTMLFormElement>) {
+ async function save(event:FormEvent<HTMLFormElement>) {
   event.preventDefault();
   if(saving)return;
   setSaving(true);setError("");setSuccess("");

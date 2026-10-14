@@ -403,3 +403,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Recruiter profile designation edit — PARTIAL:** Self-only designation PATCH with strict Zod input, same-origin guard, central identity.self.manage, active matching company/recruiter profile, millisecond optimistic token, append-only activity event in transaction, mobile editable control and conflict retry. Name/email/mobile remain central read-only; first/last name schema absent. Pure unit and disposable PG success/foreign/wrong-role/stale tests authored, not executed. Remaining runtime security and browser acceptance, exact legacy independent first/last name editing.
+
+
+**2026-10-14 Chat 10 / Recruiter cross-company list isolation — PARTIAL:** Extended shared recruiter job list with exact persisted placement-company ID filter and post-query grant+company invariant; this protects HR Drives, Today and Calendar from forged/mismatched relationship grants. Isolated PG success/foreign-company/wrong-role and pure policy tests authored but unexecuted. Also corrected designation whitespace normalization, typed form event and monotonic optimistic version timestamp. Remaining security review against revoked grants, runtime PG/lint/typecheck and browser acceptance.

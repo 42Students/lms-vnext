@@ -25,6 +25,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import { isExactRecruiterEmployerRow } from "./recruiter-own-company-policy";
 import { requirePlacementManageScope } from "./scope";
 import {
   createPlacementCompanyInputSchema,
@@ -141,6 +142,8 @@ export async function listPlacementRecruiterGrants(
           placementCompanyRelationships.status,
           "ACTIVE",
         ),
+        // Defense in depth: a forged/stale grant must never bridge employers.
+        eq(placementCompanies.id, context.recruiter!.companyId),
         eq(placementCompanies.status, "ACTIVE"),
         eq(users.platformStatus, "ACTIVE"),
       ),
@@ -457,6 +460,9 @@ export async function listOwnRecruiterPlacementJobs(
     .orderBy(desc(placementJobs.createdAt));
 
   for (const row of rows) {
+    if (!isExactRecruiterEmployerRow(context.recruiter!, row)) {
+      throw new AuthorizationError("placements.recruiter.read");
+    }
     requirePermission(
       context,
       "placements.recruiter.read",
