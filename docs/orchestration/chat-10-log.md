@@ -80,3 +80,5 @@
 - 2026-10-15 — HR activity pagination PARTIAL: bounded server pages and deterministic next/previous history links; tests unexecuted.
 
 - 2026-10-15 — HR drives sort PARTIAL: newest/deadline/title after recruiter-grant filtering and before 20-row pages; tests pending.
+
+- 2026-10-15 — HR Request Drive saved preview PARTIAL: validated session-only save/restore keyed by recruiter+college+source, expiry and Start Over clearing; tests authored, unexecuted.

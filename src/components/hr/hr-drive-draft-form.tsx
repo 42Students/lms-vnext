@@ -3,14 +3,17 @@
 import { useState } from "react";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
+import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 
 export function HrDriveDraftForm({
   initial,
   sourceJobTitle,
+  storageKey,
 }: {
   initial: HrDriveDraft;
   sourceJobTitle: string | null;
+  storageKey:string;
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [showPreview, setShowPreview] = useState(false);
@@ -28,6 +31,21 @@ export function HrDriveDraftForm({
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
 
+  function saveForThisTab(){
+    const raw=saveHrUnsentDraft(draft,Date.now());
+    if(!raw){setNotice("Validate the draft before saving it for this tab.");return;}
+    try{window.sessionStorage.setItem(storageKey,raw);
+      setNotice("Validated unsent draft saved for this browser tab (24-hour expiry).");}
+    catch{setNotice("This browser cannot save a draft. Copy the preview instead.");}
+  }
+  function restoreFromThisTab(){
+    try{
+      const saved=restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now());
+      if(!saved){setNotice("No valid, unexpired saved draft for this exact college and job.");return;}
+      setDraft(saved);setShowPreview(false);
+      setNotice("Restored local draft. It has not been submitted or sent.");}
+    catch{setNotice("Unable to access saved drafts in this browser.");}
+  }
   async function copyPreview() {
     if (!result.success) {
       setNotice("Complete the highlighted requirements before copying a draft.");
@@ -171,8 +189,13 @@ export function HrDriveDraftForm({
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
+          <button type="button" disabled={!result.success}
+            className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text disabled:opacity-50"
+            onClick={saveForThisTab}>Save validated draft in this tab</button>
+          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
+            onClick={restoreFromThisTab}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
-            onClick={() => { setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice(""); }}>Start over</button>
+            onClick={() => { try{window.sessionStorage.removeItem(storageKey);}catch{} setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice("Cleared this tab’s saved draft."); }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
           <div role="alert" className="mt-4 rounded-md border border-border p-3 text-sm text-body">

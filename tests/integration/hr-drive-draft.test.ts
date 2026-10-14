@@ -5,6 +5,7 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { hrDraftFromAuthorizedJob } from "@/modules/placements/hr-drive-draft-model";
+import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {recruiterDriveDraftHref} from "@/modules/placements/hr-drive-draft-links";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -46,6 +47,8 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
       },
     });
     const own = await getRecruiterPlacementWorkspace(hr(a.company.id, a.relationship.id, SEED_IDS.collegeA), job.id);
+    expect(hrDriveSessionStorageKey(SEED_IDS.facultyUser,own.college.id,own.job.id))
+      .not.toBe(hrDriveSessionStorageKey(SEED_IDS.facultyUser,SEED_IDS.collegeB,own.job.id));
     expect(hrDraftFromAuthorizedJob(own.job, own.rounds).title).toBe("Recruiter Draft " + nonce);
     expect(hrDraftFromAuthorizedJob(own.job, own.rounds).bondMonths).toBe("");
     expect(recruiterDriveDraftHref({collegeId:own.college.id,fromJobId:own.job.id}))
