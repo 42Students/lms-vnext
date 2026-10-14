@@ -740,3 +740,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 6 / Faculty Assignment CSV — PARTIAL:** Added `/api/admin/faculty-assignment/export` plus in-page filtered CSV on persisted teaching assignments; exact college-scoped course/section/faculty joins and active/ended state already enforced by the read service. Search/status retained and caller org/college/page/repeated filters rejected. Contact-free projection, 250-row bounded cap, formula-neutralized export and truncation footer, no-store, client pending/error. Unit authored; reassignment workflow and PostgreSQL/browser acceptance open.
+
+
+**2026-10-15 chat-6 round 6 / Placement Applications CSV — PARTIAL:** Added `/api/admin/placements/applications/export` and in-page filtered CSV download for exact selected-college applicant/job/role/membership records, SUBMITTED/WITHDRAWN plus search. Persisted applications, role/job and membership within the same college; no private contact, screening internals or invented shortlist state. Formula-protected UTF-8 CSV, 250-row cap and explicit truncation footer; strict parser refuses college/organization/page overrides or duplicate filter keys, no-store/private response and client pending/error. Pure model unit authored; full applicant export parity, execution and browser acceptance remain open.
