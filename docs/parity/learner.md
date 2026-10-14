@@ -1125,3 +1125,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-011 PARTIAL:** The learner dashboard now shows a true five-stage breakdown sourced only from the current own-learner application/screening journey. Withdrawals are separated before screening; no inferred offer, hire, provider completion, or cross-college data. Failure to load the journey displays Unknown rather than zero. Pure-model and own-fixture PostgreSQL authorization tests authored; CI/device/source parity pending.
+
+
+**2026-10-15 chat-5 L15-007 PARTIAL:** Assessment due buckets, including Later (after the current IST Monday–Sunday calendar week), now support validated, shareable `?due=` navigation. Back/Forward restores the chosen bucket, unknown/duplicate values are rejected on server, and pure URL model strips untrusted selectors without changing learner scope. Owned TEST-round PostgreSQL/denial tests authored; browser/navigation and CI acceptance pending.
