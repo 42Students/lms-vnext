@@ -18,6 +18,7 @@ import { assignmentOverviewState } from "@/modules/courses/learner-assignment-di
 import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment-mobile-model";
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assessment-search-model";
+import { learnerAssessmentCourseCounts } from "@/modules/courses/learner-assessment-course-counts-model";
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
@@ -168,6 +169,8 @@ export function LearnerAssessmentOverview({
     currentPage * PAGE_SIZE,
   );
 
+  const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
+
   const completed = items.filter((item) =>
     item.kind === "ASSIGNMENT"
       ? Boolean(item.submittedAt)
@@ -254,7 +257,7 @@ export function LearnerAssessmentOverview({
                 key={course.id}
                 value={course.id}
               >
-                {course.name} · {course.code}
+                {course.name} · {course.code} ({countsByCourse.get(course.id)??0})
               </option>
             ))}
           </Select>
@@ -283,6 +286,10 @@ export function LearnerAssessmentOverview({
         </label>
       </div>
 
+      <p role="status" className="text-sm text-muted-foreground">
+        Showing {filtered.length} of {items.length} published {kind==="ASSIGNMENT"?"assignments":"quizzes"} after your filters.
+        {filtered.length>PAGE_SIZE?" Page "+currentPage+" of "+totalPages+".":""}
+      </p>
       {filtered.length === 0 ? (
         <EmptyState
           title="No matching assessments"
