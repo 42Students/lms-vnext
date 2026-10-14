@@ -223,6 +223,30 @@ export async function PlacementDriveWorkspace({
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link
+                href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/letters"}
+                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+              >
+                Offer letter evidence
+              </Link>
+            ) : null}
+            {hasMembershipRole(context, "TPO") ? (
+              <Link
+                href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/closeout"}
+                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+              >
+                Drive close-out report
+              </Link>
+            ) : null}
+            {hasMembershipRole(context, "TPO") ? (
+              <Link
+                href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/candidate-schedule"}
+                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+              >
+                Candidate round schedule
+              </Link>
+            ) : null}
+            {hasMembershipRole(context, "TPO") ? (
+              <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/joining"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
