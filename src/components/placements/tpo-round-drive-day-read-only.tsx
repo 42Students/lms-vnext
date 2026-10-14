@@ -102,6 +102,12 @@ export function TpoRoundDriveDayReadOnly({
         <span className="ml-3">
           Current roster only; waiting and unmarked states remain explicit.
         </span>
+        <Link
+          href={"/tpo/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows"}
+          className="ml-3 inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline"
+        >
+          Review explicit no-shows →
+        </Link>
       </p>
 
       <section className="rounded-xl border border-border bg-surface p-5">
