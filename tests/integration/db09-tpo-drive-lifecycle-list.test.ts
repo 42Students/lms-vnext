@@ -85,6 +85,8 @@ it("lists a real draft and fences off foreign colleges and wrong roles", async (
     const onsite=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"ONSITE",search:ids.search});
     expect(onsite.rows.some(row=>row.id===id)).toBe(true);
     expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"REMOTE",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
+    const deadlineOrder=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,sort:"DEADLINE_ASC",search:ids.search});
+    expect(deadlineOrder.rows[0]?.id).toBe(id);
     const due=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,deadline:"DUE_SOON",search:ids.search});
     expect(due.rows.some(row=>row.id===id)).toBe(true);
     expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,deadline:"OVERDUE",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
