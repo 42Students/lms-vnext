@@ -403,7 +403,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |
 | L12-020 | Saved-jobs failure distinct from all-jobs failure | JobsListContent | learner jobs | UNCHECKED |
 | L12-021 | First-run/filtered-empty | JobsListContent | learner jobs | UNCHECKED |
-| L12-022 | Mobile jobs list/filters | JobsListContent responsive | learner jobs | UNCHECKED |
+| L12-022 | Mobile jobs list/filters | JobsListContent responsive | accessible mobile-only collapsible drive filters with active-filter count, 44px control, desktop always visible and preserved own authorized URL filters; PARTIAL pending Playwright/mobile screen reader, PostgreSQL/test execution, tsc/eslint acceptance | PARTIAL |
 
 ## L13 — Job Detail: `/learn/my-placements/jobs/[jobId]`
 
