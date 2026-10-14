@@ -62,6 +62,7 @@ export function LearnerCourseDiscussion({
   const [replyTo, setReplyTo] = useState<{ id: string; text: string } | null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [moderationError, setModerationError] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
   const [atBottom, setAtBottom] = useState(true);
   const [unseenCount, setUnseenCount] = useState(0);
@@ -249,22 +250,25 @@ export function LearnerCourseDiscussion({
   }
 
   async function remove(messageId: string) {
+    const current=messages.find(row=>row.id===messageId);
+    if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
     if (!window.confirm("Delete this message? This cannot be undone.")) return;
-    setDeletingId(messageId);
+    setDeletingId(messageId);setModerationError(null);
     try {
       const response = await fetch(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions/${encodeURIComponent(messageId)}`,
-        { method: "DELETE" },
+        { method: "DELETE",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
-      if (!response.ok) throw new Error("discussion_delete_failed");
+      if (!response.ok) throw new Error("Message was changed or is no longer editable. Refresh and retry.");
       // Requests already in flight can return a pre-delete snapshot.
       // Tombstone this ID for this workspace to prevent resurrection.
       locallyDeletedIds.current.add(messageId);
       setMessages((current) => current.filter((item) => item.id !== messageId));
       setHighlightedPinned((current) => current?.id === messageId ? null : current);
       await load(true);
-    } catch {
-      setLoadError(true);
+    } catch(e) {
+      setModerationError(e instanceof Error?e.message:"Discussion deletion failed.");
     } finally {
       setDeletingId(null);
     }
@@ -272,14 +276,18 @@ export function LearnerCourseDiscussion({
 
   async function togglePin(messageId: string) {
     if (!moderate || pinningId) return;
-    setPinningId(messageId);
+    const current=messages.find(row=>row.id===messageId);
+    if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
+    if(!window.confirm((current.pinned?"Unpin":"Pin")+" this Section message?"))return;
+    setPinningId(messageId);setModerationError(null);
     try {
       const response = await fetch(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions/${encodeURIComponent(messageId)}`,
-        { method: "PATCH" },
+        { method: "PATCH",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
       if (!response.ok) {
-        throw new Error("discussion_pin_failed");
+        throw new Error("Message was changed or is no longer editable. Refresh and retry.");
       }
       const payload = await response.json();
       const updated = payload?.message;
@@ -300,8 +308,8 @@ export function LearnerCourseDiscussion({
         );
       }
       await load(true);
-    } catch {
-      setLoadError(true);
+    } catch(e) {
+      setModerationError(e instanceof Error?e.message:"Discussion moderation failed.");
     } finally {
       setPinningId(null);
     }
@@ -334,6 +342,9 @@ export function LearnerCourseDiscussion({
         </section>
       ) : null}
 
+      {moderationError?<p role="alert" className="text-sm text-error">
+        {moderationError}
+      </p>:null}
       <section className="relative overflow-hidden rounded-xl border border-border bg-surface">
         <div
           ref={scrollRef}

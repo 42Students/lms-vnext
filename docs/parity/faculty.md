@@ -743,3 +743,34 @@ tests and independent Section/role/forged-selector PostgreSQL assertions in the
 fresh-Faculty fixture. No table created, no write route or fabricated notice.
 The DB10 Section notices store is still unregistered; read/write remains blocked.
 Real PG, eslint/tsc and responsive browser execution still open: PARTIAL only.
+
+## 2026-10-14 assignment editor recovery — PARTIAL
+The current legacy All Assignments row now preserves persisted due instants in
+browser-local datetime controls, rejects malformed local time, blocks archived
+actions and provides accessible write feedback; server transaction/audit and
+same-origin guards remain authoritative. A dedicated pure model test and
+unique-fixture PostgreSQL command tests cover success, stale, cross-Section,
+wrong-role and audit. **Not DONE:** browser/keyboard/mobile and exact
+legacy edit/submission-grade modal acceptance plus executed PG/lint/tsc.
+
+## 2026-10-14 Faculty All Quizzes authoring recovery — PARTIAL
+Existing draft quiz builder now consumes the actual nested GET response, safely
+ignores stale overlapping load responses, restores local due instants without
+UTC hour drift, validates unique options and correct selections before POST,
+requires an explicit confirmation and blocks published-question editing.
+The existing own-Section command retains row lock, Zod and transactional audit;
+unique Faculty-only fixture PG tests add create/edit/publish, old token,
+wrong-role and foreign-Section denial. Outstanding: independently execute PG,
+unit, ESLint/tsc, browser/keyboard/mobile, exact legacy result-edit parity.
+
+## 2026-10-14 Faculty course-discussion optimistic moderation (PARTIAL)
+The shared discussion surface now submits a required confirmed millisecond
+version token for PATCH pin/unpin and DELETE. The service supports a
+microsecond-safe SQL CAS at the mutation boundary and increments the pin token;
+a stale/delete race yields explicit retry instead of silent overwrite.
+Existing Faculty/Learner scopes remain unchanged, including learner own-unpinned
+self-delete; only live Section Faculty can pin. Transactional moderation,
+post/delete activity audit and same-origin fences remain. Added pure model and
+in-test Faculty-only membership PostgreSQL create/pin/stale/foreign/wrong-role/
+delete/audit assertions. Outstanding: run unit/PG/lint/TypeScript and browser
+role/keyboard/mobile tests; exact legacy moderation workflows. PARTIAL.
