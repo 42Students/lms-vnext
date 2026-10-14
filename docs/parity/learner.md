@@ -1131,3 +1131,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L15-009 PARTIAL:** The no-date assessment bucket now exposes an explicit, scoped and accessible warning: an absent scheduled round time does NOT prove the provider has no deadline. It also counts missing employer URLs independently rather than conflating link availability with scheduling. UTC/IST round date and link data come from the existing own-learner reader. Pure model and independent own-learner PostgreSQL denial tests authored; real browser/source acceptance pending.
+
+
+**2026-10-15 chat-5 L15-010 PARTIAL:** The past-scheduled assessment bucket now explicitly separates saved round start times from employer submission, attendance, overdue policy, or completion. A real CTA opens the existing authorized, applied-results workspace rather than treating elapsed time as a failed attempt. Pure fixed-UTC-clock model and own-learner PostgreSQL denial tests authored; browser/source and executed CI still pending.
