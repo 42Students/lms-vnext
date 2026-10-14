@@ -40,6 +40,9 @@ describe("Mentor portfolio models", () => {
     expect(mentorActivityQuerySchema.safeParse({page:"0"}).success).toBe(false);
     expect(mentorActivityQuerySchema.safeParse({pageSize:"51"}).success).toBe(false);
     expect(mentorActivityQuerySchema.safeParse({importance:"DANGEROUS"}).success).toBe(false);
+    expect(mentorActivityQuerySchema.safeParse({view:"PERSONAL"}).success).toBe(false);
+    expect(mentorActivityQuerySchema.parse({view:"REVIEWS"}).view).toBe("REVIEWS");
+    expect(mentorPortfolioHref("activity",{view:"MEETINGS",page:2})).toBe("/mentor/activity?view=MEETINGS&page=2");
     expect(mentorActivityQuerySchema.parse({importance:"CRITICAL"}).importance).toBe("CRITICAL");
     expect(mentorPortfolioHref("activity",{importance:"HIGH",page:2})).toBe("/mentor/activity?importance=HIGH&page=2");
   });
