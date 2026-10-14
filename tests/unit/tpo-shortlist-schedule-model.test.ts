@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import {
   projectTpoScheduleConflicts,
   tpoScheduleConflictsQuerySchema,
@@ -82,5 +83,44 @@ describe("TPO current shortlist model", () => {
     expect(tpoShortlistQuerySchema.safeParse({ jobId: "bad" }).success).toBe(false);
     expect(tpoShortlistQuerySchema.safeParse({ jobId: uuid(1), page: 0 }).success).toBe(false);
     expect(tpoShortlistQuerySchema.safeParse({ jobId: uuid(1), collegeId: uuid(2) }).success).toBe(false);
+  });
+});
+
+
+describe("inline TPO drive scheduling warnings", () => {
+  const current = "00000000-0000-4000-8000-000000000001";
+  const other = "00000000-0000-4000-8000-000000000002";
+  const snapshot = {
+    limited: false,
+    conflicts: [{
+      left: { id: current, companyName: "Own employer", jobTitle: "Role", name: "Interview", venue: "Lab A" },
+      right: { id: other, companyName: "Other employer", jobTitle: "QA", name: "Interview", venue: "Lab A" },
+      overlapMinutes: 30,
+    }],
+    unassessable: [{ id: current, reason: "Duration not recorded" }],
+  };
+
+  it("only projects warnings on rounds in the current drive", () => {
+    const data = projectTpoDriveScheduleWarnings(snapshot, [current]);
+    expect(data).toMatchObject({ state: "AVAILABLE", collisions: 1, unknown: 1 });
+    expect(data.warnings).toHaveLength(1);
+    expect(data.warnings[0]?.roundId).toBe(current);
+    expect(data.warnings[0]?.messages.join(" ")).toContain("Other employer");
+  });
+
+  it("does not invent a conflict-free assessment on failure or cap", () => {
+    expect(projectTpoDriveScheduleWarnings(null, [current])).toEqual({
+      state: "UNAVAILABLE", collisions: 0, unknown: 0, warnings: [],
+    });
+    expect(projectTpoDriveScheduleWarnings({ ...snapshot, limited: true }, [current]).state)
+      .toBe("LIMITED");
+  });
+
+  it("does not leak other-job round warnings into this drive", () => {
+    const unrelated = "00000000-0000-4000-8000-000000000099";
+    const value = projectTpoDriveScheduleWarnings(snapshot, [unrelated]);
+    expect(value.warnings).toEqual([]);
+    expect(value.collisions).toBe(0);
+    expect(value.unknown).toBe(0);
   });
 });
