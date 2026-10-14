@@ -88,3 +88,5 @@
 - 2026-10-15 — Hiring activity export PARTIAL: 200-record formula-safe fixed-label employer history CSV; tests unexecuted.
 
 - 2026-10-15 — HR draft round reordering PARTIAL: immutable boundary-safe move up/down with unit coverage; execution pending.
+
+- 2026-10-15 — Draft preview PARTIAL: ordered round names/kinds and compensation/eligibility, static field descriptors; tests authored not executed.

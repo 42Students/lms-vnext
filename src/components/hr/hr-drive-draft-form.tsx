@@ -6,6 +6,18 @@ import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-d
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
+import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
+
+const HR_DRAFT_PREVIEW_FIELDS=[
+ ["minimumAnnualCtcInr","Minimum CTC"],
+ ["maximumAnnualCtcInr","Maximum CTC"],
+ ["fixedAnnualCtcInr","Fixed CTC"],
+ ["variableAnnualCtcInr","Variable CTC"],
+ ["bondMonths","Bond months"],
+ ["bondAmountInr","Bond amount"],
+ ["minimumCgpa","Minimum CGPA"],
+ ["maximumActiveBacklogs","Maximum active backlogs"],
+] as const;
 
 export function HrDriveDraftForm({
   initial,
@@ -221,24 +233,27 @@ export function HrDriveDraftForm({
             <h3 className="text-base font-semibold text-foreground">{result.data.title}</h3>
             <p className="whitespace-pre-wrap">{result.data.description}</p>
             <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.workMode}</p>
-            <p>{result.data.rounds.length} planned hiring rounds</p>
+            <h4 className="font-semibold text-foreground">Planned hiring process</h4>
+            <ol className="list-inside list-decimal space-y-1">
+              {hrDraftPreviewRounds(result.data).map(step=>(
+                <li key={step.order}>
+                  <span className="font-medium text-foreground">{step.name}</span>
+                  {" · "+step.kind.replaceAll("_"," ")}
+                </li>
+              ))}
+            </ol>
+            <h4 className="pt-3 font-semibold text-foreground">Compensation & eligibility</h4>
             <dl className="grid gap-2 sm:grid-cols-2">
-              {([
-                ["Minimum CTC", result.data.minimumAnnualCtcInr],
-                ["Maximum CTC", result.data.maximumAnnualCtcInr],
-                ["Fixed CTC", result.data.fixedAnnualCtcInr],
-                ["Variable CTC", result.data.variableAnnualCtcInr],
-                ["Bond months", result.data.bondMonths],
-                ["Bond amount", result.data.bondAmountInr],
-                ["Minimum CGPA", result.data.minimumCgpa],
-                ["Maximum active backlogs", result.data.maximumActiveBacklogs],
-              ] as const).map(([label, value]) => (
-                <div key={label}>
+              {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
+                <div key={field}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-medium text-foreground">{value || "Not specified"}</dd>
+                  <dd className="font-medium text-foreground">{result.data[field]||"Not specified"}</dd>
                 </div>
               ))}
             </dl>
+            <p className="text-xs text-muted-foreground">
+              Preview only. Actual student presentation is controlled by the placement cell after approval.
+            </p>
           </div>
         ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
