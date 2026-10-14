@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail-model";
 import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
+import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -450,9 +451,10 @@ function JobActions({
 }
 
 export function LearnerPlacementJobs({
-  items,
+  items,snapshotNowIso=null,
 }: {
   items: readonly LearnerPlacementJobItem[];
+  snapshotNowIso?:string|null;
 }) {
   if (items.length === 0) {
     return (
@@ -559,6 +561,10 @@ export function LearnerPlacementJobs({
                   {formatDeadline(
                     item.job.applicationDeadline,
                   )}
+                </p>
+                <p className="mt-1 text-xs font-semibold text-body" role="status">
+                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,
+                    item.deadlinePassed,snapshotNowIso).label}
                 </p>
               </div>
             </div>

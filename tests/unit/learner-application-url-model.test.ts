@@ -8,6 +8,10 @@ expect(readLearnerApplicationUrl(updateLearnerApplicationUrl(original,{q:"develo
 q:"developer",view:"progress",sort:"company",page:1,applicationId:id});
 expect(readLearnerApplicationUrl(original).q).toBe("eng");
 });
+it("round-trips the new screening-stage sort without accepting forged sorts",()=>{
+expect(readLearnerApplicationUrl("sort=stage").sort).toBe("stage");
+expect(readLearnerApplicationUrl("sort=untrusted").sort).toBe("activity");
+});
 it("drops forged identity and denies invalid values",()=>{
 expect(updateLearnerApplicationUrl("q=ok&collegeId=forged",{view:"completed"})).not.toContain("collegeId");
 expect(updateLearnerApplicationUrl("q=ok",{q:"x".repeat(101)})).toBe("");
