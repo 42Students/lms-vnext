@@ -58,6 +58,14 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.weekEvents[0]?.rescheduled).toBe(true);
   });
 
+  it("shows the true number of near-term attention rounds despite a three-item preview",()=>{
+    const events=[1,2,3,4,5].map(n=>round("urgent-"+n,
+      n%2===0?"INTERVIEW":"TEST","2026-10-14T10:00:00Z"));
+    const state=learnerPlacementDashboard({...empty,rounds:events},now);
+    expect(state.needsAttention).toHaveLength(3);
+    expect(state.fullAttentionCount).toBe(5);
+    expect(state.fullWeekEventCount).toBe(5);
+  });
   it("does not inflate job or application counts from multiple roles", () => {
     const state = learnerPlacementDashboard({
       ...empty,

@@ -453,3 +453,18 @@ are explicitly page-local, not invented lifetime metrics. Zod, loading/error,
 honest empty states and existing authorized Delivery workspace navigation are
 provided. Former-assignment history, missing producers, full privacy/browser
 verification and exact legacy parity remain open.
+
+## D — Mentor live-team coverage read polish (2026-10-14)
+
+The existing read-only cross-project `/mentor/team-coverage` now joins
+registered membership_roles against each active project-member role, excluding
+revoked grants even if a project_members row was not end-dated. The authorized
+current non-archived project count is separate from filtered match counts;
+honest empty states distinguish no active Mentor projects from a no-match
+search/filter. Per-project active learner, Mentor and primary-Mentor
+indicators remain grounded in migrated rows; project list totals do not
+claim staffing adequacy. Links lead to the existing exact-project meeting log,
+team controls and historic membership view, never raw private member data.
+Pure unit and seeded positive/role/foreign-denial PostgreSQL assertions
+are authored but not locally executed; mobile/browser and product parity
+remain PARTIAL.

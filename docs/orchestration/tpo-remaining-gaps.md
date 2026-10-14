@@ -1,5 +1,8 @@
 # TPO — Remaining Parity Gaps
 
+- **W61 C — Buildable / PARTIAL:** TPO calendar now offers a future scheduled-round CSV by validated 1–93-day IST interval, capped at 500 with notice. Uses only registered company/job/round facts; no ICS, external sync, private meeting URL, positive DB or browser acceptance.
+- **W61 D — Buildable / PARTIAL:** TPO current shortlist now has a recruiter-minimal report/CSV with application ID, display name and email, the only candidate identity fields in the current recruiter round workspace. No outbound share, grant, token or broader disclosure. Consent, legacy column/share workflow and positive DB/browser acceptance remain open.
+
 - **W61 A — Missing migrated table / BLOCKED:** per-user TPO notification preferences are staged at `placement_tpo_user_preferences` but absent from the registered migration journal. Keep settings read-only until schema ownership/privacy and audit acceptance are approved.
 - **W61 B — Buildable / PARTIAL:** College-owned company relationship trust edit/archive/restore implemented with confirmed row-locked actor audit and active-drive blockers. Dedicated archived listing; global company name/domain editing remains outside this tenant-scoped action. Database/browser acceptance outstanding.
 

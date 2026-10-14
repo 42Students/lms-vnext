@@ -23,5 +23,6 @@ describe("Learner Drives browse integration", () => {
     expect(browse).toContain("PAGE_SIZE = 20");
     expect(browse).toContain("filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso))");
     expect(browse).toContain("Eligible to apply only");
+    expect(browse).toContain("snapshotNowIso={snapshotNowIso}");
   });
 });

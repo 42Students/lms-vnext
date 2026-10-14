@@ -917,3 +917,11 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L7-018: mobile quiz cards display own attempt availability and published-results-only status, with touch-sized links. Does not invent provider outcomes, scores or send external notifications. Fresh-learner PG and pure-model tests authored; CI and mobile acceptance pending.
 
 2026-10-14 L3-032: mobile Learning Path exposes an ordered, filtered index from real published lesson items and deep links to focused lessons with Next Link. Skipped L3-037 interactive storage-backed video/content overlay: private streaming and authorized file access need a separate browser and storage acceptance pass; do not invent media URLs. Fresh own-learner PG, typecheck, lint, mobile and accessibility acceptance pending.
+
+2026-10-14 L11-015: attention badge and overflow action now expose the true number of own scheduled assessment/interview rounds within seven days rather than misleading three-item count; partial-source failure masks total and overflow. No inferred employer completion. Isolated PG and model tests authored; browser/CI acceptance pending.
+
+2026-10-14 L14-006: own-member Applications view now supports screening-stage sorting using existing persisted journey reads and strict URL enum. Fresh-learner PostgreSQL test and pure models authored; isolated DB and browser acceptance pending. Skipped L13-016 per-drive resume upload (private object storage/consent), L15-002 provider completion (no authoritative submission receipt), L30-034..043 verification (unmigrated review schema and private uploads).
+
+2026-10-14 L12-017: own-college placement drive cards distinguish persisted deadline urgency using server-provided ISO snapshot, without client-clock drift. Skipped L12-013/L12-014 saved jobs: persisted favorites/membership-scope writes not verified in migrated schema. Fresh PostgreSQL, static checks and browser acceptance pending.
+
+2026-10-14 L14-008: authorized Applications header now surfaces saved screened stages with own-ID detail links; does not invent urgent times or recruiter decisions. Skipped L15-014 provider submitted reminder as non-authoritative without external receipt and L18-007 opt-in because registration-consent policy not approved. Unit/isolated-PG and browser acceptance pending.
