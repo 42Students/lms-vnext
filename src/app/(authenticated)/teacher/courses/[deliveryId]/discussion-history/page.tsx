@@ -3,19 +3,16 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  facultyDiscussionHistorySchema,facultyDiscussionHistoryHref,
+  parseFacultyDiscussionHistoryLocation,facultyDiscussionHistoryHref,
 } from "@/modules/courses/faculty-discussion-history-model";
 import { getFacultyDiscussionHistory } from "@/modules/courses/faculty-discussion-history-service";
 
 type Params={action?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function FacultyDiscussionHistoryPage({
   params,searchParams,
 }:{params:Promise<{deliveryId:string}>;searchParams:Promise<Params>}) {
   const [{deliveryId},raw]=await Promise.all([params,searchParams]);
-  const parsed=facultyDiscussionHistorySchema.safeParse({
-    deliveryId,action:first(raw.action)??undefined,page:first(raw.page)??undefined,
-  });
+  const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid discussion history filters</h1>
     <Link href="/teacher/courses" className="text-primary-text underline">Back to Courses</Link>

@@ -11,6 +11,7 @@ import {
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeElectives } from "@/modules/academics/college-structure-directory-service";
+import { electiveCsvHref } from "@/modules/academics/college-elective-export-model";
 
 export default async function CollegeElectivesPage({
   searchParams,
@@ -30,6 +31,10 @@ export default async function CollegeElectivesPage({
     listCollegeElectiveSlotOptions(context),
   ]);
   return <div className="space-y-4">
+    <Link prefetch={false} download href={electiveCsvHref(data.query)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export filtered electives CSV
+    </Link>
     <CollegeSlotManager options={options} />
     <CollegeStructureDirectory data={data} electiveOptions={options} />
   </div>;

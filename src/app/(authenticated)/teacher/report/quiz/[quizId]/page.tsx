@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {notFound} from "next/navigation";
+import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
@@ -19,8 +21,15 @@ export default async function FacultyQuizReportPage({
 }) {
   const context = await getCurrentRequestContext();
   const { quizId } = await params;
-  const { deliveryId } = await searchParams;
-  const report = await getFacultyQuizReport(context, quizId, deliveryId ?? null);
+  const parsed=parseFacultyAssessmentReportRoute(quizId,await searchParams);
+  if(!parsed) notFound();
+  let report:Awaited<ReturnType<typeof getFacultyQuizReport>>;
+  try {
+    report=await getFacultyQuizReport(context,parsed.assessmentId,parsed.deliveryId);
+  } catch(error) {
+    if(facultyQuizReportHidden(error)) notFound();
+    throw error;
+  }
   const {
     quiz,
     latestAttempts,

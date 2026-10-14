@@ -9,7 +9,7 @@ export function learnerAssessmentExternalLaunch(input:unknown,nowMs:number){
  const parsed=sourceSchema.safeParse(input);
  if(!parsed.success)return null;
  const at=parsed.data.scheduledAt?Date.parse(parsed.data.scheduledAt):Number.NaN;
- const minutes=Number.isFinite(at)&&Number.isFinite(nowMs)?Math.ceil((at-nowMs)/60000):null;
+ const minutes=Number.isFinite(at)&&Number.isFinite(nowMs)?(at-nowMs)/60000:null;
  const urgency=minutes!==null&&minutes>=0&&minutes<=30;
  return {href:parsed.data.href,urgent:urgency,
   notice:urgency

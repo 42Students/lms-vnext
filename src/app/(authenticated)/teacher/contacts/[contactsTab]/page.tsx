@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   FacultyContactsPagination,
@@ -42,17 +43,22 @@ export default async function FacultyContactsPage({
 
   const selected =
     tabs[contactsTab as keyof typeof tabs];
-  const query = await searchParams;
-  const pageSize = query.pageSize === "20" ? 20 : query.pageSize === "50" ? 50 : 10;
-  const page = /^\d{1,5}$/.test(query.page ?? "1")
-    ? Math.max(1, Number(query.page ?? "1"))
-    : 1;
+  const raw=await searchParams;
+  const filters=parseFacultyContactsQuery(raw);
+  if(!filters)return <section role="alert" className="space-y-3 p-5">
+    <h1 className="text-lg font-semibold">Invalid directory filters</h1>
+    <Link href={"/teacher/contacts/"+contactsTab}
+      className="inline-flex min-h-10 items-center text-primary-text underline">
+      Return to Contacts
+    </Link>
+  </section>;
+  const {page,pageSize,search}=filters;
   const context = await getCurrentRequestContext();
   const result = await listFacultyContacts(
     context,
     {
       tab: selected.value,
-      search: typeof query.q === "string" ? query.q.slice(0, 200) : "",
+      search,
       page,
       pageSize,
     },

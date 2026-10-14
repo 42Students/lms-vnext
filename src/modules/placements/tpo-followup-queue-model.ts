@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { placementReportCsv } from "./report-model";
 
 const uuid = z.string().uuid();
+export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM"),window:z.enum(["DUE","NEXT_7_DAYS"]).default("DUE"),q:z.string().trim().max(100).default(""),page:z.coerce.number().int().min(1).max(10000).default(1)}).strict();
 export const confirmedTpoFollowupCreateSchema = z.object({
   confirmed: z.literal(true),
   leadId: uuid,
@@ -24,6 +26,9 @@ export type TpoDueFollowupFact = {
   companyName: string | null;
   dueAt: Date;
   note: string | null;
+  phoneNorm?: string | null;
+  unsubscribedAt?: Date | null;
+  recruiterUserId?: string | null;
 };
 
 export function projectTpoFollowupQueue(
@@ -37,6 +42,8 @@ export function projectTpoFollowupQueue(
     companyName: fact.companyName,
     dueAt: fact.dueAt.toISOString(),
     note: fact.note,
+    phoneNorm:fact.phoneNorm??null,
+    canContact:fact.unsubscribedAt==null&&fact.recruiterUserId==null,
     overdue: fact.dueAt.getTime() < now.getTime(),
   }));
   return { rows, dueCount: rows.filter((row) => row.overdue).length };
@@ -51,4 +58,43 @@ export function tpoFollowupDoneAudit(
   note: string,
 ): string {
   return "Follow-up completed (" + outcome + "): " + note;
+}
+
+export function tpoFollowupQueueHref(input:{scope:"MINE"|"TEAM";window:"DUE"|"NEXT_7_DAYS";q?:string;page?:number}){
+ const params=new URLSearchParams({scope:input.scope,window:input.window});
+ if(input.q)params.set("q",input.q);
+ if(input.page&&input.page>1)params.set("page",String(input.page));
+ return "/tpo/follow-ups?"+params.toString();
+}
+
+/** Opening a native dialer or WhatsApp does not claim that a call or message was sent. */
+export function tpoFollowupContactLinks(phoneNorm:string|null,canContact:boolean){
+ if(!canContact||!phoneNorm)return {call:null,whatsapp:null};
+ const phone=phoneNorm.trim();
+ if(!/^\+?[1-9]\d{7,14}$/.test(phone))return {call:null,whatsapp:null};
+ return {call:"tel:"+(phone.startsWith("+")?phone:"+"+phone),
+  whatsapp:"https://wa.me/"+phone.replace(/^\+/,"")};
+}
+
+export const TPO_FOLLOWUP_EXPORT_LIMIT=500;
+export function tpoFollowupCsv(facts:readonly TpoDueFollowupFact[],input:{
+ scope:"TEAM"|"MINE";window:"DUE"|"NEXT_7_DAYS";q:string;
+}){
+ const truncated=facts.length>TPO_FOLLOWUP_EXPORT_LIMIT;
+ const displayed=facts.slice(0,TPO_FOLLOWUP_EXPORT_LIMIT);
+ const rows:(string|null)[][]=displayed.map(f=>[
+  f.id,f.leadName,f.companyName??"",f.dueAt.toISOString(),
+  f.note??"",
+ ]);
+ rows.push(["Methodology",input.scope+" ownership, "+input.window+" window, literal search: "+input.q,
+   "Open follow-ups only. No call or message delivery implied.","",""]);
+ if(truncated)rows.push(["TRUNCATED","First "+TPO_FOLLOWUP_EXPORT_LIMIT+
+  " matching rows exported; more matching tasks exist.",null,null,null]);
+ return {csv:placementReportCsv(["Follow-up ID","Recruiter","Company","Due ISO","Preparation note"],rows),
+   truncated,visible:displayed.length};
+}
+export function tpoFollowupQueueExportHref(input:{scope:"TEAM"|"MINE";window:"DUE"|"NEXT_7_DAYS";q?:string}){
+ const p=new URLSearchParams({scope:input.scope,window:input.window});
+ if(input.q)p.set("q",input.q);
+ return "/api/placements/tpo/follow-up-queue/export?"+p;
 }

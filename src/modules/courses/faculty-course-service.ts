@@ -10,6 +10,7 @@ import {
   academicPeriods,
   collegeMemberships,
   membershipRoles,
+  users,
   courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
@@ -101,6 +102,13 @@ export async function listFacultyCourseDeliveries(
         eq(collegeMemberships.userId, context.user.id),
         eq(collegeMemberships.collegeId, membership.collegeId),
         eq(collegeMemberships.status, "ACTIVE"),
+      ),
+    )
+    .innerJoin(
+      users,
+      and(
+        eq(users.id, collegeMemberships.userId),
+        eq(users.platformStatus, "ACTIVE"),
       ),
     )
     .innerJoin(
