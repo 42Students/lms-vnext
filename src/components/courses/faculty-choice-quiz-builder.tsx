@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -20,6 +20,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const choiceRequest=useRef(0);
  const [success,setSuccess]=useState<string|null>(null);
  const [selected,setSelected]=useState("");
+ const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
@@ -31,13 +32,15 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [pending,setPending]=useState(false);
  const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
- const chosen=quizzes.find(q=>q.id===selected);
+ const availableQuizzes=[...localQuizzes,...quizzes.filter(q=>!localQuizzes.some(local=>local.id===q.id))]
+  .filter(q=>q.status!=="ARCHIVED");
+ const chosen=availableQuizzes.find(q=>q.id===selected);
  const editable=!pending && facultyQuizDraftEditable(chosen?.status);
  const metadataEditable=!pending && facultyQuizMetadataEditable(chosen?.status);
  async function choose(id:string){
   const token=++choiceRequest.current;
   setSelected(id);setConfirmed(false);setDirtyDraft(false);setError(null);setSuccess(null);setDetailsFailed(false);
-  const q=quizzes.find(x=>x.id===id);
+  const q=availableQuizzes.find(x=>x.id===id);
   if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);
     setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");setPending(false);return;}
   setTitle(q.title);setDescription(q.description??"");setDueAt(authoringLocalDateTime(q.dueAt));
@@ -93,7 +96,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    }:{
      action,confirmed:true,
      ...(action==="CREATE"?{lessonId,
-       sequence:Math.max(0,...quizzes.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1))}
+       sequence:Math.max(0,...availableQuizzes.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1))}
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
      title,description:description||null,dueAt:authoringDueInstant(dueAt),
      maxAttempts,
@@ -108,6 +111,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      const failure:unknown=await res.json().catch(()=>null);
      throw new Error(facultyQuizWriteMessage(failure));
    }
+   const result:unknown=await res.json().catch(()=>null);
+   const saved=facultyQuizSavedFromCommand(result);
+   if(!saved){router.refresh();throw new Error("Quiz write succeeded, but its new version could not be loaded. Refresh before another action.");}
+   setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,saved));
+   if(action==="CREATE")setSelected(saved.id);
    setConfirmed(false);setDirtyDraft(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");
    if(action==="ARCHIVE"){
      ++choiceRequest.current;
@@ -124,7 +132,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <select value={selected} disabled={pending} onChange={e=>void choose(e.target.value)}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     <option value="">Create new draft</option>
-    {quizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
+    {availableQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </select></label>
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
