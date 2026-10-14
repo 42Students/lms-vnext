@@ -10,6 +10,8 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { buildHrOfferOverview, hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
+import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
+import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 
 function formatCtc(
@@ -28,7 +30,8 @@ export default async function HrPlacementJobPage({
   searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string }>;
+  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string;
+    roundId?:string; outcome?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -56,6 +59,13 @@ export default async function HrPlacementJobPage({
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
+  const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
+    (filters.roundId ? null : workspace.rounds[0] ?? null);
+  if (filters.roundId && !selectedRound) notFound();
+  const inlineResults = selectedRound
+    ? projectRecruiterRoundResults(workspace.rounds, selectedRound.id, filters.outcome)
+    : null;
+  const outcomeOptions = hrInlineRoundResultFilters(inlineResults?.counts);
 
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
@@ -349,6 +359,58 @@ export default async function HrPlacementJobPage({
             }),
           )}
         />
+        {filters.tab === "rounds" ? <section className="mt-6 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Results from table</h3>
+            <p className="mt-1 text-sm text-body">Authorized, placement-cell-shortlisted candidates only. STAGED means awaiting college review; APPLIED means official college-applied outcome.</p>
+          </div>
+          {workspace.rounds.length ? <>
+            <nav aria-label="Choose results round" className="flex flex-wrap gap-2">
+              {workspace.rounds.map(round => (
+                <Link key={round.id} href={hrInlineRoundResultsHref(workspace.job.id,round.id,"ALL")}
+                  aria-current={selectedRound?.id === round.id ? "page" : undefined}
+                  className={selectedRound?.id === round.id
+                    ? "inline-flex min-h-10 items-center rounded-md bg-primary px-3 py-2 text-sm text-on-primary"
+                    : "inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm text-body"}>
+                  {round.sequence}. {round.name}
+                </Link>
+              ))}
+            </nav>
+            {inlineResults ? inlineResults.round.kind === "TALK"
+              ? <p className="text-sm text-muted-foreground">Informational rounds do not record candidate outcomes.</p>
+              : <>
+                <nav aria-label="Filter results" className="flex flex-wrap gap-2">
+                  {outcomeOptions.map(option => (
+                    <Link key={option.value} href={hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}
+                      aria-current={filters.outcome === option.value ? "page" : undefined}
+                      className={filters.outcome === option.value
+                        ? "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary"
+                        : "rounded-full border border-border px-3 py-2 text-xs text-body"}>
+                      {option.label} ({option.count})
+                    </Link>
+                  ))}
+                </nav>
+                {inlineResults.rows.length
+                  ? <div className="grid gap-3 md:grid-cols-2">
+                      {inlineResults.rows.map(candidate => (
+                        <article key={candidate.key} className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4">
+                          <p className="break-words font-semibold text-foreground">{candidate.name}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <StatusBadge>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
+                            <StatusBadge>{candidate.status}</StatusBadge>
+                          </div>
+                          {candidate.scorePercent != null
+                            ? <p className="mt-2 text-sm text-body">Score: {candidate.scorePercent}%</p> : null}
+                          {candidate.waitlistRank != null
+                            ? <p className="mt-1 text-sm text-body">Waitlist rank: {candidate.waitlistRank}</p> : null}
+                        </article>
+                      ))}
+                    </div>
+                  : <p className="text-sm text-muted-foreground">No shared candidates match this result filter.</p>}
+              </> : null}
+          </> : <p className="text-sm text-muted-foreground">No active hiring rounds are configured for this drive.</p>}
+          <p className="text-xs text-muted-foreground">This table does not apply results or send candidate messages. Use the existing staging controls above for permitted employer submissions.</p>
+        </section> : null}
       </section> : null}
     </div>
   );

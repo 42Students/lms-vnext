@@ -409,3 +409,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 follow-up / recruiter scope placement — PARTIAL:** Corrected exact employer company filter placement: it belongs only on recruiter-owned job listing, not the TPO's administrator grant directory. Preserves TPO grant listing while retaining company enforcement on HR drives/calendar/dashboard. Auth regression test added below; execution remains orchestrator-gated.
+
+
+**2026-10-14 Chat 10 / Embedded HR round results table — PARTIAL:** Rounds tab now includes Results from table selector and validated outcome filtering using the same recruiter-grant-protected, SHORTLISTED candidate projection as the standalone view; stages distinguish STAGED from APPLIED with no private notes. Responsive cards and explicit zero/empty states. Pure model/unit and isolated PG success/foreign company/college/wrong-role tests authored, not executed. Remaining legacy bulk result workflow, interviewer slot UI, stale-result concurrency, browser acceptance.
