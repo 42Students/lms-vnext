@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, count, eq, ilike, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
+import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
   cohorts,
@@ -58,17 +59,17 @@ export async function listCollegeSemesterCourseMappings(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("college_mapping_offering_id"),
-    courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("college_mapping_course_name"),
-    courseCode: sql<string>`${courses.code}`.mapWith(courses.code).as("college_mapping_course_code"),
-    cohortName: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_mapping_cohort_name"),
-    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_mapping_program_name"),
-    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_mapping_program_id"),
-    periodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_mapping_period_name"),
-    periodCode: sql<string>`${academicPeriods.code}`.mapWith(academicPeriods.code).as("college_mapping_period_code"),
-    type: courseOfferings.type,
-    credits: courseOfferings.credits,
-    status: courseOfferings.status,
+    id: aliasedColumn(courseOfferings.id, "sc_id"),
+    courseName: aliasedColumn(courses.name, "sc_course_name"),
+    courseCode: aliasedColumn(courses.code, "sc_course_code"),
+    cohortName: aliasedColumn(cohorts.name, "sc_cohort_name"),
+    programName: aliasedColumn(programs.name, "sc_program_name"),
+    programId: aliasedColumn(programs.id, "sc_program_id"),
+    periodName: aliasedColumn(academicPeriods.name, "sc_period_name"),
+    periodCode: aliasedColumn(academicPeriods.code, "sc_period_code"),
+    type: aliasedColumn(courseOfferings.type, "sc_type"),
+    credits: aliasedColumn(courseOfferings.credits, "sc_credits"),
+    status: aliasedColumn(courseOfferings.status, "sc_status"),
   }).from(courseOfferings)
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, and(
@@ -130,22 +131,22 @@ export async function listCollegeFacultyAssignments(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: sql<string>`${courseTeachingAssignments.id}`.mapWith(courseTeachingAssignments.id).as("college_teaching_assignment_id"),
+    id: aliasedColumn(courseTeachingAssignments.id, "fa_id"),
     updatedAt: sql<Date>`${courseTeachingAssignments.updatedAt}`
       .mapWith(courseTeachingAssignments.updatedAt).as("assignment_updated_at"),
-    deliveryId: courseTeachingAssignments.deliveryId,
-    membershipId: courseTeachingAssignments.membershipId,
-    facultyName: users.displayName,
-    courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("college_teaching_course_name"),
-    courseCode: courses.code,
-    sectionName: sql<string>`${sections.name}`.mapWith(sections.name).as("college_teaching_section_name"),
-    cohortName: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_teaching_cohort_name"),
-    periodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_teaching_period_name"),
-    offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("college_teaching_offering_id"),
-    role: courseTeachingAssignments.role,
-    startedAt: courseTeachingAssignments.startedAt,
-    endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.mapWith(courseTeachingAssignments.endedAt).as("college_teaching_ended_at"),
-    deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.mapWith(courseSectionDeliveries.endedAt).as("college_teaching_delivery_ended_at"),
+    deliveryId: aliasedColumn(courseTeachingAssignments.deliveryId, "fa_delivery_id"),
+    membershipId: aliasedColumn(courseTeachingAssignments.membershipId, "fa_membership_id"),
+    facultyName: aliasedColumn(users.displayName, "fa_faculty_name"),
+    courseName: aliasedColumn(courses.name, "fa_course_name"),
+    courseCode: aliasedColumn(courses.code, "fa_course_code"),
+    sectionName: aliasedColumn(sections.name, "fa_section_name"),
+    cohortName: aliasedColumn(cohorts.name, "fa_cohort_name"),
+    periodName: aliasedColumn(academicPeriods.name, "fa_period_name"),
+    offeringId: aliasedColumn(courseOfferings.id, "fa_offering_id"),
+    role: aliasedColumn(courseTeachingAssignments.role, "fa_role"),
+    startedAt: aliasedColumn(courseTeachingAssignments.startedAt, "fa_started_at"),
+    endedAt: aliasedColumn(courseTeachingAssignments.endedAt, "fa_ended_at"),
+    deliveryEndedAt: aliasedColumn(courseSectionDeliveries.endedAt, "fa_delivery_ended_at"),
   }).from(courseTeachingAssignments)
     .innerJoin(collegeMemberships, and(
       eq(collegeMemberships.id, courseTeachingAssignments.membershipId),

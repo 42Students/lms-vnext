@@ -47,7 +47,11 @@ export default async function HrPlacementJobPage({
   const query = await searchParams;
   let hiring: Awaited<ReturnType<typeof getHrJobRead>>;
   try {
-    hiring = await getHrJobRead(context, jobId, query);
+    // Parse only the known params: extra ones (for example ?collegeId=) are ignored.
+    const { tab, stage, applicant, page, offerPage, offerState, roundId, outcome } = query;
+    hiring = await getHrJobRead(context, jobId, {
+      tab, stage, applicant, page, offerPage, offerState, roundId, outcome,
+    });
   } catch (error) {
     if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
         (error instanceof z.ZodError && !z.string().uuid().safeParse(jobId).success)) {

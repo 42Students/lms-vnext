@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, asc, count, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
   cohortProgressionState,
@@ -64,15 +65,15 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   const collegeId = requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
-    id: sql<string>`${programTerms.id}`.mapWith(programTerms.id).as("college_term_id"),
+    id: aliasedColumn(programTerms.id, "sem_id"),
     updatedAt: sql<Date>`${programTerms.updatedAt}`.mapWith(programTerms.updatedAt).as("term_updated_at"),
-    name: sql<string>`${programTerms.name}`.mapWith(programTerms.name).as("college_term_name"),
-    termNumber: programTerms.termNumber,
-    totalCredits: programTerms.totalCredits,
-    isActive: programTerms.isActive,
-    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_term_program_name"),
-    programCode: programs.code,
-    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_term_program_id"),
+    name: aliasedColumn(programTerms.name, "sem_name"),
+    termNumber: aliasedColumn(programTerms.termNumber, "sem_term_number"),
+    totalCredits: aliasedColumn(programTerms.totalCredits, "sem_total_credits"),
+    isActive: aliasedColumn(programTerms.isActive, "sem_is_active"),
+    programName: aliasedColumn(programs.name, "sem_program_name"),
+    programCode: aliasedColumn(programs.code, "sem_program_code"),
+    programId: aliasedColumn(programs.id, "sem_program_id"),
   }).from(programTerms)
     .innerJoin(programs, eq(programs.id, programTerms.programId))
     .innerJoin(departments, and(
@@ -134,20 +135,20 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
   const collegeId = requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
-    id: sql<string>`${cohorts.id}`.mapWith(cohorts.id).as("college_batch_id"),
-    name: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_batch_name"),
-    code: sql<string>`${cohorts.code}`.mapWith(cohorts.code).as("college_batch_code"),
-    status: cohorts.status,
-    updatedAt: cohorts.updatedAt,
-    expectedEndPeriodId: cohorts.expectedEndPeriodId,
-    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_batch_program_id"),
-    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_batch_program_name"),
-    programCode: sql<string>`${programs.code}`.mapWith(programs.code).as("college_batch_program_code"),
-    startPeriodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_batch_start_period_name"),
-    startDate: academicPeriods.startDate,
-    startPeriodId: sql<string>`${academicPeriods.id}`.mapWith(academicPeriods.id).as("college_batch_start_period_id"),
-    currentTermNumber: cohortProgressionState.currentTermNumber,
-    currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
+    id: aliasedColumn(cohorts.id, "batch_id"),
+    name: aliasedColumn(cohorts.name, "batch_name"),
+    code: aliasedColumn(cohorts.code, "batch_code"),
+    status: aliasedColumn(cohorts.status, "batch_status"),
+    updatedAt: aliasedColumn(cohorts.updatedAt, "batch_updated_at"),
+    expectedEndPeriodId: aliasedColumn(cohorts.expectedEndPeriodId, "batch_expected_end_period_id"),
+    programId: aliasedColumn(programs.id, "batch_program_id"),
+    programName: aliasedColumn(programs.name, "batch_program_name"),
+    programCode: aliasedColumn(programs.code, "batch_program_code"),
+    startPeriodName: aliasedColumn(academicPeriods.name, "batch_start_period_name"),
+    startDate: aliasedColumn(academicPeriods.startDate, "batch_start_date"),
+    startPeriodId: aliasedColumn(academicPeriods.id, "batch_start_period_id"),
+    currentTermNumber: aliasedColumn(cohortProgressionState.currentTermNumber, "batch_current_term_number"),
+    currentAcademicYearStart: aliasedColumn(cohortProgressionState.currentAcademicYearStart, "batch_current_academic_year_start"),
   }).from(cohorts)
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, and(

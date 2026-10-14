@@ -99,59 +99,59 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
   finally{setPending(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
-  <label className="grid gap-1 text-sm">Quiz
+  <label className="grid min-w-0 gap-1 text-sm">Quiz
    <select value={selected} onChange={e=>void choose(e.target.value)}
-    className="min-h-10 rounded border border-border p-2">
+    className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     <option value="">Create new draft</option>
     {quizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </select></label>
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
-  {!chosen?<label className="grid gap-1 text-sm">Lesson
+  {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
    <select value={lessonId} onChange={e=>setLessonId(e.target.value)}
-    className="min-h-10 rounded border border-border p-2">
+    className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </select></label>:null}
-  <label className="grid gap-1 text-sm">Quiz title
+  <label className="grid min-w-0 gap-1 text-sm">Quiz title
    <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-    className="min-h-10 rounded border border-border p-2"/></label>
-  <label className="grid gap-1 text-sm">Instructions
+    className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
+  <label className="grid min-w-0 gap-1 text-sm">Instructions
    <textarea value={description} maxLength={10000} rows={2}
     onChange={e=>setDescription(e.target.value)}
-    className="rounded border border-border p-2"/></label>
-  <label className="grid gap-1 text-sm">Due date (IST, optional)
+    className="min-w-0 max-w-full rounded border border-border p-2"/></label>
+  <label className="grid min-w-0 gap-1 text-sm">Due date (IST, optional)
    <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
-    className="min-h-10 rounded border border-border p-2"/></label>
-  <label className="grid gap-1 text-sm">Maximum attempts
+    className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
+  <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
    <input type="number" min={1} max={20} value={maxAttempts}
     onChange={e=>setMaxAttempts(Number(e.target.value))}
-    className="min-h-10 rounded border border-border p-2"/></label>
+    className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   {questions.map((q,i)=><fieldset key={i} disabled={pending||Boolean(chosen&&chosen.status!=="DRAFT")}
-   className="space-y-3 rounded-lg border border-border p-4">
+   className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
-   <label className="grid gap-1 text-sm">Prompt
+   <label className="grid min-w-0 gap-1 text-sm">Prompt
     <textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
-     className="rounded border border-border p-2"/></label>
+     className="min-w-0 max-w-full rounded border border-border p-2"/></label>
    <div className="flex flex-wrap gap-3">
-    <label className="grid gap-1 text-sm">Type
+    <label className="grid min-w-0 gap-1 text-sm">Type
      <select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,type:e.target.value as Question["type"]}))}
-      className="min-h-10 rounded border border-border p-2">
+      className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </select></label>
-    <label className="grid gap-1 text-sm">Points
+    <label className="grid min-w-0 gap-1 text-sm">Points
      <input type="number" min={1} max={1000} value={q.points}
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
       className="min-h-10 w-24 rounded border border-border p-2"/></label>
    </div>
    {q.options.map((o,j)=><div key={j} className="flex flex-wrap items-center gap-2">
-    <label className="grow text-sm">Option {j+1}
+    <label className="min-w-0 flex-[1_1_12rem] text-sm">Option {j+1}
      <input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
-      className="mt-1 block min-h-10 w-full rounded border border-border p-2"/></label>
+      className="mt-1 block min-h-10 min-w-0 w-full max-w-full rounded border border-border p-2"/></label>
     <label className="flex items-center gap-1 text-xs">
      <input type="checkbox" checked={o.correct}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>({...x,correct:k===j?e.target.checked:
