@@ -59,7 +59,7 @@ export async function CollegeRoleDirectoryWorkspace({
   };
   const parsed = collegeRoleDirectoryQuerySchema.safeParse(
     Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined),
+      Object.entries(input).filter(([, value]) => value !== undefined && value !== ""),
     ),
   );
 
