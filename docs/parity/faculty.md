@@ -1362,3 +1362,6 @@ The existing 50-row persisted Faculty notification feed now rejects duplicate `v
 
 ## 2026-10-15 Faculty Quiz attempt report private 404 — PARTIAL
 Malformed Quiz path IDs now use `notFound()` rather than a generic report error, and missing/foreign/mismatched Quiz or teaching-Section service errors become a non-leaking 404. Invalid pagination and delivery queries retain a recoverable inline error; genuine database errors propagate. New typed pure-model tests cover the error boundary. Exact PostgreSQL positive/foreign/role and mobile browser acceptance remain open; All Quizzes is still PARTIAL.
+
+## 2026-10-15 Faculty gradebook CSV privacy correction — PARTIAL
+The existing Section gradebook CSV no longer outputs learner email or uses email as a missing-name fallback. Name, roll number and published score cells remain formula-neutralized. Pure export regression assertions cover the omitted private-contact column; exact current teaching-Section authorization remains upstream. Source-authored only, with DB and browser export acceptance pending.
