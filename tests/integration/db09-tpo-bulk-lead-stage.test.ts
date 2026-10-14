@@ -137,7 +137,7 @@ describe.skipIf(!enabled)("DB09 confirmed bulk lead stage PostgreSQL", () => {
     });
     expect(stale.counts.ineligible).toBe(1);
     const rows = await pool.query(
-      "SELECT l.id, l.manual_stage, l.not_now_reason, l.not_now_until, " +
+      "SELECT l.id, l.manual_stage, l.not_now_reason, l.not_now_until::date::text AS not_now_until, " +
       "a.note, a.type, a.created_by_user_id FROM placement_tpo_leads l " +
       "JOIN placement_tpo_lead_activities a ON a.college_id=l.college_id AND a.lead_id=l.id " +
       "WHERE l.id = ANY($1::uuid[]) ORDER BY l.id, a.created_at",
