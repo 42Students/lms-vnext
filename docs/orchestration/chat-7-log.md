@@ -14,3 +14,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L25-005: authorized release-filtered Board via existing sprint FK, pure model/unit/PG authored; not run here.
 - L25-013: truthful Board empty/filtered-empty state from authorized persisted rows; unit/PG authored, gates pending.
 - L25-014: mobile collapsed Board filters with active count and responsive desktop grid; unit/PG authored, not executed.
+- L25-008: accessible native task detail dialog and owned task selection; pure model/unit/PG authored, not executed.
