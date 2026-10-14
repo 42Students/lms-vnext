@@ -182,6 +182,7 @@ export function FacultyAssessmentOverview({
                           description: item.description,
                           dueAt: item.dueAt,
                           status: item.status,
+                          updatedAt: item.updatedAt,
                           ...(item.kind === "QUIZ"
                             ? { maxAttempts: item.maxAttempts }
                             : { maxPoints: item.maxPoints }),

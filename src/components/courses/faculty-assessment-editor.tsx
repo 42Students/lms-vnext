@@ -21,6 +21,7 @@ type EditableAssessment = {
   description: string | null;
   dueAt: Date | string | null;
   status: string;
+  updatedAt: Date | string;
   maxPoints?: number;
   maxAttempts?: number;
 };
@@ -89,6 +90,7 @@ export function FacultyAssessmentEditor({
       return;
     }
 
+    if (!window.confirm("Confirm these draft assessment edits?")) return;
     setError(null);
     setSaving(true);
     try {
@@ -98,6 +100,8 @@ export function FacultyAssessmentEditor({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          expectedUpdatedAt: new Date(assessment.updatedAt).toISOString(),
+          confirmed: true,
           title: cleanTitle,
           description:
             description.trim() || null,
