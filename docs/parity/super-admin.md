@@ -686,3 +686,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Joining Outcomes oversight — PARTIAL:** `/admin/placements/joining` read-only persisted offer joining-outcome rows with PENDING/JOINED/DID_NOT_JOIN/DEFERRED, joining date/IST recorded date, applicant/job search and 25-row pagination. Explicitly excludes missing records from pending and hides internal reason/contact; exact college/org joins, mobile loading/error states. Pure unit authored; mutations, history/detail, PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Seasons — PARTIAL:** `/admin/placements/seasons` selected-college persisted placement-season name/code, registered start/end dates, ACTIVE/CLOSED lifecycle with IST close time, strict search/status, 25-row paging and responsive loading/empty/error. No default/global scope leak or season mutation. Pure unit authored; season config/closeout management, PostgreSQL and browser acceptance open.
