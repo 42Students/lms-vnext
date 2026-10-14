@@ -62,18 +62,19 @@ remain open.
 - [ ] Loading/no-session/error states.
 - [ ] Audit metadata for corrections is preserved.
 
-### Discussions
-- [ ] Feed/read behavior matches.
-- [ ] Faculty post/reply/moderation actions match.
-- [ ] Empty/loading/error states.
-- [x] Course/class isolation.
+### Discussions — DONE (evidence accepted 2026-10-14)
+- [x] Feed/read behavior matches the registered Section chat contract: exact teaching Section, paged history, current highlights and bounded polling.
+- [x] Faculty post/reply/pin/unpin/delete behavior matches the live legacy classroom chat contract; stale-token and cross-Section requests are denied, audit retained. Pinned-strip unpin works for an out-of-page highlight.
+- [x] Empty/loading/error and retry states exist; empty Faculty discussions offer welcome/focus draft starters, and the browser suite exercised empty starter controls.
+- [x] Course/class isolation is enforced.
+Evidence: `1f374255579a3e2e09cc65a69c14c11276abb3be` CI [38595677626](https://github.com/42Students/lms-vnext/actions/runs/38595677626) had 25 passing browser cases including all Discussions cases, plus `faculty-c4-reports-audit-contact.test.ts` 3/3, `learner-course-discussion-actions.test.ts` 3/3 and `learner-discussion-mobile.test.ts` 2/2 on real disposable PostgreSQL. Unit, typecheck and build jobs passed. Full CI is red due to other surfaces, **not** evidence of failed Discussion acceptance. DB10 Section notices are a separate blocked product surface, not silently claimed as completed by this chat acceptance.
 
 ## Page: Contacts
 **Legacy:** `/teacher/contacts/[contactsTab]`  
 Tabs: All Contacts, Teachers, Students.
 
 - [ ] All Contacts tab fields/columns match.
-- [ ] Teachers tab fields/columns match.
+- [x] Teachers tab matches the approved public directory fields (name, active role and department; private email/phone/profile withheld), with exact same-college role detail.
 - [ ] Students tab fields/columns match.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
 - [ ] Contact actions/deep links are matched.
@@ -881,3 +882,28 @@ append-only activity_events or their referenced actor/membership rows.
 These are source changes targeting proven failing CI cases, **not yet a
 successful rerun at this revision**. Run targeted authenticated Chromium,
 then full CI, before marking Discussions/Contacts/Notifications DONE.
+
+## Faculty Contacts — Teachers: DONE (2026-10-14)
+
+The approved 2026-10-14 privacy decision limits contact visibility to
+need-to-know actors. This Teachers public directory is read-only: active
+Faculty membership, public name, department and current college roles, never
+unrelated learner contact information, identity, document or private profile.
+It retains legacy Teachers navigation, same-college role filtering, bounded
+server search, 10/20/50 paging, exact role-checked detail and return link,
+responsive cards, empty/loading/error/retry and stale/foreign denial.
+
+**Executed acceptance (immutable source SHA
+`c9e5a8d2e2c416a99708d8f9d1581b2fd18373e7`):**
+[GitHub CI 38599250226](https://github.com/42Students/lms-vnext/actions/runs/38599250226)
+ran `tests/integration/faculty-contacts-teachers-acceptance.test.ts`
+**3/3 PASS** (positive listing/detail, name search/phone-email non-disclosure,
+wrong-role/suspended/disabled/foreign-college and forged scope denial).
+`tests/e2e/faculty-contacts-teachers.spec.ts` passed both **desktop and
+mobile** authenticated user journeys, including list→detail→back, same-college
+teacher-only cards, search/no-match, public-only visibility, mobile
+horizontal-scroll check and no uncaught page errors. Typecheck, unit and build
+also passed at that source SHA. Overall CI still has failures in other
+modules and a pre-existing repository lint violation; this DONE designation
+is scoped exclusively to **Faculty Contacts — Teachers**, not All Contacts,
+Contacts — Students, whole Faculty or database/release certification.

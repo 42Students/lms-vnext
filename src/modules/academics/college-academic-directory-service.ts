@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
