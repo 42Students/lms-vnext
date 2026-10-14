@@ -27,6 +27,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "identity.person.onboarded",
   IDENTITY_ROLES_CHANGED:
     "identity.membership.roles_changed",
+  IDENTITY_LEARNER_CONTACT_UPDATED: "identity.learner_contact.updated",
   IDENTITY_MEMBERSHIP_SUSPENDED:
     "identity.membership.suspended",
   IDENTITY_MEMBERSHIP_REACTIVATED:
