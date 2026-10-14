@@ -60,6 +60,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view === "WAITING" ? <EmptyState title="Requests not available here" description="Waiting requests and sent-back approvals are not yet backed by a recruiter-visible request-state read. Published jobs are never mislabeled as pending requests." /> :
      filtered.length ? <RecruiterPlacementPortfolio jobs={filtered} /> :
      <EmptyState title="No matching drives" description="No authorized, non-archived drives match this college, lifecycle and search." />}
+    <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request a Drive, Hire Again, and Fix and Resend require the separate employer request lifecycle and remain unavailable here.</p>
   </div>;
 }
