@@ -553,7 +553,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L18-023 | Notices from placement cell | PlacementCellContent | placement page | GAP |
 | L18-024 | Notice dispute flow | PlacementCellContent | placement page | GAP |
 | L18-025 | Offer-letter/file flow | PlacementCellContent | storage-backed offer flow | BLOCKED |
-| L18-026 | Page loading/error/retry/empty | PlacementCellContent | placement page | GAP |
+| L18-026 | Page loading/error/retry/empty | PlacementCellContent | placement page with error/retry and loading route; offers/requests/alerts empty states | FIXED |
 | L18-027 | Personal placement activity alerts, not official notices | registered in-app PLACEMENTS notifications | learner Placement Cell recent alerts | FIXED |
 
 ## L19 — Placement Rules
