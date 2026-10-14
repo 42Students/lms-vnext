@@ -2,14 +2,14 @@ import "server-only";
 import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,courseTeachingAssignments,courseSectionDeliveries,
-  courseOfferings,courses,departments,membershipRoles} from "@/db/schema";
+  courseOfferings,courses,departments,membershipRoles,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {teachingAssignmentConflict} from "./teaching-assignment-guard";
 import {postgresConstraintName} from "./errors";
-import {collegeTeachingReassignIdSchema,collegeTeachingReassignSchema}
+import {collegeTeachingReassignIdSchema,collegeTeachingReassignSchema,teachingMembershipIsActive}
   from "./college-teaching-reassign-model";
 
 export class CollegeTeachingReassignError extends Error {
@@ -38,6 +38,18 @@ export async function reassignCollegeTeaching(context:RequestContext,rawId:unkno
           eq(departments.collegeId,member.collegeId)))
         .where(eq(courseTeachingAssignments.id,id)).limit(1);
       if(!reference)throw new CollegeTeachingReassignError("ASSIGNMENT_NOT_FOUND");
+      // Hold persisted identity and role locks through commit; a cached context
+      // must not survive account suspension, membership suspension or role removal.
+      const [actor]=await tx.select({accountStatus:users.platformStatus,
+        membershipStatus:collegeMemberships.status})
+        .from(collegeMemberships)
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"COLLEGE_ADMIN")))
+        .where(and(eq(collegeMemberships.id,member.id),
+          eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.collegeId,member.collegeId)))
+        .for("share").limit(1);
+      if(!teachingMembershipIsActive(actor))throw new AuthorizationError("courses.manage");
       // Match the canonical create writer's delivery lock to serialize all
       // role swaps with concurrent creates on the same live delivery.
       const [delivery]=await tx.select({id:courseSectionDeliveries.id})
@@ -67,15 +79,18 @@ export async function reassignCollegeTeaching(context:RequestContext,rawId:unkno
           sql`date_trunc('milliseconds',${courseTeachingAssignments.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`))
         .limit(1);
       if(!version)throw new CollegeTeachingReassignError("ASSIGNMENT_STALE");
-      const [replacement]=await tx.select({id:collegeMemberships.id})
+      const [replacement]=await tx.select({id:collegeMemberships.id,
+        membershipStatus:collegeMemberships.status,accountStatus:users.platformStatus})
         .from(collegeMemberships)
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
         .innerJoin(membershipRoles,and(
           eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"FACULTY")))
         .where(and(eq(collegeMemberships.id,input.replacementMembershipId),
           eq(collegeMemberships.collegeId,member.collegeId),eq(collegeMemberships.status,"ACTIVE")))
-        .for("share",{of:collegeMemberships}).limit(1);
-      if(!replacement)throw new CollegeTeachingReassignError("TARGET_NOT_FOUND");
+        .for("share").limit(1);
+      if(!replacement||!teachingMembershipIsActive(replacement))
+        throw new CollegeTeachingReassignError("TARGET_NOT_FOUND");
       const live=await tx.select({membershipId:courseTeachingAssignments.membershipId,
         role:courseTeachingAssignments.role})
         .from(courseTeachingAssignments)
