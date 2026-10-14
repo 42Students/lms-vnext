@@ -8,7 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
 import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
-  type LearnerInboxQuery } from "@/modules/activity/learner-notification-inbox-model";
+  type LearnerInboxQuery,learnerNotificationInboxHref } from "@/modules/activity/learner-notification-inbox-model";
 import { NotificationList, type NotificationListItem } from "./notification-list";
 import {learnerNotificationPlacementAction} from "@/modules/activity/learner-notification-placement-action-model";
 import {
@@ -70,7 +70,21 @@ export function LearnerNotificationsInbox({
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
   const filtered=active!=="all" || unread!=="all" || search.trim()!=="";
-  function resetFilters(){setActive("all");setUnread("all");setSearch("");}
+  function applySearch(){
+    router.push(learnerNotificationInboxHref({category:active,unread,q:search}));
+  }
+  function selectCategory(category:LearnerNotificationCategory){
+    setActive(category);
+    router.push(learnerNotificationInboxHref({category,unread,q:search}));
+  }
+  function selectUnread(value:"all"|"unread"){
+    setUnread(value);
+    router.push(learnerNotificationInboxHref({category:active,unread:value,q:search}));
+  }
+  function resetFilters(){
+    setActive("all");setUnread("all");setSearch("");
+    router.push("/learn/notifications");
+  }
 
   return (
     <section className="space-y-5" aria-label="Learner notifications inbox">
@@ -81,7 +95,7 @@ export function LearnerNotificationsInbox({
               key={key}
               type="button"
               aria-pressed={active === key}
-              onClick={() => setActive(key)}
+              onClick={() => selectCategory(key)}
               className={active === key
                 ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 : "min-h-11 rounded-full border border-border bg-surface px-4 text-sm font-semibold text-body transition hover:border-primary hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"}
@@ -96,13 +110,18 @@ export function LearnerNotificationsInbox({
           Search notifications
           <input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}
+            onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         <button type="button" aria-pressed={unread==="unread"}
-          onClick={()=>setUnread(prev=>prev==="unread"?"all":"unread")}
+          onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
           className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
           {unread==="unread"?"Unread only ✓":"Unread only"}
+        </button>
+        <button type="button" onClick={applySearch}
+          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Apply search
         </button>
         <button type="button" disabled={!filtered} onClick={resetFilters}
           className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">

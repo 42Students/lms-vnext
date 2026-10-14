@@ -990,3 +990,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 Support History cancellation: existing request cancellation hardened by live learner entitlement, transactional updatedAt comparison, own-only UI, confirmation and audit. Skipped saved-job write (placement_saved_jobs present only as staged DB08 source, no registered migration), profile proof uploads (private R2 bucket absent), and new email/SMS sends (prohibited by orchestrator decision). PostgreSQL/unit/runtime acceptance pending.
 
 2026-10-14 Support History pagination: fixed hard 30-row truncation using existing own-college requests, schema-validated status/type/page selectors and filter-preserving Next/Previous links. Unit and isolated learner PostgreSQL tests authored; no file or external send added. Runtime/mobile acceptance pending.
+
+2026-10-14 learner notification inbox query: category/unread/search controls now reflect browser history with strict allowed query parameters; own personal notification reads and announcement fallbacks unchanged. No external sending. Unit and fresh-learner PostgreSQL tests authored; browser/static acceptance pending.
