@@ -1,7 +1,7 @@
 import { z } from "zod";
 export const tpoApplicantReviewSchema = z.object({
   confirmed: z.literal(true),
-  expectedUpdatedAt: z.iso.datetime({ offset: true }),
+  expectedUpdatedAt: z.iso.datetime({ offset: true }).transform(value=>new Date(value).toISOString()),
   decision: z.enum(["SHORTLISTED", "REJECTED"]),
   note: z.string().trim().min(10).max(1000),
 }).strict();
