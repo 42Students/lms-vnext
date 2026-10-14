@@ -925,3 +925,6 @@ Scoped Resource Directory now supports deterministic recorded-sequence and title
 
 ## 2026-10-15 chat-11 round 6 AR — global meeting type triage (PARTIAL)
 The current-Mentor global Meetings calendar now carries registered meeting_type through its already tenant/active-grant-scoped reader and filters GENERAL/PLANNING/STANDUP/REVIEW/RETRO consistently for UI and capped safe CSV. Strict selector and pure tests authored; full DB/browser parity and executed checks remain open.
+
+## 2026-10-15 chat-11 round 6 AS — meeting chronological order (PARTIAL)
+Exact-project team meeting history supports persisted start-time oldest/newest ordering, deterministic UUID tie-breaks and URL-preserved paging, alongside current-Mentor authorization and recorded status/type/outcome/title filters. Query and href regression cases source-authored. Real PostgreSQL, TypeScript, browser and legacy verification remain open.
