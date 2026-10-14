@@ -877,3 +877,6 @@ and full legacy readiness behavior remain unverified.
 
 ## 2026-10-15 chat-11 AB — Mentor final-review queue ordering (PARTIAL)
 Oldest/newest persisted submission ordering and URL-preserved pagination added to current assigned-project review alerts. The established role, college and project gate remains; strict query validation and pure unit tests are authored. CLI/PG/browser and legacy acceptance remain open.
+
+## 2026-10-15 chat-11 AC — Mentor Resource HTTPS link availability filter (PARTIAL)
+The exact-project Resource directory filters records with credential-free HTTPS links separately from unavailable/unsafe records, in both paginated reads and bounded formula-neutralized metadata CSV. Strict Zod and pure unit assertions authored. Current same-college assigned Mentor authority unchanged. Tests/browser/full legacy resource parity open.

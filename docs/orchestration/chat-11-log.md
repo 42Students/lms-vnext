@@ -175,3 +175,6 @@
 
 ## Round 3 AB — Delivery review ordering (PARTIAL)
 - Oldest-first triage over live pending delivery alerts, with strict selector and pure tests; execution not verified.
+
+## Round 3 AC — Resource link filter (PARTIAL)
+- Filter unsafe/unavailable versus safe HTTPS resource links before paging/CSV, with unit tests authored but not run.
