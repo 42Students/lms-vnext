@@ -4,6 +4,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { courseOfferingIdSchema } from "@/modules/courses/validation";
 import { loadCourseOfferingScope } from "@/modules/courses/scope";
 import { CoursesServiceError } from "@/modules/courses/errors";
+import { AcademicsServiceError } from "@/modules/academics/errors";
 import { resourceVisibleInAdminScope } from "./super-admin-resource-scope-model";
 
 /** Absent/invalid and foreign-safety-scope offerings both render not-found. */
@@ -21,9 +22,10 @@ export async function resolveSuperAdminOfferingDetail(context: RequestContext, r
   } catch (error) {
     if (error instanceof CoursesServiceError && (
       error.code === "OFFERING_NOT_FOUND" ||
-      error.code === "COURSE_NOT_FOUND" ||
-      error.code === "COHORT_NOT_FOUND" ||
-      error.code === "ACADEMIC_PERIOD_NOT_FOUND"
+      error.code === "COURSE_NOT_FOUND"
+    )) return null;
+    if (error instanceof AcademicsServiceError && (
+      error.code === "COHORT_NOT_FOUND" || error.code === "ACADEMIC_PERIOD_NOT_FOUND"
     )) return null;
     throw error;
   }

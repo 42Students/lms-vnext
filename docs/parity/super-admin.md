@@ -623,3 +623,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 Chat 6 / course-offering detail unknown-ID 404 — PARTIAL:** `/admin/courses/offerings/[offeringId]` preflights Zod UUID and exact Super Admin selected-college/org visibility, renders not-found for malformed, missing, archived or foreign offering resources while central authorization rejects wrong roles. Pure guard and disposable PG fixture regressions authored, not executed; authoring and legacy course detail parity remain open.
+
+
+**2026-10-15 Chat 6 / template overview detail missing-ID handling — PARTIAL:** `/admin/projects/templates/[templateId]` validates UUID and translates PROJECT_TEMPLATE_NOT_FOUND to a route 404 (preserving other errors), for global and scoped template reads. Regression unit and in-test persisted PG fixture authored, not executed; full overview editing and browser parity remain open.
