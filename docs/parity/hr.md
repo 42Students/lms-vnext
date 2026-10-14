@@ -484,3 +484,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR Calendar event-category filters — PARTIAL:** Week/month/agenda calendar now filters presentation across authorized Rounds, Application deadlines, Results due or All, preserving category in prior/today/next and view URLs; no fabricated interview slots and no new candidate disclosure. Pure model/unit tests authored; PG auth continues through existing listRecruiterCalendarEvents and remains to be executed. Browser viewport validation open.
+
+
+**2026-10-15 chat-10 / Request Drive round presets — PARTIAL:** Added three local hiring-round presets (interview-only, test+interview, full TALK/TEST/GD/INTERVIEW); replacing round lists never saves, submits, or mutates source Hire Again jobs. Pure model/Zod unit tests authored. Also corrected calendar category filter typing to preserve typed result-due records. Remaining persisted approval and browser parity.

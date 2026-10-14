@@ -1,10 +1,13 @@
 import {z} from "zod";
+import type {HrDueItem} from "./hr-calendar-day-model";
+import type {PlacementCalendarDayGroup} from "./placement-calendar-model";
 export const HR_CALENDAR_CATEGORIES=["ALL","ROUNDS","DEADLINES","RESULTS_DUE"] as const;
 export const hrCalendarCategorySchema=z.enum(HR_CALENDAR_CATEGORIES);
 export type HrCalendarCategory=z.infer<typeof hrCalendarCategorySchema>;
-export function filterHrCalendarDays<T extends {
- events:readonly {kind:string}[];resultsDue:readonly unknown[];
-}>(days:readonly T[],category:HrCalendarCategory) {
+export type HrCalendarFilterDay={
+ day:string;events:PlacementCalendarDayGroup["events"];resultsDue:HrDueItem[];
+};
+export function filterHrCalendarDays(days:readonly HrCalendarFilterDay[],category:HrCalendarCategory):HrCalendarFilterDay[] {
  return days.map(day=>({
   ...day,
   events:day.events.filter(event=>category==="ALL"||
