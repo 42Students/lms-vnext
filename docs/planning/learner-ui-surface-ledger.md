@@ -554,6 +554,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L18-024 | Notice dispute flow | PlacementCellContent | placement page | GAP |
 | L18-025 | Offer-letter/file flow | PlacementCellContent | storage-backed offer flow | BLOCKED |
 | L18-026 | Page loading/error/retry/empty | PlacementCellContent | placement page | GAP |
+| L18-027 | Personal placement activity alerts, not official notices | registered in-app PLACEMENTS notifications | learner Placement Cell recent alerts | FIXED |
 
 ## L19 — Placement Rules
 
@@ -717,7 +718,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-003 | Project notifications | NotificationsContent | notification feed | UNCHECKED |
 | L29-004 | Placement/job notifications | NotificationsContent | notification feed | UNCHECKED |
 | L29-005 | Announcements/general notifications | NotificationsContent | notification feed | UNCHECKED |
-| L29-006 | Personal notifications | NotificationsContent | notification feed | UNCHECKED |
+| L29-006 | Personal notifications | NotificationsContent | own-recipient paginated personal history + canonical notifications feed | FIXED |
 | L29-007 | Unread signal | NotificationsContent | notification list | FIXED |
 | L29-008 | Mark read | NotificationsContent | read API | FIXED |
 | L29-009 | Action: Take Assessment | NotificationsContent | actionHref | UNCHECKED |
