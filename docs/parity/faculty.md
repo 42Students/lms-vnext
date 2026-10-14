@@ -1365,3 +1365,6 @@ Malformed Quiz path IDs now use `notFound()` rather than a generic report error,
 
 ## 2026-10-15 Faculty gradebook CSV privacy correction — PARTIAL
 The existing Section gradebook CSV no longer outputs learner email or uses email as a missing-name fallback. Name, roll number and published score cells remain formula-neutralized. Pure export regression assertions cover the omitted private-contact column; exact current teaching-Section authorization remains upstream. Source-authored only, with DB and browser export acceptance pending.
+
+## 2026-10-15 Faculty gradebook CSV bounded export — PARTIAL
+Server-owned gradebook CSV now caps export at 500 learner rows, appending a formula-neutralized row identifying the omitted count (not silently implying completeness); private learner email remains excluded. Pure tests cover 522-member bounds and contact redaction. PG scale fixture and browser download acceptance remain open; no DONE promotion.
