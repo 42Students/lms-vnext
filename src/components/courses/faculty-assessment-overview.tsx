@@ -237,6 +237,7 @@ export function FacultyAssessmentOverview({
                     deliveryId={item.deliveryId}
                     status={item.status}
                     resultsPublished={item.resultsPublished}
+                    updatedAt={new Date(item.updatedAt).toISOString()}
                     deliveryOwned={item.facultyOwned}
                   />
                 </>
