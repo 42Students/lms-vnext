@@ -83,6 +83,7 @@ export type CoursesServiceErrorCode =
   | "SCHEDULE_EVENT_CONFLICT"
   | "ATTENDANCE_ROSTER_CONFLICT"
   | "ATTENDANCE_NOT_STARTED"
+  | "ATTENDANCE_STALE_VERSION"
   | "ATTENDANCE_CORRECTION_WINDOW_EXPIRED";
 
 export class CoursesServiceError extends Error {

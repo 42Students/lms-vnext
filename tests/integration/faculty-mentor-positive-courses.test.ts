@@ -22,6 +22,7 @@ import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-servi
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
+import {markFacultyAttendance} from "@/modules/attendance/faculty-service";
 import {getFacultyPublishedGradebook,getFacultyPublishedGradebookLearner} from "@/modules/courses/faculty-gradebook-service";
 import {facultyGradebookCsv} from "@/modules/courses/faculty-gradebook-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
@@ -400,6 +401,36 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(audit.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.assignment.grade_published","courses.assignment.graded",
     ]);
+  });
+  it("corrects an exact Section session with SQL microsecond markedAt and rejects stale/foreign/learner",async()=>{
+    const {delivery,section}=await fixture();
+    const end=new Date(Date.now()-10*60000);
+    const start=new Date(end.getTime()-30*60000);
+    const session=await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,
+      title:"Correction fixture "+runId,startsAt:start.toISOString(),endsAt:end.toISOString(),
+    });
+    const inserted=await pool.query<{marked_at:Date}>(`insert into attendance_sessions
+      (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
+      values($1,'MARKED',$2,now(),now()) returning marked_at`,
+      [session.id,facultyOnlyUserId]);
+    const request={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
+      absentMembershipIds:[],expectedMarkedAt:inserted.rows[0]!.marked_at.toISOString()};
+    await expect(markFacultyAttendance(learner,session.id,request)).rejects.toBeDefined();
+    await expect(markFacultyAttendance(facultyOnly,SEED_IDS.collegeB,request)).rejects.toBeDefined();
+    await expect(markFacultyAttendance({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },session.id,request)).rejects.toBeDefined();
+    const corrected=await markFacultyAttendance(facultyOnly,session.id,request);
+    expect(corrected.markedPresent).toBe(1);
+    await expect(markFacultyAttendance(facultyOnly,session.id,request))
+      .rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
+    const audit=await pool.query<{metadata:{correction:boolean,markedAt:string}}>(`
+      select metadata from activity_events
+      where subject_id=$1::text and event_type='courses.attendance.marked'
+      order by created_at desc limit 1`,[session.id]);
+    expect(audit.rows[0]?.metadata.correction).toBe(true);
+    expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();

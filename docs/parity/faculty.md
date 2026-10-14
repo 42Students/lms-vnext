@@ -801,3 +801,15 @@ fresh Learner+Faculty Section PostgreSQL test cover successful grade/publish,
 stale version, wrong role, forged college and archived assignment denial.
 Still PARTIAL: execute tsc/eslint/PG/unit tests, browser and legacy grading
 modal/regrade review, old server consumers.
+
+## 2026-10-14 Faculty Attendance correction optimistic token — PARTIAL
+Existing mark/update path already enforces exact Section roster, correction
+hours and same-origin PATCH. Corrections to an already MARKED session now require
+the prior persisted markedAt ISO token, compare millisecond precision under the
+session row lock, and advance timestamp monotonically. Audit metadata preserves
+old/new mark timestamps plus existing aggregate counts without learner IDs.
+Existing browser editor supplies the token and surfaces explicit stale reload
+instruction. Pure-model and test-created Faculty+Learner Section PG fixtures
+cover default SQL now microseconds, successful correction, stale replay,
+foreign-scoped and wrong-role denial, audit. PARTIAL until tsc/lint/PG/unit,
+mobile browser and actual legacy correction history are independently verified.

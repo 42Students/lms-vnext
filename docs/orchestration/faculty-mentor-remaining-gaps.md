@@ -440,3 +440,12 @@ writes unless status remains PUBLISHED at transaction time, including when a
 concurrent ARCHIVE starts. Pure policy + unit; own-Section PostgreSQL
 grade/publish/stale/foreign/role/archived/audit tests authored. Remains:
 executed tests, responsive browser and exact legacy grading modal parity.
+
+## 2026-10-14 Faculty Course Attendance correction state fence — PARTIAL
+Added session markedAt optimistic token for repeat marking, leaving first-mark
+payload backward compatible. Existing correction-window, roster, schedule,
+Faculty-role scope and immutable attendance audit remain authoritative.
+Audit now includes before/after markedAt, without private learner identifiers.
+New pure unit and self-created Faculty/Learner PG test includes SQL now default,
+success/foreign/role/stale/audit. Remaining: execute tests and browser/mobile,
+legacy correction modal parity and correction-request storage decision.
