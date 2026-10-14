@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, count, eq, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, projectMembers, users } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -73,7 +73,9 @@ export async function getMentorTeamHistory(
       eq(collegeMemberships.id, projectMembers.membershipId))
     .innerJoin(users, eq(users.id, collegeMemberships.userId))
     .where(filters)
-    .orderBy(asc(projectMembers.startedAt), asc(projectMembers.id))
+    .orderBy(...(query.order==="NEWEST"
+      ? [desc(projectMembers.startedAt),desc(projectMembers.id)]
+      : [asc(projectMembers.startedAt),asc(projectMembers.id)]))
     .limit(pagination.pageSize)
     .offset((pagination.page - 1) * pagination.pageSize);
   return {
