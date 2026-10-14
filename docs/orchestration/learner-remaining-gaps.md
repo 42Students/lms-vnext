@@ -959,3 +959,6 @@ The rows below were considered but intentionally not promoted to PARTIAL; they r
 Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence not verified; do not fake saved state. Skipped L13-016 private per-drive resume: storage/consent policy unresolved.
 
 2026-10-14 L16-019: mobile interview drawer prioritizes effective IST persisted schedule and full-width actions; date-only status never implies attendance/completion. Own-learner PG and model tests authored; mobile/CI acceptance remains. Skipped L16-006 confirm attendance: no migrated learner acknowledgement state or employer acceptance record.
+
+2026-10-14 L19-005: learner Placement Rules now distinguishes future eligibility checks from already-submitted applications using own `placement_applications` status via verified scoped journey service. Versioned College-wide rule change and retroactivity remain BLOCKED by missing canonical policy version/effective-date/approval source; explicit College owner decision required. Pure-model and own fresh-learner PostgreSQL tests authored, not executed in this session.
+Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt-in policy/consent state not approved; L30-034..043 verification lacks reviewed documents and trusted state machine.
