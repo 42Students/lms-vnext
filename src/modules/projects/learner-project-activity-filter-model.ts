@@ -31,3 +31,42 @@ export function filterLearnerProjectActivity<T extends { eventType: string }>(
   const category = learnerProjectActivityCategorySchema.safeParse(categoryInput).data ?? "ALL";
   return events.filter(event => category === "ALL" || learnerProjectActivityCategory(event.eventType) === category);
 }
+
+export const learnerProjectActivityFilterSchema = z.object({
+  category: learnerProjectActivityCategorySchema.default("ALL"),
+  from: z.iso.date().optional(),
+  to: z.iso.date().optional(),
+}).strict().refine(value => !value.from || !value.to || value.from <= value.to, {
+  message: "Start date must be on or before end date", path: ["to"],
+});
+export type LearnerProjectActivityFilters = z.infer<typeof learnerProjectActivityFilterSchema>;
+
+export function parseLearnerProjectActivityFilters(input: {
+  category?: unknown; from?: unknown; to?: unknown;
+}) {
+  return learnerProjectActivityFilterSchema.safeParse({
+    category: input.category === "" ? undefined : input.category,
+    from: input.from === "" ? undefined : input.from,
+    to: input.to === "" ? undefined : input.to,
+  });
+}
+
+/** Inclusive IST date range, expressed as a UTC half-open interval for persisted instants. */
+export function learnerProjectActivityDateBounds(filters: LearnerProjectActivityFilters) {
+  return {
+    from: filters.from ? new Date(filters.from + "T00:00:00+05:30") : undefined,
+    until: filters.to ? new Date(Date.parse(filters.to + "T00:00:00+05:30") + 86_400_000) : undefined,
+  };
+}
+
+export function learnerProjectActivityPrefixes(category: LearnerProjectActivityCategory): readonly string[] {
+  switch (category) {
+    case "SPRINT": return ["projects.sprint."];
+    case "TASK": return ["projects.task."];
+    case "TEAM": return ["projects.team.", "projects.member.", "projects.mentor.", "projects.meeting."];
+    case "RESOURCE": return ["projects.resource."];
+    case "SUBMISSION": return ["projects.delivery.", "projects.submission."];
+    case "PROJECT": return ["projects.project.", "projects.readiness."];
+    default: return [];
+  }
+}
