@@ -143,8 +143,17 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   },{id,foreignDeliveryId:SEED_IDS.collegeB});
   expect(foreign).toBeGreaterThanOrEqual(400);
   if(view.name==="mobile"){
-   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
-   expect(width).toBeLessThanOrEqual(view.width+1);
+   const {width,offenders}=await page.evaluate(()=>{
+    const width=document.documentElement.scrollWidth;
+    const offenders=[...document.querySelectorAll("*")]
+      .filter(el=>el.getBoundingClientRect().right>window.innerWidth+1)
+      .slice(0,8).map(el=>({
+       tag:el.tagName,classes:String(el.className).slice(0,120),
+       right:Math.round(el.getBoundingClientRect().right),
+      }));
+    return {width,offenders};
+   });
+   expect(width,JSON.stringify(offenders)).toBeLessThanOrEqual(view.width+1);
   }
   expect(errors).toEqual([]);
  });
