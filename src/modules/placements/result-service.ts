@@ -292,6 +292,13 @@ export async function stagePlacementRoundResult(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Serialize result staging with drive closure; a pre-transaction status
+    // read alone can admit a result after another operator closes the drive.
+    const [lockedJob] = await tx.select({status: placementJobs.status})
+      .from(placementJobs).where(eq(placementJobs.id, job.id)).for("update").limit(1);
+    if (!lockedJob || lockedJob.status === "CLOSED" || lockedJob.status === "ARCHIVED") {
+      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    }
     const [lockedRound] = await tx
       .select({
         status: placementJobRounds.status,
