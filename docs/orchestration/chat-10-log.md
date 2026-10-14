@@ -98,3 +98,5 @@
 - 2026-10-15 — HR results-due round drilldown PARTIAL: preserve actual round ID through authorized Today/Calendar links; pure unit extended, unexecuted.
 
 - 2026-10-15 — HR Home chooser metadata PARTIAL: exact active grants with code and granted date, stale candidates filtered; unit authored, execution pending.
+
+- 2026-10-15 — HR profile grant navigation PARTIAL: direct scoped Today/Drives/Team links for each own active college grant; tests unexecuted.
