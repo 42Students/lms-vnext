@@ -19,12 +19,9 @@ describe("unknown provider deadline against persisted authorized TEST rounds",()
   }));
   const selected=rounds.filter(row=>row.roundId===f.roundId);
   expect(learnerAssessmentMissingSchedule(selected).count).toBe(0);
-  await pool.query("UPDATE placement_job_rounds SET scheduled_at=NULL WHERE id=$1",[f.roundId]);
-  const missing=(await getOwnLearnerAssessmentBrowse(f.drive.learner.context)).rounds.filter(x=>x.roundId===f.roundId).map(row=>({
-   ...row,scheduledAt:row.scheduledAt?.toISOString()??null,
-   exception:row.exception?{scheduledAt:row.exception.scheduledAt.toISOString()}:null,
-  }));
-  expect(learnerAssessmentMissingSchedule(missing).count).toBe(1);
+  // The fixture's scheduled round remains unchanged: setting SCHEDULED to
+  // NULL would violate producer invariants and is unit-tested separately.
+  expect(learnerAssessmentMissingSchedule([{...selected[0]!,scheduledAt:null}]).count).toBe(1);
  },30000);
  it("denies foreign college, wrong role and persisted suspension",async()=>{
   const ctx=f.drive.learner.context;
