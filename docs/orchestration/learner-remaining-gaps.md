@@ -970,3 +970,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 L16-015: copyable approved-reschedule summary uses persisted scoped exception with original/approved IST times; never includes private join URL, consent, or employer send. Pure model and fresh-learner PG test with own approved request/exception authored; runtime/clipboard acceptance outstanding.
 
 2026-10-14 L16-009: own interview .ics export now folds UTF-8 content lines to RFC5545 75-octet limit and includes calendar method/scale, preserving exact UTC persisted schedule/duration and excluding join links. Pure and fresh-learner PG authored; manual import/CI acceptance outstanding.
+
+2026-10-14 L14-018: own-application assessment action resolves an exact persisted TEST round; does not guess assessment IDs from result history. Skips: L1-021 course thumbnail (no migrated image association); L13-016 resume upload (private-storage authorization absent); L30-034..043 profile verification (private proof/review states not migrated).
