@@ -206,7 +206,7 @@ export function LearnerJobsBrowse({
           </button>
         </div>
       ) : (
-        <LearnerPlacementJobs items={paged} />
+        <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} />
       )}
 
       {totalPages > 1 ? (
