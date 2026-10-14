@@ -2,8 +2,10 @@ import { SuperAdminTemplateSubviewPage } from "@/components/projects/super-admin
 
 export default async function SuperAdminTemplateVersionsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ templateId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { templateId } = await params;
 
@@ -11,6 +13,7 @@ export default async function SuperAdminTemplateVersionsPage({
     <SuperAdminTemplateSubviewPage
       templateId={templateId}
       section="versions"
+      historyQuery={{ page: (await searchParams).page }}
     />
   );
 }
