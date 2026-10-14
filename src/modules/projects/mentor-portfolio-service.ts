@@ -46,7 +46,7 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
   const allowed = new Set(scope.projects.map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
-    alerts.filter(a => allowed.has(a.projectId)), query.search,
+    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order,
   );
   return { enabled: true, query, ...pageMentorPortfolio(items, query) };
 }
@@ -72,6 +72,7 @@ export async function getMentorPortfolioActivity(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
+    query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     or(
       and(eq(activityEvents.subjectType, "project"), inArray(activityEvents.subjectId, ids)),
       inArray(metadataProjectId, ids),

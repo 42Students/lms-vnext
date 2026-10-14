@@ -13,11 +13,13 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
 import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
+import {mentorAttentionKindSchema,selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
 type Params = {
   view?: string | string[];
+  kind?: string | string[];
   beforeCreatedAt?: string | string[];
   beforeId?: string | string[];
 };
@@ -34,7 +36,8 @@ export default async function MentorNotificationsPage({
     beforeCreatedAt:first(raw.beforeCreatedAt) ?? undefined,
     beforeId:first(raw.beforeId) ?? undefined,
   });
-  if (!parsed.success) return <section role="alert" className="space-y-3">
+  const kind=mentorAttentionKindSchema.safeParse(first(raw.kind)??"ALL");
+  if (!parsed.success||!kind.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid notification filters</h1>
     <Link href={MENTOR_INBOX} className="text-primary-text underline">Return to newest notifications</Link>
   </section>;
@@ -51,6 +54,7 @@ export default async function MentorNotificationsPage({
   ]);
   const alerts = projectAccess.projects.enabled
     ? await listMyMentorProjectAttention(context) : [];
+  const visibleAlerts=selectMentorAttention(alerts,kind.data);
   const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
@@ -71,17 +75,33 @@ export default async function MentorNotificationsPage({
       }))} />
     <section aria-labelledby="mentor-attention" className="space-y-3">
       <h2 id="mentor-attention" className="text-lg font-semibold text-foreground">
-        Project attention ({alerts.length})
+        Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
+      <form method="get" action={MENTOR_INBOX}
+        className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
+        <label className="grid gap-1 text-sm font-semibold">Attention type
+          <select name="kind" defaultValue={kind.data}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All</option><option value="REVIEW">Reviews</option>
+            <option value="STALLED">Stalled</option>
+            <option value="REQUESTED">Meeting requests</option>
+            <option value="MEETING_SOON">Meetings soon</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Filter attention
+        </button>
+        <Link href={MENTOR_INBOX} className="text-sm text-primary-text underline">Clear</Link>
+      </form>
       {!projectAccess.projects.enabled
         ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
             Projects access is disabled; project attention is unavailable.
           </p>
-        : alerts.length === 0
+        : visibleAlerts.length === 0
           ? <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-              No current assigned project requires recorded attention.
+              No project-attention signal matches this filter.
             </p>
-          : <div className="grid gap-3">{alerts.map(alert=>
+          : <div className="grid gap-3">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
                 className="block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">

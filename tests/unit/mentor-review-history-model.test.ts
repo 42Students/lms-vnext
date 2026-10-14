@@ -3,6 +3,7 @@ import {
   mentorReviewDecisionLabel,
   mentorReviewHistoryHref,
   mentorReviewHistoryPagination,
+  mentorReviewHistoryLiteralSearch,
   mentorReviewHistoryQuerySchema,
 } from "@/modules/projects/mentor-review-history-model";
 
@@ -25,6 +26,9 @@ describe("Mentor final delivery history model",() => {
     expect(mentorReviewHistoryQuerySchema.safeParse({membershipId:"other"}).success).toBe(false);
     expect(mentorReviewHistoryQuerySchema.safeParse({decision:"UNKNOWN"}).success).toBe(false);
     expect(mentorReviewHistoryQuerySchema.safeParse({page:"0"}).success).toBe(false);
+    expect(mentorReviewHistoryQuerySchema.safeParse({search:"x".repeat(121)}).success).toBe(false);
+    expect(mentorReviewHistoryLiteralSearch("%_\\")).toBe("\\%\\_\\\\");
+    expect(mentorReviewHistoryHref({decision:"ALL",search:"Atlas & Co",page:2})).toContain("search=Atlas+%26+Co&page=2");
   });
   it("constructs scoped review history URLs",() => {
     expect(mentorReviewHistoryHref({decision:"APPROVED",page:3}))
