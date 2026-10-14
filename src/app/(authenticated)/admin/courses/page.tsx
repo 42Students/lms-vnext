@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,6 +19,7 @@ export default async function SuperAdminCoursesPage() {
           title="Courses"
           description="Course administration requires a college safety scope."
         />
+        <Link href="/admin/lessons" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Lessons directory →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before managing Courses, Offerings, Section deliveries or teaching assignments."
@@ -39,6 +41,7 @@ export default async function SuperAdminCoursesPage() {
         title="Courses"
         description="Course structure inside the selected college safety scope."
       />
+      <Link href="/admin/lessons" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Lessons directory →</Link>
       <AdminCourseOverview
         workspace={workspace}
         offeringBasePath="/admin/courses/offerings"
