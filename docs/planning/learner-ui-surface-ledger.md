@@ -174,7 +174,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L3-029 | Course progress refresh after actions | syllabus | progress model | FIXED |
 | L3-030 | Empty learning path | syllabus | EmptyState | FIXED |
 | L3-031 | Partial lesson/no-items state | syllabus | lesson state | FIXED |
-| L3-032 | Learning Path mobile behavior | syllabus responsive | learner workspace | UNCHECKED |
+| L3-032 | Learning Path mobile behavior | syllabus responsive | compact touch-sized mobile Jump-to-Lesson index from authorized published sequence/counts; respects active filter, uses Next Link to focus/open exact lesson without losing filter, empty-filter state is explicit. PARTIAL: isolated PostgreSQL/model tests authored; tsc/eslint, phone/device and screen-reader acceptance pending | PARTIAL |
 | L3-033 | Current lesson + completed/in-progress lesson status | syllabus roadmap cards | learner workspace | FIXED |
 | L3-034 | Per-lesson content-type breakdown/counts | syllabus roadmap cards | learner workspace | FIXED |
 | L3-035 | Assignment due / overdue and expired-quiz row cues | syllabus roadmap rows | learner workspace | FIXED |
@@ -252,7 +252,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-020 | Zero assignments | AssignmentsContent | EmptyState | CLOSED |
 | L6-021 | Filtered empty | AssignmentsContent | EmptyState | CLOSED |
 | L6-022 | Deep link exact assignment | AssignmentsContent | roadmap query | CLOSED |
-| L6-023 | Mobile assignment cards/drawer | AssignmentsContent responsive | aggregate page | UNCHECKED |
+| L6-023 | Mobile assignment cards/drawer | AssignmentsContent responsive | mobile-first full-width submission action and drawer links; derived due/submitted/grade-visible quick status only from own persisted assignment; card titles wrap. PARTIAL pending fresh PG, unit, tsc/eslint, touch-device and screen-reader acceptance | PARTIAL |
 
 ## L7 — All Quizzes: `/learn/allQuizzes`
 
@@ -275,7 +275,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L7-015 | Request failure/retry | QuizzesContent | aggregate page | CLOSED |
 | L7-016 | Zero quizzes | QuizzesContent | EmptyState | CLOSED |
 | L7-017 | Filtered empty | QuizzesContent | EmptyState | CLOSED |
-| L7-018 | Mobile quiz list | QuizzesContent responsive | aggregate page | UNCHECKED |
+| L7-018 | Mobile quiz list | QuizzesContent responsive | mobile-first full-width quiz action/history links with own persisted remaining attempts, due/closed, and published-results-only quick status; never expose unpublished score. PARTIAL pending PG/unit/tsc/eslint execution and mobile/screen-reader acceptance | PARTIAL |
 
 ## L8 — Standalone Quiz Attempt: `/quiz`
 

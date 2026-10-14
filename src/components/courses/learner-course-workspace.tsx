@@ -16,6 +16,7 @@ import {
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
+import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
 
 type Workspace = Awaited<
   ReturnType<
@@ -621,6 +622,14 @@ export function LearnerCourseWorkspace({
     ),
   };
 
+  const mobileOutline=learnerRoadmapMobileOutline(
+    workspace.lessons.map(lesson=>({
+      id:lesson.id,name:lesson.name,sequence:lesson.sequence,
+      visibleCount:lesson.items.filter(item=>matchesFilter(lesson,item)).length,
+    })),
+    activeFilter as "all"|"lectures"|"resources"|"assessments"|"live-sessions",
+  );
+
   if (!workspace.learningPath) {
     return (
       <EmptyState
@@ -721,6 +730,30 @@ export function LearnerCourseWorkspace({
         </div>
       </nav>
 
+      <details className="rounded-xl border border-border bg-surface sm:hidden">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
+          Jump to lesson ({mobileOutline.length})
+          <span aria-hidden="true">⌄</span>
+        </summary>
+        {mobileOutline.length ? (
+          <nav aria-label="Published lesson index" className="border-t border-border p-2">
+            <ol className="space-y-1">
+              {mobileOutline.map((lesson,index)=>(
+                <li key={lesson.id}>
+                  <Link
+                    href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
+                    className="flex min-h-11 items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        ) : <p className="border-t border-border p-4 text-sm text-body">
+          No published items match this filter.
+        </p>}
+      </details>
       <div className="space-y-4">
         {workspace.lessons.map((lesson, lessonIndex) => {
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
@@ -749,6 +782,7 @@ export function LearnerCourseWorkspace({
 
           return (
             <details
+              id={`lesson-${lesson.id}`}
               key={lesson.id}
               open={
                 focusLessonId === lesson.id ||
