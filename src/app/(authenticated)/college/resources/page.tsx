@@ -1,0 +1,30 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
+import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
+import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+
+export default async function CollegeResourcesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const context = await getCurrentRequestContext();
+  if (!context.membership) redirect("/dashboard");
+  const raw = collegeContentSearchParams(await searchParams);
+  const parsed = collegeContentQuerySchema.safeParse(raw);
+  if (!parsed.success) {
+    return (
+      <div className="space-y-5">
+        <PageHeader eyebrow="College Admin · Courses & Content" title="Resources" />
+        <ErrorState title="Invalid resource filters"
+          description="The title, status or page filter is invalid. No content was loaded."
+          action={<Link href="/college/resources" className="font-semibold text-primary-text">Clear filters</Link>} />
+      </div>
+    );
+  }
+  return <CollegeContentAggregate data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />;
+}
