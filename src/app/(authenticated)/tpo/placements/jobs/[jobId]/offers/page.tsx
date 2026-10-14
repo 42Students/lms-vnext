@@ -6,12 +6,13 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
-export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[]}>}){
+export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
  const raw=Array.isArray(q.status)?q.status[0]:q.status;
- const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL"});
+ const page=Array.isArray(q.page)?q.page[0]:q.page;
+ const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{})});
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
@@ -24,7 +25,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <nav aria-label="Offer status" className="flex flex-wrap gap-2">{tabs.map(([value,label,count])=>
    <Link key={value} href={root+"/offers?status="+value} aria-current={data.status===value?"page":undefined}
     className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-primary-text">{label} ({count})</Link>)}</nav>
-  {data.truncated?<p role="status" className="rounded border border-border p-3 text-sm">Showing first 200 of {data.totalMatching} records; pagination is outstanding.</p>:null}
+  <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role}</p></div><strong className="text-sm">{row.status}</strong></div>
@@ -33,6 +34,11 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="text-primary-text" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
    </article>)}</section>}
-  <p className="text-xs text-muted-foreground">Counts include offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <nav aria-label="Offer register pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <span className="text-body">Page {data.page} of {data.totalPages}</span>
+   <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)} className="font-semibold text-primary-text">← Previous</Link>:null}
+    {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)} className="font-semibold text-primary-text">Next →</Link>:null}</div>
+  </nav>
+  <p className="text-xs text-muted-foreground">Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }
