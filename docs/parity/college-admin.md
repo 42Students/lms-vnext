@@ -268,6 +268,8 @@ Legacy contract:
 ## Page: Attendance
 **Legacy:** `/college-admin/attendance`
 
+**Department-summary read-first PARTIAL (2026-10-14):** `/college/attendance/departments` reports marked scheduled-session counts and explicit attendance status rows by the authenticated college department, using registered session/event/record tables. It cannot derive true attendance percentages, because PRESENT can be implicit and eligible learner/session denominators are not computed. Search, pagination, loading/error and honest no-data states are included. Exact legacy reporting, database runtime and browser acceptance remain open.
+
 Legacy contract audited:
 - Attendance Policy card;
 - retroactive marking window;
@@ -783,3 +785,7 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `college-admin/das
 - [ ] Execute `tests/unit/admin-dashboard-navigation.test.ts`, build/typecheck and authenticated desktop/mobile College Admin browser workflow.
 
 **State: PARTIAL / source-authored navigation only / tests not run.**
+
+## College Admin Department Placement Evidence (read-first PARTIAL)
+
+`/college/placements/readiness-by-department` lists active enrolled learners, recorded candidate-academic-evidence profiles, verified profiles, and placement preference profiles by owning department. It does not assert job eligibility or actual readiness, and is not a replacement for legacy Hiring Analytics. This reports only migrated source evidence with College Admin permission and strict college scope; full funnel reporting, browser and runtime DB acceptance remain open.
