@@ -142,6 +142,18 @@ export default async function CollegeGroupDetailPage({
         </section>
       ) : null}
 
+      {rule ? (
+        <section className="rounded-xl border border-border bg-surface p-4">
+          <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
+            className="font-semibold text-primary-text hover:underline">
+            Preview persisted membership rule (read-only)
+          </Link>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Counts are a bounded eligibility preview, not automatic enrollment or a promised refresh result.
+          </p>
+        </section>
+      ) : null}
+
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Members</h2>
         {members.length === 0 ? (
