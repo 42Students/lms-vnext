@@ -26,6 +26,7 @@ describe("College Admin content aggregate model", () => {
       { status: "CLOSED" },
       { format: "EXTERNAL_URL" },
       { scope: "OTHER" },
+      { offeringStatus: "CANCELLED" },
       { page: 0 },
       { page: 1001 },
       { q: "a".repeat(101) },
@@ -47,6 +48,8 @@ describe("College Admin content aggregate model", () => {
     expect(url.searchParams.get("format")).toBe("YOUTUBE");
     expect(url.searchParams.get("courseCode")).toBe("CS-101");
     expect(url.searchParams.get("scope")).toBe("SECTION");
+    expect(collegeContentHref("RESOURCE",{...collegeContentQuerySchema.parse({offeringStatus:"ARCHIVED"})}))
+      .toContain("offeringStatus=ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(collegeContentHref("RESOURCE", {
       q: "", status: "ALL", format: "ALL", scope: "ALL", page: 1,

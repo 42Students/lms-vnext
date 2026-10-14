@@ -99,6 +99,8 @@ export async function listCollegeContentAggregate(
       inArray(lessonContents.contentType,
         kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
+      kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL"
+        ? eq(courseOfferings.status,query.offeringStatus) : undefined,
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
       kind !== "LIVE_CLASS" && query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
       kind !== "LIVE_CLASS" && query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
