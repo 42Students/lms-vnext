@@ -7,8 +7,14 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnNotifications } from "@/modules/activity/notification-service";
 import { requirePersistedLearnerNotificationMembership } from "@/modules/activity/learner-notification-membership-service";
+import { learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
+import { notFound } from "next/navigation";
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({searchParams}:{
+  searchParams:Promise<{category?:string|string[];unread?:string|string[];q?:string|string[]}>;
+}) {
+  const query=learnerNotificationInboxQuerySchema.safeParse(await searchParams);
+  if (!query.success) notFound();
   const context =
     await getCurrentRequestContext();
   const membership = await requirePersistedLearnerNotificationMembership(context);
@@ -62,6 +68,7 @@ export default async function NotificationsPage() {
       </Link>
       <LearnerNotificationsInbox
         personal={items}
+        initialFilters={query.data}
         announcementsEnabled={announcementsEnabled}
         announcements={announcements.map((announcement) => ({
           id: announcement.id,
