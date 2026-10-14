@@ -766,8 +766,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-026 | Contact deep-link scroll | profile query section | strict Zod ?section=contacts route input, live target scroll, responsive completion checklist deep links | FIXED |
 | L30-027 | Connect-accounts deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-028 | Optional-section partial failure isolation | removed from current learner Profile composition | no separate optional placement-section fetches | RETIRED |
-| L30-029 | Loading skeleton | ProfileSkeleton | profile route | UNCHECKED |
-| L30-030 | Hard-error + Retry | profile route | profile route | UNCHECKED |
+| L30-029 | Loading skeleton | ProfileSkeleton | responsive academic identity, introduction and section-shaped placeholders; PARTIAL pending browser/mobile exact parity | PARTIAL |
+| L30-030 | Hard-error + Retry | profile route | honest hard failure retry/exit plus independent academic-summary recovery after live owned profile gate; PARTIAL pending PG/browser retry and unsaved edits acceptance | PARTIAL |
 | L30-031 | Visibility refresh | profile route | guarded visibility-triggered router.refresh after 45s, manual saved-profile refresh, and reconciliation of newer server props only when on-screen document matches previous saved state (unsaved changes protected); PARTIAL pending fresh PostgreSQL/unit, tsc/eslint, multi-tab browser and concurrent-editor acceptance | PARTIAL |
 | L30-032 | Role fence/redirect | profile route | server context | FIXED |
 | L30-033 | Mobile profile cards/forms | profile responsive | profile workspace | UNCHECKED |
