@@ -128,10 +128,15 @@ export function RecruiterLeadDetailWorkspace({
   }, [base, params]);
 
   useEffect(() => {
-    setLead(null);
     const controller = new AbortController();
-    void load(controller.signal);
-    return () => controller.abort();
+    const timer = setTimeout(() => {
+      setLead(null);
+      void load(controller.signal);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [load]);
 
   async function mutate(url: string, method: "PATCH" | "POST", body: unknown) {
@@ -206,10 +211,17 @@ export function RecruiterLeadDetailWorkspace({
 
   async function markNotNow(event: React.FormEvent) {
     event.preventDefault();
+    if (!window.confirm(
+      "Mark this recruiter Not Now? The stage and reason/revisit date will be " +
+      "saved with an auditable change record. No invitation will be sent.",
+    )) return;
     const ok = await mutate(base + "/not-now", "POST", {
-      collegeId,
-      reason: notNowReason.trim() || null,
-      revisitDate: revisitDate || null,
+      confirmed: true,
+      decision: {
+        collegeId,
+        reason: notNowReason.trim() || null,
+        revisitDate: revisitDate || null,
+      },
     });
     if (ok) setNotNowOpen(false);
   }

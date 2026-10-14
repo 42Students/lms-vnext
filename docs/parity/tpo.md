@@ -63,6 +63,8 @@ Closure checklist:
 - stale-load and Companies-load error handling.
 
 - [ ] Add Lead action is present.
+
+**W45 PARTIAL:** The existing Add Lead modal now requires an explicit creation confirmation. Its same-origin POST uses strict nested Zod input and the migrated DB09 lead/immutable activity tables. The service commits lead and staff-attributed NOTE audit in one transaction, so audit failure rolls back creation; tenant management scope and database contact unique indexes still enforce denial/duplicates. Full legacy duplicate-confirm/open flow, import preview, browser acceptance and executed PostgreSQL tests remain open.
 - [ ] Import action is present.
 - [ ] Outreach-health metrics and drill-in filters match.
 - [ ] Relationship-stage metrics and drill-ins match.
@@ -103,6 +105,8 @@ Filters/actions:
 - [ ] Row Create Drive pre-fills company.
 - [ ] Row Mark Contacted matches.
 - [ ] Row Not Now matches.
+
+**W45 PARTIAL:** Lead-detail Not Now confirmation now posts strict Zod input to the same-origin endpoint; the college-scoped writer locks the lead and atomically updates the manual stage/revisit decision and appends an immutable user NOTE audit. Identical repeats are idempotent; changed reasons/dates are audited. Row-action placement in the table, full legacy modal semantics, browser acceptance and positive/negative disposable PostgreSQL execution remain open.
 
 ### View: Board
 - columns by CRM stage;
