@@ -80,6 +80,8 @@ it("lists a real draft and fences off foreign colleges and wrong roles", async (
     expect((await getTpoDriveLifecycleList(tpo,{...filters,page:1000})).page).toBe(2);
     expect((await getTpoDriveLifecycleList(tpo,{...filters,search:"%"})).rows).toHaveLength(0);
     await pool.query("UPDATE placement_jobs SET status=\u0027PUBLISHED\u0027, published_at=now(), application_deadline=now()+interval \u00272 days\u0027 WHERE id=$1",[id]);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,employmentType:"FULL_TIME",search:ids.search})).rows.some(row=>row.id===id)).toBe(true);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,employmentType:"INTERNSHIP",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
     const onsite=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"ONSITE",search:ids.search});
     expect(onsite.rows.some(row=>row.id===id)).toBe(true);
     expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"REMOTE",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
