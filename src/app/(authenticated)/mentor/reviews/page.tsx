@@ -29,7 +29,16 @@ export default async function MentorReviewsPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Delivery review queue"
       description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
-      actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
+      actions={<div className="flex flex-wrap items-center gap-3">
+        <Link href="/mentor/review-history"
+          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          Review history
+        </Link>
+        <Link href="/mentor/projects"
+          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          Projects
+        </Link>
+      </div>} />
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No project data was loaded.
     </div> : <>

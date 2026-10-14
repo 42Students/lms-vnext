@@ -360,3 +360,17 @@ Added Section-local advisory guidance against the persisted College attendance p
 ### Faculty Section overlap rejection UI (2026-10-14)
 
 Faculty class scheduling now translates persisted PostgreSQL non-overlap exclusion violations into an actionable message in the Schedule Class form, without inventing a success or disabling the constraint. E2E schedules a real class, attempts the same Section/time a second time, asserts HTTP 409 and the recovery text, then continues into Calendar and attendance correction. This does not certify full scheduling parity without the exact-SHA run.
+
+## Faculty assessment results overview (2026-10-14)
+
+Source-authored read-only `/teacher/results` joins existing active Section
+teaching-assignment assessment discovery with the already authorized Section-
+specific Assignment and Quiz report readers. Filters are strict Zod enum/search/
+paging; results are limited to five assessments per page to bound database
+fan-out. Figures are actual eligible/responded/missing and graded-score averages
+from the existing report services. Averages with no scored responses show
+Unknown, not zero; draft/private results are never called learner-visible.
+All Quizzes and All Assignments link to this overview. Pure-model tests and
+PostgreSQL denial tests are authored, not executed here. This does not replace
+legacy detailed reports, analytics, grading controls or authenticated browser
+verification; parent rows remain PARTIAL.
