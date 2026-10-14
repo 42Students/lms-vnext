@@ -9,7 +9,10 @@ import { resourceVisibleInAdminScope } from "./super-admin-resource-scope-model"
 
 /** Absent/invalid and foreign-safety-scope offerings both render not-found. */
 export async function resolveSuperAdminOfferingDetail(context: RequestContext, rawId: unknown) {
-  requirePermission(context, "courses.manage");
+  requirePermission(context, "courses.manage", {
+    collegeId: context.adminScope?.collegeId ?? undefined,
+    organizationId: context.adminScope?.organizationId ?? undefined,
+  });
   const id = courseOfferingIdSchema.safeParse(rawId);
   if (!id.success || !context.adminScope?.collegeId) return null;
   try {

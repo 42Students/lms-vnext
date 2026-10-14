@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   COLLEGE_DASHBOARD_CARD_DEFINITIONS,
   collegeDashboardCardsProjection,
+  collegeDashboardEmptyRecordPrompts,
   collegeDashboardCardsQuerySchema,
 } from "@/modules/admin-ui/college-dashboard-cards-model";
 
@@ -20,6 +21,13 @@ describe("College dashboard count-card projection", () => {
     expect(jobs?.count).toBeNull();
     expect(() => collegeDashboardCardsProjection({students:-1})).toThrow("DASHBOARD_COUNT_INVALID");
     expect(() => collegeDashboardCardsProjection({students:Number.NaN})).toThrow("DASHBOARD_COUNT_INVALID");
+  });
+  it("builds only source-zero, local-path prompts, never treats unknown counts as failures", () => {
+    const cards = collegeDashboardCardsProjection({students:0,faculty:3,jobs:null});
+    const prompts = collegeDashboardEmptyRecordPrompts(cards);
+    expect(prompts.map(x=>x.key)).toEqual(["students"]);
+    expect(prompts[0].href).toBe("/college/students");
+    expect(prompts[0].hint).not.toMatch(/failed|blocked/i);
   });
   it("never generates an external or tenant-controlled navigation target", () => {
     const cards = collegeDashboardCardsProjection({});

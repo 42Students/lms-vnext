@@ -10,12 +10,14 @@ describe("College Activity CSV export", () => {
     const query = { module: "COURSES", importance: "HIGH",
       actorUserId: "10000000-0000-4000-8000-000000000001",
       from: "2026-10-01", to: "2026-10-14" };
-    expect(collegeActivityExportQuerySchema.parse(query)).toEqual(query);
+    expect(collegeActivityExportQuerySchema.parse({...query,subjectId:"A-record"}))
+      .toEqual({...query,subjectId:"A-record"});
     for (const invalid of [
       { collegeId: "foreign" },
       { beforeId: "10000000-0000-4000-8000-000000000001" },
       { module: "UNEXPECTED" },
       { actorUserId: "not-uuid" },
+      { subjectId: "x".repeat(501) },
       { eventType: "x".repeat(121) },
     ]) expect(collegeActivityExportQuerySchema.safeParse(invalid).success).toBe(false);
     expect(readCollegeActivityExportParams(

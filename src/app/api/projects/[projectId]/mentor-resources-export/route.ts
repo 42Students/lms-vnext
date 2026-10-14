@@ -11,6 +11,7 @@ export async function GET(request:Request,{params}:RouteContext){
   const {projectId}=await params,url=new URL(request.url);
   const query=mentorResourceDirectoryQuerySchema.parse({
    projectId,required:url.searchParams.get("required")??undefined,
+   link:url.searchParams.get("link")??undefined,
    search:url.searchParams.get("search")??undefined,page:1,
   });
   const data=await getMentorResourceDirectory(await getCurrentRequestContext(),query);

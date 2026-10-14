@@ -6,7 +6,7 @@ import {getMentorRiskReadiness} from "@/modules/projects/mentor-risk-readiness-s
 import {mentorRiskReadinessHref,mentorRiskReadinessQuerySchema}
   from "@/modules/projects/mentor-risk-readiness-model";
 
-type Search={focus?:string|string[];page?:string|string[]};
+type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 
 export default async function MentorRiskReadinessPage({params,searchParams}:{
@@ -14,7 +14,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
 }){
   const [{projectId},raw]=await Promise.all([params,searchParams]);
   const parsed=mentorRiskReadinessQuerySchema.safeParse({
-    projectId,focus:first(raw.focus)??undefined,page:first(raw.page)??undefined,
+    projectId,focus:first(raw.focus)??undefined,
+    taskPriority:first(raw.taskPriority)??undefined,page:first(raw.page)??undefined,
   });
   if(!parsed.success)return <section role="alert">
     <h1>Invalid risk/readiness filters</h1>
@@ -50,6 +51,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         {" "}{data.readinessGapCount} outstanding readiness checkpoints</p>
       <p className="text-xs text-muted-foreground">
         Signals are persisted workflow states, not a failure prediction or readiness score.
+        Priority filters affect task drill-ins only; project totals and non-task signals stay unchanged.
         A project without tasks is never assumed complete.
       </p>
       <form method="get" action={base+"/risk-readiness"}
@@ -59,6 +61,14 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             className="min-h-10 rounded border border-border bg-background px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Task priority
+          <select name="taskPriority" defaultValue={data.query.taskPriority}
+            className="min-h-10 rounded border border-border bg-background px-3">
+            <option value="ALL">All task priorities</option>
+            <option value="CRITICAL">Critical</option><option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
