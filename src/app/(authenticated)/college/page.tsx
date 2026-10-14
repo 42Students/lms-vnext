@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
-import { getCollegeSetupChecklist } from "@/modules/admin-ui/college-setup-checklist-service";
+import { CollegeDashboardCards } from "@/components/admin/college-dashboard-cards";
+import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -32,7 +33,7 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const setup = await getCollegeSetupChecklist(context, {});
+  const dashboard = await getCollegeDashboardCards(context, {});
 
   return (
     <div className="space-y-6">
@@ -90,7 +91,8 @@ export default async function CollegeOverviewPage() {
           </p>
         </div>
       </section>
-      <CollegeSetupChecklist phases={setup.phases} />
+      <CollegeDashboardCards cards={dashboard.cards} />
+      <CollegeSetupChecklist phases={dashboard.setup.phases} />
     </div>
   );
 }
