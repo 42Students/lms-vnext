@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
+import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import { FacultyQuizReview } from "@/components/courses/faculty-quiz-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -39,28 +40,9 @@ export default async function FacultyQuizReportPage({
         description={`${quiz.courseName} · ${quiz.sectionName} · ${quiz.lessonName}`}
       />
       <FacultyReportCsvDownload
-        kind="quiz"
-        title={quiz.title}
-        sectionName={quiz.sectionName}
-        rows={[
-          ...latestAttempts.map((attempt) => ({
-            name: attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
-            email: attempt.learnerEmail,
-            status: "ATTEMPTED" as const,
-            score: attempt.score + "/" + attempt.maxScore,
-            percent: attempt.maxScore > 0
-              ? Math.round(attempt.score / attempt.maxScore * 100) : null,
-            submittedAt: attempt.submittedAt.toISOString(),
-            note: "Attempt " + attempt.attemptNumber,
-          })),
-          ...notAttemptedLearners.map((learner) => ({
-            name: learner.displayName || learner.email || "Learner",
-            email: learner.email,
-            status: "NOT_ATTEMPTED" as const,
-            score: null, percent: null, submittedAt: null,
-            note: "No recorded attempt",
-          })),
-        ]}
+        href={facultyReportCsvHref({
+          kind:"quiz",assessmentId:quiz.id,deliveryId:quiz.deliveryId,
+        })}
       />
       <FacultyReportDownload
         kind="quiz"

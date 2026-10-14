@@ -1,0 +1,100 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  mentorTaskHistoryHref, mentorTaskHistoryQuerySchema, taskReviewDecisionLabel,
+} from "@/modules/projects/mentor-task-history-model";
+import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
+
+type Params={decision?:string|string[];search?:string|string[];page?:string|string[]};
+const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
+export default async function MentorTaskReviewHistoryPage({
+  searchParams,
+}:{searchParams:Promise<Params>}) {
+  const raw=await searchParams;
+  const parsed=mentorTaskHistoryQuerySchema.safeParse({
+    decision:first(raw.decision)??undefined,
+    search:first(raw.search)??undefined,
+    page:first(raw.page)??undefined,
+  });
+  if(!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid review history filters</h1>
+    <Link href="/mentor/task-review-history" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+  const context=await getCurrentRequestContext();
+  if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  const data=await getMentorTaskReviewHistory(context,parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
+      description="Registered task decisions on projects currently assigned to you."
+      actions={<Link href="/mentor/task-reviews"
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Pending task reviews
+      </Link>} />
+    {!data.enabled ? <section role="status"
+      className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      Projects access is disabled. Reviewed task history is unavailable.
+    </section> : <>
+      <form action="/mentor/task-review-history" method="get"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Task or project
+          <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Decision
+          <select name="decision" defaultValue={data.query.decision}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="ALL">All reviews</option>
+            <option value="APPROVED">Approved</option>
+            <option value="CHANGES_REQUESTED">Changes requested</option>
+          </select>
+        </label>
+        <button type="submit"
+          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Filter
+        </button>
+        <Link href="/mentor/task-review-history" className="px-3 py-2 text-sm font-semibold text-primary-text">
+          Clear
+        </Link>
+      </form>
+      <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
+      {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
+        description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred." />
+      : <ol className="grid gap-3">{data.items.map(item=>
+        <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-semibold text-foreground">{item.taskTitle}</h2>
+            <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>
+          </div>
+          <p className="mt-2 text-sm text-body">{item.projectTitle} · Version {item.version}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Reviewed {item.reviewedAt
+              ? new Intl.DateTimeFormat("en-IN",{
+                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+              }).format(item.reviewedAt)+" IST" : "date not recorded"}
+          </p>
+          <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}
+            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            Open authorized Board →
+          </Link>
+        </li>)}</ol>}
+      <nav aria-label="Reviewed task history pagination" className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+        <div className="flex gap-3">
+          {data.page>1 && <Link href={mentorTaskHistoryHref({...data.query,page:data.page-1})}
+            className="text-sm font-semibold text-primary-text">Previous</Link>}
+          {data.page<data.totalPages && <Link href={mentorTaskHistoryHref({...data.query,page:data.page+1})}
+            className="text-sm font-semibold text-primary-text">Next</Link>}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      This is assigned-project decision history, not a list of reviews personally
+      authored by the current Mentor. Raw feedback, learner identities and submission URLs
+      are not returned. All review writes stay in the existing authorized Board.
+    </p>
+  </div>;
+}
