@@ -1458,3 +1458,6 @@ A pure model now translates typed stale-version, attempt, lifecycle, deadline an
 
 ## 2026-10-15 R6 Faculty Quiz write-error UI integration — PARTIAL
 The confirmed Quiz editor now uses the typed, non-leaking denial-message model at the actual POST response handler. A stale version prompts reload, while immutable/expired/no-change states display distinct guidance without exposing server errors. Unit coverage for the model is included; browser execution still pending.
+
+## 2026-10-15 R6 Faculty Quiz failed-load retry — PARTIAL
+When a selected Quiz's question-bank fetch fails, the Faculty editor now exposes an explicit retry that reloads only that Quiz within its original delivery-scoped API, and disables retry while loading. Failed drafts remain non-editable/non-publishable until their bank is retrieved. Pure retry-state tests authored; real browser/network failure acceptance remains pending.

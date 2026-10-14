@@ -164,3 +164,10 @@ export function facultyQuizWriteMessage(raw:unknown):string {
   default:return "Quiz write was rejected. Review changes or retry.";
  }
 }
+
+/** Failed Section question fetches need an explicit retry without changing scope. */
+export function facultyQuizCanRetryDetails(
+ failed:boolean,quizId:string|undefined,pending:boolean,
+):boolean {
+ return failed && Boolean(quizId) && !pending;
+}
