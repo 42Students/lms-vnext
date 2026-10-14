@@ -23,7 +23,6 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import {
   COLLEGE_LEARNING_PAGE_SIZE,
   collegeLearningPageCount,
-  collegeLearningQuerySchema,
   collegeLessonQuerySchema,
   collegeProgressQuerySchema,
   type CollegeLessonRecord,

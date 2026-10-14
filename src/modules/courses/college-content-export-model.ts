@@ -1,11 +1,12 @@
 import {z} from "zod";
 import {collegeContentQuerySchema,type CollegeContentKind} from "./college-content-aggregate-model";
+import {collegeIstDateSchema} from "./college-live-classes-model";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const CONTENT_METADATA_EXPORT_CAP=1000;
 export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true}).extend({
  view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
- from:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
- to:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+ from:collegeIstDateSchema.optional(),
+ to:collegeIstDateSchema.optional(),
 });
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{

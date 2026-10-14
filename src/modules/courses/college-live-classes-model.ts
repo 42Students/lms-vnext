@@ -1,7 +1,14 @@
 import { z } from "zod";
 import { collegeContentQuerySchema } from "./college-content-aggregate-model";
+export const collegeIstDateSchema=z.string()
+ .regex(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)
+ .refine(day=>{const date=new Date(day+"T00:00:00Z");
+   return Number.isFinite(date.valueOf())&&date.toISOString().slice(0,10)===day;
+ },{message:"Invalid calendar date"});
 export const collegeLiveClassQuerySchema=collegeContentQuerySchema.omit({format:true}).extend({
  view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
+ from:collegeIstDateSchema.optional(),
+ to:collegeIstDateSchema.optional(),
   from:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
   to:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
 }).refine(q=>!q.from||!q.to||q.from<=q.to,{message:"Inverted date range"})
