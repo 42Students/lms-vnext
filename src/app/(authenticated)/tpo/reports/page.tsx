@@ -51,6 +51,11 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placement-summary",
         },
         {
+          title: "Company funnel & compensation intelligence",
+          description: "Persisted applicant denominators and offer-versus-learner CTC measures, with CSV.",
+          path: "/tpo/reports/intelligence",
+        },
+        {
           title: "By branch",
           description:
             "Compare registered students, applications, placements and packages across departments.",
