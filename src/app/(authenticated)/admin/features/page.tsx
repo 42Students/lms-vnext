@@ -9,6 +9,7 @@ import {
   ADMIN_MODULE_LABELS,
   adminFeaturesHref,
   describeModuleDecision,
+  collegeModuleCardSummary,
   type AdminModuleDecision,
 } from "@/modules/module-access/admin-read-model";
 import {
@@ -172,7 +173,38 @@ export default async function SuperAdminFeaturesPage({
             description="No active colleges match the current search and selected Super Admin scope. Check the filters or return to the first page."
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <>
+          <div className="grid gap-3 lg:hidden" aria-label="College module cards">
+            {result.items.map(college => {
+              const summary = collegeModuleCardSummary(college.modules);
+              return <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="m-0 break-words font-semibold text-foreground">{college.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{college.code}</p>
+                  </div>
+                  <StatusBadge>{summary.enabled} of {college.modules.length} enabled</StatusBadge>
+                </div>
+                <dl className="mt-4 space-y-3">
+                  {college.modules.map(decision => (
+                    <div key={decision.module} className="flex flex-wrap items-start justify-between gap-2 border-t border-border pt-3">
+                      <dt className="text-sm font-semibold text-foreground">{decision.label}</dt>
+                      <dd className="m-0 text-right"><ModuleState decision={decision}/></dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {summary.locked} locked · {summary.persisted} rules with persisted source
+                </p>
+                <Link href={`/admin/features/${encodeURIComponent(college.id)}`}
+                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                  View access hierarchy →
+                </Link>
+              </article>;
+            })}
+          </div>
+          <div className="hidden rounded-xl border border-border bg-surface lg:block">
+
             <table className="w-full min-w-[50rem] border-collapse text-left text-sm">
               <thead className="bg-muted text-body">
                 <tr>
@@ -244,6 +276,7 @@ export default async function SuperAdminFeaturesPage({
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <nav

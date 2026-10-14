@@ -1,0 +1,71 @@
+import Link from "next/link";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
+import { adminLearningHref, adminLearningQuerySchema, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
+
+export default async function SuperAdminCourseProgressPage({
+  searchParams,
+}: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const raw = await searchParams;
+  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
+  if (!parsed.success) return <div className="space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
+      action={<Link href="/admin/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
+  </div>;
+  const context = await getCurrentRequestContext();
+  if (!context.adminScope?.collegeId) return <div className="space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <EmptyState title="Choose a college" description="Select a college scope to inspect recorded learner content activity." />
+  </div>;
+  const data = await listCollegeCourseProgress(context, parsed.data);
+  const summary = adminProgressStats(data.items);
+  return <div className="space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
+      description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
+    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+      <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
+        <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Offering status
+        <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
+        </select>
+      </label>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+    </form>
+    <p className="text-sm text-muted-foreground">
+      {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
+      {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
+    </p>
+    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
+      {data.items.map(item => <article key={item.offeringId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <h2 className="m-0 break-words font-semibold text-foreground">{item.courseName} ({item.courseCode})</h2>
+          <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
+        </div>
+        <p className="mt-1 text-sm text-body">{item.cohortName} · {item.periodName}</p>
+        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-body">
+          <div><dt className="text-xs text-muted-foreground">Recorded content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.recordedRows}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Completed content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.completedRows}</dd></div>
+          <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
+        </dl>
+      </article>)}
+    </div> : <EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />}
+    <nav aria-label="Course progress pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+      <div className="flex gap-2">
+        {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+        {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+      </div>
+    </nav>
+    <Link href="/admin/courses" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Courses</Link>
+  </div>;
+}

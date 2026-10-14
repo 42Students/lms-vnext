@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   CollegeAdminDashboardActions,
   SuperAdminGlobalDashboardActions,
+  SuperAdminCollegeDashboardActions,
 } from "@/components/admin/admin-dashboard-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { MembershipChooser } from "@/components/auth/membership-chooser";
@@ -153,7 +154,7 @@ async function SuperAdminDashboard({
           management remains available only when the scope is cleared.
         </p>
       </section>
-      {!collegeId ? <SuperAdminGlobalDashboardActions /> : null}
+      {collegeId ? <SuperAdminCollegeDashboardActions /> : <SuperAdminGlobalDashboardActions />}
     </div>
   );
 }

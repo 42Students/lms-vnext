@@ -11,6 +11,7 @@ import {
   MODULE_SCOPE_LABELS,
   describeModuleDecision,
   describeStoredOverride,
+  summarizeStoredModuleOverrides,
 } from "@/modules/module-access/admin-read-model";
 import {
   getSuperAdminCollegeModuleAccess,
@@ -164,7 +165,29 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+        <>
+        <div className="grid gap-3 lg:hidden" aria-label="College module inheritance cards">
+          {OPTIONAL_MODULE_KEYS.map(moduleKey => {
+            const effective = modules.find(value => value.module === moduleKey);
+            return <article key={moduleKey} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+              <h3 className="m-0 break-words text-base font-semibold text-foreground">{ADMIN_MODULE_LABELS[moduleKey]}</h3>
+              <dl className="mt-3 space-y-3 text-sm">
+                {ancestorLevels.map(level => {
+                  const stored=ancestorRule(level,moduleKey);
+                  return <div key={level} className="flex flex-wrap justify-between gap-2 border-t border-border pt-3">
+                    <dt className="text-body">{MODULE_SCOPE_LABELS[level]}</dt>
+                    <dd className="font-semibold text-foreground">{stored?describeStoredOverride(stored):"Inherit"}</dd>
+                  </div>;
+                })}
+                <div className="flex flex-wrap justify-between gap-2 border-t border-border pt-3">
+                  <dt className="font-semibold text-body">Effective at college</dt>
+                  <dd className="font-semibold text-foreground">{effective?effective.enabled?"On":"Off":"Unavailable"}</dd>
+                </div>
+              </dl>
+            </article>;
+          })}
+        </div>
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
           <table className="w-full min-w-[38rem] border-collapse text-left text-sm">
             <thead className="bg-muted text-body">
               <tr>
@@ -254,6 +277,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             </tbody>
           </table>
         </div>
+        </>
       </section>
 
       <section className="space-y-3">
@@ -261,6 +285,11 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Persisted lower-level overrides
           </h2>
+          <p className="mt-1 text-sm leading-6 text-body">
+            This page contains {summarizeStoredModuleOverrides(result.descendants).rules} visible stored override rows,
+            including {summarizeStoredModuleOverrides(result.descendants).locked} locked rules.
+            Counts are for this page only.
+          </p>
           <p className="mt-1 text-sm leading-6 text-body">
             Stored rules on departments, programs,
             cohorts, sections and memberships belonging
@@ -284,7 +313,25 @@ export default async function SuperAdminCollegeModuleAccessPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <>
+          <div className="grid gap-3 lg:hidden" aria-label="Stored descendant rule cards">
+            {result.descendants.map(item => (
+              <article key={`${item.scopeType}:${item.scopeId}:${item.module}`}
+                className="min-w-0 rounded-xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="m-0 break-words text-sm font-semibold text-foreground">
+                    {ADMIN_MODULE_LABELS[item.module as keyof typeof ADMIN_MODULE_LABELS]??item.module}
+                  </h3>
+                  <StatusBadge tone={item.enabled?"success":"neutral"}>{describeStoredOverride(item)}</StatusBadge>
+                </div>
+                <p className="mt-2 text-xs font-semibold text-muted-foreground">
+                  {MODULE_SCOPE_LABELS[item.scopeType as keyof typeof MODULE_SCOPE_LABELS]??item.scopeType}
+                </p>
+                <p className="mt-1 break-words text-sm text-body">{item.scopeLabel}</p>
+              </article>
+            ))}
+          </div>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
             <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
               <thead className="bg-muted text-body">
                 <tr>
@@ -351,6 +398,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <nav
