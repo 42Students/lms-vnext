@@ -20,7 +20,7 @@ describe("Faculty Section-owned Blueprint content updates", () => {
   });
   it("rejects backwards live-class schedule and normalizes valid instants", () => {
     const base = {kind:"LIVE_CLASS" as const, title:"Class", notes:"", url:"https://meet.example.test", starts:"2026-10-13T09:00", ends:"2026-10-13T10:00"};
-    expect(facultyContentPatch(base)).toHaveProperty("startsAt",expect.stringMatching(/2026-10-13T/));
+    expect(facultyContentPatch(base)).toHaveProperty("startsAt","2026-10-13T03:30:00.000Z");
     expect(() => facultyContentPatch({...base, ends:base.starts})).toThrow("after");
   });
 });
