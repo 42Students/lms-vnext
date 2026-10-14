@@ -1,3 +1,10 @@
+import { facultySubmissionReportSearchSchema } from "@/modules/courses/faculty-assignment-submissions-model";
+import { facultyQuizAttemptSearchSchema } from "@/modules/courses/faculty-quiz-attempts-model";
+import { getFacultySubmissionReviewPage } from "@/modules/courses/faculty-submission-review-service";
+import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
+import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
+import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
+import { commandFacultyAttendanceSchedule } from "@/modules/attendance/faculty-schedule-mutation-service";
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
@@ -20,7 +27,7 @@ import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assig
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment, updateCourseAssignment } from "@/modules/courses/assignment-service";
-import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
+import {gradeAssignmentSubmission,publishAssignmentGrade,listAssignmentSubmissions} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
@@ -529,6 +536,93 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       "courses.assignment.grade_published","courses.assignment.graded",
       "courses.assignment.graded",
     ]);
+  });
+  it("filters only persisted Faculty teaching deliveries and invalidates revoked assignments",async()=>{
+    const {delivery}=await fixture();
+    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY",page:999});
+    expect(list.items.map(item=>item.deliveryId)).toEqual([delivery.id]);
+    expect(list.page).toBe(1);
+    expect(list.items.length).toBeLessThanOrEqual(48);
+    const foreignSelector=await getFacultyCourseList(facultyOnly,{period:SEED_IDS.collegeB});
+    expect(foreignSelector.items).toEqual([]);
+    await expect(getFacultyCourseList(learner,{})).rejects.toBeDefined();
+    await expect(getFacultyCourseList(facultyOnly,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    const foreign=await getFacultyCourseList({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},{});
+    expect(foreign.items).toEqual([]);
+    await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
+    const revoked=await getFacultyCourseList(facultyOnly,{});
+    expect(revoked.items).toEqual([]);
+  });
+  it("projects real submission content from an authorized Faculty reader without widening scope",async()=>{
+    const {delivery,assignment}=await fixture();
+    const row=await pool.query<{id:string}>("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Own learner response') returning id",[assignment.id,delivery.id,testLearnerMembershipId]);
+    const submissions=await listAssignmentSubmissions(facultyOnly,assignment.id,delivery.id);
+    const submission=submissions.find(item=>item.id===row.rows[0]!.id)!;
+    expect(facultySubmissionContentView({id:submission.id,submissionType:submission.submissionType,
+      textContent:submission.textContent,submissionUrl:submission.submissionUrl},false))
+      .toEqual({kind:"TEXT",text:"Own learner response"});
+    await expect(listAssignmentSubmissions(learner,assignment.id,delivery.id)).rejects.toBeDefined();
+    await expect(listAssignmentSubmissions(facultyOnly,assignment.id,SEED_IDS.collegeB)).rejects.toBeDefined();
+    await expect(listAssignmentSubmissions({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},assignment.id,delivery.id)).rejects.toBeDefined();
+  });
+  it("pages actual Faculty grading submissions and rechecks publication and scope",async()=>{
+    const {delivery,assignment}=await fixture();
+    await pool.query("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Review fixture')",[assignment.id,delivery.id,testLearnerMembershipId]);
+    const search=facultySubmissionReportSearchSchema.parse({deliveryId:delivery.id,filter:"UNGRADED",page:"999"});
+    const query={assignmentId:assignment.id,...search};
+    const pending=await getFacultySubmissionReviewPage(facultyOnly,query);
+    expect(pending.total).toBe(1);expect(pending.page).toBe(1);
+    expect(pending.items[0]?.submittedAt).toEqual(expect.any(String));
+    const id=pending.items[0]!.id;
+    await gradeAssignmentSubmission(facultyOnly,id,{pointsAwarded:7,feedback:"Graded fixture",expectedVersion:pending.items[0]!.version});
+    expect((await getFacultySubmissionReviewPage(facultyOnly,query)).total).toBe(0);
+    expect((await getFacultySubmissionReviewPage(facultyOnly,{...query,filter:"GRADED"})).total).toBe(1);
+    await expect(getFacultySubmissionReviewPage(learner,query)).rejects.toBeDefined();
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,deliveryId:SEED_IDS.collegeB})).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_NOT_FOUND"});
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,assignmentId:SEED_IDS.collegeB})).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_NOT_FOUND"});
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await pool.query("update course_assignments set status='ARCHIVED' where id=$1",[assignment.id]);
+    await expect(getFacultySubmissionReviewPage(facultyOnly,query)).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
+  });
+  it("reads a real Quiz attempt drill-in from strict search selectors without widening Section scope",async()=>{
+    const {delivery,quiz}=await fixture();
+    const search=facultyQuizAttemptSearchSchema.parse({deliveryId:delivery.id,page:"1"});
+    const result=await getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search});
+    expect(result.quiz.id).toBe(quiz.id);expect(result.pageSize).toBe(10);
+    expect(result.items).toEqual([]);
+    await expect(getFacultyQuizAttemptDrilldown(learner,{quizId:quiz.id,...search})).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search,deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await expect(getFacultyQuizAttemptDrilldown(facultyOnly,{quizId:quiz.id,...search,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+  });
+  it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
+    const {delivery}=await fixture();
+    const payload={action:"CREATE" as const,title:"Own Faculty IST session "+runId,
+      description:null,location:null,confirm:true as const,
+      ...facultyScheduleInstants("2026-10-22T00:15","2026-10-22T01:15")};
+    const created=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},payload);
+    const persisted=await pool.query<{starts_at:Date,ends_at:Date}>(
+      "select starts_at,ends_at from section_schedule_events where id=$1",[created.id]);
+    expect(persisted.rows[0]?.starts_at.toISOString()).toBe("2026-10-21T18:45:00.000Z");
+    expect(persisted.rows[0]?.ends_at.toISOString()).toBe("2026-10-21T19:45:00.000Z");
+    await expect(commandFacultyAttendanceSchedule(learner,{deliveryId:delivery.id},payload)).rejects.toBeDefined();
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:SEED_IDS.collegeB},payload)).rejects.toBeDefined();
+    const version=await pool.query<{updated_at:Date}>(
+      "update section_schedule_events set updated_at=now() where id=$1 returning updated_at",[created.id]);
+    const change={...payload,action:"RESCHEDULE" as const,sessionId:created.id,
+      expectedUpdatedAt:version.rows[0]!.updated_at.toISOString(),
+      ...facultyScheduleInstants("2026-10-22T02:15","2026-10-22T03:15")};
+    const saved=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change);
+    expect(saved.updatedAt.getTime()).toBeGreaterThan(version.rows[0]!.updated_at.getTime());
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change))
+      .rejects.toMatchObject({code:"FACULTY_ATTENDANCE_SCHEDULE_STALE_VERSION"});
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},{
+      ...change,expectedUpdatedAt:saved.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE"});
+    const afterNoOp=await pool.query<{updated_at:Date}>("select updated_at from section_schedule_events where id=$1",[created.id]);
+    expect(afterNoOp.rows[0]?.updated_at.getTime()).toBe(saved.updatedAt.getTime());
+    const audits=await pool.query<{count:number}>(
+      "select count(*)::int as count from activity_events where subject_id=$1::text and summary like 'Faculty attendance session%'",[created.id]);
+    expect(audits.rows[0]?.count).toBe(2);
   });
   it("corrects an exact Section session with SQL microsecond markedAt and rejects stale/foreign/learner",async()=>{
     const {delivery,section}=await fixture();

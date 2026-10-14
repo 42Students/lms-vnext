@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {neutralizeFacultyCsvCell} from "./faculty-report-csv";
+import {neutralizeFacultyCsvCell,capFacultyReportCsvRows} from "./faculty-report-csv";
 export const facultyGradebookParamsSchema=z.object({
   deliveryId:z.string().uuid(),
 }).strict();
@@ -45,13 +45,19 @@ const csv=(value:string|number|null)=>{
   return '"'+safe.replaceAll('"','""')+'"';
 };
 export function facultyGradebookCsv(rows:readonly FacultyGradebookRow[]){
-  const header=["Student","Roll number","Email","Published scored assessments",
+  const header=["Student","Roll number","Published scored assessments",
     "Published assessments","Earned points","Possible points","Recorded score (%)","Incomplete grading"];
-  return [header.map(csv).join(","),...rows.map(row=>[
-    row.displayName??row.email??"Learner",row.rollNumber,row.email,
+  const limited=capFacultyReportCsvRows(rows);
+  const records=limited.rows.map(row=>[
+    row.displayName??"Learner",row.rollNumber,
     row.gradedCount,row.publishedAssessments,row.earned,row.possible,
     row.percent,row.hasUnknown?"YES":"NO",
-  ].map(csv).join(","))].join("\r\n")+"\r\n";
+  ].map(csv).join(","));
+  const truncation=limited.omittedRows>0
+    ? [[`Export capped at 500 learners; ${limited.omittedRows} additional rows omitted`,
+        null,null,null,null,null,null,null].map(csv).join(",")]
+    : [];
+  return [header.map(csv).join(","),...records,...truncation].join("\r\n")+"\r\n";
 }
 
 /** Only published, Section-scoped assessment evidence belongs in this view. */

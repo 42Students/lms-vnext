@@ -1258,3 +1258,116 @@ No completion of Course Attendance or overall CI is claimed.
 Registered Section attendance uses current Faculty teaching assignment and exact active roster, marking by Schedule Event under `/teacher/courses/[deliveryId]/attendanceDetail`. The server enforces a persisted attendance policy window, optimistic millisecond marking token, meaningful correction reason, changed status requirement, foreign/wrong-role denial, and audited counts. The UI restores saved absences on session selection, explicitly distinguishes unmarked/upcoming from absent, offers a monthly class-health summary and per-learner detail overlay, and uses Asia/Kolkata time labels.
 
 **Executed proof:** [Faculty Course Attendance acceptance run 38623132225](https://github.com/42Students/lms-vnext/actions/runs/38623132225) at source commit `51ae3b8ea492baed125f80b222374660c914cd02` passed **6/6 PostgreSQL tests** in `faculty-c4-reports-audit-contact.test.ts` (including positive first mark, reasoned correction, stale/unchanged version/foreign/role denial and persisted append-only activity history), **20/20 unit tests** across attendance edit-state/grid/learner detail, and **2/2 desktop/mobile Chromium tests** in `faculty-course-attendance.spec.ts` (persisted create → mark → correction, recorded monthly percentage, student detail drawer and foreign-scope denial). Both independent jobs were successful. The test fixture fixes use a genuinely short invalid correction reason and the registered `activity_events.occurred_at` field. This is an Attendance surface closure, not a claim of global CI green, off-policy admin override or file-backed functionality.
+
+## 2026-10-15 Faculty attendance and live-class IST scheduling — PARTIAL
+Attendance create/reschedule and Blueprint live-class editors now read and
+write IST wall times independently of the device timezone. Labels and session
+summaries explicitly use IST. Invalid calendar dates and reversed windows fail
+before confirmation; the original attendance create dialog confirms its IST
+window. Rescheduling adds a SQL millisecond CAS beside its locked-version check.
+Pure tests cover midnight rollover and impossible dates. A fresh Faculty
+Section PG fixture covers UTC persistence, wrong/foreign-role denial, SQL now()
+microsecond tokens, reschedule, stale replay and two immutable audit events.
+Remaining: real PostgreSQL execution, mobile/browser scheduling and legacy
+calendar acceptance. The non-root PostgreSQL attempt is blocked: useradd -m
+pguser fails with "Cannot open audit interface - aborting" in the root-only UID
+namespace; no PostgreSQL run is claimed. Existing DONE rows remain unchanged.
+
+## 2026-10-15 Faculty Courses URL filters and bounded workspace reads — PARTIAL
+Courses search, academic-period/teaching-role selectors and pagination now
+round-trip through validated URLs. Only current persisted teaching deliveries
+are selectable; filters never widen scope. The server filters/pages before
+loading at most 48 full Course workspaces, and cards render on the server
+instead of serializing all lesson/content data to a client list. Clear,
+filtered-empty, previous/next, retry and responsive cards remain available.
+Pure tests cover literal search, combined filters, pagination/clamping and
+invalid/duplicate/forged selectors. Fresh Faculty Section PG fixtures cover
+success, wrong-role/foreign selector, forbidden college injection and revocation.
+GET-only; stale write tokens do not apply. Remaining: PostgreSQL execution and
+legacy/browser/mobile list acceptance. No DONE promotion.
+
+## 2026-10-15 Faculty submitted-file review entry point — PARTIAL
+The Assignment grading drawer now handles FILE alongside TEXT and LINK.
+Readiness is computed on the server and passed to each review caller; when
+ready, the link uses only the existing authenticated assignment file endpoint,
+which rechecks scope and delegates to storage signed-read helpers. No object
+key, bucket path, receipt metadata or signed URL is embedded in list payloads;
+prefetch is disabled. Unready files and unsafe/missing links have explicit
+states. Submitted text retains line breaks and review timestamps use IST.
+Pure tests cover safe content projection, runtime gating and URL/path injection.
+The fresh Section PG reader fixture covers real persisted text and wrong-role/
+foreign-scope denial. Real FILE receipt/R2 read acceptance remains BLOCKED by
+DB06_ASSIGNMENT_FILES_READY/storage attestation and PostgreSQL execution; no
+file workflow or existing DONE report row is promoted by this UI wiring.
+
+## 2026-10-15 Faculty paged grading drawer — PARTIAL
+View Submissions now reads at most 20 serialized grade-review rows per response
+with All/Needs grading/Graded/Late filters, totals and previous/next controls.
+The GET rechecks persisted current teaching scope and published assignment;
+foreign/nonexistent selectors share a non-leaking denial. Duplicate/injected
+query selectors are rejected. Client responses are Zod-validated, old requests
+cannot overwrite a newer filter, and successful grading refreshes membership
+in the selected filter and report metrics. Equal-time rows have stable ID order.
+Pure tests cover query injection, cap, ISO dates and omission of storage fields.
+Fresh Section PG fixtures cover real review/grading/filter transitions and
+wrong/foreign-role, forged selector and archived-parent denial. Writes remain
+on the existing same-origin versioned audited endpoints. Remaining: PostgreSQL
+execution and mobile/keyboard/legacy drawer acceptance; no DONE promotion.
+
+## 2026-10-15 Faculty report drill-in strict selectors — PARTIAL
+Assignment submission and Quiz attempt drill-in pages now validate their full
+search objects instead of silently accepting the first of duplicate Section,
+filter or page selectors. Path-owned assessment IDs cannot be overridden from
+query parameters, and unknown scope fields fail closed with existing recovery
+links. The Quiz review drawer now formats attempt timestamps in IST too.
+Pure tests cover duplicate/forged selectors, path ownership and valid defaults.
+Fresh Section PG fixtures feed parsed selectors into real grading/attempt
+readers and cover role/foreign-scope denial. GET-only; no stale write token.
+Existing DONE report/assessment evidence is retained. Remaining: executed
+PostgreSQL and browser/mobile acceptance for these strict drill-in boundaries.
+
+## 2026-10-15 Faculty reschedule no-op and precision fence — PARTIAL
+Attendance rescheduling now checks the locked version before no-op detection,
+returns dedicated stale/no-change errors, and does not increment versions or
+append audit events for unchanged metadata/windows. The editor disables an
+unchanged reschedule and displays actionable errors. Untouched minute controls
+preserve original seconds/milliseconds; metadata-only server updates omit
+unchanged timestamp columns, preserving PostgreSQL sub-millisecond precision.
+New error codes are declared in the Courses union and use its existing 409 map.
+Pure tests cover semantic equality, real edits, precision and safe error copy.
+Fresh Section PG fixtures assert stale-before-no-op, unchanged version and the
+same two actual-change audits alongside scope/role denial. Remaining: executed
+PostgreSQL and browser/mobile reschedule acceptance. DONE evidence is preserved.
+
+## 2026-10-15 Faculty route boundary — PARTIAL
+Added a shared active-Faculty plus central `courses.read` predicate and an authenticated `/teacher` layout redirecting other roles, disabled users, and inactive memberships to `/dashboard`. Unit fixtures cover granted/denied actors. This is a source-authored boundary; browser/PG run and independent acceptance remain outstanding. No DONE promotion.
+
+## 2026-10-15 Legacy /teach role parity — PARTIAL
+The legacy `/teach` subtree now uses the exact `/teacher` active Faculty and central college-scoped read predicate, so disabled members cannot keep access merely through a cached FACULTY role. Shared unit fixtures cover the predicate. Runtime browser role redirects and persisted membership revocation are pending independent acceptance; not DONE.
+
+## 2026-10-15 /teach Course detail hidden-Section 404 — PARTIAL
+The alternate Faculty Course detail validates UUID before lookup and maps missing/foreign/unassigned learning deliveries to `notFound()` through a typed, tested service-error classifier. Genuine database errors still reach the error boundary. This is a source-authored privacy/route safeguard; exact PostgreSQL and desktop/mobile browser acceptance remain open.
+
+## 2026-10-15 Faculty Quiz choice-type transitions — PARTIAL
+The quiz builder now normalizes changing an authored multiple-choice question to single choice: exactly one prior selected answer (or the first incomplete option) remains correct, without mutating stored state. A pure model and unit regression tests cover normalization and schema-valid output. Browser keyboard/mobile and PG command acceptance remain open; All Quizzes stays PARTIAL.
+
+## 2026-10-15 Faculty Quiz metadata editor lifecycle lock — PARTIAL
+Quiz title, instructions, due date, attempt limit, question add/remove and selection are disabled while loading/saving, and published/closed/archived quizzes render metadata read-only rather than offering unsaveable edits. A pure-model unit suite asserts draft-only editing. Lifecycle writes still validate persisted status and optimistic timestamps. Executed browser/PG evidence and legacy modal ergonomics remain outstanding.
+
+## 2026-10-15 Faculty notification deep-link boundary — PARTIAL
+Faculty inbox destinations are now normalized through a pure same-origin Faculty-path policy. External, protocol-relative, wrong-account and control-character links are suppressed; authorized items can still be marked read. Unit tests cover valid Course links and malicious/wrong-role cases. Existing persisted membership-scoped feed and same-origin write route are unchanged. Producer audit and real PG/browser acceptance remain open.
+
+## 2026-10-15 Faculty inbox strict query parsing — PARTIAL
+The existing 50-row persisted Faculty notification feed now rejects duplicate `view` values, unknown URL selectors, malformed unread filters and incomplete/forged cursor pairs with a recoverable newest-page link instead of silently widening scope. A pure Zod model and unit cases cover valid cursor and denial states. Real Faculty PG/browser verification and producer/deep-link parity remain open.
+
+## 2026-10-15 Faculty Quiz attempt report private 404 — PARTIAL
+Malformed Quiz path IDs now use `notFound()` rather than a generic report error, and missing/foreign/mismatched Quiz or teaching-Section service errors become a non-leaking 404. Invalid pagination and delivery queries retain a recoverable inline error; genuine database errors propagate. New typed pure-model tests cover the error boundary. Exact PostgreSQL positive/foreign/role and mobile browser acceptance remain open; All Quizzes is still PARTIAL.
+
+## 2026-10-15 Faculty gradebook CSV privacy correction — PARTIAL
+The existing Section gradebook CSV no longer outputs learner email or uses email as a missing-name fallback. Name, roll number and published score cells remain formula-neutralized. Pure export regression assertions cover the omitted private-contact column; exact current teaching-Section authorization remains upstream. Source-authored only, with DB and browser export acceptance pending.
+
+## 2026-10-15 Faculty gradebook CSV bounded export — PARTIAL
+Server-owned gradebook CSV now caps export at 500 learner rows, appending a formula-neutralized row identifying the omitted count (not silently implying completeness); private learner email remains excluded. Pure tests cover 522-member bounds and contact redaction. PG scale fixture and browser download acceptance remain open; no DONE promotion.
+
+## 2026-10-15 Faculty published Quiz metadata editor parity — PARTIAL
+The Quiz builder now exposes confirmed, optimistic EDIT of title/instructions/IST deadline for PUBLISHED and CLOSED Section quizzes while keeping the question bank and attempt limit locked. The UI omits sealed questions in metadata-only writes; ARCHIVED remains immutable. Pure tests cover lifecycle and Zod commands. PG positive/denial and mobile browser verification remain pending.

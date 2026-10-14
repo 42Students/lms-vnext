@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
@@ -194,6 +195,7 @@ export default async function FacultyAssignmentReportPage({
         <h2 className="text-lg font-semibold text-foreground">Review and grade submissions</h2>
         <p className="mt-1 text-sm text-body">Open a learner submission to grade, regrade or publish feedback.</p>
         <FacultyAssignmentReview
+        filesEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}
           deliveryId={assignment.deliveryId}
           maxPoints={assignment.maxPoints}
