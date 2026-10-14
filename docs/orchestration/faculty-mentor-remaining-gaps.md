@@ -179,3 +179,11 @@ Exact assigned-project read combines registered role-backed active team counts w
 - New pure model tests and an isolated positive/forged/stale PostgreSQL suite
   are authored. **Do not mark any item DONE** until disposable PostgreSQL,
   ESLint, TypeScript, mobile UI and legacy behavior are independently verified.
+
+## A — Faculty discussion moderation history (2026-10-14)
+
+Source-authored read-only Section audit view over migrated activity_events,
+requiring current Faculty teaching scope. Pin/unpin history is attributable to
+a moderator, but existing delete audit has no actor-role snapshot and may be
+learner self-deletion; the view labels it neutrally. No message content
+reconstruction and no write route. PARTIAL until successful PG/browser checks.
