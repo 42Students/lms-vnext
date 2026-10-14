@@ -5,7 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
-import { adminUsersQuerySchema, adminUsersHref } from "@/modules/people/admin-user-directory-model";
+import { adminUsersQuerySchema, adminUsersHref, adminPeopleSearchState } from "@/modules/people/admin-user-directory-model";
 import { listSuperAdminUsers } from "@/modules/people/admin-user-directory-service";
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -22,6 +22,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
+ const tabForm=adminPeopleSearchState(data.query);
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · People" title="Users & Roles"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."/>
@@ -32,15 +33,18 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      (data.query.tab===tab.id?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>{tab.label}</Link>)}
   </nav>
   <p className="text-xs text-muted-foreground">
+   {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
+   {" "}
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
+   <input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-sm font-semibold text-body">Name or college
     <input type="search" name="q" maxLength={100} defaultValue={query.data.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Role
-    <select name="role" disabled={query.data.tab!=="ALL"} defaultValue={query.data.role} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </select>
    </label>
