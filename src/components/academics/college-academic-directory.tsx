@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import {
   academicDirectoryHref,
@@ -14,7 +15,10 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
   | Awaited<ReturnType<typeof listCollegeBatches>>;
 
-export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
+export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
+  data: DirectoryData;
+  batchPeriods?: { id: string; name: string; code: string }[];
+}) {
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
   const path = semesters ? "/college/semesters" : "/college/batches";
@@ -25,7 +29,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
         title={title}
         description={semesters
           ? "Manage registered program terms with semester names, credit totals, status and dependency-guarded deletion."
-          : "Read-only batch directory with recorded academic progression and active class/enrollment counts."}
+          : "Create or edit planned batches and review recorded academic progression and active class/enrollment counts."}
         actions={
           <Link href="/college/academics"
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -117,6 +121,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
                   <th scope="col" className="px-4 py-3">Progression</th>
                   <th scope="col" className="px-4 py-3">Active classes / learners</th>
                   <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Actions</th>
                 </tr>
               )}
             </thead>
@@ -158,6 +163,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
                       {item.activeSections} classes / {item.activeEnrolledLearners} learners
                     </td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
+                    <td className="px-4 py-4"><CollegeCohortRowActions row={item} periods={batchPeriods} /></td>
                   </tr>
                 ))}
             </tbody>

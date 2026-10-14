@@ -41,6 +41,8 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_SEMESTER_CREATED: "academics.semester.created",
   ACADEMICS_SEMESTER_UPDATED: "academics.semester.updated",
   ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",
+  ACADEMICS_BATCH_CREATED: "academics.batch.created",
+  ACADEMICS_BATCH_UPDATED: "academics.batch.updated",
   ACADEMICS_LEARNER_ENROLLED:
     "academics.learner.enrolled",
   COURSES_LEARNING_PATH_PUBLISHED:

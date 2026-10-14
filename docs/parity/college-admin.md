@@ -157,6 +157,9 @@ Legacy contract:
 ## Page: Batches
 **Legacy:** `/college-admin/batches`
 
+**Write-side PARTIAL (2026-10-14):** `/college/batches` adds a validated create form and confirmed edit dialog (name, code, expected end period) for PLANNED cohorts via dedicated `/api/college/batches` endpoints. Registered program, period, cohort and dependency rows are enforced under College Admin college scope; parent/subject locks, case-insensitive duplicate-name/code checks, same-college period date windows, child and progression-history guards, transactional audit and explicit cross-college denial are implemented. Create/edit do **not** allow start-period/program changes, bypass archived parents, mutate an existing progression state, or imply promotion. Legacy delete, student/class modal and move, academic-year recalculate, exact status/edit parity, browser/PG execution and full acceptance remain open.
+
+
 **Read-first PARTIAL (2026-10-14):** `/college/batches` lists persisted cohorts with program, start academic period, status, and optional DB-0051 `cohort_progression_state` (current term and academic year), alongside scoped counts of active sections and active learner enrollments. Server-side search, program/status filters, 25-row pagination, explicit absent progression and empty/error states included. A cohort period is not interpreted as an exact legacy batch end date. Legacy create/edit/delete, learner drill-in/moves, promotion preview and true current-class attendance remain open. No database/browser acceptance claimed.
 
 Legacy contract audited:
