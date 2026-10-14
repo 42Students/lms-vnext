@@ -134,3 +134,13 @@ extends the isolated, uniquely named sprint PostgreSQL fixture with successful
 create/transition history and stale/foreign-role denials. Date values are
 explicitly rejected until promoted migration columns exist. This partial
 implementation does not claim complete legacy date semantics.
+
+## 2026-10-14 Mentor inbox acknowledgment hardening (PARTIAL)
+
+A dedicated Mentor-only, currently persisted role-grant and college-scoped
+personal inbox is wired to same-origin, strict-empty-body POST controls for
+single and bulk mark-read. The changed-recipient rows and sanitized audit
+are transactional and idempotent. The isolated fresh-user PostgreSQL fixture
+covers success, cross-college exclusion, wrong-role, suspended actor, no-op
+and clean teardown; tests have been authored, not independently executed.
+Final mobile/browser and legacy producer parity remain open.
