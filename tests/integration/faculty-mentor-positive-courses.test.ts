@@ -1,3 +1,5 @@
+import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
+import { commandFacultyAttendanceSchedule } from "@/modules/attendance/faculty-schedule-mutation-service";
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
@@ -529,6 +531,30 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       "courses.assignment.grade_published","courses.assignment.graded",
       "courses.assignment.graded",
     ]);
+  });
+  it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
+    const {delivery}=await fixture();
+    const payload={action:"CREATE" as const,title:"Own Faculty IST session "+runId,
+      description:null,location:null,confirm:true as const,
+      ...facultyScheduleInstants("2026-10-22T00:15","2026-10-22T01:15")};
+    const created=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},payload);
+    const persisted=await pool.query<{starts_at:Date,ends_at:Date}>(
+      "select starts_at,ends_at from section_schedule_events where id=$1",[created.id]);
+    expect(persisted.rows[0]?.starts_at.toISOString()).toBe("2026-10-21T18:45:00.000Z");
+    expect(persisted.rows[0]?.ends_at.toISOString()).toBe("2026-10-21T19:45:00.000Z");
+    await expect(commandFacultyAttendanceSchedule(learner,{deliveryId:delivery.id},payload)).rejects.toBeDefined();
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:SEED_IDS.collegeB},payload)).rejects.toBeDefined();
+    const version=await pool.query<{updated_at:Date}>(
+      "update section_schedule_events set updated_at=now() where id=$1 returning updated_at",[created.id]);
+    const change={...payload,action:"RESCHEDULE" as const,sessionId:created.id,
+      expectedUpdatedAt:version.rows[0]!.updated_at.toISOString(),
+      ...facultyScheduleInstants("2026-10-22T02:15","2026-10-22T03:15")};
+    const saved=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change);
+    expect(saved.updatedAt.getTime()).toBeGreaterThan(version.rows[0]!.updated_at.getTime());
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change)).rejects.toBeDefined();
+    const audits=await pool.query<{count:number}>(
+      "select count(*)::int as count from activity_events where subject_id=$1::text and summary like 'Faculty attendance session%'",[created.id]);
+    expect(audits.rows[0]?.count).toBe(2);
   });
   it("corrects an exact Section session with SQL microsecond markedAt and rejects stale/foreign/learner",async()=>{
     const {delivery,section}=await fixture();
