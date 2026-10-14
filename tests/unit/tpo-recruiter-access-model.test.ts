@@ -1,0 +1,208 @@
+import {
+  describe,
+  expect,
+  it,
+} from "vitest";
+
+import {
+  formatTpoRecruiterGrantDate,
+  toTpoRecruiterGrantView,
+  tpoRecruiterAccessHref,
+  tpoRecruiterAccessQuerySchema,
+} from "@/modules/placements/tpo-recruiter-access-model";
+
+describe("TPO recruiter grant read model", () => {
+  it("preserves an active grant without inventing a revocation", () => {
+    expect(
+      toTpoRecruiterGrantView({
+        displayName: "  Ananya Rao  ",
+        companyName: "Example Company",
+        status: "ACTIVE",
+        grantedAt: new Date(
+          "2026-10-14T10:00:00.000Z",
+        ),
+        revokedAt: null,
+      }),
+    ).toEqual({
+      displayName: "Ananya Rao",
+      companyName: "Example Company",
+      status: "ACTIVE",
+      grantedDate: "14 Oct 2026",
+      revokedDate: null,
+    });
+  });
+
+  it("retains historical revoked grants and both dates", () => {
+    const result = toTpoRecruiterGrantView({
+      displayName: "Recruiter B",
+      companyName: "Archived Relationship Ltd",
+      status: "REVOKED",
+      grantedAt: new Date(
+        "2026-09-10T08:00:00.000Z",
+      ),
+      revokedAt: new Date(
+        "2026-10-14T21:00:00.000Z",
+      ),
+    });
+
+    expect(result).toEqual({
+      displayName: "Recruiter B",
+      companyName: "Archived Relationship Ltd",
+      status: "REVOKED",
+      grantedDate: expect.stringMatching(/^10 Sept? 2026$/),
+      revokedDate: "15 Oct 2026",
+    });
+  });
+
+  it("formats grant dates in IST across UTC midnight", () => {
+    expect(
+      formatTpoRecruiterGrantDate(
+        new Date(
+          "2026-10-14T20:30:00.000Z",
+        ),
+      ),
+    ).toBe("15 Oct 2026");
+
+    expect(
+      formatTpoRecruiterGrantDate(null),
+    ).toBeNull();
+  });
+
+  it("shows a safe fallback for a missing display name", () => {
+    const result = toTpoRecruiterGrantView({
+      displayName: "   ",
+      companyName: "Company",
+      status: "ACTIVE",
+      grantedAt: new Date(
+        "2026-10-01T08:00:00.000Z",
+      ),
+      revokedAt: null,
+    });
+
+    expect(result.displayName).toBe(
+      "Unnamed recruiter",
+    );
+
+    expect(
+      Object.keys(result).sort(),
+    ).toEqual([
+      "companyName",
+      "displayName",
+      "grantedDate",
+      "revokedDate",
+      "status",
+    ]);
+  });
+
+  it("rejects unsupported grant statuses instead of relabelling them", () => {
+    expect(() =>
+      toTpoRecruiterGrantView({
+        displayName: "Recruiter",
+        companyName: "Company",
+        status: "PENDING",
+        grantedAt: new Date(
+          "2026-10-01T08:00:00.000Z",
+        ),
+        revokedAt: null,
+      }),
+    ).toThrow();
+  });
+});
+
+describe("TPO recruiter access filters", () => {
+  it("defaults to all grants and the first page", () => {
+    expect(
+      tpoRecruiterAccessQuerySchema.parse({}),
+    ).toEqual({
+      status: "ALL",
+      page: 1,
+    });
+  });
+
+  it("accepts active and revoked filters", () => {
+    expect(
+      tpoRecruiterAccessQuerySchema.parse({
+        status: "REVOKED",
+        page: "3",
+      }),
+    ).toEqual({
+      status: "REVOKED",
+      page: 3,
+    });
+
+    expect(
+      tpoRecruiterAccessQuerySchema.parse({
+        status: "ACTIVE",
+      }).status,
+    ).toBe("ACTIVE");
+  });
+
+  it("rejects unsupported filters and unbounded pages", () => {
+    expect(
+      tpoRecruiterAccessQuerySchema.safeParse({
+        status: "ARCHIVED",
+      }).success,
+    ).toBe(false);
+
+    expect(
+      tpoRecruiterAccessQuerySchema.safeParse({
+        page: 0,
+      }).success,
+    ).toBe(false);
+
+    expect(
+      tpoRecruiterAccessQuerySchema.safeParse({
+        page: 10001,
+      }).success,
+    ).toBe(false);
+
+    expect(
+      tpoRecruiterAccessQuerySchema.safeParse({
+        collegeId: "other-college",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("preserves status across pagination without adding tenant identifiers", () => {
+    const url = new URL(
+      tpoRecruiterAccessHref({
+        status: "REVOKED",
+        page: 4,
+      }),
+      "https://example.test",
+    );
+
+    expect(url.pathname).toBe(
+      "/tpo/settings/recruiters",
+    );
+
+    expect(
+      url.searchParams.get("status"),
+    ).toBe("REVOKED");
+
+    expect(
+      url.searchParams.get("page"),
+    ).toBe("4");
+
+    expect(
+      url.searchParams.has("collegeId"),
+    ).toBe(false);
+  });
+
+  it("uses the canonical URL for default filters", () => {
+    expect(
+      tpoRecruiterAccessHref(),
+    ).toBe(
+      "/tpo/settings/recruiters",
+    );
+
+    expect(
+      tpoRecruiterAccessHref({
+        status: "ALL",
+        page: 1,
+      }),
+    ).toBe(
+      "/tpo/settings/recruiters",
+    );
+  });
+});

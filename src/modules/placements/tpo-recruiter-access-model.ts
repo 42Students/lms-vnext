@@ -1,0 +1,129 @@
+import { z } from "zod";
+
+export const TPO_RECRUITER_ACCESS_FILTERS = [
+  "ALL",
+  "ACTIVE",
+  "REVOKED",
+] as const;
+
+export type TpoRecruiterGrantStatus =
+  | "ACTIVE"
+  | "REVOKED";
+
+export const tpoRecruiterAccessQuerySchema =
+  z.object({
+    status: z
+      .enum(TPO_RECRUITER_ACCESS_FILTERS)
+      .default("ALL"),
+    page: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(10000)
+      .default(1),
+  }).strict();
+
+export type TpoRecruiterAccessQuery =
+  z.infer<typeof tpoRecruiterAccessQuerySchema>;
+
+export type TpoRecruiterGrantSourceRow = {
+  displayName: string | null;
+  companyName: string;
+  status: string;
+  grantedAt: Date;
+  revokedAt: Date | null;
+};
+
+export type TpoRecruiterGrantView = {
+  displayName: string;
+  companyName: string;
+  status: TpoRecruiterGrantStatus;
+  grantedDate: string;
+  revokedDate: string | null;
+};
+
+const istDateFormatter = new Intl.DateTimeFormat(
+  "en-GB",
+  {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  },
+);
+
+export function formatTpoRecruiterGrantDate(
+  value: Date | null,
+): string | null {
+  return value
+    ? istDateFormatter.format(value)
+    : null;
+}
+
+/**
+ * Strip all identifiers and contact fields before
+ * constructing the TPO-facing read model.
+ *
+ * A REVOKED grant remains a historical record even
+ * if the profile or company relationship was archived.
+ * ACTIVE describes the grant row, not a guarantee
+ * of currently usable recruiter account access.
+ */
+export function toTpoRecruiterGrantView(
+  row: TpoRecruiterGrantSourceRow,
+): TpoRecruiterGrantView {
+  const status = z
+    .enum(["ACTIVE", "REVOKED"])
+    .parse(row.status);
+
+  return {
+    displayName:
+      row.displayName?.trim() ||
+      "Unnamed recruiter",
+    companyName: row.companyName,
+    status,
+    grantedDate:
+      formatTpoRecruiterGrantDate(
+        row.grantedAt,
+      ) ?? "Not recorded",
+    revokedDate:
+      formatTpoRecruiterGrantDate(
+        row.revokedAt,
+      ),
+  };
+}
+
+export function tpoRecruiterAccessHref(
+  filters: {
+    status?: TpoRecruiterAccessQuery["status"];
+    page?: number;
+  } = {},
+): string {
+  const params = new URLSearchParams();
+
+  if (
+    filters.status &&
+    filters.status !== "ALL"
+  ) {
+    params.set(
+      "status",
+      filters.status,
+    );
+  }
+
+  if (
+    filters.page &&
+    filters.page > 1
+  ) {
+    params.set(
+      "page",
+      String(filters.page),
+    );
+  }
+
+  const query = params.toString();
+
+  return query
+    ? `/tpo/settings/recruiters?${query}`
+    : "/tpo/settings/recruiters";
+}
