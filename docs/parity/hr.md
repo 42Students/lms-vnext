@@ -397,3 +397,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / HR Drive Detail overview — PARTIAL:** Added employer-visible summary cards for shared/withdrawn application counts, issued/accepted offers and completed/total evaluative rounds, persisted deadline/read-only cues and tab navigation. Counts explicitly capped to existing 200-row views; pure unit + in-test PG company/role denials authored but unexecuted. Remaining complete legacy request lifecycle, review actions, exact pipeline stage attribution, unconstrained pagination and browser privacy proof.
+
+
+**2026-10-14 Chat 10 / HR Drive List structured filters — PARTIAL:** Employment type, work mode, explicit missing/deadline-within-seven-days selectors and 20-row view pagination augment prior college/lifecycle/search filters. All data still arrives through exact recruiter grant-scoped job read; Waiting not fabricated. Unit and in-test PG foreign/wrong-role fixtures authored, unexecuted. Remaining: DB-side keyset paging and total count at scale, actual recruiter request lifecycle, exact legacy sticky/stale behavior and browser acceptance.
