@@ -1,0 +1,86 @@
+import "server-only";
+
+import {randomUUID} from "node:crypto";
+import {and,desc,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import {requireProjectLifecycleAccess} from "./access";
+import {ProjectsServiceError,postgresConstraintName} from "./errors";
+import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
+
+/** Task creation only. No assignee/workload field exists in registered project_tasks. */
+export async function createMentorProjectTask(context:RequestContext,rawParams:unknown,rawInput:unknown){
+  const {projectId}=mentorTaskCreateParamsSchema.parse(rawParams);
+  const input=mentorTaskCreateSchema.parse(rawInput);
+  const membership=context.membership;
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const scope=await requireProjectLifecycleAccess(context,projectId);
+  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+  }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const modules=await resolveOptionalModuleAccess(context);
+  if(!modules.projects.enabled)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  try{
+    return await getDb().transaction(async tx=>{
+      const [project]=await tx.select({status:projectInstances.status})
+        .from(projectInstances)
+        .where(and(eq(projectInstances.id,scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId)))
+        .for("update").limit(1);
+      if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      const [sprint]=await tx.select().from(projectSprints)
+        .where(and(eq(projectSprints.id,input.sprintId),
+          eq(projectSprints.projectId,scope.project.id)))
+        .for("update").limit(1);
+      if(!sprint||sprint.status==="COMPLETED"||
+          sprint.updatedAt.getTime()!==new Date(input.expectedSprintUpdatedAt).getTime())
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      const [release]=await tx.select({status:projectReleases.status})
+        .from(projectReleases)
+        .where(and(eq(projectReleases.id,sprint.releaseId),
+          eq(projectReleases.projectId,scope.project.id)))
+        .limit(1);
+      if(!release||release.status==="SHIPPED")
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+
+      const [last]=await tx.select({sequence:projectTasks.sequence})
+        .from(projectTasks).where(eq(projectTasks.sprintId,sprint.id))
+        .orderBy(desc(projectTasks.sequence)).limit(1);
+      const [created]=await tx.insert(projectTasks).values({
+        projectId:scope.project.id,sprintId:sprint.id,
+        templateKey:"mentor-"+randomUUID().replaceAll("-",""),
+        sequence:(last?.sequence??-1)+1,
+        title:input.title,description:input.description,
+        acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
+        status:"TODO",
+      }).returning();
+      if(!created)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      // Invalidate other forms holding the old sprint timestamp.
+      const updatedAt=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
+      await tx.update(projectSprints).set({updatedAt})
+        .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_task",subjectId:created.id,
+        subjectLabel:created.title,summary:"Project task created",
+        metadata:{projectId:scope.project.id,sprintId:sprint.id,taskId:created.id},
+        groupKey:"project:"+scope.project.id,
+        dedupeKey:"project-task:"+created.id+":created",
+      });
+      return created;
+    });
+  }catch(error){
+    if(["project_tasks_sprint_sequence_uq","project_tasks_project_key_uq"]
+      .includes(postgresConstraintName(error)??""))
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    throw error;
+  }
+}
