@@ -881,3 +881,5 @@ L17-007: date picker uses only persisted learner-scoped placement rounds, conver
 L17-010: own-scoped calendar event details backed by migrated placement rounds; event IDs are checked against the returned membership-scoped events rather than accepted from caller input. New unit and disposable PostgreSQL tests authored, browser/DB acceptance pending.
 
 L17-015: month/week mobile fallback now groups only real authorized events by IST calendar day and retains exact round and details links. No fabricated schedule entries; database and responsive acceptance pending.
+
+L11-003: partial-source placements dashboard now distinguishes read failures from empty data, prevents swallowed authorization errors with an upfront persisted learner gate, shows successful sections and a refresh control, and masks missing metric sources as unknown. Fresh-learner PostgreSQL tests and pure-model tests authored, independent error-injection/CI/browser acceptance pending.

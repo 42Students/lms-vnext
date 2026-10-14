@@ -359,7 +359,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L11-001 | Exact placement tabs | PlacementsTabsLayout | learner placement tabs | FIXED |
 | L11-002 | First-run onboarding hero | placements dashboard | placements home | UNCHECKED |
-| L11-003 | Partial-source error alert | placements dashboard | placements home | UNCHECKED |
+| L11-003 | Partial-source error alert | placements home | authenticated learner gate before parallel independent settled source reads; warns of failed sections, retry button, preserves loaded sections, masks failed dashboard metrics as unknown rather than zero; pure and fresh-learner PostgreSQL tests authored. PARTIAL pending CI, error-injection and browser recovery acceptance | PARTIAL |
 | L11-004 | Hero greeting | placements dashboard | placements home | UNCHECKED |
 | L11-005 | Next-action priority | placements dashboard | placements home | UNCHECKED |
 | L11-006 | Assessment urgency action | placements dashboard | placements home | UNCHECKED |

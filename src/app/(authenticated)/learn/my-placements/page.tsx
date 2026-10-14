@@ -13,6 +13,11 @@ import {
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
+import { LearnerPlacementPartialAlert } from "@/components/placements/learner-placement-partial-alert";
+import { learnerDashboardPartialState, type PlacementDashboardAvailability }
+  from "@/modules/placements/learner-dashboard-partial-model";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { LearnerRecentPlacementActivity } from "@/components/placements/learner-recent-placement-activity";
 import { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
@@ -40,26 +45,39 @@ export default async function LearnerPlacementsPage({
     redirect("/dashboard");
   }
 
-  const [
-    rows,
-    preferences,
-    journeyBundle,
-    academicEvidence,
-    offerRows,
-    requestWorkspace,
-  ] = await Promise.all([
-    listLearnerPlacementJobs(context),
-    getCandidatePreferences(context),
-    getLearnerPlacementJourneyWithActivity(context),
-    getOwnAcademicEvidence(context),
-    listOwnPlacementOffers(context),
-    getLearnerPlacementRequestWorkspace(context),
-  ]);
+  // Authorization failures cannot be reduced to a "partially loaded" page.
+  const ownMembership=await requireLearnerPlacementAccess(context);
+  requirePermission(context,"placements.read",{
+    collegeId:ownMembership.collegeId,organizationId:ownMembership.organizationId,
+  });
+  const [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead] =
+    await Promise.allSettled([
+      listLearnerPlacementJobs(context),getCandidatePreferences(context),
+      getLearnerPlacementJourneyWithActivity(context),getOwnAcademicEvidence(context),
+      listOwnPlacementOffers(context),getLearnerPlacementRequestWorkspace(context),
+    ]);
+  // Never turn a post-preflight authorization revocation into a partial read:
+  // the entire page must deny access, even when other source calls succeeded.
+  for(const outcome of [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead]){
+    if(outcome.status==="rejected" && outcome.reason instanceof AuthorizationError)
+      throw outcome.reason;
+  }
+  const availability:PlacementDashboardAvailability={
+    jobs:jobsRead.status==="fulfilled",preferences:preferencesRead.status==="fulfilled",
+    journey:journeyRead.status==="fulfilled",academic:academicRead.status==="fulfilled",
+    offers:offersRead.status==="fulfilled",rounds:requestsRead.status==="fulfilled",
+  };
+  const rows=jobsRead.status==="fulfilled"?jobsRead.value:null;
+  const preferences=preferencesRead.status==="fulfilled"?preferencesRead.value:null;
+  const journeyBundle=journeyRead.status==="fulfilled"?journeyRead.value:null;
+  const academicEvidence=academicRead.status==="fulfilled"?academicRead.value:null;
+  const offerRows=offersRead.status==="fulfilled"?offersRead.value:null;
+  const requestWorkspace=requestsRead.status==="fulfilled"?requestsRead.value:null;
+  const journeyRows=journeyBundle?.rows ?? [];
 
-  const journeyRows = journeyBundle.rows;
 
   const items: LearnerPlacementJobItem[] =
-    rows.map((row) => ({
+    (rows ?? []).map((row) => ({
       job: {
         id: row.job.id,
         title: row.job.title,
@@ -140,7 +158,7 @@ export default async function LearnerPlacementsPage({
     }));
 
   const dashboard = learnerPlacementDashboard({
-    jobs: rows.map((row) => ({
+    jobs: (rows ?? []).map((row) => ({
       jobId: row.job.id,
       deadlinePassed: row.deadlinePassed,
       canApply: row.canApply,
@@ -150,7 +168,7 @@ export default async function LearnerPlacementsPage({
       applicationStatus: row.applicationStatus,
       screeningStatus: row.screening.status,
     })),
-    rounds: requestWorkspace.rounds.map((row) => ({
+    rounds: (requestWorkspace?.rounds ?? []).map((row) => ({
       applicationId: row.applicationId,
       roundId: row.roundId,
       roundKind: row.roundKind,
@@ -162,11 +180,13 @@ export default async function LearnerPlacementsPage({
         ? { scheduledAt: row.exception.scheduledAt }
         : null,
     })),
-    offers: offerRows.map((row) => ({
+    offers: (offerRows ?? []).map((row) => ({
       status: row.offer.status,
       expiresAt: row.offer.expiresAt,
     })),
   });
+
+  const display=learnerDashboardPartialState(availability,dashboard);
 
   return (
     <div className="space-y-8">
@@ -187,11 +207,12 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
-      <LearnerPlacementsDashboard snapshot={dashboard} />
+      <LearnerPlacementPartialAlert missing={display.failed} />
+      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} />
 
-      <LearnerRecentPlacementActivity events={journeyBundle.activity} />
+      {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
-      <LearnerPlacementOffers
+      {offerRows ? <LearnerPlacementOffers
         offers={offerRows.map((row) => ({
           offerId: row.offer.id,
           applicationId:
@@ -231,9 +252,9 @@ export default async function LearnerPlacementsPage({
               }
             : null,
         }))}
-      />
+      /> : null}
 
-      <LearnerPlacementRequests
+      {requestWorkspace ? <LearnerPlacementRequests
         initialRoundId={requestRoundId}
         requests={requestWorkspace.requests.map(
           (row) => ({
@@ -314,13 +335,11 @@ export default async function LearnerPlacementsPage({
               null,
           }),
         )}
-      />
+      /> : null}
 
-      <LearnerPlacementJourney
-        items={journey}
-      />
+      {journeyBundle ? <LearnerPlacementJourney items={journey} /> : null}
 
-      <LearnerPlacementAcademicEvidence
+      {availability.academic ? <LearnerPlacementAcademicEvidence
         evidence={{
           cgpa:
             academicEvidence?.cgpa ?? null,
@@ -355,9 +374,9 @@ export default async function LearnerPlacementsPage({
               | "VERIFIED"
               | undefined) ?? null,
         }}
-      />
+      /> : null}
 
-      <LearnerPlacementPreferences
+      {preferences ? <LearnerPlacementPreferences
         preferences={{
           preferredRoleTitles:
             preferences.preferredRoleTitles,
@@ -378,9 +397,9 @@ export default async function LearnerPlacementsPage({
           notifyApplicationUpdates:
             preferences.notifyApplicationUpdates,
         }}
-      />
+      /> : null}
 
-      <section className="space-y-3">
+      {rows ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">
             Live opportunities
@@ -390,7 +409,7 @@ export default async function LearnerPlacementsPage({
           </p>
         </div>
         <LearnerPlacementJobs items={items} />
-      </section>
+      </section> : null}
     </div>
   );
 }
