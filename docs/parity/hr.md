@@ -553,3 +553,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Drive Detail hard error — PARTIAL:** Added retryable route-local error state and Back to Drives option for operational loading failures, separate from existing 404 and loading skeleton. Error copy never displays raw denial codes or private applicant data. Browser permission/error verification pending.
+
+
+**2026-10-15 chat-10 R5 / Company Team filtered export — PARTIAL:** Team CSV now uses the same bounded name/designation/email search as the visible team page, applied only after exact persisted employer-college team authorization. Export link retains selected college and search; no unshared candidate contacts are added. Pure filter unit extended; PG/browser download proof remains.
