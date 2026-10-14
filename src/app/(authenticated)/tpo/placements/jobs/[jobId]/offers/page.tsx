@@ -23,10 +23,14 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
  const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"");
+ const csvFilters=new URLSearchParams({status:data.status,joining:parsed.data.joining});
+ if(searchQuery)csvFilters.set("q",searchQuery);
+ const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
  const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn]] as const;
  return <div className="space-y-6">
   <Link href={root} className="text-sm font-semibold text-primary-text">← Back to drive</Link>
-  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."/>
+  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
+   actions={<a href={csvHref} className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Export filtered CSV</a>}/>
   <nav aria-label="Offer status" className="flex flex-wrap gap-2">{tabs.map(([value,label,count])=>
    <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
     className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-primary-text">{label} ({count})</Link>)}</nav>
@@ -60,6 +64,6 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-primary-text">← Previous</Link>:null}
     {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-primary-text">Next →</Link>:null}</div>
   </nav>
-  <p className="text-xs text-muted-foreground">Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <p className="text-xs text-muted-foreground">The CSV includes at most 500 matching offer versions with a truncation row, formula-neutralized cells and no contact details. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }
