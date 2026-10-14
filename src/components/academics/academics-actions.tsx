@@ -12,7 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
-import { updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
+import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 
 async function mutate(
   path: string,
@@ -93,6 +93,8 @@ export function ProgramActions({
     useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
+  const [discardOpen, setDiscardOpen] =
+    useState(false);
   const [name, setName] =
     useState(program.name);
   const [code, setCode] =
@@ -108,7 +110,21 @@ export function ProgramActions({
     setDurationTerms(
       String(program.durationTerms),
     );
+    setDiscardOpen(false);
     setEditOpen(true);
+  }
+
+  function requestEditOpenChange(nextOpen: boolean) {
+    if (nextOpen) {
+      setEditOpen(true);
+      return;
+    }
+    if (pending) return;
+    if (hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms })) {
+      setDiscardOpen(true);
+    } else {
+      setEditOpen(false);
+    }
   }
 
   return (
@@ -132,7 +148,7 @@ export function ProgramActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={requestEditOpenChange}
         title="Edit program"
         description="Department ownership is immutable; update the Program identity and duration here."
         footer={
@@ -140,7 +156,7 @@ export function ProgramActions({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setEditOpen(false)}
+              onClick={() => requestEditOpenChange(false)}
             >
               Cancel
             </Button>
@@ -216,6 +232,19 @@ export function ProgramActions({
           </div>
         </div>
       </Dialog>
+
+      <ConfirmDialog
+        open={discardOpen}
+        onOpenChange={setDiscardOpen}
+        title="Discard program changes?"
+        description="You have unsaved program edits. Discarding them will not modify the program."
+        confirmLabel="Discard changes"
+        pending={pending}
+        onConfirm={() => {
+          setDiscardOpen(false);
+          setEditOpen(false);
+        }}
+      />
 
       <ConfirmDialog
         open={archiveOpen}
