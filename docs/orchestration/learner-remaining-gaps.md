@@ -992,3 +992,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 Support History pagination: fixed hard 30-row truncation using existing own-college requests, schema-validated status/type/page selectors and filter-preserving Next/Previous links. Unit and isolated learner PostgreSQL tests authored; no file or external send added. Runtime/mobile acceptance pending.
 
 2026-10-14 learner notification inbox query: category/unread/search controls now reflect browser history with strict allowed query parameters; own personal notification reads and announcement fallbacks unchanged. No external sending. Unit and fresh-learner PostgreSQL tests authored; browser/static acceptance pending.
+
+2026-10-14 learner inbox read-all: explicit mobile confirmation for existing readAt-audited, own-college scoped idempotent acknowledgement; no external provider or new storage. Fresh PG + unit tests authored; completion requires CI/browser and simultaneous acknowledgement acceptance. Stale replay is a harmless no-op rather than an error by the established notification read policy.
