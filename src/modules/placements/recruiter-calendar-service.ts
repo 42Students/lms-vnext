@@ -6,6 +6,7 @@ import {
   gte,
   inArray,
   lt,
+  or,
 } from "drizzle-orm";
 import { z } from "zod";
 
@@ -27,6 +28,7 @@ import {
 } from "./placement-calendar-model";
 import {
   buildRecruiterCalendarEvents,
+  buildRecruiterResultsDueItems,
   type RecruiterCalendarJob,
 } from "./recruiter-calendar-model";
 import {
@@ -176,6 +178,7 @@ export async function listRecruiterCalendarEvents(
             timezone:
               placementJobRounds.timezone,
             venue: placementJobRounds.venue,
+            resultsDueAt: placementJobRounds.resultsDueAt,
           })
           .from(placementJobRounds)
           .where(
@@ -188,13 +191,15 @@ export async function listRecruiterCalendarEvents(
                 placementJobRounds.status,
                 ["SCHEDULED", "COMPLETED"],
               ),
-              gte(
-                placementJobRounds.scheduledAt,
-                startsAt,
-              ),
-              lt(
-                placementJobRounds.scheduledAt,
-                endsBefore,
+              or(
+                and(
+                  gte(placementJobRounds.scheduledAt, startsAt),
+                  lt(placementJobRounds.scheduledAt, endsBefore),
+                ),
+                and(
+                  gte(placementJobRounds.resultsDueAt, startsAt),
+                  lt(placementJobRounds.resultsDueAt, endsBefore),
+                ),
               ),
             ),
           )
@@ -204,6 +209,8 @@ export async function listRecruiterCalendarEvents(
             ),
             asc(placementJobRounds.id),
           );
+
+  const resultsDue = buildRecruiterResultsDueItems({jobs,rounds,startsAt,endsBefore});
 
   const events = buildRecruiterCalendarEvents({
     jobs,
@@ -216,6 +223,7 @@ export async function listRecruiterCalendarEvents(
     from: input.from,
     to: input.to,
     events,
+    resultsDue,
     days: groupPlacementCalendarEvents(events),
     summary: summarizePlacementCalendar(
       events,

@@ -33,6 +33,7 @@ export async function getRecruiterSelfProfile(context: RequestContext) {
       email: users.email,
       phoneE164: users.phoneE164,
       title: placementRecruiterProfiles.title,
+      profileUpdatedAt: placementRecruiterProfiles.updatedAt,
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
     })

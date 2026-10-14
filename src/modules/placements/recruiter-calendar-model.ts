@@ -22,6 +22,7 @@ export type RecruiterCalendarRound = {
   scheduledAt: Date | null;
   timezone: string | null;
   venue: string | null;
+  resultsDueAt?: Date | null;
 };
 
 /**
@@ -127,4 +128,26 @@ export function buildRecruiterCalendarEvents(input: {
   }
 
   return sortPlacementCalendarEvents(events);
+}
+
+/** Employer-visible results due dates. No candidate-level data or imaginary
+ * interview slots are exposed. Dates are absolute instants, displayed in IST. */
+export function buildRecruiterResultsDueItems(input: {
+  jobs: readonly RecruiterCalendarJob[];
+  rounds: readonly RecruiterCalendarRound[];
+  startsAt: Date;
+  endsBefore: Date;
+}) {
+  const authorized = new Map(input.jobs.filter(job =>
+    job.archivedAt === null && (job.status === "PUBLISHED" || job.status === "CLOSED")
+  ).map(job => [job.id, job]));
+  return input.rounds.flatMap(round => {
+    const job = authorized.get(round.jobId);
+    const due = round.resultsDueAt;
+    if (!job || !due || (round.status !== "SCHEDULED" && round.status !== "COMPLETED") ||
+      !Number.isFinite(due.getTime()) ||
+      due.getTime() < input.startsAt.getTime() || due.getTime() >= input.endsBefore.getTime()) return [];
+    return [{ id:round.id, jobId:round.jobId, jobTitle:job.title,
+      roundName:round.name, dueAt:due, status:round.status }];
+  }).sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id));
 }
