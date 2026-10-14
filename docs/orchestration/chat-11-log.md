@@ -114,3 +114,36 @@
 - Reused scoped Board service and capped 100-row formula-neutralized CSV.
 - Own-project PostgreSQL and pure export model tests authored; not executed.
 - PARTIAL pending CLI/PG/browser and legacy parity verification.
+
+## N — Mentor portfolio report summaries (2026-10-14)
+- New Mentor-only assigned-project status/attention summary with scoped filters,
+  responsive drill-ins and explicit no-signal semantics.
+- Current persisted role+college and projects.read authorization, no private contacts.
+- Pure model and in-test-project PostgreSQL success/role/foreign/disabled tests
+  authored, not executed. Read-only, no stale-token mutation.
+- PARTIAL pending independent CLI/PG and browser verification.
+
+## O — Mentor Resource link metadata directory (2026-10-14)
+- Added scoped active-resource metadata filter/search/page and safe HTTPS-only links.
+- Added capped CSV of metadata but deliberately no raw URL or file data.
+- Own-project PG and pure unit tests authored, not executed.
+- PARTIAL pending CI/runtime/browser and legacy resource-write decision.
+
+## P — Sanitized Mentor project event-category filters (2026-10-14)
+- Added registered SQL event-type group filters for lifecycle, review, meeting
+  and task audit records; CSV honors identical controls and 200-row cap.
+- Unit and isolated PostgreSQL own-project tests authored, not executed.
+- No actor identities or raw metadata sent. PARTIAL until actual gates/browser.
+
+## Q — Mentor delivery review state and feedback filters (2026-10-14)
+- Added Zod-filtered SQL status/written-feedback presence to existing review history.
+- Added 200-row formula-neutralized metadata-only CSV, no raw review text.
+- Own-project PG and pure model tests authored, not run.
+- PARTIAL: real PostgreSQL, lint/typecheck and mobile/browser acceptance pending.
+
+## R — Mentor assigned-project reports CSV (2026-10-14)
+- Added capped, formula-neutralized 100-project portfolio report CSV via
+  existing strict Mentor assignment/status/attention filters.
+- No learner contact or raw descriptions, no new mutation or external send.
+- Unit/PG own-project positive and denial tests authored but not run.
+- PARTIAL pending actual CI/PG and responsive browser proof.

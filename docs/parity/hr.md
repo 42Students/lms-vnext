@@ -442,3 +442,27 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / HR Calendar narrow-screen views — PARTIAL:** Week and month now render date-grouped mobile cards without the desktop seven-column horizontal grid, preserving separate persisted rounds, deadlines and results due with exact recruiter job links. Desktop grid remains. Pure unit and PG fixture updated, unexecuted. Also corrected Offers pagination display to use exact selected-state total. Remaining browser viewport/scroll validation and legacy interview-slot surface.
+
+
+**2026-10-15 chat-10 / recruiter shared-applicant CSV — PARTIAL:** Added GET export from exact recruiter-owned job, capped at 200 rows through per-page shortlist-and-active-user-scoped existing reads, formula-neutralized quoted CSV, IST submission time, explicit omitted count, and all contact fields masked (never exported for recruiters). No new permission or mutation. Pure unit and in-test isolated PG own/foreign-company/wrong-role fixtures authored but not run. Remaining real shortlisted applicant positive fixture, concurrent revocation snapshot behavior, browser file acceptance.
+
+
+**2026-10-15 chat-10 / recruiter hiring activity feed — PARTIAL:** New read-only /hr/activity filters persisted PLACEMENTS job-published/closed audit events by exact company+college-owned job IDs, replacing raw audit summaries with fixed non-sensitive event labels and IST timestamps. No applicant contacts, new sends or table changes. Pure unit and disposable PG own/foreign/wrong-role tests authored but unexecuted. Remaining notification unread/read, message threads, browser acceptance.
+
+
+**2026-10-15 chat-10 / HR round schedule overlap — PARTIAL:** Drive Rounds now displays owned persisted round start/end, venue/mode and conservative potential overlap warnings only with known positive durations; IST labels, no invented SLOT or write actions. Unit/isolated PG own-company, foreign-company and wrong-role fixtures authored; unexecuted. Remains true resource/slot conflict checks and browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter self-name profile edit — PARTIAL:** Self-only displayName edit is backed by registered users table, strict Zod, central identity.self.manage, same-origin PATCH, active profile matching exact recruiter company, SQL millisecond optimistic CAS and transactional activity audit. Profile displays the editable own name; company identity/email/mobile stay read-only. No file features or external sending. Pure unit and in-test PostgreSQL success/foreign-company/wrong-role/stale/audit fixtures authored but not run. Remaining independent legacy first/last name fields, browser acceptance and session-display propagation check.
+
+
+**2026-10-15 chat-10 / HR read-only in-app notifications — PARTIAL:** New /hr/messages page safely lists persisted own-recipient in_app_notifications joined to allowlisted PLACEMENTS job lifecycle events and exact recruiter company+college job IDs; unread-only filter, chooser, bounded newest 100 and IST times. Never displays raw notification body/title or applicant contact. Pure unit and in-test PostgreSQL own positive/foreign-college/wrong-role fixtures authored, not executed. Remaining true legacy threads, read acknowledgement, real-time refresh, browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter notification acknowledgement — PARTIAL:** Same-origin POST marks only own-recipient, exact-company job-lifecycle notification readAt using strict createdAt optimistic CAS and no new external send or noisy audit event. Foreign-company notification resolves non-leaking PLACEMENT_JOB_NOT_FOUND; duplicate or stale becomes declared PLACEMENT_RECRUITER_NOTIFICATION_STALE. Read button refreshes inbox. Unit + isolated PG own/foreign/wrong-role/stale tests authored, unexecuted. Remaining legacy thread-level read semantics and browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter offers CSV — PARTIAL:** Authorized own-company Offers tab now exports filtered, SQL-paginated, 200-row capped and formula-neutralized CSV (including persisted reply deadline and joining outcome). Recruiter CSV never includes contact regardless of shortlist. Endpoint rechecks company+college job before each page and sets no-store/omitted header. Pure unit and isolated PG own/foreign/wrong-role tests authored, unexecuted. Remaining LOI/selection writes and complete browser/export acceptance.
+
+
+**2026-10-15 chat-10 / Today unread recruiter notifications — PARTIAL:** Today now shows company-and-selected-college-scoped count of unread eligible in-app job notifications, deep links to filtered /hr/messages and to the separate hiring activity history. Count explicitly states if truncated to 100; no private recipient/body content or implicit college fallback. Pure unit and in-test PostgreSQL own/wrong-scope notification fixture extended, unexecuted. Remaining legacy task lifecycle, full inbox pagination, browser/mobile acceptance.
