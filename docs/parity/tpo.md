@@ -1,4 +1,6 @@
 # TPO — Detailed Page Parity Spec
+**W64 B PARTIAL:** /tpo/reports/placed-branch derives season/drive-scoped unique accepted-offer learners and explicitly confirmed JOINED learners from persisted offers/outcomes; uses current active academic enrollment for branch and exposes unmatched students as Unassigned. CSV is formula-neutralized, capped to 200 branch rows with total+notice. Unit and isolated PostgreSQL tests authored; runtime PG/browser acceptance and historically accurate branch snapshots remain open.
+
 
 Legacy sidebar: Home, Leads, Drives, Students, Requests, Calendar, Reports, Messages, Settings, Audit Log, Notifications. Secondary/mobile `More` also links Profile and the secondary tools.
 

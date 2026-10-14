@@ -51,7 +51,12 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placement-summary",
         },
         {
-          title: "Season pipeline",
+          title: "Placed students by branch",
+          description: "Season-scoped unique placed and confirmed joined learners, with current academic branch and capped CSV.",
+          path: "/tpo/reports/placed-branch",
+        },
+        {
+                    title: "Season pipeline",
           description: "Recorded applied, shortlisted, offer and joining stages, with unavailable final selection and capped CSV.",
           path: "/tpo/reports/season-pipeline",
         },
