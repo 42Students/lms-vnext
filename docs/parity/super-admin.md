@@ -674,3 +674,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Shortlisted — PARTIAL:** `/admin/placements/shortlisted` has read-only, persisted SHORTLISTED screening outcomes, selected-college joined applicant/job/membership, safe search and application status paging, IST decision date, responsive error/empty/loading; strips screening internalReason, candidate contact and recruiter notes. Pure query tests authored. Bulk shortlist/export, details and PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Job Settings — PARTIAL:** Added `/admin/placements/job-settings`, read-only job lifecycle/deadline and persisted optional eligibility rules (minimum CGPA, backlog/gap and missing-evidence policy), including explicit missing-policy states. Search/status/paging, safe job link, IST, mobile states, central selected-college authorization; no mutation or candidate private data. Pure unit test authored. Complete eligibility editor and PG/browser gates remain open.
