@@ -310,3 +310,15 @@ Implemented a persisted, active Section-roster monthly health summary with P/A, 
 ### Calendar-to-Attendance Faculty flow (2026-10-14)
 
 Faculty-only calendar event cards link to the exact Section delivery Attendance tab with a server-resolved persisted session ID. The destination still queries via the active Faculty authorization path and checks that the session is among its scoped rows, discarding injected or revoked-session query IDs. On a valid session link, the editor starts with that exact session and its stored absence selections, and the existing live correction-window rule determines whether marking is enabled. Learner calendar links remain Course Overview and expose no Faculty attendance controls. Source and unit tests added; authenticated browser proof remains a release gate.
+
+## Faculty Course Student drill-in (2026-10-14)
+
+Source-authored read-only `/teacher/courses/[deliveryId]/students/[membershipId]`
+links from the current authorized Section/elective delivery roster. The current
+Faculty role, central courses.read college scope and persisted active teaching
+assignment are required before the target learner is resolved against the exact
+current roster. Course-level attendance counts exclude unknown/unmarked and
+future sessions from recorded attendance. The existing monthly attendance report
+is unchanged. Loading/error and pure-model/denial tests are authored only;
+full private profile, positive database/browser tests and exact legacy drill-in
+parity remain OPEN. No checklist item is closed solely from source work.
