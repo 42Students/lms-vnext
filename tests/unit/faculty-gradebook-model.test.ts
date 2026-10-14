@@ -28,7 +28,8 @@ describe("Faculty published Section gradebook",()=>{
   it("neutralizes spreadsheet formulas for roster fields",()=>{
     const csv=facultyGradebookCsv(facultyPublishedGradeRows(roster,[],0));
     expect(csv).toContain('"\' =NOW()"');
-    expect(csv).toContain('"\'+unsafe@x.y"');
+    expect(csv).not.toContain("+unsafe@x.y");
+    expect(csv).not.toContain('"Email"');
     expect(csv).toContain('"\'@SUM(1,2)"');
   });
   it("validates only the UUID delivery selector",()=>{
