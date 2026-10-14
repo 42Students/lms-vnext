@@ -56,6 +56,12 @@ export default async function TpoDriveShortlistPage({
           </a>
         }
       />
+      <Link
+        href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+      >
+        Recruiter-visible shortlist report →
+      </Link>
       <p className="text-sm text-body">
         {data.total} shortlisted application(s). This is an application-level count:
         one learner may have multiple role-option applications. Withdrawn or

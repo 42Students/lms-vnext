@@ -4,7 +4,7 @@ import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRounds, placementJobs, users,
+  placementJobs, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
