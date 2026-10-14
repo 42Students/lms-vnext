@@ -46,6 +46,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByText("No public directory members found")).toBeVisible();
   await expect(page).toHaveURL(/pageSize=50/);
   await page.getByRole("link",{name:"Clear search"}).click();
+  await expect(page.getByLabel("Search contacts")).toHaveValue("");
   await page.getByLabel("Contacts per page").selectOption("50");
   await page.getByRole("button",{name:"Search",exact:true}).click();
   await expect(learner).toBeVisible();
