@@ -33,8 +33,7 @@ export function projectTpoJoiningTracker(rows: readonly TpoJoiningSourceRow[]) {
     joiningStatus: row.joining?.status ?? "PENDING",
     joiningDate: row.joining?.joiningDate ?? null,
     reason: row.joining?.reason ?? null,
-    hasRecordedOutcome: row.joining?.status !== undefined &&
-      row.joining.status !== "PENDING",
+    hasRecordedOutcome: (row.joining?.status ?? "PENDING") !== "PENDING",
   }));
   return {
     items,
