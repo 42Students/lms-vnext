@@ -415,8 +415,13 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
       values($1,'MARKED',$2,now(),now()) returning marked_at`,
       [session.id,facultyOnlyUserId]);
+    await pool.query(`insert into attendance_records
+      (schedule_event_id,membership_id,status,marked_by_user_id)
+      values($1,$2,'ABSENT',$3)`,
+      [session.id,testLearnerMembershipId,facultyOnlyUserId]);
     const request={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
-      absentMembershipIds:[],expectedMarkedAt:inserted.rows[0]!.marked_at.toISOString()};
+      absentMembershipIds:[],expectedMarkedAt:inserted.rows[0]!.marked_at.toISOString(),
+      correctionReason:"Corrected marked presence per official register"};
     await expect(markFacultyAttendance(learner,session.id,request)).rejects.toBeDefined();
     await expect(markFacultyAttendance(facultyOnly,SEED_IDS.collegeB,request)).rejects.toBeDefined();
     await expect(markFacultyAttendance({
@@ -431,6 +436,11 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       where subject_id=$1::text and event_type='courses.attendance.marked'
       order by created_at desc limit 1`,[session.id]);
     expect(audit.rows[0]?.metadata.correction).toBe(true);
+    const reason=await pool.query<{metadata:{correctionReason:string}}>(`
+      select metadata from activity_events
+      where subject_id=$1::text and event_type='courses.attendance.marked'
+      order by created_at desc limit 1`,[session.id]);
+    expect(reason.rows[0]?.metadata.correctionReason).toMatch(/official register/);
     expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
   });
   it("toggles CLOSED Quiz result visibility with an audited SQL-default token",async()=>{
@@ -461,6 +471,25 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     select count(*)::text as n from activity_events where subject_id=$1::text
      and event_type='courses.quiz.results_changed'`,[quiz.id]);
    expect(events.rows[0]?.n).toBe("2");
+  });
+  it("denies a no-op and an unexplained existing-session correction",async()=>{
+    const {delivery,section}=await fixture();
+    const end=new Date(Date.now()-12*60000),start=new Date(end.getTime()-30*60000);
+    const event=await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,title:"Explain corrections "+runId,
+      startsAt:start.toISOString(),endsAt:end.toISOString(),
+    });
+    const [record]= (await pool.query<{marked_at:Date}>(`insert into attendance_sessions
+      (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
+      values($1,'MARKED',$2,now(),now()) returning marked_at`,
+      [event.id,facultyOnlyUserId])).rows;
+    const body={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
+      absentMembershipIds:[],expectedMarkedAt:record!.marked_at.toISOString()};
+    await expect(markFacultyAttendance(facultyOnly,event.id,body))
+      .rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_REASON_REQUIRED"});
+    await expect(markFacultyAttendance(facultyOnly,event.id,{
+      ...body,correctionReason:"Checked register; no learner state changed",
+    })).rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_NO_CHANGE"});
   });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();
