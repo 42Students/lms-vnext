@@ -73,6 +73,9 @@ describe("people onboarding validation", () => {
       collegeId,
       limit: 50,
       offset: 0,
+      q: "",
+      role: "ALL",
+      status: "ALL",
     });
 
     expect(() =>
