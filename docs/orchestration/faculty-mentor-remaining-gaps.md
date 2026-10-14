@@ -69,3 +69,42 @@ Primary blockers can coexist with browser/DB evidence gaps, and the listed evide
 2. For missing migrated table rows, assign the DB/schema owner and obtain migrations/authoritative contracts first; do not spoof missing fields.
 3. For buildable rows, execute scoped positive/negative PostgreSQL integration, unit tests, TypeScript, ESLint and the authenticated mobile/browser suite against an exact commit.
 4. Only promote a parity row to DONE with traced behavior, role/tenant isolation, user-facing recovery states, and preserved legacy acceptance evidence; otherwise leave PARTIAL.
+
+## Positive-path database tests and Mentor review audit — chat-4 (2026-10-14)
+
+**Exact batch revision:** Resolve the current `chatgpt/chat-4` commit after
+review. These tests are executable PostgreSQL integration specifications,
+not independently executed success evidence; do **not** mark any row DONE
+until CI/DB logs demonstrate results at an exact SHA.
+
+- `tests/integration/faculty-mentor-positive-projects.test.ts` creates a
+  dedicated Project template, materializes a Project with an active Mentor
+  and Learner, then verifies successful Mentor team history/coverage,
+  sprint/task status, exact-project activity, pending review discovery,
+  task review decision history, owned notification delivery/unread
+  acknowledgment, and audit rows for both APPROVED and CHANGES_REQUESTED.
+  A re-review must reject and must not create a duplicate event. Fixture
+  cleanup is restricted to `chat4-positive-*` records.
+- `tests/integration/faculty-mentor-positive-courses.test.ts` builds a
+  Program, period, cohort, Section, Course offering/delivery, current
+  Faculty teaching grant, active Learner enrollment, published Assignment
+  and Quiz inside the test. It verifies successful Faculty teaching profile,
+  same-college contact detail, exact Section assessment-health/aggregate
+  results and server-scoped CSV GET report regeneration, with genuine
+  no-response rows and an honest no-due-date follow-up state.
+  Fixture cleanup is restricted to `C4POS-*` records.
+- The existing `POST /api/projects/[projectId]/tasks/[taskId]/submissions/
+  [submissionId]/review` retains its same-origin guard and Zod decision
+  validator. Its existing locked, conditional state update now records
+  `projects.task.reviewed` inside the **same transaction** using the
+  authenticated actor, exact college, project/task/version/decision,
+  a review-specific dedupe key and *no feedback or submission URL* in metadata.
+  The safe Mentor history label is fixed to `Task review decision recorded`.
+  Existing project-lifecycle and Mentor portfolio unit assertions now
+  cover the new event, rather than using a stale event enum.
+
+**Outstanding:** No disposable TEST_DATABASE_URL, local checkout,
+executed Vitest/TypeScript/ESLint, GitHub CI or browser proof was available
+in this chat. Run the new integration files with a migrated and seeded
+disposable PostgreSQL database, reconcile any runtime failures, and verify
+that all prior suites remain green. Faculty/Mentor parity remains PARTIAL.
