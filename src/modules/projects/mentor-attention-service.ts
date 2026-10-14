@@ -11,6 +11,7 @@ import { hasActiveMembership, hasMembershipRole, type RequestContext } from
 import { listMyProjectInstances } from "./member-service";
 import { ProjectsServiceError } from "./errors";
 import { deriveMentorProjectAttention } from "./mentor-attention";
+import { currentPendingMentorSubmissions } from "./mentor-latest-review-model";
 
 /** All project IDs originate from active same-college mentor membership rows.
  * Never accept a client-provided project list for this cross-project feed.
@@ -38,7 +39,7 @@ export async function listMyMentorProjectAttention(
       status:projectSubmissions.status,submittedAt:projectSubmissions.submittedAt,
       version:projectSubmissions.version,
     }).from(projectSubmissions).where(and(
-      inArray(projectSubmissions.projectId,ids),eq(projectSubmissions.status,"SUBMITTED"),
+      inArray(projectSubmissions.projectId,ids),
     )).orderBy(desc(projectSubmissions.version)),
     getDb().select({
       id:projectMeetings.id,projectId:projectMeetings.projectId,
@@ -73,10 +74,7 @@ export async function listMyMentorProjectAttention(
       .where(inArray(projectTaskSubmissions.projectId,ids))
       .groupBy(projectTaskSubmissions.projectId),
   ]);
-  const submissionMap=new Map<string,(typeof submissions)[number]>();
-  for (const submission of submissions) {
-    if (!submissionMap.has(submission.projectId)) submissionMap.set(submission.projectId,submission);
-  }
+  const submissionMap=currentPendingMentorSubmissions(submissions);
   const meetingMap=new Map<string,typeof meetings>();
   for (const meeting of meetings) {
     const m=meetingMap.get(meeting.projectId)??[];
