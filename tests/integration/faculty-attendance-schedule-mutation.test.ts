@@ -14,6 +14,7 @@ import {createCourseTeachingAssignment} from "@/modules/courses/teaching-assignm
 import {createLearningPath} from "@/modules/courses/learning-path-service";
 import {createCourseLesson} from "@/modules/courses/lesson-service";
 import {commandFacultyAttendanceSchedule} from "@/modules/attendance/faculty-schedule-mutation-service";
+import {getFacultyIstMonth} from "@/modules/courses/faculty-ist-month-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Use disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -80,6 +81,39 @@ afterEach(cleanup);
 afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
 const time={startsAt:"2026-10-22T09:00:00+05:30",endsAt:"2026-10-22T10:00:00+05:30"};
 describe("Faculty attendance session scheduling on disposable PostgreSQL",()=>{
+ it("reads created persisted session in the precise IST date grid and rejects foreign month scope",async()=>{
+  const {delivery}=await fixture();
+  const created=await commandFacultyAttendanceSchedule(faculty,{deliveryId:delivery.id},{
+   action:"CREATE",title:"Faculty October IST calendar",
+   description:"Registered classroom",location:"Room C4",
+   startsAt:"2026-10-28T23:50:00+05:30",
+   endsAt:"2026-10-29T00:30:00+05:30",confirm:true,
+  });
+  const result=await getFacultyIstMonth(faculty,{
+   month:"2026-10",deliveryId:delivery.id,
+  });
+  expect(result.schedule.courses.some(c=>c.deliveryId===delivery.id)).toBe(true);
+  expect(result.grid.authorized).toBe(true);
+  expect(result.grid.days).toHaveLength(42);
+  expect(result.grid.days.find(d=>d.key==="2026-10-28")?.events.some(e=>e.id===created.id)).toBe(true);
+  expect(result.grid.days.find(d=>d.key==="2026-10-29")?.events.some(e=>e.id===created.id)).toBe(true);
+  const previous=await getFacultyIstMonth(faculty,{
+   month:"2026-09",deliveryId:delivery.id,
+  });
+  expect(previous.grid.days.some(d=>d.events.some(e=>e.id===created.id))).toBe(false);
+  await expect(getFacultyIstMonth(faculty,{
+   month:"2026-10",deliveryId:SEED_IDS.collegeB,
+  })).rejects.toBeDefined();
+  await expect(getFacultyIstMonth(learner,{
+   month:"2026-10",deliveryId:delivery.id,
+  })).rejects.toBeDefined();
+  await expect(getFacultyIstMonth({...faculty,user:{...faculty.user,platformStatus:"DISABLED"}},{
+   month:"2026-10",deliveryId:delivery.id,
+  })).rejects.toBeDefined();
+  await expect(getFacultyIstMonth(faculty,{
+   month:"2026-13",deliveryId:delivery.id,
+  })).rejects.toBeDefined();
+ });
  it("creates scoped attendance events, prevents collisions and audits each actual change",async()=>{
   const {delivery}=await fixture();
   const payload={action:"CREATE" as const,title:"Faculty C4 Attendance",
