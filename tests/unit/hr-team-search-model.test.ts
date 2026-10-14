@@ -10,5 +10,9 @@ describe("HR team filter",()=>{
  });
  it("bounds input length",()=>{
   expect(hrTeamSearchSchema.safeParse("x".repeat(121)).success).toBe(false);
+  expect(searchHrTeam(team,"No match")).toEqual([]);
+  const filtered=searchHrTeam(team,"ravi@");
+  expect(filtered).toHaveLength(1);
+  expect(filtered[0]?.email).toBe("ravi@company.test");
  });
 });
