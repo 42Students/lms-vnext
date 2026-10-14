@@ -7,7 +7,7 @@ import { activityEvents, inAppNotifications } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { ActivityServiceError } from "./errors";
 import { requirePersistedLearnerNotificationMembership } from "./learner-notification-membership-service";
-import { markOwnNotificationRead } from "./notification-service";
+import { markAllOwnNotificationsRead, markOwnNotificationRead } from "./notification-service";
 
 /** Learner-only acknowledgement. Both recipient AND event college must
  * match the authenticated current membership; readAt is the audit timestamp.
@@ -30,4 +30,11 @@ export async function markOwnLearnerNotificationRead(
   if (!owned) throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   // Existing service performs an idempotent conditional own-recipient UPDATE.
   return markOwnNotificationRead(context, id);
+}
+
+/** Bulk acknowledgement is also scoped to the current learner college.
+ * Shared recipients in different colleges cannot be silently acknowledged. */
+export async function markAllOwnLearnerNotificationsRead(context: RequestContext) {
+  const membership = await requirePersistedLearnerNotificationMembership(context);
+  return markAllOwnNotificationsRead(context, { collegeId: membership.collegeId });
 }

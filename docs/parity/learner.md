@@ -719,6 +719,29 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 
 ## Page: Notifications
 
+**2026-10-14 Learner positive-path + scoped acknowledgement addition
+(PARTIAL, L29-017):** New disposable PostgreSQL integration fixture
+creates a learner user, active college membership and enrollment,
+shortlisted application + scheduled test round, a personal PLACEMENTS
+notification, and a same-recipient notification originating from a
+different college. The tests assert actual Profile academic identity,
+assessment round/day bucket, notification history, placement alert
+projection, idempotent single mark-read, scoped bulk mark-read, and
+cross-college/cross-role denial. The tests are **authored, not yet
+executed**, so they are not green evidence.
+
+Learner inbox and keyset history now restrict events to the current
+persisted college and revalidate active user/LEARNER membership with
+central `academics.read`. Learner mark-read uses strict Zod UUID, own
+recipient, current event college, and `readAt` audit timestamp.
+Both the Learner-specific and original shared POST endpoints retain
+`isSameOriginRequest`; shared routes dispatch Learner contexts to
+the strict service (including suspended memberships). Bulk mark-read
+is college-scoped for Learners; other roles retain their shared inbox
+behavior. This does not implement non-migrated college announcements or
+close general Learner Notifications browser/oracle parity.
+
+
 **2026-10-14 personal notification history (PARTIAL):** added
 `/learn/notifications/history`, linked from the main learner inbox.
 Uses the existing registered own-recipient keyset pagination reader
