@@ -526,3 +526,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / duplicate hiring-round validation — PARTIAL:** Request a Drive rejects ambiguous duplicate stage names even across kinds after case/whitespace normalization, identifying the offending round row while preserving legitimate multiple rounds. Pure Zod unit cases authored, unexecuted. No placement decision or actual round write.
+
+
+**2026-10-15 chat-10 round 4 / recruiter notification CSV — PARTIAL:** New read-only export traverses up to eight exact recipient/company/college-scoped notification pages, capped at 200, with formula-neutralized job titles, fixed lifecycle labels, IST receive times, and unread flag. Raw notification titles/bodies, applicant contacts and other employers' notifications are never exported. Unit tests authored but unexecuted; PG/browser proof pending.
