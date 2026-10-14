@@ -367,6 +367,8 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 # 6. TPO
 
+**W62 D PARTIAL (L45):** New /tpo/reports/season-pipeline and scoped formula-neutralized CSV show recorded application, current shortlist, offer version, current acceptance and confirmed joining evidence. Final employer-selected stage remains null pending a migrated canonical source. Drive CSV capped at 200 with explicit truncation; unit/PG tests authored but not executed; exact legacy/browser parity remains open.
+
 **W62 C PARTIAL:** TPO-only Drive Day index lists actually live, timed, published rounds and persisted attendance summary; no-show requires ABSENT, and unknown remains separate. Unit/PG tests authored but unrun; dashboard hero/browser parity remain open.
 
 **W62 B PARTIAL:** Existing Leads report adds college-scoped contact recency, quiet/missing evidence, open follow-up, no-next-step and unassigned summaries. Unit/PG tests authored, unrun; exact legacy filters and browser approval remain open.

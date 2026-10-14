@@ -201,6 +201,7 @@ export function ReportNavigation({
       href: "/tpo/reports/placement-summary",
       label: "Placement summary",
     },
+    { href: "/tpo/reports/season-pipeline", label: "Season pipeline" },
     {
       href: "/tpo/reports/by-branch",
       label: "By branch",
