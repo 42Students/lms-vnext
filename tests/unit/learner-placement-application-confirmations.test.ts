@@ -7,6 +7,13 @@ const source = readFileSync(
 );
 
 describe("Learner job application confirmations", () => {
+  it("requires explicit confirmation for internal placement applications", () => {
+    expect(source).toContain('onClick={() => setConfirmation("INTERNAL")}');
+    expect(source).toContain('confirmation === "INTERNAL"');
+    expect(source).toContain("Confirm application");
+    expect(source).toContain('void apply("INTERNAL")');
+    expect(source).toContain("learnerDriveApplyGate");
+  });
   it("never treats opening an external employer link as proof of submission", () => {
     expect(source).toContain('onClick={() => setConfirmation("EXTERNAL")}');
     expect(source).toContain('confirmation === "EXTERNAL"');
