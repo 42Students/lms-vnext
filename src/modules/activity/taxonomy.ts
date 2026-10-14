@@ -69,6 +69,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "projects.readiness.overridden",
   PROJECTS_SPRINT_UPDATED:
     "projects.sprint.updated",
+  PROJECTS_TASK_DETAILS_UPDATED:
+    "projects.task.details_updated",
   PROJECTS_TASK_SUBMITTED:
     "projects.task.submitted",
   PROJECTS_TASK_REVIEWED:
