@@ -35,6 +35,9 @@ export const ACTIVITY_EVENT_TYPES = {
     "identity.membership.ended",
   ACADEMICS_PROGRAM_CREATED:
     "academics.program.created",
+  ACADEMICS_SEMESTER_CREATED: "academics.semester.created",
+  ACADEMICS_SEMESTER_UPDATED: "academics.semester.updated",
+  ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",
   ACADEMICS_LEARNER_ENROLLED:
     "academics.learner.enrolled",
   COURSES_LEARNING_PATH_PUBLISHED:
