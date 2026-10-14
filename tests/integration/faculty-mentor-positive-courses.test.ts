@@ -1,3 +1,4 @@
+import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { randomUUID } from "node:crypto";
@@ -312,14 +313,16 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const lessonId=lessonRow.rows[0]!.id;
     const created=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"CREATE",lessonId,sequence:10,title:"Faculty owned draft "+runId,
-      description:"Text only",dueAt:null,maxPoints:15,confirmed:true,
+      description:"Text only",dueAt:authoringDueInstant("2026-10-21T09:30"),maxPoints:15,confirmed:true,
     });
     expect(created.status).toBe("DRAFT");
     const edited=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-      title:"Revised draft "+runId,description:"Updated text",dueAt:null,maxPoints:20,
+      title:"Revised draft "+runId,description:"Updated text",dueAt:authoringDueInstant("2026-10-21T00:15"),maxPoints:20,
       confirmed:true,
     });
+    expect(created.dueAt?.toISOString()).toBe("2026-10-21T04:00:00.000Z");
+    expect(edited.dueAt?.toISOString()).toBe("2026-10-20T18:45:00.000Z");
     expect(edited.maxPoints).toBe(20);
     await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),

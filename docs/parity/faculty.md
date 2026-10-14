@@ -1046,3 +1046,15 @@ changed-file ESLint executed successfully; the complete unit suite passed (505 f
 open. Disposable PostgreSQL binaries are available, but this sandbox maps only
 UID 0: chown to a non-root user fails and unshare UID mapping is denied;
 PostgreSQL refuses root. No database test is claimed as executed.
+
+## 2026-10-14 Faculty assessment deadline authoring in IST — PARTIAL
+Assignment and Quiz draft controls now read and save explicit IST wall times,
+including the aggregate edit drawer and Blueprint authoring form. Assignment
+EDIT uses the same strict conversion as CREATE; impossible calendar dates
+are rejected rather than normalized or silently clearing the deadline.
+Pure tests exercise leap days, midnight rollover and device-independent
+conversion. The own-Section PostgreSQL assignment fixture now checks persisted
+CREATE/EDIT deadlines alongside existing stale, foreign-scope and role denial.
+Existing publication guards, version checks and immutable audit are unchanged.
+Remaining: PostgreSQL execution (sandbox UID restriction), browser/mobile and
+legacy-oracle deadline acceptance; no DONE promotion.
