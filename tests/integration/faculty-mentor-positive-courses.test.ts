@@ -18,6 +18,7 @@ import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
 import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
+import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
 import {facultyGradebookCsv} from "@/modules/courses/faculty-gradebook-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
@@ -299,6 +300,21 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const health=await getFacultyCourseAssessmentHealth(faculty,{
       deliveryId:delivery.id,kind:"ALL",page:1,
     });
+    const correction=await getFacultyCorrectionAvailability(faculty,{
+      deliveryId:delivery.id,
+    });
+    expect(correction.requestsAvailable).toBe(false);
+    expect(correction.requestHistory).toBeNull();
+    expect(correction.items).toEqual([]);
+    await expect(getFacultyCorrectionAvailability(learner,{
+      deliveryId:delivery.id,
+    })).rejects.toBeDefined();
+    await expect(getFacultyCorrectionAvailability(faculty,{
+      deliveryId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+    await expect(getFacultyCorrectionAvailability(faculty,{
+      deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
     const gradebook=await getFacultyPublishedGradebook(faculty,{deliveryId:delivery.id});
     expect(gradebook.rosterSize).toBe(1);
     expect(gradebook.rows).toEqual(expect.arrayContaining([
