@@ -16,6 +16,8 @@ import {createCourseTeachingAssignment} from "@/modules/courses/teaching-assignm
 import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage} from "@/modules/courses/discussion-service";
 import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-history-service";
 import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-service";
+import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
+import {getFacultyStudentDetail} from "@/modules/courses/faculty-student-detail-service";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 
@@ -142,6 +144,40 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   await expect(getFacultyReportsHub(faculty,{deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
   const disabled:RequestContext={...faculty,user:{...faculty.user,platformStatus:"DISABLED"}};
   await expect(getFacultyReportsHub(disabled,{deliveryId:f.deliveryId})).rejects.toBeDefined();
+ });
+
+ it("reads exactly one enrolled Section learner and denies out-of-roster, stale and foreign scopes",async()=>{
+  const f=await fixture();
+  const {roster,delivery}=await getFacultyDeliveryRoster(faculty,f.deliveryId);
+  expect(delivery.deliveryId).toBe(f.deliveryId);
+  expect(roster.map(row=>row.membershipId)).toEqual([f.learnerMembershipId]);
+  const detail=await getFacultyStudentDetail(faculty,{
+   deliveryId:f.deliveryId,membershipId:f.learnerMembershipId,
+  });
+  expect(detail.course.deliveryId).toBe(f.deliveryId);
+  expect(detail.student.membershipId).toBe(f.learnerMembershipId);
+  expect(detail.student.displayName).toBe("Faculty C4 Roster Learner");
+  expect(detail.summary).toMatchObject({
+   present:0,absent:0,unmarked:0,upcoming:0,recorded:0,percent:null,
+  });
+  expect(detail.sessions).toEqual([]);
+  await expect(getFacultyStudentDetail(faculty,{
+   deliveryId:f.deliveryId,membershipId:SEED_IDS.learnerCollegeAMembership,
+  })).rejects.toBeDefined();
+  await expect(getFacultyStudentDetail(faculty,{
+   deliveryId:SEED_IDS.collegeB,membershipId:f.learnerMembershipId,
+  })).rejects.toBeDefined();
+  await expect(getFacultyStudentDetail(learner,{
+   deliveryId:f.deliveryId,membershipId:f.learnerMembershipId,
+  })).rejects.toBeDefined();
+  const disabled={...faculty,user:{...faculty.user,platformStatus:"DISABLED" as const}};
+  await expect(getFacultyStudentDetail(disabled,{
+   deliveryId:f.deliveryId,membershipId:f.learnerMembershipId,
+  })).rejects.toBeDefined();
+  await expect(getFacultyStudentDetail(faculty,{
+   deliveryId:f.deliveryId,membershipId:f.learnerMembershipId,
+   collegeId:SEED_IDS.collegeB,
+  })).rejects.toBeDefined();
  });
  it("keeps Faculty alternate contacts blocked even for a real authorized Faculty-only profile",async()=>{
   // Seeded College A Faculty ALSO has MENTOR: the self-profile permission
