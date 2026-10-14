@@ -1434,3 +1434,6 @@ Editing Quiz title, instructions, IST deadline, max attempts or a new draft's le
 
 ## 2026-10-15 Round 5 Faculty Quiz question structure — PARTIAL
 Quiz add/remove-question actions now invalidate earlier confirmation and enforce at least one and at most 100 questions, using pure immutable helpers. Unit test authored; PG and browser verification remain pending.
+
+## 2026-10-15 Round 5 Quiz unavailable question-bank write fence — PARTIAL
+If the selected draft's persisted question bank fails to load, Faculty cannot EDIT or PUBLISH it until an explicit fresh load succeeds; the server's own scope and version checks remain authoritative. Published metadata-only edits remain possible. Pure action matrix tests authored; browser retry acceptance pending.

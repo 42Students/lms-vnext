@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -28,13 +28,14 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [questions,setQuestions]=useState<Question[]>([fresh()]);
  const [confirmed,setConfirmed]=useState(false);
  const [pending,setPending]=useState(false);
+ const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const chosen=quizzes.find(q=>q.id===selected);
  const editable=!pending && facultyQuizDraftEditable(chosen?.status);
  const metadataEditable=!pending && facultyQuizMetadataEditable(chosen?.status);
  async function choose(id:string){
   const token=++choiceRequest.current;
-  setSelected(id);setConfirmed(false);setError(null);setSuccess(null);
+  setSelected(id);setConfirmed(false);setError(null);setSuccess(null);setDetailsFailed(false);
   const q=quizzes.find(x=>x.id===id);
   if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);
     setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");setPending(false);return;}
@@ -47,7 +48,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    const response:unknown=await res.json();
    if(token!==choiceRequest.current)return;
    setQuestions(facultyAuthoringQuestionsFromResponse(response));
-  }catch(e){if(token===choiceRequest.current){setError(e instanceof Error?e.message:"Quiz details unavailable");setQuestions([]);}}
+  }catch(e){if(token===choiceRequest.current){setError(e instanceof Error?e.message:"Quiz details unavailable");setQuestions([]);setDetailsFailed(true);}}
   finally{if(token===choiceRequest.current)setPending(false);}
  }
  function updateQuestion(i:number,fn:(q:Question)=>Question){
@@ -56,6 +57,9 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
   if(!confirmed){setError("Confirm the action before saving.");return;}
   if(pending)return;
+  if(!facultyQuizDraftLoadAllowsAction(detailsFailed,chosen?.status,action)){
+    setError("Reload the Quiz questions before editing or publishing this draft.");return;
+  }
   if(action!=="CREATE" && (
     !chosen || ((action==="EDIT" && !facultyQuizMetadataEditable(chosen.status)) ||
      (action==="PUBLISH" && chosen.status!=="DRAFT")) ||
@@ -192,9 +196,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {!chosen?<button type="button" disabled={!confirmed||pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
     <>
-    <button type="button" disabled={!confirmed||pending||!facultyQuizMetadataEditable(chosen.status)}
+    <button type="button" disabled={!confirmed||pending||!facultyQuizMetadataEditable(chosen.status)||
+      (chosen.status==="DRAFT"&&detailsFailed)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
-    <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"}
+    <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"||detailsFailed}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
     {chosen.status==="PUBLISHED"&&
      <button type="button" disabled={!confirmed||pending}
