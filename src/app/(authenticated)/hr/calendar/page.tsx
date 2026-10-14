@@ -226,6 +226,7 @@ export default async function HrCalendarPage({
     redirect("/dashboard");
   }
 
+  // eslint-disable-next-line react-hooks/purity -- calendar is anchored to current request time.
   const now = new Date();
   const today = placementCalendarDayKey(now);
 
@@ -342,6 +343,10 @@ export default async function HrCalendarPage({
                 "Accessible drives",
                 calendar.authorizedJobCount,
               ],
+              [
+                "Results due",
+                calendar.resultsDue.length,
+              ],
             ].map(([label, value]) => (
               <div
                 key={String(label)}
@@ -355,6 +360,21 @@ export default async function HrCalendarPage({
                 </p>
               </div>
             ))}
+          </section>
+
+          <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+            <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
+            <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
+            {calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {calendar.resultsDue.map(item => (
+                <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
+                  className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary">
+                  <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
+                  <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
+                  <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
+                </Link>
+              ))}
+            </div> : <p className="mt-3 text-sm text-muted-foreground">No results deadlines are recorded in this calendar period.</p>}
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">

@@ -82,7 +82,7 @@ export function buildRecruiterCompanyReportRows(
   return jobs.map((job) => ({
     ...job,
     ...EMPTY_COUNTS,
-    ...byJobId.get(job.id),
+    ...(byJobId.get(job.id) ?? {}),
   }));
 }
 
