@@ -83,6 +83,8 @@ export function buildRecruiterCompanyReportRows(
     ...job,
     ...EMPTY_COUNTS,
     ...(byJobId.get(job.id) ?? {}),
+    declinedOffers: byJobId.get(job.id)?.declinedOffers ?? 0,
+    joinedOffers: byJobId.get(job.id)?.joinedOffers ?? 0,
   }));
 }
 

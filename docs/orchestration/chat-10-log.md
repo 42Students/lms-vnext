@@ -12,3 +12,5 @@
 - 2026-10-14 — Company Reports funnel PARTIAL: declined/joined DB evidence + mobile cards; unit/PG denials authored, runtime positive fixtures and acceptance outstanding.
 
 - 2026-10-14 — Results-due calendar PARTIAL: bounded round due-at query, IST due cards, no fabricated slot/notifications, unit+isolated PG authored; unexecuted.
+
+- 2026-10-14 — Drive Detail Overview PARTIAL: employer-scoped summary / deadline state and nav, model/tests, runtime not executed.

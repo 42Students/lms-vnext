@@ -394,3 +394,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / HR Results-Due Calendar — PARTIAL:** Persisted recruiter-company/college-scoped round resultsDueAt dates now appear as a dedicated IST due list with job/round drill-ins and counts. Round query includes dates in view even if meeting scheduled in another week; no slot, messaging or candidate data fabricated. Unit and isolated PG role/company/college fixtures authored (not executed). Remaining: integrated legacy RESULT_DUE event taxonomy in day columns, interview SLOT table, stale-load treatment and browser/PG proof.
+
+
+**2026-10-14 Chat 10 / HR Drive Detail overview — PARTIAL:** Added employer-visible summary cards for shared/withdrawn application counts, issued/accepted offers and completed/total evaluative rounds, persisted deadline/read-only cues and tab navigation. Counts explicitly capped to existing 200-row views; pure unit + in-test PG company/role denials authored but unexecuted. Remaining complete legacy request lifecycle, review actions, exact pipeline stage attribution, unconstrained pagination and browser privacy proof.
