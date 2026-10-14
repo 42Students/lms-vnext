@@ -128,6 +128,9 @@ Detailed page contract: `docs/parity/mentor.md`.
 | Project Activity | project detail | vNext project workspace | Verify activity/history parity. | PARTIAL |
 | Global Meetings calendar | `/mentor/calendar` | `/mentor/calendar` | Authorized cross-project meeting list, requested/upcoming/past grouping, auto-refreshing time and safe join links exist; hydration state transition no longer cascades synchronously. Browser/tenant verification remains. | PARTIAL |
 | Mentor Notifications | `/mentor/notifications` | shared notifications | Legacy includes pending reviews, stalled projects, upcoming/requested meetings plus broad announcements; not yet proven by shared vNext feed. | PARTIAL |
+| Mentor delivery review queue | `/mentor/reviews` | Assigned project submission alerts; links to existing Delivery review actions. | PARTIAL — Active Mentor college/member scoping, pending-review filtering, search, pagination, disabled/empty/loading/error states and helper/denial tests authored. Existing Delivery workspace remains authoritative for writes. DB/browser verification and exact legacy queue parity pending. |
+| Mentor portfolio activity | `/mentor/activity` | Registered `activity_events` related to actively assigned Mentor projects. | PARTIAL — Central projects.read permission, college/organization and live assignment filters, fixed safe event labels, DB pagination and empty/error states authored. Activity producers, legacy full history coverage and executed DB/browser verification pending. |
+
 | Mentor Courses routes | `/mentor/courses/*` | n/a | Legacy redirect stubs to mentor Projects. | RETIRED |
 | Mentor Contacts routes | `/mentor/contacts/*` | n/a | Legacy redirect stubs. | RETIRED |
 | Mentor All Quizzes | `/mentor/allQuizzes` | n/a | Legacy redirect stub. | RETIRED |
