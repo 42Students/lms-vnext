@@ -65,6 +65,9 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_CATALOG_CREATED: "courses.catalog.created",
   COURSES_CATALOG_UPDATED: "courses.catalog.updated",
   COURSES_CATALOG_ARCHIVED: "courses.catalog.archived",
+  COURSES_OFFERING_CREATED: "courses.offering.created",
+  COURSES_OFFERING_UPDATED: "courses.offering.updated",
+  COURSES_OFFERING_ARCHIVED: "courses.offering.archived",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
   COURSES_LEARNING_PATH_UNPUBLISHED: "courses.learning_path.unpublished",
@@ -77,12 +80,12 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.teaching_assignment.ended",
   COURSES_LEARNER_CONTENT_COMPLETED:
     "courses.learner_content.completed",
-  COURSES_QUIZ_CREATED:"courses.quiz.created",
-  COURSES_QUIZ_UPDATED:"courses.quiz.updated",
-  COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
   COURSES_ASSIGNMENT_CREATED:"courses.assignment.created",
   COURSES_ASSIGNMENT_UPDATED:"courses.assignment.updated",
   COURSES_ASSIGNMENT_ARCHIVED:"courses.assignment.archived",
+  COURSES_QUIZ_CREATED:"courses.quiz.created",
+  COURSES_QUIZ_UPDATED:"courses.quiz.updated",
+  COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
   COURSES_ASSIGNMENT_SUBMITTED:
     "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:

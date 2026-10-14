@@ -877,3 +877,19 @@ PARTIAL — Implemented registered placement-only notification choice mutation a
 - L30-034 through L30-043 learner verification: no confirmed vNext verification state machine/private document schema or approved upload workflow. Do not invent verified badges or statuses.
 
 L17-007: date picker uses only persisted learner-scoped placement rounds, converted to ISO strings at the client boundary; acceptance remains PARTIAL until fresh disposable PostgreSQL, static checks and mobile/browser timezone review.
+
+L17-010: own-scoped calendar event details backed by migrated placement rounds; event IDs are checked against the returned membership-scoped events rather than accepted from caller input. New unit and disposable PostgreSQL tests authored, browser/DB acceptance pending.
+
+L17-015: month/week mobile fallback now groups only real authorized events by IST calendar day and retains exact round and details links. No fabricated schedule entries; database and responsive acceptance pending.
+
+L11-003: partial-source placements dashboard now distinguishes read failures from empty data, prevents swallowed authorization errors with an upfront persisted learner gate, shows successful sections and a refresh control, and masks missing metric sources as unknown. Fresh-learner PostgreSQL tests and pure-model tests authored, independent error-injection/CI/browser acceptance pending.
+
+2026-10-14 L2-007: published learner learning-path preview and measured item completion now shown on Course Home; authored takeaways remain separate. All unit, PG, typecheck/lint and responsive acceptance still required.
+
+2026-10-14 L2-006: About panel now labels persisted content provenance instead of conflating author HTML, catalogue and path description; surfaces course code and missing faculty honestly. No rich HTML/storage field invented. Authored unit+PG and responsive acceptance outstanding.
+
+2026-10-14 L2-016: own course update feed now mixes persisted learner completion/submissions with course-team posts and upcoming deadlines. Grading events excluded without published grade timestamps. Fresh PG, unit, JSX/lint and browser acceptance pending.
+
+2026-10-14 L2-022: responsive Course Overview navigation targets only sections present for an authorized course; no fake mobile content or storage. Unit and fresh-learner PG assertions authored; browser/device and accessibility review remains.
+
+Skipped in this batch for missing canonical source or external dependencies: L1-021 course thumbnail (no verified migrated image association); L12-013/014 saved job (saved-job persistence unconfirmed in registered journal); L13-016 per-drive resume upload (storage/private-object handling missing); L30-034..L30-043 profile verification (no verified state machine, document upload or review process); external sends intentionally untouched without provider/consent contracts.

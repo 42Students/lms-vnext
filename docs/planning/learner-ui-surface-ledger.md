@@ -114,8 +114,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-003 | Blueprint hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
 | L2-004 | Students hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
 | L2-005 | Back to Courses | course shell | course detail header | CLOSED |
-| L2-006 | About this course | Home | Overview | GAP |
-| L2-007 | What you'll learn / learning-path summary | Home | Overview | GAP |
+| L2-006 | About this course | Home | transparent authored/catalogue/path fallback provenance, persisted course code and context, explicit no-faculty state and zero-credit display; retains sanitized display-content renderer. PARTIAL pending fresh PG/tsc/lint, browser responsive and authored-html privacy acceptance | PARTIAL |
+| L2-007 | What you&apos;ll learn / learning-path summary | Home | published ordered lesson preview with own persisted item counts and null for no denominator; authored takeaways remain separate and are not fabricated. PARTIAL: fresh PostgreSQL test, tsc/lint, responsive browser and learning-path navigation acceptance not executed | PARTIAL |
 | L2-008 | Faculty/teacher context | Home | Overview | CLOSED |
 | L2-009 | Section + semester context | Home | Overview | CLOSED |
 | L2-010 | Credits/elective context | Home | Overview | CLOSED |
@@ -124,13 +124,13 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-013 | Lesson progress metric | Home | Overview | FIXED |
 | L2-014 | Assignment progress metric | Home | Overview | FIXED |
 | L2-015 | Quiz progress metric | Home | Overview | FIXED |
-| L2-016 | Unified recent course updates | Home activity/widgets | Overview | GAP |
+| L2-016 | Unified recent course updates | Home activity/widgets | course-team announcements plus real last-14-day content completion and assignment submission, alongside next-14-day deadlines/live classes; never fabricate grade/published event timestamps. PARTIAL pending real PostgreSQL/tsc/lint tests, chronology and mobile/browser acceptance | PARTIAL |
 | L2-017 | Course-team update links to Discussions | Home activity/widgets | Overview | FIXED |
 | L2-018 | Assessment/live update links to exact item | Home activity/widgets | Overview | FIXED |
 | L2-019 | Historical course Overview read-only messaging | course history | Overview | CLOSED |
 | L2-020 | Course not-found/access handling | course route | course detail | CLOSED |
 | L2-021 | Course loading/error state | course route | course detail | CLOSED |
-| L2-022 | Overview mobile behavior | Home responsive | Overview | UNCHECKED |
+| L2-022 | Overview mobile behavior | Home responsive | mobile-only horizontal accessible jump navigation, 44px targets, scroll offsets and small-screen padding for About/path/next/progress/updates; no dead links to absent sections. PARTIAL pending responsive browser, screen-reader, tsc/lint, fresh PostgreSQL acceptance | PARTIAL |
 | L2-023 | Authored introduction content | InThisCourseSection introduction_content | Course domain has description only | GAP |
 | L2-024 | Authored rich HTML overview + sanitization | InThisCourseSection html_content | Course domain has no rich overview field | GAP |
 | L2-025 | Authored takeaways list | InThisCourseSection takeaways | vNext currently derives lesson names | GAP |
@@ -359,7 +359,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L11-001 | Exact placement tabs | PlacementsTabsLayout | learner placement tabs | FIXED |
 | L11-002 | First-run onboarding hero | placements dashboard | placements home | UNCHECKED |
-| L11-003 | Partial-source error alert | placements dashboard | placements home | UNCHECKED |
+| L11-003 | Partial-source error alert | placements home | authenticated learner gate before parallel independent settled source reads; warns of failed sections, retry button, preserves loaded sections, masks failed dashboard metrics as unknown rather than zero; pure and fresh-learner PostgreSQL tests authored. PARTIAL pending CI, error-injection and browser recovery acceptance | PARTIAL |
 | L11-004 | Hero greeting | placements dashboard | placements home | UNCHECKED |
 | L11-005 | Next-action priority | placements dashboard | placements home | UNCHECKED |
 | L11-006 | Assessment urgency action | placements dashboard | placements home | UNCHECKED |
@@ -517,12 +517,12 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-007 | Date picker | learner career calendar | date input with strict valid YYYY-MM-DD IST day keys; existing owned persisted round filter remains; pure and fresh-learner PG tests authored. PARTIAL pending executed PostgreSQL, Vitest, TypeScript/ESLint, calendar browser/mobile and timezone acceptance | PARTIAL |
 | L17-008 | Event-type filters | CareerCalendarContent | career calendar | GAP |
 | L17-009 | Event chips | CareerCalendarContent | career calendar | GAP |
-| L17-010 | Selected-event detail drawer | CareerCalendarContent | career calendar | GAP |
+| L17-010 | Selected-event detail drawer | learner career calendar | event cards now open own-scoped detail drawer with real IST time, employer, kind, approved-reschedule cue and exact assessment/interview deep link; never shows provider secrets. PARTIAL pending PG/TypeScript/ESLint and mobile/browser acceptance | PARTIAL |
 | L17-011 | Event action/deep links | CareerCalendarContent | career rounds | FIXED |
 | L17-012 | Partial-source failure + retry | CareerCalendarContent | career calendar | GAP |
 | L17-013 | Empty calendar state | CareerCalendarContent | career calendar | FIXED |
 | L17-014 | Timezone handling | CareerCalendarContent | career rounds | UNCHECKED |
-| L17-015 | Mobile agenda fallback | CareerCalendarContent responsive | career calendar | GAP |
+| L17-015 | Mobile agenda fallback | learner career calendar | month/week show accessible mobile IST day-grouped agenda rather than 38rem horizontal grid; same persisted filtered own events, details and exact deep links; pure and fresh-learner PG tests authored. PARTIAL pending executed tests, responsive screen-reader and browser acceptance | PARTIAL |
 
 ## L18 — Placement Cell
 
