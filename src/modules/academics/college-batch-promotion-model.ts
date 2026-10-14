@@ -74,6 +74,9 @@ export const collegePromotionExecuteSchema = z.object({
   cohortId: z.string().uuid(),
   programId: z.string().uuid(),
   expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+  expectedCheckedLearners: z.number().int().min(1).max(2000),
+  expectedTargetTerm: z.number().int().min(1).max(100),
+  expectedAcademicYearStart: z.number().int().min(1900).max(9998),
   yearStart: z.number().int().min(1900).max(9998).optional(),
   confirm: z.literal(true),
   action: z.literal("PROMOTE"),
@@ -87,4 +90,12 @@ export function promotionReady(preview: {
 }): boolean {
   return preview.simulatedReadiness && preview.completePreview &&
     preview.blockedLearners === 0 && preview.plan.action === "PROMOTE";
+}
+
+export function promotionPreviewMatches(expected: {
+  expectedCheckedLearners: number; expectedTargetTerm: number; expectedAcademicYearStart: number;
+}, actual: {checkedLearners: number; plan: {targetTermNumber: number|null; academicYearStart: number|null}}): boolean {
+  return expected.expectedCheckedLearners === actual.checkedLearners &&
+    expected.expectedTargetTerm === actual.plan.targetTermNumber &&
+    expected.expectedAcademicYearStart === actual.plan.academicYearStart;
 }

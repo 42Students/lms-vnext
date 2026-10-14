@@ -69,6 +69,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     name: sections.name,
     code: sections.code,
     status: sections.status,
+    updatedAt: sql<Date>`${sections.updatedAt}`.mapWith(sections.updatedAt).as("section_updated_at"),
     capacity: sections.capacity,
     programId: sql<string>`${programs.id}`.as("class_program_id"),
     programName: sql<string>`${programs.name}`.as("class_program_name"),

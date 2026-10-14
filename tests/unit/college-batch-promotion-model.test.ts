@@ -1,9 +1,24 @@
 import { describe, expect, it } from "vitest";
 import {
   batchPromotionPlan, collegePromotionQuerySchema, promotionLearnerBlockers,
+  promotionPreviewMatches, collegePromotionExecuteSchema,
 } from "@/modules/academics/college-batch-promotion-model";
 
 describe("College Admin batch promotion preview policy", () => {
+  it("binds a confirmed promotion to count, term and year from the server preview",()=>{
+    const expected={expectedCheckedLearners:2,expectedTargetTerm:4,expectedAcademicYearStart:2028};
+    const actual={checkedLearners:2,plan:{targetTermNumber:4,academicYearStart:2028}};
+    expect(promotionPreviewMatches(expected,actual)).toBe(true);
+    expect(promotionPreviewMatches({...expected,expectedCheckedLearners:3},actual)).toBe(false);
+    expect(promotionPreviewMatches({...expected,expectedTargetTerm:5},actual)).toBe(false);
+    expect(promotionPreviewMatches({...expected,expectedAcademicYearStart:2029},actual)).toBe(false);
+    const base={cohortId:"40000000-0000-4000-8000-000000000001",
+      programId:"40000000-0000-4000-8000-000000000002",
+      expectedVersion:0,action:"PROMOTE",confirm:true,...expected};
+    expect(collegePromotionExecuteSchema.safeParse(base).success).toBe(true);
+    expect(collegePromotionExecuteSchema.safeParse({...base,expectedCheckedLearners:undefined}).success).toBe(false);
+    expect(collegePromotionExecuteSchema.safeParse({...base,collegeId:base.cohortId}).success).toBe(false);
+  });
   const base = {
     cohortStatus: "ACTIVE", currentTermNumber: 1, durationTerms: 4,
     nextTermConfigured: true, currentYearStart: 2026,
