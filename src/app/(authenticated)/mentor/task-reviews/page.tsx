@@ -94,6 +94,15 @@ export default async function MentorTaskReviewsPage({
           Clear
         </Link>
       </form>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/mentor/task-reviews/export?"+new URLSearchParams({
+          search:data.query.search,priority:data.query.priority,order:data.query.order,
+        }).toString()} download
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          Export pending task review metadata CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}
+      </div>
       <p className="text-sm text-body">
         {data.total === 0
           ? "No matching submissions"

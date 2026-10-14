@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const collegeNoticeInboxQuerySchema = z.strictObject({});
+export const collegeNoticeInboxQuerySchema = z.strictObject({
+  unreadOnly: z.enum(["0", "1"]).default("0"),
+});
 
 export type CollegeNoticeSource = {
   id: string;
@@ -10,6 +12,11 @@ export type CollegeNoticeSource = {
   createdAt: Date;
   readAt: Date | null;
 };
+
+export function collegeNoticeUnreadLabel(value: number) {
+  if (!Number.isSafeInteger(value) || value < 0) throw new Error("INVALID_UNREAD_COUNT");
+  return `${value.toLocaleString("en-IN")} unread personal notification${value === 1 ? "" : "s"}`;
+}
 
 export function collegeNoticeInboxProjection(rows: readonly CollegeNoticeSource[]) {
   return rows.map(row => ({

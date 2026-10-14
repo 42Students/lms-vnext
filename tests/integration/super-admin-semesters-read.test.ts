@@ -15,7 +15,7 @@ const admin:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"admin-
 const id=randomUUID(),term=randomUUID(),label="admin-sem-"+id.slice(0,8);
 describe.skipIf(!enabled)("Super Admin Semesters in-test PostgreSQL",()=>{
  beforeAll(async()=>{
-  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3,$3,8)",[id,SEED_IDS.departmentA,label]);
+  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3::text,$3::text,8)",[id,SEED_IDS.departmentA,label]);
   await pool!.query("insert into program_terms(id,program_id,term_number,name,is_active,total_credits) values ($1,$2,1,$3,true,20)",[term,id,label]);
  });
  afterAll(async()=>{try{

@@ -2,7 +2,7 @@ import { z } from "zod";
 export const SUPER_ADMIN_READ_PAGE_SIZE = 25;
 export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
- status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN"]).default("ALL"),
+ status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: z.coerce.number().int().min(1).max(1000).default(1),
 });
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
