@@ -22,6 +22,12 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
+  const metrics=[
+    ["Blocked tasks",data.counts.blockedTasks],
+    ["Awaiting task review",data.counts.reviewTasks],
+    ["Requested meetings",data.counts.pendingMeetings],
+    ["Tasks not Done",data.counts.incompleteTasks],
+  ] as const;
   return <div className="space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.projectTitle+" · "+data.projectStatus}
@@ -33,12 +39,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
       <section aria-label="Recorded workflow signals" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {([
-          ["Blocked tasks",data.counts.blockedTasks],
-          ["Awaiting task review",data.counts.reviewTasks],
-          ["Requested meetings",data.counts.pendingMeetings],
-          ["Tasks not Done",data.counts.incompleteTasks],
-        ] as const).map(([label,value])=>
+        {metrics.map(([label,value])=>
           <article key={label} className="rounded-xl border border-border bg-surface p-4">
             <h2 className="text-xs font-semibold text-muted-foreground">{label}</h2>
             <p className="mt-2 text-2xl font-bold tabular-nums">{value}</p>

@@ -59,13 +59,13 @@ export default async function MentorSprintProgressPage({
         <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <a href={"/api/mentor/sprint-progress/export?"+
+        <Link href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({
             state:data.query.state,search:data.query.search,
           }).toString()}
           download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export filtered sprint CSV (max 100)
-        </a>
+        </Link>
         {data.total>100?<span role="status">
           Export omits {data.total-100} sprints beyond the 100-row cap.
         </span>:null}
