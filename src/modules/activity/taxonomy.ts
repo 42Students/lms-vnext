@@ -35,6 +35,9 @@ export const ACTIVITY_EVENT_TYPES = {
     "identity.membership.reactivated",
   IDENTITY_MEMBERSHIP_ENDED:
     "identity.membership.ended",
+  ACADEMICS_DEPARTMENT_CREATED: "academics.department.created",
+  ACADEMICS_DEPARTMENT_UPDATED: "academics.department.updated",
+  ACADEMICS_DEPARTMENT_ARCHIVED: "academics.department.archived",
   ACADEMICS_PROGRAM_CREATED:
     "academics.program.created",
   ACADEMICS_PROGRAM_UPDATED: "academics.program.updated",

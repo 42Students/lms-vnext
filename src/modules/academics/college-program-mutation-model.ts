@@ -24,6 +24,10 @@ export const archiveCollegeProgramSchema = z.object({
 
 export const collegeProgramIdSchema = z.string().uuid();
 
+export const restoreCollegeProgramSchema = z.object({
+  action: z.literal("RESTORE"), confirm: z.literal(true),
+}).strict();
+
 /** Detect unsaved edits, even invalid input, before dismissing an edit dialog. */
 export function hasUnsavedCollegeProgramEdit(
   saved: { name: string; code: string; durationTerms: number },

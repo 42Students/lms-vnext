@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
+import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
 import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
@@ -167,6 +168,12 @@ export async function CollegeRoleDirectoryWorkspace({
                       <div className="mt-2">
                         <StudentClassMoveAction membershipId={item.membershipId} name={item.name} />
                       </div> : null}
+                    {kind === "FACULTY" ?
+                      <CollegeFacultyLifecycleAction
+                        membershipId={item.membershipId}
+                        name={item.name}
+                        status={item.membershipStatus}
+                      /> : null}
                   </td>
                   <td className="px-4 py-4 text-body">
                     {joinedLabel(item.joinedAt)}
