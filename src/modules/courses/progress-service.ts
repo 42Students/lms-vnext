@@ -5,8 +5,9 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  learnerContentProgress,
+  learnerContentProgress, collegeMemberships, membershipRoles, users,
 } from "@/db/schema";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
@@ -202,6 +203,7 @@ export async function getLearnerContentProgress(
     lessonContentIdSchema.parse(
       contentIdInput,
     );
+  await requireOwnCourseLearnerRead(context);
   const { content, membershipId } =
     await requireLearnerProgressScope(
       context,
@@ -275,6 +277,24 @@ async function completeManualContentOnce(
   const gate = manualContentCompletionGate(content.contentType, content.endsAt, now);
   if (gate !== "ALLOWED") throw new CoursesServiceError(gate);
   return getDb().transaction(async (tx) => {
+    // Lock the actor while applying completion: a suspension or role removal
+    // racing this transaction must not create an accepted completion.
+    const [actor] = await tx.select({
+      userId: collegeMemberships.userId, collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+    }).from(collegeMemberships)
+      .where(eq(collegeMemberships.id, membershipId))
+      .for("share").limit(1);
+    const [account] = await tx.select({status:users.platformStatus}).from(users)
+      .where(eq(users.id, context.user.id)).for("share").limit(1);
+    const [role] = await tx.select({id:membershipRoles.id}).from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId,membershipId),
+        eq(membershipRoles.role,"LEARNER"))).for("share").limit(1);
+    if(!actor || actor.userId!==context.user.id ||
+      actor.collegeId!==context.membership?.collegeId || actor.status!=="ACTIVE" ||
+      !account || account.status!=="ACTIVE" || !role) {
+      throw new AuthorizationError("courses.read");
+    }
     const lockKey = membershipId + ":" + content.id;
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}), 72001)`);
     const [existing] = await tx.select().from(learnerContentProgress).where(and(
@@ -282,7 +302,7 @@ async function completeManualContentOnce(
       eq(learnerContentProgress.lessonContentId, content.id),
     )).limit(1);
     if (existing?.completedAt) return buildLearnerProgressView(content, existing);
-    let saved;
+    let saved: typeof learnerContentProgress.$inferSelect | undefined;
     if (existing) {
       [saved] = await tx.update(learnerContentProgress).set({
         completedAt: now, updatedAt: now,
