@@ -1,9 +1,10 @@
 import "server-only";
 
 import { and, eq, inArray } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, collegeMemberships, placementCompanies,
+  activityEvents, collegeMemberships, membershipRoles, placementCompanies,
   placementCompanyRelationships, placementJobs, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -36,7 +37,7 @@ export async function getTpoCompanyLifecycle(
   context: RequestContext,
   companyIdInput: unknown,
 ) {
-  const companyId = tpoCompanyLifecycleSchema.shape.companyId.parse(companyIdInput);
+  const companyId = z.string().uuid().parse(companyIdInput);
   const { collegeId } = await companyScope(context);
   const [row] = await getDb().select({
     relationshipId: placementCompanyRelationships.id,
@@ -59,7 +60,9 @@ export async function saveTpoCompanyLifecycle(
   const input = tpoCompanyLifecycleSchema.parse(raw);
   return getDb().transaction(async (tx) => {
     const [principal] = await tx.select({ id: collegeMemberships.id })
-      .from(collegeMemberships).innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .innerJoin(membershipRoles, and(eq(membershipRoles.membershipId, collegeMemberships.id), eq(membershipRoles.role, "TPO")))
       .where(and(eq(collegeMemberships.id, scope.actorMembershipId),
         eq(collegeMemberships.collegeId, scope.collegeId),
         eq(collegeMemberships.userId, scope.actorUserId),
@@ -94,7 +97,7 @@ export async function saveTpoCompanyLifecycle(
       "ACTIVE" as const;
     const [saved] = await tx.update(placementCompanyRelationships).set({
       ...(input.action === "EDIT_TRUST"
-        ? { isTrusted: input.nextTrusted }
+        ? { isTrusted: input.nextTrusted ?? current.isTrusted }
         : { status: nextStatus, archivedAt: input.action === "ARCHIVE" ? now : null }),
       updatedAt: now,
     }).where(and(
