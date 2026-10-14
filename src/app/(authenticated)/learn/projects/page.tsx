@@ -17,7 +17,7 @@ import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
-import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
+import { learnerProjectHasBlockedTasks, learnerProjectHasNoTrackedTasks } from "@/modules/projects/learner-project-work-model";
 import { sortLearnerProjectRows } from "@/modules/projects/learner-project-sort-model";
 
 function one(value: string | string[] | undefined) {
@@ -27,7 +27,7 @@ function one(value: string | string[] | undefined) {
 const searchSchema = z.string().trim().max(100);
 const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
 const attentionSchema = z.literal("LEARNER_ACTION");
-const workSchema = z.literal("BLOCKED");
+const workSchema = z.enum(["BLOCKED","NO_TASKS"]);
 const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
 
 function parsePageSize(value: string | undefined) {
@@ -103,6 +103,9 @@ export default async function LearnerProjectsPage({
       attentionByProject.has(row.project.id),
     )
     .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
+      row.project.status, progressByProject.get(row.project.id),
+    ))
+    .filter((row) => query.work !== "NO_TASKS" || learnerProjectHasNoTrackedTasks(
       row.project.status, progressByProject.get(row.project.id),
     ))
     ,query.sort ?? "RECENT",progressByProject);

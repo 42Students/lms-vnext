@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 round-6 empty-task Project filter (PARTIAL):** Learners can identify their current/planned Projects with genuinely zero persisted tasks, without conflating missing progress with zero or including archived/completed work. Available in desktop/mobile selectors and retained through URL-backed pagination; pure tests authored, PG/browser gates remain open.
+
 **2026-10-15 chat-7 round-6 upcoming Class Schedule only (PARTIAL):** Learners can hide completed sessions while retaining sessions currently in progress, based on true persisted end instants. The selector composes with course/section/kind/text search and affects both calendar and exports from the same authorized set; it does not alter stored sessions. Pure clock-boundary tests authored; browser/timezone acceptance open.
 
 **2026-10-15 chat-7 round-6 Board task ordering (PARTIAL):** Learners can sort authorized Project Board tasks by persisted priority, update time or title while preserving search, status, sprint, release and task-modal deep links. Default keeps project order. Pure ordering regressions authored; browser and PG scope acceptance outstanding.
