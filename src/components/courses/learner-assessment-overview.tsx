@@ -18,6 +18,7 @@ import { assignmentOverviewState } from "@/modules/courses/learner-assignment-di
 import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment-mobile-model";
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assessment-search-model";
+import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
 
 type CourseChoice = {
   id: string;
@@ -138,6 +139,7 @@ export function LearnerAssessmentOverview({
   const [courseId, setCourseId] =
     useState("");
   const [search, setSearch] = useState("");
+  const [stateFilter, setStateFilter] = useState<LearnerAssessmentStateFilter>("ALL");
   const [page, setPage] = useState(1);
   const [
     selectedAssignmentKey,
@@ -148,9 +150,10 @@ export function LearnerAssessmentOverview({
     () =>
       items.filter(item =>
         (!courseId || item.courseId === courseId) &&
-        learnerAssessmentMatchesSearch(item, search),
+        learnerAssessmentMatchesSearch(item, search) &&
+        learnerAssessmentMatchesState(item, stateFilter, currentNowMs),
       ),
-    [courseId, items, search],
+    [courseId, items, search, stateFilter, currentNowMs],
   );
 
   const totalPages = Math.max(
@@ -222,7 +225,7 @@ export function LearnerAssessmentOverview({
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <input type="search" value={search} maxLength={100}
@@ -254,12 +257,24 @@ export function LearnerAssessmentOverview({
             ))}
           </Select>
         </label>
+        <label className="w-full">
+          <span className="mb-1.5 block text-xs font-semibold text-body">State</span>
+          <Select value={stateFilter}
+            onChange={event => {
+              setStateFilter(event.target.value as LearnerAssessmentStateFilter);
+              setPage(1);
+            }}>
+            {LEARNER_ASSESSMENT_STATE_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </Select>
+        </label>
       </div>
 
       {filtered.length === 0 ? (
         <EmptyState
           title="No matching assessments"
-          description="Change the search or course filter to see other published assessments."
+          description="Change the search, course or state filter to see other published assessments."
         />
       ) : (
         <div
