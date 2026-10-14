@@ -125,6 +125,7 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_SPRINT_UPDATED:
     "projects.sprint.updated",
   PROJECTS_MEETING_DECIDED: "projects.meeting.decided",
+  PROJECTS_DELIVERY_REVIEWED: "projects.delivery.reviewed",
   PROJECTS_TASK_CREATED:
     "projects.task.created",
   PROJECTS_TASK_DETAILS_UPDATED:

@@ -275,9 +275,13 @@ export function LearnerFinalDeliveryControl({
 export function FinalReviewControl({
   projectId,
   submissionId,
+  mode,
+  expectedUpdatedAt,
 }: {
   projectId: string;
   submissionId: string;
+  mode: "MENTOR" | "ADMIN" | "LEARNER";
+  expectedUpdatedAt: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -301,10 +305,11 @@ export function FinalReviewControl({
     setPending(true);
     try {
       await projectMutation(
-        `/api/projects/${projectId}/submissions/${submissionId}/review`,
+        mode==="MENTOR"?`/api/projects/${projectId}/submissions/${submissionId}/mentor-decision`:`/api/projects/${projectId}/submissions/${submissionId}/review`,
         "POST",
         {
           decision,
+          ...(mode==="MENTOR"?{expectedUpdatedAt,confirmed:true}:{}),
           feedback:
             feedback.trim() || undefined,
         },

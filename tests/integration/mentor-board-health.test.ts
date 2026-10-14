@@ -13,6 +13,7 @@ import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-servic
 import {startProjectSprint} from "@/modules/projects/lifecycle-service";
 import {scheduleProjectMeeting} from "@/modules/projects/meeting-service";
 import {decideMentorProjectMeeting} from "@/modules/projects/mentor-meeting-decision-service";
+import {decideMentorFinalDelivery} from "@/modules/projects/mentor-final-delivery-decision-service";
 import {submitProjectTask,reviewProjectTaskSubmission} from "@/modules/projects/task-submission-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires isolated disposable TEST_DATABASE_URL");
@@ -129,6 +130,30 @@ async function fixture(){
   return {project,mentor,foreign,learner,
     task:workspace.tasks[0]!,sprint:workspace.sprints[0]!};
 }
+
+describe("Mentor final delivery reviewed with immutable audit",()=>{
+ it("accepts default now() token once and denies stale/foreign/wrong-role",async()=>{
+  const {project,mentor,foreign,learner}=await fixture();
+  const id=randomUUID();
+  const inserted=await pool.query<{updated_at:Date}>(`insert into project_submissions
+   (id,project_id,version,status,summary,source_url,created_by_membership_id,
+    submitted_by_membership_id,submitted_at)
+   values($1,$2,1,'SUBMITTED','Final test','https://example.invalid/project',
+    $3,$3,now()) returning updated_at`,
+   [id,project.id,learner.membership!.id]);
+  const token={decision:"APPROVED" as const,
+   expectedUpdatedAt:inserted.rows[0]!.updated_at.toISOString(),confirmed:true as const};
+  await expect(decideMentorFinalDelivery(learner,project.id,id,token)).rejects.toBeDefined();
+  await expect(decideMentorFinalDelivery(foreign,project.id,id,token)).rejects.toBeDefined();
+  await expect(decideMentorFinalDelivery(mentor,SEED_IDS.collegeB,id,token)).rejects.toBeDefined();
+  const result=await decideMentorFinalDelivery(mentor,project.id,id,token);
+  expect(result.submission.status).toBe("APPROVED");
+  await expect(decideMentorFinalDelivery(mentor,project.id,id,token)).rejects.toBeDefined();
+  const audit=await pool.query<{count:string}>(`select count(*)::text as count
+   from activity_events where subject_id=$1::text and event_type='projects.delivery.reviewed'`,[id]);
+  expect(audit.rows[0]?.count).toBe("1");
+ });
+});
 
 describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",()=>{
  it("completes a SQL-backed meeting and denies replay/foreign/wrong-role",async()=>{
