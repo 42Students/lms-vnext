@@ -19,6 +19,7 @@ import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-servi
 import {createLessonContent,transitionLessonContent} from "@/modules/courses/lesson-content-service";
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
 import {getFacultyAssignmentReport,getFacultyQuizReport} from "@/modules/courses/faculty-assessment-report-service";
+import {getFacultyQuizQuestionCsvForDownload} from "@/modules/courses/faculty-quiz-question-csv-service";
 import {getFacultyReportCsvForDownload} from "@/modules/courses/faculty-report-csv-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL is mandatory.");
@@ -273,6 +274,23 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    expect(all.omittedRows).toBe(0);
    expect(attempted.csv).toBe(all.csv);
    expect(missed.csv).toBe(all.csv);
+   const questions=await getFacultyQuizQuestionCsvForDownload(faculty,{
+    quizId:created.id,deliveryId:delivery.id,
+   });
+   expect(questions.filename).toContain("questions");
+   expect(questions.csv).toContain('"Question","Points","Answered","Correct","Accuracy (%)"');
+   expect(questions.csv).toContain("Which structure is FIFO?");
+   expect(questions.csv).not.toContain("@example.");
+   expect(questions.omittedRows).toBe(0);
+   await expect(getFacultyQuizQuestionCsvForDownload(learner,{
+    quizId:created.id,deliveryId:delivery.id,
+   })).rejects.toBeDefined();
+   await expect(getFacultyQuizQuestionCsvForDownload(faculty,{
+    quizId:created.id,deliveryId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
+   await expect(getFacultyQuizQuestionCsvForDownload(faculty,{
+    quizId:created.id,deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+   })).rejects.toBeDefined();
    await expect(getFacultyQuizReport(learner,created.id,delivery.id)).rejects.toBeDefined();
    await expect(getFacultyQuizReport(faculty,created.id,SEED_IDS.collegeB)).rejects.toBeDefined();
    await expect(getFacultyReportCsvForDownload(learner,{
