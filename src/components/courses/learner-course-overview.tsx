@@ -3,6 +3,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ExpandableCourseDescription } from "./expandable-course-description";
 import { ExpandableCourseUpdate } from "./expandable-course-update";
 import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overview-priority";
+import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -89,6 +90,11 @@ export function LearnerCourseOverview({
   }>;
 }) {
   const summary = workspace.summary;
+  const progressAvailability = learnerProgressAvailability({
+    hasPublishedLearningPath: workspace.learningPath !== null,
+    publishedLessonCount: workspace.lessons.length,
+    trackableItemCount: summary.itemsTotal,
+  });
   const next = workspace.nextItem;
   const nextContent = workspace.nextContent;
   const now = workspace.snapshotNowMs;
@@ -338,10 +344,18 @@ export function LearnerCourseOverview({
         </div>
       </section>
 
+      {!progressAvailability.hasDenominator ? (
+        <section role="status" aria-label="Course progress availability"
+          className="rounded-xl border border-warning bg-surface px-4 py-3 sm:px-5">
+          <h3 className="text-sm font-semibold text-foreground">Course progress not yet measurable</h3>
+          <p className="mt-1 text-sm text-body">{progressAvailability.detail}</p>
+        </section>
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
-          value={`${summary.overallPercent}%`}
+          value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
         <Metric
