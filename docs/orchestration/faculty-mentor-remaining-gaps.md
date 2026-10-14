@@ -392,3 +392,11 @@ unchanged. Pure model unit test and own-Faculty fixture PostgreSQL
 create/edit/stale/foreign/wrong-role/audit checks were added.
 Still open: execute tests, real browser create/edit/archive/grade modal and
 legacy lesson-order parity; no claim of DONE.
+
+## 2026-10-14 B2 — All Quizzes (PARTIAL)
+Repaired a broken authoring GET contract: API returns `{quiz:{questions}}`,
+not root `questions`. The builder now rejects stale overlapping fetches,
+restores correct answers and browser-local due times, validates questions
+before the server mutation and prevents editing published quiz questions.
+Added model unit and own-Faculty PostgreSQL create/edit/publish/stale/foreign/
+wrong-role/audit assertions. No DONE promotion pending execution/browser parity.

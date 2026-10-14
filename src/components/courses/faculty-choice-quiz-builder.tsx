@@ -1,6 +1,10 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {authoringLocalDateTime,authoringDueInstant}
+ from "@/modules/courses/faculty-authoring-datetime-model";
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue}
+ from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
 type Quiz={id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
@@ -13,6 +17,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  deliveryId:string;lessons:readonly {id:string;name:string}[];quizzes:readonly Quiz[];
 }){
  const router=useRouter();
+ const choiceRequest=useRef(0);
+ const [success,setSuccess]=useState<string|null>(null);
  const [selected,setSelected]=useState("");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
@@ -25,33 +31,38 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [error,setError]=useState<string|null>(null);
  const chosen=quizzes.find(q=>q.id===selected);
  async function choose(id:string){
-  setSelected(id);setConfirmed(false);setError(null);
+  const token=++choiceRequest.current;
+  setSelected(id);setConfirmed(false);setError(null);setSuccess(null);
   const q=quizzes.find(x=>x.id===id);
   if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);
-    setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");return;}
-  setTitle(q.title);setDescription(q.description??"");setDueAt(q.dueAt?.slice(0,16)??"");
+    setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");setPending(false);return;}
+  setTitle(q.title);setDescription(q.description??"");setDueAt(authoringLocalDateTime(q.dueAt));
   setMaxAttempts(q.maxAttempts);setLessonId(q.lessonId);setPending(true);
   try{
    const res=await fetch("/api/courses/quizzes/"+encodeURIComponent(q.id)+
      "?deliveryId="+encodeURIComponent(deliveryId),{cache:"no-store"});
    if(!res.ok)throw new Error("Cannot load quiz questions for this Section.");
-   const response=await res.json() as {
-    questions:Array<{type:Question["type"];prompt:string;points:number;sequence:number;
-      options:Array<{text:string;correct?:boolean;sequence:number}>}>;
-   };
-   setQuestions(response.questions.map((x,i)=>({
-    type:x.type,prompt:x.prompt,points:x.points,sequence:i,
-    options:x.options.map((o,j)=>({text:o.text,correct:o.correct??false,sequence:j})),
-   })));
-  }catch(e){setError(e instanceof Error?e.message:"Quiz details unavailable");setQuestions([]);}
-  finally{setPending(false);}
+   const response:unknown=await res.json();
+   if(token!==choiceRequest.current)return;
+   setQuestions(facultyAuthoringQuestionsFromResponse(response));
+  }catch(e){if(token===choiceRequest.current){setError(e instanceof Error?e.message:"Quiz details unavailable");setQuestions([]);}}
+  finally{if(token===choiceRequest.current)setPending(false);}
  }
  function updateQuestion(i:number,fn:(q:Question)=>Question){
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"){
   if(!confirmed){setError("Confirm the action before saving.");return;}
-  setError(null);setPending(true);
+  if(pending)return;
+  if(chosen?.status!=="DRAFT"&&action!=="CREATE"){
+    setError("Only current draft quizzes can be edited or published.");return;
+  }
+  if(action!=="PUBLISH"){
+    const validation=facultyQuizDraftIssue(title,questions);
+    if(validation){setError(validation);return;}
+  }
+  if(!window.confirm("Confirm "+action.toLowerCase()+" for this Section Quiz?"))return;
+  setError(null);setSuccess(null);setPending(true);
   try{
    const body=action==="PUBLISH"?{
      action,quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt,confirmed:true,
@@ -60,7 +71,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      ...(action==="CREATE"?{lessonId,
        sequence:Math.max(0,...quizzes.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1))}
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
-     title,description:description||null,dueAt:dueAt?new Date(dueAt).toISOString():null,
+     title,description:description||null,dueAt:authoringDueInstant(dueAt),
      maxAttempts,questions:questions.map((q,i)=>({
       ...q,sequence:i,options:q.options.map((o,j)=>({...o,sequence:j})),
      })),
@@ -69,7 +80,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
    if(!res.ok)throw new Error("Quiz write was rejected. Check your choices or refresh a stale draft.");
-   setConfirmed(false);router.refresh();
+   setConfirmed(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
   finally{setPending(false);}
  }
@@ -101,7 +112,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <input type="number" min={1} max={20} value={maxAttempts}
     onChange={e=>setMaxAttempts(Number(e.target.value))}
     className="min-h-10 rounded border border-border p-2"/></label>
-  {questions.map((q,i)=><fieldset key={i}
+  {questions.map((q,i)=><fieldset key={i} disabled={pending||Boolean(chosen&&chosen.status!=="DRAFT")}
    className="space-y-3 rounded-lg border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    <label className="grid gap-1 text-sm">Prompt
@@ -151,6 +162,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    I confirm these choices, point totals and the current draft state.
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-3">
    {!chosen?<button type="button" disabled={!confirmed||pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
