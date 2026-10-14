@@ -11,6 +11,8 @@ import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
+import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
+import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -40,18 +42,21 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayWeek(now);
-  const [jobs, calendar] = await Promise.all([
+  const [jobs, calendar, inbox] = await Promise.all([
     listOwnRecruiterPlacementJobs(context),
     listRecruiterCalendarEvents(context, week),
+    listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
   ]);
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
+  const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
     {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
+    ...(unreadAction ? [unreadAction] : []),
   ];
   return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Today"
@@ -64,7 +69,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
         className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
-    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{actions.map(action=>
+    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
@@ -100,6 +105,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
       <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
+      <Link className="text-primary-text" href={"/hr/messages?collegeId="+encodeURIComponent(selectedId)}>Messages & Notifications</Link>
+      <Link className="text-primary-text" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
       <Link className="text-primary-text" href="/hr/profile">Your profile</Link></div>
   </div>;
 }

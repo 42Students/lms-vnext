@@ -44,3 +44,21 @@
 - 2026-10-14 — HR Offers DB pages PARTIAL: 25-row filtered status pages and all-shared aggregate totals, no LOI; tests authored/extended, execution pending.
 
 - 2026-10-14 — HR Calendar mobile cards PARTIAL: narrow-screen day group layout for rounds/deadlines/results, unit/PG tests extended. Offers paging total label fixed. Execution pending.
+
+- 2026-10-15 — HR applicant CSV PARTIAL: existing grant-scoped applicant pages, formula-neutralized capped CSV, contact always masked; unit+PG authored, not executed.
+
+- 2026-10-15 — HR hiring activity PARTIAL: employer-scoped publish/close timeline, no applicant data. Unit+PG fixtures authored; gates pending.
+
+- 2026-10-15 — HR round schedule PARTIAL: read-only IST timeline + conservative known-duration collision hints. Unit/PG written, not run.
+
+- 2026-10-15 — Recruiter self-display-name PARTIAL: audited same-origin self-only CAS write to registered user name, no company-level mutations; pure/PG tests authored, execution pending.
+
+- 2026-10-15 — Pre-merge self-review hotfix: fixed double-escaped regexes in recruiter display-name normalization and CSV formula neutralization; added leading whitespace/newline regressions. Pure tests authored, not executed.
+
+- 2026-10-15 — HR notifications PARTIAL: scoped own-recipient lifecycle inbox, no raw PII/title/body, unread-only display; unit/PG fixtures authored, unexecuted.
+
+- 2026-10-15 — HR notification mark read PARTIAL: same-origin, exact employer allowlist, createdAt CAS, new stale error and persisted readAt. Unit/PG authored; not run.
+
+- 2026-10-15 — HR offers CSV PARTIAL: 200 cap, formula neutralization and always-masked contact via existing exact-company read; pure/unit+PG authored, unexecuted.
+
+- 2026-10-15 — Today unread notification CTA PARTIAL: grant-scoped unread 100-cap card plus links to Messages/Activity. Unit and PG fixture added, tests not executed.
