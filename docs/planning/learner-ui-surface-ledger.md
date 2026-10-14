@@ -219,7 +219,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L5-009 | Empty feed | Classroom | EmptyState | FIXED |
 | L5-010 | Load error/retry | Classroom | retry state | FIXED |
 | L5-011 | Historical discussion read-only | old course | `canPost=false` | FIXED |
-| L5-012 | Mobile discussion behavior | Classroom responsive | discussion component | UNCHECKED |
+| L5-012 | Mobile discussion behavior | Classroom responsive | touch keyboard Enter adds paragraph instead of accidental post, explicit full-width send, mobile-height feed and wrap-safe bubbles, one-tap Jump to latest without replacing unseen counter; private own-course PG and pure-model tests authored. PARTIAL pending browser/keyboard, unit/PG, tsc/eslint acceptance | PARTIAL |
 | L5-013 | Consecutive-message sender grouping | Classroom buildFeed | learner discussion feed | FIXED |
 | L5-014 | Initial load lands at newest message | Classroom scroll-to-bottom behavior | learner discussion feed | FIXED |
 | L5-015 | New-message unseen counter while reading history | Classroom unseenCount | learner discussion feed | FIXED |

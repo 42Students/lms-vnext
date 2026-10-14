@@ -909,3 +909,5 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L12-022: mobile Drives filters collapse with active-filter count and remain accessible while desktop controls stay shown. Persisted own-college read and pure test authored; browser and disposable-DB execution outstanding. Skipped L13-016: private resume-object upload policy/storage approval absent.
 
 2026-10-14 L14-024: mobile applications filters reveal active URL selections; cards and drawer links use full-width accessible actions. No external sends/storage. Own learner PG and unit tests authored, browser/runtime acceptance pending.
+
+2026-10-14 L5-012: touch-friendly own-course discussion composer with explicit Post and safe message wrapping; does not change write permissions or faculty moderation. Independent learner PostgreSQL test authored; device keyboard/CI acceptance pending. Skipped L2-024 rich authored HTML (unmigrated authoring schema and sanitization contract).
