@@ -33,7 +33,7 @@ import {
   hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
@@ -495,6 +495,10 @@ export async function actOnPlacementOffer(
     // Self acceptance/decline is not a back door around paid module or the
     // learner/class/batch placement decision. TPO withdrawal is separate.
     await requireLearnerPlacementAccess(context);
+    if (!context.membership || !can(context, "placements.read", {
+      collegeId: current.job.collegeId,
+      organizationId: context.membership.organizationId,
+    })) throw new AuthorizationError("placements.read");
   } else {
     await requirePlacementManageScope(
       context,
@@ -515,6 +519,21 @@ export async function actOnPlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    if (input.action === "ACCEPT" || input.action === "DECLINE") {
+      // Validate current persisted identity under locks before changing an offer.
+      const [member] = await tx.select({
+        userId: collegeMemberships.userId, collegeId: collegeMemberships.collegeId,
+        status: collegeMemberships.status,
+      }).from(collegeMemberships).where(eq(collegeMemberships.id, context.membership!.id))
+        .for("share").limit(1);
+      const [account] = await tx.select({ status: users.platformStatus })
+        .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
+      if (!member || member.userId !== context.user.id ||
+          member.collegeId !== current.job.collegeId ||
+          member.status !== "ACTIVE" || !account || account.status !== "ACTIVE") {
+        throw new AuthorizationError("placements.read");
+      }
+    }
     const [offer] = await tx
       .select()
       .from(placementOffers)
