@@ -4,7 +4,6 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { getDb } from "@/db/client";
 import { updateOwnLearnerContacts } from "@/modules/people/learner-contact-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -79,7 +78,6 @@ function own() {
 describe("Learner contact-only PATCH succeeds and denies in PostgreSQL", () => {
   it("persists validated contacts, preserves other sections and audits without PII", async () => {
     const { context: learner, ids: keys } = own();
-    const db = getDb();
     // A test-specific saved profile section must survive the contacts PATCH.
     await pool.query(
       "INSERT INTO learner_profiles(membership_id,profile_document) VALUES($1,$2::jsonb)",
@@ -130,7 +128,6 @@ describe("Learner contact-only PATCH succeeds and denies in PostgreSQL", () => {
     });
     expect(JSON.stringify(events.rows[0]?.metadata)).not.toContain("edit.");
     expect(JSON.stringify(events.rows[0]?.metadata)).not.toContain("9876543210");
-    expect(db).toBeDefined();
   });
 
   it("denies forged college, suspended membership and wrong-role without changing data", async () => {
@@ -159,6 +156,23 @@ describe("Learner contact-only PATCH succeeds and denies in PostgreSQL", () => {
       [keys.membership, "identity.learner_contact.updated"],
     );
     expect(audit.rowCount).toBe(0);
+  });
+
+  it("denies live suspension and role removal even when request context is stale", async () => {
+    const { context: learner, ids: keys } = own();
+    const edit = {
+      confirmed: true,
+      contacts: { alternatePhone: "", contactEmail: "test@example.test" },
+    };
+    await pool.query("UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1", [keys.membership]);
+    await expect(updateOwnLearnerContacts(learner, edit))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await pool.query("UPDATE college_memberships SET status='ACTIVE' WHERE id=$1", [keys.membership]);
+    await pool.query("DELETE FROM membership_roles WHERE id=$1", [keys.role]);
+    await expect(updateOwnLearnerContacts(learner, edit))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    const saved = await pool.query("SELECT membership_id FROM learner_profiles WHERE membership_id=$1", [keys.membership]);
+    expect(saved.rowCount).toBe(0);
   });
 
   it("rejects unconfirmed, login email, impersonation and invalid phone without writes", async () => {
