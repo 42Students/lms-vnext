@@ -460,6 +460,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Resource metadata CSV PARTIAL (2026-10-15):** Own-college RESOURCE authoring metadata can be exported with matching search/status/course/scope filters and 1,000-row cap, spreadsheet-formula neutralization and truncation disclosure. Private text notes, URLs, keys and meeting links are not returned. Tenant and wrong-role PG fixture assertions authored; executed/browser parity remains open.
+
 **Persisted audience-scope filter PARTIAL (2026-10-15):** Resources list can distinguish offering-shared metadata from section-bound records using nullable deliveryId before pagination; a section-specific scope is never inferred. Strict query validation, URL-persisted selector and PG fixture for shared/section exclusion authored; browser/real-DB acceptance remains pending.
 
 **Mobile catalogue parity PARTIAL (2026-10-15):** The content catalogue now shows self-contained course/lesson/status/scope cards at narrow widths rather than a minimum-800px data table; desktop retains the wide table. A shared pure scope-label model has unit coverage and the existing isolated-PG fixture validates persisted delivery scope. Actual 375px browser verification and full legacy actions remain open.

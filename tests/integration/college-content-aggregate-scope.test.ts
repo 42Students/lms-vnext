@@ -158,6 +158,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
     ]);
+    const resourceCsv=await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label});
+    expect(resourceCsv.csv).toContain(label);
+    expect(resourceCsv.csv).not.toContain("test-only private notes");
+    expect(resourceCsv.csv).not.toContain("test-only-private-key");
+    const foreignResources=await exportCollegeContentMetadata(adminB,"RESOURCE",{q:label});
+    expect(foreignResources.csv).not.toContain(label);
+    await expect(exportCollegeContentMetadata(nonAdmin,"RESOURCE",{})).rejects.toBeInstanceOf(AuthorizationError);
     const exported=await exportCollegeContentMetadata(adminA,"VIDEO",{q:label});
     expect(exported.csv).toContain(label);
     expect(exported.csv).not.toContain("test-only-private-key");
