@@ -44,6 +44,12 @@ export const createTpoLeadSchema = z.object({
   "Provide at least an email or phone contact",
 );
 
+/** Confirmation belongs to the HTTP boundary, not the reusable service. */
+export const confirmedCreateTpoLeadSchema = z.object({
+  confirmed: z.literal(true),
+  lead: createTpoLeadSchema,
+}).strict();
+
 export const logTpoLeadActivitySchema = z.object({
   collegeId: id,
   type: z.enum(["CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE"]),
@@ -80,6 +86,11 @@ export const updateTpoLeadSchema = z.object({
 }).strict().refine(value => Object.keys(value).some(key => key !== "collegeId"), {
   message: "Provide at least one editable field",
 });
+
+export const confirmedMarkTpoNotNowSchema = z.object({
+  confirmed: z.literal(true),
+  decision: markTpoNotNowSchema,
+}).strict();
 
 export const checkTpoLeadContactSchema = z.object({
   collegeId: id,
