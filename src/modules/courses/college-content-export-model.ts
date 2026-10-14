@@ -4,11 +4,13 @@ import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college
 export const CONTENT_METADATA_EXPORT_CAP=1000;
 export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true}).extend({
  view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
+ from:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+ to:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  q:string;courseCode?:string;status:string;format:string;scope:string;
- view?: "ALL"|"UPCOMING"|"PAST";
+ view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -17,6 +19,8 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  if(q.scope!=="ALL"&&kind!=="LIVE_CLASS")p.set("scope",q.scope);
  if(q.format!=="ALL"&&kind==="VIDEO")p.set("format",q.format);
  if(kind==="LIVE_CLASS"&&q.view&&q.view!=="ALL")p.set("view",q.view);
+ if(kind==="LIVE_CLASS"&&q.from)p.set("from",q.from);
+ if(kind==="LIVE_CLASS"&&q.to)p.set("to",q.to);
  const type=kind==="VIDEO"?"video":kind==="RESOURCE"?"resource":"live-class";
  return "/api/academics/college-content-export/"+type+(p.size?"?"+p.toString():"");
 }

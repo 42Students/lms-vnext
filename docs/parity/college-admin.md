@@ -494,6 +494,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Live Classes
+**IST date-window CSV parity PARTIAL (2026-10-15):** Downloaded live-class schedule metadata now uses the same chosen from/through IST dates as on-screen pagination, without leaking meeting links. Calendar selectors pass through bounded service validation, with owned/absent-date fixture assertions; runtime and browser proof still pending.
+
 **IST day-range scheduling filter PARTIAL (2026-10-15):** Saved LIVE_CLASS content now filters on configured start/end instants overlapping bounded IST-local days, preserving day selectors in paginated URLs. Strict range and tenant-scoped PostgreSQL fixture authored; independent runtime/browser acceptance remains outstanding.
 
 **Live-class schedule CSV PARTIAL (2026-10-15):** A strictly own-college, formula-neutralized 1,000-row Live Classes schedule export lists persisted session/course/lesson metadata and UTC ISO start/end instants; no private meeting URLs or storage keys. The downloaded CSV is explicit about UTC timestamps, unlike the IST UI. PG fixture covers current-college/foreign/wrong-role and secret exclusion; runtime/browser acceptance remains open.

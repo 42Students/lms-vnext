@@ -12,6 +12,8 @@ describe("college video metadata CSV",()=>{
   expect(href).toContain("scope=SECTION");
   expect(collegeContentCsvHref("LIVE_CLASS",{...q,view:"PAST"})).toContain("view=PAST");
   expect(collegeContentCsvSchema.safeParse({view:"TOMORROW"}).success).toBe(false);
+  expect(collegeContentCsvSchema.safeParse({from:"tomorrow"}).success).toBe(false);
+  expect(collegeContentCsvHref("LIVE_CLASS",{...q,view:"ALL",from:"2026-11-01",to:"2026-11-01"})).toContain("from=2026-11-01");
  });
  it("neutralizes metadata and contains no storage identifiers",()=>{
   const csv=renderCollegeContentMetadataCsv([{
