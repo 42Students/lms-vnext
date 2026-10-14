@@ -28,10 +28,11 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
   const projectsEnabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
   const empty=()=>({
     enabled:false as const,query,projectTitle:scope.project.title,
+    projectStatus:scope.project.status,
     team:{learners:0,mentors:0,primaryRecorded:false},
     ...mentorTeamMeetingsPage(0,1),items:[] as {
       id:string;title:string;status:string;type:string;
-      startsAt:Date;endsAt:Date;timeZone:string;hasOutcome:boolean;
+      startsAt:Date;endsAt:Date;updatedAt:Date;timeZone:string;hasOutcome:boolean;
     }[],
   });
   if(!projectsEnabled)return empty();
@@ -62,6 +63,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     status:projectMeetings.status,type:projectMeetings.meetingType,
     startsAt:projectMeetings.startsAt,endsAt:projectMeetings.endsAt,
     timeZone:projectMeetings.timeZone,outcome:projectMeetings.outcome,
+    updatedAt:projectMeetings.updatedAt,
   }).from(projectMeetings)
     .where(and(eq(projectMeetings.projectId,scope.project.id),
       query.status==="ALL"?undefined:eq(projectMeetings.status,query.status)))
@@ -69,6 +71,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     .limit(page.pageSize).offset((page.page-1)*page.pageSize);
   return {
     enabled:true as const,query,projectTitle:scope.project.title,
+    projectStatus:scope.project.status,
     team:{
       learners:teamRows.filter(row=>row.role==="LEARNER").length,
       mentors:teamRows.filter(row=>row.role==="MENTOR").length,

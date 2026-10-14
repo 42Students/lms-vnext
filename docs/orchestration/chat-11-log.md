@@ -59,3 +59,40 @@
 - Added central projects.read guard and isolated PG role/foreign/disabled
   fixture plus pure model unit coverage; tests not run here.
 - PARTIAL: authenticated browser/download parity, paging and CLI/DB evidence.
+
+
+## G — Mentor scheduled meeting reschedule (2026-10-14)
+- Confirmed IST wall-clock modal with exact-project PATCH and same-origin guard.
+- Active assigned Mentor, central projects.read, locked project/meeting,
+  SQL millisecond CAS and same-project overlapping meeting denial.
+- Transactional sanitized activity; declared conflict code, source-authored
+  model/unit and isolated PostgreSQL success/stale/foreign/role tests.
+- PARTIAL: tests/browser unexecuted and cross-project collision policy unresolved.
+
+
+## H — Mentor exact-project activity export (2026-10-14)
+- Read-only GET export, max 200 scoped persisted events using existing Mentor
+  project/college/permission checks and redacted event projection.
+- Formula-neutralized CSV, IST dates, explicit truncation and no raw metadata.
+- Unit and unique-fixture positive/role/foreign/disabled PostgreSQL tests
+  authored; no runtime test results claimed.
+- PARTIAL pending desktop/mobile download and actual CI/PG checks.
+
+
+## I — Mentor task review priority and queue ordering (2026-10-14)
+- Added typed priority triage to existing current-Mentor pending queue:
+  priority selection and oldest/newest persisted submittedAt ordering.
+- Existing exact-task submission action remains the only review mutation.
+- Own-project PostgreSQL test with HIGH/LOW task submissions, foreign/role/
+  disabled denial and pure query/href unit tests authored, not executed.
+- PARTIAL: real PG/CI/browser and historic review parity pending.
+
+
+## J — Mentor reviewed task history CSV (2026-10-14)
+- Implemented GET-only capped (200), formula-neutralized review-decision CSV
+  over current assigned Mentor project history and strict stored status filters.
+- Added UI download control, truncated count, IST timestamps and no private
+  submission content, reviewer identity or learner contact.
+- Pure unit and disposable PostgreSQL successful/foreign/wrong-role/disabled
+  fixtures authored, not run. No new permissions or schema writes.
+- PARTIAL pending full CLI and browser evidence.

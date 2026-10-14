@@ -57,6 +57,17 @@ export default async function MentorProjectActivityHistoryPage({
       <p className="text-sm text-body">
         {data.total} matching persisted event{data.total===1?"":"s"}
       </p>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/projects/"+encodeURIComponent(projectId)+
+          "/mentor-activity-export"+(data.query.importance==="ALL"?"":
+            "?importance="+encodeURIComponent(data.query.importance))}
+          download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          Export recorded events CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status">
+          Export omits {data.total-200} additional matching events.
+        </span>:null}
+      </div>
       {data.items.length===0 ? <EmptyState title="No recorded project activity"
         description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred." />
         : <ol className="grid gap-3">{data.items.map(event=>
