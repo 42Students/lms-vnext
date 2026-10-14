@@ -305,3 +305,27 @@ successful edit/audit plus forged Mentor, foreign college, stale version and
 untrusted field denial are authored. They require independent execution.
 The Project Sprints parent row remains PARTIAL pending verified browser,
 accessibility, fresh-DB regression and full legacy controls.
+
+## Mentor task metadata PATCH — source-only PARTIAL (2026-10-14)
+
+A new two-stage, mobile-friendly **Edit task** dialog on the existing Mentor
+Project Board edits only registered `project_tasks.title`, `description`,
+`acceptance_criteria` and `priority`. It uses a review/confirmation step and
+a same-origin `PATCH /api/projects/[projectId]/tasks/[taskId]/details` route.
+Strict Zod input rejects injected tenant IDs, assignment/sprint fields and
+workflow status. The service obtains current persisted Mentor/project lifecycle
+access, central `projects.read` and the optional Projects module, then
+transaction-locks the exact same-college project and task. It rejects shipped
+releases, completed sprints, completed or in-review tasks, no-ops, and stale
+millisecond `expectedUpdatedAt` tokens, accounting for PostgreSQL's
+microsecond timestamp storage. A committed update produces exactly one
+sanitized `projects.task.details_updated` actor/college audit inside the same
+transaction, with changed field names but no private description or learner
+submission URL in metadata. Existing Board status transitions and review
+actions remain separate. Tests include Zod/route unit assertions and a real
+disposable-PostgreSQL fixture covering a successful update and audit,
+forged-member, cross-college, stale-token and untrusted-field denials,
+with unique template/project names and full event/fixture cleanup.
+These tests are authored **but not executed here**; do not mark Board
+or task reviews DONE without fresh-DB, lint, typecheck and mobile/browser
+proof. No unmigrated assignee/workload data has been invented.

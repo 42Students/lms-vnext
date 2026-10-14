@@ -29,6 +29,8 @@ describe("Mentor portfolio models", () => {
     expect(safeMentorProjectEventLabel("projects.project.created")).toBe("Project created");
     expect(safeMentorProjectEventLabel("projects.task.reviewed"))
       .toBe("Task review decision recorded");
+    expect(safeMentorProjectEventLabel("projects.task.details_updated"))
+      .toBe("Task details updated");
     expect(safeMentorProjectEventLabel("secret:person@example.com")).toBe("Project activity recorded");
   });
   it("rejects arbitrary caller-provided college, user and project identifiers", () => {
