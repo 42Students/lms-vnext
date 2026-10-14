@@ -1077,3 +1077,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L29-018 PARTIAL:** Learner Notifications mobile filter tabs now wrap into a two-column layout rather than requiring horizontal scrolling, expose a concise active-filter/result summary, and constrain long notification text and action links at 375px. Only the learner inbox wrapper changes; other role lists are unaffected. Pure model and own-inbox PG tests authored; device/browser/keyboard execution pending.
+
+
+**2026-10-15 chat-5 L30-023 PARTIAL:** Learner Profile now makes legacy publications/awards discoverable without inventing a dedicated verified publication entity: it labels saved achievements as possible awards and only explicitly publication-labelled, learner-authored metadata as publications. Full section editors remain the canonical authorship workflow, with no promotion to verified status. Pure model and self-seeded own-profile PostgreSQL role/tenant/suspension tests authored. Exact legacy data entry, storage migration, runtime and mobile/browser parity remain open.
