@@ -8,9 +8,10 @@ describe("College Admin atomic remove and lock contract", () => {
       action: "REMOVE_AND_LOCK", membershipId, expectedVersion: 2, confirm: true,
     });
     expect(collegeStudyMemberLabel(action)).toContain("lock");
+    expect(collegeStudyMemberSchema.safeParse({action:"REMOVE_AND_LOCK",membershipId,expectedVersion:0,confirm:true}).success).toBe(true);
     for (const candidate of [
       { action: "REMOVE_AND_LOCK", membershipId, expectedVersion: 2 },
-      { action: "REMOVE_AND_LOCK", membershipId, expectedVersion: 0, confirm: true },
+      { action: "REMOVE_AND_LOCK", membershipId, expectedVersion: -1, confirm: true },
       { action: "REMOVE_AND_LOCK", membershipId, expectedVersion: 2, confirm: false },
       { action: "REMOVE_AND_LOCK", membershipId, expectedVersion: 2, confirm: true, collegeId: membershipId },
     ]) expect(collegeStudyMemberSchema.safeParse(candidate).success).toBe(false);

@@ -24,3 +24,7 @@ This document records implementation scope only, not closure or release approval
 ## Item 4 — Filtered People CSV report — PARTIAL (2026-10-14)
 
 New College Admin-only bounded CSV of persisted, filtered memberships. Tenant-scoped service with 1,000-row limit, formula neutralization, truncation disclosure and private UID exclusion. Model/isolated PG positive and denial tests authored, not executed. Remaining: precise legacy report parity, bulk consistency and runtime/browser proof. Also fixed Item 3 stale-version test to use a positive nonmatching version instead of a Zod-invalid zero.
+
+### Item 3 follow-up correction (2026-10-14)
+
+Registered lms_group_members.version starts at zero. Remove & Lock now permits optimistic token version 0 and rejects negative versions; the unit witness covers this initial-version case. No acceptance tests were executed in this session.

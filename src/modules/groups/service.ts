@@ -573,7 +573,7 @@ export async function removeAndLockCollegeStudyMember(
   context: RequestContext, groupIdInput: string, memberIdInput: string, expectedVersion: number,
 ) {
   const groupId = uuid.parse(groupIdInput), memberId = uuid.parse(memberIdInput);
-  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1)
+  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0)
     throw new GroupServiceError("GROUP_MEMBER_STALE");
   return getDb().transaction(async tx => {
     const group = await lockGroup(tx, groupId);
