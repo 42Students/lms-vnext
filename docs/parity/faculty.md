@@ -1398,3 +1398,6 @@ A locked, version-checked Faculty Quiz metadata-only EDIT now returns a typed 40
 
 ## 2026-10-15 R4 published Quiz question-bank denial fixture — PARTIAL
 The integration fixture now asserts that replacing the question bank after publication is forbidden, while metadata-only edits remain legal. Existing stale-token, learner-role and wrong-Section expectations remain. Awaiting executed PostgreSQL verification.
+
+## 2026-10-15 R4 teaching-list fixture role alignment — PARTIAL
+The integration fixture now filters by its actual CO_TEACHER assignment, verifies another user's PRIMARY assignment is not returned, and retains the persisted revocation and foreign-college checks. Awaiting executed PostgreSQL verification.

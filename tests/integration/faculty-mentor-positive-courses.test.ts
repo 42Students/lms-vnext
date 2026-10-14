@@ -542,7 +542,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("filters only persisted Faculty teaching deliveries and invalidates revoked assignments",async()=>{
     const {delivery}=await fixture();
-    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY",page:999});
+    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"CO_TEACHER",page:999});
+    const primary=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY"});
+    expect(primary.items).toEqual([]);
     expect(list.items.map(item=>item.deliveryId)).toEqual([delivery.id]);
     expect(list.page).toBe(1);
     expect(list.items.length).toBeLessThanOrEqual(48);
