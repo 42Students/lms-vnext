@@ -213,6 +213,7 @@ export async function stagePlacementRoundResult(
   context: RequestContext,
   roundIdInput: string,
   rawInput: StagePlacementRoundResultInput,
+  expectedCurrentResultId?: string | null,
 ) {
   const roundId = placementRoundIdSchema.parse(
     roundIdInput,
@@ -359,6 +360,17 @@ export async function stagePlacementRoundResult(
       )
       .limit(1);
 
+    // Confirmed TPO submissions use the actual current row identity.
+    // Evaluate this under the existing application/round row locks so a
+    // stale operator screen can never silently overwrite a newer result.
+    if (
+      expectedCurrentResultId !== undefined &&
+      (current?.id ?? null) !== expectedCurrentResultId
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_NOT_FOUND",
+      );
+    }
     if (current?.status === "APPLIED") {
       throw new PlacementsServiceError(
         "PLACEMENT_RESULT_ALREADY_APPLIED",
@@ -443,6 +455,30 @@ export async function stagePlacementRoundResult(
         submittedAt: now,
       })
       .returning();
+
+    if (!staged) {
+      throw new PlacementsServiceError("PLACEMENT_RESULT_NOT_FOUND");
+    }
+
+    if (expectedCurrentResultId !== undefined) {
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RESULT_STAGED,
+        collegeId: job.collegeId,
+        subjectType: "placement_result",
+        subjectId: staged.id,
+        subjectLabel: round.name,
+        summary: "Round result staged for " + job.title,
+        metadata: {
+          jobId: job.id,
+          roundId: round.id,
+          applicationId: input.applicationId,
+          outcome: staged.outcome,
+          version: staged.version,
+        },
+        groupKey: "placement-job:" + job.id + ":results",
+        dedupeKey: "placement-result:" + staged.id + ":staged",
+      });
+    }
 
     return staged;
   });
