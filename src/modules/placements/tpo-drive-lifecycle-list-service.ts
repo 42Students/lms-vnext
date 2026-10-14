@@ -39,6 +39,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;
    const scope=and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.seasonId,season.id),
     deadlineCondition,
+    filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     isNull(placementJobs.archivedAt),filters.search?or(
      ilike(placementJobs.title,tpoApplicantExportSearchPattern(filters.search)),
      ilike(placementCompanies.name,tpoApplicantExportSearchPattern(filters.search))):undefined);
@@ -78,7 +79,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"}):
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
   return {
-    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,
+    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
   };
