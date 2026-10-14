@@ -102,5 +102,10 @@ export function facultyRemoveQuizOption<T extends {correct:boolean}>(
  const remaining=question.options.filter((_,i)=>i!==index).map(o=>({...o}));
  if(question.type==="SINGLE_CHOICE"&&!remaining.some(o=>o.correct))
   remaining[0]!.correct=true;
+ if(question.type==="MULTIPLE_CHOICE"){
+  const selected=remaining.filter(option=>option.correct).length;
+  if(selected===0)remaining[0]!.correct=true;
+  if(selected===remaining.length)remaining[remaining.length-1]!.correct=false;
+ }
  return remaining;
 }
