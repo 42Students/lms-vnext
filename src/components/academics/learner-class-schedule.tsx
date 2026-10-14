@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
+import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
   useMemo,
@@ -283,6 +284,7 @@ export function LearnerClassSchedule({
   );
   const monthKeys=useMemo(()=>istMonthGridKeys(anchor.getFullYear(),anchor.getMonth()+1),[anchor]);
   const agenda=useMemo(()=>istDayAgenda(filteredEvents,chosenDay),[filteredEvents,chosenDay]);
+  const dayIcs=useMemo(()=>learnerScheduleDayIcs(agenda,chosenDay),[agenda,chosenDay]);
   function movePeriod(direction:-1|1) {
     const next=shiftCalendarAnchor(anchor,view,direction);
     setAnchor(next);
@@ -525,9 +527,17 @@ export function LearnerClassSchedule({
                   })}
                 </div>
                 <section className="rounded-xl border border-border bg-surface-subtle p-3 sm:p-4" aria-label="Selected day agenda">
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
-                  </h3>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
+                    </h3>
+                    {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
+                      href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                      Download selected day (.ics)
+                    </a> : null}
+                  </div>
+                  {dayIcs.truncated ? <p className="mt-2 text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
                   {agenda.length ? <div className="mt-3 grid gap-3 md:grid-cols-2">
                     {agenda.map(event=><EventCard key={event.id} event={event} courseBasePath={courseBasePath}/>)}
                   </div> : <p className="mt-2 text-sm text-muted-foreground">No classes on this day.</p>}
