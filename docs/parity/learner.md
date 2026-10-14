@@ -288,6 +288,19 @@ Legacy contract includes:
 
 ## Page: Applications
 
+**2026-10-14 application detail extension (PARTIAL):** the existing
+applications drawer now links to separate read-only Application History and
+Company Preview pages. History reads only registered
+`placement_application_status_history` (migration 0021), showing actual status
+transitions or a truthful no-records state without private actor/reason fields.
+Company Preview reads registered company/relationship records (migration 0016)
+only for an application owned by the authenticated learner, sanitizes HTTPS
+website links and shows honest no-biography/logo states. Both preserve central
+learner placement access checks, explicit `placements.read`, UUID validation,
+loading/retry, responsive layouts and unknown/cross-member not-found. These
+pages do not yet reproduce legacy in-page modals; executed browser and
+database acceptance remain open.
+
 **2026-10-13 implementation update:** learner's application list now has
 URL-aware search, All/In Progress/Completed views, stage filters,
 recent-activity/company/oldest sort and 20-row pages. Each Journey
