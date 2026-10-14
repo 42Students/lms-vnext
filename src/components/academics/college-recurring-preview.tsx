@@ -16,6 +16,10 @@ export function CollegeRecurringPreview({
   const [sectionId, setSectionId] = useState("");
   const [title, setTitle] = useState("Class session");
   const [created, setCreated] = useState<number | null>(null);
+  const [lastPreviewKey, setLastPreviewKey] = useState("");
+  function previewKey() {
+    return JSON.stringify({sectionId,from,to,weekdays,startTime,endTime,title,facultyId,hallId});
+  }
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [startTime, setStartTime] = useState("09:00");
@@ -52,6 +56,7 @@ export function CollegeRecurringPreview({
         const payload: unknown = await response.json();
         if (!response.ok) throw new Error(collegePreviewErrorLabel(payload));
         setResult(payload as Result);
+        setLastPreviewKey(previewKey());
       } catch (err) {
         setError(err instanceof Error ? err.message : "Schedule preview failed");
       }
@@ -60,6 +65,10 @@ export function CollegeRecurringPreview({
   function execute() {
     const version = selected?.updatedAt;
     if (!version || !result || result.blocked>0 || result.ready===0) return;
+    if (lastPreviewKey !== previewKey()) {
+      setError("Schedule fields changed since the preview. Preview this pattern again before saving.");
+      return;
+    }
     if (!window.confirm("Create "+result.ready+" scheduled sessions? Every conflict is rechecked; either all sessions are committed or none.")) return;
     setError("");
     setCreated(null);
@@ -77,6 +86,7 @@ export function CollegeRecurringPreview({
         if (!response.ok) throw new Error(value.error ?? "Scheduling failed");
         setCreated(value.created ?? 0);
         setResult(null);
+        setLastPreviewKey("");
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "Scheduling failed");
       }

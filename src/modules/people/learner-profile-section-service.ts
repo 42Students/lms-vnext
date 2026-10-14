@@ -67,7 +67,7 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
       summary:"Learner updated profile section",
       metadata:{section:input.section,itemCount:input.items.length},
     });
-    const document=saved?.document ?? {};
-    return {section:input.section,items:document[input.section] ?? input.items};
+    const savedDocument=saved?.document ?? {};
+    return {section:input.section,items:savedDocument[input.section] ?? input.items};
   });
 }
