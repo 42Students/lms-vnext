@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
+import { TemplateMetadataEditControl } from "@/components/projects/template-metadata-edit-control";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getProjectTemplateDetail } from "@/modules/projects/template-service";
@@ -54,6 +55,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
+            {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
+              <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
+                summary={detail.template.summary} currentVersion={detail.template.currentVersion}
+                updatedAt={detail.template.updatedAt.toISOString()} /> : null}
             {can(context, "project-template.manage") || context.adminScope?.collegeId ? (
             <ProjectTemplateActions
               templateId={detail.template.id}
