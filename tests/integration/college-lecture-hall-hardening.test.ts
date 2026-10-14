@@ -34,15 +34,15 @@ describe.skipIf(!enabled)("College Admin lecture hall transaction and scheduled-
     if (!pool) throw Error("DB03 disposable PostgreSQL required");
     await pool.query(
       "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
-      "VALUES($1,$2,$3,$3,'2026-07-01','2026-12-31')",
+      "VALUES($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')",
       [ids.period, SEED_IDS.collegeA, label],
     );
-    await pool.query("INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$3,8)",
+    await pool.query("INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3::text,$3::text,8)",
       [ids.program, SEED_IDS.departmentA, label]);
-    await pool.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$3,$4)",
+    await pool.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3::text,$3::text,$4)",
       [ids.cohort, ids.program, label, ids.period]);
     await pool.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code,capacity) " +
-      "VALUES($1,$2,$3,$4,$4,70)", [ids.section, ids.cohort, ids.period, label]);
+      "VALUES($1,$2,$3,$4::text,$4::text,70)", [ids.section, ids.cohort, ids.period, label]);
   });
   afterAll(async () => {
     try {

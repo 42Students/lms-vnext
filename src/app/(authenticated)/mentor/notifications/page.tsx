@@ -99,7 +99,9 @@ export default async function MentorNotificationsPage({
       <h2 id="mentor-personal-notifications" className="text-lg font-semibold text-foreground">
         Personal notifications
       </h2>
-      <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount} baseHref={MENTOR_INBOX} />
+      <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
+        baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
+        confirmMarkAll />
       {inbox.cursor.invalid
         ? <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
@@ -109,7 +111,7 @@ export default async function MentorNotificationsPage({
             </Link>
           </div>
         : <>
-            <NotificationList items={items}
+            <NotificationList items={items} readEndpoint="/api/mentor/notifications"
               emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}

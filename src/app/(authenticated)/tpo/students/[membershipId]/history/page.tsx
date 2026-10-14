@@ -53,7 +53,7 @@ export default async function TpoLearnerPlacementHistoryPage({
       <PageHeader
         eyebrow="TPO · Students"
         title={history.learner.displayName + " · Placement history"}
-        description="Read-only application, applied-round, offer-version and joining evidence across persisted placement seasons."
+        description="Read-only application status, versioned round results, offer transitions and joining evidence across persisted placement seasons."
         actions={
           <Link
             href={"/tpo/students/" +
@@ -68,6 +68,8 @@ export default async function TpoLearnerPlacementHistoryPage({
         {[
           ["Applications (all seasons)", history.total],
           ["Offer versions (this page)", history.pageFacts.offerVersions],
+          ["Round result versions (this page)", history.pageFacts.resultVersions],
+          ["Staged round results (this page)", history.pageFacts.stagedResults],
           ["Accepted offer versions (this page)", history.pageFacts.acceptedOfferVersions],
           ["Confirmed joins (this page)", history.pageFacts.confirmedJoins],
         ].map(([label, value]) => (
@@ -107,6 +109,25 @@ export default async function TpoLearnerPlacementHistoryPage({
                 Applied {dateFormat.format(new Date(item.submittedAt))} IST ·
                 Channel: {item.channel}
               </p>
+              <section aria-label="Application status changes">
+                <h3 className="mb-2 font-semibold text-foreground">
+                  Application status history
+                </h3>
+                {item.applicationEvents.length === 0 ? (
+                  <p className="text-sm text-body">
+                    No separate application status events are recorded.
+                  </p>
+                ) : (
+                  <ul className="flex flex-wrap gap-2 text-sm">
+                    {item.applicationEvents.map((event) => (
+                      <li key={event.id} className="rounded-md border border-border px-3 py-2">
+                        {event.fromStatus ?? "NEW"} → {event.toStatus}
+                        {" · "}{dateFormat.format(new Date(event.at))} IST
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
               <div className="grid gap-4 lg:grid-cols-2">
                 <section>
                   <h3 className="mb-2 font-semibold text-foreground">
@@ -123,6 +144,31 @@ export default async function TpoLearnerPlacementHistoryPage({
                       ))}
                     </ul>
                   )}
+                  <details className="mt-4 rounded-md border border-border p-3">
+                    <summary className="cursor-pointer text-sm font-semibold text-foreground">
+                      All recorded round result versions ({item.resultVersions.length})
+                    </summary>
+                    {item.resultVersions.length === 0 ? (
+                      <p className="mt-2 text-sm text-body">
+                        No staged, superseded or applied result versions are recorded.
+                      </p>
+                    ) : (
+                      <ul className="mt-3 space-y-2 text-sm">
+                        {item.resultVersions.map((version) => (
+                          <li key={version.id} className="rounded-md bg-surface-secondary p-3">
+                            {version.name} · version {version.version}:{" "}
+                            <strong>{version.status}</strong> · {version.outcome}
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Recorded {dateFormat.format(new Date(version.submittedAt))} IST.
+                              {version.status !== "APPLIED"
+                                ? " Not an applied final outcome."
+                                : " Applied result."}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </details>
                 </section>
                 <section>
                   <h3 className="mb-2 font-semibold text-foreground">
@@ -148,6 +194,16 @@ export default async function TpoLearnerPlacementHistoryPage({
                           <p className="mt-1">
                             Joining: {offer.joiningStatus ?? "No outcome recorded"}
                           </p>
+                          {offer.statusEvents.length > 0 ? (
+                            <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                              {offer.statusEvents.map((event) => (
+                                <li key={event.id}>
+                                  {event.fromStatus ?? "NEW"} → {event.toStatus}
+                                  {" · "}{dateFormat.format(new Date(event.at))} IST
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
                         </li>
                       ))}
                     </ul>
@@ -176,7 +232,10 @@ export default async function TpoLearnerPlacementHistoryPage({
       <p className="text-xs leading-5 text-muted-foreground">
         Source is registered in-app placement data, including archived historical drives.
         External offers, registration choices and background verification are not
-        inferred from these records. No learner eligibility is changed on this page.
+        inferred from these records. STAGED/SUPERSEDED round results are audit
+        versions, not final candidate outcomes. Internal comments, private
+        reasons and messaging are not displayed. No learner eligibility is changed
+        on this page.
       </p>
     </div>
   );

@@ -20,6 +20,7 @@ import {
 } from "@/db/schema/course-upload-receipts-staged";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -328,6 +329,18 @@ export async function submitCourseAssignment(
         })
         .returning();
 
+      // Audit only identifiers and type, never the learner's answer.
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_SUBMITTED,
+        collegeId: assignment.collegeId,
+        organizationId: assignment.organizationId,
+        subjectType: "course_assignment",
+        subjectId: assignmentId,
+        summary: "Learner submitted assignment",
+        metadata: { submissionId: created!.id, deliveryId: input.deliveryId, submissionType: input.submissionType },
+        dedupeKey: "assignment-submission:" + created!.id + ":submitted",
+      });
+
       if (
         input.submissionType === "FILE"
       ) {
@@ -440,6 +453,7 @@ export async function getMyAssignmentSubmission(
   assignmentIdInput: string,
   deliveryIdInput: string,
 ) {
+  await requireOwnCourseLearnerRead(context);
   const assignmentId =
     courseAssignmentIdSchema.parse(
       assignmentIdInput,
@@ -732,6 +746,11 @@ export async function publishAssignmentGrade(
     );
   }
 
+  // Even a duplicate publish must carry the current optimistic token:
+  // otherwise a stale browser tab reports success after a concurrent regrade.
+  if (current.version !== input.expectedVersion) {
+    throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
+  }
   if (current.gradePublished) {
     return current;
   }

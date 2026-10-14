@@ -49,18 +49,11 @@ describe.skipIf(!enabled)("College Admin STUDY_GROUP membership writes, isolated
       [group, SEED_IDS.collegeA, label, SEED_IDS.collegeAdminUser],
     );
   });
+  // Immutable group-member and activity histories are append-only. Keep this
+  // UUID-scoped, per-run fixture and all referenced rows for audit integrity.
   afterAll(async () => {
-    try {
-      if (pool) {
-        await pool.query("DELETE FROM activity_events WHERE subject_type='lms_group_member' AND metadata->>'groupId' = $1", [group]);
-        await pool.query("DELETE FROM lms_group_member_events WHERE group_id=$1", [group]);
-        await pool.query("DELETE FROM lms_group_members WHERE group_id=$1", [group]);
-        await pool.query("DELETE FROM lms_groups WHERE id=$1", [group]);
-        await pool.query("DELETE FROM membership_roles WHERE id=$1", [extra.role]);
-        await pool.query("DELETE FROM college_memberships WHERE id=$1", [extra.membership]);
-        await pool.query("DELETE FROM users WHERE id=$1", [extra.user]);
-      }
-    } finally { await pool?.end(); await closeDatabaseConnection(); }
+    await pool?.end();
+    await closeDatabaseConnection();
   });
   it("adds, locks, unlocks and removes; captures immutable history", async () => {
     const id = SEED_IDS.learnerCollegeAMembership;

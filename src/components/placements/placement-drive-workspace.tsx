@@ -19,6 +19,8 @@ import { listPlacementRoleOptions } from "@/modules/placements/role-option-servi
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
+import { TpoDriveLifecycleControls } from "./tpo-drive-lifecycle-controls";
+import { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 import { PlacementOfferControls } from "./placement-offer-controls";
 import { PlacementRoleOptions } from "./placement-role-options";
 import { PlacementRequestQueue } from "./placement-request-queue";
@@ -66,6 +68,9 @@ export async function PlacementDriveWorkspace({
   ]);
 
   const isTpo = hasMembershipRole(context, "TPO");
+  const lifecycleReadiness = isTpo
+    ? await getTpoDriveLifecycleReadiness(context, jobId)
+    : null;
   const [collisionAssessment, shortlist] = isTpo
     ? await Promise.all([
         getTpoScheduleConflicts(context, { days: 90 }).catch(() => null),
@@ -431,16 +436,15 @@ export async function PlacementDriveWorkspace({
           }),
         )}
       />
-      <PlacementJobLifecycleControls
-        jobId={jobId}
-        status={
-          driveDay.job.status as
-            | "DRAFT"
-            | "PUBLISHED"
-            | "CLOSED"
-            | "ARCHIVED"
-        }
-      />
+      {lifecycleReadiness ? (
+        <TpoDriveLifecycleControls readiness={lifecycleReadiness} />
+      ) : (
+        <PlacementJobLifecycleControls
+          jobId={jobId}
+          status={driveDay.job.status as
+            | "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED"}
+        />
+      )}
       <PlacementDriveDayOverview
         driveDay={driveDay}
       />
