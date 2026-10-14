@@ -565,3 +565,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Drive-grouped notification page — PARTIAL:** Read-only Messages screen groups its current 25 authorized notification rows by drive, showing per-page unread totals while preserving record-level mark-read actions. Explicitly states this is *not* persisted conversation threads or cross-page totals. Pure model/unit added; recipient/company/college query remains the same. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Round conflict deep links — PARTIAL:** Existing within-drive, known-duration overlap indicators now deep-link each *authorized persisted* conflicting round to the Rounds selector using an encoded roundId. Unknown IDs are filtered rather than projected, and this does not infer interviewer or room conflicts. Pure model regression authored; foreign-company not-found behavior remains with existing job resolver. Browser acceptance pending.
