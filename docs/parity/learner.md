@@ -362,6 +362,17 @@ Legacy contract audited from `ApplicationsContent`:
 
 ## Page: Assessments
 
+**2026-10-14 official-results extension (PARTIAL):** linked, read-only
+`/learn/my-placements/assessments/results` lists persisted, applied
+TEST/VENDOR_TEST results from the Learner's authorized applications.
+All/Passed/Not passed/Other views show stored scores and shared candidate
+feedback, if any, with actual IST timestamps, application/drive links and
+truthful first-run or filtered-empty states. Unpublished results, other round
+types and scheduled-but-unreported assessments are not treated as outcomes.
+The legacy Pending/Completed employer-submission workflow, browser and
+executed DB checks remain outstanding.
+
+
 **Learner schedule browser update (2026-10-13):** dedicated Assessment rounds
 now support employer/round search, Upcoming/Past/Awaiting schedule buckets,
 Today/7-day urgency filters, sorting, empty/filter states and a details drawer.
@@ -476,6 +487,15 @@ Legacy contract:
 - [ ] Mobile agenda fallback is verified.
 
 ## Page: Jobs
+
+**2026-10-14 closing-soon extension (PARTIAL):** the published Learner
+Drives page has an URL-backed seven-day application-deadline toggle. It
+uses a single server clock snapshot passed through the authoritative
+membership-scoped job service and existing deadline policy, and does not
+invent deadlines for unscheduled or already-expired jobs. Pure-model and
+DB scope-denial tests are authored; saved-job storage is still unregistered,
+and legacy tab/browser parity remain open.
+
 
 **2026-10-13 browse update:** the dedicated Learner Drives page now
 filters the persisted role-option feed by search text, employment type,

@@ -3,6 +3,7 @@ import type { LearnerPlacementJobItem } from "@/components/placements/learner-pl
 import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
 import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/page-header";
+import { getOwnLearnerDriveBrowse } from "@/modules/placements/learner-closing-drives-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
@@ -48,7 +49,7 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
 
 export default async function LearnerPlacementJobsPage() {
   const context = await getCurrentRequestContext();
-  const rows = await listLearnerPlacementJobs(context);
+  const { rows, snapshotNowIso } = await getOwnLearnerDriveBrowse(context);
 
   return (
     <div className="space-y-6">
@@ -58,7 +59,7 @@ export default async function LearnerPlacementJobsPage() {
         description="Placement drives and roles available to you."
       />
       <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
-        <LearnerJobsBrowse items={rows.map(toItem)} />
+        <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso} />
       </Suspense>
     </div>
   );

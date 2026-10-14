@@ -8,8 +8,8 @@ function read(path: string) {
 describe("Learner Drives browse integration", () => {
   it("keeps server-authorized jobs while filtering only the dedicated Drives route", () => {
     const page = read("src/app/(authenticated)/learn/my-placements/jobs/page.tsx");
-    expect(page).toContain("listLearnerPlacementJobs(context)");
-    expect(page).toContain("<LearnerJobsBrowse items={rows.map(toItem)} />");
+    expect(page).toContain("getOwnLearnerDriveBrowse(context)");
+    expect(page).toContain("<LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso} />");
     const home = read("src/app/(authenticated)/learn/my-placements/page.tsx");
     expect(home).toContain("<LearnerPlacementJobs items={items} />");
   });
@@ -20,7 +20,7 @@ describe("Learner Drives browse integration", () => {
     expect(browse).toContain("popstate");
     expect(browse).toContain("router.replace");
     expect(browse).toContain("PAGE_SIZE = 20");
-    expect(browse).toContain("filterLearnerPlacementJobs(items, filters)");
+    expect(browse).toContain("filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso))");
     expect(browse).toContain("Eligible to apply only");
   });
 });
