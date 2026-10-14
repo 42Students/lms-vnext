@@ -1047,3 +1047,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-004 PARTIAL:** Mobile Week view now preserves seven daily slots (including explicitly empty dates) instead of skipping unscheduled days. Scheduled items still come from the learner-scoped read. Browser/device and executed test acceptance outstanding.
+
+
+**2026-10-15 chat-5 L17-005 PARTIAL:** Day mode includes a scoped IST-day timeline summary with real first/last scheduled times, distinct from week/month. Tests authored; execute PG, static and browser acceptance before closing.

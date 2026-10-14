@@ -13,6 +13,7 @@ import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-c
 import { learnerCareerDayChips } from "@/modules/placements/learner-career-day-chips-model";
 import { learnerCareerKindCounts } from "@/modules/placements/learner-career-kind-count-model";
 import { learnerCareerWeekDays } from "@/modules/placements/learner-career-week-days-model";
+import { learnerCareerDayTimeline } from "@/modules/placements/learner-career-day-timeline-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
@@ -76,6 +77,7 @@ export function LearnerCareerCalendar({
     : events.filter((event) => event.kind === filter);
   const period = careerCalendarPeriod(filtered, anchor, view);
   const monthCounts = learnerCareerKindCounts(period.events);
+  const dayTimeline = view === "day" ? learnerCareerDayTimeline(period.events, anchor) : null;
 
   const calendarDays = (() => {
     if (view !== "month" && view !== "week") return [];
@@ -246,6 +248,17 @@ export function LearnerCareerCalendar({
         </section>
       ) : null}
 
+      {dayTimeline ? (
+        <section className="rounded-xl border border-border bg-surface p-4" aria-label="Selected day schedule summary">
+          <h3 className="m-0 text-base font-semibold text-foreground">{prettyDay(anchor)} · Day schedule</h3>
+          <p role="status" className="mt-2 text-sm text-body">
+            {dayTimeline.events.length} scheduled round{dayTimeline.events.length===1?"":"s"} on this IST date.
+            {dayTimeline.first ? " First: " + displayDate(dayTimeline.first.start) + "." : ""}
+            {dayTimeline.last && dayTimeline.events.length>1 ? " Last: " + displayDate(dayTimeline.last.start) + "." : ""}
+          </p>
+        </section>
+      ) : null}
+
       {calendarDays.length ? (
         <section className="space-y-4 md:hidden" aria-label="Mobile career calendar agenda">
           <h3 className="text-base font-semibold text-foreground">Agenda by day (IST)</h3>
@@ -283,7 +296,7 @@ export function LearnerCareerCalendar({
       <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 md:block" : "space-y-3"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-base font-semibold text-foreground">
-            {view === "agenda" ? "30-day agenda" : "Events"} · {period.events.length}
+            {view === "agenda" ? "30-day agenda" : view === "day" ? "Day events" : "Events"} · {period.events.length}
           </h3>
           <span className="text-xs text-muted-foreground">
             Times shown in Indian Standard Time
