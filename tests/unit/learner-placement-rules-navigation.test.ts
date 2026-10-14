@@ -18,6 +18,13 @@ describe("Learner Placement Rules working editor navigation", () => {
     expect(error).toContain("Retry");
   });
 
+  it("sets a safe back origin from the two existing placement entrypoints", () => {
+    const cell = source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
+    const drives = source("src/app/(authenticated)/learn/my-placements/jobs/page.tsx");
+    expect(cell).toContain('/learn/my-placements/rules?from=cell');
+    expect(drives).toContain('/learn/my-placements/rules?from=drives');
+  });
+
   it("links academic evidence to its actual Learner placement editor", () => {
     const rules = source("src/app/(authenticated)/learn/my-placements/rules/page.tsx");
     const target = source("src/components/placements/learner-placement-academic-evidence.tsx");
