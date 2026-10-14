@@ -1,0 +1,1 @@
+export default function Loading(){return <div role="status" className="animate-pulse space-y-3"><div className="h-10 w-60 rounded bg-muted"/><div className="h-16 rounded bg-muted"/><div className="h-40 rounded bg-muted"/></div>;}

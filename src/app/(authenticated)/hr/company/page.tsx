@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { ErrorState } from "@/components/ui/error-state";
+import { buildRecruiterCompanyOverview } from "@/modules/placements/recruiter-company-overview-model";
+import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
@@ -21,7 +25,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if (!hasActiveRecruiter(context)) redirect("/dashboard");
 
   const query = await searchParams;
-  const requestedCollegeId = one(query.collegeId) ?? null;
+  const collegeQuery = z.string().uuid().optional().safeParse(one(query.collegeId));
+  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Company & Team" />
+    <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
+      action={<Link href="/hr/company" className="text-primary-text underline">Choose college</Link>} /></div>;
+  const requestedCollegeId = collegeQuery.data ?? null;
   const requestedTab = one(query.tab);
 
   if (requestedTab === "reports") {
@@ -71,6 +79,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     );
   }
 
+  const jobs = await listOwnRecruiterPlacementJobs(context);
+  const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
     <div className="space-y-6">
@@ -150,6 +160,28 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               <dd className="mt-1 text-sm text-foreground">{result.company.primaryDomain ?? "Not provided"}</dd>
             </div>
           </dl>
+          <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
+            <h3 className="text-base font-semibold text-foreground">Hiring footprint with this college</h3>
+            <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[
+                {label: "All visible drives", value: overview.total},
+                {label: "Live drives", value: overview.active},
+                {label: "Closed drives", value: overview.closed},
+              ].map(item=><div key={item.label} className="rounded-lg border border-border bg-surface-secondary p-3">
+                <span className="block text-xs text-muted-foreground">{item.label}</span>
+                <span className="mt-1 block text-xl font-bold tabular-nums text-foreground">{item.value}</span>
+              </div>)}
+            </div>
+            {overview.recent.length ? <div className="mt-4 space-y-2">
+              <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
+              {overview.recent.map(job=><Link key={job.id} href={"/hr/placements/jobs/"+job.id}
+                className="flex flex-wrap justify-between gap-2 rounded-md border border-border p-3 text-sm hover:border-primary">
+                <span className="font-medium text-primary-text">{job.title}</span>
+                <span className="text-muted-foreground">{job.status}</span>
+              </Link>)}
+            </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
+          </section>
         </section>
       ) : (
         <section className="rounded-xl border border-border bg-surface p-5">
