@@ -57,6 +57,11 @@ Uses the shared Faculty-profile schema.
 - [ ] Loading/hard-error/retry/visibility-refresh behavior.
 - [ ] Learner/Faculty/Mentor/TPO role misroutes are fenced.
 
+
+## Page: College Contact Profile
+
+**Additional College Admin contact surface (PARTIAL):** `/college/college-profile` is separate from the legacy personal profile. Read public college display name, support email/phone and HTTPS terms/privacy links; confirmed edits use own-college scope, registered branding validation, optimistic version checks and a privacy-safe activity audit in one transaction. Does not expose personal account edits, sensitive identity data, college code/address or visual branding writes. Loading/error states and denial tests authored; executed disposable PostgreSQL/browser acceptance and final scope decision remain open.
+
 ## Page: Placement Interview Calendar
 **Legacy:** `/college-admin/calendar`
 
@@ -273,6 +278,8 @@ Legacy contract:
 
 ## Page: Electives
 **Legacy:** `/college-admin/electives`
+
+**Write-side PARTIAL:** `/college/electives` includes confirmed slot create/edit via same-origin POST/PATCH, own-college program/period checks, versioned update, enrollment-impacting edit guard, atomic audit, unit and gated DB tests. Feature enablement, full offering capacity, learner choice/finalize and exact legacy/browser parity remain open.
 
 **Read-first PARTIAL (2026-10-14):** `/college/electives` now shows registered DB-0037 elective slots with program, term, optional academic year/period, choice constraints, credits, status and counts of active college-owned course offerings. Search, program/status filters, 25-row pagination, loading/error and honest empty states included. Presence of a slot does **not** verify the college feature switch or a learner choice window. Feature-disabled state, creation/editing, selection/enrollment, capacity enforcement, close/finalize, executed DB/browser parity remain open.
 
@@ -516,6 +523,9 @@ Audited contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Student Group Detail
+
+**PARTIAL read-only dynamic rule preview:** College Admin can open `/college/groups/[groupId]/rule-preview` from the group detail for configured supported V1 rules. Shows persisted criteria and a bounded candidate eligibility projection without writing memberships or exposing applicant evidence. No assertion of capacity/waitlist outcome or full college-wide counts above cap. Rule edit/refresh controls, original legacy behavior, PG execution and browser verification remain open.
+
 **Legacy:** `/college-admin/student-groups/[id]`
 
 Audited contract:
