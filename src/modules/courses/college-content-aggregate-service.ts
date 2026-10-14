@@ -25,7 +25,7 @@ import {
   type CollegeContentKind,
 } from "./college-content-aggregate-model";
 
-import {collegeLiveClassQuerySchema} from "./college-live-classes-model";
+import {collegeLiveClassQuerySchema,istDayBoundary} from "./college-live-classes-model";
 const programDepartment = alias(departments, "content_program_department");
 
 /**
@@ -104,6 +104,8 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
       live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
       live?.view === "PAST" ? lt(lessonContents.endsAt,new Date()) : undefined,
+      live?.from ? gte(lessonContents.endsAt,istDayBoundary(live.from)) : undefined,
+      live?.to ? lt(lessonContents.startsAt,istDayBoundary(live.to,true)) : undefined,
       query.q ? or(
         ilike(lessonContents.title, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
         ilike(courseLessons.name, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
@@ -120,7 +122,7 @@ export async function listCollegeContentAggregate(
   ]);
   const total = counts[0]?.total ?? 0;
   return {
-    kind, query, view:live?.view??"ALL", items, total,
+    kind, query, view:live?.view??"ALL", from:live?.from, to:live?.to, items, total,
     totalPages: collegeContentPageCount(total),
   };
 }

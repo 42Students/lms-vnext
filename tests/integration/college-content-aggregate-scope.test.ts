@@ -221,6 +221,10 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       title:label,courseName:label,offeringId:ids.offering,status:"PUBLISHED",
     });
     expect(mine.items.find(r=>r.id===ids.live)?.startsAt).toBeInstanceOf(Date);
+    const dated=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,from:"2026-11-01",to:"2026-11-01"});
+    const otherDay=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,from:"2026-11-02",to:"2026-11-02"});
+    expect(dated.items.map(r=>r.id)).toContain(ids.live);
+    expect(otherDay.items).toEqual([]);
     const exact=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:label});
     const unknown=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:"NEVER-MATCH"});
     expect(exact.items.map(r=>r.id)).toContain(ids.live);

@@ -36,6 +36,14 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         <option value="PAST">Past sessions</option>
       </select>
     </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
+      <input type="date" name="from" defaultValue={data.from??""}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
+      <input type="date" name="to" defaultValue={data.to??""}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+    </label>
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
   </form>
@@ -58,9 +66,9 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
   <nav aria-label="Live class pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
     <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
     <div className="flex gap-2">
-      {data.query.page>1?<Link href={collegeLiveClassHref({...data.query,view:data.view,page:data.query.page-1})}
+      {data.query.page>1?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page-1})}
         className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link>:null}
-      {data.query.page<data.totalPages?<Link href={collegeLiveClassHref({...data.query,view:data.view,page:data.query.page+1})}
+      {data.query.page<data.totalPages?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page+1})}
         className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link>:null}
     </div>
   </nav>
