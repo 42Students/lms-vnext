@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema } from "@/modules/activity/college-activity-model";
+import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref } from "@/modules/activity/college-activity-model";
 
 const uuid = "10000000-0000-4000-8000-000000000001";
 describe("College activity model", () => {
@@ -20,6 +20,23 @@ describe("College activity model", () => {
       activitySearchParams({ subjectType: ["A", "B"] }),
     ).success).toBe(false);
     expect(activitySearchParams({actorUserId:"",from:"",subjectType:""})).toEqual({});
+  });
+  it("constructs exact IST calendar shortcuts and preserves non-date filters without cursor", () => {
+    const filter = {module:"ACADEMICS" as const, q:"first term",
+      beforeOccurredAt:"2026-10-14T12:00:00Z",beforeId:uuid};
+    const date=new Date("2026-10-14T20:00:00Z"); // 15 Oct in Asia/Kolkata
+    const seven=new URL(collegeActivityRecentHref(filter,7,date),"https://example.test");
+    const thirty=new URL(collegeActivityRecentHref(filter,30,date),"https://example.test");
+    expect(seven.searchParams.get("from")).toBe("2026-10-09");
+    expect(seven.searchParams.get("to")).toBe("2026-10-15");
+    expect(thirty.searchParams.get("from")).toBe("2026-09-16");
+    expect(seven.searchParams.get("module")).toBe("ACADEMICS");
+    expect(seven.searchParams.get("q")).toBe("first term");
+    expect(seven.searchParams.has("beforeId")).toBe(false);
+    expect(collegeActivityQuerySchema.safeParse(Object.fromEntries(seven.searchParams)).success).toBe(true);
+    const yearBoundary=new URL(collegeActivityRecentHref({},7,new Date("2027-01-01T00:00:00Z")),"https://example.test");
+    expect(yearBoundary.searchParams.get("from")).toBe("2026-12-26");
+    expect(() => collegeActivityRecentHref({},7,new Date("invalid"))).toThrow("INVALID_DATE");
   });
   it("preserves filters when navigating to the next cursor", () => {
     const href = collegeActivityHref({ actorName:"Ana", q:"room updated", module: "ACADEMICS", importance: "HIGH",
