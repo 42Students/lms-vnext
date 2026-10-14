@@ -1,4 +1,5 @@
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
+import {learnerExpiringOffer} from "./learner-dashboard-offer-priority-model";
 
 /** Use only learner-scoped source rows; never infer employer outcomes or
  * "confirmed" attendance from a scheduled round. Dates are UTC instants. */
@@ -102,7 +103,16 @@ export function learnerPlacementDashboard(
     events[0] ??
     null;
 
-  const nextAction = priority
+  const urgentOffer=learnerExpiringOffer(input.offers,nowMs);
+  const nextAction=urgentOffer
+    ? {
+        label:"Offer decision due soon",
+        title:"Review your expiring placement offer",
+        detail:"An issued offer expires within 24 hours. Review the official terms before responding.",
+        href:"/learn/my-placements/offers?status=pending",
+        when:urgentOffer.expiresAt,
+      }
+    : priority
     ? {
         label: priority.kind === "ASSESSMENT"
           ? "Assessment coming up"
@@ -132,7 +142,8 @@ export function learnerPlacementDashboard(
     ).size,
     upcomingAssessmentCount: events.filter((event) => event.kind === "ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
-    activeOfferCount: input.offers.filter((row) => row.status === "ISSUED").length,
+    activeOfferCount: input.offers.filter((row) => row.status === "ISSUED" &&
+      (row.expiresAt===null||row.expiresAt.getTime()>=nowMs)).length,
     activeApplicationCount: new Set(
       input.applications.filter((row) =>
         row.applicationStatus === "SUBMITTED" &&

@@ -361,7 +361,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-002 | First-run onboarding hero | placements dashboard | placements home | UNCHECKED |
 | L11-003 | Partial-source error alert | placements home | authenticated learner gate before parallel independent settled source reads; warns of failed sections, retry button, preserves loaded sections, masks failed dashboard metrics as unknown rather than zero; pure and fresh-learner PostgreSQL tests authored. PARTIAL pending CI, error-injection and browser recovery acceptance | PARTIAL |
 | L11-004 | Hero greeting | placements dashboard | placements home | UNCHECKED |
-| L11-005 | Next-action priority | placements dashboard | placements home | UNCHECKED |
+| L11-005 | Next-action priority | placements dashboard | issued still-actionable offer expiring within 24h takes priority over planned round; expired/accepted offers excluded, existing assessment/interview logic otherwise unchanged; on offer-read failure hero remains unknown rather than misleading. PARTIAL pending fresh-PG/tsc/eslint and real expiry-boundary/browser acceptance | PARTIAL |
 | L11-006 | Assessment urgency action | placements dashboard | placements home | UNCHECKED |
 | L11-007 | Interview urgency action | placements dashboard | placements home | UNCHECKED |
 | L11-008 | Next scheduled event action | placements dashboard | placements home | UNCHECKED |
