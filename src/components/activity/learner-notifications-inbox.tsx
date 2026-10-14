@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
 import { useMemo, useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,13 +20,20 @@ export function LearnerNotificationsInbox({
   personal,
   announcements,
   announcementsEnabled,
+  announcementsLoadFailed=false,
   initialFilters,
 }: {
   personal: readonly NotificationListItem[];
   announcements: readonly AnnouncementFeedItem[];
   announcementsEnabled: boolean;
+  announcementsLoadFailed?:boolean;
   initialFilters?: LearnerInboxQuery;
 }) {
+  const router=useRouter();
+  const sourceStatus=learnerNotificationLoadStatus({
+    announcementsEnabled,announcementsFailed:announcementsLoadFailed,
+    personalReady:true,
+  });
   const defaults=learnerNotificationInboxQuerySchema.parse(initialFilters ?? {});
   const [active, setActive] = useState<LearnerNotificationCategory>(defaults.category);
   const [unread,setUnread] = useState<"all"|"unread">(defaults.unread);
@@ -103,6 +112,15 @@ export function LearnerNotificationsInbox({
         Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
       </p>
 
+      {sourceStatus.state==="PARTIAL" ? (
+        <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          <p className="font-semibold text-foreground">Announcements not refreshed</p>
+          <p className="mt-1">{sourceStatus.notice}</p>
+          <Button size="sm" variant="secondary" onClick={()=>router.refresh()}>
+            Retry announcements
+          </Button>
+        </div>
+      ):null}
       {!announcementsEnabled && (active === "all" || active === "general") ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           College announcements are temporarily unavailable while their

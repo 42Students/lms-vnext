@@ -728,7 +728,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-013 | Project deep links | NotificationsContent | actionHref | UNCHECKED |
 | L29-014 | Loading state | NotificationsContent | notification page | UNCHECKED |
 | L29-015 | Empty state | NotificationsContent | notification list | FIXED |
-| L29-016 | Error/stale/retry behavior | NotificationsContent | notification page | UNCHECKED |
+| L29-016 | Error/stale/retry behavior | NotificationsContent | unreadable personal feed remains a hard failure; independent announcement-fetch errors retain authorized personal notifications with explicit partial-source warning and refresh retry; no false empty. PARTIAL pending executed unit/own-PG, TypeScript/ESLint, announcement failure-injection/browser acceptance | PARTIAL |
 | L29-017 | No cross-college/cross-role leakage | notification API | current persisted Learner membership, event college-scoped inbox/history and single/bulk read actions; DB success/denial tests authored, not run | FIXED |
 | L29-018 | Mobile notification list | NotificationsContent responsive | notification page | UNCHECKED |
 
