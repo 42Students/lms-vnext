@@ -821,3 +821,11 @@ ALL view retains expired REQUESTED meetings as actionable, without synthesizing
 MISSED status. Pure timezone-boundary tests and the existing same-college/foreign
 PostgreSQL fixture were extended. **PARTIAL:** test/browser execution, large-calendar
 paging and legacy parity remain open.
+
+## chat-11 backlog T — exact-project meeting title search (PARTIAL)
+
+A literal SQL-wildcard-escaped title filter now applies to the persisted
+meeting count and page query, alongside registered status and current-Mentor
+college/module access. Pure unit and in-test meeting PostgreSQL fixture checks
+cover search, percent literals and role denial. **PARTIAL:** test/browser and
+legacy meeting acceptance pending.
