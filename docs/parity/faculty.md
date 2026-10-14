@@ -490,3 +490,15 @@ Unit tests cover GET URL, malformed query, headers and filename; the existing
 isolated PostgreSQL positive and tenant-denial tests continue to cover
 the underlying export service. No new write or UI table was invented.
 Independent execution and full legacy report/browser parity remain PARTIAL.
+
+## Public Faculty Contacts policy applied — 2026-10-14
+
+The All/Teachers/Students directory and drill-ins are now limited to public
+display name, registered active same-college role and Faculty department.
+The service does not select email, phone, photo or private profile identity,
+and searches only public name/department. Central courses.read, active
+persisted Faculty role, same-college actor/target scoping, strict Zod,
+ten/twenty/fifty pagination and exact tab links remain enforced. Existing
+PostgreSQL tenant test search is updated from private email to display name.
+Private contact actions are intentionally not offered. Parent parity
+remains PARTIAL until browser/DB acceptance of this exact revision.
