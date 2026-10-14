@@ -5,5 +5,5 @@ export function learnerBoardTaskSelectionNotice(
   rawTaskId: unknown, foundInAuthorizedProject: boolean,
 ): string|null {
   if(!idSchema.safeParse(rawTaskId).success || foundInAuthorizedProject) return null;
-  return "This task is no longer available in your Project. Your Board has not been changed.";
+  return "This task is unavailable in this Board view. Clear your filters or return to the Board.";
 }

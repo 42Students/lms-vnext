@@ -37,6 +37,10 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
      organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:a.relationship.id}]}};
   const result=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA});
   expect(result.rows.some(row=>row.jobId===job.id)).toBe(true);
+  const matched=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,q:"Notif Job "+n});
+  expect(matched.rows.some(row=>row.jobId===job.id)).toBe(true);
+  const missing=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,q:"Not a matching job"});
+  expect(missing.total).toBe(0);
   const scoped=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,unreadOnly:"true"});
   expect(hrTodayUnreadAction({...scoped,collegeId:SEED_IDS.collegeA})?.value).toBe(1);
   expect(JSON.stringify(result.rows)).not.toContain("Confidential source body");
