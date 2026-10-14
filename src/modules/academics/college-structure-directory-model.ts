@@ -12,6 +12,7 @@ export const collegeStructureQuerySchema = z.object({
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
+  maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveQuerySchema = collegeStructureQuerySchema.extend({
@@ -24,10 +25,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "minimumCapacity", "semesterNumber", "minimumCredits", "page"] as const) {
+  for (const key of ["q", "programId", "status", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programId" || key === "minimumCapacity" || key === "semesterNumber" || key === "minimumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programId" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits") && !value)) {
       result[key] = value;
     }
   }
@@ -42,6 +43,8 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (query.status !== "ACTIVE") params.set("status", query.status);
   if (kind === "CLASSES" && "minimumCapacity" in query && query.minimumCapacity !== undefined)
     params.set("minimumCapacity", String(query.minimumCapacity));
+  if (kind === "CLASSES" && "maximumCapacity" in query && query.maximumCapacity !== undefined)
+    params.set("maximumCapacity",String(query.maximumCapacity));
   if (kind === "ELECTIVES" && "semesterNumber" in query && query.semesterNumber !== undefined)
     params.set("semesterNumber", String(query.semesterNumber));
   if (kind === "ELECTIVES" && "minimumCredits" in query && query.minimumCredits !== undefined)

@@ -49,8 +49,12 @@ describe("College Admin classes/electives read-only filters", () => {
       .toBe("/college/electives");
     expect(collegeClassQuerySchema.parse({ minimumCapacity: "36" }).minimumCapacity).toBe(36);
     expect(collegeClassQuerySchema.safeParse({ minimumCapacity: 0 }).success).toBe(false);
+    expect(collegeClassQuerySchema.safeParse({ maximumCapacity: 0 }).success).toBe(false);
+    expect(collegeClassQuerySchema.safeParse({ maximumCapacity: 100001 }).success).toBe(false);
+    expect(readCollegeStructureParams({maximumCapacity:""})).toEqual({});
     expect(collegeStructureQuerySchema.safeParse({ minimumCapacity: 36 }).success).toBe(false);
     expect(collegeStructureHref("CLASSES", { ...query, minimumCapacity: 36 })).toContain("minimumCapacity=36");
+    expect(collegeStructureHref("CLASSES", { ...query, maximumCapacity: 36 })).toContain("maximumCapacity=36");
     expect(collegeStructureTotalPages(0)).toBe(1);
     expect(collegeElectiveQuerySchema.parse({ semesterNumber: "1" }).semesterNumber).toBe(1);
     expect(collegeElectiveQuerySchema.safeParse({ semesterNumber: 25 }).success).toBe(false);
