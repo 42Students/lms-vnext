@@ -638,3 +638,20 @@ microseconds, stale replay, collision, wrong-role, foreign and disabled
 denials. **PARTIAL:** TypeScript/ESLint/PG/browser verification, optional
 cross-project Mentor conflict policy, and full legacy meeting lifecycle
 remain unverified.
+
+
+## 2026-10-14 chat-11 H — Mentor exact-project activity CSV (PARTIAL)
+
+The existing role/college/project-scoped activity-history screen now exposes
+a read-only capped CSV export of up to 200 actual persisted PROJECTS event
+rows, respecting the existing event-importance filter. Export fields are
+limited to safe event label, importance, ID and IST timestamp, with formula
+neutralization, no raw metadata, learner contact, actor identity, private
+notes, or event summary. The service revalidates current Mentor assignment,
+central projects.read and optional Projects enablement for every bounded
+page. CSV declares omitted matches both visibly and in HTTP headers; no
+external delivery or new permission is introduced. A pure export model/unit
+suite and unique-project PostgreSQL fixture assert safe output, persisted
+read success, wrong-role, disabled and non-leaking foreign-college denial.
+**PARTIAL:** Run typecheck, lint, unit, PG and browser download tests, verify
+historic producer completeness and exact legacy activity filters.

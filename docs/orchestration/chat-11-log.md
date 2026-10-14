@@ -68,3 +68,12 @@
 - Transactional sanitized activity; declared conflict code, source-authored
   model/unit and isolated PostgreSQL success/stale/foreign/role tests.
 - PARTIAL: tests/browser unexecuted and cross-project collision policy unresolved.
+
+
+## H — Mentor exact-project activity export (2026-10-14)
+- Read-only GET export, max 200 scoped persisted events using existing Mentor
+  project/college/permission checks and redacted event projection.
+- Formula-neutralized CSV, IST dates, explicit truncation and no raw metadata.
+- Unit and unique-fixture positive/role/foreign/disabled PostgreSQL tests
+  authored; no runtime test results claimed.
+- PARTIAL pending desktop/mobile download and actual CI/PG checks.
