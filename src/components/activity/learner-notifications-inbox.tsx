@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
+import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
 import { useMemo, useState } from "react";
@@ -75,6 +76,7 @@ export function LearnerNotificationsInbox({
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
   const unreadPersonalCount=learnerNotificationPendingCount(personal);
+  const mobileSummary=learnerNotificationMobileFilterSummary({category:active,unread,q:search},visible.length);
   async function markAllRead(){
     if(markingAll || !learnerNotificationReadAllSchema.safeParse({confirmed:true}).success)return;
     setMarkingAll(true);setMarkAllError(null);
@@ -104,8 +106,9 @@ export function LearnerNotificationsInbox({
 
   return (
     <section className="space-y-5" aria-label="Learner notifications inbox">
-      <nav aria-label="Filter notifications by type" className="overflow-x-auto">
-        <div className="flex min-w-max flex-wrap gap-2">
+      <p role="status" className="text-sm text-body sm:hidden">{mobileSummary}</p>
+      <nav aria-label="Filter notifications by type" className="min-w-0">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {learnerNotificationCategories.map(({ key, label }) => (
             <button
               key={key}
@@ -113,15 +116,15 @@ export function LearnerNotificationsInbox({
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
               className={active === key
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-                : "min-h-11 rounded-full border border-border bg-surface px-4 text-sm font-semibold text-body transition hover:border-primary hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"}
+                ? "min-h-11 min-w-0 rounded-full bg-primary px-2 text-center text-sm font-semibold text-on-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                : "min-h-11 min-w-0 rounded-full border border-border bg-surface px-2 text-center text-sm font-semibold text-body transition hover:border-primary hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"}
             >
               {label} <span className="ml-1 tabular-nums">{counts[key]}</span>
             </button>
           ))}
         </div>
       </nav>
-      <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+      <div className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
         <label className="text-xs font-semibold text-body">
           Search notifications
           <input type="search" value={search} maxLength={100}
@@ -171,6 +174,7 @@ export function LearnerNotificationsInbox({
           database rollout is being verified. Personal notifications remain available.
         </div>
       ) : null}
+      <div className="min-w-0 [&_article]:min-w-0 [&_article]:break-words [&_article_a]:max-w-full">
       {visible.length === 0 ? (
         <div className="space-y-3">
           <NotificationList items={[]} emptyText={
@@ -191,6 +195,7 @@ export function LearnerNotificationsInbox({
           }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
+      </div>
       <Dialog open={confirmReadAll} onOpenChange={value=>{if(!markingAll)setConfirmReadAll(value);}}
         title="Mark all personal notifications as read?"
         description="This acknowledges all unread notifications in your current college, including older pages. College announcements have no personal read status."
@@ -213,7 +218,7 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-10 items-center rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
