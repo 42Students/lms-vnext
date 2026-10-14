@@ -1,3 +1,4 @@
+import { LearnerProjectActivity } from "@/components/projects/learner-project-activity";
 import { notFound, redirect } from "next/navigation";
 import { projectInstanceIdSchema } from "@/modules/projects/validation";
 import { ProjectsServiceError } from "@/modules/projects/errors";
@@ -20,12 +21,12 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string; taskId?: string }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
   if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
-  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory } = await searchParams;
   const activeSection =
     tab === "board" || tab === "tasks"
       ? "tasks"
@@ -34,9 +35,10 @@ export default async function LearnerProjectPage({
         : tab === "delivery"
           ? "delivery"
           : tab === "team" ||
+              tab === "meetings" ||
               tab === "sprints" ||
               tab === "resources"
-            ? tab
+            ? (tab === "meetings" ? "team" : tab)
             : "overview";
   const access = await requireProjectReadAccess(
     context,
@@ -91,7 +93,7 @@ export default async function LearnerProjectPage({
           shown={boardTasks.length} total={workspace.tasks.length} />
       ) : null}
       {activeSection === "tasks" ? (
-        <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} />
+        <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} sprints={workspace.sprints} />
       ) : null}
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
@@ -99,7 +101,8 @@ export default async function LearnerProjectPage({
           sprintTitle={workspace.sprints.find(sprint=>sprint.id===selectedTask.sprintId)?.title??null} />
       ) : null}
       {goals ? <LearnerProjectGoals overview={goals} /> : null}
-      <ProjectWorkspace
+      {activeSection === "audit" ? <LearnerProjectActivity projectId={projectId}
+        events={workspace.activity} categoryInput={activityCategory} /> : <ProjectWorkspace
       workspace={shownWorkspace}
       backHref="/learn/projects"
       backLabel="Projects"
@@ -109,7 +112,7 @@ export default async function LearnerProjectPage({
         context.membership?.id ?? null
       }
       activeSection={activeSection}
-      />
+      />}
     </div>
   );
 }

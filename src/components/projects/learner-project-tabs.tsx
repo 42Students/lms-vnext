@@ -2,16 +2,9 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { canonicalLearnerProjectTab } from "@/modules/projects/learner-project-tab-alias-model";
+import { canonicalLearnerProjectTab, LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-tab-alias-model";
 
-const tabs = [
-  { key: "overview", label: "Overview" },
-  { key: "team", label: "People & Meetings" },
-  { key: "sprints", label: "Releases and Sprints" },
-  { key: "board", label: "Board" },
-  { key: "resources", label: "Resources" },
-  { key: "activity", label: "Activity" },
-] as const;
+
 
 export function LearnerProjectTabs({ projectId }: { projectId: string }) {
   const searchParams = useSearchParams();
@@ -20,7 +13,7 @@ export function LearnerProjectTabs({ projectId }: { projectId: string }) {
   return (
     <nav aria-label="Project sections" className="overflow-x-auto border-b border-border">
       <div className="flex min-w-max gap-1">
-        {tabs.map((tab) => (
+        {LEARNER_PROJECT_DETAIL_TABS.map((tab) => (
           <Link
             key={tab.key}
             href={`/learn/projects/${encodeURIComponent(projectId)}?tab=${tab.key}`}

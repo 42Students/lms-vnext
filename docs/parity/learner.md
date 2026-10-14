@@ -1003,3 +1003,25 @@ OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
 - **L22-002 PARTIAL (chat-7):** learner Project Overview now reads goal, description and deliverables solely from its authorized immutable assigned project-template version. Empty authored content is explicitly absent; no invented definition-of-done text. Pure model/unit and own-learner PG success and denial fixtures authored. **Remaining:** execute static/unit/isolated-PG and compare exact legacy Overview/mobile and template authoring producer.
 
 - **L21-008 PARTIAL (chat-7):** legacy learner Project URL `?tab=tasks` now renders canonical Board and sets correct active tab without changing project access rules; canonical links remain `?tab=board`. Pure-model unit and self-fixtured PG read/denial tests authored. **Remaining:** typecheck/lint/Vitest/isolated-PG, Back/Forward and mobile/browser parity.
+
+- **L21-009 PARTIAL:** legacy `?tab=meetings` opens the People & Meetings learner workspace. Unit and own-learner PG denial tests authored. Remaining: executed checks, legacy/browser/mobile acceptance.
+
+- **L25-007 PARTIAL:** learner Board task index shows persisted title, status, priority and sprint. Type and story points are not persisted, not fabricated. Unit and own-learner PG positive/scope/role denial tests authored. Remaining: executed tests/browser parity and migrated type/points producer if required.
+
+- **L21-010 PARTIAL (chat-7):** authorized learner Project final delivery now has an explicit canonical tab, so `?tab=delivery` highlights the matching navigation and displays persisted own Project submission/review flow. No new files or external sends. Unit/own-learner PG scope-denial tests authored. **Remaining:** executable test gates, mobile navigation, Back/Forward and legacy delivery workspace parity.
+
+- **L20-014 PARTIAL (chat-7):** Learner Projects list explicitly labels persisted ARCHIVED instances as read-only without treating COMPLETED projects as archived. No write permission or storage changes. Pure model and PG persisted own-learner/foreign-college/suspended checks authored. **Remaining:** execute tsc/lint/Vitest/isolated PG and confirm archived navigation/disabled actions against legacy mobile/browser behavior.
+
+## 2026-10-14 attendance filter correction — PARTIAL
+
+The Attendance workspace now uses IST for record month membership and date/time labels, including UTC month/year boundaries. The current Course/month selection is resolved from the URL on each navigation, so restored history no longer leaves stale local filters. Query months and Course IDs are validated and constrained to the server-authorized Course list. Existing loading/error/empty and mobile views remain in place. Pure boundary/query tests and an own-enrolled-learner PostgreSQL success/foreign-college/suspended/wrong-role test were added. Disposable PG execution is blocked by root-only sandbox user mapping; mobile/browser Back/Forward acceptance remains outstanding. No parity row is marked DONE.
+
+Board Assignee/Mine remains blocked: registered project_tasks has no assignee column. Course thumbnails remain blocked by the absence of a verified canonical image association; no image or ownership data was fabricated.
+
+## 2026-10-14 assessment deadline consistency — PARTIAL
+
+All Assignments and All Quizzes now advance one service-snapshot clock using elapsed monotonic time after mount, including a visibility-return update. Quiz desktop actions, mobile availability, assignment due/late labels and the submission drawer use the same instant. No render-time device wall clock or unpublished score is exposed. Dates display in IST. Pure deadline-transition tests and an own-enrolled-learner PostgreSQL read/denial test were authored; disposable PG remains unavailable in the root-only sandbox. Browser deadline-crossing, background-tab and mobile verification remain open; text/link submission policy is unchanged and files remain blocked.
+
+## 2026-10-14 Project Activity categories — PARTIAL (L27-002..006, L27-008/010)
+
+The learner Activity tab now filters persisted own-project events by Sprint changes, Task changes, Team and meetings, Resources shared, and Submission updates. Task submissions/reviews stay in the task source category; final-delivery/submission events use Submission updates. Project details is also retained from the legacy filter. It shows IST timestamps, actor names and saved subject labels with wrapping mobile cards. Empty source and filtered-empty states are distinct; Apply/Clear retain the exact project/tab. The feed explicitly states its latest-100-event limit rather than implying full archive search. Pure category tests and an independently seeded own-college PG test cover success, foreign-college event exclusion, suspended/wrong-role/foreign-project denial. PG execution and desktop/mobile browser verification remain open. Missing/unemitted historical event types are not fabricated; date range filtering is still outstanding.

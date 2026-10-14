@@ -2,12 +2,12 @@
 
 import {
   useMemo,
-  useState,
 } from "react";
 import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
+import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@/modules/attendance/learner-attendance-filter-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -66,29 +66,9 @@ function monthKey(date: Date) {
   ).padStart(2, "0")}`;
 }
 
-function parseMonth(value: string | null) {
-  if (
-    value &&
-    /^\d{4}-\d{2}$/.test(value)
-  ) {
-    const [year, month] = value
-      .split("-")
-      .map(Number);
-    if (
-      year &&
-      month &&
-      month >= 1 &&
-      month <= 12
-    ) {
-      return new Date(year, month - 1, 1);
-    }
-  }
-  const now = new Date();
-  return new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    1,
-  );
+function parseMonth(value: string) {
+  const [year, month] = value.split("-").map(Number);
+  return new Date(year, month - 1, 1);
 }
 
 function shiftMonth(
@@ -102,17 +82,6 @@ function shiftMonth(
   );
 }
 
-function sameMonth(
-  value: string,
-  month: Date,
-) {
-  const date = new Date(value);
-  return (
-    date.getFullYear() ===
-      month.getFullYear() &&
-    date.getMonth() === month.getMonth()
-  );
-}
 
 function isPresent(
   status: RecordRow["status"],
@@ -153,6 +122,7 @@ function summarize(
 
 function dateLabel(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     weekday: "long",
     day: "numeric",
     month: "short",
@@ -161,6 +131,7 @@ function dateLabel(value: string) {
 
 function timeLabel(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     hour: "numeric",
     minute: "2-digit",
   }).format(new Date(value));
@@ -221,28 +192,21 @@ export function LearnerAttendanceWorkspace({
   records,
   summaries,
   threshold,
+  defaultMonth,
 }: {
   courses: readonly Course[];
   records: readonly RecordRow[];
   summaries: readonly Summary[];
   threshold: number;
+  defaultMonth: string;
 }) {
   const router = useRouter();
   const params = useSearchParams();
-  const initialDeliveryId =
-    params.get("deliveryId") &&
-    courses.some(
-      (course) =>
-        course.deliveryId ===
-        params.get("deliveryId"),
-    )
-      ? params.get("deliveryId")!
-      : courses[0]?.deliveryId ?? "";
-  const [deliveryId, setDeliveryId] =
-    useState(initialDeliveryId);
-  const [month, setMonth] = useState(() =>
-    parseMonth(params.get("month")),
-  );
+  const filters = resolveLearnerAttendanceFilters({
+    deliveryId: params.get("deliveryId"), month: params.get("month"),
+  }, courses, defaultMonth);
+  const deliveryId = filters.deliveryId;
+  const month = parseMonth(filters.month);
 
   const course =
     courses.find(
@@ -251,13 +215,8 @@ export function LearnerAttendanceWorkspace({
     ) ?? null;
 
   const monthRows = useMemo(
-    () =>
-      records.filter(
-        (row) =>
-          row.deliveryId === deliveryId &&
-          sameMonth(row.startsAt, month),
-      ),
-    [records, deliveryId, month],
+    () => filterLearnerAttendanceMonth(records, deliveryId, filters.month),
+    [records, deliveryId, filters.month],
   );
   const summary = useMemo(
     () => summarize(monthRows),
@@ -285,12 +244,10 @@ export function LearnerAttendanceWorkspace({
   function changeCourse(
     nextDeliveryId: string,
   ) {
-    setDeliveryId(nextDeliveryId);
     updateUrl(nextDeliveryId, month);
   }
 
   function changeMonth(nextMonth: Date) {
-    setMonth(nextMonth);
     updateUrl(deliveryId, nextMonth);
   }
 
@@ -352,7 +309,7 @@ export function LearnerAttendanceWorkspace({
                 onChange={(event) =>
                   changeMonth(
                     parseMonth(
-                      event.target.value,
+                      event.target.value || filters.month,
                     ),
                   )
                 }

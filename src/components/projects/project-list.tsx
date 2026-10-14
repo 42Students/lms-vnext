@@ -13,6 +13,7 @@ export type ProjectListItem = {
   memberCount?: number;
   progressPercent?: number;
   progressDetail?: string;
+  readOnlyLabel?: string | null;
   attention?: readonly string[];
   href?: string;
 };
@@ -92,6 +93,9 @@ export function ProjectList({
               >
                 {statusLabel(item.status)}
               </StatusBadge>
+              {item.readOnlyLabel ? (
+                <StatusBadge tone="neutral">{item.readOnlyLabel}</StatusBadge>
+              ) : null}
               {item.attention?.map((label) => (
                 <StatusBadge
                   key={label}
