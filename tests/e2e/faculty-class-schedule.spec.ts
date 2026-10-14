@@ -77,11 +77,11 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await viewSelect.selectOption("week");
   await viewSelect.selectOption("month");
   await page.goto("/teacher/calendar?month=2026-13");
-  await expect(page.getByRole("alert")).toContainText("Invalid month or Section filter");
+  await expect(page.locator('section[role="alert"]')).toContainText("Invalid month or Section filter");
   // App Router can stream an authorization error boundary with HTTP 200.
   // Verify denied content, rather than treating the transport status as auth.
   await page.goto("/teacher/calendar?month=2026-10&deliveryId="+SEED_IDS.collegeB);
-  await expect(page.getByRole("alert")).toContainText("Unable to load Class Schedule");
+  await expect(page.locator('section[role="alert"]')).toContainText("Unable to load Class Schedule");
   await expect(page.getByText(title,{exact:true})).toHaveCount(0);
   await expect(page.getByRole("region",{name:"IST month schedule grid"})).toHaveCount(0);
   if(view.name==="mobile"){
