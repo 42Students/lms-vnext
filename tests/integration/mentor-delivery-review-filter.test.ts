@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
+import {getMentorReviewHistory} from "@/modules/projects/mentor-review-history-service";
 import {mentorDeliveryReviewCsv} from "@/modules/projects/mentor-review-overview-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -97,6 +98,11 @@ describe("Mentor final delivery feedback-filtered review history — PostgreSQL"
   expect(withFeedback.items).toEqual([expect.objectContaining({
     id:reviewedId,feedbackPresent:true,decision:"CHANGES_REQUESTED",
   })]);
+  const history=await getMentorReviewHistory(mentor,{search:"Export project",decision:"CHANGES_REQUESTED"});
+  expect(history.items.some(item=>item.projectId===project.id)).toBe(true);
+  const missing=await getMentorReviewHistory(mentor,{search:"%no-project-match",decision:"ALL"});
+  expect(missing.items.some(item=>item.projectId===project.id)).toBe(false);
+  await expect(getMentorReviewHistory(learner,{search:"Export project"})).rejects.toBeDefined();
   const csv=mentorDeliveryReviewCsv(withFeedback.items,0);
   expect(csv).toContain("Changes requested");
   expect(csv).not.toContain("Please revise");
