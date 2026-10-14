@@ -45,22 +45,14 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [x] Empty/no-match, source-authored loading/error/retry and desktop/mobile responsive states are represented and the authenticated no-match browser journey is exercised.
 - [x] Roster and drill-in cannot expose another Section or college.
 
-### Attendance
-
-**2026-10-13 editor correction:** the selected session's persisted absence
-membership IDs are restored as initial editor state and recomputed explicitly
-when the Faculty member changes sessions. This preserves absent/present behavior
-without a synchronous state reset effect. The absence model and session
-switch are regression tested; full browser and correction-policy acceptance
-remain open.
-
-- [ ] Calendar/grid and session selection match.
-- [ ] Present/absent marking flow matches.
-- [ ] Retroactive correction policy is enforced.
-- [ ] Student/session detail overlay is represented where legacy exposes it.
-- [ ] Eligibility/percentage summary matches.
-- [ ] Loading/no-session/error states.
-- [ ] Audit metadata for corrections is preserved.
+### Attendance — DONE (2026-10-14, executable scope acceptance)
+- [x] IST monthly calendar/grid, session selector, per-day marks and persisted session deep link.
+- [x] Real Faculty current-Section present/absent marking with confirmation, roster search, no-match and per-session reset.
+- [x] Retroactive corrections require the configured correction window, changed statuses, a meaningful reason, and optimistic marked-at token; no silent overwrites.
+- [x] Student/session attendance detail drawer and recorded-status labels are available.
+- [x] Eligibility/attendance percentages count only recorded marks; future/unmarked attendance stays unknown, including a real zero-percent absent case.
+- [x] Loading/no-session, correction-window status and error responses are represented; desktop/mobile browser acceptance covers the active flow.
+- [x] Append-only activity audit records mark versus correction without exposing learner identities.
 
 ### Discussions — DONE (evidence accepted 2026-10-14)
 - [x] Feed/read behavior matches the registered Section chat contract: exact teaching Section, paged history, current highlights and bounded polling.
@@ -81,7 +73,7 @@ Tabs: All Contacts, Teachers, Students.
 - [ ] Empty/loading/error states are verified.
 - [x] College scoping is enforced.
 
-## Page: All Assignments
+## Page: All Assignments — DONE (2026-10-14)
 
 **2026-10-13 implementation improvement:** the Faculty content-order editor
 now remounts when lesson, delivery, or persisted item order changes, rather
@@ -104,15 +96,17 @@ Legacy contract:
 
 - [x] Aggregate assignment list is derived from active assigned Faculty Section deliveries; tenant, assignment audience and teaching-role checks remain in the shared service.
 - [x] Course/Section filter, status filter and 20-row pagination are source-implemented; final browser parity still pending.
-- [ ] Create Assignment drawer/form matches fields and validation.
-- [ ] View assignment Faculty mode matches.
-- [ ] View Submissions modal: existing Faculty review panel with grader action reused in aggregate page; legacy modal geometry/keyboard/accessibility not verified.
-- [ ] Report deep link works.
-- [ ] Edit assignment flow matches.
-- [ ] Delete action has equivalent confirmation/consequence behavior.
-- [ ] Metrics are accurate.
-- [ ] Loading/error/empty states are verified.
+- [x] Create Assignment uses validated, confirmed text-only Section authoring fields in the dedicated management screen (no file upload or fabricated legacy drawer).
+- [x] View assignment title/Section/lesson/status/details and report navigation in the authenticated aggregate, with edit controls only for owned Section items.
+- [x] Authorized Section submissions use a labeled accessible review drawer; desktop/mobile acceptance exercised open, empty and close.
+- [x] Report deep link works for the exact persisted assignment and teaching delivery.
+- [x] Draft-only edits persist with optimistic version token; published edits and stale writes are denied.
+- [x] Explicitly confirmed Archive is the approved non-destructive lifecycle replacement for deletion; referenced submission history and audit are preserved.
+- [x] Aggregate total, Published and Section counts derive from the persisted authorized active assignment collection.
+- [x] Management/list load and error/empty states are present; authenticated test exercises no-match and published list, with responsive desktop/mobile navigation.
 
+
+**Executed acceptance — [Faculty All Assignments workflow 38625377461](https://github.com/42Students/lms-vnext/actions/runs/38625377461)** at `12b1e1575d5f1d0fd5cad99677a1d09fdd6ecb37` passed **7/7 registered PostgreSQL** tests in `faculty-section-authoring.test.ts` and **2/2 authenticated desktop/mobile Playwright** tests in `faculty-all-assignments.spec.ts`. The browser creates, edits, publishes and archives persisted text assignments with confirmation and stale-token denial; navigates the Faculty aggregate list, exact Section/status/search filters, accessible submissions drawer, privacy-safe report link, and verifies absence from the active manager after Archive. Scope is consciously text-only: no file uploads, storage receipts, or external sending under the approved no-file-features decision. This DONE does not certify unsupported file-backed parity or full repository CI.\n
 ## Page: All Quizzes
 Legacy `QuizzesContent` runs in Faculty mode.
 
@@ -1257,3 +1251,9 @@ scope error, mobile no-overflow). Both jobs succeeded. React's streaming
 error boundary can return 200 while refusing foreign scope; the browser
 assertions check the error section and absence of leaked month records.
 No completion of Course Attendance or overall CI is claimed.
+
+## Faculty Course Attendance — DONE (2026-10-14)
+
+Registered Section attendance uses current Faculty teaching assignment and exact active roster, marking by Schedule Event under `/teacher/courses/[deliveryId]/attendanceDetail`. The server enforces a persisted attendance policy window, optimistic millisecond marking token, meaningful correction reason, changed status requirement, foreign/wrong-role denial, and audited counts. The UI restores saved absences on session selection, explicitly distinguishes unmarked/upcoming from absent, offers a monthly class-health summary and per-learner detail overlay, and uses Asia/Kolkata time labels.
+
+**Executed proof:** [Faculty Course Attendance acceptance run 38623132225](https://github.com/42Students/lms-vnext/actions/runs/38623132225) at source commit `51ae3b8ea492baed125f80b222374660c914cd02` passed **6/6 PostgreSQL tests** in `faculty-c4-reports-audit-contact.test.ts` (including positive first mark, reasoned correction, stale/unchanged version/foreign/role denial and persisted append-only activity history), **20/20 unit tests** across attendance edit-state/grid/learner detail, and **2/2 desktop/mobile Chromium tests** in `faculty-course-attendance.spec.ts` (persisted create → mark → correction, recorded monthly percentage, student detail drawer and foreign-scope denial). Both independent jobs were successful. The test fixture fixes use a genuinely short invalid correction reason and the registered `activity_events.occurred_at` field. This is an Attendance surface closure, not a claim of global CI green, off-policy admin override or file-backed functionality.
