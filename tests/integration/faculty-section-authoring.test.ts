@@ -16,6 +16,8 @@ import {createLearningPath,transitionLearningPath} from "@/modules/courses/learn
 import {createCourseLesson} from "@/modules/courses/lesson-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
+import {createLessonContent,transitionLessonContent} from "@/modules/courses/lesson-content-service";
+import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL is mandatory.");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -52,6 +54,9 @@ async function cleanup(){
    join course_offerings o on o.id=lp.offering_id join courses c on c.id=o.course_id
    where c.code like $1)`,[like]);
  }
+ await pool.query(`delete from lesson_contents where lesson_id in(
+  select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
+  join course_offerings o on o.id=lp.offering_id join courses c on c.id=o.course_id where c.code like $1)`,[like]);
  await pool.query(`delete from course_lessons where learning_path_id in(
   select lp.id from course_learning_paths lp join course_offerings o on o.id=lp.offering_id
   join courses c on c.id=o.course_id where c.code like $1)`,[like]);
@@ -106,6 +111,27 @@ beforeEach(cleanup);
 afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
 
 describe("Faculty own-delivery assessment command successful DB writes and denials",()=>{
+ it("reads a real published HTTPS live class with exact Faculty Section scope",async()=>{
+  const {delivery,lesson}=await fixture();
+  const live=await createLessonContent(faculty,{
+   lessonId:lesson.id,deliveryId:delivery.id,title:"Live FIFO Session "+tag,
+   contentType:"LIVE_CLASS",sequence:0,
+   externalUrl:"https://meet.example.invalid/course/"+tag.toLowerCase(),
+   startsAt:"2026-10-20T10:00:00.000Z",endsAt:"2026-10-20T11:00:00.000Z",
+  });
+  await transitionLessonContent(faculty,live.id,{action:"PUBLISH"});
+  const list=await getFacultyLiveClasses(faculty,{view:"ALL",deliveryId:delivery.id});
+  expect(list.items).toEqual(expect.arrayContaining([
+   expect.objectContaining({id:live.id,deliveryId:delivery.id,
+    joinUrl:"https://meet.example.invalid/course/"+tag.toLowerCase()}),
+  ]));
+  await expect(getFacultyLiveClasses(learner,{view:"ALL"})).rejects.toBeDefined();
+  await expect(getFacultyLiveClasses(faculty,{view:"ALL",
+   deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+  await expect(getFacultyLiveClasses({
+   ...faculty,membership:{...faculty.membership!,status:"SUSPENDED"},
+  },{view:"ALL"})).rejects.toBeDefined();
+ });
  it("creates and audits Assignment draft, rejects stale/foreign, then publishes and archives",async()=>{
   const {delivery,lesson}=await fixture();
   const create={action:"CREATE" as const,lessonId:lesson.id,sequence:0,title:"Task "+tag,
