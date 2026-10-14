@@ -6,7 +6,6 @@ import { transitionCohort } from "@/modules/academics/cohort-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
-  CollegeCohortMutationError,
   createCollegeCohort,
   updateCollegeCohort,
 } from "@/modules/academics/college-cohort-mutation-service";
@@ -134,8 +133,9 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
       [batch.id],
     );
     expect(state.rows[0]).toMatchObject({
-      cohort_id: batch.id, current_term_number: 1, version: "0",
+      cohort_id: batch.id, current_term_number: 1,
     });
+    expect(Number(state.rows[0]?.version)).toBe(0);
     const edited = await updateCollegeCohort(adminA, batch.id, {
       name: name + "REVISED", code: payload("REVISED").code,
       expectedEndPeriodId: null, confirm: true,
