@@ -56,6 +56,7 @@ export async function CollegeRoleDirectoryWorkspace({
     teachingRole: first(params.teachingRole),
     facultyDepartmentId: first(params.facultyDepartmentId),
     titlePresence: first(params.titlePresence),
+    departmentPresence: first(params.departmentPresence),
     employmentType: first(params.employmentType),
     sort: first(params.sort),
     page: first(params.page),
@@ -230,6 +231,15 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ALL">All faculty</option>
               <option value="PRESENT">Title recorded</option>
               <option value="MISSING">Title missing</option>
+            </select>
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Primary department coverage
+            <select name="departmentPresence" defaultValue={result.filter.departmentPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All faculty</option>
+              <option value="ASSIGNED">Department recorded</option>
+              <option value="MISSING">Department missing</option>
             </select>
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
