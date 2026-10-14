@@ -692,3 +692,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Screening Queue — PARTIAL:** Added `/admin/placements/screenings`, read-only PENDING/HOLD/REJECTED screening state in selected college, search, pagination, IST decisions, safe job deep links and private-notes masking; separate SHORTLISTED view. Added eight-route mobile-wrapping oversight navigation on Placements entry page. Pure query unit authored, PostgreSQL/browser checks unexecuted. Decision actions, exports and exact legacy parity remain open.
+
+
+**2026-10-15 chat-6 round 4 / Read-first oversight verification — PARTIAL:** Added an isolated PostgreSQL in-test CLOSED placement season fixture with explicit UUID/text raw parameter casts to prevent ambiguous inferred parameter type, cross-college/org non-leaking empty result and wrong-role denial; corrected placements-navigation JSX indentation. Authored, not executed; the full 8-route PostgreSQL, lint, TypeScript and 375px browser gates still require orchestration run. Prior unrelated test repairs remain main-owned.
