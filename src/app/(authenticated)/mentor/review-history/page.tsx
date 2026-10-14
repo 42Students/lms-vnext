@@ -1,0 +1,98 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  mentorReviewDecisionLabel, mentorReviewHistoryHref, mentorReviewHistoryQuerySchema,
+} from "@/modules/projects/mentor-review-history-model";
+import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
+
+type Search = { decision?: string | string[]; page?: string | string[] };
+const first = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
+export default async function MentorReviewHistoryPage({
+  searchParams,
+}: { searchParams: Promise<Search> }) {
+  const raw=await searchParams;
+  const parsed=mentorReviewHistoryQuerySchema.safeParse({
+    decision:first(raw.decision) ?? undefined, page:first(raw.page) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid review history filters</h1>
+    <Link href="/mentor/review-history" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+  const context=await getCurrentRequestContext();
+  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  const data=await getMentorReviewHistory(context,parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
+      description="Recorded final-delivery review decisions for projects currently assigned to you."
+      actions={<Link href="/mentor/reviews"
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Pending reviews
+      </Link>} />
+    {!data.enabled ?
+      <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        Projects access is disabled for this membership. No review history was loaded.
+      </section>
+    : <>
+      <nav aria-label="Review decision filter" className="flex flex-wrap gap-2">
+        {([
+          ["ALL","All decisions"],
+          ["APPROVED","Approved"],
+          ["CHANGES_REQUESTED","Changes requested"],
+        ] as const).map(([decision,label]) =>
+          <Link key={decision} href={mentorReviewHistoryHref({decision,page:1})}
+            aria-current={data.query.decision===decision?"page":undefined}
+            className={data.query.decision===decision
+              ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+              : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
+            {label}
+          </Link>)}
+      </nav>
+      <p className="text-sm text-body">
+        {data.total} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
+      </p>
+      {data.items.length===0
+        ? <EmptyState title="No recorded delivery reviews"
+            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." />
+        : <ol className="grid gap-3">{data.items.map(item =>
+          <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-semibold text-foreground">{item.projectTitle}</h2>
+              <span className="text-sm font-semibold text-body">
+                {mentorReviewDecisionLabel(item.decision)}
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-body">
+              Final delivery version {item.version} · Reviewed{" "}
+              {new Intl.DateTimeFormat("en-IN",{
+                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+              }).format(item.reviewedAt)} IST
+            </p>
+            <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              Open authorized delivery history →
+            </Link>
+          </li>)}</ol>}
+      <nav aria-label="Delivery history pagination" className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+        <div className="flex gap-3">
+          {data.page>1 && <Link href={mentorReviewHistoryHref({...data.query,page:data.page-1})}
+            className="text-sm font-semibold text-primary-text">Previous</Link>}
+          {data.page<data.totalPages && <Link href={mentorReviewHistoryHref({...data.query,page:data.page+1})}
+            className="text-sm font-semibold text-primary-text">Next</Link>}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      This is project-level review history, not a record of decisions personally
+      authored by the current Mentor. Raw feedback and learner identities are
+      not returned. Only registered decision rows are shown; active assignment is required.
+    </p>
+  </div>;
+}
