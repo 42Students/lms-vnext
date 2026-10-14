@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
+import { RecruiterDesignationEditor } from "@/components/hr/recruiter-designation-editor";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
@@ -31,17 +32,14 @@ export default async function HrProfilePage() {
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
           </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</dt>
-            <dd className="mt-1 text-sm text-foreground">{profile.title ?? "Not provided"}</dd>
-          </div>
+          <RecruiterDesignationEditor initialTitle={profile.title} updatedAt={profile.profileUpdatedAt.toISOString()} />
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Mobile</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.phoneE164 ?? "Not provided"}</dd>
           </div>
         </dl>
         <p className="mt-4 text-xs text-muted-foreground">
-          Name, email and mobile currently come from your central identity record. Exact legacy First Name / Last Name editing remains blocked until the shared identity contract supports those fields.
+          Name, email and mobile come from your central identity record and remain read-only here. Recruiter designation can be updated with optimistic versioning. Separate legacy First Name / Last Name editing is blocked until the shared identity schema supports those fields.
         </p>
       </section>
 
