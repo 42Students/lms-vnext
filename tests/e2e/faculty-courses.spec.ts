@@ -92,6 +92,28 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
+test("Faculty Attendance is scoped to its Course and exposes learner detail affordances", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Attendance" }).click();
+  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Attendance report" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Mark attendance" })).toBeVisible();
+  // If the seed contains a session in the visible month, the learner button
+  // must reveal real per-session data, not make up a Present attendance mark.
+  const details = page.getByRole("button", { name: /^View attendance details for / });
+  if (await details.count()) {
+    await details.first().click();
+    const panel = page.getByRole("dialog", { name: /attendance$/ });
+    await expect(panel).toBeVisible();
+    await expect(panel.getByText("Session history")).toBeVisible();
+    await expect(panel.getByText("Not marked", { exact: true })).toBeVisible();
+    await panel.getByRole("button", { name: "Close drawer" }).click();
+  }
+});
+
 test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pages", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");

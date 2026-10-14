@@ -16,6 +16,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
+import { facultyLearnerAttendanceDetail } from "@/modules/attendance/faculty-learner-attendance-detail";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
@@ -157,6 +158,7 @@ export function FacultyAttendanceWorkspace({
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [selectedLearnerId, setSelectedLearnerId] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] =
     useState(false);
   const [scheduling, setScheduling] =
@@ -241,6 +243,18 @@ export function FacultyAttendanceWorkspace({
       ),
     [monthSessions],
   );
+
+  const selectedLearner = selectedLearnerId
+    ? allLearners.find((learner) => learner.membershipId === selectedLearnerId) ?? null
+    : null;
+  const learnerDetail = useMemo(
+    () => selectedLearnerId
+      ? facultyLearnerAttendanceDetail(selectedLearnerId, monthSessions, workspace.records, clock)
+      : null,
+    [selectedLearnerId, monthSessions, workspace.records, clock],
+  );
+  const canMarkSelectedLearner = selectedLearnerId !== null &&
+    workspace.roster.some((learner) => learner.membershipId === selectedLearnerId);
 
   const markedCount = monthSessions.filter(
     (session) =>
@@ -544,9 +558,14 @@ export function FacultyAttendanceWorkspace({
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId}>
                       <td className="sticky left-0 z-10 bg-surface px-3 py-3">
-                        <p className="m-0 font-semibold text-foreground">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLearnerId(learner.membershipId)}
+                          aria-label={`View attendance details for ${learnerName(learner)}`}
+                          className="m-0 text-left font-semibold text-primary-text hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-primary"
+                        >
                           {learnerName(learner)}
-                        </p>
+                        </button>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[
                             learner.rollNumber
@@ -843,6 +862,88 @@ export function FacultyAttendanceWorkspace({
           )}
         </>
       )}
+
+      <Drawer
+        open={selectedLearner !== null}
+        onOpenChange={(open) => { if (!open) setSelectedLearnerId(null); }}
+        title={selectedLearner ? learnerName(selectedLearner) + " attendance" : "Learner attendance"}
+        description={`Recorded class sessions for ${month}. Unmarked and upcoming sessions are not included in the attendance percentage.`}
+      >
+        {selectedLearner && learnerDetail ? (
+          <div className="space-y-5">
+            <p className="text-sm text-body">
+              {[selectedLearner.rollNumber ? "Roll " + selectedLearner.rollNumber : null,
+                selectedLearner.email, selectedLearner.phoneE164].filter(Boolean).join(" · ") ||
+                "Contact details unavailable"}
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {[
+                ["Present", learnerDetail.present],
+                ["Absent", learnerDetail.absent],
+                ["Not marked", learnerDetail.unmarked],
+                ["Upcoming", learnerDetail.upcoming],
+                ["Marked", learnerDetail.marked],
+                ["Attendance", learnerDetail.attendedPercent === null ? "—" : learnerDetail.attendedPercent + "%"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
+                  <p className="text-xs text-muted-foreground">{label}</p>
+                  <p className="mt-1 text-xl font-semibold text-foreground">{value}</p>
+                </div>
+              ))}
+            </div>
+            <h3 className="text-base font-semibold text-foreground">Session history</h3>
+            {learnerDetail.rows.length === 0 ? (
+              <p className="text-sm text-body">No class sessions are scheduled for this month.</p>
+            ) : (
+              <ol className="space-y-3">
+                {learnerDetail.rows.map((session) => {
+                  const canMark = canMarkSelectedLearner &&
+                    facultyAttendanceMarkingWindow({
+                      startsAt: new Date(session.startsAt),
+                      endsAt: new Date(session.endsAt),
+                      correctionWindowHours: workspace.policy.correctionWindowHours,
+                      now: clock,
+                    }) === "OPEN";
+                  return (
+                    <li key={session.id} className="rounded-lg border border-border p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <strong className="text-sm text-foreground">{session.title}</strong>
+                        <StatusBadge tone={session.code === "P" ? "success" : session.code === "A" ? "error" : session.code === "—" ? "warning" : "neutral"}>
+                          {session.label}
+                        </StatusBadge>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">{dateTime(session.startsAt)}</p>
+                      {session.note ? <p className="mt-2 whitespace-pre-wrap text-sm text-body">{session.note}</p> : null}
+                      {session.markedAt ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Last recorded {dateTime(session.markedAt)}
+                        </p>
+                      ) : null}
+                      {canMark ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            chooseSession(session.id);
+                            setMode("MARK");
+                            setSelectedLearnerId(null);
+                          }}
+                        >
+                          {session.code === "—" ? "Mark this session" : "Review / correct session"}
+                        </Button>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Corrections after the Faculty window closes require a College Admin.
+              Historical records are not editable from this detail panel.
+            </p>
+          </div>
+        ) : null}
+      </Drawer>
 
       <Drawer
         open={scheduleOpen}
