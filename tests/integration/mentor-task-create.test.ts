@@ -1,0 +1,164 @@
+import {randomUUID} from "node:crypto";
+import {afterAll,afterEach,describe,expect,it} from "vitest";
+import {Pool} from "pg";
+import {closeDatabaseConnection} from "@/db/client";
+import type {RequestContext} from "@/modules/identity/context";
+import {SEED_IDS} from "../../scripts/db-seed-data";
+import {addProjectMember} from "@/modules/projects/member-service";
+import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
+import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege} from "@/modules/projects/template-service";
+import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
+import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+
+if(!process.env.TEST_DATABASE_URL)throw new Error(
+  "Mentor create test requires isolated disposable TEST_DATABASE_URL",
+);
+const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+const root:RequestContext={
+  user:{id:SEED_IDS.superAdminUser,identityUid:"seed-superadmin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+  membership:null,adminScope:null,
+};
+const scopedRoot:RequestContext={...root,adminScope:{
+  organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA,
+}};
+const admin:RequestContext={
+  user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
+};
+const mentor:RequestContext={
+  user:{id:SEED_IDS.facultyUser,identityUid:"seed-shared-faculty",platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["MENTOR","FACULTY"]},
+};
+const learner:RequestContext={
+  user:{id:SEED_IDS.learnerUser,identityUid:"seed-learner",platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:SEED_IDS.learnerCollegeAMembership,collegeId:SEED_IDS.collegeA,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+};
+const tracked:{projects:string[];templates:string[]}={projects:[],templates:[]};
+async function cleanup(){
+  // Immutable activity_events are intentionally retained: no deletion from append-only audit tables.
+  if(tracked.projects.length){
+    for(const table of [
+      "project_task_submissions","project_submission_reviews","project_submissions",
+      "project_meetings","project_members","project_resources",
+      "project_tasks","project_sprints","project_releases",
+    ]){
+      await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
+    }
+    await pool.query("delete from project_instances where id=any($1::uuid[])",[tracked.projects]);
+    tracked.projects=[];
+  }
+  if(tracked.templates.length){
+    await pool.query("delete from project_template_college_assignments where template_id=any($1::uuid[])",[tracked.templates]);
+    await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[tracked.templates]);
+    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    tracked.templates=[];
+  }
+}
+afterEach(cleanup);
+afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
+
+async function fixture(){
+  const suffix=randomUUID().replaceAll("-","").slice(0,16);
+  const created=await createProjectTemplate(root,{
+    slug:"chat4-create-task-"+suffix,title:"Isolated task "+suffix,
+    blueprint:{
+      overview:{goal:"Build a task",deliverables:["Task"]},
+      releases:[{key:"release-a",title:"Release",sequence:0}],
+      sprints:[{key:"sprint-a",releaseKey:"release-a",title:"Sprint",sequence:0}],
+      tasks:[{key:"task-a",sprintKey:"sprint-a",title:"Seeded template task",priority:"MEDIUM" as const,sequence:0}],resources:[],
+    },
+  });
+  tracked.templates.push(created.template.id);
+  await publishProjectTemplate(root,created.template.id);
+  await assignProjectTemplateToCollege(scopedRoot,created.template.id,SEED_IDS.collegeA);
+  const project=await createProjectInstance(admin,{
+    collegeId:SEED_IDS.collegeA,templateId:created.template.id,
+    slug:"chat4-create-project-"+suffix,title:"Unique task project "+suffix,
+  });
+  tracked.projects.push(project.id);
+  await addProjectMember(admin,project.id,{
+    membershipId:SEED_IDS.facultyCollegeAMembership,role:"MENTOR",isPrimary:true,
+  });
+  await addProjectMember(admin,project.id,{
+    membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+  });
+  const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+  const sprint=workspace.sprints[0];
+  if(!sprint)throw new Error("Fixture missing registered sprint");
+  return {project,sprint};
+}
+describe("Mentor task create — migrated PostgreSQL",()=>{
+  it("reads actual team counts and one registered requested meeting",async()=>{
+    const {project}=await fixture();
+    const meetingId=randomUUID();
+    await pool.query(`insert into project_meetings
+      (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,
+       requested_by_membership_id,created_by_user_id)
+       values ($1,$2,'REQUESTED','GENERAL',$3,
+        '2026-11-01T10:00:00Z','2026-11-01T11:00:00Z','Asia/Kolkata',$4,$5)`,[
+      meetingId,project.id,"Unique Mentor meeting",
+      SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,
+    ]);
+    const view=await getMentorTeamMeetings(mentor,{projectId:project.id});
+    expect(view).toMatchObject({
+      enabled:true,total:1,
+      team:{learners:1,mentors:1,primaryRecorded:true},
+    });
+    expect(view.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({id:meetingId,status:"REQUESTED",hasOutcome:false}),
+    ]));
+    const completed=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,status:"COMPLETED",
+    });
+    expect(completed.items).toEqual([]);
+    expect(completed.total).toBe(0);
+    await expect(getMentorTeamMeetings(learner,{projectId:project.id}))
+      .rejects.toBeDefined();
+    await expect(getMentorTeamMeetings(mentor,{projectId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+    await expect(getMentorTeamMeetings(mentor,{
+      projectId:project.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
+
+  it("creates a TODO task exactly once, audits and rejects forged/foreign/stale writes",async()=>{
+    const {project,sprint}=await fixture();
+    const params={projectId:project.id};
+    const input={
+      sprintId:sprint.id,title:"Unique Mentor task",description:"No fake assignee",
+      acceptanceCriteria:"Submitted review",priority:"HIGH" as const,
+      expectedSprintUpdatedAt:sprint.updatedAt.toISOString(),
+    };
+    const created=await createMentorProjectTask(mentor,params,input);
+    expect(created).toMatchObject({
+      projectId:project.id,sprintId:sprint.id,title:input.title,
+      priority:"HIGH",status:"TODO",sequence:1,
+    });
+    const saved=await pool.query<{id:string}>(
+      "select id from project_tasks where project_id=$1 and id=$2",[project.id,created.id],
+    );
+    expect(saved.rows).toHaveLength(1);
+    const audit=await pool.query<{event_type:string;actor_user_id:string}>(
+      "select event_type,actor_user_id from activity_events where subject_type='project_task' and subject_id=$1 and event_type='projects.task.created'",
+      [created.id],
+    );
+    expect(audit.rows).toEqual([{event_type:"projects.task.created",actor_user_id:mentor.user.id}]);
+    await expect(createMentorProjectTask(mentor,params,input))
+      .rejects.toBeDefined();
+    await expect(createMentorProjectTask(learner,params,{
+      ...input,expectedSprintUpdatedAt:new Date().toISOString(),
+    })).rejects.toBeDefined();
+    await expect(createMentorProjectTask(mentor,{projectId:SEED_IDS.collegeB},input))
+      .rejects.toBeDefined();
+    await expect(createMentorProjectTask(mentor,params,{
+      ...input,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+    const count=await pool.query<{total:number}>(
+      "select count(*)::int as total from project_tasks where project_id=$1",[project.id],
+    );
+    expect(count.rows[0]?.total).toBe(2);
+  });
+});
