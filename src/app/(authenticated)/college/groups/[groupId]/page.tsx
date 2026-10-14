@@ -5,6 +5,8 @@ import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { CollegeStudyMemberActions } from "@/components/groups/college-study-member-actions";
+import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import {
   GroupReadError,
   getCollegeGroupDetail,
@@ -64,6 +66,16 @@ export default async function CollegeGroupDetailPage({
   }
 
   const { group, counts, members, events, rule } = detail;
+  const candidatePage = group.kind === "STUDY_GROUP" && context.membership
+    ? await listCollegePeopleWithRuntime(context, {
+      collegeId: context.membership.collegeId, limit: 100, offset: 0,
+    }) : null;
+  const available = candidatePage?.items.filter((person) =>
+    person.membership.status === "ACTIVE" && person.membership.roles.includes("LEARNER"),
+  ).map((person) => ({
+    id: person.membership.id,
+    label: person.user.displayName || person.user.email || person.membership.id,
+  })) ?? [];
 
   return (
     <div className="space-y-6">
@@ -160,6 +172,12 @@ export default async function CollegeGroupDetailPage({
           />
         )}
       </section>
+
+      {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
+        <CollegeStudyMemberActions groupId={group.id} name={group.name}
+          members={members} available={available} />
+      </section> : null}
 
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Recent activity</h2>

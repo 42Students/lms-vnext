@@ -28,7 +28,7 @@ describe("own learner schedule sourced from PostgreSQL sessions",()=>{
       view:"month",month:"2026-10",deliveryId:ids.delivery,
     },schedule.courses,new Date(2026,9,14));
     expect(filters?.view).toBe("month");
-    expect(filterScheduleEvents(schedule.events,filters!.selectedDeliveryIds)
+    expect(filterScheduleEvents(schedule.events.map(event=>({...event,startsAt:event.startsAt.toISOString(),endsAt:event.endsAt.toISOString()})),filters!.selectedDeliveryIds)
       .some(event=>event.id===ids.event)).toBe(true);
     expect(resolveOwnLearnerCalendarFilters({
       deliveryId:SEED_IDS.collegeB,

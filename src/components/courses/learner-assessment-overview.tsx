@@ -357,6 +357,7 @@ export function LearnerAssessmentOverview({
         }
         footer={
           selectedAssignment ? (
+            <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text"
@@ -367,6 +368,7 @@ export function LearnerAssessmentOverview({
               className="ml-2 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:underline">
               Full assignment details
             </Link>
+            </>
           ) : undefined
         }
       >

@@ -21,7 +21,7 @@
 | 4.2 | Semester–Course Mapping | PARTIAL | Buildable — map registered program_term_courses to real term selector, add/unmap and duplicate conflict checks. |
 | 4.2 | Batches | PARTIAL | Buildable — cohort CRUD, student modal/moves and safe progression integrations against registered tables. |
 | 4.2 | Classes | PARTIAL | Buildable — section CRUD, capacity, recurring schedule setup and conflict/result reporting. |
-| 4.2 | Batch Promotion | PARTIAL | Buildable — implement server-authored preview, blockers, academic-year overrides, atomic promotion/graduation with DB witness. |
+| 4.2 | Batch Promotion | PARTIAL | Buildable — read-only persisted server preview now available; atomic, audited cohort progression/graduation mutation, complete dry-run transactional guards and legacy modal acceptance remain open. |
 | 4.2 | Lecture Halls | PARTIAL | Buildable — migrated management exists; verify legacy field parity, conflicts, responsive behaviors and executed acceptance. |
 | 4.2 | Electives | PARTIAL | Buildable — existing slot catalogue; implement selection/enrollment rules, finalize actions, feature-disabled behavior and denial tests. |
 | 4.2 | Attendance | PARTIAL | Buildable — policy authority, exact grid/session corrections, department evidence, export and DB/browser acceptance. |

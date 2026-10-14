@@ -1,6 +1,10 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report-csv-service";
+import {
+  facultyCsvAttachmentHeaders,
+  parseFacultyCsvDownloadUrl,
+} from "@/modules/courses/faculty-report-csv-request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,18 +18,13 @@ export async function GET(request:Request,{params}:RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const path = await params;
-    const query = Object.fromEntries(new URL(request.url).searchParams.entries());
-    const {csv,filename} = await getFacultyReportCsvForDownload(context,{
-      ...query,kind:path.kind,assessmentId:path.assessmentId,
+    const query = parseFacultyCsvDownloadUrl(request.url,{
+      kind:path.kind,assessmentId:path.assessmentId,
     });
+    const {csv,filename} = await getFacultyReportCsvForDownload(context,query);
     return new Response("\uFEFF" + csv,{
       status:200,
-      headers:{
-        "Content-Type":"text/csv; charset=utf-8",
-        "Content-Disposition":'attachment; filename="' + filename + '"',
-        "Cache-Control":"private, no-store, max-age=0",
-        "X-Content-Type-Options":"nosniff",
-      },
+      headers:facultyCsvAttachmentHeaders(filename),
     });
   } catch (error) {
     return apiErrorResponse(error);

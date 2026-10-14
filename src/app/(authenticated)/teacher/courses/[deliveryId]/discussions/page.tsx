@@ -31,6 +31,7 @@ export default async function FacultyCourseDiscussionsPage({
         description={`${workspace.course.courseName} · ${workspace.course.sectionName}`}
       />
       <LearnerCourseDiscussion
+        key={deliveryId}
         deliveryId={deliveryId}
         moderate
       />

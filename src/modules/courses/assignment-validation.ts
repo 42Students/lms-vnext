@@ -152,7 +152,7 @@ export const gradeAssignmentSubmissionInputSchema =
       .number()
       .int()
       .min(0),
-  });
+  }).strict();
 
 export const publishAssignmentGradeInputSchema =
   z.object({
@@ -160,7 +160,7 @@ export const publishAssignmentGradeInputSchema =
       .number()
       .int()
       .min(0),
-  });
+  }).strict();
 
 export type CreateCourseAssignmentInput =
   z.infer<
