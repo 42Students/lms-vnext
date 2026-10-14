@@ -30,6 +30,14 @@ describe("offer register",()=>{
   expect(projectOfferRegister(offers,"ACCEPTED",1,"data").totalMatching).toBe(0);
   expect(offerRegisterQuery.safeParse({jobId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",q:"x".repeat(101)}).success).toBe(false);
  });
+ it("filters accepted offers by explicitly persisted joining states",()=>{
+  const facts=[row("1","ACCEPTED"),row("2","ACCEPTED","JOINED"),row("3","ACCEPTED","DEFERRED"),row("4","ISSUED")];
+  expect(projectOfferRegister(facts,"ALL",1,"","PENDING").rows.map(x=>x.id)).toEqual(["1"]);
+  expect(projectOfferRegister(facts,"ALL",1,"","JOINED").rows.map(x=>x.id)).toEqual(["2"]);
+  expect(projectOfferRegister(facts,"ALL",1,"","DEFERRED").rows.map(x=>x.id)).toEqual(["3"]);
+  expect(projectOfferRegister(facts,"ISSUED",1,"","PENDING").totalMatching).toBe(0);
+  expect(offerRegisterQuery.safeParse({jobId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",joining:"SELECTED"}).success).toBe(false);
+ });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
   expect(offerRegisterQuery.safeParse({jobId,status:"SELECTED"}).success).toBe(false);
