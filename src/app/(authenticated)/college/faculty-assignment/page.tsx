@@ -7,6 +7,7 @@ import {
   CollegeFacultyAssignmentEnd,
 } from "@/components/college/college-faculty-assignment-actions";
 import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-options-service";
+import {CollegeFacultyReassignAction} from "@/components/college/college-faculty-reassign-action";
 import { PageHeader } from "@/components/ui/page-header";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
@@ -109,12 +110,22 @@ export default async function CollegeFacultyAssignmentPage({
               <td className="px-4 py-3 text-body">{item.state}</td>
               <td className="px-4 py-3">
                 {item.state === "ACTIVE" ? (
-                  <CollegeFacultyAssignmentEnd
-                    assignmentId={item.id}
-                    facultyName={item.facultyName}
-                    courseName={item.courseName}
-                    role={item.role}
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    <CollegeFacultyAssignmentEnd
+                      assignmentId={item.id}
+                      facultyName={item.facultyName}
+                      courseName={item.courseName}
+                      role={item.role}
+                    />
+                    <CollegeFacultyReassignAction
+                      assignmentId={item.id}
+                      facultyName={item.facultyName}
+                      role={item.role}
+                      oldMembershipId={item.membershipId}
+                      expectedUpdatedAt={item.updatedAt.toISOString()}
+                      faculty={options.faculty}
+                    />
+                  </div>
                 ) : <span className="text-xs text-muted-foreground">Historical</span>}
               </td>
             </tr>)}</tbody>
