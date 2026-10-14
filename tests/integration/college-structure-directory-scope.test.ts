@@ -146,7 +146,7 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     const own=await exportCollegeElectives(adminA,{q:key});
     const foreign=await exportCollegeElectives(adminB,{q:key});
     expect(own.csv).toContain(key);
-    expect(own.csv).toContain("Select");
+    expect(own.csv).toContain("Minimum picks");
     expect(foreign.csv).not.toContain(key);
     await expect(exportCollegeElectives(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
   });

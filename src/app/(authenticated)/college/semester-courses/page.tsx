@@ -54,7 +54,7 @@ export default async function CollegeSemesterCoursesPage({
           Course offerings
         </Link>}
       />
-      <Link prefetch={false} href={offeringMappingCsvHref(query)}
+      <Link prefetch={false} download href={offeringMappingCsvHref(query)}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Export filtered offering mappings CSV
       </Link>

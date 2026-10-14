@@ -29,7 +29,7 @@ export default async function CollegeSemestersPage({
     </div>;
   }
   return <div className="space-y-4">
-    <Link prefetch={false} href={academicExportHref("SEMESTERS",parsed.data)}
+    <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered semesters CSV
     </Link>
