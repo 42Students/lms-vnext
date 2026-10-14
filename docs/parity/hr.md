@@ -451,3 +451,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR round schedule overlap — PARTIAL:** Drive Rounds now displays owned persisted round start/end, venue/mode and conservative potential overlap warnings only with known positive durations; IST labels, no invented SLOT or write actions. Unit/isolated PG own-company, foreign-company and wrong-role fixtures authored; unexecuted. Remains true resource/slot conflict checks and browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter self-name profile edit — PARTIAL:** Self-only displayName edit is backed by registered users table, strict Zod, central identity.self.manage, same-origin PATCH, active profile matching exact recruiter company, SQL millisecond optimistic CAS and transactional activity audit. Profile displays the editable own name; company identity/email/mobile stay read-only. No file features or external sending. Pure unit and in-test PostgreSQL success/foreign-company/wrong-role/stale/audit fixtures authored but not run. Remaining independent legacy first/last name fields, browser acceptance and session-display propagation check.
