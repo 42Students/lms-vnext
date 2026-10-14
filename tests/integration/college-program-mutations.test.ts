@@ -140,6 +140,36 @@ describe.skipIf(!enabled)("College Admin program create/edit/archive transaction
     expect(events.rows.every(row => row.college_id === SEED_IDS.collegeA)).toBe(true);
   });
 
+  it("rolls back rejected edits without writing audit rows", async () => {
+    const target = await ownProgram("ROLLBACK");
+    const taken = await ownProgram("NAMEOWNER");
+    const countEvents = async () => {
+      const events = await pool!.query(
+        "SELECT count(*)::int AS count FROM activity_events WHERE subject_type='program' AND subject_id=$1",
+        [target.id],
+      );
+      return Number(events.rows[0]?.count ?? 0);
+    };
+    const before = await countEvents();
+    expect(before).toBe(1);
+    await expect(updateCollegeProgram(adminA, target.id, {
+      name: taken.name.toUpperCase(), code: target.code, durationTerms: 8,
+    })).rejects.toMatchObject({ code: "PROGRAM_NAME_CONFLICT" });
+    await expect(updateCollegeProgram(adminB, target.id, {
+      name: label + "FOREIGN", code: "FOREIGN", durationTerms: 8,
+    })).rejects.toMatchObject({ code: "PROGRAM_NOT_FOUND" });
+    expect(await countEvents()).toBe(before);
+    const stored = await pool!.query(
+      "SELECT name,code,duration_terms,status FROM programs WHERE id=$1",
+      [target.id],
+    );
+    expect(stored.rows[0]).toMatchObject({
+      name: target.name, code: target.code, duration_terms: 8, status: "ACTIVE",
+    });
+    await archiveCollegeProgram(adminA, target.id, { confirm: true });
+    await archiveCollegeProgram(adminA, taken.id, { confirm: true });
+  });
+
   it("denies cross-college IDs, forged ownership and a non-admin role", async () => {
     const owned = await ownProgram("SCOPED");
     await expect(createCollegeProgram(adminA, {

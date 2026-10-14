@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   archiveCollegeProgramSchema,
   canReduceProgramDuration,
+  hasUnsavedCollegeProgramEdit,
   collegeProgramIdSchema,
   createCollegeProgramSchema,
   updateCollegeProgramSchema,
@@ -42,6 +43,22 @@ describe("College Admin program write contracts", () => {
     expect(archiveCollegeProgramSchema.safeParse({ confirm: true }).success).toBe(true);
     expect(archiveCollegeProgramSchema.safeParse({ confirm: true, collegeId: departmentId }).success).toBe(false);
     expect(collegeProgramIdSchema.safeParse("nope").success).toBe(false);
+  });
+
+  it("confirms before discarding dirty inputs, even invalid drafts", () => {
+    const saved = { name: "B.Tech CSE", code: "CSE", durationTerms: 8 };
+    expect(hasUnsavedCollegeProgramEdit(saved, {
+      name: "B.Tech CSE", code: "CSE", durationTerms: "8",
+    })).toBe(false);
+    expect(hasUnsavedCollegeProgramEdit(saved, {
+      name: "B.Tech CSE", code: "CSE", durationTerms: "",
+    })).toBe(true);
+    expect(hasUnsavedCollegeProgramEdit(saved, {
+      name: "B.Tech CSE", code: "CSE2", durationTerms: "8",
+    })).toBe(true);
+    expect(hasUnsavedCollegeProgramEdit(saved, {
+      name: "B.Tech CSE ", code: "CSE", durationTerms: "8",
+    })).toBe(true);
   });
 
   it("prohibits reducing duration below real referenced curriculum/progression", () => {
