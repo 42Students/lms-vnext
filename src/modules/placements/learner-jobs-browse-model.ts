@@ -112,8 +112,13 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       return a.roleOption.title.localeCompare(b.roleOption.title) ||
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
-    const deadline = (row: T) => row.job.applicationDeadline
-      ? Date.parse(row.job.applicationDeadline) : Number.MAX_SAFE_INTEGER;
+    // A closed or malformed-deadline drive must not outrank actionable
+    // upcoming deadlines. No caller time is used to override saved policy.
+    const deadline=(row:T)=>{
+      if(row.deadlinePassed||!row.job.applicationDeadline)return Number.MAX_SAFE_INTEGER;
+      const instant=Date.parse(row.job.applicationDeadline);
+      return Number.isFinite(instant)?instant:Number.MAX_SAFE_INTEGER;
+    };
     return deadline(a) - deadline(b) ||
       a.roleOption.title.localeCompare(b.roleOption.title) ||
       a.roleOption.id.localeCompare(b.roleOption.id);

@@ -41,7 +41,16 @@ describe("Learner job browsing filters", () => {
   it("sorts by earliest deadline with missing deadlines last", () => {
     expect(filterLearnerPlacementJobs(jobs,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
   });
-  it("supports compensation and title sorting", () => {
+  it("sorts actionable deadlines before closed or malformed dates",()=>{
+    const rows=[
+      {...jobs[0]!,job:{...jobs[0]!.job,applicationDeadline:"bad-date"}},
+      {...jobs[1]!,job:{...jobs[1]!.job,applicationDeadline:"2026-10-10T00:00:00Z"},deadlinePassed:true},
+      {...jobs[2]!,job:{...jobs[2]!.job,applicationDeadline:"2026-10-17T00:00:00Z"},deadlinePassed:false},
+    ];
+    expect(filterLearnerPlacementJobs(rows,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
+    expect(rows[0]!.job.applicationDeadline).toBe("bad-date");
+  });
+    it("supports compensation and title sorting", () => {
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"ctc"}).map(x=>x.job.id))
       .toEqual(["b","a","c"]);
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"title"}).map(x=>x.job.id))
