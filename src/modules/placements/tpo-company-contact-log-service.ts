@@ -1,7 +1,6 @@
 import "server-only";
 
 import { and, count, desc, eq } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,
@@ -13,15 +12,12 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
-import { projectTpoCompanyContactRows } from "./tpo-operations-export-model";
+import {
+  projectTpoCompanyContactRows,
+  tpoCompanyContactLogQuerySchema,
+} from "./tpo-operations-export-model";
 
-export const tpoCompanyContactLogQuerySchema = z.object({
-  companyId: z.string().uuid(),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
-  type: z.enum([
-    "ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM",
-  ]).default("ALL"),
-}).strict();
+export { tpoCompanyContactLogQuerySchema } from "./tpo-operations-export-model";
 
 /**
  * Source is registered DB09 CRM activity persistence; each row is joined
