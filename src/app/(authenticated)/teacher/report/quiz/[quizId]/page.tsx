@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getFacultyQuizReport } from "@/modules/courses/faculty-assessment-report-service";
+import { facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 
 export default async function FacultyQuizReportPage({
   params,
@@ -39,6 +40,12 @@ export default async function FacultyQuizReportPage({
         title={quiz.title}
         description={`${quiz.courseName} · ${quiz.sectionName} · ${quiz.lessonName}`}
       />
+      <div className="flex flex-wrap justify-end gap-3">
+        <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Individual attempts &amp; question accuracy →
+        </Link>
+      </div>
       <FacultyReportCsvDownload
         href={facultyReportCsvHref({
           kind:"quiz",assessmentId:quiz.id,deliveryId:quiz.deliveryId,
