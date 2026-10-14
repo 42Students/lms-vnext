@@ -10,6 +10,8 @@ describe("college live class read model",()=>{
   expect(collegeLiveClassQuerySchema.safeParse({format:"VIDEO"}).success).toBe(false);
   expect(liveClassSearchParams({q:["a","b"]})).toBeNull();
   expect(collegeLiveClassQuerySchema.safeParse({page:1001}).success).toBe(false);
+  expect(collegeLiveClassQuerySchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
+  expect(collegeLiveClassHref({...collegeLiveClassQuerySchema.parse({courseCode:"CS A"}),page:2})).toContain("courseCode=CS+A");
   expect(collegeLiveClassQuerySchema.parse({view:"UPCOMING"}).view).toBe("UPCOMING");
   expect(collegeLiveClassQuerySchema.safeParse({view:"COMING"}).success).toBe(false);
   expect(collegeLiveClassHref({...collegeLiveClassQuerySchema.parse({view:"PAST"}),page:2})).toContain("view=PAST");
