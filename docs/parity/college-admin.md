@@ -443,6 +443,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Learning-path lifecycle selector PARTIAL (2026-10-15):** College lesson rows and capped exports can now distinguish ACTIVE versus ARCHIVED owning learning paths independently of lesson and offering state. Query applies at signed-in-college scoped joins before page counts; strict schema and guarded PG inclusion/exclusion authored. Legacy/browser/CI acceptance remains open.
+
 **Period-specific lesson catalogue PARTIAL (2026-10-15):** Lessons now filter by saved academic-period code without conflating numbered semesters and calendar periods; scoped SQL runs before pagination/content counts and matching CSV uses the same selector. Own/other period PostgreSQL fixture authored; runtime/mobile/browser checks remain open.
 
 **Program-scoped lesson catalogue PARTIAL (2026-10-15):** Lesson list and capped CSV can select exact registered program codes, scoped by both course department and cohort-program department. Filter survives pagination and combines with title, course and lifecycle selectors; PG positive/missing tests authored. Execution and browser acceptance remain open.
