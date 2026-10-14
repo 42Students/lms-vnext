@@ -18,7 +18,7 @@ import {
   programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   COLLEGE_LEARNING_PAGE_SIZE,
@@ -31,6 +31,15 @@ import {
 const cohortDepartment = alias(departments, "learning_cohort_department");
 
 function requireCollegeCoursesRead(context: RequestContext) {
+  // These two service exports are read-only; selected Super Admin scope is a
+  // separate explicit read path, never an implicit college membership.
+  if (isSuperAdmin(context) && context.adminScope?.collegeId) {
+    requirePermission(context, "courses.read", {
+      collegeId: context.adminScope.collegeId,
+      organizationId: context.adminScope.organizationId,
+    });
+    return context.adminScope.collegeId;
+  }
   const member = context.membership;
   if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "courses.read", {
