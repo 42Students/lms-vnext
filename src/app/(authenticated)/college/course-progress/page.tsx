@@ -20,6 +20,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     Object.fromEntries(Object.entries({
       q: first(params.q), status: first(params.status),courseCode:first(params.courseCode)||undefined,
       programCode:first(params.programCode)||undefined,
+      periodCode:first(params.periodCode)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

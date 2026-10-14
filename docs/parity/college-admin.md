@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Persisted academic-period filter PARTIAL (2026-10-15):** Course Progress now uses exact academic-period codes from registered offerings, before college-scoped pagination and content-activity counts. Search, CSV and page links preserve the selector; own/other period fixture coverage authored. Runtime/browser verification remains open.
+
 **Exact program-code progress filter PARTIAL (2026-10-15):** Course Progress now supports a bounded persisted program-code selector over own-college offerings, retained in pagination and capped CSV. Positive/negative program-scoped PG evidence authored, without inventing eligibility denominators or activity totals; executed PG/browser closure remains open.
 
 **Exact recorded-course filter PARTIAL (2026-10-15):** Per-offering content-progress evidence now supports an exact registered course-code selector across paginated UI and formula-safe export; it never computes inferred learner completion or attendance. Existing college/foreign PostgreSQL fixture covers a matching and missing code; runtime/browser evidence open.

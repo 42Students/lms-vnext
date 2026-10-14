@@ -38,6 +38,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(progress.searchParams.get("q")).toBe("a & b");
     expect(collegeProgressQuerySchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
     expect(collegeProgressQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({periodCode:"2026-FALL"})))
+      .toContain("periodCode=2026-FALL");
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({programCode:"CS & EE"})))
       .toContain("programCode=CS+%26+EE");
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({courseCode:"CS 101"})))

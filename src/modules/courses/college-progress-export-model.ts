@@ -3,11 +3,12 @@ import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college
 export const PROGRESS_EXPORT_CAP=1000;
 export const collegeProgressCsvSchema=collegeProgressQuerySchema.omit({page:true});
 export {exportParams};
-export function collegeProgressCsvHref(query:{q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string}){
+export function collegeProgressCsvHref(query:{q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;periodCode?:string}){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
  if(query.programCode)p.set("programCode",query.programCode);
+ if(query.periodCode)p.set("periodCode",query.periodCode);
  if(query.status!=="ACTIVE")p.set("status",query.status);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
