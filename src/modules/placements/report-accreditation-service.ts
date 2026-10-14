@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, desc, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -22,9 +23,11 @@ import {
   buildAccreditationExport,
   type AccreditationFacts,
 } from "./report-accreditation-model";
-import {
-  placementReportQuerySchema,
-} from "./report-service";
+const accreditationQuerySchema = z.object({
+  collegeId: z.string().uuid(),
+  seasonId: z.string().uuid().optional(),
+  jobId: z.string().uuid().optional(),
+}).strict();
 import { requirePlacementManageScope } from "./scope";
 
 /**
@@ -36,7 +39,7 @@ export async function getPlacementAccreditationReport(
   context: RequestContext,
   rawQuery: unknown,
 ) {
-  const query = placementReportQuerySchema.parse(rawQuery);
+  const query = accreditationQuerySchema.parse(rawQuery);
   if (
     isSuperAdmin(context) &&
     context.adminScope?.collegeId !== query.collegeId
