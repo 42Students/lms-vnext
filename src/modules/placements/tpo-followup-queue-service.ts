@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
@@ -65,6 +65,7 @@ export async function getTpoDueFollowupQueue(
       isNull(placementTpoFollowups.doneAt),
       ...timeConditions,
       ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
+      ...(query.q ? [sql<boolean>\`position(lower(\${query.q}::text) in lower(coalesce(\${placementTpoLeads.name}, '') || ' ' || coalesce(\${placementTpoLeads.companyName}, ''))) > 0\`] : []),
     ))
     .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id))
     .limit(201);
@@ -87,6 +88,7 @@ export async function getTpoDueFollowupQueue(
     hasMoreDue: facts.length > 200,
     scope: query.scope,
     window: query.window,
+    q: query.q,
     leads: leads.slice(0, 200),
     hasMoreLeads: leads.length > 200,
   };

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const uuid = z.string().uuid();
-export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM"),window:z.enum(["DUE","NEXT_7_DAYS"]).default("DUE")}).strict();
+export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM"),window:z.enum(["DUE","NEXT_7_DAYS"]).default("DUE"),q:z.string().trim().max(100).default("")}).strict();
 export const confirmedTpoFollowupCreateSchema = z.object({
   confirmed: z.literal(true),
   leadId: uuid,
@@ -52,4 +52,10 @@ export function tpoFollowupDoneAudit(
   note: string,
 ): string {
   return "Follow-up completed (" + outcome + "): " + note;
+}
+
+export function tpoFollowupQueueHref(input:{scope:"MINE"|"TEAM";window:"DUE"|"NEXT_7_DAYS";q?:string}){
+ const params=new URLSearchParams({scope:input.scope,window:input.window});
+ if(input.q)params.set("q",input.q);
+ return "/tpo/follow-ups?"+params.toString();
 }
