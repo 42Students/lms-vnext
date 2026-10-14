@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
+import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type LearnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total,
-}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number}) {
+  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total, statusCounts,
+}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
   const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId});
@@ -70,6 +71,18 @@ export function LearnerProjectBoardSearch({
         {form}
       </details>
       <div className="hidden sm:block">{form}</div>
+      <div className="grid grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-3 lg:grid-cols-5" aria-label="Task counts by status">
+        {LEARNER_BOARD_STATUS_LABELS.map(item => (
+          <Link key={item.value}
+            aria-current={status===item.value ? "true" : undefined}
+            href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId}, item.value)}
+            className={status===item.value
+              ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
+              : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
+            <span>{item.label}</span><span>{statusCounts[item.value]}</span>
+          </Link>
+        ))}
+      </div>
       <p className="mt-3 text-sm text-muted-foreground" role="status">
         {shown} of {total} authorized tasks match
       </p>
