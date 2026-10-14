@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
+import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 
 const PAGE_SIZE = 48;
 
@@ -153,9 +154,11 @@ export function LearnerCourseList({
               <select
                 value={periodId}
                 onChange={(event) => {
+                  const reset = learnerCourseSemesterFilterReset();
                   setPeriodId(event.target.value);
-                  setQuery("");
-                  setVisibleLimit(PAGE_SIZE);
+                  setQuery(reset.search);
+                  setTypeFilter(reset.type);
+                  setVisibleLimit(reset.visibleLimit);
                 }}
                 className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
                 aria-label="Select semester"
