@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
+import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -30,7 +31,7 @@ export default async function CollegeActivityPage({
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
-  for (const key of ["module", "importance", "eventType", "actorUserId", "subjectType", "from", "to"] as const) {
+  for (const key of ["module", "importance", "eventType", "actorUserId", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
@@ -43,7 +44,7 @@ export default async function CollegeActivityPage({
         Export filtered CSV (max 1,000)
       </a>} />
     <p className="text-xs text-muted-foreground">
-      The export uses severity, module, action, actor, entity type and IST date filters (not the entity UUID), from the newest event,
+      The export uses severity, module, action, actor, entity type, entity UUID and IST date filters from the newest event,
       with a 1,000-row cap and an explicit CSV footer if truncated.
     </p>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
@@ -53,7 +54,7 @@ export default async function CollegeActivityPage({
           <select name="module" defaultValue={data.query.module ?? ""}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">All modules</option>
-            {["PLATFORM", "IDENTITY", "ACADEMICS", "COURSES", "PROJECTS", "PLACEMENTS"].map(v =>
+            {ACTIVITY_MODULES.map(v =>
               <option key={v} value={v}>{v}</option>)}
           </select>
         </label>
@@ -62,7 +63,7 @@ export default async function CollegeActivityPage({
           <select name="importance" defaultValue={data.query.importance ?? ""}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">All importance levels</option>
-            {["LOW", "NORMAL", "HIGH", "CRITICAL"].map(v =>
+            {ACTIVITY_IMPORTANCE.map(v =>
               <option key={v} value={v}>{v}</option>)}
           </select>
         </label>
