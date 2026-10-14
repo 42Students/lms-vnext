@@ -8,7 +8,7 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
-type Search={status?:string|string[];search?:string|string[]};
+type Search={status?:string|string[];search?:string|string[];period?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
@@ -16,6 +16,7 @@ export default async function MentorCalendarPage({searchParams}:{
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse({
     status:first(raw.status)??undefined,search:first(raw.search)??undefined,
+    period:first(raw.period)??undefined,
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1>Invalid meeting filters</h1>
@@ -25,7 +26,9 @@ export default async function MentorCalendarPage({searchParams}:{
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
   if(access?.projects.enabled!==true)return <MentorProjectsUnavailable/>;
   const meetings=await listMyMentorCalendarMeetings(context);
-  const displayed=filterMentorCalendar(meetings,parsed.data);
+  // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
+  const now=new Date();
+  const displayed=filterMentorCalendar(meetings,parsed.data,now);
   return <div className="space-y-5">
     <PageHeader eyebrow="Mentor" title="Meetings"
       description="Registered meetings across your current assigned Projects. Times shown in IST."/>
@@ -43,12 +46,20 @@ export default async function MentorCalendarPage({searchParams}:{
             <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">IST dates
+        <select name="period" defaultValue={parsed.data.period}
+          className="min-h-10 rounded-md border border-border bg-background px-3">
+          <option value="ALL">All dates</option><option value="TODAY">Today</option>
+          <option value="NEXT_7_DAYS">Next 7 IST days</option>
+          <option value="PAST_7_DAYS">Previous 7 IST days</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       <Link href="/mentor/calendar" className="inline-flex min-h-10 items-center text-sm text-primary-text underline">Clear</Link>
     </form>
     <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
     <MentorMeetingsCalendar meetings={displayed}
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
-      initialNow={new Date().toISOString()}/>
+      initialNow={now.toISOString()}/>
   </div>;
 }

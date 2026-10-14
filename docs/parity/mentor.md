@@ -812,3 +812,12 @@ Unit-model cap/neutralization tests and an own-project PostgreSQL fixture
 cover persisted positive selection and wrong-role/disabled/foreign/forged
 denial. Read-only, so no stale write token applies. **PARTIAL:** real typecheck,
 lint, PostgreSQL, browser download and legacy reports acceptance remain open.
+
+## chat-11 backlog S — global Meetings IST date-window filters (PARTIAL)
+
+Current assigned Mentor global Meetings filters support Today, next 7 IST calendar
+days and previous 7 IST calendar days alongside existing status/search. The
+ALL view retains expired REQUESTED meetings as actionable, without synthesizing
+MISSED status. Pure timezone-boundary tests and the existing same-college/foreign
+PostgreSQL fixture were extended. **PARTIAL:** test/browser execution, large-calendar
+paging and legacy parity remain open.
