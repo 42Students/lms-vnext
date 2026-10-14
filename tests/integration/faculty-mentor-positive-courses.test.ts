@@ -29,6 +29,8 @@ import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-serv
 import { getFacultySectionNotices } from "@/modules/courses/faculty-notices-service";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
+import {getFacultyDiscussionParticipation} from "@/modules/courses/faculty-discussion-participation-service";
+import {getFacultySessionCoverage} from "@/modules/courses/faculty-session-coverage-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -91,11 +93,7 @@ async function cleanup() {
         join course_learning_paths lp on lp.id=l.learning_path_id
         join course_offerings co on co.id=lp.offering_id
         join courses c on c.id=co.course_id where c.code like $1))`, [codePattern]);
-  await pool.query(`delete from activity_events where subject_id in
-    (select a.id::text from course_assignments a join course_lessons l on l.id=a.lesson_id
-      join course_learning_paths lp on lp.id=l.learning_path_id
-      join course_offerings co on co.id=lp.offering_id
-      join courses c on c.id=co.course_id where c.code like $1)`, [codePattern]);
+  // Preserve immutable activity_events. Other fixture teardown must not erase audit history.
   await pool.query(`delete from quiz_options where question_id in (
     select question.id from quiz_questions question join course_quizzes quiz on quiz.id=question.quiz_id
     join course_lessons l on l.id=quiz.lesson_id join course_learning_paths lp on lp.id=l.learning_path_id
@@ -247,6 +245,41 @@ afterAll(async()=>{
 });
 
 describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
+  it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
+    const {delivery}=await fixture();
+    await pool.query(`insert into course_discussion_messages(delivery_id,sender_membership_id,
+      sender_role,message_text) values($1,$2,'FACULTY',$3)`,
+      [delivery.id,facultyOnlyMembershipId,"Visible to Section only"]);
+    const data=await getFacultyDiscussionParticipation(facultyOnly,{deliveryId:delivery.id});
+    expect(data.counts).toMatchObject({total:1,faculty:1,learner:0,pinned:0});
+    expect(data.recent).toHaveLength(1);
+    await expect(getFacultyDiscussionParticipation(learner,{deliveryId:delivery.id}))
+      .rejects.toBeDefined();
+    await expect(getFacultyDiscussionParticipation(facultyOnly,{deliveryId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+    await expect(getFacultyDiscussionParticipation(facultyOnly,{
+      deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
+  it("reads registered Section attendance session coverage with honest unmarked state",async()=>{
+    const {delivery,section}=await fixture();
+    await createSectionScheduleEvent(admin,{
+      sectionId:section.id,deliveryId:delivery.id,
+      title:"C4 coverage session "+runId,
+      startsAt:"2026-10-20T04:00:00.000Z",endsAt:"2026-10-20T05:00:00.000Z",
+    });
+    const summary=await getFacultySessionCoverage(facultyOnly,{deliveryId:delivery.id});
+    expect(summary.total).toBe(1);
+    expect(summary.marked).toBe(0);
+    expect(summary.shown[0]).toMatchObject({title:"C4 coverage session "+runId});
+    await expect(getFacultySessionCoverage(learner,{deliveryId:delivery.id}))
+      .rejects.toBeDefined();
+    await expect(getFacultySessionCoverage(facultyOnly,{deliveryId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+    await expect(getFacultySessionCoverage(facultyOnly,{
+      deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
   it("reads live self-profile Section, IST sessions and registered learner contact",async()=>{
     const {delivery,section}=await fixture();
     const session=await createSectionScheduleEvent(admin,{

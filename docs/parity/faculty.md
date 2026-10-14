@@ -728,3 +728,18 @@ Date serialization, but strict Zod, transaction locks, optimistic token and
 same-origin command authorization remain server authoritative. Existing
 isolated PostgreSQL create/reschedule/denial test and new pure model tests
 are authored; TypeScript, browser and PostgreSQL reruns remain open.
+
+## 2026-10-14 Faculty read-first: Discussion participation and Section session coverage (PARTIAL)
+
+Added exact live Faculty-Section read-only `discussion-participation` using the
+migrated `course_discussion_messages`: persisted total, Faculty, Learner and
+pinned counts plus the latest 12 role/time entries. Reply counts and unresolved
+questions are *not* inferred from the legacy flattened text prefix.
+Added `session-coverage` from already-authorized scheduled/marked attendance
+sessions: separates recorded marks from elapsed unmarked and upcoming sessions,
+caps displayed rows at 40 and discloses truncation. Both are linked from the
+existing Faculty workspace, with loading/retry/mobile states, pure model/unit
+tests and independent Section/role/forged-selector PostgreSQL assertions in the
+fresh-Faculty fixture. No table created, no write route or fabricated notice.
+The DB10 Section notices store is still unregistered; read/write remains blocked.
+Real PG, eslint/tsc and responsive browser execution still open: PARTIAL only.

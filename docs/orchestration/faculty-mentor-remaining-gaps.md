@@ -287,3 +287,17 @@ stale replay denial, and unchanged record. Existing Mentor task-details
 service-level PG success/foreign/stale coverage remains in place.
 No independent PostgreSQL execution or tsc/eslint evidence in this chat;
 do not promote any parity row to DONE.
+
+## 2026-10-14 B — Faculty read-first incremental rows (PARTIAL)
+
+- **Course Discussions:** newly registered-message participation overview
+  (own Section, role counts and latest 12 timestamps), no inferred reply tree,
+  unanswered-learner flag or deleted text.
+- **Course Attendance:** Section session-status coverage (marked/ended-unmarked/
+  upcoming) with bounded 40-row display and explicit truncation, no invented
+  individual marks or final attendance percentages.
+- **Skipped Faculty Section notices:** DB10 announcement and Section-targeting
+  tables not registered. Existing notice screen remains transparently blocked.
+- PostgreSQL fixtures use unique Course and created Faculty-only/Learner members;
+  read success plus role/foreign/forged selectors authored. No execution
+  evidence in this session; legacy acceptance and browser states remain PARTIAL.
