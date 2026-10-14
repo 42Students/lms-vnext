@@ -8,8 +8,9 @@ export type FacultyContactRow={
   departmentName:string|null;roles:string[];
 };
 
-export function FacultyContactsTable({items,showRoles,detailBaseHref}:{
+export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery=""}:{
   items:readonly FacultyContactRow[];showRoles:boolean;detailBaseHref?:string;
+  detailQuery?:string;
 }) {
   if(items.length===0) return <EmptyState title="No public directory members found"
     description="Try another name, department or contact tab. Private contact information is not displayed." />;
@@ -20,7 +21,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref}:{
         className="rounded-xl border border-border bg-surface p-4">
         <h2 className="text-sm font-semibold text-foreground">
           {detailBaseHref?<Link
-            href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)}
+            href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)+detailQuery}
             className="text-primary-text hover:underline">{name}</Link>:name}
         </h2>
         <p className="mt-2 text-sm text-body">Department: {item.departmentName??"Not recorded"}</p>

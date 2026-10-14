@@ -1467,3 +1467,6 @@ The editor now marks metadata and question edits as unsaved and refuses PUBLISH 
 
 ## 2026-10-15 R6 Faculty Quiz persisted version reconciliation — PARTIAL
 The Quiz editor now consumes the authoritative `{quiz}` response after successful CREATE/EDIT/PUBLISH/CLOSE/ARCHIVE, preserves the exact persisted `updatedAt`, status and generated ID, and overrides stale server-rendered dropdown records. It does not invent next versions or permit a second write using the pre-save optimistic token. Pure parsing/reconciliation tests authored; authenticated multi-action browser and PG acceptance pending.
+
+## 2026-10-15 R6 Faculty Contacts detail return context — PARTIAL
+Public Contact cards now preserve only validated directory search, page and page-size selectors in their details link, and the Back to Contacts action restores the same filtered directory. Duplicate, foreign or malformed query fields are discarded instead of being propagated. No private contact fields or role claims are included in URLs. Pure URL tests authored; browser acceptance pending.
