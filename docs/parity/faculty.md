@@ -1440,3 +1440,6 @@ If the selected draft's persisted question bank fails to load, Faculty cannot ED
 
 ## 2026-10-15 Round 5 Faculty Courses concurrent-revocation recovery — PARTIAL
 After the initial persisted Faculty Course list is resolved, a single concurrently revoked/ended Section no longer crashes all Course cards when its workspace is read. Only typed missing/unassigned delivery errors are omitted; genuine database failures still surface. Pure error-boundary tests added. Pagination can require refresh during concurrent revocation; PG/browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz metadata preflight — PARTIAL
+Quiz CREATE and EDIT now validate title, instructions, bounded integer attempt count and exact IST due-date calendar values before the destructive confirmation/API call; invalid values show field-specific guidance instead of generic write failure. Server-side Zod and persisted authorization remain mandatory. Unit cases authored; mobile and PG acceptance pending.

@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -72,7 +72,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     const validation=facultyQuizDraftIssue(title,questions);
     if(validation){setError(validation);return;}
   }
-  if(action==="EDIT" && !title.trim()){setError("Enter a Quiz title.");return;}
+  if(action==="CREATE"||action==="EDIT"){
+    const issue=facultyQuizMetadataIssue(title,description,dueAt,maxAttempts);
+    if(issue){setError(issue);return;}
+  }
   const warning=action==="ARCHIVE" ?
     "Archive this Section Quiz? Learners will no longer see it. Quizzes with attempts cannot be archived." :
     action==="CLOSE" ?
