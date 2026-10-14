@@ -1449,3 +1449,6 @@ Contacts selector defaults now use input-side Zod prefault values before numeric
 
 ## 2026-10-15 R6 Faculty Course page strict decimal selectors — PARTIAL
 The Course list now accepts only bounded positive integer page selectors (or ordinary URL decimal strings), rejecting duplicate array values, booleans, exponent notation and leading-zero aliases that Zod number coercion would silently admit. Existing validated query links are unchanged. Unit regressions authored; executed page/PG acceptance pending.
+
+## 2026-10-15 R6 Faculty Course invalid-filter recovery — PARTIAL
+Unknown/duplicated/malformed Course filters now show an explicit reset action rather than allowing a generic Zod exception or silently loading a widened Section list. Only the pure query parser is used for recovery; valid requests still traverse the same persisted Faculty teaching reader. Unit tests authored; browser verification open.

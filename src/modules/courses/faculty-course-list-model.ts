@@ -50,3 +50,9 @@ export function facultyCourseWorkspaceRevokedError(error:unknown){
   "OFFERING_NOT_FOUND","LEARNING_ACCESS_DENIED",
  ].includes(error.code);
 }
+
+/** UI URL boundary: invalid selectors must not silently widen teaching scope. */
+export function parseFacultyCourseListLocation(raw:unknown):FacultyCourseListQuery|null {
+ const result=facultyCourseListQuerySchema.safeParse(raw);
+ return result.success?result.data:null;
+}
