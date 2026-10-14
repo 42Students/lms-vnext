@@ -564,7 +564,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L19-002 | Back action | PlacementRulesPage | safe Zod-validated dashboard/cell/drives back destination, linked from source pages | FIXED |
 | L19-003 | Personal "Where you stand" note | PlacementRulesPage | registered learner-scoped evidence/preferences with explicit unknown values and no eligibility invention | FIXED |
 | L19-004 | Authoritative college rules summary | PlacementRulesPage/API | no canonical policy model | BLOCKED |
-| L19-005 | Rule-change applicability wording | PlacementRulesPage | rules page | GAP |
+| L19-005 | Rule-change applicability wording | PlacementRulesPage | own saved submitted-app count and candid future-vs-submitted eligibility applicability wording; no invented College policy version, effective date or retroactive decision; link to own applications. PARTIAL pending executed PG/unit/tsc/lint and College-owner policy approval/browser copy acceptance | PARTIAL |
 | L19-006 | Loading skeleton | PlacementRulesPage | dedicated loading.tsx with LoadingState | FIXED |
 | L19-007 | Load error + Retry | PlacementRulesPage | dedicated error.tsx retry and safe return | FIXED |
 | L19-008 | Drive-level eligibility explanation | DriveEligibilityPanel | rules page | FIXED |

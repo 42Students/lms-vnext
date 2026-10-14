@@ -14,7 +14,7 @@ export default async function LearnerPlacementRulesPage({
   // change authorization, learner identity or the data being read.
   const parsed = learnerPlacementRulesQuerySchema.safeParse(query);
   const context = await getCurrentRequestContext();
-  const { evidence, preferences, preparation, back } =
+  const { evidence, preferences, preparation, back, ruleApplicability } =
     await getOwnLearnerPlacementRulesView(context, parsed.success ? parsed.data : {});
   return (
     <div className="space-y-6">
@@ -78,6 +78,21 @@ export default async function LearnerPlacementRulesPage({
         <h2 className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Check current drives →</Link>
+      </section>
+      <section aria-labelledby="rule-applicability-heading"
+        className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 id="rule-applicability-heading" className="text-base font-semibold text-foreground">
+          {ruleApplicability.heading}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-body">{ruleApplicability.message}</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          We do not have a versioned College placement-policy record here.
+          No change-effective date or retroactive eligibility decision is inferred.
+        </p>
+        <Link href="/learn/my-placements/applications"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+          Review my saved applications →
+        </Link>
       </section>
       <div className="grid gap-4 md:grid-cols-2">
         <section className="rounded-xl border border-border bg-surface p-5">
