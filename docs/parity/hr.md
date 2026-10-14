@@ -532,3 +532,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / recruiter team paging — PARTIAL:** Company & Team Team tab now paginates the *already authorized and search-filtered* company roster in 25-row slices with URL-stable search and prev/next controls. No cross-company user enumeration, no new data selected. Pure unit tests authored but unexecuted. DB keyset paging and browser acceptance remain.
+
+
+**2026-10-15 chat-10 round 4 / named round schedule conflict detail — PARTIAL:** Rounds tab now lists exact other authorized round names and sequence numbers for known-duration overlaps, rather than an unexplained count. Pure projection rejects unresolved/foreign IDs, never claims venue/panel reservation conflicts, and has unit coverage authored but not executed. Actual interview slot workflow remains.
