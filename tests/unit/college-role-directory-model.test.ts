@@ -24,7 +24,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
       { collegeId: "foreign" },
       { page: 0 },
       { page: 10001 },
-      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, {cohortId:"invalid"}, { classPresence:"CANCELLED" }, { teaching: "RETIRED" }, {teachingRole:"LECTURER"}, { facultyDepartmentId:"bad" }, {sort:"RANDOM"},
+      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, {cohortId:"invalid"}, { classPresence:"CANCELLED" }, { teaching: "RETIRED" }, {teachingRole:"LECTURER"}, { facultyDepartmentId:"bad" }, { employmentType:"x".repeat(129) }, {sort:"RANDOM"},
       { q: "x".repeat(101) },
     ]) {
       expect(collegeRoleDirectoryQuerySchema.safeParse(invalid).success).toBe(false);
@@ -33,7 +33,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
 
   it("builds only role-specific relative routes with escaped parameters", () => {
     const query = { q: "a & b", status: "ACTIVE" as const, accountStatus: "DISABLED" as const,
-      enrollment: "ACTIVE" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", sort:"NEWEST" as const, page: 2 };
+      enrollment: "ACTIVE" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", employmentType:"VISITING", sort:"NEWEST" as const, page: 2 };
     const faculty = new URL(collegeRoleDirectoryHref("FACULTY", query), "https://example.test");
     const students = new URL(collegeRoleDirectoryHref("LEARNER", query), "https://example.test");
     expect(faculty.pathname).toBe("/college/faculty");
@@ -52,6 +52,8 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(faculty.searchParams.get("teachingRole")).toBe("TA");
     expect(students.searchParams.has("teachingRole")).toBe(false);
     expect(faculty.searchParams.get("facultyDepartmentId")).toBe(query.facultyDepartmentId);
+    expect(faculty.searchParams.get("employmentType")).toBe("VISITING");
+    expect(students.searchParams.has("employmentType")).toBe(false);
     expect(students.searchParams.has("facultyDepartmentId")).toBe(false);
     expect(students.searchParams.has("teaching")).toBe(false);
     expect(students.searchParams.has("collegeId")).toBe(false);

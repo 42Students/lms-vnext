@@ -53,6 +53,7 @@ export async function CollegeRoleDirectoryWorkspace({
     teaching: first(params.teaching),
     teachingRole: first(params.teachingRole),
     facultyDepartmentId: first(params.facultyDepartmentId),
+    employmentType: first(params.employmentType),
     sort: first(params.sort),
     page: first(params.page),
   };
@@ -188,6 +189,17 @@ export async function CollegeRoleDirectoryWorkspace({
             </select>
             {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
               Only first 200 departments shown; use name search for others.
+            </span> : null}
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Employment type
+            <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All employment types</option>
+              {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
+            </select>
+            {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              First 100 distinct types shown.
             </span> : null}
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">

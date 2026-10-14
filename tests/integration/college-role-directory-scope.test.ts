@@ -232,6 +232,20 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{cohortId:SEED_IDS.collegeB}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("filters own-college Faculty by persisted exact employment type",async()=>{
+    const all=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{});
+    for(const employmentType of all.employmentOptions.slice(0,3)){
+      const result=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{employmentType});
+      expect(result.total).toBeLessThanOrEqual(all.total);
+      expect(result.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    }
+    const missing=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{employmentType:"NO-SUCH-TYPE-987"});
+    expect(missing.total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{employmentType:"VISITING"}))
+      .rejects.toThrow("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{employmentType:"VISITING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {
