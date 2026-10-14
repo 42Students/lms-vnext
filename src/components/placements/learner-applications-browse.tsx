@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
@@ -285,6 +286,11 @@ export function LearnerApplicationsBrowse({
         footer={<>
           {selected ? (
             <>
+              {ownApplicationJobHref(selected.jobId) ? <Link
+                href={ownApplicationJobHref(selected.jobId)!}
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                View this job
+              </Link> : null}
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
                 className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
