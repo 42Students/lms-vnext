@@ -436,6 +436,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 **Read-first PARTIAL:** `/college/faculty` lists persisted Faculty-role college memberships with search, status/pagination, user status, and count of active college-owned teaching assignments. The College Admin shell and dashboard link to it. This is not the legacy faculty onboarding, edit or complete-profile workflow; exact legacy and browser acceptance remain open.
 
+**Lifecycle PARTIAL:** Faculty rows now include a confirmed deactivate/reactivate action. The transaction locks the same-college FACULTY membership, requires the expected status, blocks deactivation while any live course teaching or section faculty assignment remains, and writes the state transition plus immutable actor-scoped activity event. No cross-college lifecycle writes are permitted. Legacy complete profile editing and independent runtime/browser evidence remain open.
+
 - [ ] Faculty list columns/profile metadata match.
 - [ ] Search/filter/pagination match.
 - [ ] Create/invite Faculty flow matches.
