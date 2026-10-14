@@ -1,0 +1,237 @@
+"use client";
+
+import { useState, useTransition, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createCollegeSemesterSchema,
+  updateCollegeSemesterSchema,
+} from "@/modules/academics/semester-mutation-model";
+
+type ProgramOption = { id: string; name: string; code: string };
+type SemesterRow = {
+  id: string;
+  name: string;
+  termNumber: number;
+  programName: string;
+  totalCredits: number | null;
+  isActive: boolean;
+  mappedCourses: number;
+};
+
+async function mutate(method: "POST" | "PATCH" | "DELETE", url: string, body: unknown) {
+  const response = await fetch(url, {
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const result: unknown = await response.json().catch(() => null);
+  if (!response.ok) {
+    const code = result && typeof result === "object" && "error" in result
+      ? String(result.error) : "REQUEST_FAILED";
+    throw new Error(code);
+  }
+  return result;
+}
+
+function inputNumber(value: string): number | null {
+  if (value.trim() === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : NaN;
+}
+
+export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOption[] }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [programId, setProgramId] = useState(programs[0]?.id ?? "");
+  const [termNumber, setTermNumber] = useState("1");
+  const [name, setName] = useState("");
+  const [totalCredits, setTotalCredits] = useState("");
+  const [notice, setNotice] = useState("");
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    const parsed = createCollegeSemesterSchema.safeParse({
+      programId, termNumber: Number(termNumber), name,
+      totalCredits: inputNumber(totalCredits),
+    });
+    if (!parsed.success) {
+      setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
+      return;
+    }
+    startTransition(async () => {
+      try {
+        await mutate("POST", "/api/academics/semesters", parsed.data);
+        setName("");
+        setTotalCredits("");
+        setNotice("Semester created.");
+        router.refresh();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Unable to create semester.");
+      }
+    });
+  }
+
+  return (
+    <section aria-label="Create semester" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <h2 className="m-0 text-lg font-semibold text-foreground">Create semester</h2>
+      {programs.length === 0 ? (
+        <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
+      ) : (
+        <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <label className="grid gap-1 text-sm font-medium text-body">
+            Program
+            <select required value={programId} onChange={e => setProgramId(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {programs.map(program => <option key={program.id} value={program.id}>
+                {program.name} ({program.code})
+              </option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-medium text-body">
+            Semester number
+            <input required type="number" min={1} max={24} step={1} value={termNumber}
+              onChange={e => setTermNumber(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid gap-1 text-sm font-medium text-body">
+            Semester name
+            <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid gap-1 text-sm font-medium text-body">
+            Total credits (optional)
+            <input type="number" min={0} max={1000} step={1} value={totalCredits}
+              onChange={e => setTotalCredits(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <div className="flex items-end">
+            <button type="submit" disabled={pending}
+              className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+              {pending ? "Saving…" : "Create"}
+            </button>
+          </div>
+        </form>
+      )}
+      {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+    </section>
+  );
+}
+
+export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [name, setName] = useState(row.name);
+  const [credits, setCredits] = useState(row.totalCredits === null ? "" : String(row.totalCredits));
+  const [isActive, setIsActive] = useState(row.isActive);
+  const [notice, setNotice] = useState("");
+  const url = "/api/academics/semesters/" + encodeURIComponent(row.id);
+
+  function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    const parsed = updateCollegeSemesterSchema.safeParse({
+      name, totalCredits: inputNumber(credits), isActive,
+    });
+    if (!parsed.success) {
+      setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
+      return;
+    }
+    startTransition(async () => {
+      try {
+        await mutate("PATCH", url, parsed.data);
+        setEditing(false);
+        setNotice("Semester updated.");
+        router.refresh();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Unable to update semester.");
+      }
+    });
+  }
+
+  function remove() {
+    setNotice("");
+    startTransition(async () => {
+      try {
+        await mutate("DELETE", url, { confirm: true });
+        setConfirming(false);
+        setNotice("Semester deleted.");
+        router.refresh();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Unable to delete semester.");
+      }
+    });
+  }
+
+  return (
+    <div className="min-w-52 space-y-2">
+      {!editing && !confirming ? (
+        <div className="flex gap-2">
+          <button type="button" disabled={pending} onClick={() => { setNotice(""); setEditing(true); }}
+            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            Edit
+          </button>
+          <button type="button" disabled={pending} onClick={() => { setNotice(""); setConfirming(true); }}
+            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            Delete
+          </button>
+        </div>
+      ) : null}
+      {editing ? (
+        <form onSubmit={save} className="space-y-2">
+          <p className="text-xs text-muted-foreground">Program and semester number cannot be changed.</p>
+          <label className="grid gap-1 text-xs font-semibold text-body">
+            Semester name
+            <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+              className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground" />
+          </label>
+          <label className="grid gap-1 text-xs font-semibold text-body">
+            Total credits
+            <input type="number" min={0} max={1000} step={1} value={credits}
+              onChange={e => setCredits(e.target.value)}
+              className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground" />
+          </label>
+          <label className="flex items-center gap-2 text-xs text-body">
+            <input type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
+            Active
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" disabled={pending} className="min-h-10 rounded-md bg-primary px-3 text-xs font-semibold text-on-primary disabled:opacity-50">
+              {pending ? "Saving…" : "Save"}
+            </button>
+            <button type="button" disabled={pending} onClick={() => setEditing(false)}
+              className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : null}
+      {confirming ? (
+        <div role="group" aria-label={"Confirm delete semester " + row.name} className="space-y-2 rounded-md border border-border p-2">
+          <p className="text-xs text-body">
+            Delete {row.name} (semester {row.termNumber}) from {row.programName}?
+            This cannot be undone. Mapped courses and active batches block deletion.
+          </p>
+          {row.mappedCourses > 0 ? (
+            <p className="text-xs font-semibold text-body">
+              {row.mappedCourses} mapped courses must be removed first.
+            </p>
+          ) : null}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={pending || row.mappedCourses > 0} onClick={remove}
+              className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-foreground disabled:opacity-50">
+              {pending ? "Deleting…" : "Confirm delete"}
+            </button>
+            <button type="button" disabled={pending} onClick={() => setConfirming(false)}
+              className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {notice ? <p role="status" className="text-xs text-body">{notice}</p> : null}
+    </div>
+  );
+}
