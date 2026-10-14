@@ -13,6 +13,7 @@ export async function GET(request:Request){
   const query=mentorCalendarFiltersSchema.parse({
    status:url.searchParams.get("status")??undefined,
    type:url.searchParams.get("type")??undefined,
+   projectState:url.searchParams.get("projectState")??undefined,
    search:url.searchParams.get("search")??undefined,
    period:url.searchParams.get("period")??undefined,
   });

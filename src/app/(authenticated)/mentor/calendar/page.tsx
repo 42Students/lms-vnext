@@ -8,7 +8,7 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
-type Search={status?:string|string[];type?:string|string[];search?:string|string[];period?:string|string[]};
+type Search={status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
@@ -16,6 +16,7 @@ export default async function MentorCalendarPage({searchParams}:{
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse({
     status:first(raw.status)??undefined,type:first(raw.type)??undefined,
+    projectState:first(raw.projectState)??undefined,
     search:first(raw.search)??undefined,
     period:first(raw.period)??undefined,
   });
@@ -56,6 +57,14 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="RETRO">Retrospective</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Assigned project state
+        <select name="projectState" defaultValue={parsed.data.projectState}
+          className="min-h-10 rounded-md border border-border bg-background px-3">
+          <option value="ALL">All project states</option>
+          <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
+          <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
+        </select>
+      </label>
       <label className="grid gap-1 text-sm font-semibold text-body">IST dates
         <select name="period" defaultValue={parsed.data.period}
           className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -70,6 +79,7 @@ export default async function MentorCalendarPage({searchParams}:{
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <Link href={"/api/mentor/calendar/export?"+new URLSearchParams({
         status:parsed.data.status,type:parsed.data.type,
+        projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
       }).toString()} download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
         Export filtered meeting metadata CSV (max 200)
