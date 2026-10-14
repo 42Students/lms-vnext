@@ -6,6 +6,8 @@ export const superAdminAuditExportSchema=z.object({
  module:z.enum(ACTIVITY_MODULES).optional(),
  importance:z.enum(ACTIVITY_IMPORTANCE).optional(),
  actorUserId:z.string().uuid().optional(),
+ collegeId:z.string().uuid().optional(),
+ subjectId:z.string().trim().min(1).max(500).optional(),
  eventType:z.string().trim().min(1).max(120).optional(),
  subjectType:z.string().trim().min(1).max(80).optional(),
  from:z.string().min(1).max(40).optional(),
