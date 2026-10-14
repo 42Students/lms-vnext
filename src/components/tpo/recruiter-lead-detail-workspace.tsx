@@ -206,10 +206,17 @@ export function RecruiterLeadDetailWorkspace({
 
   async function markNotNow(event: React.FormEvent) {
     event.preventDefault();
+    if (!window.confirm(
+      "Mark this recruiter Not Now? The stage and reason/revisit date will be " +
+      "saved with an auditable change record. No invitation will be sent.",
+    )) return;
     const ok = await mutate(base + "/not-now", "POST", {
-      collegeId,
-      reason: notNowReason.trim() || null,
-      revisitDate: revisitDate || null,
+      confirmed: true,
+      decision: {
+        collegeId,
+        reason: notNowReason.trim() || null,
+        revisitDate: revisitDate || null,
+      },
     });
     if (ok) setNotNowOpen(false);
   }
