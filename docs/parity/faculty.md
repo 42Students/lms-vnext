@@ -374,3 +374,18 @@ All Quizzes and All Assignments link to this overview. Pure-model tests and
 PostgreSQL denial tests are authored, not executed here. This does not replace
 legacy detailed reports, analytics, grading controls or authenticated browser
 verification; parent rows remain PARTIAL.
+
+## Faculty overdue response follow-ups (2026-10-14)
+
+New read-only `/teacher/response-followups` derives unresponded current-roster
+learners for published Assignment and Quiz assessments whose recorded due time
+has passed. It reuses the existing active teaching-Section discovery and
+Section-specific assignment/quiz report readers. The new view excludes drafts,
+future deadlines and assessments without a due date; it does not infer failure,
+misconduct or sent messages. Server-side expansion is limited to five
+assessments per page and at most twelve learner labels per assessment, with a
+link to the complete authorized report. Zod validates bounded filters and
+navigation. Pure-model tests and PostgreSQL denial tests are authored, not
+represented as executed. Exact legacy reporting, write/notification actions,
+positive database results and mobile/browser evidence remain OPEN; existing
+Assignment and Quiz report rows remain PARTIAL.
