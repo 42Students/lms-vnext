@@ -12,7 +12,7 @@ export function filterHrCalendarDays(days:readonly HrCalendarFilterDay[],categor
   ...day,
   events:day.events.filter(event=>category==="ALL"||
    (category==="DEADLINES"?event.kind==="APPLICATION_DEADLINE":
-    category==="ROUNDS"?event.kind!=="APPLICATION_DEADLINE":false)),
+    category==="ROUNDS"?event.kind==="ROUND":false)),
   resultsDue:category==="ALL"||category==="RESULTS_DUE"?[...day.resultsDue]:[],
  }));
 }
