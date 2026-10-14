@@ -1,8 +1,19 @@
 import {describe,it,expect} from "vitest";
-import {collegeTeachingReassignSchema,teachingReassignPrompt,teachingMembershipIsActive}
+import {collegeTeachingReassignSchema,teachingReassignPrompt,teachingMembershipIsActive,teachingScheduleConflict}
   from "@/modules/courses/college-teaching-reassign-model";
 const a="10000000-0000-4000-8000-000000000001",b="10000000-0000-4000-8000-000000000002";
 describe("College Faculty atomic reassign",()=>{
+  it("rejects overlapping future timetable windows but permits adjacent and own sessions",()=>{
+    const target={id:"delivery-session",startsAt:new Date("2026-10-15T03:30:00Z"),
+      endsAt:new Date("2026-10-15T04:30:00Z")};
+    expect(teachingScheduleConflict([target],[target])).toBe(false);
+    expect(teachingScheduleConflict([target],[])).toBe(false);
+    expect(teachingScheduleConflict([target],[{...target,id:"another"}])).toBe(true);
+    expect(teachingScheduleConflict([target],[{id:"next",startsAt:target.endsAt,
+      endsAt:new Date("2026-10-15T05:30:00Z")}])).toBe(false);
+    expect(teachingScheduleConflict([target],[{id:"prior",startsAt:new Date("2026-10-15T02:30:00Z"),
+      endsAt:target.startsAt}])).toBe(false);
+  });
   it("requires both a persisted active account and membership",()=>{
     expect(teachingMembershipIsActive(undefined)).toBe(false);
     expect(teachingMembershipIsActive({accountStatus:"ACTIVE",membershipStatus:"ACTIVE"})).toBe(true);
