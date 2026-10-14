@@ -326,3 +326,7 @@ parity remain OPEN. No checklist item is closed solely from source work.
 ### Faculty aggregate Assessment search and editor draft recovery (2026-10-14)
 
 All Assignments and All Quizzes now search by title, course, Section, lesson and description in already-authorized teaching data, combining with persisted status/delivery filters and resetting pagination when the search changes. The Edit drawer restores current server-provided values on every open; closing an unsaved edit can no longer inadvertently persist stale draft fields on subsequent re-open. Pure filter unit tests and complete authenticated Assignment create/edit/archive browser coverage are added; no aggregate surface is marked DONE without executed evidence.
+
+### Faculty Quiz end-to-end authoring browser gate (2026-10-14)
+
+Added an authenticated Faculty browser scenario that creates a real Section-scoped Quiz with a persisted multiple-option question, searches for it on All Quizzes, edits the title and maximum attempts, verifies the persisted edit after navigation, and archives the Quiz through the existing confirmed lifecycle route. It requires actual successful Playwright execution before closing the Create/Edit/Delete Quiz checklist rows. No change to quiz schema, learner attempt access, or global phase gates.
