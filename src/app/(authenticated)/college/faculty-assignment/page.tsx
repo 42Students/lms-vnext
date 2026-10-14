@@ -2,6 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
+import {
+  CollegeFacultyAssignmentCreate,
+  CollegeFacultyAssignmentEnd,
+} from "@/components/college/college-faculty-assignment-actions";
+import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-options-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
@@ -31,17 +36,21 @@ export default async function CollegeFacultyAssignmentPage({
     </div>
   );
 
-  const { query, items, total, totalPages } =
-    await listCollegeFacultyAssignments(context, parsed.data);
+  const [directory, options] = await Promise.all([
+    listCollegeFacultyAssignments(context, parsed.data),
+    listCollegeTeachingOptions(context),
+  ]);
+  const { query, items, total, totalPages } = directory;
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin · People"
         title="Faculty Assignment"
-        description="Read-only assignment roster from persisted teaching ownership and section deliveries in your college."
+        description="Manage persisted teaching assignments for live course/class deliveries in your college. Ending an assignment retains its history."
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
       />
+      <CollegeFacultyAssignmentCreate {...options} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
@@ -81,6 +90,7 @@ export default async function CollegeFacultyAssignmentPage({
               <th scope="col" className="px-4 py-3">Batch / class</th>
               <th scope="col" className="px-4 py-3">Period</th>
               <th scope="col" className="px-4 py-3">Lifecycle</th>
+              <th scope="col" className="px-4 py-3">Actions</th>
             </tr></thead>
             <tbody>{items.map(item => <tr key={item.id} className="border-t border-border align-top">
               <td className="px-4 py-3">
@@ -97,6 +107,16 @@ export default async function CollegeFacultyAssignmentPage({
               <td className="px-4 py-3 text-body">{item.cohortName} · {item.sectionName}</td>
               <td className="px-4 py-3 text-body">{item.periodName}</td>
               <td className="px-4 py-3 text-body">{item.state}</td>
+              <td className="px-4 py-3">
+                {item.state === "ACTIVE" ? (
+                  <CollegeFacultyAssignmentEnd
+                    assignmentId={item.id}
+                    facultyName={item.facultyName}
+                    courseName={item.courseName}
+                    role={item.role}
+                  />
+                ) : <span className="text-xs text-muted-foreground">Historical</span>}
+              </td>
             </tr>)}</tbody>
           </table>
         )}
@@ -111,8 +131,9 @@ export default async function CollegeFacultyAssignmentPage({
         </div>
       </nav>
       <p className="text-xs text-muted-foreground">
-        Ended means the teaching assignment or its delivery has ended; no reassignment, duplication,
-        section scheduling, or confirmation action is performed on this page.
+        Assignment changes require confirmation and produce audit records. A second primary teacher
+        or an already assigned faculty member cannot be added to the same live delivery.
+        Class scheduling and automatic reassignment remain offering-level workflows.
       </p>
     </div>
   );
