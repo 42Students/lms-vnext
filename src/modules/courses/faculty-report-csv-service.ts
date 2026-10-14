@@ -12,6 +12,7 @@ import {
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
 import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
+import {capFacultyQuizCsvRows,facultyQuizCsvNotice} from "./faculty-quiz-csv-cap";
 
 /** A GET export re-runs the persisted Section authorization; never trust cached UI report props. */
 export async function getFacultyReportCsvForDownload(
@@ -28,6 +29,7 @@ export async function getFacultyReportCsvForDownload(
       })) throw new AuthorizationError("courses.read");
 
   let input: FacultyReportCsvInput;
+  let omittedRows=0;
   if (query.kind === "assignment") {
     const report = await getFacultyAssignmentReport(
       context,query.assessmentId,query.deliveryId,
@@ -69,10 +71,12 @@ export async function getFacultyReportCsvForDownload(
       context,query.assessmentId,query.deliveryId,
     );
     const {quiz,latestAttempts,notAttemptedLearners} = report;
+    const capped=capFacultyQuizCsvRows(latestAttempts,notAttemptedLearners);
+    omittedRows=capped.omittedRows;
     input = {
       kind:"quiz",title:quiz.title,sectionName:quiz.sectionName,
       rows:[
-        ...latestAttempts.map(attempt => ({
+        ...capped.selectedAttempts.map(attempt => ({
           name:attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
           email:attempt.learnerEmail,
           status:"ATTEMPTED" as const,
@@ -82,7 +86,7 @@ export async function getFacultyReportCsvForDownload(
           submittedAt:attempt.submittedAt.toISOString(),
           note:"Attempt " + attempt.attemptNumber,
         })),
-        ...notAttemptedLearners.map(learner => ({
+        ...capped.selectedMissing.map(learner => ({
           name:learner.displayName || learner.email || "Learner",
           email:learner.email,
           status:"NOT_ATTEMPTED" as const,
@@ -91,8 +95,14 @@ export async function getFacultyReportCsvForDownload(
       ],
     };
   }
+  const notice=input.kind==="quiz"?facultyQuizCsvNotice(omittedRows):null;
+  // The notice is seven CSV fields like ordinary rows; numeric, server
+  // authored metadata only. It cannot introduce a spreadsheet formula.
+  const noteRow=notice?
+    '"' + notice.replaceAll('"','""') + '","","","","","",""\\r\\n':"";
   return {
     filename:facultyReportCsvFilename(input.kind,input.title,input.sectionName),
-    csv:facultyReportCsv(input),
+    csv:facultyReportCsv(input)+noteRow,
+    omittedRows,
   };
 }
