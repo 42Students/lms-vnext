@@ -5,6 +5,7 @@ import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerSchedul
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
 import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
 import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
+import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -250,18 +251,20 @@ export function LearnerClassSchedule({
   const [sectionId, setSectionId] = useState("");
   const [sessionSearch,setSessionSearch]=useState("");
   const [sessionKind,setSessionKind]=useState<LearnerScheduleKind>("ALL");
+  const [upcomingOnly,setUpcomingOnly]=useState(false);
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
     );
 
+  const filterNow = new Date();
   const filteredEvents = useMemo(
     () =>
-      filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
+      filterLearnerScheduleUpcoming(filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ), sectionId),sessionSearch),sessionKind),
-    [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind],
+      ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNow.getTime()),
+    [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),
@@ -449,6 +452,13 @@ export function LearnerClassSchedule({
                 <option value="SECTION">General section events</option>
               </select>
             </label>
+            <button type="button" aria-pressed={upcomingOnly}
+              onClick={()=>setUpcomingOnly(value=>!value)}
+              className={upcomingOnly
+                ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
+                : "min-h-11 rounded-lg border border-border px-3 text-sm font-semibold text-body"}>
+              Upcoming sessions only
+            </button>
             <span role="status" className="w-full text-xs text-muted-foreground">
               {filteredEvents.length} matching authorized sessions
             </span>
