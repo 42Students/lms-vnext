@@ -562,3 +562,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Request Drive compensation review — PARTIAL:** Validated local preview now flags potentially inconsistent fixed+variable total versus stated min/max CTC, and one-sided bond amounts/durations. Warnings are informational, never fabricated application rejections or server submissions. Pure boundary unit authored; review does not alter draft persistence. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Drive-grouped notification page — PARTIAL:** Read-only Messages screen groups its current 25 authorized notification rows by drive, showing per-page unread totals while preserving record-level mark-read actions. Explicitly states this is *not* persisted conversation threads or cross-page totals. Pure model/unit added; recipient/company/college query remains the same. Browser acceptance pending.
