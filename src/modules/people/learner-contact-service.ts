@@ -10,7 +10,8 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { learnerProfileDocumentSchema } from "./profile-validation";
-import { learnerContactEditSchema } from "./learner-contact-model";
+import { learnerContactEditSchema,learnerContactsAreStale } from "./learner-contact-model";
+import {PeopleServiceError} from "./errors";
 
 
 export async function updateOwnLearnerContacts(
@@ -60,24 +61,30 @@ export async function updateOwnLearnerContacts(
       throw new AuthorizationError("profile.self.manage");
     }
 
-    // jsonb_set uses the *currently persisted* document in the UPDATE,
-    // preventing a stale client copy from replacing other profile sections.
-    const [row] = await tx.insert(learnerProfiles).values({
-      membershipId: membership.id,
-      profileDocument: { contacts: input.contacts },
-    }).onConflictDoUpdate({
-      target: learnerProfiles.membershipId,
-      set: {
-        profileDocument: sql`jsonb_set(
-          ${learnerProfiles.profileDocument},
-          '{contacts}',
-          ${JSON.stringify(input.contacts)}::jsonb,
-          true
-        )`,
-        updatedAt: new Date(),
-      },
-    }).returning({ document: learnerProfiles.profileDocument });
-
+    // One locked profile row prevents same-contact lost updates while still
+    // allowing unrelated profile sections to merge through jsonb_set.
+    await tx.insert(learnerProfiles).values({
+      membershipId:membership.id,profileDocument:{},
+    }).onConflictDoNothing();
+    const [locked]=await tx.select({document:learnerProfiles.profileDocument})
+      .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membership.id))
+      .for("update").limit(1);
+    const current=learnerProfileDocumentSchema.shape.contacts.parse(
+      (locked?.document as Record<string,unknown>|null|undefined)?.contacts,
+    );
+    if(input.expectedContacts && learnerContactsAreStale(current,input.expectedContacts))
+      throw new PeopleServiceError("LEARNER_CONTACT_STALE");
+    if(!learnerContactsAreStale(current,input.contacts))return {contacts:current};
+    const [row]=await tx.update(learnerProfiles).set({
+      profileDocument:sql`jsonb_set(
+        ${learnerProfiles.profileDocument},
+        '{contacts}',
+        ${JSON.stringify(input.contacts)}::jsonb,
+        true
+      )`,
+      updatedAt:new Date(),
+    }).where(eq(learnerProfiles.membershipId,membership.id))
+      .returning({document:learnerProfiles.profileDocument});
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_CONTACT_UPDATED,
       collegeId: membership.collegeId,

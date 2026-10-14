@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
 import {learnerOfferResponseTiming,prioritizeLearnerOffers} from "@/modules/placements/learner-offer-response-timing-model";
+import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
+  from "@/modules/placements/learner-offer-pending-request-model";
+import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
+  from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -66,10 +71,11 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,snapshotNowIso,
+  offers,snapshotNowIso,extensionRequests=[],
 }: {
   offers: readonly LearnerPlacementOfferItem[];
   snapshotNowIso:string;
+  extensionRequests?:readonly LearnerOfferRequestStatus[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -78,7 +84,12 @@ export function LearnerPlacementOffers({
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineOffer, setDeclineOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineReason, setDeclineReason] = useState("");
+  const [extensionOffer,setExtensionOffer]=useState<LearnerPlacementOfferItem|null>(null);
+  const [extensionAt,setExtensionAt]=useState("");
+  const [extensionReason,setExtensionReason]=useState("");
+  const [extensionError,setExtensionError]=useState<string|null>(null);
   const sortedOffers=prioritizeLearnerOffers(offers,snapshotNowIso);
+  const pendingExtensions=learnerPendingOfferExtensions(extensionRequests);
   const preview = confirmOffer
     ? learnerOfferAcceptancePreview({
         offerId: confirmOffer.offerId,
@@ -159,6 +170,33 @@ export function LearnerPlacementOffers({
     }
   }
 
+  async function requestExtension(){
+    if(!extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
+    let input:ReturnType<typeof learnerOfferExtensionRequest>;
+    try{
+      input=learnerOfferExtensionRequest({
+        offerId:extensionOffer.offerId,applicationId:extensionOffer.applicationId,
+        status:extensionOffer.status,expectedExpiresAt:extensionOffer.expiresAt,
+        requestedLocalAt:extensionAt,reason:extensionReason,confirmed:true,
+      },snapshotNowIso);
+    }catch{
+      setExtensionError("Choose a later valid IST deadline and enter a reason (3–2000 characters).");
+      return;
+    }
+    setPendingId(extensionOffer.offerId);setExtensionError(null);
+    try{
+      const response=await fetch("/api/placements/requests",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify(input),
+      });
+      if(!response.ok)throw new Error("Could not request an extension. Your offer deadline has not changed.");
+      setExtensionOffer(null);setExtensionReason("");
+      showToast({tone:"success",title:"Extension request submitted",
+        description:"Your placement team must approve the request before the offer deadline changes."});
+      router.refresh();
+    }catch(error){setExtensionError(error instanceof Error?error.message:"Unable to request extension.");}
+    finally{setPendingId(null);}
+  }
   if (offers.length === 0) {
     return null;
   }
@@ -260,6 +298,14 @@ export function LearnerPlacementOffers({
               </p>
             </div>
 
+            {pendingExtensions.has(item.offerId) ? (
+              <p role="status" className="mt-4 text-sm font-semibold text-body">
+                Offer deadline extension requested. Your placement team has not approved it yet.
+                {" "}
+                <Link href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
+                  className="text-primary-text underline">Review pending request</Link>
+              </p>
+            ) : null}
             {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
                 The recorded response deadline has passed. You cannot respond to this offer.
@@ -295,6 +341,16 @@ export function LearnerPlacementOffers({
                 >
                   Decline offer
                 </Button>
+                {item.expiresAt && !pendingExtensions.has(item.offerId) ? (
+                  <Button size="sm" variant="secondary" disabled={pendingId!==null}
+                    onClick={()=>{
+                      setExtensionOffer(item);
+                      setExtensionAt(learnerOfferExtensionLocalDefault(item.expiresAt!));
+                      setExtensionReason("");setExtensionError(null);
+                    }}>
+                    Request more time
+                  </Button>
+                ):null}
               </div>
             ) : null}
 
@@ -327,6 +383,43 @@ export function LearnerPlacementOffers({
         ))}
       </div>
 
+      <Dialog open={extensionOffer!==null}
+        onOpenChange={open=>{if(!open&&pendingId===null)setExtensionOffer(null);}}
+        title="Request an offer deadline extension"
+        description="This sends an in-app request to your placement team; it does not change or accept the offer."
+        footer={<>
+          <Button variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
+            Keep current deadline
+          </Button>
+          <Button disabled={pendingId!==null} onClick={()=>void requestExtension()}>
+            {pendingId!==null?"Submitting…":"Confirm extension request"}
+          </Button>
+        </>}>
+        {extensionOffer?<div className="space-y-3">
+          <p className="text-sm font-semibold text-foreground">
+            {extensionOffer.companyName} · {extensionOffer.roleTitle}
+          </p>
+          <p className="text-sm text-body">
+            Recorded response deadline: {formatWhen(extensionOffer.expiresAt)} (IST)
+          </p>
+          <label className="block text-sm font-semibold text-foreground">
+            Requested new deadline (IST)
+            <input type="datetime-local" value={extensionAt}
+              onChange={event=>setExtensionAt(event.target.value)}
+              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm"/>
+          </label>
+          <label className="block text-sm font-semibold text-foreground">
+            Reason
+            <textarea rows={3} maxLength={2000} value={extensionReason}
+              onChange={event=>setExtensionReason(event.target.value)}
+              className="mt-1 min-h-24 w-full rounded-md border border-border bg-surface p-3 text-sm"/>
+          </label>
+          {extensionError?<p role="alert" className="text-sm text-error">{extensionError}</p>:null}
+          <p className="text-xs text-muted-foreground">
+            The placement team reviews this request. The original offer remains unchanged until approval.
+          </p>
+        </div>:null}
+      </Dialog>
       <Dialog
         open={declineOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}

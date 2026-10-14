@@ -1,5 +1,7 @@
 "use client";
 
+import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-request";
+import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -66,8 +68,10 @@ export function LearnerCareerRoundsWorkspace({
   initialSelectedKey = null,
   initialSearch = "",
   initialTimeView = "all",
+  withdrawalTargets = [],
 }: {
   kind: Kind;
+  withdrawalTargets?:readonly LearnerInterviewWithdrawalTarget[];
   rounds: readonly LearnerCareerRound[];
   snapshotNowIso: string;
   membershipId?: string | null;
@@ -197,6 +201,8 @@ export function LearnerCareerRoundsWorkspace({
   const selected = relevant.find(
     (round) => round.applicationId + ":" + round.roundId === selectedKey,
   ) ?? null;
+  const withdrawalTarget=selected&&kind==="INTERVIEW"
+    ? learnerInterviewWithdrawalTarget(withdrawalTargets,selected.applicationId,selected.roundId):null;
   const urgencyCount = relevant.filter((round) => {
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
@@ -507,6 +513,7 @@ export function LearnerCareerRoundsWorkspace({
                 </a>
               ) : null}
             </div>
+            {withdrawalTarget ? <LearnerInterviewWithdrawalRequest key={withdrawalTarget.applicationId+":"+withdrawalTarget.roundId+":"+withdrawalTarget.expectedUpdatedAt} target={withdrawalTarget} />:null}
             {kind === "INTERVIEW" ? (
               <section className="rounded-lg border border-border bg-surface-subtle p-4">
                 <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>

@@ -142,8 +142,6 @@ export async function listPlacementRecruiterGrants(
           placementCompanyRelationships.status,
           "ACTIVE",
         ),
-        // Defense in depth: a forged/stale grant must never bridge employers.
-        eq(placementCompanies.id, context.recruiter!.companyId),
         eq(placementCompanies.status, "ACTIVE"),
         eq(users.platformStatus, "ACTIVE"),
       ),
@@ -454,6 +452,8 @@ export async function listOwnRecruiterPlacementJobs(
           "ACTIVE",
         ),
         eq(placementCompanies.status, "ACTIVE"),
+        // Do not trust a grant without the recruiter's persisted employer identity.
+        eq(placementCompanies.id, context.recruiter!.companyId),
         eq(colleges.status, "ACTIVE"),
       ),
     )

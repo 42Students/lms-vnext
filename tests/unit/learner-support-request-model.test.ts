@@ -1,6 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {ownLearnerSupportRequestList,placementRequestTypeLabel} from "@/modules/placements/learner-support-request-model";
-const rows=[{request:{id:"a",requestType:"APPLICATION_WITHDRAWAL",status:"PENDING",reason:"Need help",requestedAt:new Date(),decisionNote:null},
+const rows=[{request:{id:"a",requestType:"APPLICATION_WITHDRAWAL",status:"PENDING",reason:"Need help",requestedAt:new Date(),updatedAt:new Date(),decisionNote:null},
   job:{title:"Drive",id:"job"},roleOption:{title:"Engineer"},company:{name:"Employer"}}];
 describe("own persisted placement support history",()=>{
   it("lists real status-filtered personal requests without inventing generic tickets",()=>{

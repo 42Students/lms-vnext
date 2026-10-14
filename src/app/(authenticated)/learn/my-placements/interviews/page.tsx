@@ -1,3 +1,4 @@
+import {getOwnInterviewWithdrawalTargets} from "@/modules/placements/learner-interview-withdrawal-service";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
@@ -18,6 +19,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   const context = await getCurrentRequestContext();
   // Rows are membership-scoped in the placement service, not selected by a caller ID.
   const workspace = await getLearnerPlacementRequestWorkspace(context);
+  const withdrawalTargets=await getOwnInterviewWithdrawalTargets(context);
   const query = await searchParams;
   const view=learnerInterviewScheduleViewSchema.safeParse(query.view??"all");
   const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
@@ -35,6 +37,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-interviews"}
         kind="INTERVIEW"
+        withdrawalTargets={withdrawalTargets}
         initialSelectedKey={link.key}
         initialTimeView={view.data}
         initialSearch={search.data.q}
