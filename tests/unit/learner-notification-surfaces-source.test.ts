@@ -26,9 +26,30 @@ describe("Learner notification and placement UI source guards", () => {
     expect(service).toContain("requireLearnerPlacementAccess");
   });
 
+  it("scopes Learner mark-read through persisted membership even on legacy shared API routes", () => {
+    const scoped = source("src/modules/activity/learner-notification-read-service.ts");
+    const auth = source("src/modules/activity/learner-notification-membership-service.ts");
+    const shared = source("src/app/api/notifications/[notificationId]/read/route.ts");
+    const bulk = source("src/app/api/notifications/read-all/route.ts");
+    const specific = source("src/app/api/learn/notifications/[notificationId]/read/route.ts");
+    const list = source("src/components/activity/notification-list.tsx");
+    const history = source("src/modules/activity/learner-notification-history-service.ts");
+    expect(auth).toContain('eq(membershipRoles.role, "LEARNER")');
+    expect(auth).toContain("requirePermission");
+    expect(scoped).toContain("eq(activityEvents.collegeId, membership.collegeId)");
+    expect(scoped).toContain("markAllOwnNotificationsRead(context, { collegeId: membership.collegeId })");
+    expect(shared).toContain('hasMembershipRole(context, "LEARNER")');
+    expect(shared).toContain("markOwnLearnerNotificationRead");
+    expect(bulk).toContain("markAllOwnLearnerNotificationsRead");
+    expect(specific).toContain("isSameOriginRequest(request)");
+    expect(list).toContain('readEndpoint + "/" + id + "/read"');
+    expect(history).toContain("collegeId: membership.collegeId");
+  });
+
   it("continues using the existing same-origin guard on notification writes", () => {
     for (const path of [
       "src/app/api/notifications/[notificationId]/read/route.ts",
+      "src/app/api/learn/notifications/[notificationId]/read/route.ts",
       "src/app/api/notifications/read-all/route.ts",
     ]) {
       expect(source(path)).toContain("isSameOriginRequest(request)");

@@ -7,7 +7,7 @@ import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-
 import { getOwnLearnerAssessmentBrowse } from "@/modules/placements/learner-assessment-browse-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import { getOwnLearnerNotificationHistory } from "@/modules/activity/learner-notification-history-service";
-import { markOwnLearnerNotificationRead } from "@/modules/activity/learner-notification-read-service";
+import { markAllOwnLearnerNotificationsRead, markOwnLearnerNotificationRead } from "@/modules/activity/learner-notification-read-service";
 import { learnerAssessmentDueBuckets } from "@/modules/placements/learner-assessment-due-buckets";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {
@@ -80,6 +80,18 @@ describe("Learner real PostgreSQL positive paths with fresh own-member records",
     expect(again.readAt?.getTime()).toBe(first.readAt?.getTime());
     const unread = await getOwnLearnerNotificationHistory(context, { unread: "1" });
     expect(unread.items.some(row => row.notification.id === ids.notificationA)).toBe(false);
+  });
+
+  it("bulk marks only unread records from the current learner college", async () => {
+    // Reset only this invocation's own notification so bulk success is observed
+    // independently from the earlier single-record write test.
+    await pool.query("UPDATE in_app_notifications SET read_at=NULL WHERE id=$1", [ids.notificationA]);
+    expect(await markAllOwnLearnerNotificationsRead(context)).toBe(1);
+    expect(await markAllOwnLearnerNotificationsRead(context)).toBe(0);
+    const foreign = await pool.query<{ read_at: Date | null }>(
+      "SELECT read_at FROM in_app_notifications WHERE id=$1", [ids.notificationB],
+    );
+    expect(foreign.rows[0]?.read_at).toBeNull();
   });
 
   it("denies mark-read for a foreign-college notification or forged principal", async () => {
