@@ -14,7 +14,10 @@ Every page below also requires:
 # Operations
 
 ## Page: Dashboard
-**Legacy:** `/college-admin/dashboard`  
+**Legacy:** `/college-admin/dashboard`
+
+**Setup evidence PARTIAL:** `/college` now renders the canonical dashboard setup phases with registered, college-scoped persisted counts for departments, courses, active lessons, published lesson content, programs, program terms, curriculum mappings, cohorts, sections, faculty/student role memberships, active teaching assignments, lecture halls and published jobs. Each step deep-links to its actual College Admin page. Nonzero count means source records exist, never that the complete legacy job or all setup prerequisites are finished. Counts load atomically as a response (no silent partial failure), with dashboard loading/error states. Exact KPI/attention cards, full readiness rules and browser acceptance remain open.
+  
 Legacy route maps dashboard quick actions to Departments, Courses, Programs, Faculty, Students, Lessons, Content, Semesters, Semester-Course Mapping, Batches, Classes, Batch Promotion, Faculty Assignment, Lecture Halls, Jobs, Hiring Dashboard, Attendance, Assignments, Quizzes and People.
 
 - [ ] Dashboard KPI/summary cards match the legacy AdminDashboardView.
