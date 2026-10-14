@@ -471,3 +471,15 @@ Pure model/unit and fresh Faculty/Learner Section PG case covers
 SQL default now(), publish/hide, forged delivery, wrong role, stale token
 and two audit events. Still PARTIAL: executed PG/TS/lint, responsive
 browser, legacy result-publication and learner masking acceptance.
+
+## 2026-10-14 Faculty correction explanation and no-op guard — PARTIAL
+The existing same-origin, optimistic, correction-window checked Faculty mark
+transaction now requires a short explanation when an already-MARKED session
+actually changes. It derives a persisted absence delta before mutating,
+rejects no-op corrections, and writes only counts plus a reason to its existing
+immutable activity audit (no learner IDs or names in metadata). First marks are
+unchanged. A mobile-friendly textarea and explicit error messages were added.
+Pure-model unit and fresh Section PG fixtures cover real correction, no-op,
+missing reason, wrong role, foreign Section, stale token and audit.
+Still PARTIAL: executed tests, mobile/keyboard/browser, correction-request
+workflow and legacy report acceptance.

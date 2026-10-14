@@ -33,6 +33,7 @@ import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
 import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
  from "./faculty-correction-token-model";
+import {facultyCorrectionDelta,facultyCorrectionReasonValid} from "./faculty-correction-audit-model";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -60,6 +61,7 @@ const bulkInputSchema = z
     absentMembershipIds: z.array(uuid).max(1000).default([]),
     presentMembershipIds: z.array(uuid).max(1000).default([]),
     expectedMarkedAt:z.string().datetime({offset:true}).nullable().optional(),
+    correctionReason:z.string().trim().max(500).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
@@ -523,6 +525,27 @@ export async function markFacultyAttendance(
         ? "ATTENDANCE_NOT_STARTED" : "ATTENDANCE_CORRECTION_WINDOW_EXPIRED");
     }
 
+    const [existingSession] = await tx.select({
+      scheduleEventId:attendanceSessions.scheduleEventId,
+      status:attendanceSessions.status,
+      markedAt:attendanceSessions.markedAt,
+    }).from(attendanceSessions).where(eq(attendanceSessions.scheduleEventId,scheduleEventId))
+      .for("update").limit(1);
+    if(!facultyAttendanceCorrectionTokenMatches(
+      existingSession?.status??null,existingSession?.markedAt??null,input.expectedMarkedAt,
+    ))throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
+    const isCorrection=existingSession?.status==="MARKED";
+    if(isCorrection&&!facultyCorrectionReasonValid(input.correctionReason))
+      throw new CoursesServiceError("ATTENDANCE_CORRECTION_REASON_REQUIRED");
+    const oldAbsent=isCorrection?await tx.select({membershipId:attendanceRecords.membershipId})
+      .from(attendanceRecords).where(and(
+        eq(attendanceRecords.scheduleEventId,scheduleEventId),
+        eq(attendanceRecords.status,"ABSENT"),
+      )):[];
+    const delta=facultyCorrectionDelta(oldAbsent.map(row=>row.membershipId),input.absentMembershipIds);
+    if(isCorrection&&!delta.changed)throw new CoursesServiceError("ATTENDANCE_CORRECTION_NO_CHANGE");
+    const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
+
     if (input.presentMembershipIds.length > 0) {
       await tx
         .delete(attendanceRecords)
@@ -570,20 +593,6 @@ export async function markFacultyAttendance(
       );
     }
 
-    const [existingSession] = await tx
-      .select({
-        scheduleEventId:attendanceSessions.scheduleEventId,
-        status:attendanceSessions.status,
-        markedAt:attendanceSessions.markedAt,
-      })
-      .from(attendanceSessions)
-      .where(eq(attendanceSessions.scheduleEventId,scheduleEventId))
-      .for("update").limit(1);
-    if(!facultyAttendanceCorrectionTokenMatches(
-      existingSession?.status??null,existingSession?.markedAt??null,input.expectedMarkedAt,
-    ))throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
-    const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
-
     if (existingSession) {
       const [changed]=await tx
         .update(attendanceSessions)
@@ -628,6 +637,9 @@ export async function markFacultyAttendance(
         correction: existingSession?.status==="MARKED",
         previousMarkedAt:existingSession?.markedAt?.toISOString()??null,
         markedAt:writtenAt.toISOString(),
+        correctionReason:isCorrection?input.correctionReason:null,
+        movedToAbsent:delta.movedToAbsent,
+        movedToPresent:delta.movedToPresent,
       },
       groupKey: `attendance-session:${scheduleEventId}`,
     });
