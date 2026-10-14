@@ -778,6 +778,15 @@ describe("courses UI2A faculty read model", () => {
       status: "ABSENT",
     });
 
+    const markedWorkspace =
+      await getFacultyAttendanceWorkspace(
+        faculty,
+        structure.deliveryA.id,
+      );
+    const markedAt = markedWorkspace.sessions.find(
+      (row) => row.id === session.id,
+    )?.markedAt;
+    expect(markedAt).toBeTruthy();
     const corrected =
       await markFacultyAttendance(
         faculty,
@@ -789,6 +798,8 @@ describe("courses UI2A faculty read model", () => {
           presentMembershipIds: [
             SEED_IDS.learnerCollegeAMembership,
           ],
+          expectedMarkedAt: new Date(markedAt!).toISOString(),
+          correctionReason: "Marked absent by mistake",
         },
       );
     expect(corrected).toMatchObject({
