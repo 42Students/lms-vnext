@@ -148,12 +148,26 @@ export default async function LearnerCourseTabPage({
         title={workspace.course.name}
         description={readOnly ? "Past semester course · Read only" : "Course workspace"}
         actions={
-          <Link
-            href="/learn/courses"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
-          >
-            Back to Courses
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/learn/courses"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            >
+              Back to Courses
+            </Link>
+            <Link
+              href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            >
+              Detailed progress
+            </Link>
+            <Link
+              href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            >
+              Attendance history
+            </Link>
+          </div>
         }
       />
       <LearnerCourseTabs
