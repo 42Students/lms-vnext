@@ -583,3 +583,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Super Admin dashboard quick actions — PARTIAL:** Reactivated existing global Tenant Setup, Feature Controls, and Activity Log routes, replacing old disabled placeholder links; selected-college dashboard now offers separate 6-card action grid with only established /admin destinations. Does not restore the deliberately retired full college setup checklist. Existing role/scoped count service unchanged; authored pure navigation unit plus isolated PG tenant/wrong-role fixtures (not executed). Remaining: exact legacy layout, browser/mobile verification and dashboard KPI parity.
+
+
+**2026-10-14 Chat 6 / Feature Controls mobile matrix — PARTIAL:** /admin/features now renders each selected-college module decision as a compact card below desktop width; no forced 50rem-wide table on mobile. Keeps existing server-authored optional-module resolution, source-default versus persisted rule provenance, locked-state labels, search, scope safety and pagination. Desktop table stays at lg; all mutation/toggle gaps remain. Pure model/unit and in-test PG own/foreign/wrong-role tests authored, not executed; browser no-horizontal-scroll acceptance pending.
