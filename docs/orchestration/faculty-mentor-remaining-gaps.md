@@ -228,3 +228,12 @@ optimistic timestamp and transaction audit. Unit and isolated PostgreSQL
 fixture tests are authored, not run locally. Blocker: positive DB/CI/browser
 evidence, product conflict policy for co-teachers, full legacy live-room
 workflow. Course Blueprint and Class Schedule remain PARTIAL.
+
+## 2026-10-14 B — attendance schedule
+
+Buildable migrated Section schedule events support confirmed Faculty
+CREATE/RESCHEDULE with exact teaching Section, same-college permission,
+class/faculty conflict detection, IST period bounds, optimistic token,
+transaction audit and separate attendance marking lifecycle. No new table.
+Unit/PG success and denial tests are authored, not executed. Marked sessions
+cannot be rescheduled. Browser and classroom-policy acceptance still open.
