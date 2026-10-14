@@ -237,3 +237,11 @@ class/faculty conflict detection, IST period bounds, optimistic token,
 transaction audit and separate attendance marking lifecycle. No new table.
 Unit/PG success and denial tests are authored, not executed. Marked sessions
 cannot be rescheduled. Browser and classroom-policy acceptance still open.
+
+## 2026-10-14 C — bounded Quiz result export
+
+Buildable and source-authored: same GET Section report authorization plus
+a 500-learner-result CSV export cap, numeric omitted-row footer and HTTP
+notice headers; formula escaping preserved, UI warns of partial files.
+Remaining: execute PostgreSQL and browser export tests; verify product-approved
+large-export strategy and full question-level legacy output.
