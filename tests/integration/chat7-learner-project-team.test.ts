@@ -417,6 +417,6 @@ describe("L20-014 archived own Project list card",()=>{
     expect(learnerProjectArchiveState(status!).readOnly).toBe(true);
     await expect(listMyProjectInstances({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}})).rejects.toBeDefined();
     await expect(listMyProjectInstances({...context,membership:{...context.membership!,status:"SUSPENDED"}})).rejects.toBeDefined();
-    await expect(listMyProjectInstances({...context,membership:{...context.membership!,roles:["FACULTY"]}})).resolves.toBeDefined();
+    await expect(listMyLearnerProjectProgress({...context,membership:{...context.membership!,roles:["FACULTY"]}},[ids.project])).rejects.toBeDefined();
   });
 });
