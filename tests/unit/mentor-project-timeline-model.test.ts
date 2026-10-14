@@ -25,6 +25,13 @@ describe("Mentor factual Release/Sprint timeline",()=>{
     expect(mentorTimelineQuerySchema.safeParse({projectId:id}).success).toBe(true);
     expect(mentorTimelineQuerySchema.safeParse({projectId:id,collegeId:id}).success).toBe(false);
     expect(mentorTimelineQuerySchema.safeParse({projectId:id,releaseStatus:"CLOSED"}).success).toBe(false);
+    expect(mentorTimelineQuerySchema.safeParse({projectId:id,sprintStatus:"SHIPPED"}).success).toBe(false);
+    const releases=[{id:"r1",title:"One",sequence:0,status:"IN_PROGRESS"},
+      {id:"r2",title:"Two",sequence:1,status:"PLANNED"}];
+    const sprints=[{id:"s",releaseId:"r1",title:"Working",sequence:0,status:"ACTIVE"}];
+    expect(mentorProjectTimeline(releases,sprints,[],{...query,sprintStatus:"ACTIVE"}).total).toBe(1);
+    expect(mentorProjectTimeline(releases,sprints,[],{...query,sprintStatus:"PLANNED"}).total).toBe(0);
+    expect(mentorTimelineHref({...query,sprintStatus:"ACTIVE",page:2})).toContain("sprintStatus=ACTIVE&page=2");
     expect(mentorTimelineHref({...query,releaseStatus:"SHIPPED",page:2}))
       .toBe("/mentor/projects/"+id+"/timeline?releaseStatus=SHIPPED&page=2");
   });

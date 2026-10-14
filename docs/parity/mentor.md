@@ -904,3 +904,6 @@ Reviewed task-submission history now filters registered task priority alongside 
 
 ## 2026-10-15 chat-11 AK — registered primary Mentor history (PARTIAL)
 Exact-project Team membership history can isolate registered primary Mentor assignment records, preserving role/open-ended/paging filters in authorized SQL. It does not grant role editing, expose former names or reconstruct missing history. Pure and fixture PostgreSQL assertions authored, including correction of a pre-existing two-meeting count assertion. CI/PG/browser acceptance remains open.
+
+## 2026-10-15 chat-11 AL — Mentor timeline Sprint lifecycle drill-in (PARTIAL)
+Exact-project Release/Sprint timeline now filters actual planned/active/completed Sprint statuses and includes only Releases containing matching Sprints when filtered. Pagination and Release state navigation retain the filter. Query rejects unregistered states; zero-task progress remains unknown. Unit regression cases authored; CLI/PG/browser and complete legacy parity open.
