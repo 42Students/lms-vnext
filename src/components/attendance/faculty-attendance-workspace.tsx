@@ -16,7 +16,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
-import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary, facultyAttendanceThresholdBreakdown } from "@/modules/attendance/faculty-learner-attendance-detail";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import {
   facultyAttendanceDayCell,
@@ -112,6 +112,9 @@ async function errorMessage(
 ) {
   try {
     const body = await response.json();
+    if (body?.error === "SCHEDULE_EVENT_CONFLICT") {
+      return "Another class overlaps this time in the Section. Choose a different time.";
+    }
     return body?.message || body?.error || fallback;
   } catch {
     return fallback;
@@ -257,6 +260,12 @@ export function FacultyAttendanceWorkspace({
       monthSessions, workspace.records, clock,
     ),
     [workspace.roster, workspace.records, monthSessions, clock],
+  );
+  const attendanceRisk = useMemo(
+    () => facultyAttendanceThresholdBreakdown(
+      monthSummary.learners, workspace.policy.eligibilityThresholdPercent,
+    ),
+    [monthSummary.learners, workspace.policy.eligibilityThresholdPercent],
   );
 
   function chooseSession(id: string) {
@@ -538,6 +547,8 @@ export function FacultyAttendanceWorkspace({
                     "Upcoming sessions: " + monthSummary.upcomingSessions,
                     "Present marks: " + monthSummary.presentMarks,
                     "Absent marks: " + monthSummary.absentMarks,
+                    "Below college guidance (" + attendanceRisk.threshold + "%): " + attendanceRisk.below.length,
+                    "No marked attendance yet: " + attendanceRisk.unknown.length,
                     "Unmarked learner-session cells: " + monthSummary.unmarkedMarks,
                     "Attendance: " + (monthSummary.averagePercent === null ? "Unknown" : monthSummary.averagePercent + "%"),
                   ]}
@@ -551,6 +562,8 @@ export function FacultyAttendanceWorkspace({
                         "P " + row.present,
                         "A " + row.absent,
                         "Not marked " + row.unmarked,
+                        attendanceRisk.below.includes(row.membershipId) ? "Below guidance" : "",
+                        attendanceRisk.unknown.includes(row.membershipId) ? "Unknown" : "",
                         "Upcoming " + row.upcoming,
                         row.percentage === null ? "Not available" : row.percentage + "%",
                       ].filter(Boolean).join(" | ");
@@ -574,6 +587,38 @@ export function FacultyAttendanceWorkspace({
                 </div>
               ))}
             </dl>
+            <section aria-label="Attendance threshold guidance" className="mt-5 rounded-lg border border-border bg-surface-subtle p-4">
+              <h3 className="text-sm font-semibold text-foreground">
+                College attendance guidance: {attendanceRisk.threshold}%
+              </h3>
+              <p className="mt-2 text-sm text-body">
+                {attendanceRisk.below.length} below guidance · {attendanceRisk.meets} meeting guidance ·
+                {" "}{attendanceRisk.unknown.length} without recorded attendance
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                This monthly preview is not an official debarment or institutional eligibility decision.
+              </p>
+              {attendanceRisk.below.length > 0 ? (
+                <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {attendanceRisk.below.map((membershipId) => {
+                    const learner = workspace.roster.find((row) => row.membershipId === membershipId);
+                    const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
+                    return (
+                      <li key={membershipId} className="rounded-md border border-border bg-surface px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLearnerId(membershipId)}
+                          aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
+                          className="text-left text-sm font-semibold text-primary-text hover:underline"
+                        >
+                          {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </section>
           </section>
 
           {monthSessions.length === 0 ? (

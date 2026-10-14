@@ -92,6 +92,18 @@ export function TpoRoundDriveDayReadOnly({
         }
       />
 
+      <p className="text-sm text-body">
+        <a
+          href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
+          className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover"
+        >
+          Export round attendance (CSV)
+        </a>
+        <span className="ml-3">
+          Current roster only; waiting and unmarked states remain explicit.
+        </span>
+      </p>
+
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">
           Round details

@@ -334,3 +334,29 @@ Added an authenticated Faculty browser scenario that creates a real Section-scop
 ### Faculty notification inbox cursor and role boundary (2026-10-14)
 
 The Faculty notifications page now requires an active persisted Faculty membership before either announcements or personal notifications are fetched. It exposes the shared unread/all filter, mark-all-read action and member-owned keyset pagination rather than silently truncating to 60 messages; expired, malformed or partial URL cursors give an explicit recovery link instead of a false empty feed. Navigation remains under `/teacher/notifications`; shared inbox Toolbar retains its original default `/notifications` for other accounts. The existing server-owned notification read/write routes still enforce recipient ownership and same-origin mutation checks. Unit and authenticated browser tests are added; full parity remains PARTIAL until exact-SHA execution and source comparison.
+
+## Faculty Contacts detail reader (2026-10-14)
+
+A read-only detail route `/teacher/contacts/[contactsTab]/[membershipId]`
+now opens from each listed same-college Faculty contact. It repeats the
+authoritative persisted active Faculty-role membership check and restricts the
+target to an active same-college contact with the requested directory role.
+Only existing public-to-college directory fields (name, email, phone, current
+college roles) are selected; private profile documents, identity and academic
+verification records are not loaded. Zod rejects forged tabs/IDs and cross-tenant
+selectors. Loading/error, pure-model tests and PostgreSQL denial cases are
+authored; independent execution and legacy full Contact/Profile coverage remain
+OPEN. Preserve all previously authored Faculty attendance, roster and assessment
+parity sections. No checkbox is marked DONE by this source-only work.
+
+### Faculty Attendance PostgreSQL exclusion and editor accessibility repair (2026-10-14)
+
+E2E uncovered a real database overlap constraint (section_schedule_events_section_no_overlap_excl). The Faculty session write now maps only registered exclusion-constraint failures to a 409 SCHEDULE_EVENT_CONFLICT, preserving PostgreSQL's concurrency protection; other errors are not silenced. Browser E2E scheduling fixtures use separate non-overlapping session slots across two scenarios and retries. The existing shared Drawer used globally repeated HTML IDs, which caused multiple Faculty assessment editor dialogs to resolve the wrong accessible name; it now uses React useId per instance for title/description, maintaining accessible labels without hiding inactive row drawers. New pure tests assert error mapping and browser CRUD exercises the actual dialog labels. Full acceptance remains pending exact-SHA CI.
+
+### Faculty monthly attendance guidance threshold (2026-10-14)
+
+Added Section-local advisory guidance against the persisted College attendance policy. The below-threshold list uses **exact integer marks**, never rounded display percentage; unknown/unmarked learners are kept separate rather than falsely classified safe or at risk. Faculty can open the existing authorized learner-session drawer from the list, and the PDF includes below-guidance/unknown totals. This is explicitly not official debarment or institution-wide eligibility; those decisions remain separate administrative policy and migration gates. Threshold edge/boundary tests authored; exact-SHA runtime and parity still required.
+
+### Faculty Section overlap rejection UI (2026-10-14)
+
+Faculty class scheduling now translates persisted PostgreSQL non-overlap exclusion violations into an actionable message in the Schedule Class form, without inventing a success or disabling the constraint. E2E schedules a real class, attempts the same Section/time a second time, asserts HTTP 409 and the recovery text, then continues into Calendar and attendance correction. This does not certify full scheduling parity without the exact-SHA run.

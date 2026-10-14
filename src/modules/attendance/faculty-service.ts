@@ -23,6 +23,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "@/modules/courses/errors";
+import { mapFacultyScheduleInsertError } from "./faculty-schedule-errors";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
@@ -366,15 +367,16 @@ export async function createFacultyAttendanceSession(
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   }
 
-  return getDb().transaction(async (tx) => {
-    await assertPersistedFacultyScope(
-      tx,
-      context,
-      delivery.deliveryId,
-    );
+  try {
+    return await getDb().transaction(async (tx) => {
+      await assertPersistedFacultyScope(
+        tx,
+        context,
+        delivery.deliveryId,
+      );
 
-    const [created] = await tx
-      .insert(sectionScheduleEvents)
+      const [created] = await tx
+        .insert(sectionScheduleEvents)
       .values({
         sectionId: delivery.sectionId,
         facultyMembershipId:
@@ -394,8 +396,11 @@ export async function createFacultyAttendanceSession(
         deliveryId: delivery.deliveryId,
       });
 
-    return created!;
-  });
+      return created!;
+    });
+  } catch (error) {
+    throw mapFacultyScheduleInsertError(error);
+  }
 }
 
 export async function markFacultyAttendance(

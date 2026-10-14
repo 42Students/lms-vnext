@@ -92,7 +92,7 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
-test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }) => {
+test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
@@ -103,8 +103,10 @@ test("Faculty Attendance student detail shows a real future session without fabr
 
   // This test owns a real, authorized class session in the disposable browser DB.
   // Reusing an arbitrary seeded month could quietly skip the student-detail path.
-  const start = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const end = new Date(start.getTime() + 60 * 60 * 1000);
+  // Keep the fixture outside held-class tests and distinguish retries;
+  // PostgreSQL prohibits concurrent overlapping classes for one Section.
+  const start = new Date(Date.now() + 24 * 60 * 60 * 1000 + testInfo.retry * 2 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 45 * 60 * 1000);
   const startParts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
   }).formatToParts(start);
@@ -132,6 +134,8 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await expect(health).toBeVisible();
   await expect(health).toContainText("Upcoming");
   await expect(health).toContainText("Unmarked and upcoming sessions are excluded");
+  await expect(page.getByRole("region", { name: "Attendance threshold guidance" }))
+    .toContainText("without recorded attendance");
   await expect(health.getByRole("button", { name: "Download PDF" })).toBeVisible();
   await expect(page.getByText("Attendance report")).toBeVisible();
   const learner = page.getByRole("button", { name: /^View attendance details for / });
@@ -149,7 +153,7 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await expect(page.getByRole("dialog", { name: "Schedule Class" })).toBeVisible();
 });
 
-test("Faculty marks and corrects a persisted session from its Calendar class link", async ({ page, context }) => {
+test("Faculty marks and corrects a persisted session from its Calendar class link", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
@@ -164,8 +168,10 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   expect(deliveryId).toBeTruthy();
 
   // Held class inside the correction window in disposable E2E PostgreSQL.
-  const started = new Date(Date.now() - 10 * 60_000);
-  const ended = new Date(Date.now() - 5 * 60_000);
+  // Use a distinct recently-held slot per retry; all stay in the
+  // Faculty correction window and never overlap the next-day case.
+  const started = new Date(Date.now() - (4 - testInfo.retry) * 8 * 60_000);
+  const ended = new Date(started.getTime() + 4 * 60_000);
   const localTime = (date: Date) =>
     new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
       .toISOString().slice(0, 16);
@@ -183,6 +189,24 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   expect(scheduleResponse.status(), await scheduleResponse.text()).toBe(201);
   const sessionId: string = (await scheduleResponse.json()).session.id;
   expect(sessionId).toBeTruthy();
+
+  // A second class cannot overlap this exact Section; show an actionable
+  // validation message instead of the previous generic 500.
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  const conflicting = page.getByRole("dialog", { name: "Schedule Class" });
+  await conflicting.getByLabel("Class title").fill("Overlapping class should fail");
+  await conflicting.getByLabel("Starts at").fill(localTime(started));
+  await conflicting.getByLabel("Ends at").fill(localTime(ended));
+  const collisionResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty");
+  await conflicting.getByRole("button", { name: "Schedule Class" }).click();
+  const overlap = await collisionResponse;
+  expect(overlap.status(), await overlap.text()).toBe(409);
+  await expect(conflicting.getByRole("alert")).toContainText(
+    "Another class overlaps this time in the Section",
+  );
+  await conflicting.getByRole("button", { name: "Close drawer" }).click();
 
   await page.goto("/teacher/calendar");
   await page.getByLabel("View", { exact: true }).selectOption("day");
@@ -237,15 +261,15 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
   await expect(quizzes.getByRole("button", { name: "Create draft" })).toBeVisible();
 });
 
-test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }) => {
+test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");
   await page.getByRole("button", { name: "+ Create Assignment" }).click();
   const create = page.getByRole("dialog", { name: "Create Assignment" });
   await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
-  const first = "Faculty draft browser acceptance";
-  const renamed = "Faculty updated browser acceptance";
+  const first = "Faculty draft browser acceptance " + testInfo.retry;
+  const renamed = "Faculty updated browser acceptance " + testInfo.retry;
   await create.getByLabel("Title", { exact: true }).fill(first);
   const createdResponse = page.waitForResponse((res) =>
     res.request().method() === "POST" &&
@@ -296,15 +320,15 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   expect((await archive.json()).assignment.status).toBe("ARCHIVED");
 });
 
-test("Faculty Quiz aggregate persists questions, metadata edits and archival", async ({ page, context }) => {
+test("Faculty Quiz aggregate persists questions, metadata edits and archival", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/allQuizzes");
   await page.getByRole("button", { name: "+ Create Quiz" }).click();
   const create = page.getByRole("dialog", { name: "Create Quiz" });
   await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
-  const title = "Faculty quiz browser acceptance";
-  const updated = "Faculty quiz amended acceptance";
+  const title = "Faculty quiz browser acceptance " + testInfo.retry;
+  const updated = "Faculty quiz amended acceptance " + testInfo.retry;
   await create.getByLabel("Title", { exact: true }).fill(title);
   await create.getByLabel("Prompt", { exact: true }).fill("What is one plus one?");
   await create.getByLabel("Option 1", { exact: true }).fill("Two");
