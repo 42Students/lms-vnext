@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
+import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 type QuizPayload = {
@@ -137,10 +138,13 @@ export function LearnerQuizAttempt() {
         rawDraft,
         Array.isArray(quizBody.quiz?.questions) ? quizBody.quiz.questions.length : 0,
       );
-      // Restore before enabling autosave. The old mount effects wrote an
-      // empty draft before this state was restored from sessionStorage.
-      setAnswers(draft.answers);
-      setStep(draft.step);
+      // Restore only identifiers still present in the authorized quiz payload.
+      // A modified, stale, or malicious draft must never submit foreign selections.
+      const scopedDraft=normalizeLearnerQuizDraftForQuestions(
+        draft,Array.isArray(quizBody.quiz?.questions)?quizBody.quiz.questions:[],
+      );
+      setAnswers(scopedDraft.answers);
+      setStep(scopedDraft.step);
       setReview(mustReview);
       setNowMs(loadedAtMs);
       setQuiz(quizBody.quiz);
