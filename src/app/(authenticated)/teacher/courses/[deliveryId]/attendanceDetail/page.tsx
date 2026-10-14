@@ -5,14 +5,18 @@ import {
   type FacultyAttendanceWorkspaceData,
 } from "@/components/attendance/faculty-attendance-workspace";
 import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-service";
+import { resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
 
 export default async function FacultyCourseAttendancePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ deliveryId: string }>;
+  searchParams: Promise<{ sessionId?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { deliveryId } = await params;
+  const query = await searchParams;
   const data =
     await getFacultyAttendanceWorkspace(
       context,
@@ -54,6 +58,10 @@ export default async function FacultyCourseAttendancePage({
       </Link>
       <FacultyAttendanceWorkspace
         workspace={workspace}
+        initialSessionId={resolveFacultyAttendanceSession(
+          workspace.sessions,
+          query.sessionId,
+        )}
       />
     </div>
   );

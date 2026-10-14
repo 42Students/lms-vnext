@@ -169,3 +169,15 @@ closed. Denial-path PostgreSQL tests and pure model tests are authored, NOT
 represented as executed evidence. Legacy full history coverage, response
 analytics, browser/mobile evidence and independent functional verification
 remain open. No parity checklist boxes are checked solely from source work.
+
+## Mentor Task/Board pending submissions (2026-10-14)
+
+Source-authored read-only `/mentor/task-reviews` lists persisted SUBMITTED
+task versions that are still IN_REVIEW on currently assigned active Mentor
+projects. Central projects.read, current Mentor role and college scope,
+optional Projects access and persisted project memberships constrain each read.
+Strict Zod query filters, bounded search/pagination, module-disabled/empty/error
+states and unit/DB denial tests are authored. This is distinct from the
+final-delivery `/mentor/reviews` queue. Existing project Board controls remain
+responsible for authorized task review writes. Full legacy task-detail and
+positive database/browser acceptance remain OPEN, with no checkbox claimed DONE.

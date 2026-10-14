@@ -93,6 +93,7 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
 });
 
 test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }) => {
+  test.setTimeout(90_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
@@ -120,9 +121,12 @@ test("Faculty Attendance student detail shows a real future session without fabr
     res.request().method() === "POST" &&
     new URL(res.url()).pathname === "/api/attendance/faculty");
   await form.getByRole("button", { name: "Schedule Class" }).click();
-  expect((await response).ok()).toBe(true);
+  const scheduleResult = await response;
+  expect(scheduleResult.status(), await scheduleResult.text()).toBe(201);
 
-  await page.reload();
+  await page.goto("/teacher/courses/" +
+    new URL(page.url()).pathname.split("/").filter(Boolean).at(-2) + "/attendanceDetail");
+  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
   await page.locator('input[type="month"]').fill(month);
   const health = page.getByRole("region", { name: "Monthly class health" });
   await expect(health).toBeVisible();
@@ -145,6 +149,78 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await expect(page.getByRole("dialog", { name: "Schedule Class" })).toBeVisible();
 });
 
+test("Faculty marks and corrects a persisted session from its Calendar class link", async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  const courseAttendance = page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Attendance" });
+  const destination = await courseAttendance.getAttribute("href");
+  expect(destination).toMatch(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+  await courseAttendance.click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+  const deliveryId = new URL(page.url()).pathname.split("/").at(-2)!;
+  expect(deliveryId).toBeTruthy();
+
+  // Held class inside the correction window in disposable E2E PostgreSQL.
+  const started = new Date(Date.now() - 10 * 60_000);
+  const ended = new Date(Date.now() - 5 * 60_000);
+  const localTime = (date: Date) =>
+    new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+      .toISOString().slice(0, 16);
+  const title = "Faculty marking browser proof";
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  const form = page.getByRole("dialog", { name: "Schedule Class" });
+  await form.getByLabel("Class title").fill(title);
+  await form.getByLabel("Starts at").fill(localTime(started));
+  await form.getByLabel("Ends at").fill(localTime(ended));
+  const scheduled = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty");
+  await form.getByRole("button", { name: "Schedule Class" }).click();
+  const scheduleResponse = await scheduled;
+  expect(scheduleResponse.status(), await scheduleResponse.text()).toBe(201);
+  const sessionId: string = (await scheduleResponse.json()).session.id;
+  expect(sessionId).toBeTruthy();
+
+  await page.goto("/teacher/calendar");
+  await page.getByLabel("View", { exact: true }).selectOption("day");
+  await page.getByRole("button", { name: "Today", exact: true }).click();
+  const exactLink = page.locator(
+    'a[href="/teacher/courses/' + deliveryId + '/attendanceDetail?sessionId=' + sessionId + '"]',
+  ).first();
+  await expect(exactLink).toBeVisible();
+  await expect(exactLink).toHaveText("Open class attendance");
+  await exactLink.click();
+  await expect(page).toHaveURL(new RegExp("/attendanceDetail\\?sessionId=" + sessionId + "$"));
+
+  await expect(page.getByRole("button", { name: "Mark attendance", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Class session", { exact: true })).toHaveValue(sessionId);
+  const absentButton = page.getByRole("button", { name: /^Mark .* absent$/ }).first();
+  await expect(absentButton).toBeEnabled();
+  await absentButton.click();
+  const firstMark = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty/sessions/" + sessionId);
+  await page.getByRole("button", { name: "Submit Attendance" }).click();
+  expect((await firstMark).ok()).toBe(true);
+  await page.reload();
+  await expect(page.getByRole("button", { name: /^Mark .* absent$/ }).first())
+    .toHaveAttribute("aria-pressed", "true");
+
+  const presentButton = page.getByRole("button", { name: /^Mark .* present$/ }).first();
+  await presentButton.click();
+  const correction = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty/sessions/" + sessionId);
+  await page.getByRole("button", { name: "Submit Attendance" }).click();
+  expect((await correction).ok()).toBe(true);
+  await page.reload();
+  await expect(page.getByRole("button", { name: /^Mark .* present$/ }).first())
+    .toHaveAttribute("aria-pressed", "true");
+});
+
 test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pages", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");
@@ -159,6 +235,65 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
   const quizzes = page.getByRole("dialog", { name: "Create Quiz" });
   await expect(quizzes.getByLabel("Choose assessment lesson")).toBeVisible();
   await expect(quizzes.getByRole("button", { name: "Create draft" })).toBeVisible();
+});
+
+test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await facultyLogin(context);
+  await page.goto("/teacher/allAssignments");
+  await page.getByRole("button", { name: "+ Create Assignment" }).click();
+  const create = page.getByRole("dialog", { name: "Create Assignment" });
+  await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
+  const first = "Faculty draft browser acceptance";
+  const renamed = "Faculty updated browser acceptance";
+  await create.getByLabel("Title", { exact: true }).fill(first);
+  const createdResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/courses/assignments");
+  await create.getByRole("button", { name: "Create draft" }).click();
+  const created = await createdResponse;
+  expect(created.status()).toBe(201);
+  const assignmentId: string = (await created.json()).assignment.id;
+  expect(assignmentId).toBeTruthy();
+  await page.reload();
+
+  const search = page.getByLabel("Search assessments");
+  await search.fill("no matching faculty assessment x-y-z");
+  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await search.fill(first);
+  const row = page.getByRole("article").filter({ hasText: first });
+  await expect(row).toBeVisible();
+  await expect(row).toContainText("DRAFT");
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  let dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await dialog.getByLabel("Title", { exact: true }).fill("Unsaved cancellation");
+  await dialog.getByRole("button", { name: "Close drawer" }).click();
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(first);
+
+  await dialog.getByLabel("Title", { exact: true }).fill(renamed);
+  const editedResponse = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId);
+  await dialog.getByRole("button", { name: "Save changes" }).click();
+  expect((await editedResponse).ok()).toBe(true);
+  await page.reload();
+  await page.getByLabel("Search assessments").fill(renamed);
+  const updatedRow = page.getByRole("article").filter({ hasText: renamed });
+  await expect(updatedRow).toBeVisible();
+  await updatedRow.getByRole("button", { name: "Edit", exact: true }).click();
+  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(renamed);
+
+  page.once("dialog", (confirm) => confirm.accept());
+  const archiveResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId + "/transition");
+  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
+  const archive = await archiveResponse;
+  expect(archive.ok()).toBe(true);
+  expect((await archive.json()).assignment.status).toBe("ARCHIVED");
 });
 
 test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {

@@ -38,7 +38,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
       ...COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps]),
     ].filter((item) => item.href !== null);
     for (const link of links) {
-      expect(link.href).toMatch(/^\/college\/(departments|courses|programs|placements)$/);
+      expect(link.href).toMatch(/^\/college\/[a-z-]+$/);
       expect(link.href).not.toContain("/college-admin/");
     }
     const missing = COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps])

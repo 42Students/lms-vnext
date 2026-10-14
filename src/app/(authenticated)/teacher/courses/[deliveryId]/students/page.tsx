@@ -33,6 +33,7 @@ export default async function FacultyCourseStudentsPage({
       <FacultyCourseRoster
         learners={roster}
         sectionName={delivery.sectionName}
+        deliveryId={delivery.deliveryId}
       />
     </div>
   );

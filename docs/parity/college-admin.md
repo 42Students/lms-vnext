@@ -393,6 +393,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Faculty
 **Legacy:** `/college-admin/teachers`
 
+**Read-first PARTIAL:** `/college/faculty` lists persisted Faculty-role college memberships with search, status/pagination, user status, and count of active college-owned teaching assignments. The College Admin shell and dashboard link to it. This is not the legacy faculty onboarding, edit or complete-profile workflow; exact legacy and browser acceptance remain open.
+
 - [ ] Faculty list columns/profile metadata match.
 - [ ] Search/filter/pagination match.
 - [ ] Create/invite Faculty flow matches.
@@ -414,6 +416,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Students
 **Legacy:** `/college-admin/students`
+
+**Read-first PARTIAL:** `/college/students` lists persisted Learner-role college memberships with search, status/pagination, and active program/batch/class information when registered. Missing enrollments are shown explicitly, not inferred. Create/import/edit, academic moves, full-profile detail, exact legacy/browser verification remain open.
 
 - [ ] Learner list/profile metadata match.
 - [ ] Search/filter/pagination match.

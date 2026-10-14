@@ -60,7 +60,7 @@ if (git("status", "--porcelain", "--untracked-files=no")) {
 }
 
 git("fetch", "origin");
-git("pull", "--rebase", "origin", "main");
+git("pull", "--no-rebase", "--no-edit", "origin", "main");
 
 const ref = `origin/${branch}`;
 try {
