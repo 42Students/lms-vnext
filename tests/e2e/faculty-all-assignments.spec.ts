@@ -26,7 +26,11 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   page.on("pageerror",error=>errors.push(error.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
+  // Next App Router client navigation can resolve after Playwright click.
+  // Never extract a delivery ID from the previous /teacher/courses URL.
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
   const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
   const manageHeading=page.getByRole("heading",{level:1,name:"Section assignments"});
   try{
