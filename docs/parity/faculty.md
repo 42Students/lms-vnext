@@ -762,3 +762,15 @@ The existing own-Section command retains row lock, Zod and transactional audit;
 unique Faculty-only fixture PG tests add create/edit/publish, old token,
 wrong-role and foreign-Section denial. Outstanding: independently execute PG,
 unit, ESLint/tsc, browser/keyboard/mobile, exact legacy result-edit parity.
+
+## 2026-10-14 Faculty course-discussion optimistic moderation (PARTIAL)
+The shared discussion surface now submits a required confirmed millisecond
+version token for PATCH pin/unpin and DELETE. The service supports a
+microsecond-safe SQL CAS at the mutation boundary and increments the pin token;
+a stale/delete race yields explicit retry instead of silent overwrite.
+Existing Faculty/Learner scopes remain unchanged, including learner own-unpinned
+self-delete; only live Section Faculty can pin. Transactional moderation,
+post/delete activity audit and same-origin fences remain. Added pure model and
+in-test Faculty-only membership PostgreSQL create/pin/stale/foreign/wrong-role/
+delete/audit assertions. Outstanding: run unit/PG/lint/TypeScript and browser
+role/keyboard/mobile tests; exact legacy moderation workflows. PARTIAL.
