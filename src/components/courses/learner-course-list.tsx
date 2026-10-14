@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
 
 const PAGE_SIZE = 48;
 
@@ -280,7 +281,11 @@ export function LearnerCourseList({
                     href={`/learn/courses/${row.course.deliveryId}/home`}
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
-                    <div className="flex min-h-24 items-end bg-primary-subtle px-5 py-4">
+                    <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
+                      {/* Canonical per-course media is not yet persisted; use one local, stable fallback. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element -- bundled SVG decorative fallback */}
+                      <img src={learnerCourseFallbackMedia().src} alt="" aria-hidden="true"
+                        className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20" />
                       <div className="flex w-full items-end justify-between gap-3">
                         <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
                           {row.course.courseCode}
