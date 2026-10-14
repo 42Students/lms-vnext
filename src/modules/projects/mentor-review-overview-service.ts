@@ -1,5 +1,5 @@
 import "server-only";
-import {and,count,desc,eq} from "drizzle-orm";
+import {and,count,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectSubmissionReviews,projectSubmissions} from "@/db/schema";
 import {can} from "@/modules/permissions/policy";
@@ -24,8 +24,18 @@ export async function getMentorDeliveryReviewOverview(context:RequestContext,raw
  const access=await resolveOptionalModuleAccess(context);
  if(!access.projects.enabled)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const db=getDb();
+ const feedbackWith=sql<boolean>`coalesce(trim(${projectSubmissionReviews.feedback}), '') <> ''`;
+ const feedbackWithout=sql<boolean>`coalesce(trim(${projectSubmissionReviews.feedback}), '') = ''`;
+ const filters=and(eq(projectSubmissions.projectId,scope.project.id),
+   query.status==="ALL"?undefined:eq(projectSubmissions.status,query.status),
+   query.feedback==="WITH"?feedbackWith:
+     query.feedback==="WITHOUT"?feedbackWithout:undefined);
  const [totalRow]=await db.select({total:count()}).from(projectSubmissions)
-  .where(eq(projectSubmissions.projectId,scope.project.id));
+  .leftJoin(projectSubmissionReviews,and(
+   eq(projectSubmissionReviews.submissionId,projectSubmissions.id),
+   eq(projectSubmissionReviews.projectId,projectSubmissions.projectId),
+  ))
+  .where(filters);
  const total=Number(totalRow?.total??0);
  const pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.min(query.page,totalPages);
@@ -42,7 +52,7 @@ export async function getMentorDeliveryReviewOverview(context:RequestContext,raw
    eq(projectSubmissionReviews.submissionId,projectSubmissions.id),
    eq(projectSubmissionReviews.projectId,projectSubmissions.projectId),
   ))
-  .where(eq(projectSubmissions.projectId,scope.project.id))
+  .where(filters)
   .orderBy(desc(projectSubmissions.version),desc(projectSubmissions.id))
   .limit(pageSize).offset((page-1)*pageSize);
  const items=rows.map(({feedback,...row})=>{
