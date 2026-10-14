@@ -9,6 +9,7 @@ import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-s
 type Search = {
   kind?: string | string[];
   status?: string | string[];
+  deliveryId?: string | string[];
   search?: string | string[];
   page?: string | string[];
 };
@@ -25,6 +26,7 @@ export default async function FacultyAssessmentResultsPage({
   const parsed = facultyResultsQuerySchema.safeParse({
     kind: first(raw.kind) ?? undefined,
     status: first(raw.status) ?? undefined,
+    deliveryId: first(raw.deliveryId) || undefined,
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
   });
@@ -62,6 +64,17 @@ export default async function FacultyAssessmentResultsPage({
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
+        <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="">All teaching sections</option>
+          {data.sections.map(section => (
+            <option key={section.deliveryId} value={section.deliveryId}>
+              {section.courseCode} · {section.courseName} · {section.sectionName}
+            </option>
+          ))}
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
