@@ -1,0 +1,24 @@
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+export function TenantDirectoryCsvControl({ href }: { href: string }) {
+  const [pending, setPending] = useState(false), [error, setError] = useState<string | null>(null);
+  async function download() {
+    if (pending) return;
+    setPending(true); setError(null);
+    try {
+      const response = await fetch(href, { cache: "no-store" });
+      if (!response.ok || !response.headers.get("Content-Type")?.startsWith("text/csv"))
+        throw new Error("Export unavailable. Refresh your scope and filters, then retry.");
+      const url = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a");
+      anchor.href = url; anchor.download = "tenant-directory-ist.csv"; document.body.appendChild(anchor);
+      anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not export tenants."); }
+    finally { setPending(false); }
+  }
+  return <div className="space-y-2"><Button size="sm" variant="secondary" disabled={pending} onClick={() => void download()}>
+    {pending ? "Preparing CSV…" : "Export filtered CSV (max 1,000)"}</Button>
+    {error ? <p role="alert" className="max-w-sm text-sm text-error-text">{error}</p> : null}
+  </div>;
+}

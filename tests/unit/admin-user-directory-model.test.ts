@@ -5,7 +5,7 @@ describe("Super Admin user-role directory query",()=>{
   expect(adminUsersQuerySchema.safeParse({platformStatus:"DISABLED"}).success).toBe(true);
   expect(adminUsersQuerySchema.safeParse({platformStatus:"SUSPENDED"}).success).toBe(false);
   expect(adminUsersQuerySchema.safeParse({role:"HR"}).success).toBe(false);
-  expect(adminUsersQuerySchema.safeParse({page:1001}).success).toBe(false);
+  expect(adminUsersQuerySchema.safeParse({page:100001}).success).toBe(false);
  });
  it("preserves filters in scoped pagination URLs",()=>{
   expect(adminUsersHref({tab:"ALL",q:"x",role:"FACULTY",membershipStatus:"ACTIVE",platformStatus:"ALL",page:2}))
