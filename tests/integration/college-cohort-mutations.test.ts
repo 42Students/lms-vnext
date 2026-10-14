@@ -152,7 +152,7 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
     });
     const audits = await pool!.query(
       "SELECT event_type,college_id FROM activity_events " +
-      "WHERE subject_type='cohort' AND subject_id=$1 ORDER BY created_at",
+      "WHERE subject_type='cohort' AND subject_id=$1 ORDER BY occurred_at",
       [batch.id],
     );
     expect(audits.rows.map((row) => row.event_type).sort()).toEqual([
