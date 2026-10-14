@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LearnerCareerRounds, type LearnerCareerRound } from "./learner-career-rounds";
@@ -143,6 +144,22 @@ export function LearnerCareerRoundsWorkspace({
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
+  const interviewCalendar=kind==="INTERVIEW" && selected
+    ? learnerInterviewCalendarArtifacts({
+        applicationId:selected.applicationId,
+        roundId:selected.roundId,
+        companyName:selected.companyName,
+        roleTitle:selected.roleTitle,
+        roundName:selected.roundName,
+        scheduledAt:date===null ? null : new Date(date).toISOString(),
+        durationMinutes:selected.durationMinutes ?? null,
+        venue:selected.exception?.venue ?? selected.venue ?? null,
+        mode:(selected.exception?.mode ?? selected.mode) === "ON_CAMPUS"
+          ? "ON_CAMPUS"
+          : (selected.exception?.mode ?? selected.mode) === "VIRTUAL"
+            ? "VIRTUAL" : null,
+      },new Date(snapshotNowIso))
+    : null;
   const employerTest = kind === "ASSESSMENT"
     ? externalLink(selected?.testUrl ?? null) : null;
   const selectedReminderId = selected && kind === "ASSESSMENT"
@@ -329,6 +346,30 @@ export function LearnerCareerRoundsWorkspace({
                 </a>
               ) : null}
             </div>
+            {kind === "INTERVIEW" ? (
+              <section className="rounded-lg border border-border bg-surface-subtle p-4">
+                <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>
+                <p className="mt-1 text-sm leading-6 text-body">
+                  Calendar exports use the recorded interview start and duration.
+                  Approved reschedules use your own updated time. No calendar event is
+                  created until you import the file or confirm it with Google.
+                </p>
+                {interviewCalendar ? <div className="mt-3 flex flex-wrap gap-3">
+                  <a download={interviewCalendar.filename}
+                    href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                    Download .ics
+                  </a>
+                  <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                    Add to Google Calendar ↗
+                  </a>
+                </div> : <p className="mt-2 text-sm text-muted-foreground">
+                  Calendar export becomes available when the placement team records
+                  both the interview time and duration.
+                </p>}
+              </section>
+            ) : null}
             {kind === "ASSESSMENT" ? (
               <section className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
                 <h3 className="m-0 text-sm font-semibold text-foreground">Personal submission reminder</h3>
