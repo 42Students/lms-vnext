@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { notificationDateLabel } from "@/modules/activity/notification-groups";
 import {
   learnerNotificationHistoryEmptyState,
   learnerNotificationHistoryHref,
@@ -32,6 +33,14 @@ describe("Learner notification history cursor", () => {
     expect(url.searchParams.get("unread")).toBe("1");
     expect(url.searchParams.get("beforeId")).toBe("11111111-1111-4111-8111-111111111111");
     expect(learnerNotificationHistoryHref(null, false)).toBe("/learn/notifications/history");
+  });
+
+  it("uses the actual 18:30 UTC rollover for midnight in Asia/Kolkata", () => {
+    // September 30 18:29:59Z = September 30 23:59:59 IST.
+    // September 30 18:30:00Z = October 1 00:00:00 IST.
+    const now = new Date("2026-10-01T03:00:00.000Z");
+    expect(notificationDateLabel("2026-09-30T18:29:59.000Z", now)).toBe("Yesterday");
+    expect(notificationDateLabel("2026-09-30T18:30:00.000Z", now)).toBe("Today");
   });
 
   it("distinguishes filtered empties and exhausted older pages", () => {
