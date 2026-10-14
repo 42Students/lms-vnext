@@ -112,6 +112,12 @@ export default async function TpoReportsPage({
             "College-wide recruiter leads by manual stage and source, with observed invite and recruiter-account linkage counts.",
           path: "/tpo/reports/leads",
         },
+        {
+          title: "Accreditation export",
+          description:
+            "Download a season-scoped, formula-safe CSV of observed placement outcomes with explicit completeness warnings; not a certified NAAC/NIRF template.",
+          path: "/tpo/reports/accreditation",
+        },
       ],
     },
   ];
