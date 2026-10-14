@@ -30,7 +30,7 @@ export default async function HrPlacementJobPage({
   searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string;
+  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     roundId?:string; outcome?:string }>;
 }) {
   const context =
@@ -51,7 +51,7 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersTruncated } = hiring;
   const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
@@ -160,7 +160,7 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
-              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant and offer counts cover the newest 200 shared rows at most, not the full drive.</p></div>
+              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant counts use all authorized shared records; offer counts cover the newest 200 offers at most.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
                 {driveOverview.deadlineState.replaceAll("_"," ")}
@@ -198,7 +198,7 @@ export default async function HrPlacementJobPage({
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
-          <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded.</p>
+          <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
             {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
               ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
@@ -216,7 +216,7 @@ export default async function HrPlacementJobPage({
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
-                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&applicant="+applicant.id}
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id}
                   className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
@@ -227,7 +227,7 @@ export default async function HrPlacementJobPage({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">Applicant review</h3>
-                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage}
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
               <dl className="mt-5 grid gap-4 text-sm">
@@ -243,7 +243,24 @@ export default async function HrPlacementJobPage({
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
           ) : null}
-          {applicantsTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 shared applications only.</p> : null}
+          <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            <span className="text-xs text-muted-foreground">
+              {applicantsPage.first === 0 ? "No rows on this page" :
+                "Showing " + applicantsPage.first + "–" + applicantsPage.last}
+              {" of " + (filters.stage === "SHORTLISTED" ? applicants.counts.shortlisted :
+                filters.stage === "WITHDRAWN" ? applicants.counts.withdrawn : applicants.counts.all)}
+            </span>
+            <div className="flex gap-2">
+              {filters.page > 1 ? (
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)}
+                  className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Previous</Link>
+              ) : null}
+              {filters.page < applicantsPage.pages ? (
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)}
+                  className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Next</Link>
+              ) : null}
+            </div>
+          </nav>
         </section>
       ) : null}
       {filters.tab === "offers" ? (

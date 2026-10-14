@@ -32,3 +32,5 @@
 - 2026-10-14 — HR Calendar RESULTS_DUE day grouping PARTIAL: due-only IST days and agenda/calendar badges; unit and PG fixture updated, execution pending.
 
 - 2026-10-14 — HR selection readiness PARTIAL: all-round applied PASS intersection and conservative JOINED count; unit + PG fixture updated, unexecuted.
+
+- 2026-10-14 — HR applicant DB pagination PARTIAL: 25-row scoped pages and full company-safe stage totals; tests authored/extended, execution pending.

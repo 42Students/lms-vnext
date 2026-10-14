@@ -424,3 +424,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 Selection readiness across all evaluative rounds — PARTIAL:** Recruiter offers selection preview now requires APPLIED/PASS in every non-TALK round, with every round COMPLETED; final-round-only PASS no longer confers readiness. JOINED offer count requires ACCEPTED offer state and explicit JOINED outcome. Pure unit regression and existing in-test PG scope fixture updated; tests not executed. Remaining persisted recruiter selection/LOI workflow (no registered table), full offers pagination, desktop/mobile confirmation.
+
+
+**2026-10-14 chat-10 / Shared applicant pagination — PARTIAL:** Recruiter job Applicants tab uses exact-grant scoped DB aggregation for all SUBMITTED/WITHDRAWN shortlisted application counts and DB limit/offset pages of 25 (rather than silent 200-row truncation). Mobile previous/next controls retain stage and drawer page; status/college/active-user filters remain enforced before count and list. Pure-model and in-test PG foreign-company/wrong-role tests updated, not executed. Remaining deep private share marker parity, cursor pagination at scale and browser acceptance.
