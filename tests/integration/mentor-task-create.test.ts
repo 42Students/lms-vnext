@@ -9,6 +9,7 @@ import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/proje
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege} from "@/modules/projects/template-service";
 import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error(
   "Mentor create test requires isolated disposable TEST_DATABASE_URL",
@@ -91,6 +92,27 @@ async function fixture(){
   return {project,sprint};
 }
 describe("Mentor task create — migrated PostgreSQL",()=>{
+  it("reads registered Release/Sprint timeline and denies other roles and colleges",async()=>{
+    const {project}=await fixture();
+    const view=await getMentorProjectTimeline(mentor,{projectId:project.id});
+    expect(view).toMatchObject({enabled:true,total:1,page:1,
+      items:[{status:"PLANNED",sprints:[{
+        status:"PLANNED",taskCount:1,doneCount:0,progressPercent:0,
+      }]}],
+    });
+    const shipped=await getMentorProjectTimeline(mentor,{
+      projectId:project.id,releaseStatus:"SHIPPED",
+    });
+    expect(shipped.items).toEqual([]);
+    await expect(getMentorProjectTimeline(learner,{projectId:project.id}))
+      .rejects.toBeDefined();
+    await expect(getMentorProjectTimeline(mentor,{projectId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+    await expect(getMentorProjectTimeline(mentor,{
+      projectId:project.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
+
   it("reads actual team counts and one registered requested meeting",async()=>{
     const {project}=await fixture();
     const meetingId=randomUUID();
