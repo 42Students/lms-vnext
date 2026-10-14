@@ -2,6 +2,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {TpoInterviewRescheduleForm} from "@/components/placements/tpo-interview-reschedule-form";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoInterviewReadiness} from "@/modules/placements/tpo-interview-readiness-service";
@@ -40,6 +41,9 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
       View round and candidate readiness →
     </Link>
+    {r.status==="SCHEDULED"&&r.updatedAt?
+      <TpoInterviewRescheduleForm round={{id:r.id,updatedAt:r.updatedAt,
+       scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
   <p className="text-xs text-body">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;

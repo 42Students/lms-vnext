@@ -6,6 +6,7 @@ export type InterviewRoundFact={
  id:string;jobId:string;jobTitle:string;companyName:string;name:string;
  kind:string;status:string;mode:string|null;venue:string|null;
  scheduledAt:string|null;durationMinutes:number|null;
+ updatedAt?:string|null;meetingUrl?:string|null;
 };
 export function projectTpoInterviewReadiness(
  facts:readonly InterviewRoundFact[],nowIso:string,days:number,
