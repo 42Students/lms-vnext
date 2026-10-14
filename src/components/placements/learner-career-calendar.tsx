@@ -10,6 +10,7 @@ import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
   from "@/modules/placements/learner-career-event-detail-model";
 import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
 import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-career-agenda-model";
+import { learnerCareerDayChips } from "@/modules/placements/learner-career-day-chips-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
@@ -203,6 +204,7 @@ export function LearnerCareerCalendar({
             ))}
             {calendarDays.map((day) => {
               const dayEvents = byDay.get(day) ?? [];
+              const chips = learnerCareerDayChips(dayEvents);
               const outside = view === "month" && day.slice(0, 7) !== anchor.slice(0, 7);
               return (
                 <button
@@ -216,9 +218,13 @@ export function LearnerCareerCalendar({
                   <span className="mt-2 block text-xs text-body">
                     {dayEvents.length ? `${dayEvents.length} event${dayEvents.length === 1 ? "" : "s"}` : "—"}
                   </span>
-                  {dayEvents.some((item) => item.kind === "ASSESSMENT") ? (
-                    <span className="mt-1 block text-xs font-semibold text-primary-text">Assessment</span>
-                  ) : null}
+                  {chips.visible.map((chip) => (
+                    <span key={chip.key} className="mt-1 block max-w-full truncate rounded bg-primary-subtle px-1.5 py-0.5 text-xs font-semibold text-primary-text"
+                      title={chip.title + " · " + chip.kind}>
+                      {chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : "Other"} · {chip.title}
+                    </span>
+                  ))}
+                  {chips.hidden > 0 ? <span className="mt-1 block text-xs text-body">+{chips.hidden} more</span> : null}
                 </button>
               );
             })}
