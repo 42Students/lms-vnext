@@ -544,3 +544,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / Drives IST-day and past-deadline filters — PARTIAL:** Drives adds Today (Asia/Kolkata calendar day) and recorded deadline-passed filters atop authorized published/closed jobs. Past deadline is a timestamp fact, never claimed to indicate a live application or auto-closed drive. Filters preserve URL/search and cap. Pure date-boundary and query tests authored but unexecuted; browser review pending.
+
+
+**2026-10-15 chat-10 R5 / Hiring Activity loading and hard error — PARTIAL:** Activity history has route-local loading skeleton and explicit retryable read error; failed reads are not disguised as no activity. Pending runtime/browser error boundary verification and legacy stale-last-success.
