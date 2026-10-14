@@ -10,6 +10,8 @@ describe("college video metadata CSV",()=>{
   const href=collegeContentCsvHref("VIDEO",q);
   expect(new URL(href,"https://example.test").searchParams.get("q")).toBe("A & B");
   expect(href).toContain("scope=SECTION");
+  expect(collegeContentCsvHref("LIVE_CLASS",{...q,view:"PAST"})).toContain("view=PAST");
+  expect(collegeContentCsvSchema.safeParse({view:"TOMORROW"}).success).toBe(false);
  });
  it("neutralizes metadata and contains no storage identifiers",()=>{
   const csv=renderCollegeContentMetadataCsv([{

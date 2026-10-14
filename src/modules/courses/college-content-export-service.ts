@@ -8,7 +8,13 @@ import {collegeContentCsvSchema,renderCollegeContentMetadataCsv,renderCollegeLiv
 export async function exportCollegeContentMetadata(
  context:RequestContext,kind:CollegeContentKind,raw:unknown){
  const query=collegeContentCsvSchema.parse(raw);
- const result=await collectCollegeExportRows(page=>listCollegeContentAggregate(context,kind,{...query,page}),
+ const result=await collectCollegeExportRows(page=>listCollegeContentAggregate(context,kind,
+  kind==="LIVE_CLASS" ? {
+    q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,view:query.view,page,
+  } : {
+    q:query.q,courseCode:query.courseCode,status:query.status,
+    format:query.format,scope:query.scope,page,
+  }),
   COLLEGE_CONTENT_PAGE_SIZE,CONTENT_METADATA_EXPORT_CAP);
  return {...result,csv:kind==="LIVE_CLASS" ? renderCollegeLiveClassCsv(result.rows,result.truncated)
   :renderCollegeContentMetadataCsv(result.rows,result.truncated)};
