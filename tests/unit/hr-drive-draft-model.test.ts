@@ -19,6 +19,8 @@ describe("HR recruiter Request Drive draft preview", () => {
     }, [{ kind: "INTERVIEW", name: "Technical interview" }]);
     expect(draft.title).toBe("Software Engineer");
     expect(draft.rounds).toEqual([{ kind: "INTERVIEW", name: "Technical interview" }]);
+    expect(draft.fixedAnnualCtcInr).toBe("");
+    expect(draft.maximumActiveBacklogs).toBe("");
     expect(hrDriveDraftSchema.safeParse(draft).success).toBe(true);
   });
 
@@ -30,5 +32,14 @@ describe("HR recruiter Request Drive draft preview", () => {
       location: "Hyderabad", minimumAnnualCtcInr: "700000",
       maximumAnnualCtcInr: "600000",
     }).success).toBe(false);
+    expect(hrDriveDraftSchema.safeParse({
+      ...draft, title: "Engineer", description: "Enough detail to validate this role.",
+      location: "Hyderabad", bondMonths: "121",
+    }).success).toBe(false);
+    expect(hrDriveDraftSchema.safeParse({
+      ...draft, title: "Engineer", description: "Enough detail to validate this role.",
+      location: "Hyderabad", bondMonths: "24", maximumActiveBacklogs: "2",
+      fixedAnnualCtcInr: "500000", variableAnnualCtcInr: "100000",
+    }).success).toBe(true);
   });
 });

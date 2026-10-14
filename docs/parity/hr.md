@@ -433,3 +433,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / Request Drive / Hire Again deep links — PARTIAL:** Recruiter Today and Drives pages now advertise their scoped local Request a Drive preview; authorized Drive Detail exposes Hire Again preview from exact company-owned job. Every generated link validates UUID and carries selected college; target server rechecks grant and relationship before job clone. Pure model plus in-test PG own-company fixture extended; not executed. Remaining full persisted submission/fix/resend and browser acceptance.
+
+
+**2026-10-14 chat-10 / Request Drive compensation and eligibility preview — PARTIAL:** Local draft adds fixed/variable CTC, bond months/amount and active-backlog eligibility, Zod validation and a student-view preview. No request is saved or sent. Unit tests and existing isolated PG owned-company preview fixture updated but not executed. Remaining complete persisted approval lifecycle, JD attachment, and verified legacy acceptance.

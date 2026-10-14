@@ -38,3 +38,5 @@
 - 2026-10-14 — Request Drive local draft PARTIAL: owned-college chooser, Hire Again authorized job preview and Zod validated local-only form; no persistence or sending; tests authored not executed.
 
 - 2026-10-14 — Request Drive links PARTIAL: Today/Drives CTA and exact-job Hire Again preview navigation; test extensions unexecuted.
+
+- 2026-10-14 — Request Drive compensation/eligibility PARTIAL: local-only CTC breakdown, bond, backlogs and preview; tests authored, execution pending.
