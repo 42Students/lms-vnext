@@ -74,6 +74,13 @@ describe("learner Course page parity contract", () => {
     expect(player).toContain("readOnly");
   });
 
+  it("does not present unknown Course progress as a measured 0 percent", () => {
+    const overview = read("src/components/courses/learner-course-overview.tsx");
+    expect(overview).toContain("learnerProgressAvailability");
+    expect(overview).toContain("Course progress not yet measurable");
+    expect(overview).toContain('"Not available"');
+  });
+
   it("links both authorized course drill-down views without changing legacy tabs", () => {
     const page = read(
       "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",

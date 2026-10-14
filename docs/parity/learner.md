@@ -20,6 +20,15 @@ Layer-0/Layer-1 shell parity materializes the sidebar, legacy route tree and nes
 
 ## Page: Courses list
 
+**2026-10-14 Course Overview progress-availability warning (PARTIAL,
+L2-027):** the Home tab now distinguishes an unpublished learning path,
+a published path with no lessons, and lessons with no trackable items.
+When there is no completion denominator, the Overview shows a warning
+instead of a measured `0%`. When persisted learning items exist, it
+retains their actual tracked percentage. The pure model has unit tests;
+legacy screenshot/browser comparison remains open.
+
+
 **Mobile/source parity pass:** course-type filters use equal responsive columns on narrow screens, with pressed-state semantics. The mixed All view renders the Electives heading as a separate full-grid-width row rather than widening the first elective card. Browser/mobile acceptance and course thumbnail mapping are still open.
 
 **Legacy route:** `/learn/courses`  
@@ -702,6 +711,17 @@ mobile/browser proof remain open.
 # Profile
 
 ## Page: Learner Profile
+
+**2026-10-14 academic identity summary (PARTIAL, L30-001):** the Profile
+shows the current learner name and, when a single active enrollment is
+persisted, the actual program, code, cohort and department. It verifies
+the active user, college membership and LEARNER role against registered
+tables, checks the program's department is in the same college and denies
+ambiguous enrollment. No program is fabricated when none is registered.
+The existing Profile completeness/edit workflows remain unchanged.
+Unit and disposable PostgreSQL denial tests are authored; browser and
+executed test evidence remain open.
+
 **Legacy:** `/learn/profile`
 
 Audited legacy sections:

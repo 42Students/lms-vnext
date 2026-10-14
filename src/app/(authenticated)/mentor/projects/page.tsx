@@ -265,10 +265,6 @@ export default async function MentorProjectsPage({
               className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
               Review queue
             </Link>
-            <Link href="/mentor/team-coverage"
-              className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-              Team coverage
-            </Link>
             <Link href="/mentor/sprint-progress"
               className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
               Sprint progress
