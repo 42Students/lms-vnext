@@ -255,6 +255,8 @@ Legacy contract:
 # Drives
 
 ## Page: Drives List
+
+**Work Mode drive-list scale follow-up — PARTIAL:** Lifecycle listing now searches persisted company/drive names literally, pages 25 drives at a time, and derives complete scoped season/search counts in a repeatable-read transaction instead of truncating the first 500. Previous/Next retain season, lifecycle and search; stale page requests clamp to the last page. Pure pagination tests cover records beyond 500; isolated PG fixtures exercise two-page completeness, correct counts, literal wildcard search and role/foreign-season denials. PG runtime and desktop/mobile browser acceptance remain open, as do persisted Requests workflow and exact legacy columns/export parity.
 **Legacy:** `/tpo/drives`
 
 Legacy lifecycle tabs:
