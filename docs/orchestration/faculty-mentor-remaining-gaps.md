@@ -148,3 +148,7 @@ Final mobile/browser and legacy producer parity remain open.
 ## Mentor task creation and assignment blocker (2026-10-14)
 
 A confirmation-gated Mentor task creation endpoint and UI are authored using registered project_tasks and an exact live Mentor project/sprint scope. Assignment/workload balancing remains blocked because no migrated assignee/effort field exists, and extra Zod keys are denied. The isolated positive/denial test intentionally retains append-only activity history and cleans mutable fixture records only. Real PostgreSQL and browser evidence and legacy edit/control parity remain open.
+
+## Mentor team/meeting log read (2026-10-14)
+
+Exact assigned-project read combines registered role-backed active team counts with project_meetings status-filtered history. A unique-fixture disposable PostgreSQL test inserts a real requested meeting, checks positive scoped coverage and wrong-role/foreign selector denials, and removes mutable fixtures without deleting immutable audit rows. No raw meeting outcomes, URLs or private member contacts are exposed. Existing scheduling/assignment writes, executed CI and browser acceptance remain PARTIAL.
