@@ -963,3 +963,10 @@ forged college, suspended/disabled account, wrong role, forged actor and
 caller-injected membership scopes. Full browser/positive-PG execution
 evidence, historic content completeness, and exact legacy acceptance remain
 OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
+
+
+## Chat-7 learner projects — 2026-10-14
+
+- **L20-012 PARTIAL** — The learner Projects list now bulk-loads live, learner-scoped team members, displays primary (or available) mentor and the count of distinct active members per assigned project. Pure model and isolated-PostgreSQL tests authored. **Remaining:** execute TypeScript, ESLint, unit and disposable PostgreSQL suites; browser/mobile visual parity, cross-role producer acceptance and actual account clone verification. No DONE claim.
+
+- **L20-013 PARTIAL** — Learner Project cards now calculate actual DONE/total tasks from authorized persisted tasks. Projects without tasks explicitly show untracked, not 0%; blocked tasks are counted separately and not inferred from unrelated states. Unit and own-learner PostgreSQL tests authored. **Remaining:** execute typecheck, lint, unit, isolated PostgreSQL and responsive browser checks; compare current legacy execution/readiness and cross-role producers.

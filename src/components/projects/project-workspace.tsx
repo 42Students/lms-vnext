@@ -786,6 +786,8 @@ export function ProjectWorkspace({
                         <FinalReviewControl
                           projectId={workspace.project.id}
                           submissionId={submission.id}
+                          mode={mode}
+                          expectedUpdatedAt={submission.updatedAt.toISOString()}
                         />
                       </div>
                     ) : null}
