@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const learnerClosingSoonQuerySchema = z.literal("1");
+export const learnerDriveAvailabilitySchema = z.enum(["all","open","not-open","closed"]);
 
 /** Learner placement browse facets apply to the authorized published-job rows.
  * Filtering never re-evaluates eligibility or mutates application state.
@@ -37,8 +38,20 @@ export type LearnerJobBrowseFilters = {
 
 export const DEFAULT_LEARNER_JOB_FILTERS: LearnerJobBrowseFilters = {
   search: "", employmentType: "all", location: "all",
-  eligibleOnly: false, closingSoon: false, sort: "deadline",
+  eligibleOnly: false, closingSoon: false, availability: "all", sort: "deadline",
 };
+
+/** A published drive is not necessarily open to THIS learner for a new application. */
+export function learnerDriveAvailability(item: BrowseJobShape): "open" | "not-open" | "closed" {
+  if (item.deadlinePassed) return "closed";
+  return item.canApply ? "open" : "not-open";
+}
+
+export function learnerDriveAvailabilityCounts(items:readonly BrowseJobShape[]) {
+  const counts={all:items.length,open:0,"not-open":0,closed:0};
+  for(const item of items)counts[learnerDriveAvailability(item)]++;
+  return counts;
+}
 
 export function availableLearnerJobFacets<T extends BrowseJobShape>(items: readonly T[]) {
   return {
@@ -55,6 +68,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
 ): T[] {
   const search = filters.search.trim().toLocaleLowerCase();
   const rows = items.filter((row) => {
+    if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     if (filters.eligibleOnly && !row.canApply) return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
