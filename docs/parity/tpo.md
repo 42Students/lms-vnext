@@ -6,6 +6,10 @@ TPO parity is a product-critical gate. A TPO page is not complete unless its ope
 
 # Home
 
+**W62 D / L45 PARTIAL:** Season-pipeline report and neutralized, capped CSV from migrated offers/applications/joins; selected has no independent persisted final-selection source. Runtime/browser evidence outstanding.
+
+**W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.
+
 **W62 C PARTIAL:** TPO Drive Day now shows scheduled PUBLISHED rounds actually inside their persisted duration window; checked-in, explicit ABSENT no-shows, WAITING and unknown derive from the existing college-scoped roster and attendance. Unknown duration never implies live status. Browser/PG execution, refresh cadence and exact legacy hero remain open.
 
 ## Page: TPO Home / Command Center

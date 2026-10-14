@@ -51,6 +51,11 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placement-summary",
         },
         {
+          title: "Season pipeline",
+          description: "Recorded applied, shortlisted, offer and joining stages, with unavailable final selection and capped CSV.",
+          path: "/tpo/reports/season-pipeline",
+        },
+        {
           title: "Company funnel & compensation intelligence",
           description: "Persisted applicant denominators and offer-versus-learner CTC measures, with CSV.",
           path: "/tpo/reports/intelligence",

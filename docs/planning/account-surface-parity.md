@@ -367,6 +367,10 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 # 6. TPO
 
+**W62 D PARTIAL:** Added /tpo/reports/season-pipeline and capped CSV, final selection null. Test execution and browser parity outstanding.
+
+**W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.
+
 **W62 C PARTIAL:** TPO-only Drive Day index lists actually live, timed, published rounds and persisted attendance summary; no-show requires ABSENT, and unknown remains separate. Unit/PG tests authored but unrun; dashboard hero/browser parity remain open.
 
 **W62 B PARTIAL:** Existing Leads report adds college-scoped contact recency, quiet/missing evidence, open follow-up, no-next-step and unassigned summaries. Unit/PG tests authored, unrun; exact legacy filters and browser approval remain open.

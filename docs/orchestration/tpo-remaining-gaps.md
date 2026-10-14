@@ -1,5 +1,8 @@
 # TPO — Remaining Parity Gaps
 
+- **W62 D / L45 — PARTIAL:** Season funnel/CSV authored; selected requires canonical persisted evidence, and PG/browser acceptance outstanding.
+- **W63 A / optimistic token precision audit — PARTIAL:** Audited 54 `src/modules/placements/{tpo-,company-}*service.ts` files for direct `eq(table.updatedAt, date)` guards: none remain. `tpo-company-lifecycle-service.ts` on merged main already uses `date_trunc('milliseconds', column) = ISO::timestamptz`. Added isolated PostgreSQL regression fixture with SQL-default `now()` plus 123 microseconds, successful first edit, stale old-token denial and a following archive. Tests authored, not executed; never mark DONE until PG verification.
+
 - **W62 C — Buildable / PARTIAL:** TPO-only /tpo/drive-day now shows live scheduled rounds by recorded start/duration with confirmed check-in, explicit absence and waiting/unknown counts. Existing coordinator view preserved. Runtime PG/browser verification and command-center hero remain open.
 
 - **W62 B — Buildable / PARTIAL:** Existing Leads stage/source report extended with persisted DB09 recent-contact health and honest null semantics; tests authored, not executed. Legacy drill-in, full activity health UX and browser proof remain.
