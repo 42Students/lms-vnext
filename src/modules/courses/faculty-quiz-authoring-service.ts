@@ -1,8 +1,9 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {courseQuizzes,courseSectionDeliveries,quizQuestions,quizOptions,quizAttempts} from "@/db/schema";
+import {courseQuizzes,courseSectionDeliveries,quizQuestions,quizOptions,quizAttempts,
+ collegeMemberships,membershipRoles,courseTeachingAssignments,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -37,6 +38,24 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
    const [live]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
     .from(courseSectionDeliveries).where(eq(courseSectionDeliveries.id,deliveryId)).for("update").limit(1);
    if(!live||live.endedAt)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+   // Revalidate the actor inside the write transaction: a signed cookie can
+   // outlive an actual Faculty role, user suspension, or teaching revocation.
+   const [liveFaculty]=await tx.select({id:courseTeachingAssignments.id})
+    .from(courseTeachingAssignments)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY")))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(
+      eq(courseTeachingAssignments.deliveryId,deliveryId),
+      eq(courseTeachingAssignments.membershipId,membership.id),
+      isNull(courseTeachingAssignments.endedAt),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,delivery.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    )).for("share").limit(1);
+   if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
    let result:typeof courseQuizzes.$inferSelect;
    let eventType:typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES];
    if(input.action==="CREATE"){
