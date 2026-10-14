@@ -472,3 +472,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Notifications exact counts and pagination — PARTIAL:** DB-scoped exact total/unread aggregate replaces loaded-set estimate, and unread/all lists now serve 25-row pages with previous/next. Today displays actual authorized unread count. Company/college/recipient filters precede totals and rows; no private bodies. Pure model tests authored, PG existing fixtures applicable but unexecuted. Remaining thread parity and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR notification title search — PARTIAL:** Search authorized job titles in Messages, applied to the exact company-and-college allowlist before notification queries, with GET search retained across pages. No private message body, candidate contact or other-company jobs. Unit and in-test PG fixtures extended, unexecuted.
