@@ -66,6 +66,8 @@ Closure checklist:
 
 **W45 PARTIAL:** The existing Add Lead modal now requires an explicit creation confirmation. Its same-origin POST uses strict nested Zod input and the migrated DB09 lead/immutable activity tables. The service commits lead and staff-attributed NOTE audit in one transaction, so audit failure rolls back creation; tenant management scope and database contact unique indexes still enforce denial/duplicates. Full legacy duplicate-confirm/open flow, import preview, browser acceptance and executed PostgreSQL tests remain open.
 - [ ] Import action is present.
+
+**W46 PARTIAL:** Recruiter Leads now exposes an import CSV dialog with a downloadable six-column template, strict quote-aware parsing and server-side Zod validation, 200-row/160,000-character caps, per-row preview, user confirmation and created/duplicate/invalid report. The authorized same-origin API derives college from the active TPO membership, then inserts accepted lead rows and each immutable actor-attributed NOTE in one database transaction; registered unique indexes reject existing contacts. Invalid/duplicate rows are skipped without overwriting contacts. Exact legacy New/Already/To-fix preview grouping, mapping of alternative source spreadsheets, browser acceptance and executed isolated PostgreSQL evidence are still outstanding. This work does not complete parity.
 - [ ] Outreach-health metrics and drill-in filters match.
 - [ ] Relationship-stage metrics and drill-ins match.
 - [ ] stale-data vs hard-error handling matches.
@@ -143,7 +145,7 @@ Filters/actions:
 - [ ] duplicate detection/open-existing behavior matches.
 - [ ] Not Now modal fields/validation match.
 - [ ] Invite modal workflow matches.
-- [ ] Import preview/validation/commit matches.
+- [ ] Import preview/validation/commit matches. (W46 PARTIAL: preview + confirm + transaction + row report added; exact legacy group/reconciliation UX remains.)
 - [ ] Prepared WhatsApp Messages workflow matches.
 
 ## Page: Lead Detail

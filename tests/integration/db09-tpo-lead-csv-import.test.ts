@@ -97,6 +97,7 @@ describe.skipIf(!enabled)("DB09 recruiter CSV import isolated PostgreSQL", () =>
   it("creates imported leads and immutable actor-audit pairs, reports existing/file duplicates and invalid rows", async () => {
     if (!pool) throw new Error("Isolated PostgreSQL required");
     const unique = randomUUID().slice(0, 12);
+    const phoneDigits = String(BigInt("0x" + randomUUID().replaceAll("-", ""))).slice(-10);
     const existingEmail = "already-" + unique + "@example.org";
     const existing = await createTpoLead(tpo, {
       collegeId: SEED_IDS.collegeA,
@@ -110,7 +111,7 @@ describe.skipIf(!enabled)("DB09 recruiter CSV import isolated PostgreSQL", () =>
       '"Recruiter, One",' + firstEmail + ',,Campus Partners,HR,REFERRAL\r\n' +
       "Duplicate database," + existingEmail + ",,Campus Partners,,\r\n" +
       "Repeat in file," + firstEmail + ",,Campus Partners,,\r\n" +
-      "Phone Candidate,,+91 98765 43210,Phone Corp,,LINKEDIN\r\n" +
+      "Phone Candidate,,+91 " + phoneDigits + ",Phone Corp,,LINKEDIN\r\n" +
       "Invalid name,,,,,\r\n";
     const result = await importTpoLeadsCsv(tpo, SEED_IDS.collegeA, {
       confirmed: true, csv,
@@ -138,7 +139,7 @@ describe.skipIf(!enabled)("DB09 recruiter CSV import isolated PostgreSQL", () =>
       expect(record.created_by_user_id).toBe(SEED_IDS.facultyUser);
     }
     expect(rows.rows.some(row => row.email_norm === firstEmail)).toBe(true);
-    expect(rows.rows.some(row => row.phone_norm === "9876543210")).toBe(true);
+    expect(rows.rows.some(row => row.phone_norm === phoneDigits)).toBe(true);
   });
 
   it("rejects learner roles and cross-college payloads without inserting rows", async () => {
