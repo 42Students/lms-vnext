@@ -659,3 +659,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Faculty — PARTIAL:** `/admin/faculty` distinct read-first selected-college faculty memberships with search/status/25-row paging, IST join date, safe membership detail and no phone/email fields. Central people.manage, exact selected college and organization SQL predicates, role membership join. Pure tests and in-test PG user/faculty fixture success, foreign-scope and wrong-role assertions authored, unexecuted. Management/import/edit and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Students — PARTIAL:** `/admin/students` distinct read-first selected-college learner membership page, uses central people.manage and SQL-selected organization/college role membership, search/status, 25-row paging, IST dates, mobile and safe membership detail. No email/phone selected. Pure tests and disposable PG in-test learner fixture with faculty exclusion, foreign-college denial and wrong-role tests authored, unexecuted. Import/transfer, academic roster and full legacy detail parity remain open.
