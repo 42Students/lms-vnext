@@ -102,3 +102,9 @@
 - Existing Delivery workflow remains the only review-write path.
 - Unit and isolated positive/foreign/wrong-role PG tests authored, not executed.
 - PARTIAL pending runtime, mobile and legacy checks.
+
+## L — IST unclosed scheduled-meeting risk (2026-10-14)
+- Added honest old-SCHEDULED signal without fabricating MISSED lifecycle status.
+- Valid scheduled_meeting fixture includes scheduling actor and URL to satisfy DB check.
+- Model/PG tests authored, not executed; foreign/wrong-role read denial retained.
+- PARTIAL pending runtime/browser verification.
