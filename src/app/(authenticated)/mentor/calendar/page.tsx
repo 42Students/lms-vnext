@@ -1,23 +1,54 @@
-import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { PageHeader } from "@/components/ui/page-header";
-import { MentorMeetingsCalendar } from "@/components/projects/mentor-meetings-calendar";
-import { listMyMentorCalendarMeetings } from "@/modules/projects/mentor-calendar-service";
-
-export const dynamic = "force-dynamic";
-
-export default async function MentorCalendarPage() {
-  const context = await getCurrentRequestContext();
-  const access = await resolveOptionalModuleAccess(context).catch(() => null);
-  if (access?.projects.enabled !== true) return <MentorProjectsUnavailable />;
-  const meetings = await listMyMentorCalendarMeetings(context);
-  return (
-    <div className="space-y-6">
-      <PageHeader eyebrow="Mentor" title="Meetings"
-        description="Every meeting across your assigned Projects, in one place." />
-      <MentorMeetingsCalendar meetings={meetings}
-        initialNow={new Date().toISOString()} />
-    </div>
-  );
+import Link from "next/link";
+import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
+import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {mentorCalendarFiltersSchema,filterMentorCalendar}
+  from "@/modules/projects/mentor-calendar-filter-model";
+export const dynamic="force-dynamic";
+type Search={status?:string|string[];search?:string|string[]};
+const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
+export default async function MentorCalendarPage({searchParams}:{
+  searchParams:Promise<Search>;
+}){
+  const raw=await searchParams;
+  const parsed=mentorCalendarFiltersSchema.safeParse({
+    status:first(raw.status)??undefined,search:first(raw.search)??undefined,
+  });
+  if(!parsed.success)return <section role="alert" className="space-y-3">
+    <h1>Invalid meeting filters</h1>
+    <Link href="/mentor/calendar" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+  const context=await getCurrentRequestContext();
+  const access=await resolveOptionalModuleAccess(context).catch(()=>null);
+  if(access?.projects.enabled!==true)return <MentorProjectsUnavailable/>;
+  const meetings=await listMyMentorCalendarMeetings(context);
+  const displayed=filterMentorCalendar(meetings,parsed.data);
+  return <div className="space-y-5">
+    <PageHeader eyebrow="Mentor" title="Meetings"
+      description="Registered meetings across your current assigned Projects. Times shown in IST."/>
+    <form method="get" action="/mentor/calendar"
+      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <label className="grid gap-1 text-sm font-semibold text-body">Search
+        <input type="search" name="search" maxLength={100}
+          defaultValue={parsed.data.search}
+          placeholder="Meeting or project" className="min-h-10 rounded-md border border-border bg-background px-3"/>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Status
+        <select name="status" defaultValue={parsed.data.status}
+          className="min-h-10 rounded-md border border-border bg-background px-3">
+          {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
+            <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
+        </select>
+      </label>
+      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+      <Link href="/mentor/calendar" className="inline-flex min-h-10 items-center text-sm text-primary-text underline">Clear</Link>
+    </form>
+    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
+    <MentorMeetingsCalendar meetings={displayed}
+      // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
+      initialNow={new Date().toISOString()}/>
+  </div>;
 }

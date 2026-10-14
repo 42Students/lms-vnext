@@ -6,6 +6,7 @@ import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { MentorTaskCreate } from "./mentor-task-create";
+import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
 import {
   ReleaseLifecycleActions,
   SprintLifecycleActions,
@@ -650,12 +651,22 @@ export function ProjectWorkspace({
                                       updatedAt={task.updatedAt.toISOString()}
                                     />
                                   ) : null}
-                                <TaskLifecycleActions
-                                  projectId={workspace.project.id}
-                                  taskId={task.id}
-                                  status={task.status}
-                                  sprintStatus={sprint.status}
-                                />
+                                {mode === "MENTOR" ? (
+                                  <MentorTaskStatusTransition
+                                    projectId={workspace.project.id}
+                                    taskId={task.id}
+                                    status={task.status}
+                                    sprintStatus={sprint.status}
+                                    updatedAt={task.updatedAt.toISOString()}
+                                  />
+                                ) : (
+                                  <TaskLifecycleActions
+                                    projectId={workspace.project.id}
+                                    taskId={task.id}
+                                    status={task.status}
+                                    sprintStatus={sprint.status}
+                                  />
+                                )}
                                 {latestAttempt?.status ===
                                   "SUBMITTED" &&
                                 task.status ===

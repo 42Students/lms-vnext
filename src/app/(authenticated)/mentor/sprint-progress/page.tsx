@@ -58,6 +58,18 @@ export default async function MentorSprintProgressPage({
         </button>
         <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/mentor/sprint-progress/export?"+
+          new URLSearchParams({
+            state:data.query.state,search:data.query.search,
+          }).toString()}
+          download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          Export filtered sprint CSV (max 100)
+        </Link>
+        {data.total>100?<span role="status">
+          Export omits {data.total-100} sprints beyond the 100-row cap.
+        </span>:null}
+      </div>
       <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />

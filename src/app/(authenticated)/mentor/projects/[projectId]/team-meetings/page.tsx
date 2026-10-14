@@ -87,6 +87,11 @@ export default async function MentorTeamMeetingsPage({
               Source timezone: {meeting.timeZone} · Outcome:{" "}
               {meeting.hasOutcome?"Recorded":"Not recorded"}
             </p>
+            <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+              "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+              View outcome notes
+            </Link>
           </li>)}</ol>}
       <nav aria-label="Meeting history pages" className="flex items-center justify-between gap-3">
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
@@ -99,8 +104,9 @@ export default async function MentorTeamMeetingsPage({
       </nav>
     </>}
     <p className="text-xs text-muted-foreground">
-      This is a read-only registered meeting log, not a recording, attendance register or
-      verified meeting outcome. Scheduling changes remain in the original project workspace.
+      This list is a registered meeting log, not a recording or attendance register.
+      Current assigned Mentors can open the scoped detail to read or update written
+      outcomes for completed meetings. Historical overwritten note versions are not preserved.
     </p>
   </div>;
 }
