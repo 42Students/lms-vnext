@@ -7,6 +7,7 @@ import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {grantPlacementRecruiter} from "@/modules/placements/recruiter-service";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
+import {hrTodayUnreadAction} from "@/modules/placements/hr-today-unread-model";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -36,6 +37,8 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
      organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:a.relationship.id}]}};
   const result=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA});
   expect(result.rows.some(row=>row.jobId===job.id)).toBe(true);
+  const scoped=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,unreadOnly:"true"});
+  expect(hrTodayUnreadAction({...scoped,collegeId:SEED_IDS.collegeA})?.value).toBe(1);
   expect(JSON.stringify(result.rows)).not.toContain("Confidential source body");
   await expect(listHrNotifications({...ctx,recruiter:{...ctx.recruiter!,companyId:b.company.id}},
     {collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
