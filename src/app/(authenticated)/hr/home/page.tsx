@@ -15,6 +15,7 @@ import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-cale
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
+import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -31,15 +32,28 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
   if (selectedId && !grants.some(grant => grant.collegeId === selectedId)) notFound();
-  if (!selectedId) return <div className="space-y-6">
+  if (!selectedId) {
+    const access=await getRecruiterSelfGrantOverview(context);
+    const byId=new Map(access.grants.map(item=>[item.id,item]));
+    const visible=grants.filter(item=>byId.has(item.id));
+    return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
-    {grants.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
-    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant =>
-      <Link key={grant.id} href={"/hr/home?collegeId=" + encodeURIComponent(grant.collegeId)}
-        className="rounded-lg border border-border bg-surface p-5 hover:border-primary"><span className="font-semibold">{grant.collegeName}</span>
-        <span className="mt-1 block text-sm text-muted-foreground">Open recruiter Today</span></Link>)}</section>}
+    {visible.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
+    <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
+      const detail=byId.get(grant.id)!;
+      return <article key={grant.id} className="space-y-3 rounded-lg border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
+        {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
+        <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
+        <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
+          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Open recruiter Today
+        </Link>
+      </article>;
+    })}</section>}
     <Link href="/hr/profile" className="text-sm text-primary-text">Your profile</Link>
   </div>;
+  }
   const grant = grants.find(item => item.collegeId === selectedId)!;
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
