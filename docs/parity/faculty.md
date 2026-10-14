@@ -791,6 +791,36 @@ as executed PostgreSQL, browser, ESLint or whole-repository TypeScript proof.
 Legacy gradebook weighting, full exported/download acceptance and responsive
 browser review remain OPEN; no parity status is promoted to DONE.
 
+## Faculty Section Quiz archive workflow (2026-10-14)
+
+PARTIAL: The Section choice-quiz builder now offers a confirm-first Archive
+action for current DRAFT, PUBLISHED or CLOSED quizzes. Server authorization
+requires a live Faculty teaching delivery and centrally granted course access,
+strict Zod confirmation, a locked optimistic token, and a transactional audit
+event `courses.quiz.archived`. Persisted learner attempts block archival.
+The action changes quiz status to ARCHIVED without deleting questions or
+attempt history. Added pure schema tests for malformed/forged inputs, and
+extended isolated PostgreSQL tests with published archive, wrong-role, foreign
+Section and stale-token denial, retained row and audit assertions.
+These tests are authored, not independently executed; browser parity, an
+attempt-populated runtime denial and legacy close actions remain OPEN.
+No Faculty parity row is promoted to DONE.
+
+## Faculty Quiz CLOSE and released-result continuity (2026-10-14)
+
+PARTIAL: Authenticated Faculty can now confirm CLOSE for a current published
+quiz in their exact persisted teaching Section. Same-origin, strict validated
+command, optimistic row token, current teaching scope, transaction lock and
+actor/college audit are preserved. CLOSE is allowed even with attempts;
+learner submissions/results remain stored, while ARCHIVE remains denied if
+any attempt exists. Previously closed quizzes with `resultsPublished=true`
+remain in Faculty published gradebook totals and the Section reports/results
+summary; private/unreleased results are still excluded from score totals.
+Updated pure-model tests and the in-test PostgreSQL success/denial audit
+fixture cover PUBLISHED→CLOSED→ARCHIVED (the latter only with zero attempts).
+This is authored rather than independently executed PostgreSQL/browser
+evidence; no Faculty page status is promoted from PARTIAL.
+
 ## 2026-10-14 Faculty All Assignments published-grade guards (PARTIAL)
 Existing audited grade/regrade/publish writers now fail closed when the linked
 assignment is DRAFT/ARCHIVED and hold a shared assignment row lock while a

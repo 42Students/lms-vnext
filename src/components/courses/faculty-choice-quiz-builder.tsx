@@ -51,20 +51,29 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  function updateQuestion(i:number,fn:(q:Question)=>Question){
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);
  }
- async function submit(action:"CREATE"|"EDIT"|"PUBLISH"){
+ async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
   if(!confirmed){setError("Confirm the action before saving.");return;}
   if(pending)return;
-  if(chosen?.status!=="DRAFT"&&action!=="CREATE"){
-    setError("Only current draft quizzes can be edited or published.");return;
+  if(action!=="CREATE" && (
+    !chosen || ((action==="EDIT"||action==="PUBLISH") && chosen.status!=="DRAFT") ||
+    (action==="CLOSE" && chosen.status!=="PUBLISHED") ||
+    (action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status))
+  )){
+    setError("The selected quiz cannot perform this action. Refresh its current state.");return;
   }
-  if(action!=="PUBLISH"){
+  if(action==="CREATE"||action==="EDIT"){
     const validation=facultyQuizDraftIssue(title,questions);
     if(validation){setError(validation);return;}
   }
-  if(!window.confirm("Confirm "+action.toLowerCase()+" for this Section Quiz?"))return;
+  const warning=action==="ARCHIVE" ?
+    "Archive this Section Quiz? Learners will no longer see it. Quizzes with attempts cannot be archived." :
+    action==="CLOSE" ?
+    "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
+    "Confirm "+action.toLowerCase()+" for this Section Quiz?";
+  if(!window.confirm(warning))return;
   setError(null);setSuccess(null);setPending(true);
   try{
-   const body=action==="PUBLISH"?{
+   const body=(action==="PUBLISH"||action==="CLOSE"||action==="ARCHIVE")?{
      action,quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt,confirmed:true,
    }:{
      action,confirmed:true,
@@ -80,7 +89,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
    if(!res.ok)throw new Error("Quiz write was rejected. Check your choices or refresh a stale draft.");
-   setConfirmed(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");router.refresh();
+   setConfirmed(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");
+   if(action==="ARCHIVE"){
+     ++choiceRequest.current;
+     setSelected("");setTitle("");setDescription("");setDueAt("");
+     setMaxAttempts(1);setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");
+   }
+   router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
   finally{setPending(false);}
  }
@@ -171,10 +186,22 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
     <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
+    {chosen.status==="PUBLISHED"&&
+     <button type="button" disabled={!confirmed||pending}
+      onClick={()=>void submit("CLOSE")}
+      className="rounded border border-border px-4 py-2">
+      Close quiz
+     </button>}
+    {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
+     <button type="button" disabled={!confirmed||pending}
+      onClick={()=>void submit("ARCHIVE")}
+      className="rounded border border-error px-4 py-2 text-error">
+      Archive quiz
+     </button>}
     </>}
   </div>
   <p className="text-xs text-muted-foreground">
-   Each question needs unique nonblank options and valid correct answers; total points must not exceed 10000. Edits are blocked after publication or first attempt.
+   Each question needs unique nonblank options and valid correct answers; total points must not exceed 10000. Edits are blocked after publication or first attempt. Closing stops future attempts while keeping submitted results. Archiving hides the quiz from learner lists without deleting history and is refused after any attempt.
   </p>
  </section>;
 }
