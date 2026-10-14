@@ -37,6 +37,9 @@ const codePattern = codePrefix + "-%";
 const facultyOnlyUserId = randomUUID();
 const facultyOnlyMembershipId = randomUUID();
 const facultyOnlyRoleId = randomUUID();
+const testLearnerUserId = randomUUID();
+const testLearnerMembershipId = randomUUID();
+const testLearnerRoleId = randomUUID();
 const facultyOnly: RequestContext = {
   user: {
     id: facultyOnlyUserId,
@@ -126,6 +129,10 @@ async function cleanup() {
   await pool.query("delete from academic_periods where code like $1", [codePattern]);
   // Only the principal created by THIS suite: do not mutate deterministic seed users.
   await pool.query("delete from faculty_profiles where membership_id = $1", [facultyOnlyMembershipId]);
+  await pool.query("delete from learner_profiles where membership_id = $1", [testLearnerMembershipId]);
+  await pool.query("delete from membership_roles where membership_id = $1", [testLearnerMembershipId]);
+  await pool.query("delete from college_memberships where id = $1", [testLearnerMembershipId]);
+  await pool.query("delete from users where id = $1", [testLearnerUserId]);
   await pool.query("delete from membership_roles where membership_id = $1", [facultyOnlyMembershipId]);
   await pool.query("delete from college_memberships where id = $1", [facultyOnlyMembershipId]);
   await pool.query("delete from users where id = $1", [facultyOnlyUserId]);
@@ -161,7 +168,7 @@ async function fixture() {
     deliveryId:delivery.id,membershipId:facultyOnlyMembershipId,role:"CO_TEACHER",
   });
   const enrollment=await createLearnerProgramEnrollment(admin,{
-    membershipId:SEED_IDS.learnerCollegeAMembership,programId:program.id,cohortId:cohort.id,
+    membershipId:testLearnerMembershipId,programId:program.id,cohortId:cohort.id,
   });
   await assignLearnerToSection(admin,{
     learnerEnrollmentId:enrollment.id,sectionId:section.id,
@@ -188,6 +195,23 @@ async function fixture() {
   return {delivery,assignment,quiz};
 }
 async function seedFacultyOnly() {
+  // The seeded learner already belongs to a programme. DB02 explicitly
+  // forbids a second active programme enrolment per membership; use a fresh
+  // active learner principal so positive-path tests reflect production rules.
+  await pool.query(
+    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE')",
+    [testLearnerUserId, "c4pos-learner-" + runId,
+      "c4pos-learner-" + runId.toLowerCase() + "@example.invalid",
+      "Chat4 Learner " + runId],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    [testLearnerMembershipId, testLearnerUserId, SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'LEARNER')",
+    [testLearnerRoleId, testLearnerMembershipId],
+  );
   await pool.query(
     "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE')",
     [facultyOnlyUserId, facultyOnly.user.identityUid,
