@@ -69,7 +69,7 @@ export function projectTpoBranchSeason(
   const buckets = new Map<string | null, Set<string>>();
   for (const member of everyone) {
     const scopes = membershipBranches.get(member);
-    const key = scopes?.size === 1 ? [...scopes][0] : null;
+    const key = scopes?.size === 1 ? (scopes.values().next().value ?? null) : null;
     const bucket = buckets.get(key) ?? new Set<string>();
     bucket.add(member);
     buckets.set(key, bucket);
