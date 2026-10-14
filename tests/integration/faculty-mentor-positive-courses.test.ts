@@ -319,7 +319,10 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"PUBLISH",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
     });
     await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"CLOSE",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
-    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    // Metadata-only edits of a published quiz are allowed (CAS-audited); replacing its question bank is not.
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",questions:[{...questions[0],prompt:"Published rewrite"}],expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    const questionIdsPublished=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    expect(questionIdsPublished.rows).toEqual(questionIdsBefore.rows);
     expect(published.status).toBe("PUBLISHED");
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
@@ -539,7 +542,10 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("filters only persisted Faculty teaching deliveries and invalidates revoked assignments",async()=>{
     const {delivery}=await fixture();
-    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY",page:999});
+    // facultyOnly holds the fixture's CO_TEACHER assignment; PRIMARY belongs to another Faculty member.
+    const primaryOnly=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"PRIMARY"});
+    expect(primaryOnly.items).toEqual([]);
+    const list=await getFacultyCourseList(facultyOnly,{q:codePrefix,role:"CO_TEACHER",page:999});
     expect(list.items.map(item=>item.deliveryId)).toEqual([delivery.id]);
     expect(list.page).toBe(1);
     expect(list.items.length).toBeLessThanOrEqual(48);
