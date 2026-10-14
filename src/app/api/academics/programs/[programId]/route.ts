@@ -6,6 +6,7 @@ import {
   archiveCollegeProgram,
   CollegeProgramMutationError,
   updateCollegeProgram,
+  restoreCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
 
 export const runtime = "nodejs";
@@ -28,7 +29,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const { programId } = await params;
     const context = await getCurrentRequestContext();
     const body: unknown = await request.json();
-    const program = await updateCollegeProgram(context, programId, body);
+    const program = body && typeof body === "object" && "action" in body && body.action === "RESTORE"
+      ? await restoreCollegeProgram(context, programId, body)
+      : await updateCollegeProgram(context, programId, body);
     return NextResponse.json({ program });
   } catch (error) { return handledError(error); }
 }
