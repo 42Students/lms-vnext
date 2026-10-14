@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary, facultyAttendanceThresholdBreakdown } from "@/modules/attendance/faculty-learner-attendance-detail";
 
 const session = (id: string, startsAt: string, status: string | null) => ({
   id, title: "Faculty class " + id, startsAt,
@@ -79,5 +79,29 @@ describe("Faculty monthly class-health report", () => {
     expect(facultyAttendanceMonthSummary([], [], [], NOW)).toMatchObject({
       learnerCount: 0, sessionCount: 0, averagePercent: null,
     });
+  });
+});
+
+
+describe("Faculty attendance guidance threshold, not a debarment", () => {
+  it("uses exact ratios and keeps unmarked learners out of at-risk counts", () => {
+    const data = facultyAttendanceThresholdBreakdown([
+      { membershipId: "below", present: 121, absent: 41 }, // 74.69%, rounded display would show 75
+      { membershipId: "at", present: 3, absent: 1 },
+      { membershipId: "unknown", present: 0, absent: 0 },
+      { membershipId: "clear", present: 9, absent: 1 },
+    ], 75);
+    expect(data).toEqual({
+      threshold: 75, below: ["below"], unknown: ["unknown"], meets: 2,
+    });
+  });
+  it("uses college policy thresholds and rejects invalid input without hiding unknowns", () => {
+    expect(facultyAttendanceThresholdBreakdown([
+      { membershipId: "low", present: 4, absent: 1 },
+      { membershipId: "unknown", present: 0, absent: 0 },
+    ], 85)).toEqual({
+      threshold: 85, below: ["low"], unknown: ["unknown"], meets: 0,
+    });
+    expect(facultyAttendanceThresholdBreakdown([], Number.NaN).threshold).toBe(75);
   });
 });
