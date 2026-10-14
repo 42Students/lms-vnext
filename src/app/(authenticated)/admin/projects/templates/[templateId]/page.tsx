@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ProjectsServiceError } from "@/modules/projects/errors";
+import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
@@ -17,11 +20,15 @@ export default async function SuperAdminProjectTemplateDetailPage({
 }) {
   const context = await getCurrentRequestContext();
   const { templateId } = await params;
-  const detail =
-    await getProjectTemplateDetail(
-      context,
-      templateId,
-    );
+  const id = projectTemplateIdSchema.safeParse(templateId);
+  if (!id.success) notFound();
+  let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;
+  try {
+    detail = await getProjectTemplateDetail(context, id.data);
+  } catch (error) {
+    if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
+    throw error;
+  }
 
   return (
     <div className="space-y-6">
