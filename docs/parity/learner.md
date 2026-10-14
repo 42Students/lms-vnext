@@ -1242,3 +1242,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-010 PARTIAL (round 6):** Drive location facets now trim and case-deduplicate the locations provided by own-authorized role records. Selecting one location matches all registered role locations case-insensitively, including multi-location roles, without creating new location guesses or changing eligibility. Pure regression authored; browser/PG/runtime acceptance pending.
+
+
+**2026-10-15 chat-5 L12-011 PARTIAL (round 6):** Eligible-only Drives filtering now requires both the learner's persisted canApply signal and a non-closed deadline state, preventing stale-positive role eligibility from displaying genuinely expired drives as actionable. This is a defensive client browse guard; the server remains authoritative for application actions. Pure regression authored; executed CI/PG and browser acceptance pending.

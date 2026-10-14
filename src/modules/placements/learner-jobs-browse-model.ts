@@ -92,7 +92,9 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   const search = filters.search.trim().toLocaleLowerCase();
   const rows = items.filter((row) => {
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
-    if (filters.eligibleOnly && !row.canApply) return false;
+    // Eligibility may be true for a historical snapshot even after closure.
+    // Never offer a closed drive as actionable in the eligible-only view.
+    if(filters.eligibleOnly&&(row.deadlinePassed||!row.canApply))return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;

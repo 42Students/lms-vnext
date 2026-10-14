@@ -52,6 +52,14 @@ describe("Learner job browsing filters", () => {
     expect(filterLearnerPlacementJobs(variant,{...defaults,location:"Vijayawada"}).map(x=>x.job.id))
      .toEqual(["a"]);
   });
+    it("never includes a closed role in eligible-only even if its historic canApply flag is true",()=>{
+    const contradictory={...jobs[0]!,canApply:true,deadlinePassed:true};
+    const active={...jobs[1]!,canApply:true,deadlinePassed:false};
+    expect(filterLearnerPlacementJobs([contradictory,active],{
+      ...defaults,eligibleOnly:true,
+    }).map(x=>x.job.id)).toEqual(["b"]);
+    expect(learnerDriveAvailability(contradictory)).toBe("closed");
+  });
     it("sorts by earliest deadline with missing deadlines last", () => {
     expect(filterLearnerPlacementJobs(jobs,defaults).map(x=>x.job.id)).toEqual(["c","a","b"]);
   });
