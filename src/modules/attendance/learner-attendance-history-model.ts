@@ -6,8 +6,11 @@ export const LEARNER_ATTENDANCE_HISTORY_OPTIONS=[
   {value:"NOT_MARKED",label:"Not marked"},
   {value:"SCHEDULED",label:"Scheduled"},
   {value:"OTHER",label:"Late / excused / medical"},
+  {value:"LATE",label:"Late"},
+  {value:"EXCUSED",label:"Excused"},
+  {value:"MEDICAL",label:"Medical"},
 ] as const;
-export const learnerAttendanceHistoryFilterSchema=z.enum(["ALL","PRESENT","ABSENT","NOT_MARKED","SCHEDULED","OTHER"]);
+export const learnerAttendanceHistoryFilterSchema=z.enum(["ALL","PRESENT","ABSENT","NOT_MARKED","SCHEDULED","OTHER","LATE","EXCUSED","MEDICAL"]);
 export type LearnerAttendanceHistoryFilter=z.infer<typeof learnerAttendanceHistoryFilterSchema>;
 export function filterLearnerAttendanceHistory<T extends {status:string}>(
   rows:readonly T[],rawFilter:unknown,
