@@ -11,6 +11,7 @@ import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
 import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
 import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-career-agenda-model";
 import { learnerCareerDayChips } from "@/modules/placements/learner-career-day-chips-model";
+import { learnerCareerKindCounts } from "@/modules/placements/learner-career-kind-count-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
@@ -73,6 +74,7 @@ export function LearnerCareerCalendar({
     ? events
     : events.filter((event) => event.kind === filter);
   const period = careerCalendarPeriod(filtered, anchor, view);
+  const monthCounts = learnerCareerKindCounts(period.events);
 
   const calendarDays = (() => {
     if (view !== "month" && view !== "week") return [];
@@ -193,6 +195,15 @@ export function LearnerCareerCalendar({
           ))}
         </div>
       </section>
+
+      {view === "month" ? (
+        <section className="flex flex-wrap gap-3 rounded-xl border border-border bg-surface p-3 text-sm text-body" aria-label="Selected month round totals">
+          <strong className="text-foreground">{prettyDay(period.start).replace(/\s+\d{1,2},?\s*/, " ")}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
+          <span>{monthCounts.assessments} assessments</span>
+          <span>{monthCounts.interviews} interviews</span>
+          <span>{monthCounts.other} other</span>
+        </section>
+      ) : null}
 
       {calendarDays.length ? (
         <section className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block" aria-label={view + " calendar grid"}>

@@ -1041,3 +1041,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-002 PARTIAL:** Agenda now spans 30 days starting from the chosen IST day (not a disguised month mode) and Previous/Next move 30-day windows. Events remain scoped through the existing own-learner PostgreSQL read. Runtime and browser verification outstanding.
+
+
+**2026-10-15 chat-5 L17-003 PARTIAL:** Month view now shows the precise scoped round totals by kind for its IST month alongside the day grid; no missing job-deadline or college events are fabricated. Unit and own-fixture PostgreSQL cases authored, runtime/browser acceptance outstanding.
