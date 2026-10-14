@@ -79,12 +79,15 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     const meetingId=randomUUID(),secondId=randomUUID();
     await pool.query(`insert into project_meetings
       (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,
-       requested_by_membership_id,created_by_user_id)
+       requested_by_membership_id,created_by_user_id,scheduled_by_user_id,
+       scheduled_by_membership_id,meeting_url)
        values ($1,$2,'REQUESTED','GENERAL','Review checkpoint',
-         '2026-11-01T08:00:00Z','2026-11-01T09:00:00Z','Asia/Kolkata',$3,$4),
+         '2026-11-01T08:00:00Z','2026-11-01T09:00:00Z','Asia/Kolkata',$3,$4,null,null,null),
               ($5,$2,'SCHEDULED','GENERAL','Practice session',
-         '2026-11-02T08:00:00Z','2026-11-02T09:00:00Z','Asia/Kolkata',$3,$4)`,[
+         '2026-11-02T08:00:00Z','2026-11-02T09:00:00Z','Asia/Kolkata',$3,$4,$6,$7,
+         'https://meet.example.org/room')`,[
         meetingId,project.id,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,secondId,
+        SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
       ]);
     const all=await listMyMentorCalendarMeetings(mentor);
     const owned=all.filter(row=>row.projectId===project.id);
