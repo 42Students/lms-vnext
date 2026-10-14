@@ -58,6 +58,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "FACULTY" && filter.classPresence !== "ALL") {
     throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
   }
+  if (kind === "FACULTY" && filter.registrationPresence !== "ALL") {
+    throw new RangeError("FACULTY_REGISTRATION_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.rollPresence !== "ALL") {
     throw new RangeError("FACULTY_ROLL_FILTER_UNSUPPORTED");
   }
@@ -121,6 +124,11 @@ export async function listCollegeRoleDirectory(
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
       sql`nullif(btrim(${learnerProfiles.rollNumber}), '') is not null`,
+    )));
+  const hasRegistration = exists(db.select({ memberId: learnerProfiles.membershipId })
+    .from(learnerProfiles).where(and(
+      eq(learnerProfiles.membershipId, collegeMemberships.id),
+      sql`nullif(btrim(${learnerProfiles.registrationNumber}), '') is not null`,
     )));
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
@@ -189,6 +197,8 @@ export async function listCollegeRoleDirectory(
       kind === "FACULTY" ? facultyInDepartment : undefined,
       kind === "LEARNER" && filter.rollPresence !== "ALL"
         ? (filter.rollPresence === "PRESENT" ? hasRoll : not(hasRoll)) : undefined,
+      kind === "LEARNER" && filter.registrationPresence !== "ALL"
+        ? (filter.registrationPresence === "PRESENT" ? hasRegistration : not(hasRegistration)) : undefined,
       kind === "FACULTY" ? matchesEmployment : undefined,
       kind === "LEARNER" ? belongsToCohort : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"
