@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
 import { useMemo, useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
-import { filterLearnerInbox,learnerNotificationInboxQuerySchema,learnerNotificationTarget,
+import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
   type LearnerInboxQuery } from "@/modules/activity/learner-notification-inbox-model";
 import { NotificationList, type NotificationListItem } from "./notification-list";
+import {learnerNotificationAssessmentAction} from "@/modules/activity/learner-notification-assessment-action-model";
 import {
   learnerNotificationCategories,
   learnerNotificationCategoryCounts,
@@ -18,13 +21,20 @@ export function LearnerNotificationsInbox({
   personal,
   announcements,
   announcementsEnabled,
+  announcementsLoadFailed=false,
   initialFilters,
 }: {
   personal: readonly NotificationListItem[];
   announcements: readonly AnnouncementFeedItem[];
   announcementsEnabled: boolean;
+  announcementsLoadFailed?:boolean;
   initialFilters?: LearnerInboxQuery;
 }) {
+  const router=useRouter();
+  const sourceStatus=learnerNotificationLoadStatus({
+    announcementsEnabled,announcementsFailed:announcementsLoadFailed,
+    personalReady:true,
+  });
   const defaults=learnerNotificationInboxQuerySchema.parse(initialFilters ?? {});
   const [active, setActive] = useState<LearnerNotificationCategory>(defaults.category);
   const [unread,setUnread] = useState<"all"|"unread">(defaults.unread);
@@ -103,6 +113,15 @@ export function LearnerNotificationsInbox({
         Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
       </p>
 
+      {sourceStatus.state==="PARTIAL" ? (
+        <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          <p className="font-semibold text-foreground">Announcements not refreshed</p>
+          <p className="mt-1">{sourceStatus.notice}</p>
+          <Button size="sm" variant="secondary" onClick={()=>router.refresh()}>
+            Retry announcements
+          </Button>
+        </div>
+      ):null}
       {!announcementsEnabled && (active === "all" || active === "general") ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           College announcements are temporarily unavailable while their
@@ -122,7 +141,11 @@ export function LearnerNotificationsInbox({
           ) : null}
         </div>
       ) : (
-        <NotificationList items={visible.map(item=>({...item,actionHref:learnerNotificationTarget(item.actionHref)}))}
+        <NotificationList items={visible.map(item=>({
+            ...item,
+            actionHref:learnerNotificationAssessmentAction(item.actionHref)?.href??null,
+            actionLabel:learnerNotificationAssessmentAction(item.actionHref)?.label,
+          }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
       <Dialog
@@ -132,13 +155,13 @@ export function LearnerNotificationsInbox({
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>
-            {learnerNotificationTarget(selected?.actionHref) ? (
+            {learnerNotificationAssessmentAction(selected?.actionHref) ? (
               <Link
-                href={learnerNotificationTarget(selected?.actionHref)!}
+                href={learnerNotificationAssessmentAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
                 className="inline-flex min-h-10 items-center rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text"
               >
-                Open details
+                {learnerNotificationAssessmentAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             <Button onClick={() => setSelected(null)}>Got it</Button>

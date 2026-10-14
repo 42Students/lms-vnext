@@ -801,8 +801,8 @@ mobile/browser proof remain open.
 - [ ] Announcement feed behavior matches legacy.
 - [ ] Personal notification feed behavior matches legacy.
 - [ ] Unread/read semantics are defined and verified.
-- [ ] Deep links land on the intended learner context.
-- [ ] Loading/empty/error/stale states are explicit.
+- [ ] **PARTIAL (L29-009):** recognized assessment notifications retain validated application+round UUID context and show an accurate learner assessment action; destination still enforces own membership. Other notification deep-link types need separate review. Remaining: executed PG/unit/tsc/eslint and browser navigation acceptance.
+- [ ] **PARTIAL (L29-016):** personal-feed errors still fail closed; optional announcement failures show a retry alert without hiding the authorized personal inbox. Remaining: executed PostgreSQL/unit, lint/tsc, simulated-announcement-failure and mobile/browser proof.
 - [ ] No cross-role or cross-college notifications leak.
 
 # Profile
@@ -911,7 +911,7 @@ Closure checklist:
 - [x] Placement Academic Record is absent from learner Profile, matching the current production self-profile.
 - [ ] Profile Verification Education/Identity state machine, learner submit/resubmit actions, verified badge/by/date, sent-back guidance and update-pending semantics remain open.
 - [ ] Verification readiness cannot be honestly completed until marksheet/resume/private identity-document storage flows are live; those storage-backed prerequisites remain BLOCKED.
-- [ ] Loading skeleton, hard-error retry and visibility-refresh behavior are verified.
+- [ ] **PARTIAL (L30-031):** existing loading and error/retry boundaries remain; returning to a visible Profile tab requests fresh saved data after a cooldown, and new server props never silently overwrite local edits. Remaining: executed PG/unit/tsc/eslint and two-tab/browser concurrent-edit acceptance.
 - [x] Role redirect/fence behavior is server-safe.
 - [x] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.
 
