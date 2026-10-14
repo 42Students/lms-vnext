@@ -7,7 +7,7 @@ import {AuthorizationError,can,requirePermission} from "@/modules/permissions/po
 import {PlacementsServiceError} from "./errors";
 import {listPlacementJobOffers} from "./offer-service";
 import {requirePlacementManageScope} from "./scope";
-import {offerRegisterQuery,projectOfferRegister} from "./tpo-drive-offer-register-model";
+import {offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv} from "./tpo-drive-offer-register-model";
 export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknown){
  const member=context.membership;
  if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
@@ -21,4 +21,12 @@ export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknow
  await requirePlacementManageScope(context,collegeId);
  const facts=await listPlacementJobOffers(context,job.id);
  return {job,status:input.status,...projectOfferRegister(facts,input.status,input.page,input.q,input.joining)};
+}
+
+/** Read-only, scoped export. Does not mark a letter delivered or contact a learner. */
+export async function getTpoDriveOfferRegisterCsv(context:RequestContext,raw:unknown){
+ const input=offerRegisterQuery.omit({page:true}).parse(raw);
+ const scoped=await getTpoDriveOfferRegister(context,{...input,page:1});
+ const facts=await listPlacementJobOffers(context,scoped.job.id);
+ return tpoDriveOfferRegisterCsv(facts,input);
 }

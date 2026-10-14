@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {offerRegisterQuery,projectOfferRegister,offerExpiryIndicator} from "@/modules/placements/tpo-drive-offer-register-model";
+import {offerRegisterQuery,projectOfferRegister,offerExpiryIndicator,tpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-model";
 const row=(id:string,status:string,joining:string|null=null)=>({offer:{id,status,roleTitle:"Engineer",issuedAt:new Date("2026-10-01T00:00:00Z"),respondedAt:null},joining:joining?{status:joining}:null,candidate:{membershipId:id,displayName:" Name "}});
 describe("offer register",()=>{
  it("counts versions, filters status and avoids invented joining",()=>{
@@ -45,6 +45,18 @@ describe("offer register",()=>{
   expect(offerExpiryIndicator("ISSUED",new Date("2026-11-01T09:00:00Z"),now)).toBe("OPEN");
   expect(offerExpiryIndicator("ISSUED",null,now)).toBe("UNKNOWN");
   expect(offerExpiryIndicator("ACCEPTED",new Date("2026-10-01T00:00:00Z"),now)).toBe("NOT_APPLICABLE");
+ });
+ it("exports matching versions with formula-safe names and explicit truncation",()=>{
+  const fact=row("1","ISSUED");
+  fact.candidate.displayName="=HYPERLINK(1)";
+  const report=tpoDriveOfferRegisterCsv([fact],{status:"ISSUED",q:"",joining:"ALL"});
+  expect(report.totalMatching).toBe(1);
+  expect(report.csv).toContain("\"\u0027=HYPERLINK(1)\"");
+  expect(report.csv).toContain("Issued (IST)");
+  const many=tpoDriveOfferRegisterCsv(Array.from({length:501},(_,i)=>row(String(i),"ISSUED")),{status:"ALL",q:"",joining:"ALL"});
+  expect(many.truncated).toBe(true);
+  expect(many.csv).toContain("TRUNCATED");
+  expect(many.csv).not.toContain("\"500\",");
  });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
