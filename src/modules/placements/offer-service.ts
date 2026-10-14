@@ -530,13 +530,9 @@ export async function actOnPlacementOffer(
       );
     }
 
-    // Optional optimistic guard for TPO bulk actions; checked under the
-    // same row lock as the authoritative single-offer transition.
-    // Existing learner ACCEPT/DECLINE calls are unchanged.
+    // Guard selected status beneath the same offer row lock as the transition.
     if (expectedStatus && offer.status !== expectedStatus) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_OFFER_INVALID_TRANSITION",
-      );
+      throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
     }
 
     if (

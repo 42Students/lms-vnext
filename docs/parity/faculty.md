@@ -374,3 +374,22 @@ All Quizzes and All Assignments link to this overview. Pure-model tests and
 PostgreSQL denial tests are authored, not executed here. This does not replace
 legacy detailed reports, analytics, grading controls or authenticated browser
 verification; parent rows remain PARTIAL.
+
+## Faculty overdue response follow-ups (2026-10-14)
+
+New read-only `/teacher/response-followups` derives unresponded current-roster
+learners for published Assignment and Quiz assessments whose recorded due time
+has passed. It reuses the existing active teaching-Section discovery and
+Section-specific assignment/quiz report readers. The new view excludes drafts,
+future deadlines and assessments without a due date; it does not infer failure,
+misconduct or sent messages. Server-side expansion is limited to five
+assessments per page and at most twelve learner labels per assessment, with a
+link to the complete authorized report. Zod validates bounded filters and
+navigation. Pure-model tests and PostgreSQL denial tests are authored, not
+represented as executed. Exact legacy reporting, write/notification actions,
+positive database results and mobile/browser evidence remain OPEN; existing
+Assignment and Quiz report rows remain PARTIAL.
+
+### Faculty Section roster CSV export and browser-acceptance fixes (2026-10-14)
+
+The exact scoped Students list can now export its currently filtered/sorted rows to CSV with roll, email and phone, without another backend query or wider membership access. The CSV serializer quotes fields and neutralizes spreadsheet formula prefixes (including phone numbers beginning with +), supports UTF-8, and names files by Section. Pure tests and an authenticated download test are authored. Faculty Attendance browser regressions now use exact, unique accessible names and preserve the captured delivery ID after scheduling rather than deriving it from a potentially changed browser URL. None of this independently closes full Faculty roster or attendance legacy parity until exact-commit browser/DB evidence is passing.

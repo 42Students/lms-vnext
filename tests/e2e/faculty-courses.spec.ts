@@ -1,4 +1,5 @@
 import { expect, test, type BrowserContext } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 import { E2E_IDENTITY_COOKIE_NAME, E2E_SECRET_COOKIE_NAME } from "../../src/auth/e2e-identity";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -99,7 +100,9 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
   await page.getByRole("navigation", { name: "Faculty course tabs" })
     .getByRole("link", { name: "Attendance" }).click();
-  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Attendance", exact: true, level: 1 })).toBeVisible();
+  const deliveryId = new URL(page.url()).pathname.split("/").at(-2);
+  expect(deliveryId).toBeTruthy();
 
   // This test owns a real, authorized class session in the disposable browser DB.
   // Reusing an arbitrary seeded month could quietly skip the student-detail path.
@@ -126,9 +129,8 @@ test("Faculty Attendance student detail shows a real future session without fabr
   const scheduleResult = await response;
   expect(scheduleResult.status(), await scheduleResult.text()).toBe(201);
 
-  await page.goto("/teacher/courses/" +
-    new URL(page.url()).pathname.split("/").filter(Boolean).at(-2) + "/attendanceDetail");
-  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
+  await page.goto("/teacher/courses/" + deliveryId + "/attendanceDetail");
+  await expect(page.getByRole("heading", { name: "Attendance", exact: true, level: 1 })).toBeVisible();
   await page.locator('input[type="month"]').fill(month);
   const health = page.getByRole("region", { name: "Monthly class health" });
   await expect(health).toBeVisible();
@@ -203,13 +205,12 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   await conflicting.getByRole("button", { name: "Schedule Class" }).click();
   const overlap = await collisionResponse;
   expect(overlap.status(), await overlap.text()).toBe(409);
-  await expect(conflicting.getByRole("alert")).toContainText(
-    "Another class overlaps this time in the Section",
-  );
+  await expect(conflicting.getByRole("alert").filter({ hasText: "Another class overlaps this time in the Section" }).first()).toBeVisible();
   await conflicting.getByRole("button", { name: "Close drawer" }).click();
 
   await page.goto("/teacher/calendar");
-  await page.getByLabel("View", { exact: true }).selectOption("day");
+  await expect(page.getByRole("heading", { name: "Class Schedule", level: 1 })).toBeVisible();
+  await page.getByRole("combobox", { name: "View", exact: true }).selectOption("day");
   await page.getByRole("button", { name: "Today", exact: true }).click();
   const exactLink = page.locator(
     'a[href="/teacher/courses/' + deliveryId + '/attendanceDetail?sessionId=' + sessionId + '"]',
@@ -431,6 +432,25 @@ test("Faculty Contacts renders accessible mobile cards", async ({ page, context 
   await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
   await expect(page.locator("article").filter({ hasText:"learner.seed@example.com" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Students" })).toHaveAttribute("aria-current","page");
+});
+
+test("Faculty Students exports only the filtered Section roster as spreadsheet-safe CSV", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Students" }).click();
+  await expect(page.getByRole("heading", { name: "Students", exact: true })).toBeVisible();
+  await page.getByLabel("Search students").fill("learner.seed@example.com");
+  await expect(page.getByRole("button", { name: "Download roster CSV" })).toBeEnabled();
+  const downloadStarted = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download roster CSV" }).click();
+  const download = await downloadStarted;
+  expect(download.suggestedFilename()).toMatch(/^faculty-roster-.*\.csv$/);
+  const downloaded = await readFile((await download.path())!, "utf8");
+  expect(downloaded).toContain("Student,Roll number,Email,Phone");
+  expect(downloaded).toContain("learner.seed@example.com");
+  expect(downloaded).not.toContain("E2E Section B Secret");
 });
 
 test("Faculty mobile tabs remain navigable without a desktop-only action", async ({ page, context }) => {
