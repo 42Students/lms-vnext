@@ -85,12 +85,13 @@ function SubmissionGradeCard({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [success,setSuccess]=useState<string|null>(null);
 
   async function saveGrade(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    setError(null);
+    setError(null);setSuccess(null);
 
     const parsed = Number(points);
     if (
@@ -144,6 +145,7 @@ function SubmissionGradeCard({
         (await response.json()) as {
           submission: Submission;
         };
+      setSuccess("Grade state saved. Refresh the report to verify visibility.");
       onUpdated({
         ...submission,
         ...payload.submission,
@@ -162,7 +164,7 @@ function SubmissionGradeCard({
   }
 
   async function publishGrade() {
-    setError(null);
+    setError(null);setSuccess(null);
     if (!window.confirm(
       "Publish this grade and feedback to the learner? Verify both before continuing.",
     )) {
@@ -197,6 +199,7 @@ function SubmissionGradeCard({
         (await response.json()) as {
           submission: Submission;
         };
+      setSuccess("Grade state saved. Refresh the report to verify visibility.");
       onUpdated({
         ...submission,
         ...payload.submission,
@@ -359,6 +362,7 @@ function SubmissionGradeCard({
           {error}
         </p>
       ) : null}
+      {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
     </section>
   );
 }

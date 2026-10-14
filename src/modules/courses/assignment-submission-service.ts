@@ -5,6 +5,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -665,6 +666,9 @@ export async function gradeAssignmentSubmission(
     current,
   );
 
+  if(current.assignmentStatus!=="PUBLISHED") {
+    throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+  }
   if (
     input.pointsAwarded > current.maxPoints
   ) {
@@ -675,6 +679,14 @@ export async function gradeAssignmentSubmission(
 
   const now = new Date();
   return getDb().transaction(async (tx) => {
+    // Shared row lock serializes against ARCHIVE, preserving the published
+    // assessment boundary throughout the grade and immutable audit write.
+    const [locked]=await tx.select({status:courseAssignments.status,maxPoints:courseAssignments.maxPoints})
+      .from(courseAssignments).where(eq(courseAssignments.id,current.assignmentId))
+      .for("share").limit(1);
+    if(locked?.status!=="PUBLISHED")throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+    if(!facultyAssignmentGradingAllowed(locked.status,input.pointsAwarded,locked.maxPoints))
+      throw new CoursesServiceError("ASSIGNMENT_GRADE_INVALID");
     const [updated] = await tx
       .update(assignmentSubmissions)
       .set({
@@ -740,6 +752,8 @@ export async function publishAssignmentGrade(
     current,
   );
 
+  if(!facultyAssignmentGradePublicationAllowed(current.assignmentStatus,current.gradingStatus))
+    throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   if (current.gradingStatus !== "GRADED") {
     throw new CoursesServiceError(
       "ASSIGNMENT_NOT_GRADED",
@@ -756,6 +770,10 @@ export async function publishAssignmentGrade(
   }
 
   return getDb().transaction(async (tx) => {
+    const [locked]=await tx.select({status:courseAssignments.status})
+      .from(courseAssignments).where(eq(courseAssignments.id,current.assignmentId))
+      .for("share").limit(1);
+    if(locked?.status!=="PUBLISHED")throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
     const [updated] = await tx
       .update(assignmentSubmissions)
       .set({
