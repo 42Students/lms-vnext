@@ -1383,3 +1383,6 @@ Learner gradebook drill-ins validate both UUID path IDs and map unassigned Secti
 
 ## 2026-10-15 Faculty Assignment report private route boundary — PARTIAL
 The Assignment report now rejects malformed, duplicate or forged exact-Section parameters, validates the assessment path UUID, and maps unavailable/foreign-Section records to a non-leaking 404. Database faults still propagate; pure tests cover both parsed and denied selectors. Existing DONE report workflow untouched, new guard remains PARTIAL pending executed PG/browser acceptance.
+
+## 2026-10-15 Faculty Quiz report private route boundary — PARTIAL
+The Quiz summary/report now validates the path-owned Quiz UUID and entire Section query, refusing duplicate or extra user-provided scope selectors; unassigned, missing or wrong-Section Quiz reports respond with a private 404 instead of leaking identity. Does not alter published-score visibility; pure tests authored. Actual PG/browser validation remains outstanding.

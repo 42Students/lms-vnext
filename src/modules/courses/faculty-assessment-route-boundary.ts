@@ -14,3 +14,10 @@ export function facultyAssignmentReportHidden(error:unknown):boolean {
    "SECTION_DELIVERY_NOT_FOUND","FACULTY_TEACHING_SCOPE_REQUIRED",
    "LEARNING_ACCESS_DENIED"].includes(error.code);
 }
+
+export function facultyQuizReportHidden(error:unknown):boolean {
+ return error instanceof CoursesServiceError &&
+ ["QUIZ_NOT_FOUND","QUIZ_DELIVERY_MISMATCH",
+  "SECTION_DELIVERY_NOT_FOUND","FACULTY_TEACHING_SCOPE_REQUIRED",
+  "LEARNING_ACCESS_DENIED"].includes(error.code);
+}
