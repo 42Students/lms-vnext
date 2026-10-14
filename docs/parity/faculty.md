@@ -662,3 +662,18 @@ No edit endpoint, audit fiction or accidental identity mutation was introduced.
 DB owner must migrate separate private contact fields and the product/privacy
 owner must decide edit scope, version concurrency and audit semantics before C
 can be delivered. The Self Profile parity row remains PARTIAL.
+
+## Faculty live class schedule/edit/cancel (2026-10-14, chat-4 A)
+
+`/teacher/live-classes` now has a mobile-ready confirmation flow for a
+registered lesson-scoped LIVE_CLASS entry. `POST /api/courses/faculty/live-classes/
+[deliveryId]/command` accepts strictly validated CREATE, EDIT and CANCEL
+commands only for an active, same-college Faculty teaching assignment, with
+offset-bearing time strings, https-only meeting URL, same academic-period
+window, overlap checks against that Faculty's live sessions, and optimistic
+millisecond edit tokens under an advisory transaction lock. CANCEL changes
+content status to ARCHIVED rather than deleting history. A college-scoped
+transaction audit records action and times but never the raw meeting URL.
+Unit and disposable PG fixture tests (success, foreign/role/stale denials,
+activity count) are authored but **not executed**. Multi-instructor cross
+tenant conflict/original legacy modal and browser proof remain PARTIAL.
