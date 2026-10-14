@@ -27,6 +27,8 @@ describe("Mentor portfolio models", () => {
   });
   it("keeps activity names on a fixed safe allowlist", () => {
     expect(safeMentorProjectEventLabel("projects.project.created")).toBe("Project created");
+    expect(safeMentorProjectEventLabel("projects.task.reviewed"))
+      .toBe("Task review decision recorded");
     expect(safeMentorProjectEventLabel("secret:person@example.com")).toBe("Project activity recorded");
   });
   it("rejects arbitrary caller-provided college, user and project identifiers", () => {
