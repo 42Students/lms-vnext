@@ -38,16 +38,6 @@ export default async function MentorProjectReviewCompletenessPage({
         {data.total} persisted final-delivery version{data.total===1?"":"s"}
         {" · "}Project state: {data.projectStatus}
       </p>
-      <section className="rounded-xl border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">Recorded review coverage on this page</h2>
-        <p className="mt-2 text-sm text-body">{data.pageCounts.reviewed} reviewed versions;
-          {" "}{data.pageCounts.withFeedback} with written feedback.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Counts apply only to the registered versions on this page.
-          Approval does not require written feedback; missing history is not reconstructed.
-        </p>
-      </section>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
         description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history."/>
       :<ol className="grid gap-3">{data.items.map(item=>

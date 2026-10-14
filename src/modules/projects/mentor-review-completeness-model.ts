@@ -22,16 +22,6 @@ export function projectReviewCompleteness<T extends MentorReviewEvidence>(rows:r
   }));
 }
 
-/** Page-local counts only. Absent versions and private feedback are never inferred. */
-export function reviewCoverageOnPage(rows:readonly {
- reviewRecorded:boolean;writtenFeedbackRecorded:boolean;
-}[]) {
- return {
-  reviewed:rows.filter(row=>row.reviewRecorded).length,
-  withFeedback:rows.filter(row=>row.reviewRecorded&&row.writtenFeedbackRecorded).length,
- };
-}
-
 export function reviewCompletenessPage(total:number,requested:number) {
   const pageSize=10,totalPages=Math.max(1,Math.ceil(total/pageSize));
   return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};

@@ -219,7 +219,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L5-009 | Empty feed | Classroom | EmptyState | FIXED |
 | L5-010 | Load error/retry | Classroom | retry state | FIXED |
 | L5-011 | Historical discussion read-only | old course | `canPost=false` | FIXED |
-| L5-012 | Mobile discussion behavior | Classroom responsive | discussion component | UNCHECKED |
+| L5-012 | Mobile discussion behavior | Classroom responsive | touch keyboard Enter adds paragraph instead of accidental post, explicit full-width send, mobile-height feed and wrap-safe bubbles, one-tap Jump to latest without replacing unseen counter; private own-course PG and pure-model tests authored. PARTIAL pending browser/keyboard, unit/PG, tsc/eslint acceptance | PARTIAL |
 | L5-013 | Consecutive-message sender grouping | Classroom buildFeed | learner discussion feed | FIXED |
 | L5-014 | Initial load lands at newest message | Classroom scroll-to-bottom behavior | learner discussion feed | FIXED |
 | L5-015 | New-message unseen counter while reading history | Classroom unseenCount | learner discussion feed | FIXED |
@@ -403,7 +403,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |
 | L12-020 | Saved-jobs failure distinct from all-jobs failure | JobsListContent | learner jobs | UNCHECKED |
 | L12-021 | First-run/filtered-empty | JobsListContent | learner jobs | UNCHECKED |
-| L12-022 | Mobile jobs list/filters | JobsListContent responsive | learner jobs | UNCHECKED |
+| L12-022 | Mobile jobs list/filters | JobsListContent responsive | accessible mobile-only collapsible drive filters with active-filter count, 44px control, desktop always visible and preserved own authorized URL filters; PARTIAL pending Playwright/mobile screen reader, PostgreSQL/test execution, tsc/eslint acceptance | PARTIAL |
 
 ## L13 — Job Detail: `/learn/my-placements/jobs/[jobId]`
 
@@ -431,7 +431,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L14-001 | Search + URL state | ApplicationsContent | applications page | UNCHECKED |
-| L14-002 | Back/Forward hydration | applications route | applications page | UNCHECKED |
+| L14-002 | Back/Forward hydration | applications route | strict URL state for search/stage/sort/view/pagination/own selected application; navigable history and popstate restoration, bounded search; no tenant selector. PARTIAL pending PostgreSQL/unit, lint/typecheck, mobile/back-forward browser acceptance | PARTIAL |
 | L14-003 | Stage filter chips | ApplicationsContent | applications page | UNCHECKED |
 | L14-004 | All / In Progress / Completed views | ApplicationsContent | applications page | UNCHECKED |
 | L14-005 | Sort recent activity | ApplicationsContent | applications page | UNCHECKED |
@@ -453,7 +453,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
 | L14-022 | Hard/inline error state | ApplicationsContent | applications page | UNCHECKED |
 | L14-023 | First-run/filtered-empty | ApplicationsContent | applications page | UNCHECKED |
-| L14-024 | Mobile cards/modals | ApplicationsContent responsive | applications page | UNCHECKED |
+| L14-024 | Mobile cards/modals | ApplicationsContent responsive | mobile-only collapsible filters with active-count/44px button; cards wrap long roles, full-width tap action, drawer links become full-width on mobile without changing own-membership data; PARTIAL pending mobile browser/keyboard screen-reader, tsc/lint and fresh-PG execution | PARTIAL |
 
 ## L15 — Placement Assessments
 
@@ -461,8 +461,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L15-001 | Route is materialized, not placeholder | assessments page | vNext assessments | FIXED |
 | L15-002 | Pending / Completed views | AssessmentsContent | scheduled assessment view + separate applied-results route; provider completion remains unregistered/unverified | GAP |
-| L15-003 | Search | AssessmentsContent | assessments page | GAP |
-| L15-004 | Urgency filter | AssessmentsContent | assessments page | GAP |
+| L15-003 | Search | AssessmentsContent | already authorized local search now has a bounded Zod-validated shareable query and Back/Forward restoration, preserving exact own application/round links; fresh learner PG and pure tests authored. PARTIAL: PostgreSQL/ESLint/tsc and mobile browser acceptance unexecuted | PARTIAL |
+| L15-004 | Urgency filter | AssessmentsContent | persisted IST schedule urgency now distinguishes due today, this week, later, scheduled time passed, and awaiting employer schedule with scoped counts; never equates elapsed time to submitted/completed. PARTIAL: disposable PostgreSQL, lint/tsc, mobile and timezone-browser acceptance outstanding | PARTIAL |
 | L15-005 | Due today bucket | AssessmentsContent | IST-calendar upcoming due-today count and quick filter | FIXED |
 | L15-006 | Due this week bucket | AssessmentsContent | IST Monday-Sunday upcoming assessment count and quick filter | FIXED |
 | L15-007 | Later bucket | AssessmentsContent | assessments page | GAP |
@@ -484,8 +484,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L16-001 | Route is materialized, not placeholder | InterviewsContent | interviews page | FIXED |
-| L16-002 | Upcoming / Past views | InterviewsContent | interviews page | GAP |
-| L16-003 | Search | InterviewsContent | interviews page | GAP |
+| L16-002 | Upcoming / Past views | InterviewsContent | per-learner schedule tabs with actual upcoming, past and unscheduled counts, URL-backed view choice and browser navigation, preserving own round deep links; past schedule explicitly not attendance/completion. PARTIAL: fresh PG, ts/lint, mobile and Back/Forward runtime acceptance pending | PARTIAL |
+| L16-003 | Search | InterviewsContent | searchable authorized shortlisted interview round list now has bounded Zod-backed shareable `q` URL, preserves `view` and exact application/round link, restores query on Back/Forward; no other-college records. PARTIAL: isolated PostgreSQL, unit, typecheck/lint and mobile/browser acceptance pending | PARTIAL |
 | L16-004 | Highlight deep link | InterviewsContent | interviews page | GAP |
 | L16-005 | Countdown/live/past badges | InterviewsContent | career rounds | GAP |
 | L16-006 | Confirm interview | InterviewsContent | interviews page | GAP |

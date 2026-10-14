@@ -7,7 +7,7 @@ import {createProjectTemplate,publishProjectTemplate,
  assignProjectTemplateToCollege} from "@/modules/projects/template-service";
 import {createProjectInstance} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
-import {getMentorProjectReviewCompleteness} from "@/modules/projects/mentor-review-completeness-service";
+import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -86,8 +86,8 @@ afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeData
 describe("Mentor exact-project delivery review overview PostgreSQL",()=>{
  it("shows no delivery honestly, then a persisted decision with recorded feedback",async()=>{
   const projectId=await fixture();
-  const empty=await getMentorProjectReviewCompleteness(mentor,{projectId});
-  expect(empty).toMatchObject({total:0,items:[],pageCounts:{reviewed:0,withFeedback:0}});
+  const empty=await getMentorDeliveryReviewOverview(mentor,{projectId});
+  expect(empty).toMatchObject({total:0,items:[],counts:{reviewed:0,withFeedback:0}});
   const inserted=await pool.query<{id:string}>(`
     insert into project_submissions(
       project_id,version,status,summary,created_by_membership_id,
@@ -99,21 +99,21 @@ describe("Mentor exact-project delivery review overview PostgreSQL",()=>{
    project_id,submission_id,decision,feedback,reviewed_by_user_id,reviewed_by_membership_id)
    values($1::uuid,$2::uuid,'CHANGES_REQUESTED','Please improve evidence',
      $3::uuid,$4::uuid)`,[projectId,submissionId,SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership]);
-  const data=await getMentorProjectReviewCompleteness(mentor,{projectId});
-  expect(data.pageCounts).toEqual({reviewed:1,withFeedback:1});
+  const data=await getMentorDeliveryReviewOverview(mentor,{projectId});
+  expect(data.counts).toEqual({reviewed:1,withFeedback:1});
   expect(data.items).toEqual([expect.objectContaining({
-   version:1,decision:"CHANGES_REQUESTED",writtenFeedbackRecorded:true,
-   reviewLabel:"Changes requested",
+   version:1,decision:"CHANGES_REQUESTED",feedbackPresent:true,
+   reviewLabel:"Changes requested — feedback recorded",
   })]);
   expect(JSON.stringify(data)).not.toContain("Please improve evidence");
-  await expect(getMentorProjectReviewCompleteness(learner,{projectId})).rejects.toBeDefined();
-  await expect(getMentorProjectReviewCompleteness(mentor,{
+  await expect(getMentorDeliveryReviewOverview(learner,{projectId})).rejects.toBeDefined();
+  await expect(getMentorDeliveryReviewOverview(mentor,{
    projectId:SEED_IDS.collegeB,
   })).rejects.toBeDefined();
-  await expect(getMentorProjectReviewCompleteness(mentor,{
+  await expect(getMentorDeliveryReviewOverview(mentor,{
    projectId,collegeId:SEED_IDS.collegeB,
   })).rejects.toBeDefined();
   const suspended:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
-  await expect(getMentorProjectReviewCompleteness(suspended,{projectId})).rejects.toBeDefined();
+  await expect(getMentorDeliveryReviewOverview(suspended,{projectId})).rejects.toBeDefined();
  });
 });

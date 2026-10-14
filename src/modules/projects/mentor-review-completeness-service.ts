@@ -12,7 +12,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {
   mentorReviewCompletenessQuerySchema,projectReviewCompleteness,
-  reviewCompletenessPage,reviewCoverageOnPage,
+  reviewCompletenessPage,
 } from "./mentor-review-completeness-model";
 
 /** One assigned Mentor project, one registered version per review, no private feedback text. */
@@ -30,7 +30,6 @@ export async function getMentorProjectReviewCompleteness(
   if(!access.projects.enabled)return {
     enabled:false as const,query,projectTitle:null,
     projectStatus:null,...reviewCompletenessPage(0,1),items:[],
-    pageCounts:reviewCoverageOnPage([]),
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
@@ -56,16 +55,15 @@ export async function getMentorProjectReviewCompleteness(
     .orderBy(desc(projectSubmissions.version),desc(projectSubmissions.id))
     .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize);
   const computed=projectReviewCompleteness(rows);
-  const items=computed.map(row=>({
-    id:row.id,version:row.version,status:row.status,
-    submittedAt:row.submittedAt,decision:row.decision,
-    reviewedAt:row.reviewedAt,reviewRecorded:row.reviewRecorded,
-    writtenFeedbackRecorded:row.writtenFeedbackRecorded,
-    reviewLabel:row.reviewLabel,
-  }));
   return {
     enabled:true as const,query,projectTitle:scope.project.title,
     projectStatus:scope.project.status,...paging,
-    items,pageCounts:reviewCoverageOnPage(items),
+    items:computed.map(row=>({
+      id:row.id,version:row.version,status:row.status,
+      submittedAt:row.submittedAt,decision:row.decision,
+      reviewedAt:row.reviewedAt,reviewRecorded:row.reviewRecorded,
+      writtenFeedbackRecorded:row.writtenFeedbackRecorded,
+      reviewLabel:row.reviewLabel,
+    })),
   };
 }
