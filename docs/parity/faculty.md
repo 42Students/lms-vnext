@@ -805,3 +805,18 @@ Section and stale-token denial, retained row and audit assertions.
 These tests are authored, not independently executed; browser parity, an
 attempt-populated runtime denial and legacy close actions remain OPEN.
 No Faculty parity row is promoted to DONE.
+
+## Faculty Quiz CLOSE and released-result continuity (2026-10-14)
+
+PARTIAL: Authenticated Faculty can now confirm CLOSE for a current published
+quiz in their exact persisted teaching Section. Same-origin, strict validated
+command, optimistic row token, current teaching scope, transaction lock and
+actor/college audit are preserved. CLOSE is allowed even with attempts;
+learner submissions/results remain stored, while ARCHIVE remains denied if
+any attempt exists. Previously closed quizzes with `resultsPublished=true`
+remain in Faculty published gradebook totals and the Section reports/results
+summary; private/unreleased results are still excluded from score totals.
+Updated pure-model tests and the in-test PostgreSQL success/denial audit
+fixture cover PUBLISHED→CLOSED→ARCHIVED (the latter only with zero attempts).
+This is authored rather than independently executed PostgreSQL/browser
+evidence; no Faculty page status is promoted from PARTIAL.

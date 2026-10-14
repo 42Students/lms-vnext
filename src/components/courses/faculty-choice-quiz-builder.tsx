@@ -51,11 +51,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  function updateQuestion(i:number,fn:(q:Question)=>Question){
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);
  }
- async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
+ async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
   if(!confirmed){setError("Confirm the action before saving.");return;}
   if(pending)return;
   if(action!=="CREATE" && (
-    !chosen || (action!=="ARCHIVE" && chosen.status!=="DRAFT") ||
+    !chosen || ((action==="EDIT"||action==="PUBLISH") && chosen.status!=="DRAFT") ||
+    (action==="CLOSE" && chosen.status!=="PUBLISHED") ||
     (action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status))
   )){
     setError("The selected quiz cannot perform this action. Refresh its current state.");return;
@@ -66,11 +67,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   }
   const warning=action==="ARCHIVE" ?
     "Archive this Section Quiz? Learners will no longer see it. Quizzes with attempts cannot be archived." :
+    action==="CLOSE" ?
+    "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
     "Confirm "+action.toLowerCase()+" for this Section Quiz?";
   if(!window.confirm(warning))return;
   setError(null);setSuccess(null);setPending(true);
   try{
-   const body=(action==="PUBLISH"||action==="ARCHIVE")?{
+   const body=(action==="PUBLISH"||action==="CLOSE"||action==="ARCHIVE")?{
      action,quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt,confirmed:true,
    }:{
      action,confirmed:true,
@@ -183,6 +186,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
     <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
+    {chosen.status==="PUBLISHED"&&
+     <button type="button" disabled={!confirmed||pending}
+      onClick={()=>void submit("CLOSE")}
+      className="rounded border border-border px-4 py-2">
+      Close quiz
+     </button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
      <button type="button" disabled={!confirmed||pending}
       onClick={()=>void submit("ARCHIVE")}
@@ -192,7 +201,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     </>}
   </div>
   <p className="text-xs text-muted-foreground">
-   Each question needs unique nonblank options and valid correct answers; total points must not exceed 10000. Edits are blocked after publication or first attempt. Archiving hides the quiz from learner lists without deleting history and is refused after any attempt.
+   Each question needs unique nonblank options and valid correct answers; total points must not exceed 10000. Edits are blocked after publication or first attempt. Closing stops future attempts while keeping submitted results. Archiving hides the quiz from learner lists without deleting history and is refused after any attempt.
   </p>
  </section>;
 }
