@@ -7,14 +7,14 @@ import { CollegePersonNotFoundError } from "@/modules/people/college-person-deta
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
-  searchParams: Promise<{status?:string|string[]}>;
+  searchParams: Promise<{status?:string|string[];role?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
   const query=await searchParams;
   let data: Awaited<ReturnType<typeof getCollegeFacultyDetail>>;
   try {
-    data = await getCollegeFacultyDetail(context, membershipId, {status:query.status ?? "ALL"});
+    data = await getCollegeFacultyDetail(context, membershipId, {status:query.status ?? "ALL",role:query.role ?? "ALL"});
   } catch (error) {
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
@@ -47,6 +47,16 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
+          </select>
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-body">
+          Teaching role
+          <select name="role" defaultValue={data.filter.role}
+            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="ALL">All teaching roles</option>
+            <option value="PRIMARY">Primary</option>
+            <option value="CO_TEACHER">Co-teacher</option>
+            <option value="TA">Teaching assistant</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>

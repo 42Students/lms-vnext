@@ -87,6 +87,17 @@ describe.skipIf(!enabled)("College Faculty Detail DB ownership", () => {
     await expect(getCollegeFacultyDetail(learner,ids.membership,{status:"ACTIVE"}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("filters teaching history by persisted teaching role before the row cap",async()=>{
+    const primary=await getCollegeFacultyDetail(admin,ids.membership,{role:"PRIMARY"});
+    const assistant=await getCollegeFacultyDetail(admin,ids.membership,{role:"TA"});
+    expect(primary.assignments.map(item=>item.id)).toContain(ids.assignment);
+    expect(assistant.assignments).toHaveLength(0);
+    expect(primary.counts.totalAssignments).toBe(assistant.counts.totalAssignments);
+    await expect(getCollegeFacultyDetail(foreign,ids.membership,{role:"PRIMARY"}))
+      .rejects.toBeInstanceOf(CollegePersonNotFoundError);
+    await expect(getCollegeFacultyDetail(learner,ids.membership,{role:"TA"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("returns NOT_FOUND for foreign-college and nonexistent faculties", async () => {
     await expect(getCollegeFacultyDetail(foreign, ids.membership))
       .rejects.toBeInstanceOf(CollegePersonNotFoundError);
