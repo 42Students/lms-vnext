@@ -851,6 +851,7 @@ export async function actOnPlacementRequest(
   context: RequestContext,
   requestIdInput: string,
   rawInput: PlacementRequestActionInput,
+  expectedUpdatedAt?: string,
 ) {
   const requestId =
     placementRequestIdSchema.parse(
@@ -898,7 +899,8 @@ export async function actOnPlacementRequest(
         "PLACEMENT_REQUEST_NOT_FOUND",
       );
     }
-    if (request.status !== "PENDING") {
+    if (request.status !== "PENDING" ||
+      (expectedUpdatedAt && request.updatedAt.toISOString() !== expectedUpdatedAt)) {
       throw new PlacementsServiceError(
         "PLACEMENT_REQUEST_INVALID_STATE",
       );
