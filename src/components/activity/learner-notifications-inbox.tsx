@@ -10,7 +10,7 @@ import type { AnnouncementFeedItem } from "@/components/announcements/announceme
 import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
   type LearnerInboxQuery } from "@/modules/activity/learner-notification-inbox-model";
 import { NotificationList, type NotificationListItem } from "./notification-list";
-import {learnerNotificationAssessmentAction} from "@/modules/activity/learner-notification-assessment-action-model";
+import {learnerNotificationPlacementAction} from "@/modules/activity/learner-notification-placement-action-model";
 import {
   learnerNotificationCategories,
   learnerNotificationCategoryCounts,
@@ -143,8 +143,8 @@ export function LearnerNotificationsInbox({
       ) : (
         <NotificationList items={visible.map(item=>({
             ...item,
-            actionHref:learnerNotificationAssessmentAction(item.actionHref)?.href??null,
-            actionLabel:learnerNotificationAssessmentAction(item.actionHref)?.label,
+            actionHref:learnerNotificationPlacementAction(item.actionHref)?.href??null,
+            actionLabel:learnerNotificationPlacementAction(item.actionHref)?.label,
           }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
@@ -155,13 +155,13 @@ export function LearnerNotificationsInbox({
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>
-            {learnerNotificationAssessmentAction(selected?.actionHref) ? (
+            {learnerNotificationPlacementAction(selected?.actionHref) ? (
               <Link
-                href={learnerNotificationAssessmentAction(selected?.actionHref)!.href}
+                href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
                 className="inline-flex min-h-10 items-center rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text"
               >
-                {learnerNotificationAssessmentAction(selected?.actionHref)?.label??"Open details"}
+                {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             <Button onClick={() => setSelected(null)}>Got it</Button>

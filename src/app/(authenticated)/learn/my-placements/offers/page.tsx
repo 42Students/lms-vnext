@@ -26,6 +26,7 @@ export default async function LearnerOffersPage({
   const view = validView.success ? validView.data : "all";
   const context = await getCurrentRequestContext();
   const offers = await getOwnLearnerOfferBrowse(context, view);
+  const snapshotNowIso = new Date().toISOString();
 
   return (
     <div className="space-y-6">
@@ -74,6 +75,7 @@ export default async function LearnerOffersPage({
         </section>
       ) : (
         <LearnerPlacementOffers
+          snapshotNowIso={snapshotNowIso}
           offers={offers.items.map((row) => ({
             offerId: row.offer.id,
             applicationId: row.offer.applicationId,
