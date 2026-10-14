@@ -95,6 +95,13 @@ export default async function TpoCompanyDetailPage({
         }
       />
 
+      <Link
+        href={"/tpo/companies/" + encodeURIComponent(company.companyId) + "/contact-log"}
+        className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+      >
+        View contact activity log →
+      </Link>
+
       {!contactsAvailable ? (
         <section
           role="status"
