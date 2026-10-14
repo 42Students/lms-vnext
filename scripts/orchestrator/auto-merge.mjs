@@ -507,19 +507,22 @@ function mergeOne(branch, opts) {
   entry.ahead = ahead;
 
   const base = gitOut("merge-base", "main", ref);
-  const changed = gitOut("diff", "--name-only", `${base}..${ref}`).split("\n").filter(Boolean);
-  entry.changedFiles = changed.length;
-  const blocked = changed.filter(isProtected);
-  if (blocked.length > 0) {
-    entry.reason = `protected paths touched: ${blocked.slice(0, 5).join(", ")}`;
-    return entry;
-  }
+  // Real changes come from the staged merge result below: a branch that merged main through a
+  // connector can show main's own protected-path commits in a three-dot diff.
+  let changed = [];
 
   const touched = new Set();
   const merge = git("merge", "--no-commit", "--no-ff", ref);
   if (!merge.ok) {
     const conflicts = gitOut("diff", "--name-only", "--diff-filter=U").split("\n").filter(Boolean);
-    const unresolvable = conflicts.filter((f) => !RESOLVABLE_DOC(f));
+    // Protected paths are never taken from a chat branch: keep main's version.
+    for (const f of conflicts.filter(isProtected)) {
+      git("checkout", "--ours", "--", f);
+      git("add", "--", f);
+      entry.fixes.push(`kept main's version of protected file (${f})`);
+    }
+    const stillConflicted = gitOut("diff", "--name-only", "--diff-filter=U").split("\n").filter(Boolean);
+    const unresolvable = stillConflicted.filter((f) => !RESOLVABLE_DOC(f));
     if (conflicts.length === 0 || unresolvable.length > 0) {
       entry.reason = `merge conflicts: ${(unresolvable.length ? unresolvable : [firstLines(merge.out, 3)]).slice(0, 5).join("\n")}`;
       cleanUp();
@@ -537,6 +540,15 @@ function mergeOne(branch, opts) {
       cleanUp();
       return entry;
     }
+  }
+
+  changed = gitOut("diff", "--cached", "--name-only").split("\n").filter(Boolean);
+  entry.changedFiles = changed.length;
+  const blocked = changed.filter(isProtected);
+  if (blocked.length > 0) {
+    entry.reason = `protected paths touched: ${blocked.slice(0, 5).join(", ")}`;
+    cleanUp();
+    return entry;
   }
 
   let result;

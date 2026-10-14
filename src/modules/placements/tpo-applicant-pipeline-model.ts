@@ -3,7 +3,13 @@ export const tpoApplicantPipelineParams = z.object({
   jobId: z.string().uuid(),
   stage: z.enum(["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"]).default("ALL"),
   search: z.string().trim().max(100).default(""),
+  page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
+export function tpoApplicantPipelinePage(total:number,requestedPage:number){
+ const pageSize=25,totalPages=Math.max(1,Math.ceil(total/pageSize));
+ const page=Math.min(requestedPage,totalPages);
+ return {page,pageSize,totalPages,totalMatching:total,offset:(page-1)*pageSize};
+}
 export type ApplicantPipelineFact = {
   id: string; student: string | null; role: string;
   applicationStatus: string; screeningStatus: string | null;
