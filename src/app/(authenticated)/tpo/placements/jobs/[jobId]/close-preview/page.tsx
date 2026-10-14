@@ -1,0 +1,27 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {TpoDriveClosePreviewForm} from "@/components/placements/tpo-drive-close-preview-form";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {PlacementsServiceError} from "@/modules/placements/errors";
+import {getTpoDriveClosePreview} from "@/modules/placements/tpo-drive-close-preview-service";
+export default async function TpoDriveClosePreviewPage({params}:{params:Promise<{jobId:string}>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {jobId}=await params;
+ let preview:Awaited<ReturnType<typeof getTpoDriveClosePreview>>;
+ try{preview=await getTpoDriveClosePreview(context,jobId);}catch(error){
+  if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
+  throw error;
+ }
+ return <div className="space-y-5">
+  <Link href={"/tpo/placements/jobs/"+preview.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+  <PageHeader eyebrow="TPO · Drive lifecycle" title={preview.title+" · Close preview"}
+   description="Review persisted application, round and offer counts before an audited closure."/>
+  {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
+   <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    Closure is available only for published drives in an active season. Cancellation is a separate, unimplemented transition.
+   </p>}
+ </div>;
+}
