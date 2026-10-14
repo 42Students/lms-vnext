@@ -12,6 +12,7 @@ export type ProjectListItem = {
   mentorName?: string | null;
   memberCount?: number;
   progressPercent?: number;
+  progressDetail?: string;
   attention?: readonly string[];
   href?: string;
 };
@@ -124,8 +125,13 @@ export function ProjectList({
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Progress</p>
                 <p className="mt-1 font-semibold text-foreground">
-                  {item.progressPercent ?? 0}%
+                  {item.progressPercent === undefined ? "Not tracked" : item.progressPercent + "%"}
                 </p>
+                {item.progressDetail ? (
+                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                    {item.progressDetail}
+                  </p>
+                ) : null}
               </div>
             </div>
           ) : null}
