@@ -147,6 +147,7 @@ export function learnerPlacementDashboard(
     ).size,
     upcomingAssessmentCount: events.filter((event) => event.kind === "ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
+    thisWeekInterviewCount:weekEvents.filter(event=>event.kind==="INTERVIEW").length,
     activeOfferCount: input.offers.filter((row) => row.status === "ISSUED" &&
       (row.expiresAt===null||row.expiresAt.getTime()>=nowMs)).length,
     activeApplicationCount: new Set(

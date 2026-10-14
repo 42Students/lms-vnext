@@ -134,7 +134,9 @@ export function LearnerPlacementsDashboard({
           label="Upcoming interviews"
           value={display.interviews}
           href="/learn/my-placements/interviews"
-          detail="View scheduled interview rounds"
+          detail={display.thisWeekInterviews===null
+            ?"Interview schedule unavailable"
+            :`${display.thisWeekInterviews} in the next seven IST calendar dates · view all scheduled`}
         />
       </div>
 

@@ -30,6 +30,7 @@ export function learnerDashboardPartialState(
     activeApplications:availability.journey?snapshot.activeApplicationCount:null,
     assessments:availability.rounds?snapshot.upcomingAssessmentCount:null,
     interviews:availability.rounds?snapshot.upcomingInterviewCount:null,
+    thisWeekInterviews:availability.rounds?snapshot.thisWeekInterviewCount:null,
     attention:availability.rounds?snapshot.needsAttention:null,
     urgentAssessment:availability.rounds?snapshot.urgentAssessment:null,
     urgentInterview:availability.rounds?snapshot.urgentInterview:null,
