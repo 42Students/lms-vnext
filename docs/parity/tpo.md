@@ -680,6 +680,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] Active/Removed state matches.
 - [ ] revoke access confirmation and immediate effect match.
 
+**W57 PARTIAL:** TPO Recruiter Settings now includes a confirmed grant form for existing active users and active linked college-company relationships, plus row-level confirmed revocation. Registered recruiter profiles/grants are locked and checked for an active duplicate; revocation requires the exact unchanged grant updatedAt. Every changed grant and revocation inserts immutable actor activity inside its transaction. Email is used only as an admin-supplied lookup, not disclosed in the historical roster. Invitation, brand-new user provisioning, exact legacy modal UX, executed PostgreSQL/browser evidence and permission-session propagation remain open.
+
 ## Settings: Trusted Companies
 - [ ] trusted domains list matches.
 - [ ] add/normalize domain behavior matches.

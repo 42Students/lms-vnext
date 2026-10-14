@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents, placementCompanies, placementCompanyRelationships,
@@ -43,7 +43,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       if (!relationship || relationship.companyStatus !== "ACTIVE" ||
           relationship.relationshipStatus !== "ACTIVE") throw new TpoRecruiterGrantConflict();
       const [recruiter] = await tx.select({ id: users.id, platformStatus: users.platformStatus })
-        .from(users).where(eq(users.email, input.email)).limit(1);
+        .from(users).where(ilike(users.email, input.email)).limit(1);
       if (!recruiter || recruiter.platformStatus !== "ACTIVE") throw new TpoRecruiterGrantConflict();
       await tx.insert(placementRecruiterProfiles).values({
         userId: recruiter.id, companyId: relationship.companyId,

@@ -626,3 +626,5 @@ Current-oracle re-audit found that Learner Projects and Placements cannot be sta
 
 
 <!-- W45 TPO route audit (PARTIAL): all 42 currently implemented TPO page.tsx leaf routes were checked for route-local loading.tsx and error.tsx. Missing boundaries were added with retry behavior; read-only tables and the two new pages preserve explicit zero/unavailable semantics. This is not browser validation or an executed data-state test. -->
+
+| TPO Recruiter Access | `recruiters` | `/tpo/settings/recruiters` | PARTIAL — TPO-only confirmed recruiter grants and revocations from registered grant/profile tables with duplicate active grants guarded by profile row locks, optimistic revoke snapshots and transactional immutable activity. Only existing users linked to active college company relationships are eligible. Invitation/provisioning and browser/PG acceptance remain open. | PARTIAL |
