@@ -14,6 +14,7 @@ import {
   confirmedTpoFollowupCreateSchema,
   confirmedTpoFollowupDoneSchema,
   projectTpoFollowupQueue,
+  tpoFollowupQueueQuerySchema,
   tpoFollowupCreatedAudit,
   tpoFollowupDoneAudit,
   tpoFollowupIdSchema,
@@ -38,8 +39,10 @@ async function requireTpo(context: RequestContext) {
 export async function getTpoDueFollowupQueue(
   context: RequestContext,
   now = new Date(),
+  rawQuery: unknown = {},
 ) {
-  const { collegeId } = await requireTpo(context);
+  const { collegeId, ownerMembershipId } = await requireTpo(context);
+  const query=tpoFollowupQueueQuerySchema.parse(rawQuery);
   const db = getDb();
   const facts = await db.select({
     id: placementTpoFollowups.id,
@@ -58,6 +61,7 @@ export async function getTpoDueFollowupQueue(
       eq(placementTpoLeads.collegeId, collegeId),
       isNull(placementTpoFollowups.doneAt),
       lte(placementTpoFollowups.dueAt, now),
+      ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
     ))
     .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id))
     .limit(201);
@@ -78,6 +82,7 @@ export async function getTpoDueFollowupQueue(
   return {
     ...projectTpoFollowupQueue(facts.slice(0, 200), now),
     hasMoreDue: facts.length > 200,
+    scope: query.scope,
     leads: leads.slice(0, 200),
     hasMoreLeads: leads.length > 200,
   };
