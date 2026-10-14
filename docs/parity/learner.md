@@ -748,6 +748,9 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 
 ## Page: Notifications
 
+**2026-10-14 placement-notification deep links (PARTIAL):** Personal placement notifications now validate and canonicalize persisted application UUID drawer links and offers status tabs, removing untrusted college/user query selectors. Assessment actions retain their own round validation; all targets still enforce the signed-in learner at the destination. Unit and isolated PostgreSQL tests use a fresh learner and scoped notification, with forged-college/suspended/wrong-role denial. Remaining: test execution, producer-level link coverage, browser navigation and unread/read acceptance.
+
+
 **2026-10-14 Learner positive-path + scoped acknowledgement addition
 (PARTIAL, L29-017):** New disposable PostgreSQL integration fixture
 creates a learner user, active college membership and enrollment,
