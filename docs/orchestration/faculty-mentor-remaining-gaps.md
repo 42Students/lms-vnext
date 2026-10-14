@@ -253,3 +253,13 @@ active team coverage; revoked-role rows are now excluded. The view separates
 no assigned projects from filter no-match, adds aggregate counts and links
 to the scoped registered meeting log. No new write, no audit. Pure/PG tests
 authored, not executed; owner approval of staffing rules remains blocked.
+
+## 2026-10-14 Faculty published gradebook learner breakdown — PARTIAL
+
+The read-only gradebook now links to an exact-current-Section, per-learner
+breakdown of published assignment/quiz scores. Nonpublished or missing grades
+are Unknown rather than zero; unauthorized learner identifiers do not
+reveal cross-Section records. An isolated PostgreSQL fixture already creating
+its own Learner and Faculty membership exercises positive and role/foreign/
+forged-input denials. Pure-model tests were extended. Runtime PostgreSQL,
+TypeScript, lint and responsive browser evidence still required; no DONE row.
