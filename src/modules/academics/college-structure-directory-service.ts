@@ -22,6 +22,7 @@ import {
   COLLEGE_STRUCTURE_PAGE_SIZE,
   collegeStructureQuerySchema,
   collegeClassQuerySchema,
+  collegeElectiveQuerySchema,
   collegeStructureTotalPages,
 } from "./college-structure-directory-model";
 
@@ -150,7 +151,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
 
 /** Registered elective slot directory. Not a learner-selection or feature-enablement claim. */
 export async function listCollegeElectives(context: RequestContext, raw: unknown) {
-  const query = collegeStructureQuerySchema.parse(raw);
+  const query = collegeElectiveQuerySchema.parse(raw);
   const collegeId = ownCollege(context);
   const db = getDb();
   const scoped = db.select({
@@ -182,6 +183,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveSlots.deletedAt),
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
       query.status === "ALL" ? undefined : eq(electiveSlots.status, query.status),
       query.q ? or(
         ilike(electiveSlots.name, searchPattern(query.q)),

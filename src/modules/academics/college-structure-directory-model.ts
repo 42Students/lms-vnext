@@ -14,12 +14,16 @@ export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
+export const collegeElectiveQuerySchema = collegeStructureQuerySchema.extend({
+  semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
+});
+export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
 
 export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "minimumCapacity", "page"] as const) {
+  for (const key of ["q", "programId", "status", "minimumCapacity", "semesterNumber", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !(key === "programId" && !value)) {
@@ -29,7 +33,7 @@ export function readCollegeStructureParams(
   return result;
 }
 
-export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeStructureQuery | CollegeClassQuery) {
+export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeStructureQuery | CollegeClassQuery | CollegeElectiveQuery) {
   const path = kind === "CLASSES" ? "/college/classes" : "/college/electives";
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
@@ -37,6 +41,8 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (query.status !== "ACTIVE") params.set("status", query.status);
   if (kind === "CLASSES" && "minimumCapacity" in query && query.minimumCapacity !== undefined)
     params.set("minimumCapacity", String(query.minimumCapacity));
+  if (kind === "ELECTIVES" && "semesterNumber" in query && query.semesterNumber !== undefined)
+    params.set("semesterNumber", String(query.semesterNumber));
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }
