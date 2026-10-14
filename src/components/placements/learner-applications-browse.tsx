@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -37,36 +38,38 @@ export function LearnerApplicationsBrowse({
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const [search, setSearch] = useState(() => params.get("q") ?? "");
+  const url=readLearnerApplicationUrl(params.toString());
+  const [search,setSearch]=useState(url.q);
+  const lastCommitted=useRef(url.q);
   const [withdrawTarget, setWithdrawTarget] = useState<LearnerPlacementJourneyItem | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
   const [withdrawPending, setWithdrawPending] = useState(false);
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [withdrawNotice, setWithdrawNotice] = useState<string | null>(null);
-  const updateQuery = useCallback((change: Record<string, string | null>) => {
-    const next = new URLSearchParams(params.toString());
-    for (const [key,value] of Object.entries(change)) {
-      if (!value || value === "all") next.delete(key);
-      else next.set(key, value);
-    }
-    if (!Object.prototype.hasOwnProperty.call(change, "page")) next.delete("page");
-    const query = next.toString();
-    router.replace(query ? pathname + "?" + query : pathname, { scroll:false });
-  }, [params, router, pathname]);
-
-  useEffect(() => {
-    const onPop = () => {
-      setSearch(new URLSearchParams(window.location.search).get("q") ?? "");
+  const updateQuery=useCallback((changes:Record<string,string|null>)=>{
+    const q=updateLearnerApplicationUrl(params.toString(),changes);
+    router.push(q?pathname+"?"+q:pathname,{scroll:false});
+  },[params,router,pathname]);
+  useEffect(()=>{
+    const onPop=()=>{
+      const current=readLearnerApplicationUrl(window.location.search).q;
+      lastCommitted.current=current;setSearch(current);
     };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
-  useEffect(() => {
-    if (search === (params.get("q") ?? "")) return;
-    const timer = window.setTimeout(() => updateQuery({q:search.trim() || null}), 220);
-    return () => window.clearTimeout(timer);
-  }, [search, params, updateQuery]);
-
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[]);
+  useEffect(()=>{
+    if(lastCommitted.current===url.q)return;
+    lastCommitted.current=url.q;setSearch(url.q);
+  },[url.q]);
+  useEffect(()=>{
+    const value=search.trim().slice(0,100);
+    if(value===url.q)return;
+    const timer=window.setTimeout(()=>{
+      lastCommitted.current=value;updateQuery({q:value||null});
+    },350);
+    return ()=>window.clearTimeout(timer);
+  },[search,url.q,updateQuery]);
   async function confirmWithdrawal() {
     if (!withdrawTarget || withdrawPending) return;
     const parsed = learnerApplicationWithdrawalSchema.safeParse({
@@ -105,28 +108,20 @@ export function LearnerApplicationsBrowse({
     }
   }
 
-  const viewRaw = params.get("view");
-  const view: LearnerApplicationBrowseFilters["view"] =
-    viewRaw === "progress" || viewRaw === "completed" ? viewRaw : "all";
-  const sortRaw = params.get("sort");
-  const sort: LearnerApplicationBrowseFilters["sort"] =
-    sortRaw === "company" || sortRaw === "oldest" ? sortRaw : "activity";
-  const filters: LearnerApplicationBrowseFilters = {
-    ...DEFAULT_LEARNER_APPLICATION_FILTERS,
-    search,
-    view,
-    stage: params.get("stage") ?? "all",
-    sort,
+  const view:LearnerApplicationBrowseFilters["view"]=url.view;
+  const sort:LearnerApplicationBrowseFilters["sort"]=url.sort;
+  const filters:LearnerApplicationBrowseFilters={
+    ...DEFAULT_LEARNER_APPLICATION_FILTERS,search,view,stage:url.stage,sort,
   };
   const rows = browseLearnerApplications(items, filters);
   const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
-  const requested = Number(params.get("page") ?? "1");
+  const requested = url.page;
   const page = Number.isInteger(requested) && requested > 0
     ? Math.min(requested,totalPages) : 1;
   const paged = rows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
   const stages = learnerApplicationStageOptions(items);
   const selected = items.find((item) =>
-    item.applicationId === params.get("applicationId")) ?? null;
+    item.applicationId === url.applicationId) ?? null;
   const viewOptions = [
     {key:"all", label:"All"},
     {key:"progress", label:"In Progress"},
@@ -159,7 +154,7 @@ export function LearnerApplicationsBrowse({
             Company or role
             <input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search applications…"
+              placeholder="Search applications…" maxLength={100}
               className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" />
           </label>
           <label className="text-xs font-semibold text-body">
@@ -191,7 +186,7 @@ export function LearnerApplicationsBrowse({
         <p role="status">{rows.length} of {items.length} applications</p>
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
           <button type="button"
-            onClick={() => {setSearch("");router.replace(pathname,{scroll:false});}}
+            onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
             className="min-h-10 font-semibold text-primary-text hover:underline">
             Clear filters
           </button>
@@ -203,7 +198,7 @@ export function LearnerApplicationsBrowse({
       ) : rows.length===0 ? (
         <div className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="font-semibold text-foreground">No applications match these filters.</p>
-          <button type="button" onClick={() => {setSearch("");router.replace(pathname,{scroll:false});}}
+          <button type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
             className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
             View all applications
           </button>

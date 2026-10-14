@@ -431,7 +431,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L14-001 | Search + URL state | ApplicationsContent | applications page | UNCHECKED |
-| L14-002 | Back/Forward hydration | applications route | applications page | UNCHECKED |
+| L14-002 | Back/Forward hydration | applications route | strict URL state for search/stage/sort/view/pagination/own selected application; navigable history and popstate restoration, bounded search; no tenant selector. PARTIAL pending PostgreSQL/unit, lint/typecheck, mobile/back-forward browser acceptance | PARTIAL |
 | L14-003 | Stage filter chips | ApplicationsContent | applications page | UNCHECKED |
 | L14-004 | All / In Progress / Completed views | ApplicationsContent | applications page | UNCHECKED |
 | L14-005 | Sort recent activity | ApplicationsContent | applications page | UNCHECKED |
