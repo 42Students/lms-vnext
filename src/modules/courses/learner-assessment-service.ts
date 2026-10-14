@@ -1,4 +1,5 @@
 import type { RequestContext } from "@/modules/identity/context";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
   getLearnerCourseWorkspace,
   listLearnerCourseDeliveries,
@@ -26,6 +27,7 @@ function byDueDateThenTitle<
 export async function getLearnerAssessmentOverview(
   context: RequestContext,
 ) {
+  await requireOwnCourseLearnerRead(context);
   const snapshotNowMs = Date.now();
   const deliveries =
     await listLearnerCourseDeliveries(context);

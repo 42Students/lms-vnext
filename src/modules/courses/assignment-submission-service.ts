@@ -20,6 +20,7 @@ import {
 } from "@/db/schema/course-upload-receipts-staged";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -452,6 +453,7 @@ export async function getMyAssignmentSubmission(
   assignmentIdInput: string,
   deliveryIdInput: string,
 ) {
+  await requireOwnCourseLearnerRead(context);
   const assignmentId =
     courseAssignmentIdSchema.parse(
       assignmentIdInput,
