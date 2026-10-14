@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-applications-export-service";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
- params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[]}>;
+ params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -16,7 +16,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  try{result=await getTpoDriveApplicationsExport(context,{...filters,jobId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
  const ready=process.env.DB09_TPO_API_READY==="DB09_VERIFIED";
- const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel}).toString();
+ const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  return <div className="space-y-6">
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-primary-text hover:underline">← Applicants</Link>
@@ -36,6 +36,11 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
    <label className="min-w-32 flex-1 text-sm text-body">Channel
     <select name="channel" defaultValue={result.channel} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
+    </select></label>
+   <label className="min-w-40 flex-1 text-sm text-body">Eligibility evidence
+    <select name="eligibility" defaultValue={result.eligibility} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+     <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
+     <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </select></label>
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Preview filters</button>
   </form>
