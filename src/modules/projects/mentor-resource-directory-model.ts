@@ -4,6 +4,7 @@ export const mentorResourceDirectoryQuerySchema=z.object({
  projectId:z.string().uuid(),
  required:z.enum(["ALL","REQUIRED","OPTIONAL"]).default("ALL"),
  link:z.enum(["ALL","HTTPS","UNAVAILABLE"]).default("ALL"),
+ description:z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
  order:z.enum(["SEQUENCE","TITLE"]).default("SEQUENCE"),
  search:z.string().trim().max(100).default(""),
  page:z.coerce.number().int().min(1).max(10000).default(1),
@@ -29,6 +30,8 @@ export function mentorResourceDirectory(rows:readonly MentorResourceFact[],
    (query.required==="REQUIRED")===row.required)&&
   (query.link==="ALL"||
     (query.link==="HTTPS")===(safeHttpsResourceUrl(row.url)!==null))&&
+  (query.description==="ALL"||
+    (query.description==="RECORDED")===Boolean(row.description?.trim()))&&
   (!term||[row.title,row.description??""].some(x=>
    x.toLocaleLowerCase("en-IN").includes(term))))
   .sort((a,b)=>query.order==="TITLE"
@@ -53,6 +56,7 @@ export function mentorResourceDirectoryHref(query:MentorResourceDirectoryQuery){
  const params=new URLSearchParams();
  if(query.required!=="ALL")params.set("required",query.required);
  if(query.link!=="ALL")params.set("link",query.link);
+ if(query.description!=="ALL")params.set("description",query.description);
  if(query.order!=="SEQUENCE")params.set("order",query.order);
  if(query.search)params.set("search",query.search);
  if(query.page>1)params.set("page",String(query.page));

@@ -940,3 +940,6 @@ The current authorized Mentor exact-project Team history supports earliest/lates
 
 ## 2026-10-15 chat-11 round 6 AW — project reports ordering (PARTIAL)
 Registered currently assigned Mentor project reports now allow updated-first and title A–Z/Z–A sort, consistently before pagination and capped formula-neutralized CSV. Strict URL validation and deterministic tie-break preserve status/attention/assignment filters and whole-scope totals. Model tests authored; CI/PG/browser and full reports parity remain open.
+
+## 2026-10-15 chat-11 round 6 AX — written Resource description completeness (PARTIAL)
+Exact-project Resource Directory now filters records with/without nonblank registered descriptions, alongside required/safe HTTPS/ordering/search, before pagination and capped safe metadata CSV. Presence tests treat whitespace-only notes as absent. Current live same-college Mentor checks reused; no new resource writes or file providers. Unit/browser/PG/legacy parity remain PARTIAL.

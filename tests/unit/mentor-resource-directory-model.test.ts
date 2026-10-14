@@ -37,6 +37,14 @@ describe("Mentor link-resource directory",()=>{
   expect(result.exportOmitted).toBe(2);
   expect(mentorResourceDirectoryCsv(result.exportItems,2))
    .toContain("2 additional matching resources");
+  expect(mentorResourceDirectoryQuerySchema.safeParse({...q,description:"PRIVATE"}).success)
+   .toBe(false);
+  const filtered=mentorResourceDirectory([
+   {id:"a",title:"A",description:"Notes",url:null,required:false,sequence:0},
+   {id:"b",title:"B",description:"   ",url:null,required:false,sequence:1},
+  ],{...q,description:"MISSING"});
+  expect(filtered.items.map(row=>row.id)).toEqual(["b"]);
+  expect(filtered.exportItems.map(row=>row.id)).toEqual(["b"]);
   expect(mentorResourceDirectoryQuerySchema.safeParse({...q,collegeId:projectId}).success)
    .toBe(false);
  });
