@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerClassSchedule,
@@ -36,6 +37,12 @@ export default async function LearnerCalendarPage() {
         title="Class Schedule"
         description="Your current Section schedule, Course filters and upcoming classes."
       />
+      <div className="flex flex-wrap justify-end">
+        <Link href="/learn/attendance/calendar"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Attendance calendar →
+        </Link>
+      </div>
       <LearnerClassSchedule
         sections={schedule.sections.map(
           (section) => ({
