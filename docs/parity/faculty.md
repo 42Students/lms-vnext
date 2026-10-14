@@ -1218,3 +1218,23 @@ assigned Course, active Faculty role, correct metric labels/quick action,
 no foreign Section content, reports filter/clear, back to workspace, no
 uncaught browser page errors and no mobile horizontal overflow. Both
 independent CI jobs were SUCCESS; global CI is not claimed here.
+
+## Faculty Assignment Report — DONE (2026-10-14)
+
+**Scope accepted:** real persisted current teaching-Section assignment
+report with eligible/submitted/graded/on-time/late/missing learner counts,
+score buckets, PDF view, linked submissions and GET-regenerated, bounded
+spreadsheet-safe CSV. The export rechecks current Faculty scope, never
+includes learner email/phone, and uses formula neutralization. Unknown scores
+are not invented.
+
+**Executed:** [Faculty Assignment Report acceptance 38616571640](https://github.com/42Students/lms-vnext/actions/runs/38616571640),
+source SHA `f176845b234307b5cf5bdf9456746b5c1d9fdb1e`. Both independent
+jobs passed: `faculty-section-authoring.test.ts` **6/6 PostgreSQL** tests
+including a new positive CREATE/PUBLISH/report/CSV and wrong-role/foreign-
+Section/forged-scope denials, and `faculty-assignment-report.spec.ts`
+**2/2 clean desktop/mobile Chromium** real draft creation, report display,
+CSV download and 4xx unauthorized delivery; no browser page errors, retries,
+or mobile overflow. Browser fixtures run sequentially to prevent competing
+same-lesson draft sequence conflicts. Other Faculty authoring and global CI
+rows remain separate.
