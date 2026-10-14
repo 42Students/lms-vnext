@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
@@ -58,6 +59,10 @@ export default async function LearnerPlacementJobsPage() {
         title="Drives"
         description="Placement drives and roles available to you."
       />
+      <Link href="/learn/my-placements/rules?from=drives"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        Review placement rules and preparation →
+      </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
         <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso} />
       </Suspense>
