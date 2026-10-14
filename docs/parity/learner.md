@@ -1128,3 +1128,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L15-007 PARTIAL:** Assessment due buckets, including Later (after the current IST Monday–Sunday calendar week), now support validated, shareable `?due=` navigation. Back/Forward restores the chosen bucket, unknown/duplicate values are rejected on server, and pure URL model strips untrusted selectors without changing learner scope. Owned TEST-round PostgreSQL/denial tests authored; browser/navigation and CI acceptance pending.
+
+
+**2026-10-15 chat-5 L15-009 PARTIAL:** The no-date assessment bucket now exposes an explicit, scoped and accessible warning: an absent scheduled round time does NOT prove the provider has no deadline. It also counts missing employer URLs independently rather than conflating link availability with scheduling. UTC/IST round date and link data come from the existing own-learner reader. Pure model and independent own-learner PostgreSQL denial tests authored; real browser/source acceptance pending.

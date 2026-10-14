@@ -5,6 +5,7 @@ import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} 
 import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/modules/placements/learner-assessment-link-state-model";
 import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-assessment-external-launch-model";
 import {learnerAssessmentDueHref,readLearnerAssessmentDueFromUrl} from "@/modules/placements/learner-assessment-bucket-url-model";
+import {learnerAssessmentMissingSchedule} from "@/modules/placements/learner-assessment-missing-schedule-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -198,6 +199,8 @@ export function LearnerCareerRoundsWorkspace({
     () => learnerAssessmentDueBuckets(relevant, nowMs),
     [relevant, nowMs],
   );
+  const missingSchedule=kind==="ASSESSMENT"
+    ? learnerAssessmentMissingSchedule(dueCounts.unscheduled):null;
   const visibleRows = useMemo(() => {
     const dueRows = kind === "ASSESSMENT"
       ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs) : rows;
@@ -408,6 +411,18 @@ export function LearnerCareerRoundsWorkspace({
         </div>
       </section>
 
+      {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
+        <aside role="status" aria-label="Assessments without a recorded date"
+          className="rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground">{missingSchedule.count} assessment round{missingSchedule.count===1?"":"s"} without a recorded schedule</h3>
+          <p className="mt-2 text-sm text-body">{missingSchedule.notice}</p>
+          {missingSchedule.missingLinkCount>0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {missingSchedule.missingLinkCount} also {missingSchedule.missingLinkCount===1?"lacks an":"lack"} actionable provider link.
+            </p>
+          ):null}
+        </aside>
+      ):null}
       {kind==="INTERVIEW"&&focus.hiddenByFilters ? (
         <aside role="status" className="rounded-xl border border-primary bg-primary-subtle p-4">
           <p className="text-sm font-semibold text-foreground">
