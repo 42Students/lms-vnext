@@ -278,14 +278,29 @@ export async function PlacementDriveWorkspace({
               </Link>
             ) : null}
             <Link
-              href={`/api/placements/jobs/${encodeURIComponent(jobId)}/applicants/export`}
+              href={isTpo
+                ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
+                : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
             >
-              Export applicants (CSV)
+              {isTpo ? "Preview capped applicant CSV" : "Export applicants (CSV)"}
             </Link>
           </div>
         }
       />
+      {isTpo && driveDay.rounds.length>0 ? (
+        <section aria-label="Round result entry" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="font-semibold text-foreground">Enter round results</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
+              <Link key={round.id}
+                href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                {round.name}
+              </Link>)}
+          </div>
+        </section>
+      ) : null}
       {isTpo ? (
         <section
           aria-label="Current screening shortlist"

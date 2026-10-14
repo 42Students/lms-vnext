@@ -2,6 +2,8 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {TpoApplicantReviewForm} from "@/components/placements/tpo-applicant-review-form";
+import {canReviewApplicant} from "@/modules/placements/tpo-applicant-review-model";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoApplicantDetail} from "@/modules/placements/tpo-applicant-detail-service";
@@ -38,6 +40,9 @@ export default async function TpoApplicantDetailPage({params}:Params){
     className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
     View student placement history →</Link>
   </section>
+  {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
+   <TpoApplicantReviewForm jobId={jobId} applicationId={applicationId}
+     expectedUpdatedAt={data.application.screeningUpdatedAt}/> : null}
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Applied round outcomes</h2>
    {data.resultsTruncated?<p role="status" className="text-sm text-body">Only 100 applied result versions examined.</p>:null}
