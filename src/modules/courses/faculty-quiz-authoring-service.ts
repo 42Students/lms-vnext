@@ -1,8 +1,9 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {courseQuizzes,courseSectionDeliveries,quizQuestions,quizOptions,quizAttempts} from "@/db/schema";
+import {courseQuizzes,courseSectionDeliveries,quizQuestions,quizOptions,quizAttempts,
+ collegeMemberships,membershipRoles,courseTeachingAssignments,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -11,7 +12,7 @@ import {requireDeliveryContentMutation} from "./learning-access";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints,
- facultyQuizVersionMatches} from "./faculty-quiz-authoring-model";
+ facultyQuizVersionMatches,facultyQuizMetadataUnchanged,facultyQuizAttemptLimitLocked} from "./faculty-quiz-authoring-model";
 
 /** Choice-question authoring with transaction, locked token, audit and no edits
  * after the quiz publishes or any registered attempt exists. */
@@ -37,6 +38,24 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
    const [live]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
     .from(courseSectionDeliveries).where(eq(courseSectionDeliveries.id,deliveryId)).for("update").limit(1);
    if(!live||live.endedAt)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+   // Revalidate the actor inside the write transaction: a signed cookie can
+   // outlive an actual Faculty role, user suspension, or teaching revocation.
+   const [liveFaculty]=await tx.select({id:courseTeachingAssignments.id})
+    .from(courseTeachingAssignments)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY")))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(
+      eq(courseTeachingAssignments.deliveryId,deliveryId),
+      eq(courseTeachingAssignments.membershipId,membership.id),
+      isNull(courseTeachingAssignments.endedAt),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,delivery.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    )).for("share").limit(1);
+   if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
    let result:typeof courseQuizzes.$inferSelect;
    let eventType:typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES];
    if(input.action==="CREATE"){
@@ -65,6 +84,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    if(input.action==="EDIT" && facultyQuizAttemptLimitLocked(
+      current.status,current.maxAttempts,input.maxAttempts,
+    ))throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const [attempt]=await tx.select({id:quizAttempts.id}).from(quizAttempts)
      .where(eq(quizAttempts.quizId,current.id)).limit(1);
     // Once a learner has attempted, the question bank, allowed attempt count
@@ -75,6 +97,10 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
         (input.questions!==undefined || input.maxAttempts!==current.maxAttempts))))
       throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT"){
+     // Stale token is checked before no-op detection. Only metadata-only
+     // writes can be compared without loading the immutable question bank.
+     if(input.questions===undefined && facultyQuizMetadataUnchanged(current,input))
+      throw new CoursesServiceError("FACULTY_QUIZ_NO_CHANGE");
      if(input.questions){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
       .where(eq(quizQuestions.quizId,current.id));

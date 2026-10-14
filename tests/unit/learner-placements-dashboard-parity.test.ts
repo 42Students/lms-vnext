@@ -15,7 +15,7 @@ describe("Learner placement dashboard route wiring", () => {
     expect(page).toContain("journeyRows.map((row)");
     expect(page).toContain("(requestWorkspace?.rounds ?? []).map((row)");
     expect(page).toContain("row.exception.scheduledAt");
-    expect(page).toContain("<LearnerPlacementsDashboard snapshot={dashboard} availability={availability} />");
+    expect(page).toContain("<LearnerPlacementsDashboard snapshot={dashboard} availability={availability}");
   });
 
   it("shows separate scheduled/attention and empty/error loading states", () => {

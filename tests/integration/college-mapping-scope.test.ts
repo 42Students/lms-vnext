@@ -4,6 +4,8 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { exportCollegeOfferingMappings } from "@/modules/academics/college-mapping-export-service";
+import { exportCollegeFacultyAssignments } from "@/modules/academics/college-faculty-assignment-export-service";
 import {
   listCollegeFacultyAssignments,
   listCollegeSemesterCourseMappings,
@@ -134,6 +136,12 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
       listCollegeSemesterCourseMappings(admin, { q: code, type: "ELECTIVE" }),
     ]);
     expect(core.items.map(item => item.id)).toContain(ids.offering);
+    const [active,archived]=await Promise.all([
+      listCollegeSemesterCourseMappings(admin,{q:code,status:"ACTIVE"}),
+      listCollegeSemesterCourseMappings(admin,{q:code,status:"ARCHIVED"}),
+    ]);
+    expect(active.items.map(row=>row.id)).toContain(ids.offering);
+    expect(archived.items).toEqual([]);
     expect(elective.items).toEqual([]);
     expect(ownCourses.items.find(item => item.id === ids.offering)).toMatchObject({
       courseName: code, courseCode: code, cohortName: code, programName: code,
@@ -156,6 +164,24 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     expect(otherTeaching.items).toEqual([]);
   });
 
+  it("exports only own-college offerings with role denial", async () => {
+    const ours=await exportCollegeOfferingMappings(admin,{q:code});
+    const theirs=await exportCollegeOfferingMappings(foreign,{q:code});
+    expect(ours.csv).toContain(code);
+    expect(theirs.csv).not.toContain(code);
+    await expect(exportCollegeOfferingMappings(faculty,{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("exports current-college teaching assignments without contacts",async()=>{
+    const ours=await exportCollegeFacultyAssignments(admin,{q:code});
+    const foreignCsv=await exportCollegeFacultyAssignments(foreign,{q:code});
+    expect(ours.csv).toContain(code);
+    expect(ours.csv).toContain("PRIMARY");
+    expect(foreignCsv.csv).not.toContain(code);
+    expect(ours.csv).not.toContain("Email");
+    await expect(exportCollegeFacultyAssignments(faculty,{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("denies non-admin roles and caller-supplied college IDs", async () => {
     await expect(listCollegeSemesterCourseMappings(faculty, {}))
       .rejects.toBeInstanceOf(AuthorizationError);

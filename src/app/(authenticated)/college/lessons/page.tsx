@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
+import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -18,7 +19,8 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
       q: first(params.q), status: first(params.status),
-      offeringStatus: first(params.offeringStatus), page: first(params.page),
+      offeringStatus: first(params.offeringStatus), courseCode: first(params.courseCode)||undefined,
+      page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
@@ -29,5 +31,15 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
         action={<Link href="/college/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
-  return <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} />;
+  return <div className="space-y-4">
+    <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export filtered lessons CSV
+    </Link>
+    <Link href="/college/live-classes"
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      View college live classes
+    </Link>
+    <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} />
+  </div>;
 }

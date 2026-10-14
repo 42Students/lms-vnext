@@ -34,6 +34,15 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.weekEvents.map((event) => event.roundId)).toEqual(["interview", "test"]);
   });
 
+  it("surfaces the nearest scheduled own assessment even when interview occurs first",()=>{
+    const state=learnerPlacementDashboard({...empty,rounds:[
+      round("first-interview","INTERVIEW","2026-10-14T08:00:00Z"),
+      round("second-test","TEST","2026-10-15T08:00:00Z"),
+      round("third-test","VENDOR_TEST","2026-10-16T08:00:00Z"),
+    ]},now);
+    expect(state.urgentAssessment?.roundId).toBe("second-test");
+    expect(state.urgentAssessment?.href).toContain("/assessments?applicationId=app-1&roundId=second-test");
+  });
   it("keeps interview priority when assessments are outside the urgent week", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
@@ -45,6 +54,43 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.nextAction.href).toContain("applicationId=app-1&roundId=interview");
   });
 
+  it("exposes the earliest interview independently from the assessment hero",()=>{
+    const state=learnerPlacementDashboard({...empty,rounds:[
+      round("test","TEST","2026-10-14T08:00:00Z"),
+      round("late-interview","GD","2026-10-16T08:00:00Z"),
+      round("early-interview","INTERVIEW","2026-10-15T08:00:00Z"),
+    ]},now);
+    expect(state.nextAction.title).toBe("test");
+    expect(state.urgentInterview?.roundId).toBe("early-interview");
+    expect(state.urgentInterview?.href).toBe("/learn/my-placements/interviews?applicationId=app-1&roundId=early-interview");
+  });
+  it("retains the actual chronologically next scheduled event even when hero prefers a later test",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("earlier","GD","2026-10-14T08:00:00Z"),
+      round("later","TEST","2026-10-15T08:00:00Z"),
+    ]},now);
+    expect(result.nextAction.title).toBe("later");
+    expect(result.nextScheduledEvent?.roundId).toBe("earlier");
+    expect(result.nextScheduledEvent?.href).toContain("/interviews?");
+  });
+  it("separates all future interviews from the next seven IST calendar dates",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("today","INTERVIEW","2026-10-13T09:00:00Z"),
+      round("beyond-week","GD","2026-10-20T09:00:00Z"),
+      round("assessment","TEST","2026-10-15T09:00:00Z"),
+    ]},now);
+    expect(result.upcomingInterviewCount).toBe(2);
+    expect(result.thisWeekInterviewCount).toBe(1);
+  });
+    it("distinguishes all future assessments from IST-week assessment actions",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("near","VENDOR_TEST","2026-10-14T09:00:00Z"),
+      round("far","TEST","2026-10-22T09:00:00Z"),
+      round("interview","INTERVIEW","2026-10-15T09:00:00Z"),
+    ]},now);
+    expect(result.upcomingAssessmentCount).toBe(2);
+    expect(result.thisWeekAssessmentCount).toBe(1);
+  });
   it("respects an approved reschedule and ignores past or unscheduled events", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
@@ -65,6 +111,17 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.needsAttention).toHaveLength(3);
     expect(state.fullAttentionCount).toBe(5);
     expect(state.fullWeekEventCount).toBe(5);
+  });
+  it("distinguishes published before deadline from learner actionability across duplicate role options",()=>{
+    const result=learnerPlacementDashboard({...empty,jobs:[
+      {jobId:"one",deadlinePassed:false,canApply:false},
+      {jobId:"one",deadlinePassed:false,canApply:true},
+      {jobId:"two",deadlinePassed:false,canApply:false},
+      {jobId:"three",deadlinePassed:true,canApply:true},
+    ]},now);
+    expect(result.openJobCount).toBe(2);
+    expect(result.eligibleToApplyCount).toBe(1);
+    expect(result.notOpenToApplyJobCount).toBe(1);
   });
   it("does not inflate job or application counts from multiple roles", () => {
     const state = learnerPlacementDashboard({
@@ -109,4 +166,28 @@ describe("Learner placement dashboard summary and priority", () => {
     }, now);
     expect(state.activeOfferCount).toBe(1);
   });
+});
+
+describe("L11-014 needs-attention ordering",()=>{
+ it("shows the earliest effective schedule, not all assessments before interviews",()=>{
+  const result=learnerPlacementDashboard({...empty,rounds:[
+   round("later-test","TEST","2026-10-16T08:00:00Z"),
+   round("early-interview","INTERVIEW","2026-10-14T08:00:00Z"),
+   round("middle-test","VENDOR_TEST","2026-10-15T08:00:00Z"),
+   round("late-interview","GD","2026-10-17T08:00:00Z"),
+  ]},now);
+  expect(result.needsAttention.map(x=>x.roundId)).toEqual([
+   "early-interview","middle-test","later-test"
+  ]);
+  expect(result.fullAttentionCount).toBe(4);
+  expect(result.nextAction.title).toBe("middle-test");
+ });
+ it("applies an approved reschedule before sorting its attention time",()=>{
+  const result=learnerPlacementDashboard({...empty,rounds:[
+   round("rescheduled","TEST","2026-10-14T08:00:00Z",
+     {scheduledAt:new Date("2026-10-17T08:00:00Z")}),
+   round("interview","INTERVIEW","2026-10-15T08:00:00Z"),
+  ]},now);
+  expect(result.needsAttention.map(x=>x.roundId)).toEqual(["interview","rescheduled"]);
+ });
 });
