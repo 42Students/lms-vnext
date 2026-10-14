@@ -844,6 +844,7 @@ export type TpoStudentRequestView = {
   requestType: string;
   status: string;
   requestedAt: Date;
+  updatedAt: Date;
   reason: string;
   decisionNote: string | null;
   membershipId: string;
@@ -896,6 +897,7 @@ export async function listTpoStudentRequests(
       status: placementLearnerRequests.status,
       requestedAt:
         placementLearnerRequests.requestedAt,
+      updatedAt: placementLearnerRequests.updatedAt,
       reason: placementLearnerRequests.reason,
       decisionNote:
         placementLearnerRequests.decisionNote,
@@ -1028,6 +1030,7 @@ export async function listTpoStudentRequests(
         requestType: row.requestType,
         status: row.status,
         requestedAt: row.requestedAt,
+        updatedAt: row.updatedAt,
         reason: row.reason,
         decisionNote: row.decisionNote,
         membershipId: row.membershipId,
