@@ -18,9 +18,11 @@ const foreign:RequestContext={...own,membership:{...own.membership!,
   id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
 const faculty:RequestContext={...own,membership:{...own.membership!,roles:["FACULTY"]}};
 const ids={period:randomUUID(),program:randomUUID(),cohort:randomUUID(),
-  section:randomUUID(),hall:randomUUID()};
+  section:randomUUID(),hall:randomUUID(),secondSection:randomUUID(),secondHall:randomUUID(),
+  teacher:randomUUID(),teacherMembership:randomUUID(),teacherRole:randomUUID()};
 const label="w-hall-book-"+ids.hall.slice(0,8);
 let token="";
+let secondToken="";
 const booking=()=>({sectionId:ids.section,facultyMembershipId:null,
   date:"2026-10-15",from:"09:00",to:"10:00",title:label,
   expectedSectionUpdatedAt:token,confirm:true});
@@ -39,11 +41,23 @@ describe.skipIf(!enabled)("College hall booking isolated PostgreSQL",()=>{
     token=rows.rows[0]!.updated_at.toISOString();
     await pool.query("INSERT INTO lecture_halls(id,college_id,name,capacity,room_type) VALUES($1,$2,$3,30,'CLASSROOM')",
       [ids.hall,SEED_IDS.collegeA,label]);
+    const second=await pool.query<{updated_at:Date}>(
+      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code,capacity) VALUES($1,$2,$3,$4::text,$4::text,25) RETURNING updated_at",
+      [ids.secondSection,ids.cohort,ids.period,label+"-second"]);
+    secondToken=second.rows[0]!.updated_at.toISOString();
+    await pool.query("INSERT INTO lecture_halls(id,college_id,name,capacity,room_type) VALUES($1,$2,$3,30,'CLASSROOM')",
+      [ids.secondHall,SEED_IDS.collegeA,label+"-second"]);
+    await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2::text,$3::text)",
+      [ids.teacher,ids.teacher,label]);
+    await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+      [ids.teacherMembership,ids.teacher,SEED_IDS.collegeA]);
+    await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'FACULTY')",
+      [ids.teacherRole,ids.teacherMembership]);
   });
   afterAll(async()=>{try{if(pool){
-    await pool.query("DELETE FROM section_schedule_events WHERE section_id=$1",[ids.section]);
-    await pool.query("DELETE FROM lecture_halls WHERE id=$1",[ids.hall]);
-    for(const [table,id] of [["sections",ids.section],["cohorts",ids.cohort],
+    await pool.query("DELETE FROM section_schedule_events WHERE section_id IN ($1,$2)",[ids.section,ids.secondSection]);
+    await pool.query("DELETE FROM lecture_halls WHERE id IN ($1,$2)",[ids.hall,ids.secondHall]);
+    for(const [table,id] of [["sections",ids.section],["sections",ids.secondSection],["cohorts",ids.cohort],
       ["programs",ids.program],["academic_periods",ids.period]] as const)
       await pool.query(`DELETE FROM ${table} WHERE id=$1`,[id]);
     // activity_events is append-only; its subjects are text, never delete.
@@ -68,5 +82,25 @@ describe.skipIf(!enabled)("College hall booking isolated PostgreSQL",()=>{
     expect(rows.rowCount).toBe(1);
     const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_type='section' AND subject_id=$1::text AND summary='College Admin booked a lecture hall for a scheduled class'",[ids.section]);
     expect(audit.rowCount).toBe(1);
+  });
+  it("denies disabled Faculty and permits only one concurrent overlap across different halls and Sections",async()=>{
+    const request={...booking(),from:"11:00",to:"12:00",facultyMembershipId:ids.teacherMembership};
+    await pool!.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[ids.teacher]);
+    await expect(createCollegeHallBooking(own,ids.hall,request))
+      .rejects.toMatchObject({code:"FACULTY_NOT_FOUND"});
+    await pool!.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[ids.teacher]);
+    const results=await Promise.allSettled([
+      createCollegeHallBooking(own,ids.hall,request),
+      createCollegeHallBooking(own,ids.secondHall,{...request,sectionId:ids.secondSection,
+        expectedSectionUpdatedAt:secondToken}),
+    ]);
+    expect(results.filter(result=>result.status==="fulfilled")).toHaveLength(1);
+    const denied=results.find(result=>result.status==="rejected");
+    expect(denied?.status==="rejected"?denied.reason:undefined)
+      .toMatchObject({code:"SCHEDULE_CONFLICT"});
+    const rows=await pool!.query("SELECT id FROM section_schedule_events WHERE faculty_membership_id=$1",
+      [ids.teacherMembership]);
+    expect(rows.rowCount).toBe(1);
+    // Retain identity fixtures; immutable audit/history may reference them.
   });
 });
