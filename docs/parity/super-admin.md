@@ -704,3 +704,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Offer detail — PARTIAL:** Added `/admin/placements/offers/[offerId]` for scoped, versioned offer lifecycle (issue/respond/withdraw dates IST, joining date, INR CTC). Directory deep-links to offer, and view links to applicant application. Both job and membership are SQL-college fenced with org, UUID/foreign/absent → non-leaking 404; no evidence/private contact. Pure ID/date tests authored, PG and browser acceptance remain.
+
+
+**2026-10-15 chat-6 round 5 / Joining outcome detail — PARTIAL:** Added `/admin/placements/joining/[offerId]` backed by actual persisted joining outcome, linked accepted offer and exact scoped applicant/job/organization. Displays status, joining/recorded dates, offer state and safe offer deep link; excludes private reason. Invalid, foreign or absent outcome returns 404, not synthetic PENDING. Unit model tests authored; history/mutation and PG/browser parity remain.
