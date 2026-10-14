@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -102,10 +102,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    });
    if(!res.ok){
      const failure:unknown=await res.json().catch(()=>null);
-     if(failure && typeof failure==="object" && "error" in failure &&
-        failure.error==="FACULTY_QUIZ_NO_CHANGE")
-       throw new Error("No Quiz metadata changed. Update a field before saving.");
-     throw new Error("Quiz write was rejected. Check your choices or refresh a stale draft.");
+     throw new Error(facultyQuizWriteMessage(failure));
    }
    setConfirmed(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");
    if(action==="ARCHIVE"){

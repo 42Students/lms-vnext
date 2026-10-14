@@ -1455,3 +1455,6 @@ Unknown/duplicated/malformed Course filters now show an explicit reset action ra
 
 ## 2026-10-15 R6 Faculty Quiz write-denial messages — PARTIAL
 A pure model now translates typed stale-version, attempt, lifecycle, deadline and no-op failures into actionable feedback while deliberately giving the same message for missing and foreign teaching scope. Unit tests authored; UI integration and browser acceptance remain pending.
+
+## 2026-10-15 R6 Faculty Quiz write-error UI integration — PARTIAL
+The confirmed Quiz editor now uses the typed, non-leaking denial-message model at the actual POST response handler. A stale version prompts reload, while immutable/expired/no-change states display distinct guidance without exposing server errors. Unit coverage for the model is included; browser execution still pending.
