@@ -9,6 +9,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
+import { learnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
+import { learnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import { LearnerBoardTaskIndex } from "@/components/projects/learner-board-task-index";
 import { LearnerProjectGoals } from "@/components/projects/learner-project-goals";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
@@ -91,7 +93,7 @@ export default async function LearnerProjectPage({
     ? filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById})
     : workspace.tasks;
   const selectedTask=activeSection==="tasks"
-    ? findOwnLearnerBoardTask(workspace.tasks,taskId)
+    ? findOwnLearnerBoardTask(boardTasks,taskId)
     : null;
   const boardFilters={taskSearch:search,priority,status,sprintId,releaseId};
   const selectionNotice = activeSection === "tasks"
@@ -105,7 +107,7 @@ export default async function LearnerProjectPage({
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "tasks" ? (
         <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
-          shown={boardTasks.length} total={workspace.tasks.length} />
+          shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />
       ) : null}
       {activeSection === "tasks" ? (
         <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} sprints={workspace.sprints} />

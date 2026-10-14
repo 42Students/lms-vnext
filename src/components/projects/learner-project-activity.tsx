@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
   learnerProjectActivityPageHref, parseLearnerProjectActivityFilters, learnerProjectActivityCategorySchema } from "@/modules/projects/learner-project-activity-filter-model";
 
@@ -17,6 +18,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     beforeTime: beforeTimeInput, beforeId: beforeIdInput });
   const shown = parsed.success ? filterLearnerProjectActivity(events, category) : [];
   const lastEvent = shown.at(-1);
+  const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
     <h2 className="text-lg font-semibold text-foreground">Activity</h2>
@@ -40,7 +42,15 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <Link href={route + "?tab=activity"} className="inline-flex min-h-11 items-center justify-center self-end rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
     {!parsed.success ? <p role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">Choose valid dates with the start on or before the end, and a listed activity type. If this page link is invalid, use Clear to return to recent activity.</p> : null}
-    <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
+      {parsed.success && shown.length ? (
+        <a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv"
+          className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+          Download shown events CSV
+        </a>
+      ) : null}
+    </div>
     {shown.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
       {!parsed.success ? "Apply a valid filter to view activity." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."}
     </div> : <ol className="space-y-3">{shown.map(event => <li key={event.id}
