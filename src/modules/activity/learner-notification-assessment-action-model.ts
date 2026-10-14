@@ -13,11 +13,13 @@ export function learnerNotificationAssessmentAction(raw:string|null|undefined){
    href:"/learn/my-placements/assessments",label:"View assessments",
  };
  if(app.length!==1||round.length!==1)return null;
- if(!id.safeParse(app[0]).success||!id.safeParse(round[0]).success)return null;
+ const applicationId=app[0],roundId=round[0];
+ if(!applicationId||!roundId||!id.safeParse(applicationId).success||
+   !id.safeParse(roundId).success)return null;
  // Drop unregistered user/college selectors and untrusted filter parameters.
  return {
-   href:"/learn/my-placements/assessments?applicationId="+encodeURIComponent(app[0])+
-     "&roundId="+encodeURIComponent(round[0]),
+   href:"/learn/my-placements/assessments?applicationId="+encodeURIComponent(applicationId)+
+     "&roundId="+encodeURIComponent(roundId),
    label:"View assessment details",
  };
 }
