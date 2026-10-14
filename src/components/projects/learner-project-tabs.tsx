@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { canonicalLearnerProjectTab, LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-tab-alias-model";
+import { learnerProjectTabHref } from "@/modules/projects/learner-project-tab-href-model";
 
 
 
@@ -16,7 +17,7 @@ export function LearnerProjectTabs({ projectId }: { projectId: string }) {
         {LEARNER_PROJECT_DETAIL_TABS.map((tab) => (
           <Link
             key={tab.key}
-            href={`/learn/projects/${encodeURIComponent(projectId)}?tab=${tab.key}`}
+            href={learnerProjectTabHref(projectId,tab.key,searchParams)}
             aria-current={active === tab.key ? "page" : undefined}
             className={
               active === tab.key

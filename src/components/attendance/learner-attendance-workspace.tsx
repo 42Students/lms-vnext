@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   useMemo,
 } from "react";
@@ -8,6 +10,9 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@/modules/attendance/learner-attendance-filter-model";
+import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, LEARNER_ATTENDANCE_HISTORY_OPTIONS, type LearnerAttendanceHistoryFilter } from "@/modules/attendance/learner-attendance-history-model";
+import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
+import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -207,6 +212,7 @@ export function LearnerAttendanceWorkspace({
   }, courses, defaultMonth);
   const deliveryId = filters.deliveryId;
   const month = parseMonth(filters.month);
+  const historyFilter = learnerAttendanceHistoryFilterSchema.catch("ALL").parse(params.get("status") ?? "ALL");
 
   const course =
     courses.find(
@@ -222,6 +228,11 @@ export function LearnerAttendanceWorkspace({
     () => summarize(monthRows),
     [monthRows],
   );
+  const historyRows = useMemo(
+    () => filterLearnerAttendanceHistory(monthRows,historyFilter),
+    [monthRows,historyFilter],
+  );
+  const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
 
   function updateUrl(
     nextDeliveryId: string,
@@ -235,6 +246,7 @@ export function LearnerAttendanceWorkspace({
       );
     }
     next.set("month", monthKey(nextMonth));
+    if (historyFilter !== "ALL") next.set("status", historyFilter);
     router.replace(
       `/learn/attendance?${next.toString()}`,
       { scroll: false },
@@ -249,6 +261,13 @@ export function LearnerAttendanceWorkspace({
 
   function changeMonth(nextMonth: Date) {
     updateUrl(deliveryId, nextMonth);
+  }
+  function changeHistoryFilter(nextFilter: LearnerAttendanceHistoryFilter) {
+    const next = new URLSearchParams();
+    if (deliveryId) next.set("deliveryId",deliveryId);
+    next.set("month",filters.month);
+    if (nextFilter !== "ALL") next.set("status",nextFilter);
+    router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});
   }
 
   if (courses.length === 0) {
@@ -331,10 +350,17 @@ export function LearnerAttendanceWorkspace({
         </div>
 
         {course ? (
-          <p className="mt-3 text-xs text-muted-foreground">
-            {course.sectionName} ·{" "}
-            {course.academicPeriodName}
-          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">
+              {course.sectionName} ·{" "}{course.academicPeriodName}
+            </p>
+            {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
+              <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
+                className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                Full course attendance history →
+              </Link>
+            ) : null}
+          </div>
         ) : null}
       </section>
 
@@ -453,10 +479,32 @@ export function LearnerAttendanceWorkspace({
         </div>
       </section>
 
-      {monthRows.length === 0 ? (
+      <div className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Session history</h2>
+          <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
+        </div>
+        <label className="w-full max-w-xs text-xs font-semibold text-body">Show
+          <Select className="mt-1.5 min-h-11 w-full" value={historyFilter}
+            onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
+            {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </Select>
+        </label>
+      </div>
+      {historyRows.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+          <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
+          <a download="learner-attendance-history.csv"
+            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
+            className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            Download attendance CSV
+          </a>
+        </div>
+      ) : null}
+      {historyRows.length === 0 ? (
         <EmptyState
-          title="No attendance records"
-          description="No held classes are linked to this Course for the selected month. Try another period."
+          title={monthRows.length ? "No sessions match this status" : "No attendance records"}
+          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : "No sessions are linked to this Course for the selected month. Try another period."}
         />
       ) : (
         <>
@@ -479,7 +527,7 @@ export function LearnerAttendanceWorkspace({
                 </tr>
               </thead>
               <tbody>
-                {monthRows.map((row) => (
+                {historyRows.map((row) => (
                   <tr
                     key={row.id}
                     className="border-t border-border"
@@ -531,7 +579,7 @@ export function LearnerAttendanceWorkspace({
           </div>
 
           <div className="space-y-3 md:hidden">
-            {monthRows.map((row) => (
+            {historyRows.map((row) => (
               <article
                 key={row.id}
                 className="rounded-xl border border-border bg-surface p-4"
