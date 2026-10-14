@@ -519,3 +519,102 @@ Added pure model/unit tests and an own-project disposable PostgreSQL test for
 default SQL now(), Mentor success, stale replay, wrong-role, non-leaking foreign
 scope and single review audit event. Still PARTIAL: CI/PG/browser/mobile and
 legacy review-history verification; do not fabricate task-comments storage.
+
+
+## 2026-10-14 chat-11 A — Mentor task status transitions (PARTIAL)
+
+The existing Mentor Board now offers confirmed TODO/IN_PROGRESS/BLOCKED state
+transitions using a dedicated same-origin PATCH endpoint, strict Zod validation,
+current live assigned-Mentor college scope and central projects.read.
+The service locks the Project, Task and Sprint, rejects shipped releases and
+non-active Sprints, compares PostgreSQL microsecond timestamps at millisecond
+precision in SQL, and records a same-transaction immutable actor/college
+before/after activity event. Direct DONE and IN_REVIEW transitions are reserved
+for versioned submission review, so Mentor cannot bypass the review record.
+Admin legacy controls remain unchanged. Source-authored pure and PostgreSQL
+tests cover valid writes, audit, forged inputs, stale replay and role/foreign
+denial. **PARTIAL:** checks are not executed in this session; mobile/browser,
+exact legacy Board controls, task assignees and workloads remain outstanding.
+
+
+## 2026-10-14 chat-11 B — Mentor Board/Sprint filters and exports (PARTIAL)
+
+The exact-project Mentor task-board status page now filters by registered Sprint
+ID, status, priority and literal title/Sprint search. Existing per-state totals
+remain whole-project counts while displayed/exported rows honor the selected
+filters. A same-college/current-assigned-Mentor GET route exports at most 500
+task rows to UTF-8 formula-neutralized CSV with a truncation count. Cross-project
+Sprint progress adds a filtered, current-Mentor-only export capped at 100 rows,
+also neutralized and explicitly truncated. Neither export invents assignees,
+workload, velocity or readiness. Unit tests and a new isolated positive/foreign/
+wrong-role PostgreSQL board-export fixture are authored. **PARTIAL:** real
+typecheck, ESLint, unit, PostgreSQL, download/browser and legacy filters
+verification remain open; full-scale streaming is not implemented.
+
+
+## 2026-10-14 chat-11 C — Completed team meeting notes (PARTIAL)
+
+The registered `project_meetings.outcome` field now has a dedicated current
+assigned-Mentor detail/edit surface for COMPLETED meetings only. The scoped read
+allows the Mentor to see existing post-meeting outcome text, while the confirmed
+same-origin PATCH validates nonempty up-to-4000-character notes, locks project
+and meeting, rejects archived projects and stale tokens, and uses PostgreSQL
+millisecond CAS. An immutable actor/college audit is inserted in the same
+transaction, recording only before/after note presence and never private text.
+The team-meeting log links to the exact authorized meeting detail. New mobile
+dialog and loading/error states, pure unit and isolated PostgreSQL role/foreign/
+stale/audit tests are authored. **PARTIAL:** runtime/typecheck/lint, desktop and
+mobile verification, product privacy review and historic versioned meeting
+minutes remain open; no separate notes/version table is invented.
+
+
+## 2026-10-14 chat-11 D — Mentor exact-project risk and readiness drill-ins (PARTIAL)
+
+New `/mentor/projects/[projectId]/risk-readiness` shows persisted same-project
+blocked tasks, submitted task reviews, requested meetings, and pending latest
+final-delivery review as actionable attention signals, with exact workspace
+links and paginated ALL/RISK/READINESS views. Missing/unshipped Releases,
+missing/incomplete Sprints, missing/open tasks, absence of approved final
+delivery and post-approval missing evaluation are presented as evidence-based
+readiness checkpoints rather than as a fabricated score or probability.
+Zero tasks/Sprints/Releases mean unknown—not 100% complete. The service verifies
+active current assigned-Mentor membership, central projects.read, college/
+organization scope and optional Projects enablement before scoped reads.
+Loading/error, mobile cards, filter/empty states, pure-model tests and an
+isolated PostgreSQL success/wrong-role/foreign-scope fixture were authored.
+This is read-only: stale mutation token is not applicable. **PARTIAL:** tsc,
+eslint, unit/PG/browser acceptance, exact legacy risk semantics, historical
+activity/staleness and missing task assignee/workload data remain open.
+
+
+## 2026-10-14 chat-11 E — Mentor final-review notification latest-version safety (PARTIAL)
+
+The assigned-project Mentor attention and Notifications feed now selects the
+highest persisted final-delivery version for each current Mentor project before
+deciding whether a review is pending. A historic SUBMITTED row cannot create a
+phantom pending-review notification after a later approved, revised or draft
+version; only the latest SUBMITTED row with a real submittedAt is actionable.
+This corrects review-queue notifications without creating new external sends,
+exposing private learner contact information, or changing the existing read
+permission. A pure unordered-version model/unit suite and a disposable
+PostgreSQL unique-project fixture cover latest-status suppression, newly
+submitted version, foreign-college non-leakage, wrong role and disabled user.
+No mutating route is added; stale-token denial does not apply. **PARTIAL:**
+TypeScript/ESLint/unit/PG/browser and legacy notification parity remain open.
+
+
+## 2026-10-14 chat-11 F — Mentor global Meetings filters and IST semantics (PARTIAL)
+
+The existing across-project Mentor Meetings calendar now supports server-validated
+status and literal meeting/project search filters, with status-preserving
+request workflows and transparent matching totals. Times and MISSED-day
+boundaries use the owner-confirmed Asia/Kolkata timezone instead of browser
+timezone or per-meeting timezone. Scope remains restricted to current assigned,
+same-college, role-granted Mentor projects, now with an explicit central
+projects.read check before the persisted read. There are no new meeting
+mutations or external sends. Unit and independently created PostgreSQL
+fixture tests cover real requested/scheduled rows, project status filters,
+wrong-role/disabled denial and cross-college nonleakage. **PARTIAL:**
+Test execution, browser verification, high-volume pagination, full legacy
+meeting calendar, and schedule/reschedule writes remain open. No direct
+status updates are introduced, so optimistic stale write tokens do not apply.
