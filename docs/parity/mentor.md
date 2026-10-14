@@ -365,3 +365,20 @@ single/bulk success, forged role, suspended membership, foreign-college
 denial, idempotency, audit and full fixture cleanup. Unit tests cover invalid
 mutation bodies. Authenticated browser and current-SHA PostgreSQL/CI
 execution remain open; Mentor Notifications is PARTIAL.
+
+## Mentor Project Overview recorded review/feedback completeness (2026-10-14)
+
+The read-only `/mentor/projects/[projectId]/review-completeness` page
+presents registered final-delivery versions, their persisted status,
+submission/review timestamps, recorded decision and whether nonblank written
+feedback exists. It distinguishes a draft, an unreviewed submitted version and
+a recorded approval/revision decision without claiming that missing historic
+records or optional feedback imply a policy violation. Raw review text, learner
+identity and archived/unavailable histories are not fabricated. Authorization
+is exact-project `projects.read` and persisted current assigned Mentor grant;
+Zod pagination is capped at 10 versions per page, with mobile cards and honest
+empty/disabled/loading/error states. The existing Project Overview links to
+this view; Delivery remains the only write path. Unit/helper tests and
+same-project positive empty/foreign-role denial in the existing unique-fixture
+PostgreSQL suite are authored. Execution/browser and full legacy Overview
+acceptance remain PARTIAL.

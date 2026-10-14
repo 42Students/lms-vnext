@@ -60,6 +60,12 @@ export default async function MentorProjectPage({
           Team membership history
         </Link>
         <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+        >
+          Delivery review completeness
+        </Link>
+        <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
         >
