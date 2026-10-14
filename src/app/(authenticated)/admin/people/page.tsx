@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
@@ -118,6 +119,9 @@ export default async function SuperAdminPeoplePage({
         description="Canonical people and memberships inside the selected college safety scope."
         actions={<PersonOnboardDialog collegeId={collegeId} />}
       />
+      <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Browse platform users & roles →
+      </Link>
       <DataTable
         columns={columns}
         rows={people.items}
