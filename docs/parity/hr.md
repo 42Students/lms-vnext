@@ -574,3 +574,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Drive portfolio CSV — PARTIAL:** Recruiter Drives exports up to 200 company+college-granted published/closed records after existing lifecycle/search/employment/mode/deadline filters and sorting, neutralizes spreadsheet formulas, formats IST deadline, omits learner contact and reports cap. Pure unit authored, execution and browser download pending.
+
+
+**2026-10-15 chat-10 R6 / Drives deadline-attention cards — PARTIAL:** Company+college-scoped non-archived published drives expose next-seven-day and recorded-past-deadline action links with explicit no-auto-closure caveat. Filters exclude other colleges, archived and closed jobs, and limit surfaced cards; pure unit authored, execution/browser acceptance pending.
