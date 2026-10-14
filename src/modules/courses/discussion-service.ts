@@ -131,16 +131,38 @@ export async function listCourseDiscussionMessages(
     .where(and(eq(courseDiscussionMessages.deliveryId, deliveryId), before))
     .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
     .limit(page.limit + 1);
+  // Pinning remains visible even after its message is outside the newest page.
+  // This uses the same already-authorized Section, and does not load the feed.
+  const [highlightedPinned] = await getDb()
+    .select({
+      id: courseDiscussionMessages.id,
+      messageText: courseDiscussionMessages.messageText,
+      senderName: users.displayName,
+      createdAt: courseDiscussionMessages.createdAt,
+    })
+    .from(courseDiscussionMessages)
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(courseDiscussionMessages.deliveryId, deliveryId),
+      eq(courseDiscussionMessages.pinned, true),
+    ))
+    .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
+    .limit(1);
+
   const hasOlder = fetched.length > page.limit;
   const messages = (hasOlder ? fetched.slice(0, page.limit) : fetched).reverse();
   const oldest = messages[0];
   return {
     accessMode: mode,
     canPost,
-    messages: messages.map(({ cursorCreatedAt: _cursor, ...row }) => ({
+    messages: messages.map(({ cursorCreatedAt, ...row }) => ({
       ...row,
+      createdAtExact: cursorCreatedAt,
       isMine: context.membership?.id === row.senderMembershipId,
     })),
+    highlightedPinned: highlightedPinned ?? null,
     nextCursor: hasOlder && oldest
       ? { beforeCreatedAt: oldest.cursorCreatedAt, beforeId: oldest.id }
       : null,

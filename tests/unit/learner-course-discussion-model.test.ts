@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildDiscussionFeed,
   countNewDiscussionMessages,
+  mergeDiscussionHistory,
 } from "@/components/courses/learner-course-discussion-model";
 
 describe("learner discussion feed model", () => {
@@ -74,5 +75,30 @@ describe("learner discussion feed model", () => {
     expect(
       countNewDiscussionMessages([], [{ id: "one" }]),
     ).toBe(0);
+  });
+});
+
+describe("Faculty course discussion paged history", () => {
+  it("sorts same-millisecond messages using the persisted microsecond cursor", () => {
+    const older = [
+      { id: "mid", createdAtExact: "2026-10-14T08:00:00.123004Z", pinned: false },
+      { id: "new", createdAtExact: "2026-10-14T08:00:00.123006Z", pinned: false },
+    ];
+    const incoming = [
+      { id: "early", createdAtExact: "2026-10-14T08:00:00.123001Z", pinned: false },
+      { id: "new", createdAtExact: "2026-10-14T08:00:00.123006Z", pinned: true },
+    ];
+    const merged = mergeDiscussionHistory(older, incoming);
+    expect(merged.map(row => row.id)).toEqual(["early", "mid", "new"]);
+    expect(merged.find(row => row.id === "new")?.pinned).toBe(true);
+    expect(older[1]?.pinned).toBe(false);
+  });
+
+  it("keeps deterministic UUID ordering for messages with exactly equal timestamps", () => {
+    const rows = mergeDiscussionHistory([], [
+      { id: "b", createdAtExact: "2026-10-14T08:00:00.123004Z" },
+      { id: "a", createdAtExact: "2026-10-14T08:00:00.123004Z" },
+    ]);
+    expect(rows.map(row => row.id)).toEqual(["a", "b"]);
   });
 });

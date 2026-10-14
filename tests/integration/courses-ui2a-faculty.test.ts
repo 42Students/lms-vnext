@@ -1156,6 +1156,33 @@ describe("courses UI2A faculty read model", () => {
     expect(first.messages.map(message => message.id)).toEqual(messages.slice(4));
     expect(first.nextCursor).toMatchObject({ beforeId: messages[4] });
     expect(first.nextCursor!.beforeCreatedAt).toMatch(/\.123004Z$/);
+    expect(first.messages.map(row => row.createdAtExact)).toEqual([
+      "2026-10-14T08:00:00.123004Z",
+      "2026-10-14T08:00:00.123005Z",
+      "2026-10-14T08:00:00.123006Z",
+    ]);
+    expect(first.highlightedPinned).toBeNull();
+
+    // A moderator can pin a message well outside the most recent page.
+    // All authorized readers should still see the pin banner immediately.
+    await toggleCourseDiscussionPin(faculty, messages[0]!, structure.deliveryA.id);
+    const withPinned = await listCourseDiscussionMessages(
+      faculty, structure.deliveryA.id, { limit: 3 },
+    );
+    expect(withPinned.messages.map(row => row.id)).toEqual(messages.slice(4));
+    expect(withPinned.highlightedPinned).toMatchObject({
+      id: messages[0],
+      messageText: "Paged class discussion 0",
+    });
+    const learnerPinned = await listCourseDiscussionMessages(
+      learner, structure.deliveryA.id, { limit: 2 },
+    );
+    expect(learnerPinned.highlightedPinned?.id).toBe(messages[0]);
+    await toggleCourseDiscussionPin(faculty, messages[0]!, structure.deliveryA.id);
+    const noPinned = await listCourseDiscussionMessages(
+      faculty, structure.deliveryA.id, { limit: 3 },
+    );
+    expect(noPinned.highlightedPinned).toBeNull();
 
     const second = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, {
       limit: 3, ...first.nextCursor!,
