@@ -34,7 +34,9 @@ async function requireTpoOwnerScope(context: RequestContext) {
   return college.id;
 }
 
-const placementStaffRoles = ["TPO", "COLLEGE_ADMIN", "FACULTY"] as const;
+const placementStaffRoles: Array<"TPO" | "COLLEGE_ADMIN" | "FACULTY"> = [
+  "TPO", "COLLEGE_ADMIN", "FACULTY",
+];
 
 /** Only explicitly active placement staff in the signed-in college are selectable. */
 export async function listTpoLeadOwners(context: RequestContext) {

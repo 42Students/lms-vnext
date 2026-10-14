@@ -88,7 +88,7 @@ describe.skipIf(!enabled)("DB09 TPO bulk lead ownership PostgreSQL", () => {
       "SELECT tgname FROM pg_trigger WHERE tgrelid = " +
       "'placement_tpo_leads'::regclass AND NOT tgisinternal",
     )).rows.map((row) => row.tgname);
-    expect(triggers).toContain("db09_lead_owner_scope_guard");
+    expect(triggers).toContain("db09_lead_scoped_links_guard");
   });
 
   afterEach(async () => { await cleanup(); });
