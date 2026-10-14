@@ -925,3 +925,40 @@ Skipped high-cost/unregistered rows this batch: L1-021 thumbnail (no trusted reg
 2026-10-14 L12-017: own-college placement drive cards distinguish persisted deadline urgency using server-provided ISO snapshot, without client-clock drift. Skipped L12-013/L12-014 saved jobs: persisted favorites/membership-scope writes not verified in migrated schema. Fresh PostgreSQL, static checks and browser acceptance pending.
 
 2026-10-14 L14-008: authorized Applications header now surfaces saved screened stages with own-ID detail links; does not invent urgent times or recruiter decisions. Skipped L15-014 provider submitted reminder as non-authoritative without external receipt and L18-007 opt-in because registration-consent policy not approved. Unit/isolated-PG and browser acceptance pending.
+
+2026-10-14 L14-019: Applications now opens the exact learner-owned shortlisted interview by persisted application/round ID, preserving generic fallback where no scheduled interview exists. Independent learner PostgreSQL read+denial tests authored. Skipped L16-006 interview confirmation: no registered receipt/attendance state transition; L13-016 private per-drive resume upload: storage and consent approval required. Runtime and browser acceptance pending.
+
+## 2026-10-14 learner batch: explicitly skipped ledger rows and blocking dependencies
+
+The rows below were considered but intentionally not promoted to PARTIAL; they require infrastructure, migrated evidence, or a product decision not delivered by this batch:
+
+- **L1-021:** No trusted migrated course-thumbnail/image association or fallback asset contract.
+- **L2-023:** No authored introduction-content field in the migrated course model.
+- **L2-024:** No migrated rich-overview HTML field or approved sanitizer/content authoring contract.
+- **L2-025:** No authored takeaways-list field; lesson titles cannot be presented as authored outcomes.
+- **L12-013:** No verified membership-scoped persisted saved-job write/read contract.
+- **L12-014:** No verified membership-scoped persisted saved-job write/read contract or unsave audit.
+- **L13-016:** Private resume object storage, upload authorization and consent policy need approval.
+- **L15-002:** External assessment provider completion receipts are not migrated; scheduled elapsed time is not a result.
+- **L16-006:** No registered learner interview-attendance confirmation state or audit/decision contract.
+- **L18-007:** Placement-cell opt-in/consent state transitions and applicable privacy policy are not approved.
+- **L30-034:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-035:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-036:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-037:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-038:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-039:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-040:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-041:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-042:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+- **L30-043:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+
+2026-10-14 L14-020: exact own application to published drive and its role choices through scoped persisted `placement_applications.job_id` (not a guessed matching company). Similar-role recommendations remain BLOCKED until approved recommendation criteria and availability rules are registered. Skip L1-021 course image: no canonical migrated image association; L13-016 private resume: storage/consent authorization required; L30-034..043 profile verification: missing trusted document/review state machine.
+
+2026-10-14 L13-015: published Drive detail now preserves only schema-allowed filter/sort/page state when returning to Drives; no caller-college/actor selector. Authored own-learner PG and URL-model tests; app-router/browser and static acceptance pending.
+Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence not verified; do not fake saved state. Skipped L13-016 private per-drive resume: storage/consent policy unresolved.
+
+2026-10-14 L16-019: mobile interview drawer prioritizes effective IST persisted schedule and full-width actions; date-only status never implies attendance/completion. Own-learner PG and model tests authored; mobile/CI acceptance remains. Skipped L16-006 confirm attendance: no migrated learner acknowledgement state or employer acceptance record.
+
+2026-10-14 L19-005: learner Placement Rules now distinguishes future eligibility checks from already-submitted applications using own `placement_applications` status via verified scoped journey service. Versioned College-wide rule change and retroactivity remain BLOCKED by missing canonical policy version/effective-date/approval source; explicit College owner decision required. Pure-model and own fresh-learner PostgreSQL tests authored, not executed in this session.
+Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt-in policy/consent state not approved; L30-034..043 verification lacks reviewed documents and trusted state machine.

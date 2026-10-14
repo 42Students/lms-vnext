@@ -19,7 +19,7 @@ import {
 
 export class CollegeStudentSectionMoveError extends Error {
   constructor(public readonly code:
-    "STUDENT_NOT_ACTIVE" | "STUDENT_NOT_ENROLLED" | "CURRENT_CLASS_REQUIRED" |
+    "STUDENT_NOT_FOUND" | "STUDENT_NOT_ACTIVE" | "STUDENT_NOT_ENROLLED" | "CURRENT_CLASS_REQUIRED" |
     "CLASS_NOT_ELIGIBLE" | "CLASS_FULL" | "CLASS_PLACEMENT_CHANGED") {
     super(code);
     this.name = "CollegeStudentSectionMoveError";
@@ -48,14 +48,15 @@ async function loadCurrent(tx: Parameters<Parameters<ReturnType<typeof getDb>["t
     eq(collegeMemberships.id, membershipId),
     eq(collegeMemberships.collegeId, collegeId),
   )).for("update").limit(1);
-  if (!membership || membership.status !== "ACTIVE")
+  if (!membership) throw new CollegeStudentSectionMoveError("STUDENT_NOT_FOUND");
+  if (membership.status !== "ACTIVE")
     throw new CollegeStudentSectionMoveError("STUDENT_NOT_ACTIVE");
   const [role] = await tx.select({ id: membershipRoles.id })
     .from(membershipRoles).where(and(
       eq(membershipRoles.membershipId, membershipId),
       eq(membershipRoles.role, "LEARNER"),
     )).for("share").limit(1);
-  if (!role) throw new CollegeStudentSectionMoveError("STUDENT_NOT_ACTIVE");
+  if (!role) throw new CollegeStudentSectionMoveError("STUDENT_NOT_FOUND");
   const [enrollment] = await tx.select({
     id: learnerProgramEnrollments.id,
     cohortId: learnerProgramEnrollments.cohortId,

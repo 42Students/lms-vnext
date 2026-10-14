@@ -1,7 +1,5 @@
 # TPO — Remaining Parity Gaps
 
-- **W62 D / L45 — Buildable / PARTIAL:** Season-scoped pipeline report and capped formula-safe CSV use registered application/screening/offer/joining records. Selected is null, not guessed from round PASS or offered. Browser and executed PG certification still open; an independently persisted employer-final-selection source would be necessary to close the selected stage.
-
 - **W62 C — Buildable / PARTIAL:** TPO-only /tpo/drive-day now shows live scheduled rounds by recorded start/duration with confirmed check-in, explicit absence and waiting/unknown counts. Existing coordinator view preserved. Runtime PG/browser verification and command-center hero remain open.
 
 - **W62 B — Buildable / PARTIAL:** Existing Leads stage/source report extended with persisted DB09 recent-contact health and honest null semantics; tests authored, not executed. Legacy drill-in, full activity health UX and browser proof remain.

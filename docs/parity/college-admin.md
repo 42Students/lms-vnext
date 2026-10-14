@@ -484,6 +484,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+
+**Class-move guard PARTIAL (2026-10-14):** Directory move now returns the same non-leaking `STUDENT_NOT_FOUND` code for a foreign or absent membership, resets stale destination selection on reopening, and distinguishes no alternative eligible section. Persisted move remains version-checked, same-cohort and same-period, transactionally audited. Legacy modal/browser acceptance remains outstanding.
 **Legacy:** `/college-admin/students`
 
 **Detail PARTIAL (2026-10-14):** `/college/students/[membershipId]` shows in-college learner name, roll/registration numbers, program/cohort, active section and explicitly recorded marked-session attendance statuses. It excludes identity documents and other private profile fields; foreign-college/missing IDs get the same not-found. Attendance denominator intentionally excludes unrecorded present defaults, so this is not an overall attendance rate. Browser and exact legacy drill-in acceptance remain open.
