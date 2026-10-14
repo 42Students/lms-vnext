@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
+import { CollegeArchivedPrograms } from "@/components/academics/college-archived-programs";
 import { PageHeader } from "@/components/ui/page-header";
 import { listPrograms } from "@/modules/academics/program-service";
+import { listArchivedCollegePrograms } from "@/modules/academics/college-program-mutation-service";
 import { listDepartments } from "@/modules/departments/service";
 
 export default async function CollegeProgramsPage() {
@@ -11,9 +13,10 @@ export default async function CollegeProgramsPage() {
   if (!collegeId) redirect("/dashboard");
 
   // Both reads enforce scoped permissions and active college status.
-  const [programs, departments] = await Promise.all([
+  const [programs, departments, archived] = await Promise.all([
     listPrograms(context, collegeId),
     listDepartments(context, collegeId),
+    listArchivedCollegePrograms(context),
   ]);
 
   return (
@@ -37,6 +40,7 @@ export default async function CollegeProgramsPage() {
           name: department.name,
         }))}
       />
+      <CollegeArchivedPrograms programs={archived} />
     </div>
   );
 }
