@@ -97,10 +97,14 @@ describe.skipIf(!enabled)("College Admin student class move — isolated Postgre
     })).rejects.toMatchObject({ code: "CLASS_PLACEMENT_CHANGED" });
   });
   it("denies cross-college and wrong-role access and forged body fields", async () => {
-    // Another college's admin must not learn the student exists.
+    // Foreign and entirely absent membership IDs yield indistinguishable not-found codes.
+    await expect(collegeStudentSectionOptions(foreign, id.membership))
+      .rejects.toMatchObject({code: "STUDENT_NOT_FOUND"});
+    await expect(collegeStudentSectionOptions(admin, randomUUID()))
+      .rejects.toMatchObject({code: "STUDENT_NOT_FOUND"});
     await expect(moveCollegeStudentSection(foreign, id.membership, {
       sectionId: id.to, expectedSectionEnrollmentId: id.placement, confirm: true,
-    })).rejects.toMatchObject({ code: expect.stringMatching(/^STUDENT_NOT_/) });
+    })).rejects.toMatchObject({ code: "STUDENT_NOT_FOUND" });
     await expect(moveCollegeStudentSection(faculty, id.membership, {
       sectionId: id.to, expectedSectionEnrollmentId: id.placement, confirm: true,
     })).rejects.toBeInstanceOf(AuthorizationError);
