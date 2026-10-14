@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import {
   useMemo,
   useState,
@@ -12,7 +13,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { istCalendarDay, istDayAgenda, istMonthGridKeys } from "./learner-ist-month-model";
 import {
   calendarDays,
-  eventsForDay,
+  eventsForDay as eventsForLocalDay,
   filterScheduleEvents,
   localDayKey,
   shiftCalendarAnchor,
@@ -207,6 +208,8 @@ export function LearnerClassSchedule({
   initialView = "week",
   initialAnchor,
   initialSelectedDeliveryIds,
+  initialAnchorDay,
+  calendarMode = "LOCAL",
 }: {
   courses: readonly CourseChoice[];
   sections: readonly SectionChoice[];
@@ -214,13 +217,15 @@ export function LearnerClassSchedule({
   courseBasePath?: string;
   initialView?: LearnerScheduleView;
   initialAnchor?: Date;
+  initialAnchorDay?: string;
+  calendarMode?: "LOCAL" | "IST";
   initialSelectedDeliveryIds?: readonly string[];
 }) {
   const [view, setView] =
     useState<LearnerScheduleView>(initialView);
-  const [chosenDay, setChosenDay] = useState(() => istCalendarDay(initialAnchor ?? new Date()));
+  const [chosenDay, setChosenDay] = useState(() => initialAnchorDay ?? istCalendarDay(initialAnchor ?? new Date()));
   const [anchor, setAnchor] = useState(
-    () => initialAnchor ?? new Date(),
+    () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
@@ -240,9 +245,13 @@ export function LearnerClassSchedule({
     [anchor, view],
   );
   const now = new Date();
-  const todayEvents = eventsForDay(
+  const calendarToday = calendarMode === "IST" ? learnerIstScheduleToday(now) : now;
+  function scheduleEventsForDay(rows: readonly LearnerScheduleEvent[], day: Date) {
+    return calendarMode === "IST" ? eventsForLearnerIstScheduleDay(rows, day) : eventsForLocalDay(rows, day);
+  }
+  const todayEvents = scheduleEventsForDay(
     events,
-    now,
+    calendarToday,
   );
   const upcoming = upcomingScheduleEvents(
     events,
@@ -352,7 +361,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               onClick={() =>
-                { const now=new Date();setAnchor(now);setChosenDay(istCalendarDay(now)); }
+                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(calendarMode === "IST" ? localDayKey(next) : istCalendarDay(instant)); }
               }
             >
               Today
@@ -518,7 +527,7 @@ export function LearnerClassSchedule({
                   <div className="grid grid-cols-7">
                     {days.map((day) => {
                       const dayEvents =
-                        eventsForDay(
+                        scheduleEventsForDay(
                           filteredEvents,
                           day,
                         );
@@ -527,7 +536,7 @@ export function LearnerClassSchedule({
                         anchor.getMonth();
                       const isToday =
                         localDayKey(day) ===
-                        localDayKey(new Date());
+                        localDayKey(calendarToday);
 
                       return (
                         <div
@@ -581,7 +590,7 @@ export function LearnerClassSchedule({
                 >
                   {days.map((day) => {
                     const dayEvents =
-                      eventsForDay(
+                      scheduleEventsForDay(
                         filteredEvents,
                         day,
                       );
@@ -622,7 +631,7 @@ export function LearnerClassSchedule({
               {days
                 .map((day) => ({
                   day,
-                  events: eventsForDay(
+                  events: scheduleEventsForDay(
                     filteredEvents,
                     day,
                   ),

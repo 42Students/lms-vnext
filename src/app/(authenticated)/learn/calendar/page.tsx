@@ -51,6 +51,8 @@ export default async function LearnerCalendarPage({searchParams}:{
         </Link>
       </div>
       <LearnerClassSchedule
+        calendarMode="IST"
+        initialAnchorDay={filters.anchorDay}
         sections={schedule.sections.map(
           (section) => ({
             sectionId: section.sectionId,
