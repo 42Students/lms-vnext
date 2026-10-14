@@ -94,3 +94,5 @@
 - 2026-10-15 — HR Team CSV PARTIAL: 200 cap and formula-neutralized exact-company roster export; tests authored, unexecuted.
 
 - 2026-10-15 — HR Today result-deadline urgency PARTIAL: time-bound, no invented outstanding results; tests authored unexecuted.
+
+- 2026-10-15 — HR results-due round drilldown PARTIAL: preserve actual round ID through authorized Today/Calendar links; pure unit extended, unexecuted.

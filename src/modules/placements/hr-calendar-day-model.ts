@@ -40,8 +40,9 @@ export function combineHrCalendarDays(
     }));
 }
 
-export function hrResultsDueHref(jobId: string) {
-  return "/hr/placements/jobs/" + encodeURIComponent(jobId) + "?tab=rounds";
+export function hrResultsDueHref(jobId:string,roundId?:string) {
+  const base="/hr/placements/jobs/"+encodeURIComponent(jobId)+"?tab=rounds";
+  return roundId?base+"&roundId="+encodeURIComponent(roundId):base;
 }
 
 /** Only occupied days in the selected week or month are presented on narrow
