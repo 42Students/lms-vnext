@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
@@ -37,6 +38,10 @@ export default async function LearnerPlacementAssessmentsPage() {
           instructions. The recruiter controls official submission and results.
         </p>
       </aside>
+      <Link href="/learn/my-placements/assessments/results"
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        View official assessment results →
+      </Link>
       <LearnerCareerRoundsWorkspace
         kind="ASSESSMENT"
         rounds={rounds}

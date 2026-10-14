@@ -391,7 +391,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-009 | Job/employment type filter | JobsListContent | learner jobs | UNCHECKED |
 | L12-010 | Location filter | JobsListContent | learner jobs | UNCHECKED |
 | L12-011 | Eligible-only filter | JobsListContent | learner jobs | UNCHECKED |
-| L12-012 | Closing-soon filter | JobsListContent | learner jobs | UNCHECKED |
+| L12-012 | Closing-soon filter | JobsListContent | published-job URL toggle with snapshot-based seven-day deadlines | FIXED |
 | L12-013 | Save job | JobsListContent | learner jobs | UNCHECKED |
 | L12-014 | Unsave job | JobsListContent | learner jobs | UNCHECKED |
 | L12-015 | Pagination | JobsListContent | learner jobs | UNCHECKED |
@@ -458,7 +458,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L15-001 | Route is materialized, not placeholder | assessments page | vNext assessments | FIXED |
-| L15-002 | Pending / Completed views | AssessmentsContent | assessments page | GAP |
+| L15-002 | Pending / Completed views | AssessmentsContent | scheduled assessment view + separate applied-results route; provider completion remains unregistered/unverified | GAP |
 | L15-003 | Search | AssessmentsContent | assessments page | GAP |
 | L15-004 | Urgency filter | AssessmentsContent | assessments page | GAP |
 | L15-005 | Due today bucket | AssessmentsContent | assessments page | GAP |
@@ -475,6 +475,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L15-016 | Job/application navigation | AssessmentsContent | career rounds | FIXED |
 | L15-017 | Loading/error/empty/filter-empty | AssessmentsContent | assessments page | GAP |
 | L15-018 | Employer-side submission disclaimer (not a server receipt) | assessments route notice | assessments page notice | FIXED |
+| L15-019 | Applied official assessment results | registered placement_round_results | own-member applied TEST/VENDOR_TEST results page | FIXED |
 
 ## L16 — Interviews
 
