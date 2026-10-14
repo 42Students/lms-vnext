@@ -1,0 +1,52 @@
+import "server-only";
+import { and, asc, eq, ilike, type SQL } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
+import type { RequestContext } from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { adminCompaniesQuerySchema, projectAdminCompanies } from "./admin-company-directory-model";
+
+/** Super Admin only, scoped by the selected organization/college. No CRM/private notes. */
+export async function listSuperAdminCompanyDirectory(context: RequestContext, raw: unknown) {
+  const query = adminCompaniesQuerySchema.parse(raw);
+  if (!isSuperAdmin(context)) throw new AuthorizationError("placements.read");
+  const selected = context.adminScope;
+  requirePermission(context, "placements.read", {
+    organizationId: selected?.organizationId,
+    collegeId: selected?.collegeId,
+  });
+  const filters: SQL[] = [];
+  if (selected?.collegeId) filters.push(eq(colleges.id, selected.collegeId));
+  else if (selected?.organizationId) filters.push(eq(colleges.organizationId, selected.organizationId));
+  if (query.status !== "ALL") {
+    filters.push(eq(placementCompanyRelationships.status, query.status));
+    filters.push(eq(placementCompanies.status, query.status));
+  }
+  if (query.q) {
+    // SQL wildcard characters in user searches are literal, not scope selectors.
+    const escaped = query.q.replace(/[\\%_]/g, "\\$&");
+    filters.push(ilike(placementCompanies.name, "%" + escaped + "%"));
+  }
+  const results = await getDb().select({
+    relationshipId: placementCompanyRelationships.id,
+    companyId: placementCompanies.id,
+    name: placementCompanies.name,
+    collegeId: colleges.id,
+    collegeName: colleges.name,
+    organizationId: colleges.organizationId,
+    relationshipStatus: placementCompanyRelationships.status,
+    companyStatus: placementCompanies.status,
+    trusted: placementCompanyRelationships.isTrusted,
+    website: placementCompanies.websiteUrl,
+  }).from(placementCompanyRelationships)
+    .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
+    .where(filters.length ? and(...filters) : undefined)
+    .orderBy(asc(placementCompanies.name), asc(colleges.name), asc(placementCompanyRelationships.id))
+    .limit(201);
+  return {
+    query, scope: { collegeId: selected?.collegeId ?? null, organizationId: selected?.organizationId ?? null },
+    ...projectAdminCompanies(results.slice(0, 200)), truncated: results.length > 200, cap: 200,
+  };
+}

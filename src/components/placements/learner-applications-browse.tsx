@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import {learnerApplicationJourneyTimeline} from "@/modules/placements/learner-application-journey-timeline-model";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
@@ -362,6 +363,29 @@ export function LearnerApplicationsBrowse({
               <div><dt className="text-xs font-semibold text-muted-foreground">Screening</dt>
                 <dd className="mt-1 text-sm text-foreground">{humanize(learnerApplicationStage(selected))}</dd></div>
             </dl>
+            <section aria-label="Application milestones" className="rounded-xl border border-border bg-surface-subtle p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
+                <Link href={"/learn/my-placements/applications/"+
+                  encodeURIComponent(selected.applicationId)+"/history"}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  Full saved history →
+                </Link>
+              </div>
+              <ol className="mt-3 space-y-3">
+                {learnerApplicationJourneyTimeline(selected).slice(0,5).map(item=>(
+                  <li key={item.key} className="border-l-2 border-primary pl-3 text-sm">
+                    <p className="font-semibold text-foreground">{item.label}</p>
+                    <time dateTime={item.at.toISOString()} className="mt-1 block text-xs text-muted-foreground">
+                      {formatDate(item.at)}
+                    </time>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Only events with recorded timestamps are shown. This is a summary, not the full audit history.
+              </p>
+            </section>
             {selected.screening.candidateMessage ? (
               <section className="rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
                 <h3 className="font-semibold text-foreground">Placement team feedback</h3>

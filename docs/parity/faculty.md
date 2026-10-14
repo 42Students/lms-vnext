@@ -774,3 +774,110 @@ post/delete activity audit and same-origin fences remain. Added pure model and
 in-test Faculty-only membership PostgreSQL create/pin/stale/foreign/wrong-role/
 delete/audit assertions. Outstanding: run unit/PG/lint/TypeScript and browser
 role/keyboard/mobile tests; exact legacy moderation workflows. PARTIAL.
+
+## Faculty published gradebook searchable roster (2026-10-14)
+
+PARTIAL: The exact teaching-Section published gradebook now renders 25
+current authorized learners per page, with bounded case-insensitive search
+by name, roll number and email, deterministic roll/name order, strict Zod
+query validation and links to existing own-Section score breakdown. The CSV
+still exports the full server-authorized Section, not filtered screen rows.
+Malformed nonfinite, negative or over-maximum score evidence is excluded
+rather than counted as a legitimate grade in the pure aggregate model.
+Existing server Faculty permission/tenant/Section/grade-publication gates
+are unchanged; no new mutation, audit event, schema or private grading
+read path was added. Focused unit regressions are authored but NOT claimed
+as executed PostgreSQL, browser, ESLint or whole-repository TypeScript proof.
+Legacy gradebook weighting, full exported/download acceptance and responsive
+browser review remain OPEN; no parity status is promoted to DONE.
+
+## Faculty Section Quiz archive workflow (2026-10-14)
+
+PARTIAL: The Section choice-quiz builder now offers a confirm-first Archive
+action for current DRAFT, PUBLISHED or CLOSED quizzes. Server authorization
+requires a live Faculty teaching delivery and centrally granted course access,
+strict Zod confirmation, a locked optimistic token, and a transactional audit
+event `courses.quiz.archived`. Persisted learner attempts block archival.
+The action changes quiz status to ARCHIVED without deleting questions or
+attempt history. Added pure schema tests for malformed/forged inputs, and
+extended isolated PostgreSQL tests with published archive, wrong-role, foreign
+Section and stale-token denial, retained row and audit assertions.
+These tests are authored, not independently executed; browser parity, an
+attempt-populated runtime denial and legacy close actions remain OPEN.
+No Faculty parity row is promoted to DONE.
+
+## Faculty Quiz CLOSE and released-result continuity (2026-10-14)
+
+PARTIAL: Authenticated Faculty can now confirm CLOSE for a current published
+quiz in their exact persisted teaching Section. Same-origin, strict validated
+command, optimistic row token, current teaching scope, transaction lock and
+actor/college audit are preserved. CLOSE is allowed even with attempts;
+learner submissions/results remain stored, while ARCHIVE remains denied if
+any attempt exists. Previously closed quizzes with `resultsPublished=true`
+remain in Faculty published gradebook totals and the Section reports/results
+summary; private/unreleased results are still excluded from score totals.
+Updated pure-model tests and the in-test PostgreSQL success/denial audit
+fixture cover PUBLISHED→CLOSED→ARCHIVED (the latter only with zero attempts).
+This is authored rather than independently executed PostgreSQL/browser
+evidence; no Faculty page status is promoted from PARTIAL.
+
+## Faculty assessment aggregate lifecycle controls (2026-10-14)
+
+PARTIAL: Faculty All Assignments and All Quizzes cards now link to their
+exact-Section authoring workspace and show confirmation-gated PUBLISH/ARCHIVE
+or PUBLISH/CLOSE/ARCHIVE controls (only for actual Faculty-owned entries).
+These reuse the existing strict, same-origin authenticated Faculty command
+routes, current teaching grant, optimistic version, transaction audit and
+submission/attempt protections. Shared Offering cards expose no mutation.
+A pure unit suite checks every status/kind combination, safe confirmation
+messages and narrow version-token command bodies. Successful saves refresh
+the server-owned list, with explicit error/status feedback; no client state
+is treated as proof of authorization. Actual PostgreSQL and authenticated
+browser/keyboard/mobile execution, published edit parity, archived-list parity
+and richer legacy modals remain OPEN. All Assessments/Quizzes remain PARTIAL.
+
+## Faculty Overview evidence correctness and at-risk totals (2026-10-14)
+
+PARTIAL: The Faculty Course Home current-Section signals now deduplicate marked
+sessions and absence pairs, reject out-of-roster attendance or submission
+records and nonfinite assignment grades, and report the full current-roster
+at-risk count rather than truncating the counter to eight displayed previews.
+The source still links to the exact Section roster; it does not invent
+historical enrollment dates, weighted scores or private grade publication.
+Unit tests cover duplicate/foreign evidence, malformed scores, missing
+grading, 12-student risk counts and preview truncation. These additions are
+source-authored only; legacy behavior, real PostgreSQL and authenticated
+mobile/browser verification remain open. Course Overview stays PARTIAL.
+
+## Faculty assessment review drawers and append-only notification fixture (2026-10-14)
+
+PARTIAL: The existing Faculty All Assignments submission-grading panel and All
+Quizzes immutable-attempt review now use the shared accessible native-dialog
+Drawer (Escape handling, titled panel, responsive mobile width, dismissal
+control) instead of a long inline list. Existing exact-Section API reads,
+optimistic per-submission grade writes and explicit result visibility controls
+are preserved; publishing Quiz results now asks for confirmation as hiding
+already did. The authenticated PostgreSQL Faculty Notifications fixture was
+corrected to remove only mutable notification recipients, never immutable
+activity_events or the user/membership/role records referenced by their audit
+history. This is a regression-safety correction, not a passed database run.
+Authenticated keyboard/Playwright, real PostgreSQL and exact legacy overlay
+acceptance remain OPEN; no detailed or master parity row is marked DONE.
+
+## Executed CI Faculty-browser blocker repairs (2026-10-14)
+
+An earlier main CI browser run (38590894448) exposed four Faculty
+regressions. The Faculty Discussion E2E had not accepted the new intentional
+pin/unpin confirmation dialogs, so no PATCH was sent while it waited for a
+response; both dialogs are now explicitly accepted in the test. Faculty
+Contacts E2E assertions still expected the retired private-email/table UI
+after the directory's public-only card policy; the tests now assert active
+role-labeled public cards by seeded membership ID, confirm that searching
+private login email finds no directory member, and check responsive cards.
+Faculty Notifications E2E reused SQL parameter $1 as UUID and text, causing
+PostgreSQL type inference failure; the insert now uses explicit UUID casts
+and a separate $6::text subject field. Its teardown no longer deletes
+append-only activity_events or their referenced actor/membership rows.
+These are source changes targeting proven failing CI cases, **not yet a
+successful rerun at this revision**. Run targeted authenticated Chromium,
+then full CI, before marking Discussions/Contacts/Notifications DONE.

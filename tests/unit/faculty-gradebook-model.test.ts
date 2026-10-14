@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {facultyGradebookCsv,facultyGradebookParamsSchema,facultyPublishedGradeRows,
-  facultyPublishedLearnerBreakdown}
+  facultyPublishedLearnerBreakdown,facultyGradebookViewQuerySchema,
+  paginateFacultyGradebookRows,facultyGradebookViewHref}
   from "@/modules/courses/faculty-gradebook-model";
 const roster=[
   {membershipId:"a",displayName:" =NOW()",email:"+unsafe@x.y",rollNumber:"@SUM(1,2)"},
@@ -52,5 +53,41 @@ describe("Faculty published Section gradebook",()=>{
       {assessmentId:"q3",kind:"ASSIGNMENT",title:"Not graded",
         earned:null,possible:null,percent:null,status:"UNKNOWN"},
     ]);
+  });
+  it("paginates and searches only authorized learner rows without changing grade totals",()=>{
+    const learners=Array.from({length:62},(_,i)=>({
+      membershipId:"learner-"+String(i).padStart(3,"0"),
+      displayName:"Student "+String(i).padStart(3,"0"),
+      rollNumber:"R"+String(i+1),email:"student"+i+"@example.test",
+    }));
+    const query=facultyGradebookViewQuerySchema.parse({search:"",page:"2"});
+    const second=paginateFacultyGradebookRows(learners,query);
+    expect(second).toMatchObject({total:62,matching:62,page:2,pageSize:25,totalPages:3});
+    expect(second.items).toHaveLength(25);
+    expect(new Set(second.items.map(x=>x.membershipId)).size).toBe(25);
+    const filtered=paginateFacultyGradebookRows(learners,
+      facultyGradebookViewQuerySchema.parse({search:" student12@example.test ",page:"7"}));
+    expect(filtered).toMatchObject({total:62,matching:1,page:1,totalPages:1});
+    expect(filtered.items[0]?.membershipId).toBe("learner-012");
+    expect(learners).toHaveLength(62);
+  });
+  it("rejects forged gradebook view selectors and preserves safe pagination links",()=>{
+    const deliveryId="00000000-0000-4000-8000-000000000001";
+    expect(facultyGradebookViewQuerySchema.safeParse({collegeId:deliveryId}).success).toBe(false);
+    expect(facultyGradebookViewQuerySchema.safeParse({search:"x".repeat(121)}).success).toBe(false);
+    expect(facultyGradebookViewQuerySchema.safeParse({page:["1","2"]}).success).toBe(false);
+    expect(facultyGradebookViewQuerySchema.safeParse({page:"0"}).success).toBe(false);
+    expect(facultyGradebookViewHref(deliveryId,{search:"Anu & Co",page:3}))
+      .toBe("/teacher/courses/"+deliveryId+"/gradebook?search=Anu+%26+Co&page=3");
+  });
+  it("does not count invalid persisted scores as a recorded published grade",()=>{
+    const rows=facultyPublishedGradeRows(roster,[
+      {membershipId:"a",kind:"QUIZ",assessmentId:"q1",earned:Number.NaN,possible:10},
+      {membershipId:"a",kind:"ASSIGNMENT",assessmentId:"q2",earned:11,possible:10},
+      {membershipId:"a",kind:"ASSIGNMENT",assessmentId:"q3",earned:-1,possible:10},
+      {membershipId:"a",kind:"QUIZ",assessmentId:"q4",earned:5,possible:0},
+    ],4);
+    expect(rows[0]).toMatchObject({gradedCount:0,earned:null,possible:null,
+      percent:null,hasUnknown:true});
   });
 });

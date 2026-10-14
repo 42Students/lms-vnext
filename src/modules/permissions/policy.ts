@@ -26,6 +26,7 @@ export type PlatformPermission =
   | "placements.recruiter.read"
   | "placements.recruiter.result.stage"
   | "activity.read"
+  | "project-template.read"
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
@@ -140,6 +141,12 @@ export function can(
         hasMembershipRole(context, "FACULTY")) &&
       isSameMembershipCollege(context, resource)
     );
+  }
+
+  // Global template catalogue is readable in any admin scope.
+  // This grants no capability to publish, archive, edit, duplicate or assign.
+  if (permission === "project-template.read") {
+    return isSuperAdmin(context);
   }
 
   if (

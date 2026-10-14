@@ -53,10 +53,16 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      .for("update").limit(1);
     if(!current)throw new CoursesServiceError("QUIZ_NOT_FOUND");
     if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()||
-     current.status!=="DRAFT")throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+     ((input.action==="EDIT"||input.action==="PUBLISH") && current.status!=="DRAFT") ||
+     (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
+     (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
+      throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const [attempt]=await tx.select({id:quizAttempts.id}).from(quizAttempts)
      .where(eq(quizAttempts.quizId,current.id)).limit(1);
-    if(attempt)throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+    // Closing preserves existing learner attempts; edits and archival do not
+    // bypass attempt-bearing assessment history.
+    if(attempt && input.action!=="CLOSE")
+     throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT"){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
       .where(eq(quizQuestions.quizId,current.id));
@@ -74,13 +80,20 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      if(!edited)throw new CoursesServiceError("QUIZ_NOT_FOUND");
      result=edited;eventType=ACTIVITY_EVENT_TYPES.COURSES_QUIZ_UPDATED;
     }else{
-     if(current.dueAt&&current.dueAt.getTime()<=Date.now())
-      throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
-     const [published]=await tx.update(courseQuizzes).set({
-      status:"PUBLISHED",updatedAt:new Date(Math.max(Date.now(),current.updatedAt.getTime()+1)),
+     if(input.action==="PUBLISH" && current.dueAt &&
+      current.dueAt.getTime()<=Date.now())
+       throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+     const isArchive=input.action==="ARCHIVE";
+     const isClose=input.action==="CLOSE";
+     const [transitioned]=await tx.update(courseQuizzes).set({
+      status:isArchive?"ARCHIVED":isClose?"CLOSED":"PUBLISHED",
+      updatedAt:new Date(Math.max(Date.now(),current.updatedAt.getTime()+1)),
      }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId))).returning();
-     if(!published)throw new CoursesServiceError("QUIZ_NOT_FOUND");
-     result=published;eventType=ACTIVITY_EVENT_TYPES.COURSES_QUIZ_PUBLISHED;
+     if(!transitioned)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+     result=transitioned;
+     eventType=isArchive?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_ARCHIVED:
+      isClose?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_CLOSED:
+      ACTIVITY_EVENT_TYPES.COURSES_QUIZ_PUBLISHED;
     }
    }
    if(input.action==="CREATE"||input.action==="EDIT"){

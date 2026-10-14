@@ -17,11 +17,10 @@ import {
 } from "./template-service";
 
 /**
- * Global Super Admin template inspection only.
+ * Global Super Admin template inspection, with or without a selected safety scope.
  *
- * The same centrally defined permission is used by
- * getProjectTemplateDetail. It admits only an active
- * SUPER_ADMIN with no selected organization/college scope.
+ * A dedicated centrally defined read permission allows active Super Admins
+ * in every scope. Global template mutations remain unscoped-only.
  *
  * This service performs reads only. It does not expose
  * template, assignment, or version mutation functions.
@@ -33,7 +32,7 @@ export async function getSuperAdminTemplateSubview(
 ) {
   requirePermission(
     context,
-    "project-template.manage",
+    "project-template.read",
   );
 
   const detail = await getProjectTemplateDetail(
