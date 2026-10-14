@@ -189,8 +189,13 @@ export function LearnerProfileWorkspace(props: {
     const previous=serverSnapshot.current;
     const next=props.initialDocument;
     if(JSON.stringify(previous)===JSON.stringify(next))return;
-    setDocument(local=>learnerProfileReconcile(local,previous,next));
+    // Defer React state synchronization to the next paint rather than
+    // synchronously setting state in an effect (React 19 hooks lint).
+    const frame=window.requestAnimationFrame(()=>{
+      setDocument(local=>learnerProfileReconcile(local,previous,next));
+    });
     serverSnapshot.current=next;
+    return ()=>window.cancelAnimationFrame(frame);
   },[props.initialDocument]);
 
   useEffect(()=>{
