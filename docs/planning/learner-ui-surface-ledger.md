@@ -275,7 +275,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L7-015 | Request failure/retry | QuizzesContent | aggregate page | CLOSED |
 | L7-016 | Zero quizzes | QuizzesContent | EmptyState | CLOSED |
 | L7-017 | Filtered empty | QuizzesContent | EmptyState | CLOSED |
-| L7-018 | Mobile quiz list | QuizzesContent responsive | aggregate page | UNCHECKED |
+| L7-018 | Mobile quiz list | QuizzesContent responsive | mobile-first full-width quiz action/history links with own persisted remaining attempts, due/closed, and published-results-only quick status; never expose unpublished score. PARTIAL pending PG/unit/tsc/eslint execution and mobile/screen-reader acceptance | PARTIAL |
 
 ## L8 — Standalone Quiz Attempt: `/quiz`
 

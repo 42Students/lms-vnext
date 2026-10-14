@@ -13,6 +13,7 @@ import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
 import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
 import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment-mobile-model";
+import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 
 type CourseChoice = {
   id: string;
@@ -300,6 +301,13 @@ export function LearnerAssessmentOverview({
                         {" · "}{learnerAssignmentMobileState(item,snapshotNowMs).detail}
                       </p>
                     ) : null}
+                    {item.kind === "QUIZ" ? (
+                      <p role="status"
+                        className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden">
+                        {learnerQuizMobileState(item,snapshotNowMs).label}
+                        {" · "}{learnerQuizMobileState(item,snapshotNowMs).detail}
+                      </p>
+                    ) : null}
                     {item.description ? (
                       <p className="mt-2 line-clamp-2 text-sm leading-6 text-body">
                         {item.description}
@@ -337,7 +345,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="text-xs font-semibold text-primary-text underline"
+                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-9 sm:w-auto"
                       >
                         Attempt history
                       </Link>
