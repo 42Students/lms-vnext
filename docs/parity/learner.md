@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 Board status filter (PARTIAL):** Learner project Board now filters its already authorized task set by persisted TODO/IN_PROGRESS/BLOCKED/IN_REVIEW/DONE status, alongside search, sprint, release, and priority. Invalid URL status values fail closed to no filter, existing modal deep links retain valid filter state, and mobile controls expose the same selector. Source/unit verification authored; executed PG/browser gates still open.
+
 ## 2026-10-05 current-oracle L0 re-audit
 
 The current production learner sidebar does not expose Projects/Placements statically. Projects follows hierarchical optional-module access; Placements additionally requires the college-level paid-module switch and learner placement eligibility (learner/class/batch in legacy, membership/section/cohort in vNext). vNext now models and resolves both layers and feeds them into the shared shell with optional links failing closed when current access cannot be trusted. Conditional Drive Day is still open because its coordinator producer and learner workspace are not yet cloned.
