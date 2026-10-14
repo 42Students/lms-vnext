@@ -1119,3 +1119,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L15-013 PARTIAL:** Clicking an authorized employer assessment URL now opens a confirmation dialog before any external navigation. It explains that leaving LMS is not assessment submission, and a time-critical note comes from the saved round start with an explicit no-official-deadline caveat. HTTP(S) URLs only; no external sending. Pure fixed-clock model and own-fixture PostgreSQL denial tests authored; executed browser focus/window, timezone and producer checks pending.
+
+
+**2026-10-15 chat-5 L11-004 PARTIAL:** The Placements hero now greets the authenticated learner by a bounded persisted display name only after live membership/user/college validation, otherwise uses a generic greeting without fabricating a name. Authorization revocations remain hard denials, while a noncritical name read failure leaves the dashboard functional. Pure sanitization and own-fixture PostgreSQL success/denial cases authored; browser/source and executed CI still pending.

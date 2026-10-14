@@ -20,6 +20,7 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { LearnerRecentPlacementActivity } from "@/components/placements/learner-recent-placement-activity";
 import { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
+import {getOwnLearnerPlacementGreeting} from "@/modules/placements/learner-dashboard-greeting-service";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -188,6 +189,10 @@ export default async function LearnerPlacementsPage({
   });
 
   const display=learnerDashboardPartialState(availability,dashboard);
+  const learnerName=await getOwnLearnerPlacementGreeting(context).catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
+    return null;
+  });
 
   return (
     <div className="space-y-8">
@@ -209,7 +214,7 @@ export default async function LearnerPlacementsPage({
       </div>
 
       <LearnerPlacementPartialAlert missing={display.failed} />
-      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} />
+      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} />
 
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 

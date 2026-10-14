@@ -3,6 +3,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
 import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-onboarding-steps-model";
+import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -40,13 +41,15 @@ function Metric({
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,
+  snapshot,availability,learnerName=null,
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
+  learnerName?:string|null;
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
+  const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
@@ -54,7 +57,7 @@ export function LearnerPlacementsDashboard({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              {display.firstRun ? "Welcome to placements" : next.label}
+              {greeting}
             </p>
             <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">
               {next.title}
