@@ -46,6 +46,8 @@ Closure checklist:
 - [ ] Branch performance matches.
 - [ ] Season pipeline matches.
 - [ ] Company funnel matches.
+
+**W54 PARTIAL (L46/L47):** A new TPO report and formula-neutralized CSV project company applications and accepted offers with an explicit accepted-learner / distinct SUBMITTED-applicant denominator (null if absent). Separate CTC measures distinguish accepted full-time offer versions from per-learner best packages, preserving missing values as null. Historical cohort conversion, unavailable external offers, executed tests and exact legacy/browser parity remain open.
 - [ ] Compensation intelligence matches.
 - [ ] Every KPI/queue CTA lands on the intended filtered destination.
 - [ ] Initial loading, hard error and stale-last-success states are distinct.
@@ -820,3 +822,6 @@ W06 transport to activate invite acceptance safely.
 - The check covers persisted on-campus venue/duration/start facts within the next 90 days. Unsaved scheduling form edits, candidate conflicts, past/completed rounds, historical snapshots, and conflict-free certification remain unsupported.
 - Both pages already have loading.tsx/error.tsx and explicit empty states. The new read-only affordances use existing Zod-validated, TPO-role/college-scoped services; no mutation route was added and existing writes retain same-origin protection.
 - **Open:** exact legacy schedule-editor collision taxonomy, save-time authoritative locking, current-versus-historical shortlist semantics, browser/mobile checks and executed disposable-DB/TypeScript/ESLint acceptance.
+
+
+**W54 PARTIAL (Audit):** A scoped actor-user UUID, subject-type/ID and IST date filter now shows paginated canonical PLACEMENTS activity with a formula-neutralized CSV capped at 2,000 records. Domain-history sources without consistent actors remain separate; actor directory, exact legacy coverage, executed tests and browser acceptance remain open.
