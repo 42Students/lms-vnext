@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -50,6 +50,8 @@ export async function listTpoCompanyPeople(context: RequestContext, rawId: unkno
     id: placementTpoLeads.id, name: placementTpoLeads.name,
     email: placementTpoLeads.emailNorm, designation: placementTpoLeads.designation,
     updatedAt: placementTpoLeads.updatedAt,
+    unsubscribedAt: placementTpoLeads.unsubscribedAt,
+    recruiterUserId: placementTpoLeads.recruiterUserId,
   }).from(placementTpoLeads).where(and(
     eq(placementTpoLeads.collegeId, collegeId),
     eq(placementTpoLeads.companyRelationshipId, company.id),
@@ -57,6 +59,7 @@ export async function listTpoCompanyPeople(context: RequestContext, rawId: unkno
   return { companyId, name: company.name, contacts: contacts.map(item => ({
     id: item.id, name: item.name, email: item.email,
     designation: item.designation, updatedAt: item.updatedAt.toISOString(),
+    editable: !item.unsubscribedAt && !item.recruiterUserId,
   })) };
 }
 
@@ -111,6 +114,8 @@ export async function saveTpoCompanyPerson(
       eq(placementTpoLeads.collegeId, collegeId),
       eq(placementTpoLeads.companyRelationshipId, relationship.id),
       eq(placementTpoLeads.id, input.leadId),
+      isNull(placementTpoLeads.unsubscribedAt),
+      isNull(placementTpoLeads.recruiterUserId),
     )).for("update").limit(1);
     if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
     if (current.updatedAt.toISOString() !== new Date(input.expectedUpdatedAt).toISOString()) {
