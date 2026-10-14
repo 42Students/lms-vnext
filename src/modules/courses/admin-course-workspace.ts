@@ -17,6 +17,7 @@ import {
 async function listAllCollegePeople(
   context: RequestContext,
   collegeId: string,
+  includeArchivedOfferings = false,
 ) {
   const items: Awaited<
     ReturnType<
@@ -81,6 +82,8 @@ export async function getAdminCourseWorkspace(
           await listCourseOfferings(
             context,
             cohort.id,
+            null,
+            includeArchivedOfferings,
           ),
       }),
     ),
@@ -124,7 +127,7 @@ export async function getAdminCourseWorkspace(
   );
 
   const deliveryGroups = await Promise.all(
-    offerings.map(
+    offerings.filter(offering => offering.status === "ACTIVE").map(
       async (offering) => ({
         offering,
         deliveries:
@@ -224,7 +227,7 @@ export async function getAdminCourseWorkspace(
     teachingAssignments,
     summary: {
       courses: courses.length,
-      offerings: offerings.length,
+      offerings: offerings.filter(offering => offering.status === "ACTIVE").length,
       deliveries: deliveries.length,
       teachingAssignments:
         teachingAssignments.length,
