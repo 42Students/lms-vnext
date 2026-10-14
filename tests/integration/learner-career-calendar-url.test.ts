@@ -7,6 +7,7 @@ import {readLearnerCalendarUrl,learnerCalendarSelectedEvents} from "@/modules/pl
 import {learnerCareerDayChips} from "@/modules/placements/learner-career-day-chips-model";
 import {learnerCareerKindCounts} from "@/modules/placements/learner-career-kind-count-model";
 import {learnerCareerWeekDays} from "@/modules/placements/learner-career-week-days-model";
+import {learnerCareerDayTimeline} from "@/modules/placements/learner-career-day-timeline-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {newLearnerCareerCalendarFixture,seedLearnerCareerCalendarFixture,cleanupLearnerCareerCalendarFixture,type LearnerCareerCalendarFixture} from "../support/learner-career-calendar-fixture";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
@@ -22,6 +23,16 @@ describe("calendar URL filters over persisted own rounds",()=>{
     const state=readLearnerCalendarUrl("date=2026-10-17&view=day&kind=INTERVIEW&collegeId=foreign","2026-10-14");
     expect(learnerCalendarSelectedEvents(rows,state).map(x=>x.roundId)).toEqual([fixture.roundId]);
     expect(learnerCalendarSelectedEvents(rows,{...state,kind:"ASSESSMENT"})).toHaveLength(0);
+  },30000);
+  it("builds selected IST day timeline from learner-authorized persisted rounds",async()=>{
+    const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
+    const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
+    const selected=learnerCalendarSelectedEvents(rows,{date:"2026-10-17",view:"day",kind:"ALL"});
+    const timeline=learnerCareerDayTimeline(selected,"2026-10-17");
+    expect(timeline.events.map(x=>x.roundId)).toEqual([fixture.roundId]);
+    expect(learnerCareerDayTimeline(selected,"2026-10-16").events).toHaveLength(0);
+    const wrong:RequestContext={...fixture.drive.learner.context,membership:{...fixture.drive.learner.context.membership!,roles:["TPO"]}};
+    await expect(getLearnerPlacementRequestWorkspace(wrong)).rejects.toBeDefined();
   },30000);
   it("renders seven mobile days with actual own interview and honest empty days",async()=>{
     const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
