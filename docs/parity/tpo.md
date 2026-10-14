@@ -320,6 +320,8 @@ Legacy:
 - [ ] release/response/joining data matches.
 - [ ] candidate detail deep link/drawer matches.
 
+**W44 PARTIAL:** The existing Offers & Joining workspace now exposes a TPO-only, explicitly confirmed bulk withdrawal control for up to 50 issued/accepted persisted offers. A required reason is recorded by the existing single-offer audit/history transition. Already-withdrawn, stale, foreign-job, declined and recorded-joining offers are not treated as withdrawable. This is withdrawal only: learner ACCEPT/DECLINE remains self-service, and acceptance/response/joining status is never synthesized. Full legacy bulk selection/modal UX, preflight-to-transition concurrency certification and executed runtime/browser evidence remain open.
+
 ### Tab: Drive Day
 - [ ] active/completed round selector matches.
 - [ ] Drive Day operations reachable from job.
@@ -365,6 +367,8 @@ Legacy includes:
 **W41 PARTIAL:** The TPO round overview now provides an authorized, formula-safe CSV export of its current persisted attendance roster. It includes per-learner recorded attendance and only APPLIED result outcomes, without inventing missing marks or exporting recruiter contact details. Bulk attendance/result mutations, legacy CSV columns, completed-round historical snapshots and browser/DB acceptance remain open.
 
 **W43 PARTIAL:** The round overview also links to a no-show reconciliation page that counts only persisted ABSENT marks among progression-eligible applicants; WAITING/unmarked and unrecognized statuses remain separately reported and are not inferred as absences. It flags non-completed rounds as a live snapshot. Historical immutable attendance snapshots, bulk corrections, exact legacy no-show taxonomy, positive PostgreSQL and browser acceptance remain open.
+
+**W44 PARTIAL:** The existing no-show report now downloads a dedicated formula-safe CSV of explicit ABSENT rows only, using the existing college-scoped round roster service and same report CSV encoder. Headers-only output is used when no explicit absences exist; WAITING/unmarked learners are excluded instead of being labelled absent. Historical snapshot exports, full legacy format and executed database/browser verification remain open.
 - [ ] progress/summary counts match.
 - [ ] coordinator vs TPO permission differences match.
 - [ ] completion confirmation matches.

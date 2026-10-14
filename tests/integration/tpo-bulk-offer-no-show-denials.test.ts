@@ -40,7 +40,7 @@ afterAll(async () => { await closeDatabaseConnection(); });
 
 describe("TPO bulk withdrawal and no-show PostgreSQL denial paths", () => {
   it("rejects college admins and learners without a TPO role", async () => {
-    for (const roles of [["COLLEGE_ADMIN"], ["LEARNER"]]) {
+    for (const roles of [["COLLEGE_ADMIN"], ["LEARNER"]] as const) {
       const other: RequestContext = {
         ...tpo,
         membership: { ...tpo.membership!, roles },
