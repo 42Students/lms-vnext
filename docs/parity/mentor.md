@@ -880,3 +880,6 @@ Oldest/newest persisted submission ordering and URL-preserved pagination added t
 
 ## 2026-10-15 chat-11 AC — Mentor Resource HTTPS link availability filter (PARTIAL)
 The exact-project Resource directory filters records with credential-free HTTPS links separately from unavailable/unsafe records, in both paginated reads and bounded formula-neutralized metadata CSV. Strict Zod and pure unit assertions authored. Current same-college assigned Mentor authority unchanged. Tests/browser/full legacy resource parity open.
+
+## 2026-10-15 chat-11 AD — active-project state in Mentor team coverage (PARTIAL)
+The current-assignment team coverage view now filters registered PLANNED/ACTIVE/COMPLETED project statuses alongside staffing counts, with URL-preserved pagination, strict invalid-state rejection and unit assertions. Archived project records remain excluded by existing scope; totals keep their authorized whole-portfolio meaning. Real tests/browser and legacy parity remain open.
