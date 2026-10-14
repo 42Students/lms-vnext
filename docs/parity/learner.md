@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 round-4 Quiz clear-answer action (PARTIAL):** Standalone quiz attempts now let learners clear the current single- or multiple-choice response, including radio answers that could not previously be deselected. The pure model never mutates another question's answers and the existing per-quiz session draft persists the result. Pure regression authored; browser/multi-tab acceptance pending.
+
 **2026-10-15 chat-7 round-4 Course list sort options (PARTIAL):** Learner Courses now sort by name, measured progress, or next persisted assessment deadline without breaking legacy regular-then-elective grouping. Unknown progress and missing deadlines sort last within their groups, and semester switching resets the order. Pure model regression authored; browser/PG acceptance open.
 
 **2026-10-15 chat-7 round-4 Project list sorting (PARTIAL):** Learner Projects can sort by persisted most-recent update, alphabetical title, or lowest measured progress with unknown progress last; archived projects remain last. The chosen sort survives pagination and mobile filters without affecting Mentor controls. Pure regression authored; source/PG/browser verification open.

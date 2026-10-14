@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 type QuizPayload = {
@@ -435,6 +436,13 @@ export function LearnerQuizAttempt() {
                   );
                 })}
               </div>
+              {(answers[current.id] ?? []).length > 0 ? (
+                <button type="button"
+                  onClick={() => setAnswers(currentAnswers => clearLearnerQuizAnswer(currentAnswers,current.id))}
+                  className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                  Clear this answer
+                </button>
+              ) : null}
             </>
           ) : null}
           {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
