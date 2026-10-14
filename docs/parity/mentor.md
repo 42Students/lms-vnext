@@ -766,3 +766,17 @@ positive persisted reads, foreign-scope, disabled/wrong-role and forged input
 denials. No file-backed functionality, member mutation or external sending
 was added; no mutation stale token applies. **PARTIAL:** independent PG,
 TypeScript, lint, browser, and legacy Resources interaction parity remain.
+
+## 2026-10-14 chat-11 P — Mentor activity decision-category drill-ins (PARTIAL)
+
+The current exact-project sanitized Activity history and its capped 200-row
+formula-neutralized CSV can now filter by registered Project lifecycle,
+review decisions, meeting decisions, and task activity as well as importance.
+An explicit fixed event-type allowlist filters SQL before pagination/counts;
+no raw activity summaries, actor identities, notes, feedback or arbitrary
+metadata filters are exposed. The same current Mentor, college, project,
+projects.read and module gates are reused. Pure Zod/allowlist tests and
+in-test-project PostgreSQL assertions verify real creation events, no fabricated
+review history, forged filters, wrong role and foreign-scope denial. Read-only,
+so optimistic mutation tokens are not applicable. **PARTIAL:** execute real PG,
+TypeScript, ESLint, responsive browser and legacy activity completeness checks.
