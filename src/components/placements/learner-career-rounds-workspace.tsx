@@ -512,6 +512,7 @@ export function LearnerCareerRoundsWorkspace({
                 <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>
                 <p className="mt-1 text-sm leading-6 text-body">
                   Calendar exports use the recorded interview start and duration.
+                  Event titles and descriptions are safely escaped and folded for calendar apps.
                   Approved reschedules use your own updated time. No calendar event is
                   created until you import the file or confirm it with Google.
                 </p>
