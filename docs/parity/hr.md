@@ -376,3 +376,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / HR Today — PARTIAL:** Added exact-grant college chooser, live-drive and seven-day deadline cards, this-week scheduled-round links and honest zero/empty states from recruiter-scoped persisted jobs/rounds. India calendar-day range is pure-tested; cross-company and wrong-role PG fixture tests are authored but not executed. Remaining: request-drive CTA and approval/waiting taxonomy, invitations, persisted active-college switching, messages, live card fidelity, stale refresh and browser/runtime acceptance.
+
+
+**2026-10-14 Chat 10 / Company Profile hiring footprint — PARTIAL:** Company tab now shows exact college-relationship live/closed/total persisted drive counts and three recent recruiter-visible drive links, no individual recruiter attribution, plus a strict college ID parse and existing profile CTA. Pure projection and isolated PG fixture tests authored, not executed. Remaining: legacy industry/logo (industry absent from registered company schema; logo storage blocked), individual teammate drive counts require real assignment evidence, custom stale/error retry, browser acceptance and full legacy Company tab parity.
