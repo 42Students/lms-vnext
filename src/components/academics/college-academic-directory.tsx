@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import {
   academicDirectoryHref,
   batchProgressLabel,
@@ -23,7 +24,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
         eyebrow="College Admin · Academic Setup"
         title={title}
         description={semesters
-          ? "Read-only program terms, with their configured semester number, name, credits and mapped course counts."
+          ? "Manage registered program terms with semester names, credit totals, status and dependency-guarded deletion."
           : "Read-only batch directory with recorded academic progression and active class/enrollment counts."}
         actions={
           <Link href="/college/academics"
@@ -32,6 +33,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
           </Link>
         }
       />
+      {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
       <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action={path} method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
@@ -105,6 +107,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
                   <th scope="col" className="px-4 py-3">Credits</th>
                   <th scope="col" className="px-4 py-3">Mapped courses</th>
                   <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Actions</th>
                 </tr>
               ) : (
                 <tr>
@@ -131,6 +134,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
                     </td>
                     <td className="px-4 py-4 text-body">{item.mappedCourses}</td>
                     <td className="px-4 py-4 text-body">{item.isActive ? "Active" : "Inactive"}</td>
+                    <td className="px-4 py-4"><CollegeSemesterRowActions row={item} /></td>
                   </tr>
                 ))
                 : data.items.map((item) => (
@@ -179,7 +183,7 @@ export function CollegeAcademicDirectory({ data }: { data: DirectoryData }) {
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
         {semesters
-          ? "Mapped course counts include registered curriculum mappings within this college only. Editing, semester deletion and credit validation are not part of this read-only view."
+          ? "Mapped course counts include registered curriculum mappings within this college only. Deletion is denied when mappings or non-archived batches exist; editing never changes the assigned program or semester number."
           : "Learner counts include currently active program enrollments with active college membership; class counts include active sections. No graduation, promotion preview, derived batch end date or student move is implied."}
         Exact legacy workflows, browser checks and disposable-PostgreSQL execution remain open.
       </p>
