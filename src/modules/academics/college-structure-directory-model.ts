@@ -16,6 +16,7 @@ export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveQuerySchema = collegeStructureQuerySchema.extend({
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
+  minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
 
@@ -23,10 +24,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "minimumCapacity", "semesterNumber", "page"] as const) {
+  for (const key of ["q", "programId", "status", "minimumCapacity", "semesterNumber", "minimumCredits", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !(key === "programId" && !value)) {
+    if (typeof value === "string" && !((key === "programId" || key === "minimumCapacity" || key === "semesterNumber" || key === "minimumCredits") && !value)) {
       result[key] = value;
     }
   }
@@ -43,6 +44,8 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
     params.set("minimumCapacity", String(query.minimumCapacity));
   if (kind === "ELECTIVES" && "semesterNumber" in query && query.semesterNumber !== undefined)
     params.set("semesterNumber", String(query.semesterNumber));
+  if (kind === "ELECTIVES" && "minimumCredits" in query && query.minimumCredits !== undefined)
+    params.set("minimumCredits",String(query.minimumCredits));
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

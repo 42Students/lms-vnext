@@ -54,8 +54,12 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureTotalPages(0)).toBe(1);
     expect(collegeElectiveQuerySchema.parse({ semesterNumber: "1" }).semesterNumber).toBe(1);
     expect(collegeElectiveQuerySchema.safeParse({ semesterNumber: 25 }).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({ minimumCredits: 0 }).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({ minimumCredits: 501 }).success).toBe(false);
+    expect(readCollegeStructureParams({minimumCapacity:"",semesterNumber:"",minimumCredits:""})).toEqual({});
     expect(collegeClassQuerySchema.safeParse({ semesterNumber: 1 }).success).toBe(false);
     expect(collegeStructureHref("ELECTIVES", { ...query, semesterNumber: 1 })).toContain("semesterNumber=1");
+    expect(collegeStructureHref("ELECTIVES", { ...query, minimumCredits: 3 })).toContain("minimumCredits=3");
     expect(collegeStructureTotalPages(26)).toBe(2);
   });
 

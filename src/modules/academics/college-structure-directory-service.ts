@@ -184,6 +184,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
+      query.minimumCredits !== undefined ? gte(electiveSlots.credits,query.minimumCredits) : undefined,
       query.status === "ALL" ? undefined : eq(electiveSlots.status, query.status),
       query.q ? or(
         ilike(electiveSlots.name, searchPattern(query.q)),

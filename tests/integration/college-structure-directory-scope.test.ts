@@ -138,6 +138,12 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     ]);
     expect(firstTerm.items.map(item => item.id)).toContain(ids.elective);
     expect(secondTerm.items).toEqual([]);
+    const [credits3,credits4]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,minimumCredits:3}),
+      listCollegeElectives(adminA,{q:key,minimumCredits:4}),
+    ]);
+    expect(credits3.items.map(r=>r.id)).toContain(ids.elective);
+    expect(credits4.items).toEqual([]);
     expect(electives.items.find(item => item.id === ids.elective))
       .toMatchObject({ semesterNumber: 1, minPick: 1, maxPick: 2, activeOfferings: 0 });
   });
