@@ -1,16 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {
-  DEFAULT_LEARNER_JOB_FILTERS,
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
-  learnerClosingSoonQuerySchema,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
+import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
 
 const PAGE_SIZE = 20;
 
@@ -28,51 +27,47 @@ export function LearnerJobsBrowse({
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const [search, setSearch] = useState(() => params.get("q") ?? "");
+  const urlState=readLearnerDriveUrl(params.toString());
+  const urlSearch=urlState.filters.search;
+  const [search,setSearch]=useState(urlSearch);
+  const lastCommittedQuery=useRef(urlSearch);
 
-  const updateQuery = useCallback((changes: Record<string, string | null>) => {
-    const next = new URLSearchParams(params.toString());
-    for (const [key, value] of Object.entries(changes)) {
-      if (!value || value === "all") next.delete(key);
-      else next.set(key, value);
-    }
-    if (!Object.prototype.hasOwnProperty.call(changes, "page")) next.delete("page");
-    const query = next.toString();
-    router.replace(query ? pathname + "?" + query : pathname, { scroll: false });
-  }, [pathname, params, router]);
+  const updateQuery=useCallback((changes:Record<string,string|null>)=>{
+    const query=learnerDriveQueryWithChanges(params.toString(),changes);
+    router.push(query?pathname+"?"+query:pathname,{scroll:false});
+  },[pathname,params,router]);
 
-  useEffect(() => {
-    // Browser back/forward must rehydrate the controlled search box.
-    const onPopState = () => {
-      setSearch(new URLSearchParams(window.location.search).get("q") ?? "");
+  useEffect(()=>{
+    const onPopState=()=>{
+      const navigated=readLearnerDriveUrl(window.location.search).filters.search;
+      lastCommittedQuery.current=navigated;
+      setSearch(navigated);
     };
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+    window.addEventListener("popstate",onPopState);
+    return ()=>window.removeEventListener("popstate",onPopState);
+  },[]);
 
-  useEffect(() => {
-    if (search === (params.get("q") ?? "")) return;
-    const handle = window.setTimeout(() => updateQuery({ q: search.trim() || null }), 220);
-    return () => window.clearTimeout(handle);
-  }, [search, params, updateQuery]);
+  useEffect(()=>{
+    if(lastCommittedQuery.current===urlSearch)return;
+    lastCommittedQuery.current=urlSearch;
+    setSearch(urlSearch);
+  },[urlSearch]);
 
-  const validSort: LearnerJobBrowseFilters["sort"][] = ["deadline", "ctc", "title", "newest"];
-  const rawSort = params.get("sort") ?? "deadline";
-  const filters: LearnerJobBrowseFilters = {
-    ...DEFAULT_LEARNER_JOB_FILTERS,
-    search,
-    employmentType: params.get("type") ?? "all",
-    location: params.get("loc") ?? "all",
-    eligibleOnly: params.get("eligible") === "1",
-    closingSoon: learnerClosingSoonQuerySchema.safeParse(params.get("soon")).success,
-    availability: learnerDriveAvailabilitySchema.safeParse(params.get("availability")).data ?? "all",
-    sort: validSort.includes(rawSort as LearnerJobBrowseFilters["sort"])
-      ? rawSort as LearnerJobBrowseFilters["sort"] : "deadline",
-  };
+  useEffect(()=>{
+    const text=search.trim().slice(0,100);
+    if(text===urlSearch)return;
+    const handle=window.setTimeout(()=>{
+      lastCommittedQuery.current=text;
+      updateQuery({q:text||null});
+    },350);
+    return ()=>window.clearTimeout(handle);
+  },[search,urlSearch,updateQuery]);
+
+  const filters:LearnerJobBrowseFilters={...urlState.filters,search};
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityCounts(items),[items]);
   const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
-  const parsedPage = Number(params.get("page") ?? "1");
+  const parsedPage = urlState.page;
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
   const page = Number.isInteger(parsedPage) && parsedPage > 0
     ? Math.min(parsedPage, totalPages) : 1;
@@ -88,6 +83,7 @@ export function LearnerJobsBrowse({
             <input
               type="search"
               value={search}
+              maxLength={100}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search opportunities…"
               className={selectClass}
@@ -169,7 +165,7 @@ export function LearnerJobsBrowse({
           </label>
           <button type="button" onClick={() => {
               setSearch("");
-              router.replace(pathname, { scroll: false });
+              router.push(pathname, { scroll: false });
             }}
             className="min-h-10 px-2 text-sm font-semibold text-primary-text hover:underline">
             Clear filters
@@ -192,7 +188,7 @@ export function LearnerJobsBrowse({
         <div className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="font-semibold text-foreground">No drives match these filters</p>
           <p className="mt-2 text-sm text-body">Try a different keyword, location or eligibility filter.</p>
-          <button type="button" onClick={() => { setSearch(""); router.replace(pathname, {scroll: false}); }}
+          <button type="button" onClick={() => { setSearch(""); router.push(pathname, {scroll: false}); }}
             className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
             View all drives
           </button>

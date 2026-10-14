@@ -16,9 +16,10 @@ describe("Learner Drives browse integration", () => {
 
   it("preserves URL search/back navigation and does not mutate applications on filter", () => {
     const browse = read("src/components/placements/learner-jobs-browse.tsx");
-    expect(browse).toContain('params.get("q")');
+    expect(browse).toContain("readLearnerDriveUrl(params.toString())");
     expect(browse).toContain("popstate");
-    expect(browse).toContain("router.replace");
+    expect(browse).toContain("router.push");
+    expect(browse).toContain("lastCommittedQuery");
     expect(browse).toContain("PAGE_SIZE = 20");
     expect(browse).toContain("filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso))");
     expect(browse).toContain("Eligible to apply only");
