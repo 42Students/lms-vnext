@@ -448,7 +448,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-018 | Assessment deep link | ApplicationsContent | placement assessment | UNCHECKED |
-| L14-019 | Interview deep link | ApplicationsContent | interviews | UNCHECKED |
+| L14-019 | Interview deep link | ApplicationsContent | drawer resolves exact active own application+interview round from membership-scoped persisted scheduled rounds, nearest upcoming first; fallback general interview list where no round exists. No invented outcome. PARTIAL pending fresh PostgreSQL, unit, tsc/lint and browser deep-link checks | PARTIAL |
 | L14-020 | Job/similar roles deep link | ApplicationsContent | jobs | UNCHECKED |
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
 | L14-022 | Hard/inline error state | ApplicationsContent | applications page | UNCHECKED |
