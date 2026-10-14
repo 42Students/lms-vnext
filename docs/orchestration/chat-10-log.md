@@ -4,3 +4,5 @@
 - 2026-10-14 — Today PARTIAL: live/deadline/round cards with selected grant, IST week model, unit and isolated PG fixtures authored but not executed. Pending waiting/approval/invite/stale states and runtime proof.
 - 2026-10-14 — Company Profile PARTIAL: authorized company-college hiring footprint + recent jobs, validated query, loading/error, unit and isolated PG tests authored. Industry/logo and per-person attribution remain blocked; no runtime checks.
 - 2026-10-14 — Round Results PARTIAL: chooser, exact-grant round/outcome read table and staged/applied distinctions, responsive empty/loading/error; authored unit + isolated PG denial fixtures. Remaining embedded legacy flow, submission writes, acceptance and share review.
+
+- 2026-10-14 — Applicant drawer PARTIAL: only company-drive SHORTLISTED read + active membership; contact in drawer, no unshared candidates. Pure/unit + PG auth fixtures authored; not executed.

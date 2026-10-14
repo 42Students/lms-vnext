@@ -382,3 +382,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / HR Round Results table — PARTIAL:** Added standalone chooser and per-drive round selector with outcome filters/counts, STAGED versus APPLIED status, score/waitlist display, responsive candidate rows and link back to the existing staging workspace. Read via recruiter job non-enumerating company/college grant guard and only screening-SHORTLISTED candidates; no internal comments are projected. Pure-model and isolated PG success/foreign/wrong-role tests authored, not executed. Remaining: exact legacy Results-from-table embed/tab, bulk submission/review and interview-slot workflows, share-policy audit, stale-state/cross-role/browser and PG acceptance.
+
+
+**2026-10-14 Chat 10 / Applicant review drawer — PARTIAL:** Scoped, read-only applicant panel opened from shortlisted recruiter-visible list; active college membership/user status and exact company job guard checked before contact display, IST application date, mobile bottom sheet, non-leaking missing candidate. Unit and isolated PG role/foreign tests authored, not executed. Remaining: recruiter notes/ratings and round-specific review write schema, full legacy share marker, pagination beyond 200, runtime/browser privacy evidence.
