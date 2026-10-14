@@ -92,7 +92,7 @@ export default async function LearnerProjectPage({
           shown={boardTasks.length} total={workspace.tasks.length} />
       ) : null}
       {activeSection === "tasks" ? (
-        <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} />
+        <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} sprints={workspace.sprints} />
       ) : null}
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
