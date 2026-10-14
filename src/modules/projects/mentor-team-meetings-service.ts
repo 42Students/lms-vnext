@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,count,desc,eq,ilike,isNull,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,ilike,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,membershipRoles,projectMeetings,projectMembers,users,
@@ -75,7 +75,9 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     updatedAt:projectMeetings.updatedAt,
   }).from(projectMeetings)
     .where(meetingFilters)
-    .orderBy(desc(projectMeetings.startsAt),desc(projectMeetings.id))
+    .orderBy(...(query.order==="OLDEST"
+      ? [asc(projectMeetings.startsAt),asc(projectMeetings.id)]
+      : [desc(projectMeetings.startsAt),desc(projectMeetings.id)]))
     .limit(page.pageSize).offset((page.page-1)*page.pageSize);
   return {
     enabled:true as const,query,projectTitle:scope.project.title,
