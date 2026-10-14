@@ -8,6 +8,8 @@ import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
+import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
+import { filterLearnerBoardTasks } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -189,5 +191,29 @@ describe("L20-017 persisted scoped Projects mobile filter inputs",()=>{
     const denied:RequestContext={...context,
       membership:{...context.membership!,status:"SUSPENDED"}};
     await expect(listMyProjectInstances(denied)).rejects.toBeDefined();
+  });
+});
+
+describe("L25-006 own persisted task Board search",()=>{
+  it("filters only the persisted task from its own authorized project",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'search-release','Release',0)",
+      [ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'search-sprint','Sprint',0)",
+      [ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,description,sequence) values($1,$2,$3,'search-task','Build unit checks','Own acceptance',0)",
+      [ids.taskA,ids.project,ids.sprint]);
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    expect(filterLearnerBoardTasks(workspace.tasks,"acceptance").map(task=>task.id))
+      .toEqual([ids.taskA]);
+    expect(filterLearnerBoardTasks(workspace.tasks,"another")).toEqual([]);
+  });
+  it("denies foreign college, suspended and wrong-role actors",async()=>{
+    const denied:RequestContext[]=[
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["MENTOR"]}},
+    ];
+    for(const actor of denied)
+      await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
