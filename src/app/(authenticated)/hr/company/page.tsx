@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
+import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
 import {hrTeamPageSchema,hrTeamPage} from "@/modules/placements/hr-team-pagination-model";
 
 type PageProps = {
@@ -215,9 +216,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
           </p>
-          {matchingTeam.length === 0 ? (
-            <p className="mt-3 text-sm text-muted-foreground">Only you so far.</p>
-          ) : (
+          {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)?
+            <p role="status" className="mt-3 text-sm text-muted-foreground">
+              {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
+            </p>:null}
+          {teamPageResult.rows.length===0 ? null : (
             <div className="mt-4 divide-y divide-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
