@@ -452,6 +452,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Faculty
 **Legacy:** `/college-admin/teachers`
 
+**Detail PARTIAL (2026-10-14):** `/college/faculty/[membershipId]` now provides scoped Faculty name, academic title, employment type, department and persisted teaching assignment history with active/ended counts and distinct offerings. No hours or availability are inferred and no private identity fields are disclosed. Foreign-college/nonexistent memberships get indistinguishable not-found behavior. Browser/PG acceptance and full legacy workload parity remain open.
+
 **Read-first PARTIAL:** `/college/faculty` lists persisted Faculty-role college memberships with search, status/pagination, user status, and count of active college-owned teaching assignments. The College Admin shell and dashboard link to it. This is not the legacy faculty onboarding, edit or complete-profile workflow; exact legacy and browser acceptance remain open.
 
 **Lifecycle PARTIAL:** Faculty rows now include a confirmed deactivate/reactivate action. The transaction locks the same-college FACULTY membership, requires the expected status, blocks deactivation while any live course teaching or section faculty assignment remains, and writes the state transition plus immutable actor-scoped activity event. No cross-college lifecycle writes are permitted. Legacy complete profile editing and independent runtime/browser evidence remain open.
