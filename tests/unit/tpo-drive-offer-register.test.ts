@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {offerRegisterQuery,projectOfferRegister} from "@/modules/placements/tpo-drive-offer-register-model";
+import {offerRegisterQuery,projectOfferRegister,offerExpiryIndicator} from "@/modules/placements/tpo-drive-offer-register-model";
 const row=(id:string,status:string,joining:string|null=null)=>({offer:{id,status,roleTitle:"Engineer",issuedAt:new Date("2026-10-01T00:00:00Z"),respondedAt:null},joining:joining?{status:joining}:null,candidate:{membershipId:id,displayName:" Name "}});
 describe("offer register",()=>{
  it("counts versions, filters status and avoids invented joining",()=>{
@@ -37,6 +37,14 @@ describe("offer register",()=>{
   expect(projectOfferRegister(facts,"ALL",1,"","DEFERRED").rows.map(x=>x.id)).toEqual(["3"]);
   expect(projectOfferRegister(facts,"ISSUED",1,"","PENDING").totalMatching).toBe(0);
   expect(offerRegisterQuery.safeParse({jobId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",joining:"SELECTED"}).success).toBe(false);
+ });
+ it("classifies only issued offer expiry at exact instants",()=>{
+  const now=new Date("2026-10-15T09:00:00Z");
+  expect(offerExpiryIndicator("ISSUED",new Date("2026-10-15T09:00:00Z"),now)).toBe("EXPIRED");
+  expect(offerExpiryIndicator("ISSUED",new Date("2026-10-16T09:00:00Z"),now)).toBe("DUE_SOON");
+  expect(offerExpiryIndicator("ISSUED",new Date("2026-11-01T09:00:00Z"),now)).toBe("OPEN");
+  expect(offerExpiryIndicator("ISSUED",null,now)).toBe("UNKNOWN");
+  expect(offerExpiryIndicator("ACCEPTED",new Date("2026-10-01T00:00:00Z"),now)).toBe("NOT_APPLICABLE");
  });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
