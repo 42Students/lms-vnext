@@ -245,3 +245,11 @@ a 500-learner-result CSV export cap, numeric omitted-row footer and HTTP
 notice headers; formula escaping preserved, UI warns of partial files.
 Remaining: execute PostgreSQL and browser export tests; verify product-approved
 large-export strategy and full question-level legacy output.
+
+## 2026-10-14 D — team coverage polish
+
+Existing migrated Project member and role grant tables support registered
+active team coverage; revoked-role rows are now excluded. The view separates
+no assigned projects from filter no-match, adds aggregate counts and links
+to the scoped registered meeting log. No new write, no audit. Pure/PG tests
+authored, not executed; owner approval of staffing rules remains blocked.
