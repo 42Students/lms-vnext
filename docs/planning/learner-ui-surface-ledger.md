@@ -371,7 +371,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-012 | Interviews snapshot | placements dashboard | placements home | UNCHECKED |
 | L11-013 | Assessments snapshot | placements dashboard | placements home | UNCHECKED |
 | L11-014 | Needs-attention list | placements dashboard | placements home | UNCHECKED |
-| L11-015 | Attention overflow CTAs | placements dashboard | placements home | UNCHECKED |
+| L11-015 | Attention overflow CTAs | placements dashboard | persisted learner-scoped seven-day assessments/interviews show full eligible attention count, first 3 preview, true overflow CTA to own career calendar; missing schedule source remains unknown instead of zero. PARTIAL: PG/unit/typecheck/lint, mobile/browser navigation and time-window acceptance pending | PARTIAL |
 | L11-016 | Rolling 7-day calendar preview | placements dashboard | placements home | UNCHECKED |
 | L11-017 | Recent placement activity | placements dashboard | persisted own-application activity list | FIXED |
 | L11-018 | Loading skeletons | placements dashboard | placements home | UNCHECKED |
