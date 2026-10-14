@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { facultyAttendanceConfirmation, facultyCorrectionReasonValid } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
 import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary, facultyAttendanceThresholdBreakdown } from "@/modules/attendance/faculty-learner-attendance-detail";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
@@ -217,6 +218,11 @@ export function FacultyAttendanceWorkspace({
     workspace.sessions.find(
       (session) => session.id === selectedSessionId,
     ) ?? null;
+  const attendanceConfirmation = facultyAttendanceConfirmation(
+    selectedSession?.attendanceStatus === "MARKED",
+    [...initialAbsencesForSession(workspace.roster, workspace.records, selectedSessionId)],
+    [...absent], workspace.roster.length,
+  );
   const markingWindow = selectedSession
     ? facultyAttendanceMarkingWindow({
         startsAt: new Date(selectedSession.startsAt),
@@ -308,9 +314,14 @@ export function FacultyAttendanceWorkspace({
     }
 
     setError(null);
-    if(selectedSession.attendanceStatus==="MARKED"&&correctionReason.trim().length<8){
+    if(selectedSession.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason)){
       setError("Explain this attendance correction in at least 8 characters.");return;
     }
+    if (!attendanceConfirmation) {
+      setError("Change at least one recorded mark before submitting a correction.");
+      return;
+    }
+    if (!window.confirm(attendanceConfirmation)) return;
     submitLock.current = true;
     setSubmitting(true);
     try {
@@ -965,6 +976,11 @@ export function FacultyAttendanceWorkspace({
                   </span>
                 </label>
               ):null}
+              {selectedSession?.attendanceStatus === "MARKED" ? (
+                <p role="status" className="mt-3 text-xs text-muted-foreground">
+                  {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
+                </p>
+              ) : null}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-surface-subtle p-3">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
@@ -981,7 +997,8 @@ export function FacultyAttendanceWorkspace({
                     !selectedSession ||
                     markingWindow !== "OPEN" ||
                     workspace.roster.length === 0 ||
-                    (selectedSession?.attendanceStatus==="MARKED"&&correctionReason.trim().length<8)
+                    !attendanceConfirmation ||
+                    (selectedSession?.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason))
                   }
                   onClick={submitAttendance}
                 >
