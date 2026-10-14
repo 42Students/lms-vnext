@@ -629,6 +629,12 @@ export default async function TpoStudentsPage({
                       <p className="mt-1 text-xs text-body">
                         {student.participationStatus.replaceAll("_", " ")}
                       </p>
+                      <Link
+                        href={`/tpo/students/${encodeURIComponent(student.membershipId)}/participation`}
+                        className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:underline"
+                      >
+                        Change participation →
+                      </Link>
                     </td>
 
                     <td className="px-4 py-4 text-body">
