@@ -583,3 +583,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Request a Drive duplicate round — PARTIAL:** Recruiter can duplicate a local hiring round with a generated collision-free editable name, insertion after the source, and a strict 12-round cap; previews are invalidated without saving or sending. Pure unit/Zod checks authored, runtime acceptance pending.
+
+
+**2026-10-15 chat-10 R6 / Draft destructive-reset guard — PARTIAL:** Start Over now confirms before discarding any edited or Hire Again-prefilled draft and clears the exact browser-tab scoped saved copy only after confirmation. Pure work-detection tests authored; no server writes, browser acceptance remains.
