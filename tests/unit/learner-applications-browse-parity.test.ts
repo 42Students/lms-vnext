@@ -29,6 +29,8 @@ describe("Learner Applications list and detail route", () => {
     expect(browse).toContain("Round history");
     expect(browse).toContain("learnerApplicationAttention(items)");
     expect(browse).toContain("Application screening updates");
+    expect(browse).toContain("learnerApplicationStageCounts(items)");
+    expect(browse).toContain("Screening stage filter chips");
     expect(browse).toContain("selectedInterview?.href");
     expect(browse).toContain("selectedAssessment?.href");
   });
