@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { adminAuditTextFilterSchema } from "./admin-audit-search-model";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import { escapeActivityCsvCell } from "./college-activity-export-model";
 export const SUPER_ADMIN_AUDIT_CSV_CAP = 1000;
 export const superAdminAuditExportSchema=z.object({
+ ...adminAuditTextFilterSchema.shape,
  module:z.enum(ACTIVITY_MODULES).optional(),
  importance:z.enum(ACTIVITY_IMPORTANCE).optional(),
  actorUserId:z.string().uuid().optional(),
