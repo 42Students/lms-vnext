@@ -36,6 +36,7 @@ export function learnerApplicationIsComplete(item: LearnerApplicationBrowseItem)
 export function learnerApplicationLatestActivity(item: LearnerApplicationBrowseItem) {
   return Math.max(
     item.submittedAt.getTime(),
+    item.withdrawnAt?.getTime() ?? 0,
     item.screening.decidedAt?.getTime() ?? 0,
     ...item.results.map((result) => result.appliedAt?.getTime() ?? 0),
   );

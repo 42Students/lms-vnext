@@ -23,7 +23,9 @@ const PAGE_SIZE = 20;
 export function FacultyAssessmentOverview({
   overview,
   kind,
+  filesEnabled,
 }: {
+  filesEnabled: boolean;
   overview: Overview;
   kind: "ASSIGNMENT" | "QUIZ";
 }) {
@@ -248,6 +250,7 @@ export function FacultyAssessmentOverview({
                     {item.maxPoints} points · Grade visible to learner only after publication
                   </p>
                   <FacultyAssignmentReview
+                    filesEnabled={filesEnabled}
                     assignmentId={item.id}
                     deliveryId={item.deliveryId}
                     maxPoints={item.maxPoints}

@@ -1,10 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/courses/faculty-course-list-model";
+import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {
+import type {
   getFacultyCourseWorkspace,
   listFacultyCourseDeliveries,
 } from "@/modules/courses/faculty-course-service";
@@ -42,29 +41,14 @@ function pathTone(
   return "neutral" as const;
 }
 
-export function FacultyCourseList({
-  rows,
-}: {
+export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
   rows: readonly FacultyCourseListRow[];
+  query: FacultyCourseListQuery;
+  pagination: {page:number;totalPages:number;total:number};
+  scopeCount: number;
+  periods: readonly {id:string;name:string}[];
 }) {
-  const [search, setSearch] = useState("");
-  const [visibleCount, setVisibleCount] = useState(48);
-  const filtered = useMemo(() => {
-    const term = search.trim().toLocaleLowerCase();
-    if (!term) return rows;
-    return rows.filter(({ course }) =>
-      [
-        course.courseName,
-        course.courseCode,
-        course.sectionName,
-        course.sectionCode,
-        course.academicPeriodName,
-      ].some((item) => item?.toLocaleLowerCase().includes(term)),
-    );
-  }, [rows, search]);
-  const visible = filtered.slice(0, visibleCount);
-
-  if (rows.length === 0) {
+  if (scopeCount === 0) {
     return (
       <EmptyState
         title="No active teaching Courses"
@@ -75,34 +59,45 @@ export function FacultyCourseList({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-border bg-surface p-4">
-        <label htmlFor="faculty-course-search" className="text-sm font-semibold text-body">
-          Search courses
-        </label>
-        <input
-          id="faculty-course-search"
-          name="course-search"
-          type="search"
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setVisibleCount(48);
-          }}
-          placeholder="Course, code, Section or academic period"
-          className="mt-2 block min-h-11 w-full max-w-xl rounded-md border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
-        />
-        <p className="mt-2 text-xs text-muted-foreground" aria-live="polite">
-          Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching course Sections
-        </p>
-      </div>
-      {filtered.length === 0 ? (
+      <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
+        className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        <div className="grid gap-3 md:grid-cols-3">
+          <label className="grid gap-1 text-sm font-semibold text-body">Search courses
+            <input name="q" type="search" defaultValue={query.q} maxLength={120}
+              placeholder="Course, code, Section or academic period"
+              className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Academic period
+            <select name="period" defaultValue={query.period}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="">All assigned periods</option>
+              {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Teaching role
+            <select name="role" defaultValue={query.role}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="">All assigned roles</option>
+              {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply filters</button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
+          </p>
+        </div>
+      </form>
+      {rows.length === 0 ? (
         <EmptyState
-          title="No courses match your search"
-          description="Try a different Course name, code or Section."
+          title="No courses match your filters"
+          description="Try a different Course name, academic period or teaching role."
         />
       ) : (
       <div data-testid="teacher.courses.grid" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {visible.map(({ course, workspace }) => (
+      {rows.map(({ course, workspace }) => (
         <Link
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
@@ -192,15 +187,12 @@ export function FacultyCourseList({
       ))}
       </div>
       )}
-      {visibleCount < filtered.length ? (
-        <button
-          type="button"
-          onClick={() => setVisibleCount((current) => current + 48)}
-          className="min-h-11 rounded-md border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text hover:bg-primary hover:text-on-primary"
-        >
-          Show more courses ({filtered.length - visibleCount} remaining)
-        </button>
-      ) : null}
+      <nav aria-label="Faculty Courses pages" className="flex flex-wrap items-center justify-between gap-3">
+        {pagination.page > 1 ? <Link href={facultyCourseListHref({...query,page:pagination.page-1})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link> : <span />}
+        {pagination.page < pagination.totalPages ? <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link> : null}
+      </nav>
     </div>
   );
 }
