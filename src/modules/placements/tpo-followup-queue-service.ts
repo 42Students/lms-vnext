@@ -18,6 +18,7 @@ import {
   tpoFollowupCreatedAudit,
   tpoFollowupDoneAudit,
   tpoFollowupIdSchema,
+  tpoFollowupCsv,
 } from "./tpo-followup-queue-model";
 import { TpoCrmError } from "./tpo-crm-service";
 
@@ -204,4 +205,30 @@ export async function completeConfirmedTpoFollowup(
     });
     return { id: done.id, done: true as const };
   });
+}
+
+/** Filtered read-only export, independently authorized and capped before serialization. */
+export async function getTpoFollowupQueueCsv(
+ context:RequestContext,raw:unknown,now=new Date(),
+){
+ const {collegeId,ownerMembershipId}=await requireTpo(context);
+ const input=tpoFollowupQueueQuerySchema.omit({page:true}).parse(raw);
+ const end=new Date(now.getTime()+7*86400000);
+ const when=input.window==="DUE"?[lte(placementTpoFollowups.dueAt,now)]:
+  [gte(placementTpoFollowups.dueAt,now),lte(placementTpoFollowups.dueAt,end)];
+ const facts=await getDb().select({
+  id:placementTpoFollowups.id,leadId:placementTpoFollowups.leadId,
+  leadName:placementTpoLeads.name,companyName:placementTpoLeads.companyName,
+  dueAt:placementTpoFollowups.dueAt,note:placementTpoFollowups.note,
+ }).from(placementTpoFollowups).innerJoin(placementTpoLeads,and(
+  eq(placementTpoFollowups.leadId,placementTpoLeads.id),
+  eq(placementTpoFollowups.collegeId,placementTpoLeads.collegeId),
+ )).where(and(
+  eq(placementTpoFollowups.collegeId,collegeId),
+  eq(placementTpoLeads.collegeId,collegeId),
+  isNull(placementTpoFollowups.doneAt),...when,
+  ...(input.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
+  ...(input.q?[sql<boolean>`position(lower(${input.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`]:[]),
+ )).orderBy(asc(placementTpoFollowups.dueAt),asc(placementTpoFollowups.id)).limit(501);
+ return tpoFollowupCsv(facts,input);
 }
