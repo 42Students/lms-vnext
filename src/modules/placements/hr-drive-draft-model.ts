@@ -21,10 +21,18 @@ export const hrDriveDraftSchema = z.strictObject({
   minimumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   maximumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   minimumCgpa: z.string().regex(/^(?:|(?:10(?:\.0{1,2})?|[0-9](?:\.[0-9]{1,2})?))$/),
+  fixedAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
+  variableAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
+  bondMonths: z.string().regex(/^\d{0,3}$/),
+  bondAmountInr: z.string().regex(/^\d{0,9}$/),
+  maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
   const min = data.minimumAnnualCtcInr ? Number(data.minimumAnnualCtcInr) : null;
   const max = data.maximumAnnualCtcInr ? Number(data.maximumAnnualCtcInr) : null;
+  if (data.bondMonths && Number(data.bondMonths) > 120) {
+    ctx.addIssue({ code: "custom", path: ["bondMonths"], message: "Bond must not exceed 120 months" });
+  }
   if (min !== null && max !== null && max < min) {
     ctx.addIssue({ code: "custom", path: ["maximumAnnualCtcInr"], message: "Maximum CTC must be at least minimum CTC" });
   }
@@ -36,6 +44,8 @@ export function emptyHrDriveDraft(): HrDriveDraft {
     title: "", description: "", location: "",
     employmentType: "FULL_TIME", workMode: "ONSITE",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
+    fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
+    bondAmountInr: "", maximumActiveBacklogs: "",
     rounds: [{ kind: "INTERVIEW", name: "Interview" }],
   };
 }

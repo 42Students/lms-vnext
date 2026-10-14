@@ -91,7 +91,12 @@ export function HrDriveDraftForm({
           {([
             ["minimumAnnualCtcInr", "Minimum annual CTC (₹)"],
             ["maximumAnnualCtcInr", "Maximum annual CTC (₹)"],
+            ["fixedAnnualCtcInr", "Fixed annual CTC (₹)"],
+            ["variableAnnualCtcInr", "Variable annual CTC (₹)"],
+            ["bondMonths", "Bond months"],
+            ["bondAmountInr", "Bond amount (₹)"],
             ["minimumCgpa", "Minimum CGPA (0–10)"],
+            ["maximumActiveBacklogs", "Maximum active backlogs"],
           ] as const).map(([field, label]) => (
             <label key={field} className="grid gap-1 text-sm text-body">
               {label}
@@ -101,7 +106,7 @@ export function HrDriveDraftForm({
           ))}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Bond and agreement terms require the employer-request persistence contract before submission can be enabled.
+          All compensation, bond and eligibility fields are local preview values. They are not submitted or saved.
         </p>
       </section>
 
@@ -176,6 +181,23 @@ export function HrDriveDraftForm({
             <p className="whitespace-pre-wrap">{result.data.description}</p>
             <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.workMode}</p>
             <p>{result.data.rounds.length} planned hiring rounds</p>
+            <dl className="grid gap-2 sm:grid-cols-2">
+              {([
+                ["Minimum CTC", result.data.minimumAnnualCtcInr],
+                ["Maximum CTC", result.data.maximumAnnualCtcInr],
+                ["Fixed CTC", result.data.fixedAnnualCtcInr],
+                ["Variable CTC", result.data.variableAnnualCtcInr],
+                ["Bond months", result.data.bondMonths],
+                ["Bond amount", result.data.bondAmountInr],
+                ["Minimum CGPA", result.data.minimumCgpa],
+                ["Maximum active backlogs", result.data.maximumActiveBacklogs],
+              ] as const).map(([label, value]) => (
+                <div key={label}>
+                  <dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className="font-medium text-foreground">{value || "Not specified"}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}

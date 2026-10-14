@@ -47,6 +47,7 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
     });
     const own = await getRecruiterPlacementWorkspace(hr(a.company.id, a.relationship.id, SEED_IDS.collegeA), job.id);
     expect(hrDraftFromAuthorizedJob(own.job, own.rounds).title).toBe("Recruiter Draft " + nonce);
+    expect(hrDraftFromAuthorizedJob(own.job, own.rounds).bondMonths).toBe("");
     expect(recruiterDriveDraftHref({collegeId:own.college.id,fromJobId:own.job.id}))
       .toContain("from=" + own.job.id);
     await expect(getRecruiterPlacementWorkspace(hr(b.company.id, b.relationship.id, SEED_IDS.collegeA), job.id))
