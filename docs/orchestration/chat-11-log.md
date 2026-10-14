@@ -184,3 +184,6 @@
 
 ## Round 3 AE — Assignment-role report filters (PARTIAL)
 - Primary/supporting Mentor report filters on page and capped CSV, unit tests authored but not executed.
+
+## Round 3 AF — Meeting type filter (PARTIAL)
+- Filter registered meeting types with consistent count, paging and scoped SQL; pure/PG assertions source-authored, unexecuted.

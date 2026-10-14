@@ -886,3 +886,6 @@ The current-assignment team coverage view now filters registered PLANNED/ACTIVE/
 
 ## 2026-10-15 chat-11 AE — Mentor primary/supporting assignment report (PARTIAL)
 Assigned-project reports now distinguish registered current primary versus supporting Mentor assignments, in page filters, pagination and capped neutralized report CSV. Whole-portfolio counts remain distinct from filtered totals. Strict Zod and model tests authored. No membership changes or learner contact. Actual test/browser/legacy parity open.
+
+## 2026-10-15 chat-11 AF — exact-project meeting type filter (PARTIAL)
+The registered Team & Meeting log filters by GENERAL, PLANNING, STANDUP, REVIEW or RETRO in the same scoped SQL count and paginated query as status/title. URL pagination retains meeting type, with strict invalid-selector unit tests and test-owned PostgreSQL fixture assertions. Existing Mentor role/college/current project checks unchanged; execution and full meeting legacy parity open.
