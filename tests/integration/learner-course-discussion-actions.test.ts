@@ -1,67 +1,113 @@
-import { randomUUID } from "node:crypto";
-import { beforeEach, afterEach, afterAll, describe, it, expect } from "vitest";
+import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
-import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
-import { createCourseDiscussionMessage, listCourseDiscussionMessages, deleteCourseDiscussionMessage, toggleCourseDiscussionPin } from "@/modules/courses/discussion-service";
+import type { RequestContext } from "@/modules/identity/context";
+import {
+  createCourseDiscussionMessage,
+  deleteCourseDiscussionMessage,
+  listCourseDiscussionMessages,
+  toggleCourseDiscussionPin,
+} from "@/modules/courses/discussion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {
+  cleanupLearnerCourseWriteFixture,
+  newLearnerCourseWriteFixture,
+  seedLearnerCourseWriteFixture,
+  type LearnerCourseWriteFixture,
+} from "../support/learner-course-write-fixture";
+
 if (!process.env.TEST_DATABASE_URL) throw new Error("Disposable TEST_DATABASE_URL required");
-const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
-const learner:RequestContext={user:{id:SEED_IDS.learnerUser,identityUid:"seed-learner",platformStatus:"ACTIVE",systemRoles:[]},
-  membership:{id:SEED_IDS.learnerCollegeAMembership,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]}};
-const ids={course:randomUUID(),offering:randomUUID(),delivery:randomUUID()};
-let prepared=false;
-beforeEach(async()=>{
-  const owned=await pool.query<{section_id:string;academic_period_id:string;cohort_id:string}>([
-    "SELECT se.section_id,se.academic_period_id,e.cohort_id FROM learner_program_enrollments e",
-    "JOIN section_enrollments se ON se.learner_enrollment_id=e.id",
-    "WHERE e.membership_id=$1 AND e.status='ACTIVE' AND se.status='ACTIVE' LIMIT 1",
-  ].join(" "),[SEED_IDS.learnerCollegeAMembership]);
-  if(owned.rows.length!==1)throw new Error("Seed learner requires an active Section enrollment");
-  const section=owned.rows[0]!;prepared=true;
-  const suffix=ids.course.slice(0,8);
-  await pool.query("INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$4)",[ids.course,SEED_IDS.departmentA,"Discussion "+suffix,"L5DISC-"+suffix]);
-  await pool.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id) VALUES($1,$2,$3,$4)",[ids.offering,ids.course,section.cohort_id,section.academic_period_id]);
-  await pool.query("INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3)",[ids.delivery,ids.offering,section.section_id]);
-},45000);
-afterEach(async()=>{if(!prepared)return;
-  // Delete only operational messages/own hierarchy; immutable activity_events remain.
-  await pool.query("DELETE FROM course_discussion_messages WHERE delivery_id=$1",[ids.delivery]);
-  await pool.query("DELETE FROM course_section_deliveries WHERE id=$1",[ids.delivery]);
-  await pool.query("DELETE FROM course_offerings WHERE id=$1",[ids.offering]);
-  await pool.query("DELETE FROM courses WHERE id=$1",[ids.course]);
-},45000);
-afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
-describe("learner discussion post/reply/delete, PostgreSQL",()=>{
-  it("posts, Section-validates reply, blocks learner moderation, deletes only owned unpinned messages",async()=>{
-    const first=await createCourseDiscussionMessage(learner,ids.delivery,{messageText:"First class question"});
-    const reply=await createCourseDiscussionMessage(learner,ids.delivery,{messageText:"Follow up",replyToMessageId:first.id});
-    expect(reply.messageText).toContain(first.id.slice(0,8));
-    const feed=await listCourseDiscussionMessages(learner,ids.delivery);
-    expect(feed.messages.map(m=>m.id)).toEqual(expect.arrayContaining([first.id,reply.id]));
-    await expect(toggleCourseDiscussionPin(learner,first.id,ids.delivery)).rejects.toBeDefined();
-    await expect(createCourseDiscussionMessage(learner,ids.delivery,
-      {messageText:"Wrong parent",replyToMessageId:randomUUID()})).rejects.toBeDefined();
-    const deleted=await deleteCourseDiscussionMessage(learner,reply.id,ids.delivery);
-    expect(deleted.id).toBe(reply.id);
-    const after=await listCourseDiscussionMessages(learner,ids.delivery);
-    expect(after.messages.some(message=>message.id===reply.id)).toBe(false);
-    const events=await pool.query<{count:string}>("SELECT count(*)::text AS count FROM activity_events WHERE subject_id=$1 AND event_type='courses.discussion.posted'",[first.id]);
-    expect(events.rows[0]?.count).toBe("1");
-  },30000);
-  it("denies forged-college, suspended, wrong-role, forged identity, and foreign message deletion",async()=>{
-    const first=await createCourseDiscussionMessage(learner,ids.delivery,{messageText:"Owned learner message"});
-    const bad:RequestContext[]=[
-      {...learner,membership:{...learner.membership!,collegeId:SEED_IDS.collegeB}},
-      {...learner,membership:{...learner.membership!,status:"SUSPENDED"}},
-      {...learner,membership:{...learner.membership!,roles:["FACULTY"]}},
-      {...learner,user:{...learner.user,id:SEED_IDS.facultyUser}},
+const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 1 });
+let fixture: LearnerCourseWriteFixture | null = null;
+let foreign: LearnerCourseWriteFixture | null = null;
+
+beforeEach(async () => {
+  fixture = newLearnerCourseWriteFixture();
+  await seedLearnerCourseWriteFixture(pool, fixture);
+}, 45_000);
+afterEach(async () => {
+  const cleanupOther = foreign;
+  const cleanupOwn = fixture;
+  foreign = null;
+  fixture = null;
+  try {
+    if (cleanupOther) await cleanupLearnerCourseWriteFixture(pool, cleanupOther);
+  } finally {
+    if (cleanupOwn) await cleanupLearnerCourseWriteFixture(pool, cleanupOwn);
+  }
+}, 45_000);
+afterAll(async () => {
+  await pool.end();
+  await closeDatabaseConnection();
+}, 30_000);
+
+describe("learner Section discussions with fresh PostgreSQL actors", () => {
+  it("posts and replies in the enrolled delivery, rejects pin and audits exactly once", async () => {
+    const { context, ids } = fixture!;
+    const posted = await createCourseDiscussionMessage(context, ids.delivery, {
+      messageText: "First class question",
+    });
+    const reply = await createCourseDiscussionMessage(context, ids.delivery, {
+      messageText: "Follow up",
+      replyToMessageId: posted.id,
+    });
+    expect(reply.messageText).toContain(posted.id.slice(0, 8));
+    const feed = await listCourseDiscussionMessages(context, ids.delivery);
+    expect(feed.messages.map(message => message.id)).toEqual(
+      expect.arrayContaining([posted.id, reply.id]),
+    );
+    await expect(toggleCourseDiscussionPin(context, posted.id, ids.delivery))
+      .rejects.toBeDefined();
+    const audit = await pool.query<{ total: string }>(
+      "SELECT count(*)::text AS total FROM activity_events WHERE subject_id=$1 AND event_type='courses.discussion.posted'",
+      [posted.id],
+    );
+    expect(audit.rows[0]?.total).toBe("1");
+    const removed = await deleteCourseDiscussionMessage(context, reply.id, ids.delivery);
+    expect(removed.id).toBe(reply.id);
+    const after = await listCourseDiscussionMessages(context, ids.delivery);
+    expect(after.messages.some(message => message.id === reply.id)).toBe(false);
+  }, 30_000);
+
+  it("denies forged-college, suspended, wrong-role and swapped actor writes", async () => {
+    const { context, ids } = fixture!;
+    const posted = await createCourseDiscussionMessage(context, ids.delivery, {
+      messageText: "Own class question",
+    });
+    const denied: RequestContext[] = [
+      { ...context, membership: { ...context.membership!, collegeId: SEED_IDS.collegeB } },
+      { ...context, membership: { ...context.membership!, status: "SUSPENDED" } },
+      { ...context, membership: { ...context.membership!, roles: ["FACULTY"] } },
+      { ...context, user: { ...context.user, id: SEED_IDS.facultyUser } },
     ];
-    for(const actor of bad){
-      await expect(createCourseDiscussionMessage(actor,ids.delivery,{messageText:"Spoofed"})).rejects.toBeDefined();
-      await expect(deleteCourseDiscussionMessage(actor,first.id,ids.delivery)).rejects.toBeDefined();
+    for (const actor of denied) {
+      await expect(createCourseDiscussionMessage(actor, ids.delivery, {
+        messageText: "Forged class question",
+      })).rejects.toBeDefined();
+      await expect(deleteCourseDiscussionMessage(actor, posted.id, ids.delivery))
+        .rejects.toBeDefined();
     }
-    const stored=await pool.query("SELECT id FROM course_discussion_messages WHERE id=$1",[first.id]);
-    expect(stored.rows).toHaveLength(1);
-  });
+    const stored = await pool.query(
+      "SELECT id FROM course_discussion_messages WHERE delivery_id=$1",
+      [ids.delivery],
+    );
+    expect(stored.rows.map(row => row.id)).toEqual([posted.id]);
+  }, 30_000);
+
+  it("denies replies and delete requests across separate Section deliveries", async () => {
+    const { context, ids } = fixture!;
+    foreign = newLearnerCourseWriteFixture();
+    await seedLearnerCourseWriteFixture(pool, foreign);
+    const second = await createCourseDiscussionMessage(foreign.context, foreign.ids.delivery, {
+      messageText: "Second Section message",
+    });
+    await expect(createCourseDiscussionMessage(context, ids.delivery, {
+      messageText: "Cross-Section reply",
+      replyToMessageId: second.id,
+    })).rejects.toBeDefined();
+    await expect(deleteCourseDiscussionMessage(context, second.id, ids.delivery))
+      .rejects.toBeDefined();
+    expect((await listCourseDiscussionMessages(foreign.context, foreign.ids.delivery))
+      .messages.some(message => message.id === second.id)).toBe(true);
+  }, 30_000);
 });

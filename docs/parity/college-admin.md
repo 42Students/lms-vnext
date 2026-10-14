@@ -462,6 +462,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 **Read-first PARTIAL:** `/college/students` lists persisted Learner-role college memberships with search, status/pagination, and active program/batch/class information when registered. Missing enrollments are shown explicitly, not inferred. Create/import/edit, academic moves, full-profile detail, exact legacy/browser verification remain open.
 
+**Class-reassignment PARTIAL:** The Students directory offers a confirmed class move only within the learner's active cohort and academic period. The service enforces current placement and active learner guards, a live destination class and period, capacity, stale-state denial, an atomic MOVED/ACTIVE history transition, and an immutable college-scoped activity event. Cross-batch and cross-period transfers, legacy import/edit and browser acceptance are not provided.
+
 - [ ] Learner list/profile metadata match.
 - [ ] Search/filter/pagination match.
 - [ ] Create/import/add learner flows present in legacy are accounted for.
