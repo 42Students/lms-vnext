@@ -420,3 +420,20 @@ and forecasts are not fabricated. Pure-model tests and a new positive
 registered Release/Sprint assertion with forged/foreign-scope denials
 in the existing passing fixture suite are authored, not executed here.
 Full legacy planning and browser parity remain PARTIAL.
+
+## Mentor task comments / feedback thread (2026-10-14)
+
+**PARTIAL / missing migrated table.** Registered `project_task_submissions`
+stores only a nullable `feedback` string for each reviewed submission version.
+There is no promoted `project_task_comments` or conversation/reply table.
+A read-only `/mentor/projects/[projectId]/tasks/[taskId]/feedback` page therefore
+shows only actually persisted version-specific review feedback and explicitly
+explains that threaded comments and a composer are **unavailable**. The reader
+requires a currently assigned Mentor on the exact project, `projects.read`,
+same-college scope and existing Projects enablement, and selects task feedback
+without exposing learner identity, submission URLs or private notes. Zod UUID
+validation, loading/error/retry and real no-feedback empty states are present.
+The reviewed-task history links to this exact-project page. Full comments,
+replies, attachments, notification producers and parity remain blocked until
+the DB owner promotes an authoritative schema and the product owner approves
+visibility and edit/delete rules. This does **not** certify Board parity.

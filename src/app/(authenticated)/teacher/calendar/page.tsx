@@ -40,6 +40,12 @@ export default async function FacultyCalendarPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty" title="Class Schedule"
       description="Persisted teaching sessions, with an India Standard Time month calendar and exact Section links." />
+    <div className="flex justify-end">
+      <Link href="/teacher/live-classes"
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        View live classes
+      </Link>
+    </div>
     <section className="rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-foreground">

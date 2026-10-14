@@ -80,6 +80,11 @@ export default async function MentorTaskReviewHistoryPage({
             className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
             Open authorized Board →
           </Link>
+          <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+
+            "/tasks/"+encodeURIComponent(item.taskId)+"/feedback"}
+            className="ml-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            Recorded feedback →
+          </Link>
         </li>)}</ol>}
       <nav aria-label="Reviewed task history pagination" className="flex items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
