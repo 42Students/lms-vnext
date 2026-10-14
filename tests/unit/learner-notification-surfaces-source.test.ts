@@ -38,7 +38,7 @@ describe("Learner notification and placement UI source guards", () => {
     expect(auth).toContain("requirePermission");
     expect(scoped).toContain("eq(activityEvents.collegeId, membership.collegeId)");
     expect(scoped).toContain("markAllOwnNotificationsRead(context, { collegeId: membership.collegeId })");
-    expect(shared).toContain('hasMembershipRole(context, "LEARNER")');
+    expect(shared).toContain('context.membership?.roles.includes("LEARNER")');
     expect(shared).toContain("markOwnLearnerNotificationRead");
     expect(bulk).toContain("markAllOwnLearnerNotificationsRead");
     expect(specific).toContain("isSameOriginRequest(request)");
