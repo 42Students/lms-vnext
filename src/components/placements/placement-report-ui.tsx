@@ -215,6 +215,7 @@ export function ReportNavigation({
     { href: "/tpo/reports/joining-status", label: "Joining outcomes" },
     { href: "/tpo/reports/failure-reasons", label: "Failure reasons" },
     { href: "/tpo/reports/leads", label: "Leads report" },
+    { href: "/tpo/reports/accreditation", label: "Accreditation export" },
   ];
 
   return (
