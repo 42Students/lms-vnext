@@ -194,9 +194,28 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
    title:"Illegal",description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
   })).rejects.toBeDefined();
+  const close={action:"CLOSE" as const,quizId:created.id,
+   expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true as const};
+  await expect(commandFacultyQuiz(learner,{deliveryId:delivery.id},close)).rejects.toBeDefined();
+  const closed=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},close);
+  expect(closed.status).toBe("CLOSED");
+  await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},close)).rejects.toBeDefined();
+  const archive={action:"ARCHIVE" as const,quizId:created.id,
+   expectedUpdatedAt:closed.updatedAt.toISOString(),confirmed:true as const};
+  await expect(commandFacultyQuiz(learner,{deliveryId:delivery.id},archive)).rejects.toBeDefined();
+  await expect(commandFacultyQuiz(faculty,{deliveryId:SEED_IDS.collegeB},archive)).rejects.toBeDefined();
+  await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
+   ...archive,expectedUpdatedAt:created.updatedAt.toISOString(),
+  })).rejects.toBeDefined();
+  const archived=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},archive);
+  expect(archived.status).toBe("ARCHIVED");
+  await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},archive)).rejects.toBeDefined();
+  const persisted=await pool.query("select status from course_quizzes where id=$1",[created.id]);
+  expect(persisted.rows).toEqual([{status:"ARCHIVED"}]);
   const audit=await pool.query("select event_type from activity_events where subject_id = $1::text and event_type like 'courses.quiz.%'",[created.id]);
   expect(audit.rows.map(row=>row.event_type).sort()).toEqual([
-   "courses.quiz.created","courses.quiz.published","courses.quiz.updated",
+   "courses.quiz.archived","courses.quiz.closed","courses.quiz.created",
+   "courses.quiz.published","courses.quiz.updated",
   ]);
  });
 });

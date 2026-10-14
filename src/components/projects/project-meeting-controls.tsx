@@ -21,6 +21,7 @@ type Meeting = {
   timeZone: string;
   meetingUrl: string | null;
   requestedByMembershipId: string | null;
+  updatedAt: Date;
   linkedSprintId: string | null;
   linkedTaskId: string | null;
 };
@@ -677,16 +678,18 @@ export function ProjectMeetingTransitionActions({
     setPending(true);
     try {
       await projectMutation(
-        `/api/projects/${projectId}/meetings/${meeting.id}/transition`,
+        mode === "MENTOR" ? `/api/projects/${projectId}/meetings/${meeting.id}/mentor-decision` : `/api/projects/${projectId}/meetings/${meeting.id}/transition`,
         "POST",
         action === "COMPLETE"
           ? {
               action,
+              ...(mode==="MENTOR"?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString(),confirmed:true}:{}),
               outcome:
                 note.trim() || undefined,
             }
           : {
               action,
+              ...(mode==="MENTOR"?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString(),confirmed:true}:{}),
               note:
                 note.trim() || undefined,
             },
