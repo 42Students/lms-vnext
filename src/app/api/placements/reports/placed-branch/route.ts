@@ -9,7 +9,13 @@ export async function GET(request: Request) {
     const context = await getCurrentRequestContext();
     const report = await getTpoPlacedStudentsByBranch(context,
       Object.fromEntries(new URL(request.url).searchParams.entries()));
-    const exported = tpoPlacedBranchCsv(report.season?.name ?? "No season", report);
+    if (!report.season) {
+      return Response.json({ error: "PLACEMENT_SEASON_NOT_FOUND" }, {
+        status: 404,
+        headers: { "Cache-Control": "private, no-store, max-age=0" },
+      });
+    }
+    const exported = tpoPlacedBranchCsv(report.season.name, report);
     return new Response("\uFEFF" + exported.csv, {
       status: 200,
       headers: {

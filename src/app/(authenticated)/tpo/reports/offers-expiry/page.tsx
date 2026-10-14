@@ -17,11 +17,16 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
     <div className="space-y-6">
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
-        actions={<a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
+        actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
           className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
           Export CSV
-        </a>}
+        </a> : null}
       />
+      {process.env.DB09_TPO_API_READY !== "DB09_VERIFIED" ? (
+        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          CSV export is unavailable until the DB09 verification gate is enabled.
+        </p>
+      ) : null}
       <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text hover:underline">
         ← Reports
       </Link>
