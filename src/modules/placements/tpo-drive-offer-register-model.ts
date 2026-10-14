@@ -1,8 +1,8 @@
 import {z} from "zod";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1)}).strict();
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default("")}).strict();
 export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;issuedAt:Date;respondedAt:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null}};
 export const OFFER_REGISTER_PAGE_SIZE=25;
-export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1){
+export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search=""){
  const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0};
  for(const f of facts){
   if(f.offer.status==="ISSUED")counts.issued++;
@@ -10,7 +10,9 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
   if(f.offer.status==="DECLINED")counts.declined++;
   if(f.offer.status==="WITHDRAWN")counts.withdrawn++;
  }
- const match=facts.filter(f=>status==="ALL"||f.offer.status===status).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
+ const term=search.trim().toLocaleLowerCase("en-IN");
+ const match=facts.filter(f=>(status==="ALL"||f.offer.status===status)&&(!term||
+  [f.candidate.displayName,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
  const totalPages=Math.max(1,Math.ceil(match.length/OFFER_REGISTER_PAGE_SIZE));
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
