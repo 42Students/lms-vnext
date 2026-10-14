@@ -166,14 +166,15 @@ export default async function RecruiterCompanyReportsPage({
         eyebrow="Employer Recruiter"
         title="Company Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
-        actions={
-          <Link
-            href="/hr/placements"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-          >
+        actions={<div className="flex flex-wrap gap-2">
+          <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+            Export report CSV
+          </Link>
+          <Link href="/hr/placements" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-body">
             Hiring Workspace →
           </Link>
-        }
+        </div>}
       />
 
       {report.choices.length > 1 ? (

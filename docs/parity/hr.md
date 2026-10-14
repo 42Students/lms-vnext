@@ -466,3 +466,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Today unread recruiter notifications — PARTIAL:** Today now shows company-and-selected-college-scoped count of unread eligible in-app job notifications, deep links to filtered /hr/messages and to the separate hiring activity history. Count explicitly states if truncated to 100; no private recipient/body content or implicit college fallback. Pure unit and in-test PostgreSQL own/wrong-scope notification fixture extended, unexecuted. Remaining legacy task lifecycle, full inbox pagination, browser/mobile acceptance.
+
+
+**2026-10-15 chat-10 / Company Reports CSV — PARTIAL:** Existing scoped recruiter report now supports a read-only 200-drive capped formula-neutralized CSV of aggregate funnel metrics, no student identities or contact. Each page reuses the exact recruiter company/college report service; explicit omitted header and no-store. Pure-model unit + in-test PostgreSQL own/foreign-company/wrong-role fixtures authored but unexecuted. Remaining long-history de-dup, browser download acceptance.
