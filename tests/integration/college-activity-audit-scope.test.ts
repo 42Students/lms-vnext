@@ -68,6 +68,16 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(foreign.items).toHaveLength(1);
     expect(foreign.items[0].event.collegeId).toBe(SEED_IDS.collegeB);
   });
+  it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
+    const match=await listCollegeActivity(admin,{subjectType:subject,module:"ACADEMICS",
+      importance:"NORMAL",eventType:"academics.program.updated"});
+    expect(match.items).toHaveLength(25);
+    expect(match.nextCursor).not.toBeNull();
+    const excluded=await listCollegeActivity(admin,{subjectType:subject,importance:"CRITICAL"});
+    expect(excluded.items).toHaveLength(0);
+    const anotherCollege=await listCollegeActivity(other,{subjectType:subject,module:"ACADEMICS"});
+    expect(anotherCollege.items).toHaveLength(1);
+  });
   it("protects event detail and denies wrong-role/forged college filter",async()=>{
     const detail=await getCollegeActivityDetail(admin,ids.own);
     expect(detail.event.id).toBe(ids.own);

@@ -31,6 +31,8 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**Triage filters PARTIAL (2026-10-15):** Added registered module, importance and exact event-type filters to college-scoped activity history. The cursor preserves every filter, and capped CSV export receives the same triage selectors. Strict Zod rejects invalid modules/severity; isolated PG coverage checks filtering and cross-college scope. Noise grouping, legacy filter semantics and executed browser/PG acceptance remain open.
+
 **CSV export PARTIAL (2026-10-14):** College Admin Activity Log adds a download matching actor/subject/IST date filters and the broader Activity Center adds module/importance/event filters. Both use the same read service, scoped to the current college, with a 1,000-event cap, spreadsheet-formula neutralization, and explicit truncation footer and HTTP headers. No data is mutated. Exact legacy export column parity and high-volume browser/PG acceptance remain open.
 
 **Read-first PARTIAL (2026-10-14):** `/college/activity` provides explicit actor/entity/date filters, newest-first cursor pagination and `/college/activity/[eventId]` for sanitized audit metadata. Both reads are denied outside the active College Admin membership college. Records are never edited or deleted. Exact legacy event grouping, export, browser and independently executed PostgreSQL acceptance remain open.
