@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
+import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -17,6 +18,7 @@ const ids = {
   mentorRole:randomUUID(), template:randomUUID(), version:randomUUID(),
   assignment:randomUUID(), project:randomUUID(), projectMember:randomUUID(),
   mentorProjectMember:randomUUID(),
+  release:randomUUID(),sprint:randomUUID(),taskA:randomUUID(),taskB:randomUUID(),
 };
 const suffix = ids.college.slice(0,8);
 const context:RequestContext={
@@ -64,6 +66,9 @@ async function setup() {
     [ids.mentorProjectMember,ids.project,ids.mentorMembership,SEED_IDS.superAdminUser]);
 }
 async function cleanup() {
+  await pool.query("delete from project_tasks where project_id=$1",[ids.project]);
+  await pool.query("delete from project_sprints where project_id=$1",[ids.project]);
+  await pool.query("delete from project_releases where project_id=$1",[ids.project]);
   await pool.query("delete from project_members where project_id=$1",[ids.project]);
   await pool.query("delete from project_instances where id=$1",[ids.project]);
   await pool.query("delete from project_template_college_assignments where id=$1",[ids.assignment]);
@@ -98,5 +103,32 @@ describe("L20-012 learner project team read (PostgreSQL)",()=>{
     for(const actor of denied){
       await expect(listMyLearnerProjectTeams(actor,[ids.project])).rejects.toBeDefined();
     }
+  });
+});
+
+describe("L20-013 PostgreSQL task-progress read",()=>{
+  it("uses persisted own project tasks without fabricating empty progress",async()=>{
+    expect(await listMyLearnerProjectProgress(context,[ids.project])).toEqual([{
+      projectId:ids.project,totalTasks:0,completedTasks:0,blockedTasks:0,percentage:null,
+    }]);
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'r-one','Release',0)",
+      [ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'s-one','Sprint',0)",
+      [ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,status) values($1,$2,$3,'a-one','Task A',0,'DONE'),($4,$2,$3,'b-one','Task B',1,'BLOCKED')",
+      [ids.taskA,ids.project,ids.sprint,ids.taskB]);
+    expect(await listMyLearnerProjectProgress(context,[ids.project])).toEqual([{
+      projectId:ids.project,totalTasks:2,completedTasks:1,blockedTasks:1,percentage:50,
+    }]);
+  });
+  it("does not reveal foreign ids and rejects forged college, suspension and wrong-role",async()=>{
+    expect(await listMyLearnerProjectProgress(context,[randomUUID()])).toEqual([]);
+    const denied:RequestContext[]=[
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ];
+    for(const actor of denied)
+      await expect(listMyLearnerProjectProgress(actor,[ids.project])).rejects.toBeDefined();
   });
 });

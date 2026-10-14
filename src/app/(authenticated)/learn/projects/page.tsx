@@ -11,6 +11,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
+import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -63,6 +64,11 @@ export default async function LearnerProjectsPage({
     allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id),
   );
   const teamsByProject = new Map(teamSummaries.map(row => [row.projectId, row]));
+  const projectProgress = await listMyLearnerProjectProgress(
+    context,
+    allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id),
+  );
+  const progressByProject = new Map(projectProgress.map(row => [row.projectId, row]));
 
   const attentionByProject = new Map<
     string,
@@ -135,6 +141,11 @@ export default async function LearnerProjectsPage({
             participation: "Learner",
             mentorName: teamsByProject.get(row.project.id)?.mentorName ?? null,
             memberCount: teamsByProject.get(row.project.id)?.memberCount,
+            progressPercent: progressByProject.get(row.project.id)?.percentage ?? undefined,
+            progressDetail: progressByProject.has(row.project.id)
+              ? String(progressByProject.get(row.project.id)!.completedTasks) +
+                " of " + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks done"
+              : undefined,
             attention:
               projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]
