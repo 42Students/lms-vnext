@@ -64,6 +64,14 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             </label>
           ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Owning offering status
+            <select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All offerings</option><option value="ACTIVE">Active</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Audience scope
             <select name="scope" defaultValue={data.query.scope}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

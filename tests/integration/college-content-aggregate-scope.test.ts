@@ -158,6 +158,14 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
     ]);
+    const [activeResources,archivedResources]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringStatus:"ACTIVE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringStatus:"ARCHIVED"}),
+    ]);
+    expect(activeResources.items.map(row=>row.id)).toContain(ids.resource);
+    expect(archivedResources.items).toEqual([]);
+    expect((await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label,offeringStatus:"ACTIVE"})).csv)
+      .toContain(label);
     const resourceCsv=await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label});
     expect(resourceCsv.csv).toContain(label);
     expect(resourceCsv.csv).not.toContain("test-only private notes");
