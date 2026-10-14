@@ -19,6 +19,8 @@ describe("learner self profile parity surface", () => {
 
     expect(shell).toContain('href: "/learn/profile"');
     expect(page).toContain('title="Profile"');
+    expect(page).toContain("getOwnLearnerAcademicSummary");
+    expect(page).toContain("No active program enrollment");
     expect(page).not.toContain("getCandidatePreferences");
     expect(page).not.toContain("getOwnAcademicEvidence");
     expect(workspace).not.toContain('id="job-preferences"');

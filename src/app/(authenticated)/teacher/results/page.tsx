@@ -3,12 +3,13 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { facultyResultsQuerySchema, facultyResultsHref } from "@/modules/courses/faculty-results-model";
+import { facultyResultsQuerySchema, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 
 type Search = {
   kind?: string | string[];
   status?: string | string[];
+  deliveryId?: string | string[];
   search?: string | string[];
   page?: string | string[];
 };
@@ -25,6 +26,7 @@ export default async function FacultyAssessmentResultsPage({
   const parsed = facultyResultsQuerySchema.safeParse({
     kind: first(raw.kind) ?? undefined,
     status: first(raw.status) ?? undefined,
+    deliveryId: first(raw.deliveryId) || undefined,
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
   });
@@ -64,6 +66,17 @@ export default async function FacultyAssessmentResultsPage({
           <option value="QUIZ">Quizzes</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
+        <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="">All teaching sections</option>
+          {data.sections.map(section => (
+            <option key={section.deliveryId} value={section.deliveryId}>
+              {section.courseCode} · {section.courseName} · {section.sectionName}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={data.query.status}
           className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
@@ -92,11 +105,15 @@ export default async function FacultyAssessmentResultsPage({
               </div>
               <span className="text-xs font-semibold text-body">{item.status}</span>
             </div>
-            <dl className="mt-4 grid gap-3 sm:grid-cols-4">
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {([
                 ["Eligible", item.eligible],
                 ["Responded", item.responded],
                 ["No recorded response", item.pending],
+                ["Response rate", (() => {
+                  const rate = facultyRecordedResponseRate(item.eligible, item.responded);
+                  return rate === null ? "Unknown" : rate + "%";
+                })()],
                 ["Average graded score", item.averagePercent === null
                   ? "Unknown" : item.averagePercent + "%"],
               ] as const).map(([label,value]) =>
