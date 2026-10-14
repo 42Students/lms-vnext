@@ -40,6 +40,7 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
     inArray(projectTaskSubmissions.status,["APPROVED","CHANGES_REQUESTED"]),
     eq(projectInstances.collegeId,membership.collegeId),
     query.decision==="ALL" ? undefined : eq(projectTaskSubmissions.status,query.decision),
+    query.priority==="ALL" ? undefined : eq(projectTasks.priority,query.priority),
     escaped ? or(
       ilike(projectTasks.title,"%"+escaped+"%"),
       ilike(projectInstances.title,"%"+escaped+"%"),
