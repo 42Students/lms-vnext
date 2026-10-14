@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import {
   DataTable,
   type DataTableColumn,
@@ -46,9 +47,11 @@ function Metric({
 export function AdminCourseOverview({
   workspace,
   offeringBasePath,
+  allowOfferingLifecycle = false,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
+  allowOfferingLifecycle?: boolean;
 }) {
   const deliveryCountByOffering = new Map<
     string,
@@ -206,7 +209,7 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (offering) => (
         <div className="flex flex-wrap justify-end gap-2">
-          <Link
+          {offering.status === "ACTIVE" ? <Link
             href={
               offeringBasePath +
               "/" +
@@ -215,8 +218,8 @@ export function AdminCourseOverview({
             className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open learning
-          </Link>
-          <OfferingActions
+          </Link> : null}
+          {offering.status === "ACTIVE" ? <OfferingActions
             offering={{
               id: offering.id,
               type: offering.type,
@@ -226,7 +229,10 @@ export function AdminCourseOverview({
               courseName:
                 offering.courseName,
             }}
-          />
+            hideArchive={allowOfferingLifecycle}
+          /> : null}
+          {allowOfferingLifecycle ? <CollegeOfferingLifecycleAction
+            id={offering.id} name={offering.courseName} status={offering.status} /> : null}
         </div>
       ),
     },
@@ -421,7 +427,7 @@ export function AdminCourseOverview({
         cohorts={workspace.cohorts}
         sections={workspace.sections}
         courses={workspace.courses}
-        offerings={workspace.offerings}
+        offerings={workspace.offerings.filter(offering => offering.status === "ACTIVE")}
         deliveries={workspace.deliveries}
         faculty={workspace.faculty}
       />

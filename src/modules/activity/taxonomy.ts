@@ -70,6 +70,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_OFFERING_CREATED: "courses.offering.created",
   COURSES_OFFERING_UPDATED: "courses.offering.updated",
   COURSES_OFFERING_ARCHIVED: "courses.offering.archived",
+  COURSES_OFFERING_RESTORED: "courses.offering.restored",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
   COURSES_LEARNING_PATH_UNPUBLISHED: "courses.learning_path.unpublished",
