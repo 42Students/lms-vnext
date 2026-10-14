@@ -1419,3 +1419,6 @@ Removing a multi-choice option now preserves the server's requirement for at lea
 
 ## 2026-10-15 R4 published Faculty Quiz attempt-limit contract — PARTIAL
 Faculty Quiz authoring now forbids changing a published, closed or archived Quiz's maximum attempt count even before the first learner attempt. This matches the locked Faculty editor and preserves the announced learner attempt policy; DRAFT changes remain allowed. A pure status matrix and a PostgreSQL published-Quiz denial were authored. Live PG/browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Contacts strict selectors — PARTIAL
+Faculty Contacts now refuses duplicate, malformed, unknown or forged directory query selectors rather than silently truncating search terms or resetting page and size. A recoverable in-tab filter error preserves role/tab scope; tests cover valid defaults and rejected selectors. Executed browser/PG acceptance pending.
