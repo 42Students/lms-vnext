@@ -3,7 +3,11 @@ export const candidateScheduleJobIdSchema = z.string().uuid();
 export type RoundCandidateScheduleFact = {
   id: string; name: string; kind: string; status: string;
   scheduledAt: Date | null; venue: string | null; mode: string | null;
-  participants: readonly { applicationId: string; displayName: string | null }[];
+  participants: readonly {
+    applicationId: string;
+    displayName: string | null;
+    membershipStatus?: string;
+  }[];
 };
 
 /**
@@ -13,7 +17,9 @@ export type RoundCandidateScheduleFact = {
 export function projectTpoCandidateScheduleReadiness(
   rounds: readonly RoundCandidateScheduleFact[],
 ) {
-  const all = rounds.flatMap(round => round.participants.map(person => ({
+  const all = rounds.flatMap(round => round.participants
+    .filter(person => !person.membershipStatus || person.membershipStatus === "ACTIVE")
+    .map(person => ({
     applicationId: person.applicationId,
     name: person.displayName?.trim() || "Unnamed learner",
     roundId: round.id, roundName: round.name, roundKind: round.kind,

@@ -15,6 +15,17 @@ describe("TPO candidate round schedule read-only readiness", () => {
       candidateSlot: null, panelAssignment: null, evidence: "ROUND_ONLY",
     });
   });
+  it("excludes explicitly suspended memberships rather than advertising a slot", () => {
+    const projected = projectTpoCandidateScheduleReadiness([{
+      id: "r", name: "Round", kind: "INTERVIEW", status: "SCHEDULED",
+      scheduledAt: null, mode: "VIRTUAL", venue: null,
+      participants: [
+        { applicationId: "a", displayName: "Active", membershipStatus: "ACTIVE" },
+        { applicationId: "s", displayName: "Suspended", membershipStatus: "SUSPENDED" },
+      ],
+    }]);
+    expect(projected.displayed.map((x) => x.applicationId)).toEqual(["a"]);
+  });
   it("validates IDs and returns zero for a drive without rounds", () => {
     expect(candidateScheduleJobIdSchema.safeParse("unsafe").success).toBe(false);
     expect(projectTpoCandidateScheduleReadiness([]).total).toBe(0);
