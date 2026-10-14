@@ -421,15 +421,35 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       expectedVersion:graded.version,
     });
     expect(published.gradePublished).toBe(true);
-    await transitionCourseAssignment(faculty,assignment.id,{action:"ARCHIVE"});
     await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:published.version,feedback:null,
+    })).rejects.toMatchObject({code:"ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED"});
+    const regraded=await gradeAssignmentSubmission(facultyOnly,id,{
       pointsAwarded:6,expectedVersion:published.version,
+      feedback:"Corrected using the published rubric",
+    });
+    expect(regraded.gradePublished).toBe(false);
+    expect(regraded.feedback).toBe("Corrected using the published rubric");
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:5,expectedVersion:published.version,
+      feedback:"Outdated browser replay",
+    })).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_CONFLICT"});
+    // A published assignment with submissions must NOT archive through the
+    // command. Force the restricted state only in this disposable fixture
+    // to verify the grading writer's fail-closed parent-status fence.
+    await expect(transitionCourseAssignment(faculty,assignment.id,{action:"ARCHIVE"}))
+      .rejects.toBeDefined();
+    await pool.query("update course_assignments set status='ARCHIVED' where id=$1",
+      [assignment.id]);
+    await expect(gradeAssignmentSubmission(facultyOnly,id,{
+      pointsAwarded:6,expectedVersion:regraded.version,
     })).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
     const audit=await pool.query<{event_type:string}>(`select event_type from activity_events
       where subject_id=$1::text and event_type in
       ('courses.assignment.graded','courses.assignment.grade_published')`,[id]);
     expect(audit.rows.map(x=>x.event_type).sort()).toEqual([
       "courses.assignment.grade_published","courses.assignment.graded",
+      "courses.assignment.graded",
     ]);
   });
   it("corrects an exact Section session with SQL microsecond markedAt and rejects stale/foreign/learner",async()=>{
