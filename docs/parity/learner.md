@@ -240,6 +240,18 @@ Legacy contract:
 - [ ] Regression coverage executes successfully in CI/browser.
 
 ## Page: Attendance Summary
+
+**2026-10-14 per-course attendance-history drill-down (PARTIAL):**
+`/learn/courses/[deliveryId]/attendance-summary` is a read-only course
+details view linked from the canonical Course workspace. It groups only
+existing held, marked/unmarked, and scheduled sessions by IST month;
+displays the stored college threshold and no-data/filtered-empty states,
+and never treats missing records as absences. Zod validates the delivery UUID
+and optional month, central `academics.read` plus persisted active learner
+membership protect the data, and the existing delivery-scoped attendance
+reader supplies the authorized course records. No mutations or unregistered
+tables. Browser parity and executed DB results remain outstanding.
+
 **Legacy:** `/learn/attendance`
 
 - [x] Overall attendance summary exists.
