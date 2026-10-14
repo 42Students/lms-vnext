@@ -1161,3 +1161,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L14-010 PARTIAL (round 4):** Learner application cards now expose a truthful Last Recorded Activity timestamp drawn from saved submission, withdrawal, screening decision and applied result times, plus a direct saved status-history link for a validated application UUID. This adds discoverable per-application context without exposing reviewer/audit reasons or fabricating a provider outcome. Unit and new own-fixture PG/role/tenant tests authored; browser and runtime verification pending.
+
+
+**2026-10-15 chat-5 L11-010 PARTIAL (round 5):** Published-drives snapshot distinguishes unique non-expired drives from actionable role options and counts currently not-open-to-apply drives without double-counting multi-role jobs. A nonexpired drive is not falsely labeled eligible for every learner; the published row reader remains own-membership scoped. Fixed-unit duplicate/deadline cases authored. CI/browser gate outstanding.

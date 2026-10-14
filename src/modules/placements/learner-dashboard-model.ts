@@ -57,6 +57,11 @@ export function learnerPlacementDashboard(
   const openJobIds = new Set(
     input.jobs.filter((row) => !row.deadlinePassed).map((row) => row.jobId),
   );
+  const roleAccessByJob=new Map<string,boolean>();
+  for(const row of input.jobs){
+    if(row.deadlinePassed)continue;
+    roleAccessByJob.set(row.jobId,(roleAccessByJob.get(row.jobId)??false)||row.canApply);
+  }
   const appliedIds = new Set(input.applications.map((row) => row.applicationId));
   const events: PlacementDashboardEvent[] = input.rounds.flatMap((row) => {
     const effective = row.exception?.scheduledAt ?? row.scheduledAt;
@@ -135,6 +140,7 @@ export function learnerPlacementDashboard(
   return {
     applicationCount: appliedIds.size,
     openJobCount: openJobIds.size,
+    notOpenToApplyJobCount:[...roleAccessByJob.values()].filter(canApply=>!canApply).length,
     eligibleToApplyCount: new Set(
       input.jobs.filter((row) => !row.deadlinePassed && row.canApply)
         .map((row) => row.jobId),
