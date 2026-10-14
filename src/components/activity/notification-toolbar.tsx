@@ -10,19 +10,26 @@ export function NotificationToolbar({
   view,
   unreadCount,
   baseHref = "/notifications",
+  markAllEndpoint = "/api/notifications/read-all",
+  confirmMarkAll = false,
 }: {
   view: "all" | "unread";
   unreadCount: number;
   baseHref?: string;
+  markAllEndpoint?: string;
+  confirmMarkAll?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, setPending] = useState(false);
 
   async function markAllRead() {
+    if (confirmMarkAll && !window.confirm(
+      "Mark all unread Mentor notifications in this college as read?",
+    )) return;
     setPending(true);
     try {
-      const response = await fetch("/api/notifications/read-all", {
+      const response = await fetch(markAllEndpoint, {
         method: "POST",
       });
       if (!response.ok) {
