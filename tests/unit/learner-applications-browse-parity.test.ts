@@ -9,7 +9,8 @@ describe("Learner Applications list and detail route", () => {
   it("preserves tenant-scoped journey data and explicit details deep link", () => {
     const page = read("src/app/(authenticated)/learn/my-placements/applications/page.tsx");
     expect(page).toContain("getLearnerPlacementJourney(context)");
-    expect(page).toContain("<LearnerApplicationsBrowse items={items} />");
+    expect(page).toContain("<LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} />");
+    expect(page).toContain("getLearnerPlacementRequestWorkspace(context)");
 
     const cards = read("src/components/placements/learner-placement-journey.tsx");
     expect(cards).toContain("View application details");
@@ -28,5 +29,6 @@ describe("Learner Applications list and detail route", () => {
     expect(browse).toContain("Round history");
     expect(browse).toContain("learnerApplicationAttention(items)");
     expect(browse).toContain("Application screening updates");
+    expect(browse).toContain("selectedInterview?.href");
   });
 });

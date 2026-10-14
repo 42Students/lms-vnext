@@ -10,6 +10,7 @@ import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
+import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -33,9 +34,10 @@ function formatDate(date: Date | null) {
 }
 
 export function LearnerApplicationsBrowse({
-  items,
+  items,interviewLinks=[],
 }: {
   items: readonly LearnerPlacementJourneyItem[];
+  interviewLinks?:readonly OwnApplicationInterviewLink[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -137,6 +139,9 @@ export function LearnerApplicationsBrowse({
   const attention=learnerApplicationAttention(items);
   const selected = items.find((item) =>
     item.applicationId === url.applicationId) ?? null;
+  const selectedInterview=selected
+    ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
+    : null;
   const viewOptions = [
     {key:"all", label:"All"},
     {key:"progress", label:"In Progress"},
@@ -315,8 +320,8 @@ export function LearnerApplicationsBrowse({
           <Link href="/learn/my-placements/assessments" className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             Assessments
           </Link>
-          <Link href="/learn/my-placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
-            Interviews
+          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
+            {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button onClick={() => updateQuery({applicationId:null})}>Got it</Button>
         </>}>
