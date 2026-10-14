@@ -6,12 +6,13 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrActivityQuerySchema} from "@/modules/placements/hr-job-activity-model";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
 export default async function HrJobActivityPage({searchParams}:{
- searchParams:Promise<{collegeId?:string|string[]}>
+ searchParams:Promise<{collegeId?:string|string[];kind?:string|string[]}>
 }) {
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
- const raw=(await searchParams).collegeId;
- const input=hrActivityQuerySchema.safeParse({collegeId:Array.isArray(raw)?raw[0]:raw});
+ const raw=await searchParams;
+ const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+ const input=hrActivityQuerySchema.safeParse({collegeId:first(raw.collegeId),kind:first(raw.kind)});
  if(!input.success)return <div className="space-y-4"><PageHeader eyebrow="Recruiter" title="Hiring activity"/>
   <p role="alert">Invalid college filter.</p><Link href="/hr/activity">Choose again</Link></div>;
  const result=await listRecruiterJobActivity(context,input.data);
@@ -32,6 +33,14 @@ export default async function HrJobActivityPage({searchParams}:{
      href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">{grant.collegeName}</Link>)}
    </nav>:null}
+   <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
+     {(["ALL","PUBLISHED","CLOSED"] as const).map(kind=><Link key={kind}
+       href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind}
+       aria-current={kind===input.data.kind?"page":undefined}
+       className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">
+       {kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed"}
+     </Link>)}
+   </nav>
    {result.events.length?<ol className="grid gap-3">{result.events.map(item=>
     <li key={item.id} className="rounded-lg border border-border bg-surface p-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}

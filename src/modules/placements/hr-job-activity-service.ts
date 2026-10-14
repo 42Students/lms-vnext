@@ -5,7 +5,7 @@ import {activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrActivityQuerySchema,HR_JOB_EVENT_TYPES,projectHrJobActivity} from "./hr-job-activity-model";
+import {hrActivityQuerySchema,hrActivityEventFilter,projectHrJobActivity} from "./hr-job-activity-model";
 export async function listRecruiterJobActivity(context:RequestContext,raw:unknown={}) {
  const query=hrActivityQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)
@@ -27,7 +27,7 @@ export async function listRecruiterJobActivity(context:RequestContext,raw:unknow
  }).from(activityEvents).where(and(
   eq(activityEvents.collegeId,collegeId),eq(activityEvents.module,"PLACEMENTS"),
   eq(activityEvents.subjectType,"placement_job"),inArray(activityEvents.subjectId,ids),
-  inArray(activityEvents.eventType,[...HR_JOB_EVENT_TYPES]),
+  inArray(activityEvents.eventType,[...hrActivityEventFilter(query.kind)]),
  )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(query.limit):[];
  return {status:"READY" as const,choices:grants,collegeId,
    events:projectHrJobActivity(rows,jobs)};
