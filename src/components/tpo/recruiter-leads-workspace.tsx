@@ -267,7 +267,7 @@ export function RecruiterLeadsWorkspace({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {phase === "ready" ? <RecruiterLeadCsvImport onImported={() => void load()} /> : null}
+          <RecruiterLeadCsvImport onImported={() => void load()} />
           <button type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
             Add recruiter lead
