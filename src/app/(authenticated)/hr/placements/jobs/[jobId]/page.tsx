@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
+import { buildHrOfferOverview, hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 
 function formatCtc(
@@ -48,6 +49,10 @@ export default async function HrPlacementJobPage({
   }
   const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
   const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
+  // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
+  const now = new Date();
+  const offerSummary = buildHrOfferOverview(offers, now);
+  const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   if (filters.applicant && !selectedApplicant) notFound();
 
   const ctc =
@@ -202,7 +207,26 @@ export default async function HrPlacementJobPage({
       {filters.tab === "offers" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
-          <p className="text-sm text-body">Only offers associated with candidates already shared with your company appear here.</p>
+          <p className="text-sm text-body">Only offers associated with candidates already shared with your company appear here. Offer records represent persisted versions; LOI is not stored in the registered schema and is not represented as an offer.</p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              {label:"Recorded offers",value:offerSummary.recorded},
+              {label:"Awaiting learner reply",value:offerSummary.awaitingReply},
+              {label:"Reply overdue",value:offerSummary.overdue},
+              {label:"Accepted",value:offerSummary.accepted},
+              {label:"Declined",value:offerSummary.declined},
+              {label:"Confirmed joined",value:offerSummary.joined},
+            ].map(item=><div key={item.label} className="rounded-md border border-border bg-surface-secondary p-3">
+              <p className="text-xs text-muted-foreground">{item.label}</p>
+              <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
+            </div>)}
+          </div>
+          <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
+            <h3 className="font-semibold text-foreground">Selection readiness · read only</h3>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results through the final completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
+            {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
+              <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
+          </section>
           {offers.length ? <div className="grid gap-3 md:grid-cols-2">{offers.map(offer => (
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
@@ -210,7 +234,8 @@ export default async function HrPlacementJobPage({
               <div className="mt-2 flex flex-wrap items-center gap-2"><StatusBadge>{offer.status}</StatusBadge>
                 {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">Issued {offer.issuedAt.toISOString().slice(0, 10)} · Joining {offer.joiningDate ?? "Not set"}</p>
+              <p className="mt-2 text-xs text-muted-foreground">Issued {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(offer.issuedAt)} · Joining {offer.joiningDate ?? "Not set"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">Reply by {offer.expiresAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt) : "Not set"} · Joining outcome {offer.joiningStatus ?? "Not recorded"}</p>
             </article>
           ))}</div> : <p className="text-sm text-muted-foreground">No offers recorded for shared applicants.</p>}
           {offersTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 offers only.</p> : null}

@@ -6,3 +6,5 @@
 - 2026-10-14 — Round Results PARTIAL: chooser, exact-grant round/outcome read table and staged/applied distinctions, responsive empty/loading/error; authored unit + isolated PG denial fixtures. Remaining embedded legacy flow, submission writes, acceptance and share review.
 
 - 2026-10-14 — Applicant drawer PARTIAL: only company-drive SHORTLISTED read + active membership; contact in drawer, no unshared candidates. Pure/unit + PG auth fixtures authored; not executed.
+
+- 2026-10-14 — Offers and selection PARTIAL: read-only persisted expiry + joining and pass-through readiness, no LOI/send inventions; tests authored, not executed.
