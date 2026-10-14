@@ -100,6 +100,8 @@ Filters/actions:
 - [ ] Bulk Assign Owner uses review/confirmation.
 - [ ] Bulk Mark Contacted uses review/confirmation.
 - [ ] Bulk Not Now opens reason/revisit flow.
+
+**W48 PARTIAL:** Bulk Mark Contacted and bulk Not Now are wired in the recruiter Leads table/board workspace for at most 100 filtered active, non-joined, non-unsubscribed lead IDs. Explicit confirmation and mandatory Not Now reason, optional revisit ISO date, strict discriminated Zod validation, central TPO/college-scope checks, same-origin POST, ordered row locking, expected-stage stale-state checks, and an immutable actor-attributed NOTE for every changed lead are implemented against registered DB09 tables. Results distinguish updated/unchanged/ineligible, with no false claim of manual recruiter conversion. The legacy bulk modal/board row-actions/selection ergonomics, delivery UI and full browser acceptance are still unverified. Unit and isolated PostgreSQL success/denial/rollback tests are authored but not yet executed at this SHA.
 - [ ] Bulk WhatsApp invite preparation matches.
 - [ ] Bulk email invite preflight/count/confirmation matches.
 - [ ] Joined/unsubscribed leads are correctly skipped/disabled.
