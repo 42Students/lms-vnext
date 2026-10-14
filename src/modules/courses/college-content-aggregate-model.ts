@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const COLLEGE_CONTENT_PAGE_SIZE = 25;
-export const collegeContentKindSchema = z.enum(["VIDEO", "RESOURCE"]);
+export const collegeContentKindSchema = z.enum(["VIDEO", "RESOURCE", "LIVE_CLASS"]);
 export type CollegeContentKind = z.infer<typeof collegeContentKindSchema>;
 
 export const collegeContentQuerySchema = z.object({
@@ -14,11 +14,13 @@ export const collegeContentQuerySchema = z.object({
 export type CollegeContentQuery = z.infer<typeof collegeContentQuerySchema>;
 
 export function collegeContentTypes(kind: CollegeContentKind) {
-  return kind === "VIDEO" ? ["VIDEO", "YOUTUBE"] as const : ["RESOURCE"] as const;
+  return kind === "VIDEO" ? ["VIDEO", "YOUTUBE"] as const
+    : kind === "LIVE_CLASS" ? ["LIVE_CLASS"] as const : ["RESOURCE"] as const;
 }
 
 export function collegeContentHref(kind: CollegeContentKind, query: CollegeContentQuery) {
-  const base = kind === "VIDEO" ? "/college/videos" : "/college/resources";
+  const base = kind === "VIDEO" ? "/college/videos" : kind === "LIVE_CLASS"
+    ? "/college/live-classes" : "/college/resources";
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.courseCode) params.set("courseCode", query.courseCode);
