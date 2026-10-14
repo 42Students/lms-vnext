@@ -54,3 +54,5 @@
 - 2026-10-15 — Recruiter self-display-name PARTIAL: audited same-origin self-only CAS write to registered user name, no company-level mutations; pure/PG tests authored, execution pending.
 
 - 2026-10-15 — Pre-merge self-review hotfix: fixed double-escaped regexes in recruiter display-name normalization and CSV formula neutralization; added leading whitespace/newline regressions. Pure tests authored, not executed.
+
+- 2026-10-15 — HR notifications PARTIAL: scoped own-recipient lifecycle inbox, no raw PII/title/body, unread-only display; unit/PG fixtures authored, unexecuted.

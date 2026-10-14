@@ -454,3 +454,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter self-name profile edit — PARTIAL:** Self-only displayName edit is backed by registered users table, strict Zod, central identity.self.manage, same-origin PATCH, active profile matching exact recruiter company, SQL millisecond optimistic CAS and transactional activity audit. Profile displays the editable own name; company identity/email/mobile stay read-only. No file features or external sending. Pure unit and in-test PostgreSQL success/foreign-company/wrong-role/stale/audit fixtures authored but not run. Remaining independent legacy first/last name fields, browser acceptance and session-display propagation check.
+
+
+**2026-10-15 chat-10 / HR read-only in-app notifications — PARTIAL:** New /hr/messages page safely lists persisted own-recipient in_app_notifications joined to allowlisted PLACEMENTS job lifecycle events and exact recruiter company+college job IDs; unread-only filter, chooser, bounded newest 100 and IST times. Never displays raw notification body/title or applicant contact. Pure unit and in-test PostgreSQL own positive/foreign-college/wrong-role fixtures authored, not executed. Remaining true legacy threads, read acknowledgement, real-time refresh, browser acceptance.
