@@ -11,6 +11,7 @@ import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
+  collegeDirectorySearchHint,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
@@ -110,7 +111,7 @@ export async function CollegeRoleDirectoryWorkspace({
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">
-            Name or email
+            {collegeDirectorySearchHint(kind)}
             <input
               type="search"
               name="q"

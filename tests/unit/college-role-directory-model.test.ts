@@ -3,9 +3,14 @@ import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
+  collegeDirectorySearchHint,
 } from "@/modules/people/college-role-directory-model";
 
 describe("College Admin Faculty/Students directory helpers", () => {
+  it("describes learner identifier search without exposing it as a filter for Faculty", () => {
+    expect(collegeDirectorySearchHint("LEARNER")).toContain("registration number");
+    expect(collegeDirectorySearchHint("FACULTY")).toBe("Name or email");
+  });
   it("parses status/search/page filters and forbids caller-controlled college", () => {
     expect(collegeRoleDirectoryQuerySchema.parse({})).toEqual({
       q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", teaching: "ALL", page: 1,

@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   membershipRoles,
+  learnerProfiles,
   users,
   cohorts,
   departments,
@@ -68,6 +69,11 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
     )));
+  const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
+    .from(learnerProfiles).where(and(
+      eq(learnerProfiles.membershipId, collegeMemberships.id),
+      or(ilike(learnerProfiles.rollNumber, search), ilike(learnerProfiles.registrationNumber, search)),
+    )));
   const activeTeaching = exists(db.select({ assignmentId: courseTeachingAssignments.id })
     .from(courseTeachingAssignments)
     .innerJoin(courseSectionDeliveries, and(
@@ -105,6 +111,7 @@ export async function listCollegeRoleDirectory(
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
+        kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
       ) : undefined,
     )).as("college_role_directory");
 
