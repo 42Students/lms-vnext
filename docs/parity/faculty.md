@@ -1343,3 +1343,6 @@ Added a shared active-Faculty plus central `courses.read` predicate and an authe
 
 ## 2026-10-15 Legacy /teach role parity — PARTIAL
 The legacy `/teach` subtree now uses the exact `/teacher` active Faculty and central college-scoped read predicate, so disabled members cannot keep access merely through a cached FACULTY role. Shared unit fixtures cover the predicate. Runtime browser role redirects and persisted membership revocation are pending independent acceptance; not DONE.
+
+## 2026-10-15 /teach Course detail hidden-Section 404 — PARTIAL
+The alternate Faculty Course detail validates UUID before lookup and maps missing/foreign/unassigned learning deliveries to `notFound()` through a typed, tested service-error classifier. Genuine database errors still reach the error boundary. This is a source-authored privacy/route safeguard; exact PostgreSQL and desktop/mobile browser acceptance remain open.
