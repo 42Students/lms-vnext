@@ -5,6 +5,8 @@ export const facultyQuizAttemptsQuerySchema = z.object({
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 
+export const facultyQuizAttemptSearchSchema = facultyQuizAttemptsQuerySchema.omit({quizId:true});
+
 export function facultyQuizAttemptsPage<T extends {id:string;submittedAt:Date}>(
   values:readonly T[],requested:number,
 ) {

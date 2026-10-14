@@ -1,6 +1,8 @@
 import {z} from "zod";
 import {learnerNotificationTarget} from "./learner-notification-inbox-model";
 import {learnerNotificationAssessmentAction} from "./learner-notification-assessment-action-model";
+import {learnerNotificationCourseAction} from "./learner-notification-course-action-model";
+import {learnerNotificationProjectAction} from "./learner-notification-project-action-model";
 const uuid=z.string().uuid();
 const offerView=z.enum(["pending","accepted","closed"]);
 /** Destination pages re-check own-member permissions; URLs never select a tenant. */
@@ -15,6 +17,15 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
       ?{href:"/learn/my-placements/applications?applicationId="+encodeURIComponent(ids[0]!),label:"View your application"}
       :{href:"/learn/my-placements/applications",label:"View applications"};
   }
+  const applicationDetail=url.pathname.match(/^\/learn\/my-placements\/applications\/([^/]+)(\/history)?$/);
+  if(applicationDetail){
+    const applicationId=applicationDetail[1]!;
+    if(!uuid.safeParse(applicationId).success)return null;
+    const suffix=applicationDetail[2]??"";
+    return {href:"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+suffix,
+      label:suffix?"View application history":"View your application"};
+  }
+  if(url.pathname.startsWith("/learn/my-placements/applications/"))return null;
   if(url.pathname==="/learn/my-placements/offers"){
     const values=url.searchParams.getAll("status");
     if(values.length>1||values.length===1&&!offerView.safeParse(values[0]).success)return null;
@@ -22,5 +33,21 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
       ?{href:"/learn/my-placements/offers?status="+encodeURIComponent(values[0]!),label:"View your offers"}
       :{href:"/learn/my-placements/offers",label:"View your offers"};
   }
+  if(url.pathname==="/learn/my-placements/interviews"){
+    const app=url.searchParams.getAll("applicationId");
+    const round=url.searchParams.getAll("roundId");
+    if(app.length===0&&round.length===0)
+      return {href:"/learn/my-placements/interviews",label:"View interviews"};
+    if(app.length!==1||round.length!==1||
+      !uuid.safeParse(app[0]).success||!uuid.safeParse(round[0]).success)return null;
+    return {href:"/learn/my-placements/interviews?applicationId="+encodeURIComponent(app[0]!)+
+      "&roundId="+encodeURIComponent(round[0]!),label:"View interview details"};
+  }
+  const course=learnerNotificationCourseAction(safe);
+  if(course)return course;
+  if(url.pathname==="/learn/courses"||url.pathname.startsWith("/learn/courses/"))return null;
+  const project=learnerNotificationProjectAction(safe);
+  if(project)return project;
+  if(url.pathname==="/learn/projects"||url.pathname.startsWith("/learn/projects/"))return null;
   return learnerNotificationAssessmentAction(safe);
 }

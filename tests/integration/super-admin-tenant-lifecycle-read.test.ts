@@ -1,0 +1,35 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, describe, expect, it } from "vitest";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { createCollege, archiveCollege } from "@/modules/colleges/service";
+import { getSuperAdminTenantLifecycleDirectory, getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+const enabled = Boolean(process.env.TEST_DATABASE_URL) && process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
+const admin: RequestContext = { user: { id: SEED_IDS.superAdminUser, identityUid: "tenant-lifecycle", platformStatus: "ACTIVE", systemRoles: ["SUPER_ADMIN"] }, membership: null, adminScope: null };
+describe.skipIf(!enabled)("Super Admin archived tenant directory/detail (PG)", () => {
+  afterAll(closeDatabaseConnection);
+  it("reads active/archived fixtures, decodes aliased joins, and gives identical not-found for foreign/absent tenants", async () => {
+    const token = randomUUID().slice(0, 10);
+    const active = await createCollege(admin, { organizationId: SEED_IDS.organization, name: "Tenant Active " + token, code: "LCA-" + token });
+    const archived = await createCollege(admin, { organizationId: SEED_IDS.organization, name: "Tenant Archived " + token, code: "LCR-" + token });
+    await archiveCollege(admin, archived.id);
+    expect((await getSuperAdminTenantLifecycleDirectory(admin, { q: token })).items.map(row => row.id)).toEqual([active.id]);
+    const all = await getSuperAdminTenantLifecycleDirectory(admin, { q: token, status: "ALL", page: 999 });
+    expect(all.items.map(row => row.id).sort()).toEqual([active.id, archived.id].sort());
+    expect(all.query.page).toBe(1);
+    const detail = await getSuperAdminTenantLifecycleDetail(admin, archived.id);
+    expect(detail.status).toBe("ARCHIVED");
+    expect(detail.name).toBe("Tenant Archived " + token);
+    expect(detail.organizationId).toBe(SEED_IDS.organization);
+    expect(detail.createdAt).toBeInstanceOf(Date);
+    const scoped = { ...admin, adminScope: { organizationId: SEED_IDS.organization, collegeId: active.id } };
+    expect((await getSuperAdminTenantLifecycleDirectory(scoped, { q: token, status: "ALL" })).items.map(row => row.id)).toEqual([active.id]);
+    for (const id of [archived.id, randomUUID()]) await expect(getSuperAdminTenantLifecycleDetail(scoped, id)).rejects.toMatchObject({ code: "COLLEGE_NOT_FOUND" });
+    await expect(getSuperAdminTenantLifecycleDirectory(scoped, { organizationId: randomUUID() })).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getSuperAdminTenantLifecycleDirectory({ ...admin, user: { ...admin.user, systemRoles: [] } }, {})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+});
