@@ -57,3 +57,10 @@ export function facultyResultsHref(query: FacultyResultsQuery): string {
   if (query.page > 1) params.set("page", String(query.page));
   return "/teacher/results" + (params.size ? "?" + params.toString() : "");
 }
+
+/** Returns unknown, not a made-up zero, for absent or inconsistent rosters. */
+export function facultyRecordedResponseRate(eligible: number, responded: number) {
+  if (!Number.isInteger(eligible) || !Number.isInteger(responded) ||
+      eligible <= 0 || responded < 0 || responded > eligible) return null;
+  return Math.round(responded / eligible * 100);
+}
