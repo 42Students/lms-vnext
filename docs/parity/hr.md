@@ -391,3 +391,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Company Reports outcome funnel — PARTIAL:** Joined and declined offer counts now use persisted offer/explicit joining records (joined counted only with ACCEPTED), in addition to existing applied/issued/accepted; responsive mobile cards complement table. Relationship scope and bound page size preserved, no candidate PII. Pure unit and PG no-grant/wrong-role tests authored but unexecuted; positive persisted tenant/report fixtures, historical dedup, deep legacy report parity and browser evidence remain open.
+
+
+**2026-10-14 Chat 10 / HR Results-Due Calendar — PARTIAL:** Persisted recruiter-company/college-scoped round resultsDueAt dates now appear as a dedicated IST due list with job/round drill-ins and counts. Round query includes dates in view even if meeting scheduled in another week; no slot, messaging or candidate data fabricated. Unit and isolated PG role/company/college fixtures authored (not executed). Remaining: integrated legacy RESULT_DUE event taxonomy in day columns, interview SLOT table, stale-load treatment and browser/PG proof.

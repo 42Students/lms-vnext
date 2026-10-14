@@ -515,8 +515,7 @@ export default async function RecruiterCompanyReportsPage({
         distinct candidates. Submitted and withdrawn are current
         application statuses. Outstanding and accepted offers
         count offer records with current ISSUED and ACCEPTED
-        statuses, respectively; they do not represent lifetime
-        offer history or confirmed joining. Only PUBLISHED and
+        statuses, respectively; joined counts only explicit JOINED evidence on ACCEPTED offers. These counts do not represent lifetime offer history. Only PUBLISHED and
         CLOSED drives authorized for this exact employer-college
         relationship are included. No candidate contact details,
         report exports, external offers or confidential TPO data
