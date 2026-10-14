@@ -456,6 +456,10 @@ export async function stagePlacementRoundResult(
       })
       .returning();
 
+    if (!staged) {
+      throw new PlacementsServiceError("PLACEMENT_RESULT_NOT_FOUND");
+    }
+
     if (expectedCurrentResultId !== undefined) {
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RESULT_STAGED,
