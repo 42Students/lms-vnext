@@ -555,6 +555,8 @@ Headline metrics:
 - [ ] drill-in/filter behavior matches.
 - [ ] export matches.
 
+**W49 C — PARTIAL:** A dedicated /tpo/reports/branch-season drill-in now reports unique application-holding learners, distinct members with currently ACCEPTED offers, accepted offer versions, and a clearly labeled accepted-applicants/applicants rate for one registered season. The placement-pool denominator uses only persisted, active-cohort PLACEMENTS choices if that relation is actually migrated; otherwise it and its official placement rate remain null. Ambiguous/missing current branch attribution is explicit rather than silently assigned. The same authorized model drives a formula-neutralized CSV. Original placement-time cohort/branch history, registration snapshot semantics, external offers, UI acceptance and executed PostgreSQL evidence remain open.
+
 ## Report: By Company
 - [ ] company hires/average/highest package metrics match.
 - [ ] drill-in/filter behavior matches.
