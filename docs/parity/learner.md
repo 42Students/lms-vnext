@@ -939,3 +939,27 @@ month grouping, empty months, forged college, suspended and wrong-role
 denials, and test-owned cleanup. Execution, exact legacy browser/mobile
 proof and complete canonical attendance evidence remain **OPEN**; neither
 Course Attendance nor Attendance summary is marked DONE by this addition.
+
+## Learner placement preparation evidence checklist — chat-4 (2026-10-14)
+
+PARTIAL — A new read-only, mobile-first `/learn/my-placements/preparation`
+page links from My Placements and reports **four factual persisted signals**:
+active academic program enrollment, at least one profile contact method,
+at least one Learner profile skill, and historical placement application
+activity (including withdrawn applications). Links return only to existing
+authorized Learner profile or application pages. `ALL` / `RECORDED` /
+`MISSING` filters use strict Zod and return honest no-match states.
+The server requires the canonical persisted active Learner college membership,
+role and paid Placements/eligibility scope; it checks central placements.read
+and reads only the authorized current user profile/enrollment and own
+placement_application rows. It does not expose private identity values,
+claim eligibility, invent college requirements, or calculate a subjective
+hiring-readiness score. No write route or notification is introduced.
+
+A pure-model unit suite and an isolated fresh-PostgreSQL success/denial
+integration test using the same passing Learner fixture as Attendance calendar
+were authored for an actual enrolled Learner with a persisted application,
+forged college, suspended/disabled account, wrong role, forged actor and
+caller-injected membership scopes. Full browser/positive-PG execution
+evidence, historic content completeness, and exact legacy acceptance remain
+OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
