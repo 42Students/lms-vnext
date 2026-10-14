@@ -58,6 +58,14 @@ export default async function FacultyQuizReportPage({
           Export not attempted only
         </Link>
       </nav>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
+          "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          Download question accuracy CSV
+        </Link>
+        <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
+      </div>
       <FacultyReportCsvDownload
         notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
         href={facultyReportCsvHref({

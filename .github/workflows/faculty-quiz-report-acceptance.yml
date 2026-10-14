@@ -9,6 +9,7 @@ on:
       - "tests/integration/faculty-section-authoring.test.ts"
       - "src/modules/courses/faculty-report-csv-service.ts"
       - "src/app/(authenticated)/teacher/report/quiz/**"
+      - "src/modules/courses/faculty-quiz-question-csv*"
 permissions:
   contents: read
 concurrency:
@@ -51,6 +52,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Faculty Quiz Report and safe filtered CSV PostgreSQL contracts
         run: npx vitest run --config vitest.db.config.ts tests/integration/faculty-section-authoring.test.ts
+      - name: Question accuracy formula neutralization and 500-row cap
+        run: npx vitest run tests/unit/faculty-quiz-question-csv.test.ts tests/unit/faculty-quiz-csv-cap.test.ts tests/unit/faculty-assessment-report.test.ts
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 25
