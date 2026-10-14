@@ -18,6 +18,8 @@ describe("HR hiring activity",()=>{
   expect(hrActivityEventFilter("CLOSED")).toEqual(["placements.job.closed"]);
   expect(hrActivityEventFilter("ALL")).toHaveLength(2);
   expect(hrActivityQuerySchema.safeParse({page:0}).success).toBe(false);
+  expect(hrActivityQuerySchema.safeParse({page:"2",kind:"PUBLISHED"}).success).toBe(true);
+  expect(hrActivityQuerySchema.safeParse({page:"not-a-number"}).success).toBe(false);
   expect(hrActivityHasNext(41,40)).toBe(true);
   expect(hrActivityHasNext(40,40)).toBe(false);
  });

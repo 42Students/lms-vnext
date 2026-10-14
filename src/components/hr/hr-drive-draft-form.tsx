@@ -7,6 +7,7 @@ import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-un
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
 import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
+import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compensation-review-model";
 
 const HR_DRAFT_PREVIEW_FIELDS=[
  ["minimumAnnualCtcInr","Minimum CTC"],
@@ -251,6 +252,14 @@ export function HrDriveDraftForm({
                 </div>
               ))}
             </dl>
+            {hrDraftCompensationWarnings(result.data).length>0?
+              <div role="status" className="rounded-md border border-border bg-surface p-3 text-sm">
+                <h5 className="font-semibold text-foreground">Compensation details to review</h5>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {hrDraftCompensationWarnings(result.data).map(note=><li key={note}>{note}</li>)}
+                </ul>
+                <p className="mt-2 text-xs text-muted-foreground">Review notices do not save or submit this draft.</p>
+              </div>:null}
             <p className="text-xs text-muted-foreground">
               Preview only. Actual student presentation is controlled by the placement cell after approval.
             </p>
