@@ -30,6 +30,10 @@ export default async function CollegeClassesPage({
     listCollegeSectionOptions(context),
   ]);
   return <div className="space-y-6">
+    <Link href="/college/classes/recurring-preview"
+      className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Preview recurring class schedule
+    </Link>
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
     <CollegeStructureDirectory data={classes} />
   </div>;

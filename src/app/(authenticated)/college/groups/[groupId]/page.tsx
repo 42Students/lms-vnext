@@ -187,6 +187,10 @@ export default async function CollegeGroupDetailPage({
 
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
+        <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Validate member CSV (dry run)
+        </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
       </section> : null}
