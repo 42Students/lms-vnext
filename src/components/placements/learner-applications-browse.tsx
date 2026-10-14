@@ -20,11 +20,17 @@ import {
   browseLearnerApplications,
   learnerApplicationStage,
   learnerApplicationStageOptions,
+  learnerApplicationViewCounts,
   DEFAULT_LEARNER_APPLICATION_FILTERS,
   type LearnerApplicationBrowseFilters,
 } from "@/modules/placements/learner-applications-browse-model";
 
 const PAGE_SIZE = 20;
+const viewOptions=[
+  {key:"all",label:"All"},
+  {key:"progress",label:"In progress"},
+  {key:"completed",label:"Final recorded status"},
+] as const;
 
 function humanize(value: string) {
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -135,6 +141,7 @@ export function LearnerApplicationsBrowse({
     ...DEFAULT_LEARNER_APPLICATION_FILTERS,search,view,stage:url.stage,sort,
   };
   const rows = browseLearnerApplications(items, filters);
+  const viewCounts=learnerApplicationViewCounts(items);
   const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
   const requested = url.page;
   const page = Number.isInteger(requested) && requested > 0
@@ -151,11 +158,6 @@ export function LearnerApplicationsBrowse({
   const selectedInterview=selected
     ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
-  const viewOptions = [
-    {key:"all", label:"All"},
-    {key:"progress", label:"In Progress"},
-    {key:"completed", label:"Completed"},
-  ] as const;
 
   return (
     <div className="space-y-5">
@@ -210,9 +212,13 @@ export function LearnerApplicationsBrowse({
               className={view===option.key
                 ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}
-            >{option.label}</button>
+            >{option.label} ({viewCounts[option.key]})</button>
           ))}
         </div>
+        <p className="text-xs leading-5 text-muted-foreground">
+          Final recorded status means rejected or withdrawn here. Shortlisting and applied round results
+          do not by themselves prove an offer, hiring, or employer completion.
+        </p>
         <div role="group" aria-label="Screening stage filter chips" className="flex flex-wrap gap-2">
           {stageCounts.map(({stage:stageKey,count})=>(
             <button type="button" key={stageKey} aria-pressed={filters.stage===stageKey}

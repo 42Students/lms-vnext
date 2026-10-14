@@ -35,6 +35,12 @@ export function learnerApplicationIsComplete(item: LearnerApplicationBrowseItem)
     learnerApplicationStage(item) === "REJECTED";
 }
 
+/** Current saved application/screening statuses, not inferred employer hiring outcomes. */
+export function learnerApplicationViewCounts(rows:readonly LearnerApplicationBrowseItem[]){
+ const completed=rows.filter(learnerApplicationIsComplete).length;
+ return {all:rows.length,progress:rows.length-completed,completed};
+}
+
 export function learnerApplicationLatestActivity(item: LearnerApplicationBrowseItem) {
   return Math.max(
     item.submittedAt.getTime(),
