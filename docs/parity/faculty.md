@@ -356,3 +356,7 @@ E2E uncovered a real database overlap constraint (section_schedule_events_sectio
 ### Faculty monthly attendance guidance threshold (2026-10-14)
 
 Added Section-local advisory guidance against the persisted College attendance policy. The below-threshold list uses **exact integer marks**, never rounded display percentage; unknown/unmarked learners are kept separate rather than falsely classified safe or at risk. Faculty can open the existing authorized learner-session drawer from the list, and the PDF includes below-guidance/unknown totals. This is explicitly not official debarment or institution-wide eligibility; those decisions remain separate administrative policy and migration gates. Threshold edge/boundary tests authored; exact-SHA runtime and parity still required.
+
+### Faculty Section overlap rejection UI (2026-10-14)
+
+Faculty class scheduling now translates persisted PostgreSQL non-overlap exclusion violations into an actionable message in the Schedule Class form, without inventing a success or disabling the constraint. E2E schedules a real class, attempts the same Section/time a second time, asserts HTTP 409 and the recovery text, then continues into Calendar and attendance correction. This does not certify full scheduling parity without the exact-SHA run.
