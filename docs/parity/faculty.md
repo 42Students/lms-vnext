@@ -1413,3 +1413,6 @@ The Section Quiz authoring transaction now checks persisted ACTIVE user, ACTIVE 
 
 ## 2026-10-15 R4 Quiz multiple-choice answer interaction fence — PARTIAL
 The Faculty Quiz question editor now refuses a toggle that would leave multi-choice with zero correct answers or with every option correct. Normal changes to multiple correct options remain allowed, and the existing strict save schema still validates the final question. Pure regression tests cover both two-option boundaries and a valid three-option transition. Browser/PG run pending.
+
+## 2026-10-15 R4 Quiz multiple-choice deletion consistency — PARTIAL
+Removing a multi-choice option now preserves the server's requirement for at least one correct and at least one incorrect remaining option. If Faculty removes the sole selected or sole unselected option, the editor repairs the two-option draft deterministically without mutating its original data. New pure regression cases authored; browser confirmation pending.

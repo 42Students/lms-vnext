@@ -22,6 +22,19 @@ describe("Faculty Quiz option removal",()=>{
  it("preserves multi-choice remaining correctness",()=>{
   expect(facultyRemoveQuizOption(multi,0).map(o=>o.correct)).toEqual([false,true]);
  });
+ it("keeps at least one correct and one incorrect option after a deletion",()=>{
+  const oneCorrect={type:"MULTIPLE_CHOICE" as const,options:[
+   {correct:true},{correct:false},{correct:false},
+  ]};
+  expect(facultyRemoveQuizOption(oneCorrect,0).map(o=>o.correct))
+   .toEqual([true,false]);
+  const onlyIncorrect={type:"MULTIPLE_CHOICE" as const,options:[
+   {correct:true},{correct:true},{correct:false},
+  ]};
+  expect(facultyRemoveQuizOption(onlyIncorrect,2).map(o=>o.correct))
+   .toEqual([true,false]);
+  expect(onlyIncorrect.options.map(o=>o.correct)).toEqual([true,true,false]);
+ });
  it("refuses to reduce below two options or delete an invalid index",()=>{
   const reduced=facultyRemoveQuizOption(single,2);
   expect(facultyRemoveQuizOption({type:"SINGLE_CHOICE",options:reduced},0)).toHaveLength(2);
