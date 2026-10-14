@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, lt, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
@@ -25,6 +25,7 @@ import {
   type CollegeContentKind,
 } from "./college-content-aggregate-model";
 
+import {collegeLiveClassQuerySchema} from "./college-live-classes-model";
 const programDepartment = alias(departments, "content_program_department");
 
 /**
@@ -37,7 +38,8 @@ export async function listCollegeContentAggregate(
   kind: CollegeContentKind,
   rawQuery: unknown,
 ) {
-  const query = collegeContentQuerySchema.parse(rawQuery);
+  const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
+  const query = collegeContentQuerySchema.parse(live ? (({view: _view,...filters})=>filters)(live) : rawQuery);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "courses.read", {
@@ -96,6 +98,8 @@ export async function listCollegeContentAggregate(
         kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
+      live?.view === "PAST" ? lt(lessonContents.endsAt,new Date()) : undefined,
       query.q ? or(
         ilike(lessonContents.title, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
         ilike(courseLessons.name, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
@@ -112,7 +116,7 @@ export async function listCollegeContentAggregate(
   ]);
   const total = counts[0]?.total ?? 0;
   return {
-    kind, query, items, total,
+    kind, query, view:live?.view??"ALL", items, total,
     totalPages: collegeContentPageCount(total),
   };
 }
