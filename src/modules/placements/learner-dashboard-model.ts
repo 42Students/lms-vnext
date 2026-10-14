@@ -1,5 +1,6 @@
 import { isCareerRoundVisible } from "./learner-round-visibility-policy";
 import {learnerExpiringOffer} from "./learner-dashboard-offer-priority-model";
+import {learnerDashboardIstWeekDays} from "./learner-dashboard-ist-week-model";
 
 /** Use only learner-scoped source rows; never infer employer outcomes or
  * "confirmed" attendance from a scheduled round. Dates are UTC instants. */
@@ -43,8 +44,6 @@ export type PlacementDashboardEvent = {
   href: string;
 };
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-
 export function learnerPlacementDashboard(
   input: {
     jobs: readonly PlacementDashboardJob[];
@@ -55,10 +54,14 @@ export function learnerPlacementDashboard(
   now: Date = new Date(),
 ) {
   const nowMs = now.getTime();
-  const weekEndMs = nowMs + WEEK_MS;
   const openJobIds = new Set(
     input.jobs.filter((row) => !row.deadlinePassed).map((row) => row.jobId),
   );
+  const roleAccessByJob=new Map<string,boolean>();
+  for(const row of input.jobs){
+    if(row.deadlinePassed)continue;
+    roleAccessByJob.set(row.jobId,(roleAccessByJob.get(row.jobId)??false)||row.canApply);
+  }
   const appliedIds = new Set(input.applications.map((row) => row.applicationId));
   const events: PlacementDashboardEvent[] = input.rounds.flatMap((row) => {
     const effective = row.exception?.scheduledAt ?? row.scheduledAt;
@@ -90,11 +93,12 @@ export function learnerPlacementDashboard(
     a.applicationId.localeCompare(b.applicationId) ||
     a.roundId.localeCompare(b.roundId));
 
-  const weekEvents = events.filter((event) => event.when.getTime() <= weekEndMs);
-  const attentionEvents=[
-    ...weekEvents.filter(event=>event.kind==="ASSESSMENT"),
-    ...weekEvents.filter(event=>event.kind==="INTERVIEW"),
-  ];
+  const weekDays=learnerDashboardIstWeekDays(events,now);
+  const weekEvents=weekDays.flatMap(day=>day.events);
+  // The timeline is already in effective-schedule order; grouping by round
+  // kind here hid earlier interviews behind later assessments.
+  const attentionEvents=weekEvents.filter(event=>
+    event.kind==="ASSESSMENT"||event.kind==="INTERVIEW");
   const firstWeek = (kind: PlacementDashboardEvent["kind"]) =>
     weekEvents.find((event) => event.kind === kind) ?? null;
   const priority =
@@ -136,12 +140,15 @@ export function learnerPlacementDashboard(
   return {
     applicationCount: appliedIds.size,
     openJobCount: openJobIds.size,
+    notOpenToApplyJobCount:[...roleAccessByJob.values()].filter(canApply=>!canApply).length,
     eligibleToApplyCount: new Set(
       input.jobs.filter((row) => !row.deadlinePassed && row.canApply)
         .map((row) => row.jobId),
     ).size,
     upcomingAssessmentCount: events.filter((event) => event.kind === "ASSESSMENT").length,
+    thisWeekAssessmentCount:weekEvents.filter(event=>event.kind==="ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
+    thisWeekInterviewCount:weekEvents.filter(event=>event.kind==="INTERVIEW").length,
     activeOfferCount: input.offers.filter((row) => row.status === "ISSUED" &&
       (row.expiresAt===null||row.expiresAt.getTime()>=nowMs)).length,
     activeApplicationCount: new Set(
@@ -153,8 +160,12 @@ export function learnerPlacementDashboard(
     firstRun: appliedIds.size === 0,
     nextAction,
     needsAttention:attentionEvents.slice(0,3),
+    urgentAssessment:attentionEvents.find(event=>event.kind==="ASSESSMENT")??null,
+    urgentInterview:attentionEvents.find(event=>event.kind==="INTERVIEW")??null,
+    nextScheduledEvent:events[0]??null,
     fullAttentionCount:attentionEvents.length,
     weekEvents: weekEvents.slice(0, 7),
+    weekDays: weekDays.map(day=>({...day,events:day.events.slice(0,2)})),
     fullWeekEventCount: weekEvents.length,
   };
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
 import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
+import {learnerPinnedAnnouncementPreview} from "@/modules/activity/learner-pinned-announcements-model";
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
 import { useMemo, useState } from "react";
@@ -73,6 +74,7 @@ export function LearnerNotificationsInbox({
     () => learnerNotificationCategoryCounts(combined),
     [combined],
   );
+  const pinnedAnnouncements=useMemo(()=>learnerPinnedAnnouncementPreview(combined),[combined]);
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
   const unreadPersonalCount=learnerNotificationPendingCount(personal);
@@ -174,6 +176,22 @@ export function LearnerNotificationsInbox({
           database rollout is being verified. Personal notifications remain available.
         </div>
       ) : null}
+      {pinnedAnnouncements.length>0 ? (
+        <section aria-label="Pinned college announcements" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="text-sm font-semibold text-foreground">Pinned college announcements</h2>
+          <p className="mt-1 text-xs text-body">Pinned by your college. Announcements do not have personal read receipts.</p>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {pinnedAnnouncements.map(item=><li key={item.id} className="min-w-0">
+              <button type="button" onClick={()=>setSelected(item)}
+                className="flex min-h-11 w-full min-w-0 items-center rounded-lg border border-border px-3 py-2 text-left text-sm font-semibold text-primary-text focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                <span className="min-w-0 break-words">{item.title}</span>
+              </button>
+            </li>)}
+          </ul>
+          {combined.filter(item=>item.source==="ANNOUNCEMENT"&&item.pinned).length>pinnedAnnouncements.length
+            ? <p className="mt-2 text-xs text-muted-foreground">Additional pinned announcements remain in the list below.</p>:null}
+        </section>
+      ):null}
       <div className="min-w-0 [&_article]:min-w-0 [&_article]:break-words [&_article_a]:max-w-full">
       {visible.length === 0 ? (
         <div className="space-y-3">
