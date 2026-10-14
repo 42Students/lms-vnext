@@ -382,3 +382,11 @@ this view; Delivery remains the only write path. Unit/helper tests and
 same-project positive empty/foreign-role denial in the existing unique-fixture
 PostgreSQL suite are authored. Execution/browser and full legacy Overview
 acceptance remain PARTIAL.
+
+## Mentor Project task creation (2026-10-14)
+
+An actively assigned Mentor can create a registered TODO task within an active/planned Sprint with persisted title, description, acceptance criteria, priority and sequence. Confirmation UI explains that this changes the Board and records an audit event. POST /api/projects/[projectId]/tasks validates strict Zod inputs and same origin, requires a persisted current Mentor project grant and central projects.read, and uses a locked project/Sprint transaction with optimistic sprint timestamp and immutable projects.task.created audit. Sequence uniqueness is enforced by the migrated table. PostgreSQL success/foreign/wrong-role/stale tests have been authored using unique project/template fixtures, cleaning mutable test records but never deleting from append-only audit tables. Assignment and workload fields remain explicitly blocked by the missing registered columns. Browser/real-DB execution and complete legacy parity remain PARTIAL.
+
+## Mentor team & meeting log (2026-10-14)
+
+The read-only /mentor/projects/[projectId]/team-meetings page combines exact-project current Learner/Mentor role-backed member counts and registered project_meetings records with REQUESTED/SCHEDULED/COMPLETED/CANCELLED filters and 20-row pagination. The live Mentor project grant, central projects.read and optional Projects enablement are checked before querying. The UI shows meeting type, status, recorded start time and timezone, and whether an outcome exists without exposing raw outcome text, meeting URLs or personal member contacts. Loading/error, mobile cards, disabled and honest zero-meeting states exist. An isolated PostgreSQL integration test inserts a real REQUESTED meeting and checks counts, filtering and wrong-role/foreign-project denials. Tests are authored, not executed in this chat. Lifecycle writes, complete history and browser parity remain PARTIAL.
