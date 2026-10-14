@@ -44,6 +44,16 @@ describe("Learner job browsing filters", () => {
     expect(filterLearnerPlacementJobs(jobs,{...defaults,sort:"title"}).map(x=>x.job.id))
       .toEqual(["a","b","c"]);
   });
+  it("sorts newest from persisted publication time, with unknown timestamps last", () => {
+    const withPublished = [
+      {...jobs[0]!, job: {...jobs[0]!.job, publishedAt: "2026-10-01T00:00:00Z"}},
+      {...jobs[1]!, job: {...jobs[1]!.job, publishedAt: null}},
+      {...jobs[2]!, job: {...jobs[2]!.job, publishedAt: "2026-10-12T00:00:00Z"}},
+    ];
+    expect(filterLearnerPlacementJobs(withPublished,{...defaults,sort:"newest"})
+      .map(x=>x.job.id)).toEqual(["c","a","b"]);
+    expect(withPublished.map(x=>x.job.id)).toEqual(["a","b","c"]);
+  });
   it("derives facets from real job rows", () => {
     expect(availableLearnerJobFacets(jobs)).toEqual({
       types:["FULL_TIME","INTERNSHIP"],
