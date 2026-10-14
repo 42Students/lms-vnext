@@ -13,6 +13,7 @@ afterEach(async()=>{await cleanupLearnerAssessmentBrowseFixture(pool,fixture);},
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();});
 describe("scoped employer assessment link state",()=>{
  it("uses only real owned TEST round and its persisted URL",async()=>{
+  await pool.query("UPDATE placement_job_rounds SET test_url=$1 WHERE id=$2",["https://exam.example.test/start",fixture.roundId]);
   const data=await getOwnLearnerAssessmentBrowse(fixture.drive.learner.context);
   const own=data.rounds.find(row=>row.roundId===fixture.roundId);
   expect(own).toBeDefined();
