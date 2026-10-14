@@ -18,7 +18,7 @@ describe("own application URL cannot select another learner",()=>{
 it("returns persisted member-owned application despite caller filter",async()=>{
 const f=own!;const rows=await getLearnerPlacementJourney(f.drive.learner.context);
 const query=readLearnerApplicationUrl("view=progress&applicationId="+f.applicationId);
-expect(rows.rows.some(row=>row.applicationId===query.applicationId)).toBe(true);
+expect(rows.some(row=>row.applicationId===query.applicationId)).toBe(true);
 },30000);
 it("denies forged college, suspended account, wrong role",async()=>{
 const ctx=own!.drive.learner.context;

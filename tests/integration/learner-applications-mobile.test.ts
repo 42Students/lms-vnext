@@ -18,7 +18,7 @@ afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
 describe("L14-024 own persisted application on small screen",()=>{
 it("shows authorized application with active bookmarked filters",async()=>{
 const f=own!,data=await getLearnerPlacementJourney(f.drive.learner.context);
-expect(data.rows.some(row=>row.applicationId===f.applicationId)).toBe(true);
+expect(data.some(row=>row.applicationId===f.applicationId)).toBe(true);
 const query=readLearnerApplicationUrl("q=role&view=progress");
 expect(learnerApplicationMobileSummary({search:query.q,view:query.view,
 stage:query.stage,sort:query.sort})).toContain("2 active");

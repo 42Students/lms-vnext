@@ -43,6 +43,7 @@ export function LearnerApplicationsBrowse({
   const [search,setSearch]=useState(url.q);
   const [mobileOpen,setMobileOpen]=useState(false);
   const lastCommitted=useRef(url.q);
+  const expectedNavigation=useRef<string|null>(null);
   const [withdrawTarget, setWithdrawTarget] = useState<LearnerPlacementJourneyItem | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
   const [withdrawPending, setWithdrawPending] = useState(false);
@@ -55,19 +56,29 @@ export function LearnerApplicationsBrowse({
   useEffect(()=>{
     const onPop=()=>{
       const current=readLearnerApplicationUrl(window.location.search).q;
+      expectedNavigation.current=current;
       lastCommitted.current=current;setSearch(current);
     };
     window.addEventListener("popstate",onPop);
     return ()=>window.removeEventListener("popstate",onPop);
   },[]);
   useEffect(()=>{
+    // Wait for the route state to catch up to Back/Forward or a pending push.
+    // Never replace a navigated search with the old query from the prior render.
+    if(expectedNavigation.current!==null){
+      if(url.q!==expectedNavigation.current)return;
+      expectedNavigation.current=null;
+      return;
+    }
     if(lastCommitted.current===url.q)return;
     lastCommitted.current=url.q;setSearch(url.q);
   },[url.q]);
   useEffect(()=>{
+    if(expectedNavigation.current!==null)return;
     const value=search.trim().slice(0,100);
     if(value===url.q)return;
     const timer=window.setTimeout(()=>{
+      expectedNavigation.current=value;
       lastCommitted.current=value;updateQuery({q:value||null});
     },350);
     return ()=>window.clearTimeout(timer);
