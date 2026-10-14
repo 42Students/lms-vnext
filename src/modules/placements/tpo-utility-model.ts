@@ -54,6 +54,12 @@ export const TPO_MORE_GROUPS = [
           "Open the existing recruiter companies view.",
       },
       {
+        label: "My Notifications",
+        href: "/tpo/messages/notifications",
+        description:
+          "Review your own college-scoped in-app placement notifications and mark unread deliveries read.",
+      },
+      {
         label: "Profile",
         href: "/tpo/profile",
         description:

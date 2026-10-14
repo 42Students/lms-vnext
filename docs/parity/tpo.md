@@ -1,3 +1,5 @@
+**Chat-2 / TPO More → My Notifications — PARTIAL (2026-10-15):** More navigation now directly exposes the existing own-recipient, college-and-placement-scoped in-app notification inbox with its read action. This avoids dead /tpo/notifications navigation and reuses the registered DB-backed read-and-audit writer; nav destination tests updated. Exact legacy notification-tab and browser acceptance remain open.
+
 **Chat-2 / Company contact-people drill-in — PARTIAL (2026-10-15):** The company People page links each persisted linked recruiter lead to its canonical TPO recruiter-detail workspace. The destination's existing college-scoped lead loader remains responsible for authorization; no unlinked contact identities or private applicant lists are exposed. Model test authored; desktop/mobile and PG acceptance remain open.
 
 **Chat-2 / Company offer/joining timeline links — PARTIAL (2026-10-15):** Offer-issued, response and recorded-joining events now deep-link to their exact persisted TPO offer record instead of the drive only. The destination retains college/role checks. Unit regression added; legacy parity and PG/mobile/browser proof remain open.

@@ -47,8 +47,15 @@ describe("TPO More navigation", () => {
       "/tpo/reports",
       "/tpo/audit",
       "/tpo/recruiters?view=companies",
+      "/tpo/messages/notifications",
       "/tpo/profile",
     ]);
+  });
+
+  it("exposes the existing scoped notification inbox, not a nonexistent generic notification page", () => {
+    const destination = links.find((link) => link.label === "My Notifications");
+    expect(destination?.href).toBe("/tpo/messages/notifications");
+    expect(destination?.href).not.toBe("/tpo/notifications");
   });
 
   it("contains no duplicate destinations", () => {
