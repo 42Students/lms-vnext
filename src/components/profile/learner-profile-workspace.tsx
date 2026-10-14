@@ -248,7 +248,7 @@ export function LearnerProfileWorkspace(props: {
   async function saveContacts() {
     if (contactPending) return;
     const parsed = learnerContactEditSchema.safeParse({
-      confirmed: true, contacts: contactDraft,
+      confirmed: true, contacts: contactDraft, expectedContacts: document.contacts,
     });
     if (!parsed.success) {
       setContactError(parsed.error.issues[0]?.message ?? "Check your contact details.");
@@ -263,6 +263,10 @@ export function LearnerProfileWorkspace(props: {
         body: JSON.stringify(parsed.data),
       });
       const payload = await response.json().catch(() => null);
+      if(!response.ok && payload?.error==="LEARNER_CONTACT_STALE"){
+        router.refresh();
+        throw new Error("These contact details were updated in another tab. Review the latest saved values before retrying.");
+      }
       if (!response.ok || !payload?.contacts) {
         throw new Error("Contact details could not be saved. Your existing details are unchanged.");
       }
@@ -294,9 +298,13 @@ export function LearnerProfileWorkspace(props: {
         const result = await fetch("/api/profile/me/sections", {
           method: "PATCH",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ confirmed: true, section, items }),
+          body: JSON.stringify({ confirmed: true, section, items, expectedItems: document[section] }),
         });
         const payload = await result.json().catch(() => null);
+        if(!result.ok && payload?.error==="LEARNER_PROFILE_SECTION_STALE"){
+          router.refresh();
+          throw new Error("This section changed in another tab. Review the latest saved version before retrying.");
+        }
         if (!result.ok || !Array.isArray(payload?.items)) {
           throw new Error("Could not save this section; other profile details were not changed.");
         }

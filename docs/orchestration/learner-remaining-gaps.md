@@ -986,3 +986,19 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 L30-031: Profile now refreshes saved data on tab visibility without refreshing during save/open editor, and reconciles new server document only when the current view was unchanged. No verification/file storage invented. Fresh-learner read PG and pure unit authored; multi-tab/browser test pending. Skipped L30-027 Connect Accounts: connector permissions/linked-identity UX and owner authorization contract not approved.
 
 2026-10-14 L29-009: assessment notification action distinguishes generic assessment page from exact own application+round detail, drops untrusted selector query, and does not claim external provider submission. Fresh own-learner real TEST round and notification PG evidence authored; source/test/browser acceptance pending. Skipped external assessment submit: employer/provider confirmation flow and receipt integration not migrated.
+
+2026-10-14 Support History cancellation: existing request cancellation hardened by live learner entitlement, transactional updatedAt comparison, own-only UI, confirmation and audit. Skipped saved-job write (placement_saved_jobs present only as staged DB08 source, no registered migration), profile proof uploads (private R2 bucket absent), and new email/SMS sends (prohibited by orchestrator decision). PostgreSQL/unit/runtime acceptance pending.
+
+2026-10-14 Support History pagination: fixed hard 30-row truncation using existing own-college requests, schema-validated status/type/page selectors and filter-preserving Next/Previous links. Unit and isolated learner PostgreSQL tests authored; no file or external send added. Runtime/mobile acceptance pending.
+
+2026-10-14 learner notification inbox query: category/unread/search controls now reflect browser history with strict allowed query parameters; own personal notification reads and announcement fallbacks unchanged. No external sending. Unit and fresh-learner PostgreSQL tests authored; browser/static acceptance pending.
+
+2026-10-14 learner inbox read-all: explicit mobile confirmation for existing readAt-audited, own-college scoped idempotent acknowledgement; no external provider or new storage. Fresh PG + unit tests authored; completion requires CI/browser and simultaneous acknowledgement acceptance. Stale replay is a harmless no-op rather than an error by the established notification read policy.
+
+2026-10-14 Profile sections: same-section stale versions now denied transactionally under row lock; other sections preserved with jsonb_set. Optimistic request includes expectedItems; no identity documents/files and no new external sending. Added pure-model and own-learner PostgreSQL tests, multi-tab/CI acceptance pending.
+
+2026-10-14 private learner contacts: optimistic compare of own saved alternate phone/email, transactional jsonb_set and no-op audit suppression; no identity upload and no contact disclosure to other roles. Requires fresh PostgreSQL/TypeScript/ESLint and browser/multi-tab acceptance.
+
+2026-10-14 learner issued-offer extension: in-place confirmation uses existing transactional placement request with persisted expiry optimistic token under offer row lock. No external sending or files. Fresh-learner PostgreSQL and pure-model tests authored; browser/date boundary/CI acceptance pending.
+
+2026-10-14 Offer extension pending UX: readonly learner-owned persisted request overlay on Offers/Placement Cell, no external sends and no changing status. Exact offer IDs only; fresh fixture PG + unit authored; browser, CI and producer acceptance pending.

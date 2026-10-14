@@ -31,10 +31,13 @@ export function LearnerPlacementNotificationSettings({initial}:{
           notifyMatchingJobs:matching,
           notifyApplicationUpdates:updates,
           confirmed:true,
+          expected:initial,
         }),
       });
       const result=await response.json().catch(()=>null) as {error?:string}|null;
-      if(!response.ok) throw new Error(result?.error??"Preference update failed");
+      if(!response.ok) throw new Error(result?.error === "PLACEMENT_NOTIFICATION_PREFERENCES_STALE"
+        ? "Your saved choices changed in another tab. Reload saved choices before trying again."
+        : result?.error??"Preference update failed");
       setConfirm(false);
       showToast({tone:"success",title:"Placement notification choices saved",
         description:"Only your placement notification choices were updated."});
@@ -78,6 +81,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       <Button disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
+      <Button variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
