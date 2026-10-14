@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type LearnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
+import { LEARNER_BOARD_PRIORITY_LABELS, learnerBoardPriorityFilterHref, type LearnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total, statusCounts,
-}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts}) {
+  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
+}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
   const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId});
@@ -80,6 +81,18 @@ export function LearnerProjectBoardSearch({
               ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
               : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
             <span>{item.label}</span><span>{statusCounts[item.value]}</span>
+          </Link>
+        ))}
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Task counts by priority">
+        {LEARNER_BOARD_PRIORITY_LABELS.map(item => (
+          <Link key={item.value} href={learnerBoardPriorityFilterHref(projectId,
+            {taskSearch:search,priority,status,sprintId,releaseId},item.value)}
+            aria-current={priority===item.value ? "true" : undefined}
+            className={priority===item.value
+              ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
+              : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
+            <span>{item.label}</span><span>{priorityCounts[item.value]}</span>
           </Link>
         ))}
       </div>
