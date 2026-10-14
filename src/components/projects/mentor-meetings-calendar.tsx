@@ -9,23 +9,23 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 
 const PAST_PREVIEW = 20;
-const prettyDate = (iso: string, viewerReady: boolean) => {
+const prettyDate = (iso: string) => {
   const d = new Date(iso);
   return Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-IN", {
     weekday: "short", day: "numeric", month: "short", year: "numeric",
-    timeZone: viewerReady ? undefined : "UTC",
+    timeZone: "Asia/Kolkata",
   }).format(d) : "Date TBD";
 };
-const prettyTime = (iso: string, viewerReady: boolean) => {
+const prettyTime = (iso: string) => {
   const d = new Date(iso);
   return Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-IN", {
     hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short",
-    timeZone: viewerReady ? undefined : "UTC",
+    timeZone: "Asia/Kolkata",
   }).format(d) : "Time TBD";
 };
 function MeetingRow({
-  meeting, now, viewerReady,
-}: {meeting: MentorMeetingCalendarItem; now: Date; viewerReady: boolean}) {
+  meeting, now,
+}: {meeting: MentorMeetingCalendarItem; now: Date;}) {
   const status = mentorMeetingDisplayStatus(meeting, now);
   const href = safeMentorMeetingJoinUrl(meeting);
   return (
@@ -42,8 +42,8 @@ function MeetingRow({
         }>{status}</StatusBadge>
       </div>
       <p className="mt-3 text-sm text-muted-foreground">
-        {prettyDate(meeting.startsAt, viewerReady)} · {prettyTime(meeting.startsAt, viewerReady)}
-        {" – "}{prettyTime(meeting.endsAt, viewerReady)}
+        {prettyDate(meeting.startsAt)} · {prettyTime(meeting.startsAt)}
+        {" – "}{prettyTime(meeting.endsAt)}
         {meeting.linkedSprintTitle ? " · Sprint: " + meeting.linkedSprintTitle : ""}
       </p>
       {meeting.status === "REQUESTED" ? (
@@ -68,13 +68,11 @@ export function MentorMeetingsCalendar({
   meetings, initialNow,
 }: {meetings: readonly MentorMeetingCalendarItem[]; initialNow: string}) {
   const [now, setNow] = useState(initialNow);
-  const [viewerReady, setViewerReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
   useEffect(() => {
     // Hydrate the viewer's timezone after the initial UTC-compatible render.
     // A queued callback avoids synchronous state updates in an effect.
     const frame = window.requestAnimationFrame(() => {
-      setViewerReady(true);
       setNow(new Date().toISOString());
     });
     const tick = window.setInterval(() => setNow(new Date().toISOString()), 60_000);
@@ -93,7 +91,7 @@ export function MentorMeetingsCalendar({
       </h2>
       {upcoming.length
         ? upcoming.map(meeting => <MeetingRow key={meeting.id} meeting={meeting}
-            now={instant} viewerReady={viewerReady}/>)
+            now={instant} />)
         : <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
             No upcoming meetings.
           </p>}
@@ -105,7 +103,7 @@ export function MentorMeetingsCalendar({
       {past.length
         ? (expanded ? past : past.slice(0, PAST_PREVIEW)).map(meeting =>
             <MeetingRow key={meeting.id} meeting={meeting} now={instant}
-              viewerReady={viewerReady}/>)
+              />)
         : <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
             No past meetings yet.
           </p>}

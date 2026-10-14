@@ -50,3 +50,12 @@
   with positive, foreign, wrong-role, disabled role-grant assertions.
 - Read-only: no isSameOriginRequest or mutation token required.
 - PARTIAL pending executed tools, browser and alert-producer regression proof.
+
+
+## F — Global Mentor Meetings calendar filters and IST display (2026-10-14)
+- Exact current Mentor cross-project calendar gets strictly validated status
+  and case-insensitive meeting/project search controls.
+- All dates/MISSED boundaries display in Asia/Kolkata per approved decision.
+- Added central projects.read guard and isolated PG role/foreign/disabled
+  fixture plus pure model unit coverage; tests not run here.
+- PARTIAL: authenticated browser/download parity, paging and CLI/DB evidence.
