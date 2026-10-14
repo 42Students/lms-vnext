@@ -152,3 +152,30 @@ A confirmation-gated Mentor task creation endpoint and UI are authored using reg
 ## Mentor team/meeting log read (2026-10-14)
 
 Exact assigned-project read combines registered role-backed active team counts with project_meetings status-filtered history. A unique-fixture disposable PostgreSQL test inserts a real requested meeting, checks positive scoped coverage and wrong-role/foreign selector denials, and removes mutable fixtures without deleting immutable audit rows. No raw meeting outcomes, URLs or private member contacts are exposed. Existing scheduling/assignment writes, executed CI and browser acceptance remain PARTIAL.
+
+## 2026-10-14 A–D source batch (all PARTIAL)
+
+- **A — buildable:** `/teacher/courses/[deliveryId]/assignments/manage` adds
+  confirmed, teaching-Section-only, text-based draft creation, draft editing,
+  deadline-guarded publish and soft archive. Registered assignment table,
+  locked optimistic timestamps, same-origin POST and transaction-coupled
+  `courses.assignment.created/updated/published/archived` events.
+  No irreversible hard delete and no file attachment flow.
+- **B — buildable:** `/teacher/courses/[deliveryId]/quizzes/manage` uses
+  registered Quiz/question/option rows for confirmed question builder draft
+  create/edit/publish. Zod validates option uniqueness, correct answers,
+  points and the question-count/points caps. Edit rejects published quizzes
+  and quizzes with attempts, with one safe activity event per accepted write.
+- **C — buildable:** `/teacher/live-classes` reads registered published
+  LIVE_CLASS content from exact Faculty-owned Sections. View/Section filters,
+  bound pages, error/empty states, IST display, and HTTPS-only links; no
+  raw URLs in audit or logs.
+- **D — missing migrated table:** No registered task comment/reply store
+  exists. Exact-project Mentor task feedback is available read-only through
+  `project_task_submissions.feedback`. The page explicitly blocks threaded
+  messages and does not invent a write path. DB owner must register comment
+  records and product owner must approve privacy/lifecycle before implementing
+  threaded conversations.
+- New pure model tests and an isolated positive/forged/stale PostgreSQL suite
+  are authored. **Do not mark any item DONE** until disposable PostgreSQL,
+  ESLint, TypeScript, mobile UI and legacy behavior are independently verified.
