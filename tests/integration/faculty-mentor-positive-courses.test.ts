@@ -567,12 +567,12 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const audit=await pool.query<{metadata:{correction:boolean,markedAt:string}}>(`
       select metadata from activity_events
       where subject_id=$1::text and event_type='courses.attendance.marked'
-      order by created_at desc limit 1`,[session.id]);
+      order by occurred_at desc limit 1`,[session.id]);
     expect(audit.rows[0]?.metadata.correction).toBe(true);
     const reason=await pool.query<{metadata:{correctionReason:string}}>(`
       select metadata from activity_events
       where subject_id=$1::text and event_type='courses.attendance.marked'
-      order by created_at desc limit 1`,[session.id]);
+      order by occurred_at desc limit 1`,[session.id]);
     expect(reason.rows[0]?.metadata.correctionReason).toMatch(/official register/);
     expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
   });
@@ -869,7 +869,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,
       filter:"GRADED",
     });
-    expect(gradedCsv.csv).toContain('"Learner","Email"');
+    // Orchestrator default 1 (2026-10-14): list CSV exports never carry contact details for Faculty.
+    expect(gradedCsv.csv).toContain('"Learner","Response"');
+    expect(gradedCsv.csv).not.toContain('"Email"');
     expect(gradedCsv.csv).not.toContain('"NOT_SUBMITTED"');
     await expect(getFacultyReportCsvForDownload(faculty,{
       kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"LATE",

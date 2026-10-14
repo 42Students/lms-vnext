@@ -741,6 +741,15 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         { published: true },
       ),
     ).rejects.toMatchObject({
+      code: "QUIZ_RESULTS_ADMIN_ONLY",
+    });
+    await expect(
+      setCourseQuizResults(
+        collegeAdmin,
+        quiz.id,
+        { published: true },
+      ),
+    ).rejects.toMatchObject({
       code: "INVALID_QUIZ_TRANSITION",
     });
 
@@ -763,7 +772,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "CLOSE" },
     );
     await setCourseQuizResults(
-      faculty,
+      collegeAdmin,
       quiz.id,
       { published: true },
     );

@@ -38,12 +38,15 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       .where(and(eq(projectMeetings.id,params.meetingId),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1);
     if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
-    if(!project||!mentorMeetingCanReschedule(meeting.status,project.status)||
-      meeting.startsAt.getTime()===start.getTime()&&
-      meeting.endsAt.getTime()===end.getTime())
+    if(!project||!mentorMeetingCanReschedule(meeting.status,project.status))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    // Stale version wins over the unchanged-time no-op check so a replayed
+    // request reports a stale version rather than a generic invalid state.
     if(meeting.updatedAt.getTime()!==expected.getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+    if(meeting.startsAt.getTime()===start.getTime()&&
+      meeting.endsAt.getTime()===end.getTime())
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [conflict]=await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(eq(projectMeetings.projectId,scope.project.id),
         ne(projectMeetings.id,meeting.id),eq(projectMeetings.status,"SCHEDULED"),

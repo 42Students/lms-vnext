@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   assignmentSubmissions,
@@ -72,12 +72,12 @@ export async function listCollegeAssessmentAggregate(
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
-      id: courseAssignments.id,
+      id: sql<string>`${courseAssignments.id}`.mapWith(courseAssignments.id).as("assessment_id"),
       title: courseAssignments.title,
-      courseName: courses.name,
+      courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("course_name_alias"),
       courseCode: courses.code,
-      lessonName: courseLessons.name,
-      offeringId: courseOfferings.id,
+      lessonName: sql<string>`${courseLessons.name}`.mapWith(courseLessons.name).as("lesson_name_alias"),
+      offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("offering_id_alias"),
       status: courseAssignments.status,
       dueAt: courseAssignments.dueAt,
       deliveryId: courseAssignments.deliveryId,
@@ -106,12 +106,12 @@ export async function listCollegeAssessmentAggregate(
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
-      id: courseQuizzes.id,
+      id: sql<string>`${courseQuizzes.id}`.mapWith(courseQuizzes.id).as("assessment_id"),
       title: courseQuizzes.title,
-      courseName: courses.name,
+      courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("course_name_alias"),
       courseCode: courses.code,
-      lessonName: courseLessons.name,
-      offeringId: courseOfferings.id,
+      lessonName: sql<string>`${courseLessons.name}`.mapWith(courseLessons.name).as("lesson_name_alias"),
+      offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("offering_id_alias"),
       status: courseQuizzes.status,
       dueAt: courseQuizzes.dueAt,
       deliveryId: courseQuizzes.deliveryId,

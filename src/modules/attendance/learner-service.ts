@@ -61,6 +61,29 @@ export async function getLearnerAttendanceWorkspace(
   } = {},
 ) {
   const membership = requireLearner(context);
+  if (
+    context.user.platformStatus !== "ACTIVE" ||
+    membership.status !== "ACTIVE"
+  ) {
+    throw new AuthorizationError("academics.read");
+  }
+  // A forged college/membership pair must be denied, not rendered as an
+  // empty attendance workspace.
+  const [persisted] = await getDb()
+    .select({ id: collegeMemberships.id })
+    .from(collegeMemberships)
+    .where(
+      and(
+        eq(collegeMemberships.id, membership.id),
+        eq(collegeMemberships.userId, context.user.id),
+        eq(collegeMemberships.collegeId, membership.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+      ),
+    )
+    .limit(1);
+  if (!persisted) {
+    throw new AuthorizationError("academics.read");
+  }
   const deliveries =
     await listLearnerCourseDeliveries(
       context,

@@ -816,6 +816,21 @@ export async function listMyProjectInstances(
   ) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
+  // Never trust the request-context membership/college pair as-is: a forged
+  // college must be a denial, not an empty (successful-looking) project list.
+  const [persisted] = await getDb()
+    .select({ id: collegeMemberships.id })
+    .from(collegeMemberships)
+    .where(and(
+      eq(collegeMemberships.id, membership.id),
+      eq(collegeMemberships.userId, context.user.id),
+      eq(collegeMemberships.collegeId, membership.collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+    ))
+    .limit(1);
+  if (!persisted) {
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
   // Do not trust an old project_members assignment as authorization after
   // revoking the user's LEARNER/MENTOR role or suspending their account.
   return getDb()
