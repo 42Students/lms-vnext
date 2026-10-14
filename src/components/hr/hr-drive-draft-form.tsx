@@ -7,6 +7,7 @@ import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-un
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
 import {duplicateHrDraftRound} from "@/modules/placements/hr-draft-round-duplicate-model";
+import {hrDraftContainsWork} from "@/modules/placements/hr-draft-reset-model";
 import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
 import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compensation-review-model";
 
@@ -224,7 +225,11 @@ export function HrDriveDraftForm({
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
             onClick={restoreFromThisTab}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
-            onClick={() => { try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset the form regardless. */} setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice("Cleared this tab’s saved draft."); }}>Start over</button>
+            onClick={() => {
+              if(hrDraftContainsWork(draft)&&!window.confirm("Discard all unsent draft changes and clear this tab's saved copy?"))return;
+              try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
+              setDraft(emptyHrDriveDraft());setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
+            }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
           <div role="alert" className="mt-4 rounded-md border border-border p-3 text-sm text-body">
