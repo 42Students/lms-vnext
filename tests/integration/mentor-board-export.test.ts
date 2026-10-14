@@ -9,7 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
-import {mentorBoardExportCsv} from "@/modules/projects/mentor-board-review-model";
+import {mentorBoardExportCsv,mentorSprintSummaryCsv} from "@/modules/projects/mentor-board-review-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const root:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"root",
@@ -80,6 +80,14 @@ describe("Mentor persisted filtered export with exact project scope",()=>{
     const view=await getMentorBoardReview(mentor,query);
     expect(view).toMatchObject({enabled:true,count:2,total:1,exportOmitted:0});
     expect(view.exportItems[0]?.title).toBe("=Unsafe heading");
+    expect(view.sprintSummaries).toEqual([expect.objectContaining({
+      id:sprint.id,registeredTasks:2,matchingTasks:1,
+      done:0,blocked:0,awaitingReview:0,matchingDonePercent:0,
+    })]);
+    const summary=mentorSprintSummaryCsv(view.sprintSummaryExportItems,
+      view.sprintSummaryExportOmitted);
+    expect(summary).toContain("Visible Sprint");
+    expect(summary).toContain("Matching tasks");
     const csv=mentorBoardExportCsv(view.exportItems,view.exportOmitted);
     expect(csv).toContain("'=Unsafe heading");
     expect(csv).not.toContain("Ordinary task");

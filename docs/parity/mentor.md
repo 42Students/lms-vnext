@@ -718,3 +718,19 @@ SCHEDULED row with scheduled_by IDs and meeting_url satisfying
 project_meetings_schedule_shape_ck, plus existing wrong-role/foreign-scope
 denials. Read-only, so stale write token is inapplicable. **PARTIAL:** actual
 PostgreSQL, TypeScript, lint, browser and legacy risk semantics remain open.
+
+## 2026-10-14 chat-11 M — filtered per-Sprint Board summaries and safe CSV (PARTIAL)
+
+The scoped Mentor Task Board now aggregates each registered Sprint's total
+stored tasks and current filtered task matches, DONE, BLOCKED and IN_REVIEW
+counts, and a matching-task completion percentage only when work matches.
+The page shows the first six Sprints and provides a formula-neutralized UTF-8
+CSV of at most 100 filtered Sprint summaries, with explicit omitted count.
+This reuses existing exact current Mentor assignment, central projects.read,
+college/module gating and Zod query validation; no new permission or database
+write. It does not imply velocity, dates, task owners, effort or completion
+for an empty Sprint. Pure unit and isolated persisted PostgreSQL tests cover
+filter aggregation, zero-task semantics, CSV neutralization/capping, wrong-role,
+foreign-scope and forged selectors. This is read-only, so stale write tokens
+are not applicable. **PARTIAL:** execute typecheck, lint, PostgreSQL, unit and
+browser download checks, then compare the legacy Sprint/Board summary UX.
