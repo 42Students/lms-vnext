@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -7,13 +6,9 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementCompanyInputSchema } from "@/modules/placements/validation";
+import { tpoCreateCompanySchema } from "@/modules/placements/tpo-company-create-model";
 
 export const runtime = "nodejs";
-
-export const tpoCreateCompanySchema = createPlacementCompanyInputSchema.omit({
-  collegeId: true,
-}).extend({ confirmed: z.literal(true) }).strict();
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
