@@ -27,6 +27,8 @@ describe("TPO applicant stage projection",()=>{
     expect(tpoApplicantPipelineParams.safeParse({jobId,channel:"MESSAGE"}).success).toBe(false);
     expect(tpoApplicantPipelineParams.parse({jobId,eligibility:"ELIGIBLE_WITH_MISSING_EVIDENCE"}).eligibility).toBe("ELIGIBLE_WITH_MISSING_EVIDENCE");
     expect(tpoApplicantPipelineParams.safeParse({jobId,eligibility:"NOT_ELIGIBLE"}).success).toBe(false);
+    expect(tpoApplicantPipelineParams.parse({jobId,sort:"OLDEST"}).sort).toBe("OLDEST");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,sort:"CTC"}).success).toBe(false);
   });
   it("rejects unsupported stage filters",()=>{
     expect(tpoApplicantPipelineParams.safeParse({jobId:"550e8400-e29b-41d4-a716-446655440000",stage:"SELECTED"}).success).toBe(false);
