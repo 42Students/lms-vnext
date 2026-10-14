@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
+import { CollegeClassCreate } from "@/components/academics/college-section-management";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -9,6 +10,7 @@ import {
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
+import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
 
 export default async function CollegeClassesPage({
   searchParams,
@@ -23,5 +25,12 @@ export default async function CollegeClassesPage({
       description="The search, program, status or page is invalid. No classes were loaded."
       action={<Link href="/college/classes" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
-  return <CollegeStructureDirectory data={await listCollegeClasses(context, parsed.data)} />;
+  const [classes, options] = await Promise.all([
+    listCollegeClasses(context, parsed.data),
+    listCollegeSectionOptions(context),
+  ]);
+  return <div className="space-y-6">
+    <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
+    <CollegeStructureDirectory data={classes} />
+  </div>;
 }
