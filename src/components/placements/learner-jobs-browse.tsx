@@ -7,6 +7,7 @@ import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-pl
 import {
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
+  learnerDriveAvailabilityCounts,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
