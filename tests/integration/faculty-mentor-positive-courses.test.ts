@@ -557,6 +557,12 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     const revoked=await getFacultyCourseList(facultyOnly,{});
     expect(revoked.items).toEqual([]);
+    // A stale request cookie cannot restore a disabled persisted user.
+    await pool.query("update course_teaching_assignments set ended_at=null where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
+    await pool.query("update users set platform_status='DISABLED' where id=$1",[facultyOnlyUserId]);
+    const disabled=await getFacultyCourseList(facultyOnly,{});
+    expect(disabled.items).toEqual([]);
+    await pool.query("update users set platform_status='ACTIVE' where id=$1",[facultyOnlyUserId]);
   });
   it("projects real submission content from an authorized Faculty reader without widening scope",async()=>{
     const {delivery,assignment}=await fixture();

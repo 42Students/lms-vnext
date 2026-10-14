@@ -1401,3 +1401,6 @@ The integration fixture now asserts that replacing the question bank after publi
 
 ## 2026-10-15 R4 teaching-list fixture role alignment — PARTIAL
 The integration fixture now filters by its actual CO_TEACHER assignment, verifies another user's PRIMARY assignment is not returned, and retains the persisted revocation and foreign-college checks. Awaiting executed PostgreSQL verification.
+
+## 2026-10-15 R4 persisted Faculty user-status teaching-list fence — PARTIAL
+The Faculty Courses list now joins the persisted `users` row and requires `platform_status=ACTIVE` even if a cached RequestContext still claims ACTIVE. The PostgreSQL fixture disables the actual Faculty user and checks an empty delivery list after reactivating a teaching assignment. No other role reads are changed. PG execution pending.
