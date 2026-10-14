@@ -147,6 +147,13 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(programLesson.items.map(row=>row.id)).toContain(ids.lesson);
     expect(wrongProgramLesson.items).toEqual([]);
     expect((await exportCollegeLessons(own,{programCode:name})).csv).toContain(name);
+    const [lessonsInPeriod,lessonsOutOfPeriod]=await Promise.all([
+      listCollegeLessons(own,{periodCode:name}),
+      listCollegeLessons(own,{periodCode:"PERIOD-NOT-FOUND"}),
+    ]);
+    expect(lessonsInPeriod.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(lessonsOutOfPeriod.items).toEqual([]);
+    expect((await exportCollegeLessons(own,{periodCode:name})).csv).toContain(name);
     const lesson = lessonPage.items.find(row => row.id === ids.lesson);
     const sameCode=await listCollegeCourseProgress(own,{courseCode:name});
     const missingCode=await listCollegeCourseProgress(own,{courseCode:"NOT-THIS-CODE"});

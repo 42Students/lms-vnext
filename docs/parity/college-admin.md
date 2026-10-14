@@ -443,6 +443,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Period-specific lesson catalogue PARTIAL (2026-10-15):** Lessons now filter by saved academic-period code without conflating numbered semesters and calendar periods; scoped SQL runs before pagination/content counts and matching CSV uses the same selector. Own/other period PostgreSQL fixture authored; runtime/mobile/browser checks remain open.
+
 **Program-scoped lesson catalogue PARTIAL (2026-10-15):** Lesson list and capped CSV can select exact registered program codes, scoped by both course department and cohort-program department. Filter survives pagination and combines with title, course and lifecycle selectors; PG positive/missing tests authored. Execution and browser acceptance remain open.
 
 **Exact course-code lesson catalogue PARTIAL (2026-10-15):** Lessons can now be narrowed by authoritative saved course code, independently from lesson-title text search, with scoped SQL count/pagination, filter-preserving links and capped CSV. Isolated PostgreSQL positive/negative and unit bounds authored; runtime/browser proof remains open.

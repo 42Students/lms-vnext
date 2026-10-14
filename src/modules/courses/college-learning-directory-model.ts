@@ -14,6 +14,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   offeringStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   courseCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
+  periodCode: z.string().trim().min(1).max(64).optional(),
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
