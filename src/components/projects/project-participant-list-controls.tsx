@@ -12,6 +12,7 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_REVIEW"
     | "LEARNER_ACTION";
   work?: "BLOCKED";
+  sort?: "RECENT" | "TITLE" | "PROGRESS";
   page?: number;
   pageSize?: number;
 };
@@ -110,6 +111,17 @@ export function ProjectParticipantListControls({
           </select>
         </label>
       ) : null}
+      {learner ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Sort projects
+          <select name="sort" defaultValue={query.sort ?? "RECENT"}
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="RECENT">Recently updated</option>
+            <option value="TITLE">Title A–Z</option>
+            <option value="PROGRESS">Least progress first</option>
+          </select>
+        </label>
+      ) : null}
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Rows
         <select
@@ -174,6 +186,7 @@ export function ProjectParticipantPagination({
       );
     }
     if (query.work) params.set("work", query.work);
+    if (query.sort && query.sort !== "RECENT") params.set("sort", query.sort);
     if (
       query.pageSize &&
       query.pageSize !== 25

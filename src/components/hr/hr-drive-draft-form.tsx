@@ -3,13 +3,30 @@
 import { useState } from "react";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
+import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
+import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
+import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
+import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
+
+const HR_DRAFT_PREVIEW_FIELDS=[
+ ["minimumAnnualCtcInr","Minimum CTC"],
+ ["maximumAnnualCtcInr","Maximum CTC"],
+ ["fixedAnnualCtcInr","Fixed CTC"],
+ ["variableAnnualCtcInr","Variable CTC"],
+ ["bondMonths","Bond months"],
+ ["bondAmountInr","Bond amount"],
+ ["minimumCgpa","Minimum CGPA"],
+ ["maximumActiveBacklogs","Maximum active backlogs"],
+] as const;
 
 export function HrDriveDraftForm({
   initial,
   sourceJobTitle,
+  storageKey,
 }: {
   initial: HrDriveDraft;
   sourceJobTitle: string | null;
+  storageKey:string;
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [showPreview, setShowPreview] = useState(false);
@@ -27,6 +44,21 @@ export function HrDriveDraftForm({
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
 
+  function saveForThisTab(){
+    const raw=saveHrUnsentDraft(draft,Date.now());
+    if(!raw){setNotice("Validate the draft before saving it for this tab.");return;}
+    try{window.sessionStorage.setItem(storageKey,raw);
+      setNotice("Validated unsent draft saved for this browser tab (24-hour expiry).");}
+    catch{setNotice("This browser cannot save a draft. Copy the preview instead.");}
+  }
+  function restoreFromThisTab(){
+    try{
+      const saved=restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now());
+      if(!saved){setNotice("No valid, unexpired saved draft for this exact college and job.");return;}
+      setDraft(saved);setShowPreview(false);
+      setNotice("Restored local draft. It has not been submitted or sent.");}
+    catch{setNotice("Unable to access saved drafts in this browser.");}
+  }
   async function copyPreview() {
     if (!result.success) {
       setNotice("Complete the highlighted requirements before copying a draft.");
@@ -121,6 +153,14 @@ export function HrDriveDraftForm({
             Add round
           </button>
         </div>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
+          {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
+            type="button" className="min-h-10 rounded-md border border-border px-3 text-sm text-primary-text"
+            onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
+            {preset.label}
+          </button>)}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
           {draft.rounds.map((round, index) => (
             <div key={index} className="grid min-w-0 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">
@@ -142,6 +182,14 @@ export function HrDriveDraftForm({
                       ? { ...item, name: event.target.value } : item),
                   }))} />
               </label>
+              <div className="flex items-end gap-2">
+                <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
+                <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
+              </div>
               <button type="button" disabled={draft.rounds.length <= 1}
                 className="self-end rounded-md border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
                 onClick={() => setDraft((current) => ({
@@ -162,8 +210,13 @@ export function HrDriveDraftForm({
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
+          <button type="button" disabled={!result.success}
+            className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text disabled:opacity-50"
+            onClick={saveForThisTab}>Save validated draft in this tab</button>
+          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
+            onClick={restoreFromThisTab}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
-            onClick={() => { setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice(""); }}>Start over</button>
+            onClick={() => { try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset the form regardless. */} setDraft(emptyHrDriveDraft()); setShowPreview(false); setNotice("Cleared this tab’s saved draft."); }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
           <div role="alert" className="mt-4 rounded-md border border-border p-3 text-sm text-body">
@@ -180,24 +233,27 @@ export function HrDriveDraftForm({
             <h3 className="text-base font-semibold text-foreground">{result.data.title}</h3>
             <p className="whitespace-pre-wrap">{result.data.description}</p>
             <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.workMode}</p>
-            <p>{result.data.rounds.length} planned hiring rounds</p>
+            <h4 className="font-semibold text-foreground">Planned hiring process</h4>
+            <ol className="list-inside list-decimal space-y-1">
+              {hrDraftPreviewRounds(result.data).map(step=>(
+                <li key={step.order}>
+                  <span className="font-medium text-foreground">{step.name}</span>
+                  {" · "+step.kind.replaceAll("_"," ")}
+                </li>
+              ))}
+            </ol>
+            <h4 className="pt-3 font-semibold text-foreground">Compensation & eligibility</h4>
             <dl className="grid gap-2 sm:grid-cols-2">
-              {([
-                ["Minimum CTC", result.data.minimumAnnualCtcInr],
-                ["Maximum CTC", result.data.maximumAnnualCtcInr],
-                ["Fixed CTC", result.data.fixedAnnualCtcInr],
-                ["Variable CTC", result.data.variableAnnualCtcInr],
-                ["Bond months", result.data.bondMonths],
-                ["Bond amount", result.data.bondAmountInr],
-                ["Minimum CGPA", result.data.minimumCgpa],
-                ["Maximum active backlogs", result.data.maximumActiveBacklogs],
-              ] as const).map(([label, value]) => (
-                <div key={label}>
+              {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
+                <div key={field}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-medium text-foreground">{value || "Not specified"}</dd>
+                  <dd className="font-medium text-foreground">{result.data[field]||"Not specified"}</dd>
                 </div>
               ))}
             </dl>
+            <p className="text-xs text-muted-foreground">
+              Preview only. Actual student presentation is controlled by the placement cell after approval.
+            </p>
           </div>
         ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}

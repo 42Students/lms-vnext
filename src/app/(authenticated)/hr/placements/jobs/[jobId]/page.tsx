@@ -14,7 +14,7 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
-import { hrScheduledRoundRows } from "@/modules/placements/hr-round-schedule-model";
+import { hrScheduledRoundRows,hrRoundConflictLabels } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 function formatCtc(
@@ -379,7 +379,12 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-sm text-body">{formatRoundTime(round.startsAt)} IST</p>
               <p className="text-xs text-muted-foreground">{round.endsAt?"Ends "+formatRoundTime(round.endsAt)+" IST":"Duration not recorded"}</p>
               <p className="text-xs text-muted-foreground">{round.mode??"Mode not set"} · {round.venue??"Venue not set"}</p>
-              {round.conflicts.length?<p role="status" className="mt-2 text-sm font-semibold text-foreground">Potential overlap with {round.conflicts.length} other round(s)</p>:null}
+              {round.conflicts.length?<div role="status" className="mt-2 text-sm font-semibold text-foreground">
+                <p>Potential time overlap with:</p>
+                <ul className="mt-1 list-inside list-disc text-sm font-normal">
+                  {hrRoundConflictLabels(roundSchedule,round.conflicts).map(label=><li key={label}>{label}</li>)}
+                </ul>
+              </div>:null}
             </article>)}
           </div>:<p className="text-sm text-muted-foreground">No scheduled rounds recorded.</p>}
         </section>:null}

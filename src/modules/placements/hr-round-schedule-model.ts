@@ -17,3 +17,14 @@ export function hrScheduledRoundRows(rows:readonly RoundScheduleRow[]){
     mode:row.mode,venue:row.venue,conflicts};
  }).sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime()||a.id.localeCompare(b.id));
 }
+
+export function hrRoundConflictLabels(
+  rows:ReturnType<typeof hrScheduledRoundRows>,
+  ids:readonly string[],
+):string[]{
+  const byId=new Map(rows.map(row=>[row.id,row]));
+  return ids.flatMap(id=>{
+    const match=byId.get(id);
+    return match?[match.name+" (#"+match.sequence+")"]:[];
+  });
+}
