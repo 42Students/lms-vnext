@@ -182,6 +182,33 @@ describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",
  });
 });
 
+describe("Mentor feedback CAS persisted by SQL default",()=>{
+ it("allows only current own-task Mentor version and records one event",async()=>{
+  const {project,mentor,foreign,learner,task,sprint}=await fixture();
+  await startProjectSprint(mentor,project.id,sprint.id);
+  const submitted=await submitProjectTask(learner,project.id,task.id,{
+   submissionUrl:"https://example.invalid/review/"+project.id,
+  });
+  const v=await pool.query<{updated_at:Date}>(
+   "update project_task_submissions set updated_at=now() where id=$1 returning updated_at",
+   [submitted.id]);
+  const input={decision:"CHANGES_REQUESTED" as const,feedback:"Add tests",
+   expectedUpdatedAt:v.rows[0]!.updated_at.toISOString(),confirmed:true as const};
+  await expect(reviewProjectTaskSubmission(learner,project.id,task.id,submitted.id,input)).rejects.toBeDefined();
+  await expect(reviewProjectTaskSubmission(foreign,project.id,task.id,submitted.id,input)).rejects.toBeDefined();
+  await expect(reviewProjectTaskSubmission(mentor,SEED_IDS.collegeB,task.id,submitted.id,input)).rejects.toBeDefined();
+  await expect(reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,{
+   ...input,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
+  })).rejects.toMatchObject({code:"PROJECT_TASK_SUBMISSION_STALE_VERSION"});
+  const decided=await reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,input);
+  expect(decided.submission.status).toBe("CHANGES_REQUESTED");
+  await expect(reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,input)).rejects.toBeDefined();
+  const audit=await pool.query<{n:string}>(`select count(*)::text as n from activity_events
+   where subject_id=$1::text and event_type='projects.task.reviewed'`,[submitted.id]);
+  expect(audit.rows[0]?.n).toBe("1");
+ });
+});
+
 describe("Mentor task review queue after a persisted decision",()=>{
  it("shows a current submission and excludes its stale version after review",async()=>{
   const {project,mentor,foreign,learner,task,sprint}=await fixture();
@@ -198,6 +225,7 @@ describe("Mentor task review queue after a persisted decision",()=>{
   await expect(getMentorTaskReviews(mentor,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   const result=await reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,{
    decision:"CHANGES_REQUESTED",feedback:"Clarify acceptance criteria",
+   expectedUpdatedAt:submitted.updatedAt.toISOString(),confirmed:true,
   });
   expect(result.submission.status).toBe("CHANGES_REQUESTED");
   const after=await getMentorTaskReviews(mentor,{search:project.title});

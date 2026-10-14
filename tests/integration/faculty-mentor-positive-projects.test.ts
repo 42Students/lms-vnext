@@ -200,7 +200,7 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
       submissionUrl:"https://example.com/chat4-approval",
     });
     const outcome=await reviewProjectTaskSubmission(
-      mentor,project.id,task.id,submission.id,{decision:"APPROVED"},
+      mentor,project.id,task.id,submission.id,{decision:"APPROVED",expectedUpdatedAt:submission.updatedAt.toISOString(),confirmed:true},
     );
     expect(outcome).toMatchObject({
       task:{status:"DONE"},
@@ -230,6 +230,7 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
     const reviewed=await reviewProjectTaskSubmission(
       mentor,project.id,task.id,submission.id,{
         decision:"CHANGES_REQUESTED",feedback:"Please add a real test.",
+        expectedUpdatedAt:submission.updatedAt.toISOString(),confirmed:true,
       },
     );
     expect(reviewed.submission.status).toBe("CHANGES_REQUESTED");
@@ -254,7 +255,7 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
     expect(audited.rows[0]?.metadata).not.toHaveProperty("feedback");
 
     await expect(reviewProjectTaskSubmission(mentor,project.id,task.id,submission.id,{
-      decision:"APPROVED",
+      decision:"APPROVED",expectedUpdatedAt:submission.updatedAt.toISOString(),confirmed:true,
     })).rejects.toMatchObject({code:"PROJECT_TASK_SUBMISSION_INVALID_STATE"});
     const events=await pool.query<{total:string}>(`select count(*)::text as total
       from activity_events where dedupe_key = $1`,[
