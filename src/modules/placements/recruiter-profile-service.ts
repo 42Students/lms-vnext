@@ -30,6 +30,7 @@ export async function getRecruiterSelfProfile(context: RequestContext) {
     .select({
       userId: users.id,
       displayName: users.displayName,
+      userUpdatedAt: users.updatedAt,
       email: users.email,
       phoneE164: users.phoneE164,
       title: placementRecruiterProfiles.title,
