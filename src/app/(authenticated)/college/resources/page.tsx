@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import {collegeContentCsvHref} from "@/modules/courses/college-content-export-model";
 
 export default async function CollegeResourcesPage({
   searchParams,
@@ -26,5 +27,11 @@ export default async function CollegeResourcesPage({
       </div>
     );
   }
-  return <CollegeContentAggregate data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />;
+  return <div className="space-y-4">
+    <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export filtered resource metadata CSV
+    </Link>
+    <CollegeContentAggregate data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />
+  </div>;
 }
