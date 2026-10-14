@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
+import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -147,5 +148,22 @@ describe("L20-016 project list data-state read (PostgreSQL)",()=>{
       ...context,membership:{...context.membership!,status:"SUSPENDED"},
     };
     await expect(listMyProjectInstances(suspended)).rejects.toBeDefined();
+  });
+});
+
+describe("L20-017 persisted scoped Projects mobile filter inputs",()=>{
+  it("offers real own-project state for mobile filter choices",async()=>{
+    const assigned=(await listMyProjectInstances(context))
+      .filter(row=>row.memberRole==="LEARNER");
+    expect(assigned.some(row=>row.project.id===ids.project)).toBe(true);
+    expect(learnerProjectMobileFilterSummary({status:"CURRENT",pageSize:25}))
+      .toMatchObject({count:1,labels:["Current"]});
+    expect(assigned.filter(row=>row.project.status!=="ARCHIVED" &&
+      row.project.status!=="COMPLETED").map(row=>row.project.id)).toContain(ids.project);
+  });
+  it("does not surface a suspended learner's project list",async()=>{
+    const denied:RequestContext={...context,
+      membership:{...context.membership!,status:"SUSPENDED"}};
+    await expect(listMyProjectInstances(denied)).rejects.toBeDefined();
   });
 });
