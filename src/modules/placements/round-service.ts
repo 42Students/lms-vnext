@@ -277,6 +277,7 @@ export async function actOnPlacementRound(
   context: RequestContext,
   roundIdInput: string,
   rawInput: PlacementRoundActionInput,
+  expectedUpdatedAt?: string,
 ) {
   const roundId = placementRoundIdSchema.parse(
     roundIdInput,
@@ -311,6 +312,14 @@ export async function actOnPlacementRound(
         ? "RESCHEDULED"
         : "SCHEDULED";
     return db.transaction(async (tx) => {
+      const [locked] = await tx.select({
+        updatedAt: placementJobRounds.updatedAt,
+        status: placementJobRounds.status,
+      }).from(placementJobRounds)
+        .where(eq(placementJobRounds.id, roundId)).for("update").limit(1);
+      if (!locked || locked.status !== current.round.status ||
+        (expectedUpdatedAt && locked.updatedAt.toISOString() !== expectedUpdatedAt))
+        throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
       const [updated] = await tx
         .update(placementJobRounds)
         .set({
@@ -449,6 +458,14 @@ export async function actOnPlacementRound(
   }
 
   return db.transaction(async (tx) => {
+    const [locked] = await tx.select({
+      updatedAt: placementJobRounds.updatedAt,
+      status: placementJobRounds.status,
+    }).from(placementJobRounds)
+      .where(eq(placementJobRounds.id, roundId)).for("update").limit(1);
+    if (!locked || locked.status !== current.round.status ||
+      (expectedUpdatedAt && locked.updatedAt.toISOString() !== expectedUpdatedAt))
+      throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
     const now = new Date();
     const [updated] = await tx
       .update(placementJobRounds)

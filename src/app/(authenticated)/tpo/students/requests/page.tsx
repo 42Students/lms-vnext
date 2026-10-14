@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {
   listTpoStudentRequests,
   tpoStudentRequestsQuerySchema,
@@ -345,6 +346,7 @@ export default async function TpoStudentRequestsPage({
                   <th scope="col" className="px-4 py-3">Requested</th>
                   <th scope="col" className="px-4 py-3">Status</th>
                   <th scope="col" className="px-4 py-3">Context</th>
+                  <th scope="col" className="px-4 py-3">Decision</th>
                 </tr>
               </thead>
               <tbody>
@@ -405,6 +407,15 @@ export default async function TpoStudentRequestsPage({
                         Open placement job →
                       </Link>
                     </td>
+                    <td className="px-4 py-4">
+                      {request.status === "PENDING" ? (
+                        <TpoRequestDecisionControl
+                          requestId={request.id}
+                          expectedUpdatedAt={request.updatedAt.toISOString()}
+                          requestType={request.requestType}
+                        />
+                      ) : <span className="text-xs text-muted-foreground">Decision recorded</span>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -448,10 +459,10 @@ export default async function TpoStudentRequestsPage({
         </div>
 
         <p className="text-xs leading-5 text-muted-foreground">
-          This page displays persisted request status and context only.
-          Approve, reject and other workflow decisions remain in the
-          existing authorized job-specific request controls. Send-back
-          is not represented as a persisted request status.
+          Approvals and rejections reuse the existing transactional request
+          service, which applies the authoritative consequence and records
+          the actor audit. Send-back is not represented as a persisted
+          request status.
         </p>
       </section>
     </div>

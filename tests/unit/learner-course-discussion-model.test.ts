@@ -3,6 +3,7 @@ import {
   buildDiscussionFeed,
   countNewDiscussionMessages,
   mergeDiscussionHistory,
+  reconcileLatestDiscussionPage,
 } from "@/components/courses/learner-course-discussion-model";
 
 describe("learner discussion feed model", () => {
@@ -100,5 +101,29 @@ describe("Faculty course discussion paged history", () => {
       { id: "a", createdAtExact: "2026-10-14T08:00:00.123004Z" },
     ]);
     expect(rows.map(row => row.id)).toEqual(["a", "b"]);
+  });
+});
+
+describe("discussion live refresh reconciliation", () => {
+  const row = (id: string, microsecond: number) => ({
+    id,
+    createdAtExact: "2026-10-14T08:00:00." + String(microsecond).padStart(6, "0") + "Z",
+  });
+  it("drops a deleted newest message while retaining already loaded older history", () => {
+    const previous = [row("old", 1), row("a", 2), row("deleted", 3), row("c", 4)];
+    const latest = [row("a", 2), row("c", 4), row("d", 5)];
+    expect(reconcileLatestDiscussionPage(previous, latest, 3, 3)
+      .map(item => item.id)).toEqual(["old", "a", "c", "d"]);
+  });
+  it("discards all stale rows when the server has fewer than a full page", () => {
+    const previous = [row("old", 1), row("deleted", 2), row("current", 3)];
+    expect(reconcileLatestDiscussionPage(previous, [row("current", 3)], 1, 3)
+      .map(item => item.id)).toEqual(["current"]);
+  });
+  it("preserves old pages when a local deletion was filtered from a full server response", () => {
+    const previous = [row("old", 1), row("visible", 4)];
+    const incoming = [row("visible", 4), row("new", 5)];
+    expect(reconcileLatestDiscussionPage(previous, incoming, 3, 3)
+      .map(item => item.id)).toEqual(["old", "visible", "new"]);
   });
 });

@@ -21,6 +21,7 @@ export default async function LearnerPlacementCellPage() {
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling or offer-extension requests. Your placement team owns the final decision.</p>
+        <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
       <LearnerPlacementAlerts alerts={alerts} />
