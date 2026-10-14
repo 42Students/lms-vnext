@@ -732,6 +732,11 @@ export async function publishAssignmentGrade(
     );
   }
 
+  // Even a duplicate publish must carry the current optimistic token:
+  // otherwise a stale browser tab reports success after a concurrent regrade.
+  if (current.version !== input.expectedVersion) {
+    throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
+  }
   if (current.gradePublished) {
     return current;
   }

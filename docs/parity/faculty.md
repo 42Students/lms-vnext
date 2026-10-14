@@ -462,3 +462,18 @@ overdue queue. These are positive-path tests in `tests/integration`, not
 merely role-denial cases. Still pending: actual disposable PostgreSQL run,
 CI lint/typecheck, mobile/browser evidence and exact legacy acceptance.
 All Faculty parity rows remain PARTIAL.
+
+## Faculty grade/regrade/publish stale-version reconciliation (2026-10-14)
+
+The registered `assignment_submissions` grade/feedback flow already performs
+transactional, actor-scoped grade/regrade (resetting publication), publishes
+only graded submissions, and records sanitized version-keyed activity events.
+This batch tightens strict Zod on grade/publish request bodies and rejects
+a stale `expectedVersion` even when a grade was already published (a repeated
+publish at the current version remains an idempotent no-op without an event).
+The existing Faculty submission review UI now explicitly confirms publish;
+the published regrade confirmation remains. The existing PostgreSQL suite
+has additional stale/repeat, forged learner and extra-college-key assertions.
+Section-scoped positive/negative DB and browser execution against this exact
+SHA are not independently verified here; the parent Assignment report and
+All Assignments rows remain PARTIAL.
