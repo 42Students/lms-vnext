@@ -7,6 +7,12 @@ import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LearnerCareerRounds, type LearnerCareerRound } from "./learner-career-rounds";
 import {
+  learnerAssessmentDueBucketSchema,
+  learnerAssessmentDueBuckets,
+  filterLearnerAssessmentDueBucket,
+  type LearnerAssessmentDueBucket,
+} from "@/modules/placements/learner-assessment-due-buckets";
+import {
   learnerAssessmentReminderId,
   learnerAssessmentReminderStorageKey,
   parseLearnerAssessmentReminders,
@@ -55,6 +61,7 @@ export function LearnerCareerRoundsWorkspace({
 }) {
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(defaults);
+  const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
@@ -94,7 +101,10 @@ export function LearnerCareerRoundsWorkspace({
   }
   const setFilter = <K extends keyof LearnerRoundBrowseFilters,>(
     key: K, value: LearnerRoundBrowseFilters[K],
-  ) => setFilters((current) => ({ ...current, [key]: value }));
+  ) => {
+    setDueBucket("all");
+    setFilters((current) => ({ ...current, [key]: value }));
+  };
   const rows = useMemo(
     () => browseLearnerCareerRounds(rounds, kind, filters, nowMs),
     [rounds, kind, filters, nowMs],
@@ -103,6 +113,24 @@ export function LearnerCareerRoundsWorkspace({
     () => browseLearnerCareerRounds(rounds, kind, defaults, nowMs),
     [rounds, kind, nowMs],
   );
+  const dueCounts = useMemo(
+    () => learnerAssessmentDueBuckets(relevant, nowMs),
+    [relevant, nowMs],
+  );
+  const visibleRows = useMemo(
+    () => kind === "ASSESSMENT"
+      ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs)
+      : rows,
+    [rows, dueBucket, nowMs, kind],
+  );
+  function selectDueBucket(rawBucket: unknown) {
+    const parsed = learnerAssessmentDueBucketSchema.safeParse(rawBucket);
+    if (!parsed.success) return;
+    setDueBucket(parsed.data);
+    // A quick bucket must not accidentally combine with a conflicting
+    // schedule or urgency filter and silently show an empty result.
+    setFilters(defaults);
+  }
   const selected = relevant.find(
     (round) => round.applicationId + ":" + round.roundId === selectedKey,
   ) ?? null;
@@ -145,6 +173,35 @@ export function LearnerCareerRoundsWorkspace({
             >{label}</button>
           ))}
         </div>
+        {kind === "ASSESSMENT" ? (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Assessment due buckets">
+            <button type="button" aria-pressed={dueBucket === "all"}
+              onClick={() => selectDueBucket("all")}
+              className={dueBucket === "all"
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              All assessment rounds ({relevant.length})
+            </button>
+            <button type="button" aria-pressed={dueBucket === "today"}
+              onClick={() => selectDueBucket("today")}
+              className={dueBucket === "today"
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              Due today ({dueCounts.today.length})
+            </button>
+            <button type="button" aria-pressed={dueBucket === "week"}
+              onClick={() => selectDueBucket("week")}
+              className={dueBucket === "week"
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              Due this week ({dueCounts.week.length})
+            </button>
+            <p className="w-full text-xs text-muted-foreground">
+              Scheduled upcoming rounds in IST. This week means Monday to Sunday
+              and includes due-today rounds; it does not indicate employer submission.
+            </p>
+          </div>
+        ) : null}
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-xs font-semibold text-body">
             Search employers or rounds
@@ -178,12 +235,12 @@ export function LearnerCareerRoundsWorkspace({
         </div>
       </section>
 
-      {rows.length === 0 && relevant.length > 0 ? (
+      {visibleRows.length === 0 && relevant.length > 0 ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <button type="button"
-            onClick={() => setFilters(defaults)}
+            onClick={() => { setFilters(defaults); setDueBucket("all"); }}
             className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
             Clear filters
           </button>
@@ -191,7 +248,7 @@ export function LearnerCareerRoundsWorkspace({
       ) : (
         <LearnerCareerRounds
           kind={kind}
-          rounds={rows}
+          rounds={visibleRows}
           onSelect={(round) => setSelectedKey(round.applicationId + ":" + round.roundId)}
         />
       )}
