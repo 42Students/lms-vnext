@@ -58,7 +58,7 @@ describe("Learner job browsing filters", () => {
     expect(withPublished.map(x=>x.job.id)).toEqual(["a","b","c"]);
   });
   it("separates open, unavailable and expired from persisted learner eligibility", () => {
-    const [a,b,c]=jobs;
+    const a=jobs[0]!, b=jobs[1]!, c=jobs[2]!;
     const grouped=[
       {...a, deadlinePassed:false,canApply:true},
       {...b, deadlinePassed:false,canApply:false},
