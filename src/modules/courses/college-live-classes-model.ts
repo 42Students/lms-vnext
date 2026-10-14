@@ -2,13 +2,24 @@ import { z } from "zod";
 import { collegeContentQuerySchema } from "./college-content-aggregate-model";
 export const collegeLiveClassQuerySchema=collegeContentQuerySchema.omit({format:true}).extend({
  view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
-});
-export function collegeLiveClassHref(query:{q:string;courseCode?:string;status:string;page:number;view:"ALL"|"UPCOMING"|"PAST"}){
+  from:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
+  to:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
+}).refine(q=>!q.from||!q.to||q.from<=q.to,{message:"Inverted date range"})
+  .refine(q=>!q.from||!q.to||
+   (Date.parse(q.to+"T00:00:00Z")-Date.parse(q.from+"T00:00:00Z"))/86400000<31,
+   {message:"Date range exceeds 31 days"});
+export function istDayBoundary(day:string,nextDay=false){
+ const [year,month,date]=day.split("-").map(Number);
+ return new Date(Date.UTC(year,month-1,date+(nextDay?1:0))-330*60000);
+}
+export function collegeLiveClassHref(query:{q:string;courseCode?:string;status:string;page:number;view:"ALL"|"UPCOMING"|"PAST";from?:string;to?:string}){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
  if(query.status!=="ALL")p.set("status",query.status);
  if(query.view!=="ALL")p.set("view",query.view);
+ if(query.from)p.set("from",query.from);
+ if(query.to)p.set("to",query.to);
  if(query.page>1)p.set("page",String(query.page));
  return "/college/live-classes"+(p.size?"?"+p.toString():"");
 }
