@@ -576,6 +576,12 @@ export default async function TpoStudentsPage({
                           {student.email}
                         </p>
                       ) : null}
+                      <Link
+                        href={"/tpo/students/" + encodeURIComponent(student.membershipId) + "/history"}
+                        className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:underline"
+                      >
+                        View placement history →
+                      </Link>
                     </td>
 
                     <td className="px-4 py-4">
