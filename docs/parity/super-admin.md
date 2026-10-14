@@ -592,3 +592,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / People Directory filter-tab continuation — PARTIAL:** Unscoped /admin/people now links to global Users & Roles read-only directory while keeping college-specific mutation actions scoped. All/Faculty/Students selection survives GET filtering via server-rendered hidden tab control; explicit role filter disabled when role locked by tab. Unit query/tab model and isolated PG faculty+disabled-learner fixtures with own/foreign/wrong-role checks authored (not executed). Remaining: legacy directory bulk/detail actions and browser accessibility acceptance.
+
+
+**2026-10-14 Chat 6 / User membership detail — PARTIAL:** Added /admin/people/directory/[membershipId] read-only detail with membership roles, platform/membership status and IST lifecycle dates. SQL filters exact membership by selected organization/college before retrieval. Foreign and nonexistent IDs return identical not-found; contacts null-projected in global/org scope and unmasked only in the exact selected college. Pure unit and isolated PG fixture success, foreign and wrong-role tests authored, not executed. Remaining: lifecycle actions and browser/DB acceptance.
