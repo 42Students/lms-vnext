@@ -952,3 +952,15 @@ non-disclosure. Disposable Section PG fixture tests persisted export, wrong
 role, foreign-scope denials and absence of the learner's private email.
 GET-only reports have no stale write token; other writes remain unchanged.
 PARTIAL until orchestrator gate, mobile download and legacy comparison.
+
+## 2026-10-14 Faculty Assignment editor optimistic SQL CAS — PARTIAL
+Exact Faculty Section CREATE/EDIT/PUBLISH/ARCHIVE remains on the existing
+same-origin route. After locking the parent assignment, EDIT and transitions
+now recheck its version and status in SQL using Postgres millisecond truncation,
+and expose a distinct declared STALE_VERSION error instead of confusing it
+with illegal lifecycle changes. Existing no-edit-after-publish and no-archive-
+with-submission guards, plus immutable transaction audit, are unchanged.
+Model/unit plus disposable lesson/Section PG tests cover SQL now() precision,
+authorized edit, wrong-role/foreign delivery, stale replay and audit.
+Remains PARTIAL: orchestrator execution gate, keyboard/mobile authoring drawer
+and legacy assignment lifecycle proof.

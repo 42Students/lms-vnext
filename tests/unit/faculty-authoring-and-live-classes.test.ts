@@ -1,6 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {
- facultyAssignmentCommandSchema,assignmentFieldsChanged,
+ facultyAssignmentCommandSchema,assignmentFieldsChanged,facultyAssignmentVersionMatches,
 } from "@/modules/courses/faculty-assignment-authoring-model";
 import {facultyQuizCommandSchema,sumQuizPoints} from "@/modules/courses/faculty-quiz-authoring-model";
 import {facultyLiveClassesQuerySchema,safeHttpsMeetingLink,pageFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-model";
@@ -20,6 +20,12 @@ describe("Faculty/Mentor authoring and registered read boundaries",()=>{
    expectedUpdatedAt:"2026-10-14T10:00:00Z",confirmed:true}).success).toBe(true);
   expect(assignmentFieldsChanged({title:"A",description:null,dueAt:null,maxPoints:5},
    {title:"B",description:null,dueAt:null,maxPoints:5})).toEqual(["title"]);
+ });
+ it("matches millisecond snapshots while rejecting stale authoring tokens",()=>{
+  const stored=new Date("2026-10-14T14:00:00.123Z");
+  expect(facultyAssignmentVersionMatches(stored,stored.toISOString())).toBe(true);
+  expect(facultyAssignmentVersionMatches(stored,"2026-10-14T14:00:00.122Z")).toBe(false);
+  expect(facultyAssignmentVersionMatches(stored,"not-a-date")).toBe(false);
  });
  it("requires a valid choice builder before writing",()=>{
   const base={action:"CREATE",lessonId:id,sequence:0,title:"FIFO",

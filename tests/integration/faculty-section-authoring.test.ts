@@ -161,6 +161,35 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    "courses.assignment.published","courses.assignment.updated",
   ]);
  });
+ it("denies a stale Assignment token from a SQL-default now() snapshot",async()=>{
+  const {delivery,lesson}=await fixture();
+  const created=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
+   action:"CREATE",lessonId:lesson.id,sequence:8,title:"SQL Version "+tag,
+   description:"Initial notes",dueAt:null,maxPoints:10,confirmed:true,
+  });
+  const versions=await pool.query<{updated_at:Date}>(
+   "update course_assignments set updated_at=now() where id=$1 returning updated_at",
+   [created.id]);
+  const current=versions.rows[0]!.updated_at.toISOString();
+  const edit={action:"EDIT" as const,assignmentId:created.id,expectedUpdatedAt:current,
+   title:"Version-corrected "+tag,description:"Revised",dueAt:null,maxPoints:10,
+   confirmed:true as const};
+  await expect(commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
+   ...edit,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
+  })).rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+  await expect(commandFacultyAssignment(learner,{deliveryId:delivery.id},edit))
+   .rejects.toBeDefined();
+  await expect(commandFacultyAssignment(faculty,{deliveryId:SEED_IDS.collegeB},edit))
+   .rejects.toBeDefined();
+  const changed=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},edit);
+  expect(changed.title).toBe("Version-corrected "+tag);
+  await expect(commandFacultyAssignment(faculty,{deliveryId:delivery.id},edit))
+   .rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+  const history=await pool.query<{n:string}>(`select count(*)::text as n
+   from activity_events where subject_id=$1::text
+   and event_type='courses.assignment.updated'`,[created.id]);
+  expect(history.rows[0]?.n).toBe("1");
+ });
  it("validates choice answers and audit, denies old token and foreign Section",async()=>{
   const {delivery,lesson}=await fixture();
   const questions=[{
