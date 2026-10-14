@@ -45,6 +45,7 @@ export async function getMentorTeamHistory(
   const filters = and(
     eq(projectMembers.projectId, scope.project.id),
     eq(collegeMemberships.collegeId, scope.collegeId),
+    query.role === "ALL" ? undefined : eq(projectMembers.role,query.role),
     query.view === "OPEN" ? isNull(projectMembers.endedAt) :
       query.view === "ENDED" ? isNotNull(projectMembers.endedAt) : undefined,
   );

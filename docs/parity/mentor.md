@@ -849,3 +849,11 @@ assertions authored. **PARTIAL:** browser and executed DB/typecheck still open.
 
 ## chat-11 backlog X — project-attention type filters (PARTIAL)
 Current authorized Mentor project-attention signals can be filtered by recorded kind without changing personal notifications, producer/scope, or external sends. Pure unit cases authored. PARTIAL pending PG, browser and legacy checks.
+
+## chat-11 backlog Y — Mentor team-history role filter (PARTIAL)
+
+The exact-project registered Team history supports persisted MENTOR vs LEARNER
+role selection alongside current/open/ended membership filters; role is
+applied to both SQL count and paginated rows and preserved in page links.
+No Mentor membership writes or private identities are added. Unit and
+own-project PG assertions authored; **PARTIAL:** executed tests/browser remain.
