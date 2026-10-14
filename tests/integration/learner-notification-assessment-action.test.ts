@@ -21,7 +21,7 @@ beforeEach(async()=>{
  const event=randomUUID();notificationId=randomUUID();
  await pool.query(
  "INSERT INTO activity_events(id,organization_id,college_id,actor_user_id,module,event_type,subject_type,subject_id,summary) VALUES($1,$2,$3,$4,'PLACEMENTS','placements.assessment.test','APPLICATION',$5,'Assessment fixture')",
- [event,SEED_IDS.organization,SEED_IDS.collegeA,SEED_IDS.collegeAdminUser,own.applicationId]);
+ [event,SEED_IDS.organization,own.drive.learner.ids.college,SEED_IDS.collegeAdminUser,own.applicationId]);
  await pool.query("INSERT INTO in_app_notifications(id,user_id,event_id,title,body,action_href) VALUES($1,$2,$3,'Assessment available','Open your own round',$4)",
  [notificationId,own.drive.learner.ids.user,event,
   "/learn/my-placements/assessments?applicationId="+own.applicationId+"&roundId="+own.roundId]);
