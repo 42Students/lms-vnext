@@ -398,7 +398,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-014 | Unsave job | JobsListContent | learner jobs | UNCHECKED |
 | L12-015 | Pagination | JobsListContent | learner jobs | UNCHECKED |
 | L12-016 | Open/not-open/closed grouping | learner jobs | learner-specific open-to-apply/unavailable-to-apply/deadline-passed chips over authorized published roles, with honest counts; PARTIAL pending fresh PostgreSQL negative/read verification and mobile/browser acceptance; unpublished jobs remain intentionally hidden | PARTIAL |
-| L12-017 | Deadline urgency labels | JobsListContent | learner jobs | UNCHECKED |
+| L12-017 | Deadline urgency labels | JobsListContent | real published application deadline classified using server ISO snapshot into closed, within 24 hours, within seven days, future and not announced; no fabricated expiry for absent timestamps or changes to eligibility. PARTIAL pending fresh PG, unit, tsc/eslint, browser timezone acceptance | PARTIAL |
 | L12-018 | Eligibility state on card | JobsListContent | learner jobs | FIXED |
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |
 | L12-020 | Saved-jobs failure distinct from all-jobs failure | JobsListContent | learner jobs | UNCHECKED |
