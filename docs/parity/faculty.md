@@ -1431,3 +1431,6 @@ The `/teacher/courses/[deliveryId]` landing route validates the Section UUID bef
 
 ## 2026-10-15 Round 5 Faculty Quiz metadata reconfirmation — PARTIAL
 Editing Quiz title, instructions, IST deadline, max attempts or a new draft's lesson selector now invalidates the previous confirmation. The server continues requiring explicit confirmed writes. Pure confirmation-state regression tests added; browser keyboard/mobile acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Quiz question structure — PARTIAL
+Quiz add/remove-question actions now invalidate earlier confirmation and enforce at least one and at most 100 questions, using pure immutable helpers. Unit test authored; PG and browser verification remain pending.
