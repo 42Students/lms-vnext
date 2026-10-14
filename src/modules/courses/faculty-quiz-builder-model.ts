@@ -56,3 +56,8 @@ export function facultyChangeQuizChoiceType<T extends { correct: boolean }>(
     })),
   };
 }
+
+/** Publishing or closing seals the authoring fields even before a refresh. */
+export function facultyQuizDraftEditable(status: string | null | undefined): boolean {
+  return status == null || status === "DRAFT";
+}

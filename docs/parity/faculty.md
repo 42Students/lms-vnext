@@ -1349,3 +1349,6 @@ The alternate Faculty Course detail validates UUID before lookup and maps missin
 
 ## 2026-10-15 Faculty Quiz choice-type transitions — PARTIAL
 The quiz builder now normalizes changing an authored multiple-choice question to single choice: exactly one prior selected answer (or the first incomplete option) remains correct, without mutating stored state. A pure model and unit regression tests cover normalization and schema-valid output. Browser keyboard/mobile and PG command acceptance remain open; All Quizzes stays PARTIAL.
+
+## 2026-10-15 Faculty Quiz metadata editor lifecycle lock — PARTIAL
+Quiz title, instructions, due date, attempt limit, question add/remove and selection are disabled while loading/saving, and published/closed/archived quizzes render metadata read-only rather than offering unsaveable edits. A pure-model unit suite asserts draft-only editing. Lifecycle writes still validate persisted status and optimistic timestamps. Executed browser/PG evidence and legacy modal ergonomics remain outstanding.
