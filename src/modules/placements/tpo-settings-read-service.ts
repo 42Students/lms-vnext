@@ -94,6 +94,7 @@ export async function getTpoPlacementSeasonSettings(
       endDate: season.endDate,
       status: season.status,
       closedAt: season.closedAt,
+      updatedAt: season.updatedAt.toISOString(),
     })),
   );
 

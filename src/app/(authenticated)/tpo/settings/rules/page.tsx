@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
+import { TpoCollegeRulesControl } from "@/components/placements/tpo-college-rules-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -150,6 +151,14 @@ export default async function TpoPlacementRulesSettingsPage({
             : "This college has no placement_college_rules row. Values shown are the effective source defaults: offer released, one held offer, 40% uplift, and a 48-hour minimum response period."}
         </p>
       </section>
+
+      <TpoCollegeRulesControl rules={{
+        countsAsPlacedAt: rules.countsAsPlacedAt,
+        maxHeldOffers: rules.maxHeldOffers,
+        upliftPct: rules.upliftPct,
+        minResponseHours: rules.minResponseHours,
+        version: rules.version,
+      }} />
 
       <section className="space-y-4">
         <div>
