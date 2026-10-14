@@ -1007,3 +1007,5 @@ OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
 - **L21-009 PARTIAL:** legacy `?tab=meetings` opens the People & Meetings learner workspace. Unit and own-learner PG denial tests authored. Remaining: executed checks, legacy/browser/mobile acceptance.
 
 - **L25-007 PARTIAL:** learner Board task index shows persisted title, status, priority and sprint. Type and story points are not persisted, not fabricated. Unit and own-learner PG positive/scope/role denial tests authored. Remaining: executed tests/browser parity and migrated type/points producer if required.
+
+- **L21-010 PARTIAL (chat-7):** authorized learner Project final delivery now has an explicit canonical tab, so `?tab=delivery` highlights the matching navigation and displays persisted own Project submission/review flow. No new files or external sends. Unit/own-learner PG scope-denial tests authored. **Remaining:** executable test gates, mobile navigation, Back/Forward and legacy delivery workspace parity.

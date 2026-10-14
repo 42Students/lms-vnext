@@ -9,6 +9,8 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
+import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
+import { LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-tab-alias-model";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { learnerBoardCardMetadata } from "@/modules/projects/learner-board-card-model";
@@ -390,5 +392,17 @@ describe("L25-007 learner Board persisted task context",()=>{
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L21-010 exact learner final delivery tab",()=>{
+  it("loads the own project final-delivery read behind canonical tab",async()=>{
+    expect(LEARNER_PROJECT_DETAIL_TABS.some(item=>item.key==="delivery")).toBe(true);
+    const workspace=await getProjectWorkspaceView(context,ids.project);
+    expect(workspace.project.id).toBe(ids.project);
+    expect(workspace.finalDelivery.submissions).toEqual([]);
+    await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
   });
 });
