@@ -1011,3 +1011,9 @@ OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
 - **L21-010 PARTIAL (chat-7):** authorized learner Project final delivery now has an explicit canonical tab, so `?tab=delivery` highlights the matching navigation and displays persisted own Project submission/review flow. No new files or external sends. Unit/own-learner PG scope-denial tests authored. **Remaining:** executable test gates, mobile navigation, Back/Forward and legacy delivery workspace parity.
 
 - **L20-014 PARTIAL (chat-7):** Learner Projects list explicitly labels persisted ARCHIVED instances as read-only without treating COMPLETED projects as archived. No write permission or storage changes. Pure model and PG persisted own-learner/foreign-college/suspended checks authored. **Remaining:** execute tsc/lint/Vitest/isolated PG and confirm archived navigation/disabled actions against legacy mobile/browser behavior.
+
+## 2026-10-14 attendance filter correction — PARTIAL
+
+The Attendance workspace now uses IST for record month membership and date/time labels, including UTC month/year boundaries. The current Course/month selection is resolved from the URL on each navigation, so restored history no longer leaves stale local filters. Query months and Course IDs are validated and constrained to the server-authorized Course list. Existing loading/error/empty and mobile views remain in place. Pure boundary/query tests and an own-enrolled-learner PostgreSQL success/foreign-college/suspended/wrong-role test were added. Disposable PG execution is blocked by root-only sandbox user mapping; mobile/browser Back/Forward acceptance remains outstanding. No parity row is marked DONE.
+
+Board Assignee/Mine remains blocked: registered project_tasks has no assignee column. Course thumbnails remain blocked by the absence of a verified canonical image association; no image or ownership data was fabricated.
