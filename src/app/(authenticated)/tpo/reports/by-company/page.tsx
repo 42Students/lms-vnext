@@ -21,6 +21,7 @@ type SearchParams = {
   jobId?: string | string[];
   q?: string | string[];
   page?: string | string[];
+  sort?: string | string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -39,7 +40,7 @@ export default async function TpoByCompanyReportPage({
   }
 
   const query = await searchParams;
-  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{})});
+  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{})});
   if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className="font-semibold text-foreground">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
@@ -49,7 +50,7 @@ export default async function TpoByCompanyReportPage({
 
   const view=paginateCompanyReport(workspace.report.byCompany,viewQuery.data);
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
-  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,page});
+  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,sort:view.query.sort,page});
   return (
     <div className="space-y-6">
       <PageHeader
@@ -67,7 +68,12 @@ export default async function TpoByCompanyReportPage({
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search company name
           <input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
-        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        </label><label className="grid gap-1 text-sm font-semibold text-body">Order companies
+          <select name="sort" defaultValue={view.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
+            <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option>
+          </select>
+        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
       </form>
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and CSV retain the selected full season/drive scope.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
@@ -98,7 +104,7 @@ export default async function TpoByCompanyReportPage({
         ])}
         emptyDescription="No company placements are available for the selected season and drive."
       />
-      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<a href={href(view.page-1)} className="font-semibold text-primary-text">← Previous</a>:null}{view.page<view.totalPages?<a href={href(view.page+1)} className="font-semibold text-primary-text">Next →</a>:null}</div></nav>
+      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<Link href={href(view.page-1)} className="font-semibold text-primary-text">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="font-semibold text-primary-text">Next →</Link>:null}</div></nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Company report drill-down">
         <h2 className="font-semibold text-foreground">Open company records</h2>
         <p className="mt-1 text-sm text-body">These company pages show your college relationship and full persisted history, not just this report season.</p>
