@@ -7,6 +7,7 @@ const STATUS = {
   DEPARTMENT_NOT_FOUND: 400,
   HALL_NAME_TAKEN: 409,
   HALL_IN_USE: 409,
+  HALL_CAPACITY_CONFLICT: 409,
 } as const;
 
 export function lectureHallErrorResponse(error: LectureHallError) {
