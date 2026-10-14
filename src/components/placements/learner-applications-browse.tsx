@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { Dialog } from "@/components/ui/dialog";
+import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -36,6 +38,11 @@ export function LearnerApplicationsBrowse({
   const pathname = usePathname();
   const params = useSearchParams();
   const [search, setSearch] = useState(() => params.get("q") ?? "");
+  const [withdrawTarget, setWithdrawTarget] = useState<LearnerPlacementJourneyItem | null>(null);
+  const [withdrawReason, setWithdrawReason] = useState("");
+  const [withdrawPending, setWithdrawPending] = useState(false);
+  const [withdrawError, setWithdrawError] = useState<string | null>(null);
+  const [withdrawNotice, setWithdrawNotice] = useState<string | null>(null);
   const updateQuery = useCallback((change: Record<string, string | null>) => {
     const next = new URLSearchParams(params.toString());
     for (const [key,value] of Object.entries(change)) {
@@ -59,6 +66,44 @@ export function LearnerApplicationsBrowse({
     const timer = window.setTimeout(() => updateQuery({q:search.trim() || null}), 220);
     return () => window.clearTimeout(timer);
   }, [search, params, updateQuery]);
+
+  async function confirmWithdrawal() {
+    if (!withdrawTarget || withdrawPending) return;
+    const parsed = learnerApplicationWithdrawalSchema.safeParse({
+      action: "WITHDRAW",
+      confirmed: true,
+      reason: withdrawReason,
+    });
+    if (!parsed.success) {
+      setWithdrawError(parsed.error.issues[0]?.message ?? "Enter a valid reason.");
+      return;
+    }
+    setWithdrawPending(true);
+    setWithdrawError(null);
+    try {
+      const response = await fetch(
+        "/api/placements/applications/" +
+          encodeURIComponent(withdrawTarget.applicationId) + "/actions",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(parsed.data),
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Withdrawal could not be saved. Your application has not been changed.");
+      }
+      setWithdrawTarget(null);
+      setWithdrawReason("");
+      setWithdrawNotice("Application withdrawn. The updated status will appear in your history.");
+      updateQuery({ applicationId: null });
+      router.refresh();
+    } catch (error) {
+      setWithdrawError(error instanceof Error ? error.message : "Unable to withdraw application.");
+    } finally {
+      setWithdrawPending(false);
+    }
+  }
 
   const viewRaw = params.get("view");
   const view: LearnerApplicationBrowseFilters["view"] =
@@ -90,6 +135,11 @@ export function LearnerApplicationsBrowse({
 
   return (
     <div className="space-y-5">
+      {withdrawNotice ? (
+        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
+          {withdrawNotice}
+        </p>
+      ) : null}
       <section aria-label="Application list filters" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Application stage views">
           {viewOptions.map((option) => (
@@ -197,6 +247,20 @@ export function LearnerApplicationsBrowse({
               </Link>
             </>
           ) : null}
+          {selected?.applicationStatus === "SUBMITTED" ? (
+            <Button
+              variant="secondary"
+              disabled={withdrawPending}
+              onClick={() => {
+                setWithdrawTarget(selected);
+                setWithdrawReason("");
+                setWithdrawError(null);
+                setWithdrawNotice(null);
+              }}
+            >
+              Withdraw application
+            </Button>
+          ) : null}
           <Link href="/learn/my-placements/assessments" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
             Assessments
           </Link>
@@ -247,6 +311,63 @@ export function LearnerApplicationsBrowse({
           </div>
         ) : null}
       </Drawer>
+
+      <Dialog
+        open={withdrawTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !withdrawPending) {
+            setWithdrawTarget(null);
+            setWithdrawError(null);
+          }
+        }}
+        title="Confirm application withdrawal"
+        description="This changes the official status of your submitted application. This action cannot be undone here."
+        footer={
+          <>
+            <Button variant="secondary" disabled={withdrawPending}
+              onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
+              Keep application
+            </Button>
+            <Button
+              disabled={withdrawPending || !learnerApplicationWithdrawalSchema.safeParse({
+                action: "WITHDRAW", confirmed: true, reason: withdrawReason,
+              }).success}
+              onClick={() => { void confirmWithdrawal(); }}
+            >
+              {withdrawPending ? "Withdrawing…" : "Confirm withdrawal"}
+            </Button>
+          </>
+        }
+      >
+        {withdrawTarget ? (
+          <div className="space-y-4">
+            <p className="break-words text-sm text-body">
+              {withdrawTarget.companyName} · {withdrawTarget.jobTitle}
+            </p>
+            <label className="block text-sm font-semibold text-foreground">
+              Reason for withdrawal <span className="font-normal text-muted-foreground">(required)</span>
+              <textarea
+                value={withdrawReason}
+                onChange={(event) => { setWithdrawReason(event.target.value); setWithdrawError(null); }}
+                minLength={5}
+                maxLength={500}
+                rows={4}
+                disabled={withdrawPending}
+                aria-describedby="withdrawal-reason-hint"
+                className="mt-2 min-h-24 w-full rounded-md border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                placeholder="Briefly explain why you are withdrawing"
+              />
+            </label>
+            <p id="withdrawal-reason-hint" className="text-xs text-muted-foreground">
+              5–500 characters. Your reason is stored in application status history
+              for the placement team; it is not shown on the public Learner timeline.
+            </p>
+            {withdrawError ? (
+              <p role="alert" className="text-sm font-semibold text-error">{withdrawError}</p>
+            ) : null}
+          </div>
+        ) : null}
+      </Dialog>
     </div>
   );
 }
