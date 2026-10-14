@@ -12,7 +12,7 @@ export default async function HrJobActivityPage({searchParams}:{
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
- const input=hrActivityQuerySchema.safeParse({collegeId:first(raw.collegeId),kind:first(raw.kind)});
+ const input=hrActivityQuerySchema.safeParse({collegeId:first(raw.collegeId),kind:first(raw.kind),page:first(raw.page)});
  if(!input.success)return <div className="space-y-4"><PageHeader eyebrow="Recruiter" title="Hiring activity"/>
   <p role="alert">Invalid college filter.</p><Link href="/hr/activity">Choose again</Link></div>;
  const result=await listRecruiterJobActivity(context,input.data);
@@ -48,6 +48,13 @@ export default async function HrJobActivityPage({searchParams}:{
      <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
     </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
      No visible publication or closure activity at this college.</p>}
+   <nav aria-label="Activity history pages" className="flex flex-wrap items-center gap-3">
+     {input.data.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&page="+(input.data.page-1)}
+       className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
+     <span className="text-xs text-muted-foreground">Page {input.data.page} · up to {input.data.limit} events</span>
+     {result.hasNext?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&page="+(input.data.page+1)}
+       className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
+   </nav>
    <p className="text-xs text-muted-foreground">Read-only hiring history, not the recruiter Messages inbox.</p>
   </>}
  </div>;

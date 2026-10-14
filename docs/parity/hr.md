@@ -487,3 +487,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Request Drive round presets — PARTIAL:** Added three local hiring-round presets (interview-only, test+interview, full TALK/TEST/GD/INTERVIEW); replacing round lists never saves, submits, or mutates source Hire Again jobs. Pure model/Zod unit tests authored. Also corrected calendar category filter typing to preserve typed result-due records. Remaining persisted approval and browser parity.
+
+
+**2026-10-15 chat-10 / Hiring activity server pagination — PARTIAL:** Read-only /hr/activity now pages allowlisted employer/college audit events using stable occurredAt/id sort, capped limit+1 lookahead, bounded numeric page and filter-preserving previous/next links. No private metadata. Pure-model and in-test PG page bounds extended, unexecuted. Remaining keyset paging at large offsets and browser acceptance.

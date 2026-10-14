@@ -76,3 +76,5 @@
 - 2026-10-15 — HR Calendar category filters PARTIAL: All/Rounds/Deadlines/Results-due URL views and pure unit tests; gates pending.
 
 - 2026-10-15 — HR Drive round presets PARTIAL: three unsent draft templates plus calendar category typing correction, tests authored unexecuted.
+
+- 2026-10-15 — HR activity pagination PARTIAL: bounded server pages and deterministic next/previous history links; tests unexecuted.
