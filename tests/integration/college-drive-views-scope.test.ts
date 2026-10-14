@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
+import { exportCollegeDriveApplicationsCsv, listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -13,7 +14,7 @@ const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
   process.env.DB03_ISOLATED_TEST_DATABASE === "1";
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 }) : null;
-const ids = { company: randomUUID(), relationship: randomUUID(), season: randomUUID(), job: randomUUID() };
+const ids = { company: randomUUID(), relationship: randomUUID(), season: randomUUID(), job: randomUUID(), roleOption:randomUUID(), application:randomUUID() };
 const code = "W-CA-" + ids.company.slice(0, 8);
 
 const adminA: RequestContext = {
@@ -47,11 +48,18 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
       "VALUES($1,$2,$3,$4,$5,'Isolated read-only fixture','FULL_TIME','HYBRID',$6)",
       [ids.job, SEED_IDS.collegeA, ids.season, ids.relationship, code, SEED_IDS.collegeAdminUser],
     );
+    await pool.query("INSERT INTO placement_job_role_options(id,job_id,title,employment_type,work_mode) VALUES($1,$2,$3,'FULL_TIME','HYBRID')",
+      [ids.roleOption,ids.job,code]);
+    await pool.query("INSERT INTO placement_applications(id,job_id,role_option_id,membership_id,channel,status,eligibility_status,eligibility_snapshot,submitted_by_user_id) " +
+      "VALUES($1,$2,$3,$4,'INTERNAL','SUBMITTED','ELIGIBLE','{}'::jsonb,$5)",
+      [ids.application,ids.job,ids.roleOption,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser]);
   });
   afterAll(async () => {
     try {
       if (pool) {
         // No activity/history/append-only deletion.
+        await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
+        await pool.query("DELETE FROM placement_job_role_options WHERE id=$1", [ids.roleOption]);
         await pool.query("DELETE FROM placement_jobs WHERE id=$1", [ids.job]);
         await pool.query("DELETE FROM placement_seasons WHERE id=$1", [ids.season]);
         await pool.query("DELETE FROM placement_company_relationships WHERE id=$1", [ids.relationship]);
@@ -72,11 +80,24 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
     const overview = await getCollegeDriveOverview(adminA, ids.job);
     expect(overview.drive.companyName).toBe(code);
     expect(overview.counts).toEqual({
-      applications: 0, shortlisted: 0, selected: null, offered: 0,
+      applications: 1, shortlisted: 0, selected: null, offered: 0,
     });
     await expect(getCollegeDriveOverview(adminB, ids.job))
       .rejects.toMatchObject({ code: "PLACEMENT_JOB_NOT_FOUND" });
     await expect(getCollegeDriveOverview(learner, ids.job)).rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("lists the scoped applicant and produces neutralized, bounded CSV; foreign job looks absent", async () => {
+    const own = await listCollegeDriveApplications(adminA, ids.job, { status:"SUBMITTED" });
+    expect(own.items).toContainEqual(expect.objectContaining({id:ids.application,status:"SUBMITTED"}));
+    const exportResult=await exportCollegeDriveApplicationsCsv(adminA,ids.job,{});
+    expect(exportResult.total).toBe(1);
+    expect(exportResult.truncated).toBe(false);
+    expect(exportResult.csv).toContain("Application status");
+    await expect(listCollegeDriveApplications(adminB,ids.job,{}))
+      .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+    await expect(exportCollegeDriveApplicationsCsv(adminB,ids.job,{}))
+      .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+    await expect(listCollegeDriveApplications(learner,ids.job,{})).rejects.toBeInstanceOf(AuthorizationError);
   });
   it("rejects non-admin and caller-supplied college scope", async () => {
     await expect(listCollegeDrives(learner, {})).rejects.toBeInstanceOf(AuthorizationError);
