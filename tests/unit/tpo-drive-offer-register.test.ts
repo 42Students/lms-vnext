@@ -20,6 +20,16 @@ describe("offer register",()=>{
   expect(projectOfferRegister(facts,"ALL",20).page).toBe(11);
   expect(projectOfferRegister(facts,"ALL",2).rows).toHaveLength(25);
  });
+ it("searches persisted learner names and roles literally before paging",()=>{
+  const offers=[row("1","ISSUED"),row("2","ISSUED"),row("3","ACCEPTED")];
+  offers[0]!.candidate.displayName="Aditi Raman";
+  offers[1]!.offer.roleTitle="Data Analyst";
+  expect(projectOfferRegister(offers,"ALL",1,"  ADITI " ).rows.map(x=>x.id)).toEqual(["1"]);
+  expect(projectOfferRegister(offers,"ALL",1,"data").rows.map(x=>x.id)).toEqual(["2"]);
+  expect(projectOfferRegister(offers,"ALL",1,"%").rows).toHaveLength(0);
+  expect(projectOfferRegister(offers,"ACCEPTED",1,"data").totalMatching).toBe(0);
+  expect(offerRegisterQuery.safeParse({jobId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",q:"x".repeat(101)}).success).toBe(false);
+ });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
   expect(offerRegisterQuery.safeParse({jobId,status:"SELECTED"}).success).toBe(false);
