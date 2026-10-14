@@ -68,6 +68,7 @@ test("Faculty posts, pins, unpins and deletes a Section discussion in the browse
   const article = page.getByRole("article").filter({ hasText: text });
   await expect(article).toBeVisible();
   const actionPath = "/api/courses/deliveries/";
+  page.once("dialog", dialog => dialog.accept());
   const pin = page.waitForResponse(res =>
     res.request().method() === "PATCH" &&
     new URL(res.url()).pathname.includes(actionPath) &&
@@ -75,6 +76,7 @@ test("Faculty posts, pins, unpins and deletes a Section discussion in the browse
   await article.getByRole("button", { name: "Pin", exact: true }).click();
   expect((await pin).ok()).toBe(true);
   await expect(article.getByRole("button", { name: "Unpin" })).toBeVisible();
+  page.once("dialog", dialog => dialog.accept());
   const unpin = page.waitForResponse(res =>
     res.request().method() === "PATCH" && new URL(res.url()).pathname.endsWith("/" + messageId));
   await article.getByRole("button", { name: "Unpin" }).click();
@@ -486,7 +488,7 @@ test("Faculty Notifications keep the Faculty route through unread and cursor rec
   await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
 });
 
-test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {
+test("Faculty Contacts verifies public-only role cards, scoped search and page size", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/contacts/allContacts");
   await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
@@ -494,27 +496,37 @@ test("Faculty Contacts matches the legacy tabs, college search and page size", a
   for (const label of ["All Contacts", "Teachers", "Students"]) {
     await expect(tabs.getByRole("link", { name: label })).toBeVisible();
   }
-  await expect(page.getByRole("columnheader", { name: "Role" })).toBeVisible();
+  const publicLearner = page.locator("article").filter({
+    has: page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]'),
+  });
+  await expect(publicLearner).toBeVisible();
+  await expect(publicLearner.getByRole("list", { name: "Current college roles" })).toContainText("Student");
+  await expect(page.getByRole("table")).toHaveCount(0);
+  // The public directory deliberately does not search or disclose login email.
   await page.getByLabel("Search contacts").fill("learner.seed@example.com");
   await page.getByLabel("Contacts per page").selectOption("50");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page).toHaveURL(/q=learner.seed%40example.com/);
   await expect(page).toHaveURL(/pageSize=50/);
-  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toBeVisible();
-  await expect(page.getByRole("table").getByText("Student")).toBeVisible();
+  await expect(page.getByText("No public directory members found")).toBeVisible();
+  await page.getByRole("link", { name: "Clear search" }).click();
   await tabs.getByRole("link", { name: "Teachers" }).click();
-  await expect(page.getByRole("columnheader", { name: "Role" })).toHaveCount(0);
-  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toHaveCount(0);
+  await expect(page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toHaveCount(0);
   await tabs.getByRole("link", { name: "Students" }).click();
-  await expect(page.getByRole("table").getByText("learner.seed@example.com")).toBeVisible();
+  await expect(page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toBeVisible();
 });
 
-test("Faculty Contacts renders accessible mobile cards", async ({ page, context }) => {
+test("Faculty Contacts shows authorized public profile cards on mobile without private emails", async ({ page, context }) => {
   await facultyLogin(context);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/teacher/contacts/students?q=learner.seed%40example.com&pageSize=10");
+  await page.goto("/teacher/contacts/students?pageSize=10");
   await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
-  await expect(page.locator("article").filter({ hasText:"learner.seed@example.com" })).toBeVisible();
+  const card = page.locator("article").filter({
+    has: page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]'),
+  });
+  await expect(card).toBeVisible();
+  await expect(card.getByRole("list", { name: "Current college roles" })).toContainText("Student");
+  await expect(card).not.toContainText("learner.seed@example.com");
   await expect(page.getByRole("link", { name: "Students" })).toHaveAttribute("aria-current","page");
 });
 
