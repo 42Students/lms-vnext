@@ -1,3 +1,4 @@
+import { getFacultySubmissionReviewPage } from "@/modules/courses/faculty-submission-review-service";
 import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
@@ -561,6 +562,24 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await expect(listAssignmentSubmissions(learner,assignment.id,delivery.id)).rejects.toBeDefined();
     await expect(listAssignmentSubmissions(facultyOnly,assignment.id,SEED_IDS.collegeB)).rejects.toBeDefined();
     await expect(listAssignmentSubmissions({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},assignment.id,delivery.id)).rejects.toBeDefined();
+  });
+  it("pages actual Faculty grading submissions and rechecks publication and scope",async()=>{
+    const {delivery,assignment}=await fixture();
+    await pool.query("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Review fixture')",[assignment.id,delivery.id,testLearnerMembershipId]);
+    const query={assignmentId:assignment.id,deliveryId:delivery.id,filter:"UNGRADED",page:999};
+    const pending=await getFacultySubmissionReviewPage(facultyOnly,query);
+    expect(pending.total).toBe(1);expect(pending.page).toBe(1);
+    expect(pending.items[0]?.submittedAt).toEqual(expect.any(String));
+    const id=pending.items[0]!.id;
+    await gradeAssignmentSubmission(facultyOnly,id,{pointsAwarded:7,feedback:"Graded fixture",expectedVersion:pending.items[0]!.version});
+    expect((await getFacultySubmissionReviewPage(facultyOnly,query)).total).toBe(0);
+    expect((await getFacultySubmissionReviewPage(facultyOnly,{...query,filter:"GRADED"})).total).toBe(1);
+    await expect(getFacultySubmissionReviewPage(learner,query)).rejects.toBeDefined();
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,deliveryId:SEED_IDS.collegeB})).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_NOT_FOUND"});
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,assignmentId:SEED_IDS.collegeB})).rejects.toMatchObject({code:"ASSIGNMENT_SUBMISSION_NOT_FOUND"});
+    await expect(getFacultySubmissionReviewPage(facultyOnly,{...query,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await pool.query("update course_assignments set status='ARCHIVED' where id=$1",[assignment.id]);
+    await expect(getFacultySubmissionReviewPage(facultyOnly,query)).rejects.toMatchObject({code:"ASSIGNMENT_NOT_PUBLISHED"});
   });
   it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
     const {delivery}=await fixture();
