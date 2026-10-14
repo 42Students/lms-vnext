@@ -10,6 +10,9 @@ describe("College people CSV contract", () => {
     const url = new URL(collegePeopleExportHref({ q:"a & b", role:"MENTOR", status:"ACTIVE" }), "https://test.invalid");
     expect(url.searchParams.get("q")).toBe("a & b");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    const learner = new URL(collegePeopleExportHref({q:"Ana",role:"LEARNER",status:"SUSPENDED"}), "https://test.invalid");
+    expect(learner.searchParams.get("role")).toBe("LEARNER");
+    expect(learner.searchParams.get("status")).toBe("SUSPENDED");
   });
   it("neutralizes spreadsheet injection and reports truncation", () => {
     for (const value of ["=2+2", " -10", "+cmd", "@query", "\t=1"])
