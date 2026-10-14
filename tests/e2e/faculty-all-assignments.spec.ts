@@ -26,9 +26,19 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   page.on("pageerror",error=>errors.push(error.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
+  // Next App Router client navigation can resolve after Playwright click.
+  // Never extract a delivery ID from the previous /teacher/courses URL.
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
   const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
-  await expect(page.getByRole("heading",{level:1,name:"Section assignments"})).toBeVisible();
+  const manageHeading=page.getByRole("heading",{level:1,name:"Section assignments"});
+  try{
+   await manageHeading.waitFor({state:"visible",timeout:8000});
+  }catch{
+   const rendered=(await page.locator("body").innerText()).slice(0,2300);
+   throw new Error("Faculty manage route "+page.url()+" rendered: "+rendered);
+  }
   await expect(page.getByRole("heading",{name:"Assignment authoring"})).toBeVisible();
   const baseTitle="Faculty Assignment "+view.name+" "+randomUUID().slice(0,8);
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(baseTitle);
@@ -80,6 +90,34 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("combobox",{name:"Choose draft or create new"})
    .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   await expect(page.getByRole("button",{name:"Save draft"})).toBeDisabled();
+
+  // The legacy Faculty All Assignments surface is more than the authoring
+  // form: verify persisted aggregate list, scoped status/search, review drawer
+  // and report link against this real published Section assignment.
+  await page.goto("/teacher/allAssignments");
+  await expect(page.getByRole("heading",{level:1,name:"All Assignments"})).toBeVisible();
+  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
+  await page.getByRole("combobox",{name:"Status"}).selectOption("DRAFT");
+  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await page.getByRole("combobox",{name:"Status"}).selectOption("PUBLISHED");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(baseTitle+" revised");
+  const publishedCard=page.locator("article").filter({
+   has:page.getByRole("heading",{name:baseTitle+" revised"}),
+  });
+  await expect(publishedCard).toBeVisible();
+  await expect(publishedCard.getByText("This Section")).toBeVisible();
+  await publishedCard.getByRole("button",{name:"View submissions"}).click();
+  const drawer=page.getByRole("dialog",{name:"Assignment submissions"});
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByText("No learners have submitted this Assignment yet.")).toBeVisible();
+  await page.getByRole("button",{name:"Close drawer"}).click();
+  await publishedCard.getByRole("link",{name:"View Report"}).click();
+  await expect(page).toHaveURL(new RegExp(
+   "/teacher/report/assignment/"+assignmentId+"\\?deliveryId="+deliveryId,
+  ));
+  await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
+  await page.getByRole("combobox",{name:"Choose draft or create new"})
+   .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   await confirmation.check();
   const archive=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");

@@ -1,4 +1,5 @@
 "use client";
+import { facultyScheduleFieldsChanged, facultyScheduleErrorMessage } from "@/modules/attendance/faculty-schedule-mutation-model";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -25,6 +26,13 @@ export function FacultyAttendanceScheduleEditor({
   const [success,setSuccess]=useState<string|null>(null);
   const eligible=sessions.filter(s=>!s.marked);
   const selected=eligible.find(s=>s.id===id);
+  let unchanged = false;
+  if(action==="RESCHEDULE"&&selected){
+    try {
+      unchanged=!facultyScheduleFieldsChanged({...selected,startsAt:new Date(selected.startsAt),endsAt:new Date(selected.endsAt)},
+        {title,description:description||null,location:location||null,...facultyScheduleInstants(startsAt,endsAt,selected)});
+    } catch { /* Invalid fields are explained by save validation. */ }
+  }
   function applyExistingSession(session:Session){
     setId(session.id);
     setTitle(session.title);
@@ -49,14 +57,15 @@ export function FacultyAttendanceScheduleEditor({
     if(title.trim().length<3){
       setError("Enter a session title of at least three characters.");return;
     }
-    const timingError=validateFacultyScheduleWindow(startsAt,endsAt);
+    const timingError=validateFacultyScheduleWindow(startsAt,endsAt,action==="RESCHEDULE"?selected:undefined);
     if(timingError){setError(timingError);return;}
+    if(unchanged){setError("No schedule details changed; nothing was saved.");return;}
     if(!window.confirm("Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"))return;
     setBusy(true);setError(null);setSuccess(null);
     try{
       const payload={
         action,title,description:description||null,location:location||null,
-        ...facultyScheduleInstants(startsAt,endsAt),
+        ...facultyScheduleInstants(startsAt,endsAt,action==="RESCHEDULE"?selected:undefined),
         ...(action==="RESCHEDULE"?{
           sessionId:selected?.id,expectedUpdatedAt:selected?.updatedAt,
         }:{}),confirm:true,
@@ -65,8 +74,7 @@ export function FacultyAttendanceScheduleEditor({
         "/api/courses/faculty/attendance/"+encodeURIComponent(deliveryId)+"/schedule",
         {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)},
       );
-      if(!response.ok)throw new Error(
-        "Session was not saved. Check the current schedule, Section ownership and version.");
+      if(!response.ok)throw new Error(facultyScheduleErrorMessage(await response.json().catch(()=>null)));
       setSuccess(action==="CREATE"?"Session scheduled.":"Session rescheduled.");
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Session update failed.");}
@@ -116,10 +124,11 @@ export function FacultyAttendanceScheduleEditor({
         maxLength={1000} className="min-h-20 rounded border border-border bg-background p-2" />
     </label>
     <button type="button" onClick={save}
-      disabled={busy||action==="RESCHEDULE"&&!selected}
+      disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}
       className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
     </button>
+    {unchanged?<p role="status" className="text-xs text-muted-foreground">No schedule details have changed.</p>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   </section>;

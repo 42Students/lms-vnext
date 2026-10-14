@@ -11,7 +11,7 @@ import {CoursesServiceError} from "@/modules/courses/errors";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema}
+import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,facultyScheduleFieldsChanged}
   from "./faculty-schedule-mutation-model";
 
 /** Scoped course Session CREATE and RESCHEDULE. Marked sessions cannot move. */
@@ -51,12 +51,15 @@ export async function commandFacultyAttendanceSchedule(
           eq(sectionScheduleEvents.facultyMembershipId,membership.id),
           eq(sectionScheduleEvents.status,"SCHEDULED"),
         )).for("update").limit(1).then(rows=>rows.map(r=>r.event));
-      if(!current||current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
-        throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+      if(!current)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+      if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+        throw new CoursesServiceError("FACULTY_ATTENDANCE_SCHEDULE_STALE_VERSION");
       const [marked]=await tx.select({status:attendanceSessions.status})
         .from(attendanceSessions)
         .where(eq(attendanceSessions.scheduleEventId,current.id)).limit(1);
       if(marked?.status==="MARKED")throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+      if(!facultyScheduleFieldsChanged(current,input))
+        throw new CoursesServiceError("FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE");
     }
     const conflict=await tx.select({id:sectionScheduleEvents.id})
       .from(sectionScheduleEvents)
@@ -86,7 +89,9 @@ export async function commandFacultyAttendanceSchedule(
     }else{
       [saved]=await tx.update(sectionScheduleEvents).set({
         title:input.title,description:input.description,location:input.location,
-        startsAt,endsAt,updatedAt:now,
+        ...(startsAt.getTime()!==current!.startsAt.getTime()?{startsAt}:{}),
+        ...(endsAt.getTime()!==current!.endsAt.getTime()?{endsAt}:{}),
+        updatedAt:now,
       }).where(and(
         eq(sectionScheduleEvents.id,current!.id),
         eq(sectionScheduleEvents.sectionId,owned.sectionId),
