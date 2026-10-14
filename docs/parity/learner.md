@@ -1071,3 +1071,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L29-013 PARTIAL:** Notification project actions now recognize the own Projects directory and exact project instance UUID with a single permitted legacy tab (including Board and Delivery). Arbitrary tenant/actor selectors are stripped; forged/duplicate tabs and unexpected project URLs fail closed. The destination still enforces learner project-membership access. Unit and independent own-membership PostgreSQL denial evidence authored; project producer-to-inbox and browser verification outstanding. No chat-7 Projects files changed.
+
+
+**2026-10-15 chat-5 L14-005 PARTIAL:** Applications Recent Activity sorting now uses the saved withdrawn timestamp alongside submission, screening decision and round-result activity, so an actual later withdrawal is not incorrectly sorted by the older submission date. Stable tie breaks and tenant-scoped source remain unchanged. Pure model/own-learner DB denial coverage authored; executed tests and browser Back/Forward acceptance pending.
