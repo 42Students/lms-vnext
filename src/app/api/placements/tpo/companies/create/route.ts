@@ -28,7 +28,9 @@ export async function POST(request: Request) {
     const { confirmed: _confirmed, ...input } =
       tpoCreateCompanySchema.parse(await request.json());
     void _confirmed;
-    const result = await createPlacementCompany(context, { ...input, collegeId });
+    const result = await createPlacementCompany(context, {
+      ...input, collegeId, isTrusted: false,
+    });
     return NextResponse.json({
       companyId: result.company.id,
       relationshipId: result.relationship.id,

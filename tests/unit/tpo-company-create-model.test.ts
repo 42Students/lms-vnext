@@ -10,7 +10,6 @@ describe("TPO company directory create contract", () => {
     })).toMatchObject({
       confirmed: true,
       name: "Recruiter Company",
-      isTrusted: false,
     });
     expect(tpoCreateCompanySchema.safeParse({
       confirmed: false,
@@ -26,6 +25,9 @@ describe("TPO company directory create contract", () => {
     const valid = { confirmed: true, name: "Example Company" };
     expect(tpoCreateCompanySchema.safeParse({
       ...valid, collegeId: "20000000-0000-4000-8000-000000000002",
+    }).success).toBe(false);
+    expect(tpoCreateCompanySchema.safeParse({
+      ...valid, isTrusted: true,
     }).success).toBe(false);
     expect(tpoCreateCompanySchema.safeParse({
       ...valid, ownerMembershipId: "40000000-0000-4000-8000-000000000002",
