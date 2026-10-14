@@ -1,0 +1,34 @@
+import "server-only";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { placementApplications, placementJobs, placementLearnerRequests } from "@/db/schema";
+import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { actOnPlacementRequest } from "./request-service";
+import { requirePlacementManageScope } from "./scope";
+import { tpoRequestDecisionSchema } from "./tpo-request-decision-model";
+import { placementRequestIdSchema } from "./validation";
+import { PlacementsServiceError } from "./errors";
+
+export async function decideTpoRequest(context: RequestContext, rawId: unknown, raw: unknown) {
+  const membership = context.membership;
+  if (!membership || !hasMembershipRole(context, "TPO"))
+    throw new AuthorizationError("placements.manage");
+  const collegeId = membership.collegeId;
+  if (!can(context, "placements.manage", { collegeId }))
+    throw new AuthorizationError("placements.manage");
+  requirePermission(context, "placements.manage", { collegeId });
+  const requestId = placementRequestIdSchema.parse(rawId);
+  const body = tpoRequestDecisionSchema.parse(raw);
+  await requirePlacementManageScope(context, collegeId);
+  const [row] = await getDb().select({ id: placementLearnerRequests.id })
+    .from(placementLearnerRequests)
+    .innerJoin(placementApplications, eq(placementApplications.id, placementLearnerRequests.applicationId))
+    .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .where(and(eq(placementLearnerRequests.id, requestId), eq(placementJobs.collegeId, collegeId))).limit(1);
+  if (!row) throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
+  return actOnPlacementRequest(context, requestId, {
+    action: body.action,
+    ...(body.action === "APPROVE" ? { note: body.note || null } : { note: body.note }),
+  }, body.expectedUpdatedAt);
+}

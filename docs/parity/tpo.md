@@ -493,6 +493,8 @@ Legacy columns:
 - [ ] decision consequences update authoritative learner/job state.
 - [ ] empty/loading/error states match.
 
+**W58 A — PARTIAL:** The college-scoped TPO Requests queue now exposes confirmed APPROVE/REJECT decisions for pending persisted request types (application withdrawal, round reschedule, offer extension), with required rejection note and an expected-updated-at optimistic token verified under a row lock. It reuses the authoritative request transaction/effect and immutable placement activity audit. CANCEL stays learner-controlled; send-back has no migrated state. Legacy request detail and reason taxonomy, executed isolated PostgreSQL confirmation and browser parity remain open.
+
 # Calendar
 
 ## Page: TPO Calendar
