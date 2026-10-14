@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -132,12 +133,10 @@ export function FacultyQuizReview({
   async function setResults(
     published: boolean,
   ) {
-    if (
-      !published &&
-      !window.confirm(
-        "Hide published Quiz results from learners?",
-      )
-    ) {
+    if (!window.confirm(published
+      ? "Publish these quiz scores and answers to eligible learners?"
+      : "Hide published Quiz results from learners?"
+    )) {
       return;
     }
 
@@ -176,8 +175,8 @@ export function FacultyQuizReview({
     }
   }
 
-  if (!open) {
-    return (
+  return (
+    <>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Button
           size="sm"
@@ -224,11 +223,13 @@ export function FacultyQuizReview({
           </span>
         ) : null}
       </div>
-    );
-  }
-
-  return (
-    <div className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4">
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        title="Quiz attempts"
+        description="Review immutable Section-scoped attempts and choose whether released results are visible to learners."
+      >
+      <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
@@ -275,13 +276,9 @@ export function FacultyQuizReview({
           >
             Refresh
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setOpen(false)}
-          >
-            Close
-          </Button>
+          <span className="text-xs text-muted-foreground">
+            Escape or close the drawer to return to the assessment list.
+          </span>
         </div>
       </div>
 
@@ -309,7 +306,7 @@ export function FacultyQuizReview({
         </p>
       ) : null}
 
-      {attempts &&
+      {!loading && attempts &&
       attempts.length > 0 ? (
         <div className="mt-4 space-y-3">
           {attempts.map((attempt) => (
@@ -418,6 +415,8 @@ export function FacultyQuizReview({
           ))}
         </div>
       ) : null}
-    </div>
+      </div>
+      </Drawer>
+    </>
   );
 }
