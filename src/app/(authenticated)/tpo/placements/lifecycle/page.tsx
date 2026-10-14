@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];page?:string|string[] };
+type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -16,12 +16,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
+    ...(first(params.workMode)?{workMode:first(params.workMode)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,page,
+   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,page,
   }};}
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
@@ -51,6 +52,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All deadlines</option><option value="DUE_SOON">Live · next 7 days</option>
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
+        </select>
+      </label>
+      <label className="min-w-36 flex-1 text-sm font-semibold text-body">Work mode
+        <select name="workMode" defaultValue={data.workMode} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
+          <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
         </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>

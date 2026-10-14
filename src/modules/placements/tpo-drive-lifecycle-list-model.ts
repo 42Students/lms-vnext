@@ -4,6 +4,7 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   view: z.enum(["ALL", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","DUE_SOON","OVERDUE","UNSET"]).default("ALL"),
+  workMode:z.enum(["ALL","ONSITE","REMOTE","HYBRID"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
 export const TPO_DRIVE_PAGE_SIZE=25;
