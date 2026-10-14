@@ -680,3 +680,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Hiring Dashboard — PARTIAL:** `/admin/placements/hiring` now uses real job-level application counts (submitted/withdrawn) from selected-college jobs and same-college learner memberships, 25-row status/search paging and mobile/error/empty states; explicitly does not represent per-application counts as distinct students, placements or interview conversion. No fabricated zero on query failures. Pure pagination/status unit authored; full season funnel/CTC/branch outcome metrics and PG/browser validation remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Offers oversight — PARTIAL:** Added `/admin/placements/offers`, read-only persisted offer versions, ISSUED/ACCEPTED/DECLINED/WITHDRAWN, INR compensation, joining date and expiry, IST issue, selected-college job/applicant membership and organization joins, search, 25-row cards and safe job link. No recruiter/TPO writes or evidence keys. Pure query tests authored; PG/browser gates, full offers action/detail parity remain open.
