@@ -1143,3 +1143,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-016 PARTIAL (round 4):** The Placement dashboard calendar preview now shows seven contiguous Asia/Kolkata calendar days, including days without events, with two own-scheduled rounds per day and honest overflow. This replaces a misleading rolling-168-hour list that could cover eight local dates around midnight. Approved reschedule UTC instants remain authoritative; date-boundary/leap-year pure tests authored. Browser/PG/runtime checks pending.
+
+
+**2026-10-15 chat-5 L11-009 PARTIAL (round 4):** When a noncritical dashboard source is unavailable but the learner's published-drive source loaded successfully, the hero exposes a safe Browse Drives fallback without inventing a no-activity or zero-jobs state. When drives themselves fail, the CTA is suppressed instead of promising accessible jobs. No new service/scope bypass. Unit cases for partial failures authored; runtime/browser gate pending.

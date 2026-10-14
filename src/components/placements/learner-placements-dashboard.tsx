@@ -5,6 +5,7 @@ import { learnerDashboardPartialState,type PlacementDashboardAvailability } from
 import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-onboarding-steps-model";
 import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
 import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
+import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboard-fallback-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -51,6 +52,7 @@ export function LearnerPlacementsDashboard({
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
+  const safeFallback=learnerDashboardSafeFallback(availability);
   const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
   return (
@@ -85,6 +87,10 @@ export function LearnerPlacementsDashboard({
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
+          {safeFallback ? <Link href={safeFallback.href}
+            className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4">
+            {safeFallback.label} →
+          </Link> : null}
         </p>
       )}
 
