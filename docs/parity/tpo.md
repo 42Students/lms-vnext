@@ -413,6 +413,8 @@ Legacy includes:
 **W66-2 PARTIAL — Extend Deadline:** A confirmed TPO published-drive extension at /tpo/placements/jobs/[jobId]/extend-deadline updates only persisted applicationDeadline for an active season, requires a later future IST deadline, row-locked expectedUpdatedAt with millisecond-safe SQL CAS, and immutable actor audit. Unit/PG tests authored, unexecuted. Legacy overlay placement, borrower notifications, browser/race validation remain open.
 
 - [ ] Extend Deadline modal validation matches.
+**W66-3 PARTIAL — Close consequence preview:** A TPO-only drive close-preview page shows persisted applications, rounds, and offer versions. A confirmed same-origin POST checks signed-in college/actor, active season, PUBLISHED state, millisecond-safe job token and unchanged preview counts under a job lock, then closes and writes immutable audit. This is CLOSE only: the job enum has no CANCELLED state. Remaining: legacy CANCEL semantics, cross-writer serialization, consequence notifications, browser checks and executed PostgreSQL evidence.
+
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.
 
