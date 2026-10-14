@@ -328,6 +328,18 @@ export async function submitCourseAssignment(
         })
         .returning();
 
+      // Audit only identifiers and type, never the learner's answer.
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_SUBMITTED,
+        collegeId: assignment.collegeId,
+        organizationId: assignment.organizationId,
+        subjectType: "course_assignment",
+        subjectId: assignmentId,
+        summary: "Learner submitted assignment",
+        metadata: { submissionId: created!.id, deliveryId: input.deliveryId, submissionType: input.submissionType },
+        dedupeKey: "assignment-submission:" + created!.id + ":submitted",
+      });
+
       if (
         input.submissionType === "FILE"
       ) {

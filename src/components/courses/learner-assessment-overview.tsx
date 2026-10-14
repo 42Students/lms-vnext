@@ -355,6 +355,10 @@ export function LearnerAssessmentOverview({
             >
               Open in Learning Path
             </Link>
+            <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
+              className="ml-2 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:underline">
+              Full assignment details
+            </Link>
           ) : undefined
         }
       >
