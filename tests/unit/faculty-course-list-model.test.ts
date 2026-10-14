@@ -25,9 +25,10 @@ describe("Faculty Course list query and bounded cards", () => {
   expect(pageFacultyCourseList([],facultyCourseListQuerySchema.parse({page:2}))).toMatchObject({page:1,total:0,totalPages:1});
  });
  it("rejects forged, duplicated and invalid selectors and preserves filters in links", () => {
-  for(const query of [{q:["a","b"]},{period:"bad"},{role:"ADMIN"},{page:0},{page:"1.5"},{collegeId:period},{q:"x".repeat(121)}])
+  for(const query of [{q:["a","b"]},{page:["2"]},{page:true},{page:"1e3"},{page:"02"},{period:"bad"},{role:"ADMIN"},{page:0},{page:"1.5"},{collegeId:period},{q:"x".repeat(121)}])
    expect(facultyCourseListQuerySchema.safeParse(query).success).toBe(false);
   expect(facultyCourseListHref({q:" Java & UI ",period,role:"TA",page:2})).toBe("/teacher/courses?q=Java+%26+UI&period="+period+"&role=TA&page=2");
   expect(facultyCourseListHref({})).toBe("/teacher/courses");
+  expect(facultyCourseListQuerySchema.parse({page:"10000"}).page).toBe(10000);
  });
 });
