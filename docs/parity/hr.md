@@ -366,3 +366,8 @@ Legacy states:
 - [ ] duplicate/replayed token behavior is safe.
 - [ ] loading/error/success states match.
 - [ ] public route leaks no applicant/college-private information before acceptance.
+
+
+**2026-10-14 Chat 6 HR job Applicants/Offers — PARTIAL:** Tabs use persisted job-scoped applicant + screening records for placement-cell-SHORTLISTED candidates only, with active/withdrawn counts and filters, 200-row source cap, and job offers read-only for shared applicants. Recruiter grant is checked before both reads; no internal screening reasons or unshared candidates are queried. Remaining: exact legacy share marker semantics, private/no-share placeholders, applicant drawers/review writes, pagination, executed PG/browser verification, and privacy review.
+
+**2026-10-14 Chat 6 / HR cross-company job routing — PARTIAL:** Existing recruiter job resolver now converts missing/foreign-company/foreign-college/wrong-role job access to identical non-enumerating PLACEMENT_JOB_NOT_FOUND before candidate/offer reads. HR job page maps that and malformed job UUID to a localized not-found state and provides a loading skeleton. Added a pure permission model plus unit and isolated PG fixture tests (authored, not executed). Remains: runtime/browser testing, expiry/revocation concurrency and exact legacy 403/404 copy review.

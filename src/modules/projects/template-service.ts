@@ -95,7 +95,7 @@ export async function listProjectTemplates(
 ) {
   requirePermission(
     context,
-    "project-template.manage",
+    "project-template.read",
   );
 
   return getDb()
@@ -110,7 +110,7 @@ export async function getProjectTemplateDetail(
 ) {
   requirePermission(
     context,
-    "project-template.manage",
+    "project-template.read",
   );
   const templateId =
     projectTemplateIdSchema.parse(templateIdInput);
