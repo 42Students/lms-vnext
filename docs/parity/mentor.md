@@ -286,3 +286,22 @@ transaction-locked task/submission updates are retained; the decision audit
 is inserted into that transaction, with no raw feedback in metadata.
 Positive cases remain unexecuted pending disposable DB, CI and browser proof.
 Mentor Board and notifications parity remain PARTIAL.
+
+## Mentor sprint details write — source-only PARTIAL (2026-10-14)
+
+The existing Project workspace now provides a two-step **Edit sprint** dialog
+and confirmation for registered `project_sprints.title` and `description`.
+The endpoint `PATCH /api/projects/[projectId]/sprints/[sprintId]`
+enforces `isSameOriginRequest`, strict Zod params/input,
+`requireProjectLifecycleAccess` backed by a current persisted same-college
+Mentor assignment or authorized Project manager, central `projects.read`,
+and Projects module availability. The transaction locks the project/sprint,
+rejects archived/completed project, completed sprint, shipped release,
+unchanged input and stale `expectedUpdatedAt`, and atomically writes the
+new timestamp plus a safe `projects.sprint.updated` actor/college audit row.
+No dates, goals, task states, release links or template keys are invented.
+Pure-model tests and a disposable PostgreSQL fixture suite covering a
+successful edit/audit plus forged Mentor, foreign college, stale version and
+untrusted field denial are authored. They require independent execution.
+The Project Sprints parent row remains PARTIAL pending verified browser,
+accessibility, fresh-DB regression and full legacy controls.
