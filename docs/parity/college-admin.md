@@ -517,6 +517,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: People Directory
+
+**Combined directory filters PARTIAL (chat-9, 2026-10-14):** /college/people now filters persisted memberships by server-scoped college, name/email/phone, role and status before counted pagination. All-role search includes multi-role memberships once; existing onboarding, role and lifecycle dialogs remain. Strict Zod query, encoded filter-preserving pagination, empty/loading/error/reset states and authored pure-model and isolated PostgreSQL positive/foreign/wrong-role tests. Remaining: legacy field/column parity, profile drawer and lifecycle UX parity, 50-row pagination/browser evidence and independently executed PostgreSQL/type/lint tests.
+
 **Legacy:** `/college-admin/people`
 
 - [ ] Combined role directory fields match.
