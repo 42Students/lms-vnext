@@ -41,7 +41,7 @@ export async function commandFacultyAttendanceSchedule(
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"section-schedule:"+owned.sectionId}))`);
     let current:typeof sectionScheduleEvents.$inferSelect|undefined;
     if(input.action==="RESCHEDULE"){
-      [current]=await tx.select().from(sectionScheduleEvents)
+      [current]=await tx.select({event:sectionScheduleEvents}).from(sectionScheduleEvents)
         .innerJoin(sectionScheduleEventCourses,
           eq(sectionScheduleEventCourses.scheduleEventId,sectionScheduleEvents.id))
         .where(and(
@@ -50,7 +50,7 @@ export async function commandFacultyAttendanceSchedule(
           eq(sectionScheduleEvents.sectionId,owned.sectionId),
           eq(sectionScheduleEvents.facultyMembershipId,membership.id),
           eq(sectionScheduleEvents.status,"SCHEDULED"),
-        )).for("update").limit(1).then(rows=>rows.map(r=>r.section_schedule_events));
+        )).for("update").limit(1).then(rows=>rows.map(r=>r.event));
       if(!current||current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
         throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
       const [marked]=await tx.select({status:attendanceSessions.status})
