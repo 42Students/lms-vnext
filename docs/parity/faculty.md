@@ -1437,3 +1437,6 @@ Quiz add/remove-question actions now invalidate earlier confirmation and enforce
 
 ## 2026-10-15 Round 5 Quiz unavailable question-bank write fence — PARTIAL
 If the selected draft's persisted question bank fails to load, Faculty cannot EDIT or PUBLISH it until an explicit fresh load succeeds; the server's own scope and version checks remain authoritative. Published metadata-only edits remain possible. Pure action matrix tests authored; browser retry acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Courses concurrent-revocation recovery — PARTIAL
+After the initial persisted Faculty Course list is resolved, a single concurrently revoked/ended Section no longer crashes all Course cards when its workspace is read. Only typed missing/unassigned delivery errors are omitted; genuine database failures still surface. Pure error-boundary tests added. Pagination can require refresh during concurrent revocation; PG/browser acceptance pending.
