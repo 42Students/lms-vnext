@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ilike, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -33,7 +33,12 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
   const projection=season?await db.transaction(async tx=>{
+   const end=new Date(now.getTime()+7*86400000);
+   const deadlineCondition=filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
+    filters.deadline==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
+    filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;
    const scope=and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.seasonId,season.id),
+    deadlineCondition,
     isNull(placementJobs.archivedAt),filters.search?or(
      ilike(placementJobs.title,tpoApplicantExportSearchPattern(filters.search)),
      ilike(placementCompanies.name,tpoApplicantExportSearchPattern(filters.search))):undefined);
@@ -73,7 +78,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"}):
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
   return {
-    ...projection, seasons, season, view: filters.view,search:filters.search,
+    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
   };
