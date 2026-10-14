@@ -22,6 +22,8 @@ import { loadCourseSectionDeliveryScope } from "./scope";
 import { CoursesServiceError } from "./errors";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import { formatDiscussionReply } from "./learner-discussion-reply-model";
+import {facultyDiscussionModerationSchema,facultyDiscussionTokenMatches}
+ from "./faculty-discussion-moderation-model";
 
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
@@ -237,7 +239,9 @@ export async function toggleCourseDiscussionPin(
   context: RequestContext,
   messageIdInput: string,
   deliveryIdInput?: string,
+  rawExpected?: unknown,
 ) {
+  const concurrency=rawExpected===undefined?null:facultyDiscussionModerationSchema.parse(rawExpected);
   const requestedDeliveryId = deliveryIdInput === undefined
     ? null
     : deliveryIdSchema.parse(deliveryIdInput);
@@ -258,19 +262,22 @@ export async function toggleCourseDiscussionPin(
     );
   }
 
-  // Evaluate both columns against the current persisted value in one
-  // UPDATE; two simultaneous moderators must toggle twice, not lose a write.
+  if(concurrency&&!facultyDiscussionTokenMatches(message.updatedAt,concurrency.expectedUpdatedAt))
+    throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
+  // Atomic toggle with millisecond-normalized CAS for route writes.
   return getDb().transaction(async (tx) => {
     const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
       pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
         then null else ${context.user.id}::uuid end`,
-      updatedAt: new Date(),
+      updatedAt: new Date(Math.max(Date.now(),message.updatedAt.getTime()+1)),
     }).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+      concurrency?sql`date_trunc('milliseconds', ${courseDiscussionMessages.updatedAt}) =
+        ${new Date(concurrency.expectedUpdatedAt).toISOString()}::timestamptz`:undefined,
     )).returning();
-    if (!updated) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    if (!updated) throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_PIN_CHANGED,
       collegeId: context.membership!.collegeId,
@@ -289,7 +296,9 @@ export async function deleteCourseDiscussionMessage(
   context: RequestContext,
   messageIdInput: string,
   deliveryIdInput?: string,
+  rawExpected?: unknown,
 ) {
+  const concurrency=rawExpected===undefined?null:facultyDiscussionModerationSchema.parse(rawExpected);
   const requestedDeliveryId = deliveryIdInput === undefined
     ? null
     : deliveryIdSchema.parse(deliveryIdInput);
@@ -313,6 +322,8 @@ export async function deleteCourseDiscussionMessage(
     );
   }
 
+  if(concurrency&&!facultyDiscussionTokenMatches(message.updatedAt,concurrency.expectedUpdatedAt))
+    throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   return getDb().transaction(async (tx) => {
     const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
@@ -321,8 +332,10 @@ export async function deleteCourseDiscussionMessage(
         eq(courseDiscussionMessages.senderMembershipId, context.membership!.id),
         eq(courseDiscussionMessages.pinned, false),
       ) : undefined,
+      concurrency?sql`date_trunc('milliseconds', ${courseDiscussionMessages.updatedAt}) =
+        ${new Date(concurrency.expectedUpdatedAt).toISOString()}::timestamptz`:undefined,
     )).returning({ id: courseDiscussionMessages.id });
-    if (!deleted) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    if (!deleted) throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_DELETED,
       collegeId: context.membership!.collegeId,

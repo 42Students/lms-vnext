@@ -382,3 +382,30 @@ cases; then perform authenticated mobile/browser and legacy-oracle acceptance.
 These tests have been authored and reviewed as source, but are not claimed as
 executed. Existing PARTIAL rows remain PARTIAL, existing RETIRED decisions
 remain RETIRED; no DONE parity row was changed.
+
+## 2026-10-14 A2 — All Assignments (PARTIAL)
+Hardened the existing Section assignment authoring editor: device-local due date
+round-trips the persisted ISO instant, invalid local dates fail client-side,
+archived actions are disabled, and mutations give accessible status/error text.
+Existing transaction + immutable audit and row-lock optimistic token are
+unchanged. Pure model unit test and own-Faculty fixture PostgreSQL
+create/edit/stale/foreign/wrong-role/audit checks were added.
+Still open: execute tests, real browser create/edit/archive/grade modal and
+legacy lesson-order parity; no claim of DONE.
+
+## 2026-10-14 B2 — All Quizzes (PARTIAL)
+Repaired a broken authoring GET contract: API returns `{quiz:{questions}}`,
+not root `questions`. The builder now rejects stale overlapping fetches,
+restores correct answers and browser-local due times, validates questions
+before the server mutation and prevents editing published quiz questions.
+Added model unit and own-Faculty PostgreSQL create/edit/publish/stale/foreign/
+wrong-role/audit assertions. No DONE promotion pending execution/browser parity.
+
+## 2026-10-14 C2 — Course Discussions (PARTIAL)
+Existing create/reply and moderation were present; **new** required confirmed
+client token on PATCH/DELETE and SQL millisecond CAS prevent stale moderation
+writes against PostgreSQL microsecond timestamps. Shared Learner own-delete
+flow still sends a token; Faculty pin/unpin requires confirmation. Error feedback
+is visible without inventing deleted text. Test fixtures authored for create,
+pin, stale denial, wrong role, forged delivery and deletion audit. Full
+browser/database execution and legacy reply-tree parity remain open.
