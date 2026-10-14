@@ -181,13 +181,15 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     const dueAt=new Date(Date.now()-60000).toISOString();
     const created=[];
     for(let i=0;i<28;i++)created.push(await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt}));
-    const page1=await getTpoDueFollowupQueue(tpo,undefined,{q:leadId});
-    expect(page1.items).toBeUndefined();
-    const other=await getTpoDueFollowupQueue(tpo,undefined,{page:2});
+    const page1=await getTpoDueFollowupQueue(tpo,undefined,{q:"Follow-up",page:1});
+    expect(page1.rows).toHaveLength(25);
+    const other=await getTpoDueFollowupQueue(tpo,undefined,{q:"Follow-up",page:2});
     expect(other.total).toBeGreaterThanOrEqual(28);
+    expect(other.rows.length).toBeGreaterThanOrEqual(3);
     expect(other.page).toBe(2);
     const allIds=[...page1.rows,...other.rows].map(x=>x.id);
     expect(new Set(allIds).size).toBe(allIds.length);
+    expect(created.every(row=>allIds.includes(row.id))).toBe(true);
   });
 
   it("rejects wrong roles and foreign college reads and writes without changing records", async () => {
@@ -212,7 +214,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     const created = await createConfirmedTpoFollowup(tpo, {
       confirmed: true, leadId, dueAt,
     });
-    expect((await getTpoFollowupQueueCsv(foreign,{})).csv).not.toContain(leadId);
+    await expect(getTpoFollowupQueueCsv(foreign,{})).rejects.toBeInstanceOf(AuthorizationError);
     await expect(completeConfirmedTpoFollowup(learner, created.id, {
       confirmed: true, expectedDueAt: created.dueAt,
       outcome: "OTHER", note: "Wrong role",
