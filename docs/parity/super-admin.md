@@ -547,3 +547,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Super Admin Assignments read-first — PARTIAL:** New /admin/assignments, tenant-selected read-only assessment rows using a dedicated centrally authorized Super Admin read path within shared query service, search/status/page validation, counts of submitted records on the displayed page, responsive cards, empty/loading/error, and Courses navigation. No grading or submission content exposed. Authored unit and isolated PG in-test course/lesson/assignment fixtures with cross-college and wrong-role denial (not executed). Remaining: exact legacy authoring/review, exports/detail, filters, executed PG/browser validation, performance checks.
+
+
+**2026-10-14 Chat 6 / Super Admin Quizzes read-first — PARTIAL:** New /admin/quizzes with explicit college-scope read using shared scope-safe read-only assessment service, search and draft/published/closed/archived statuses, page-level attempt counts, 25-row pagination, mobile cards and loading/error/empty states. Pure unit and isolated PG in-test quiz with cross-college and wrong-role denial authored, unexecuted. Remaining: exact legacy quiz builder/detail, score/report drill-ins, grading and learner workflows, runtime tests/browser acceptance, CSV and larger-scale performance.
