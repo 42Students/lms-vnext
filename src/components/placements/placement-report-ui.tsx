@@ -209,6 +209,7 @@ export function ReportNavigation({
     { href: "/tpo/reports/placed-branch", label: "Placed by branch" },
     { href: "/tpo/reports/season-pipeline", label: "Season pipeline" },
     { href: "/tpo/reports/offers-expiry", label: "Offer expiry" },
+    { href: "/tpo/reports/joining-followups", label: "Joining follow-ups" },
     { href: "/tpo/reports/ctc", label: "CTC" },
     { href: "/tpo/reports/unplaced", label: "Unplaced students" },
     {
