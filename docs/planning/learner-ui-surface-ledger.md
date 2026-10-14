@@ -732,6 +732,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-017 | No cross-college/cross-role leakage | notification API | current persisted Learner membership, event college-scoped inbox/history and single/bulk read actions; DB success/denial tests authored, not run | FIXED |
 | L29-018 | Mobile notification list | NotificationsContent responsive | notification page | UNCHECKED |
 
+| L29-019 | Placement notification choices with conflict protection | registered placement preferences | required expected flags, membership serialization, 409/reload recovery and audit; PARTIAL pending PG/browser/producer acceptance | PARTIAL |
+
 ## L30 — Profile: `/learn/profile`
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
