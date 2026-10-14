@@ -164,6 +164,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semester–Course Mapping
+**Offering-mapping subquery repair PARTIAL (2026-10-15):** The College Admin mapping list now projects unique names for course/cohort/program/period identifiers, titles and codes to avoid PostgreSQL 42702 in paginated reads; isolated PG test additionally asserts the ancestry fields. Dedicated program-term assignment mutations and executed PG/mobile/legacy parity evidence remain open.
+
 **Legacy:** `/college-admin/semester-courses`
 
 **Read-first PARTIAL:** `/college/semester-courses` lists persisted college-owned course offerings by cohort/program/academic period with CORE/ELECTIVE type, credits, filters and offering links. Academic periods are not yet certified as legacy numbered semesters; no create/remove mapping writes and no complete browser parity.
