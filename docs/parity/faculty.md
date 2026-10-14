@@ -1368,3 +1368,6 @@ The existing Section gradebook CSV no longer outputs learner email or uses email
 
 ## 2026-10-15 Faculty gradebook CSV bounded export — PARTIAL
 Server-owned gradebook CSV now caps export at 500 learner rows, appending a formula-neutralized row identifying the omitted count (not silently implying completeness); private learner email remains excluded. Pure tests cover 522-member bounds and contact redaction. PG scale fixture and browser download acceptance remain open; no DONE promotion.
+
+## 2026-10-15 Faculty published Quiz metadata editor parity — PARTIAL
+The Quiz builder now exposes confirmed, optimistic EDIT of title/instructions/IST deadline for PUBLISHED and CLOSED Section quizzes while keeping the question bank and attempt limit locked. The UI omits sealed questions in metadata-only writes; ARCHIVED remains immutable. Pure tests cover lifecycle and Zod commands. PG positive/denial and mobile browser verification remain pending.

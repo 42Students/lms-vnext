@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -31,6 +31,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [error,setError]=useState<string|null>(null);
  const chosen=quizzes.find(q=>q.id===selected);
  const editable=!pending && facultyQuizDraftEditable(chosen?.status);
+ const metadataEditable=!pending && facultyQuizMetadataEditable(chosen?.status);
  async function choose(id:string){
   const token=++choiceRequest.current;
   setSelected(id);setConfirmed(false);setError(null);setSuccess(null);
@@ -56,16 +57,18 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   if(!confirmed){setError("Confirm the action before saving.");return;}
   if(pending)return;
   if(action!=="CREATE" && (
-    !chosen || ((action==="EDIT"||action==="PUBLISH") && chosen.status!=="DRAFT") ||
+    !chosen || ((action==="EDIT" && !facultyQuizMetadataEditable(chosen.status)) ||
+     (action==="PUBLISH" && chosen.status!=="DRAFT")) ||
     (action==="CLOSE" && chosen.status!=="PUBLISHED") ||
     (action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status))
   )){
     setError("The selected quiz cannot perform this action. Refresh its current state.");return;
   }
-  if(action==="CREATE"||action==="EDIT"){
+  if(action==="CREATE"||(action==="EDIT"&&chosen?.status==="DRAFT")){
     const validation=facultyQuizDraftIssue(title,questions);
     if(validation){setError(validation);return;}
   }
+  if(action==="EDIT" && !title.trim()){setError("Enter a Quiz title.");return;}
   const warning=action==="ARCHIVE" ?
     "Archive this Section Quiz? Learners will no longer see it. Quizzes with attempts cannot be archived." :
     action==="CLOSE" ?
@@ -82,9 +85,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        sequence:Math.max(0,...quizzes.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1))}
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
      title,description:description||null,dueAt:authoringDueInstant(dueAt),
-     maxAttempts,questions:questions.map((q,i)=>({
+     maxAttempts,
+     ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:questions.map((q,i)=>({
       ...q,sequence:i,options:q.options.map((o,j)=>({...o,sequence:j})),
-     })),
+     }))} : {}),
    };
    const res=await fetch("/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
@@ -115,14 +119,14 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </select></label>:null}
   <label className="grid min-w-0 gap-1 text-sm">Quiz title
-   <input value={title} disabled={!editable} maxLength={255} onChange={e=>setTitle(e.target.value)}
+   <input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>setTitle(e.target.value)}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Instructions
-   <textarea value={description} disabled={!editable} maxLength={10000} rows={2}
+   <textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>setDescription(e.target.value)}
     className="min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Due date (IST, optional)
-   <input type="datetime-local" disabled={!editable} value={dueAt} onChange={e=>setDueAt(e.target.value)}
+   <input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>setDueAt(e.target.value)}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
    <input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
@@ -183,8 +187,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {!chosen?<button type="button" disabled={!confirmed||pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
     <>
-    <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"}
-     onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
+    <button type="button" disabled={!confirmed||pending||!facultyQuizMetadataEditable(chosen.status)}
+     onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
     <button type="button" disabled={!confirmed||pending||chosen.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
     {chosen.status==="PUBLISHED"&&
