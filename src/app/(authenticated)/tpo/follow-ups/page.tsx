@@ -9,7 +9,7 @@ import { tpoFollowupQueueHref } from "@/modules/placements/tpo-followup-queue-mo
 
 export const dynamic = "force-dynamic";
 
-export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[];q?:string|string[]}>}) {
+export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[];q?:string|string[];page?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
@@ -18,8 +18,10 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   const scope=(Array.isArray(raw.scope)?raw.scope[0]:raw.scope)==="MINE"?"MINE":"TEAM";
   const window=(Array.isArray(raw.window)?raw.window[0]:raw.window)==="NEXT_7_DAYS"?"NEXT_7_DAYS":"DUE";
   const q=(Array.isArray(raw.q)?raw.q[0]:raw.q)?.trim().slice(0,100)??"";
+  const inputPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
+  const page=inputPage&&/^[1-9]\d{0,3}$/.test(inputPage)?Number(inputPage):1;
   const ready = process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
-  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q}) : null;
+  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q,page}) : null;
   return (
     <div className="space-y-6">
       <Link href="/tpo/recruiters"
@@ -51,7 +53,12 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
-      {data ? <TpoDueFollowupWorkspace data={data} /> : (
+      {data ? <><TpoDueFollowupWorkspace data={data} />
+        <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span>
+          <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-primary-text">← Previous</Link>:null}
+            {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-primary-text">Next →</Link>:null}</div>
+        </nav></> : (
         <section role="status" className="rounded-xl border border-border bg-surface p-6">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">

@@ -172,6 +172,20 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     expect((await getTpoDueFollowupQueue(tpo,undefined,{q:"%_not_real"})).rows.some(row=>row.id===task.id)).toBe(false);
   });
 
+  it("paginates stored follow-ups without hiding records beyond page one",async()=>{
+    const leadId=await fixture();
+    const dueAt=new Date(Date.now()-60000).toISOString();
+    const created=[];
+    for(let i=0;i<28;i++)created.push(await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt}));
+    const page1=await getTpoDueFollowupQueue(tpo,undefined,{q:leadId});
+    expect(page1.items).toBeUndefined();
+    const other=await getTpoDueFollowupQueue(tpo,undefined,{page:2});
+    expect(other.total).toBeGreaterThanOrEqual(28);
+    expect(other.page).toBe(2);
+    const allIds=[...page1.rows,...other.rows].map(x=>x.id);
+    expect(new Set(allIds).size).toBe(allIds.length);
+  });
+
   it("rejects wrong roles and foreign college reads and writes without changing records", async () => {
     if (!pool) throw new Error("Disposable PostgreSQL is required");
     const leadId = await fixture();

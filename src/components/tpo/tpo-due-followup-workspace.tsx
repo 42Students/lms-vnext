@@ -21,6 +21,7 @@ type Queue = {
   hasMoreDue: boolean;
   leads: Lead[];
   hasMoreLeads: boolean;
+  page:number;pageSize:number;total:number;totalPages:number;
   scope:"MINE"|"TEAM";
   window:"DUE"|"NEXT_7_DAYS";
 };
@@ -164,11 +165,11 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-base font-semibold text-foreground">
-            {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.rows.length}{data.hasMoreDue ? "+" : ""})
+            {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.total})
           </h2>
           <p className="mt-1 text-sm text-body">
             {data.window==="DUE"?"Open tasks due now or earlier.":"Open tasks scheduled from now through the next seven days."}
-            The list is limited to the earliest 200 rows in this window and ownership scope, not a college-wide total.
+            This is a 25-row page of the selected ownership and date window, not a college-wide total.
           </p>
         </div>
         {data.rows.length === 0 ? (

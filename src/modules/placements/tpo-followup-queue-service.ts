@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, gte, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
@@ -47,28 +47,38 @@ export async function getTpoDueFollowupQueue(
   const weekEnd=new Date(now.getTime()+7*86400000);
   const timeConditions=query.window==="DUE"?[lte(placementTpoFollowups.dueAt,now)]:
     [gte(placementTpoFollowups.dueAt,now),lte(placementTpoFollowups.dueAt,weekEnd)];
-  const facts = await db.select({
-    id: placementTpoFollowups.id,
-    leadId: placementTpoFollowups.leadId,
-    leadName: placementTpoLeads.name,
-    companyName: placementTpoLeads.companyName,
-    dueAt: placementTpoFollowups.dueAt,
-    note: placementTpoFollowups.note,
+  const conditions=and(
+    eq(placementTpoFollowups.collegeId,collegeId),
+    eq(placementTpoLeads.collegeId,collegeId),
+    isNull(placementTpoFollowups.doneAt),
+    ...timeConditions,
+    ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
+    ...(query.q?[sql<boolean>`position(lower(${query.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`]:[]),
+  );
+  const [totalResult]=await db.select({total:count()}).from(placementTpoFollowups)
+    .innerJoin(placementTpoLeads,and(
+      eq(placementTpoFollowups.leadId,placementTpoLeads.id),
+      eq(placementTpoFollowups.collegeId,placementTpoLeads.collegeId),
+    )).where(conditions);
+  const total=Number(totalResult?.total??0);
+  const pageSize=25;
+  const totalPages=Math.max(1,Math.ceil(total/pageSize));
+  const page=Math.min(query.page,totalPages);
+  const facts=await db.select({
+    id:placementTpoFollowups.id,
+    leadId:placementTpoFollowups.leadId,
+    leadName:placementTpoLeads.name,
+    companyName:placementTpoLeads.companyName,
+    dueAt:placementTpoFollowups.dueAt,
+    note:placementTpoFollowups.note,
   }).from(placementTpoFollowups)
-    .innerJoin(placementTpoLeads, and(
-      eq(placementTpoFollowups.leadId, placementTpoLeads.id),
-      eq(placementTpoFollowups.collegeId, placementTpoLeads.collegeId),
+    .innerJoin(placementTpoLeads,and(
+      eq(placementTpoFollowups.leadId,placementTpoLeads.id),
+      eq(placementTpoFollowups.collegeId,placementTpoLeads.collegeId),
     ))
-    .where(and(
-      eq(placementTpoFollowups.collegeId, collegeId),
-      eq(placementTpoLeads.collegeId, collegeId),
-      isNull(placementTpoFollowups.doneAt),
-      ...timeConditions,
-      ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
-      ...(query.q ? [sql<boolean>`position(lower(${query.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`] : []),
-    ))
-    .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id))
-    .limit(201);
+    .where(conditions)
+    .orderBy(asc(placementTpoFollowups.dueAt),asc(placementTpoFollowups.id))
+    .limit(pageSize).offset((page-1)*pageSize);
 
   const leads = await db.select({
     id: placementTpoLeads.id,
@@ -84,8 +94,9 @@ export async function getTpoDueFollowupQueue(
     .limit(201);
 
   return {
-    ...projectTpoFollowupQueue(facts.slice(0, 200), now),
-    hasMoreDue: facts.length > 200,
+    ...projectTpoFollowupQueue(facts, now),
+    hasMoreDue: page<totalPages,
+    page,pageSize,total,totalPages,
     scope: query.scope,
     window: query.window,
     q: query.q,
