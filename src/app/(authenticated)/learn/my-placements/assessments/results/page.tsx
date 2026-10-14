@@ -123,10 +123,6 @@ export default async function LearnerAssessmentResultsPage({
                   className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
                   View application →
                 </Link>
-                <Link href={"/learn/my-placements/jobs/" + encodeURIComponent(item.jobId)}
-                  className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
-                  View drive →
-                </Link>
               </div>
             </article>
           ))}
