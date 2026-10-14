@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { learnerScheduleIstDay } from "./learner-ist-schedule-model";
 
 export const learnerCalendarQuerySchema=z.object({
   view:z.enum(["week","month","day"]).optional(),
@@ -21,6 +22,7 @@ export function resolveOwnLearnerCalendarFilters(
   const month=query.month ? Number(query.month.slice(5,7))-1 : today.getMonth();
   return {
     view:query.view ?? "week",
+    anchorDay: query.month ? query.month + "-01" : learnerScheduleIstDay(today),
     anchor:query.month ? new Date(year,month,1) : today,
     selectedDeliveryIds:query.deliveryId ? [query.deliveryId] : ids,
   };
