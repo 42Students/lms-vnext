@@ -994,3 +994,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 learner notification inbox query: category/unread/search controls now reflect browser history with strict allowed query parameters; own personal notification reads and announcement fallbacks unchanged. No external sending. Unit and fresh-learner PostgreSQL tests authored; browser/static acceptance pending.
 
 2026-10-14 learner inbox read-all: explicit mobile confirmation for existing readAt-audited, own-college scoped idempotent acknowledgement; no external provider or new storage. Fresh PG + unit tests authored; completion requires CI/browser and simultaneous acknowledgement acceptance. Stale replay is a harmless no-op rather than an error by the established notification read policy.
+
+2026-10-14 Profile sections: same-section stale versions now denied transactionally under row lock; other sections preserved with jsonb_set. Optimistic request includes expectedItems; no identity documents/files and no new external sending. Added pure-model and own-learner PostgreSQL tests, multi-tab/CI acceptance pending.

@@ -294,9 +294,13 @@ export function LearnerProfileWorkspace(props: {
         const result = await fetch("/api/profile/me/sections", {
           method: "PATCH",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ confirmed: true, section, items }),
+          body: JSON.stringify({ confirmed: true, section, items, expectedItems: document[section] }),
         });
         const payload = await result.json().catch(() => null);
+        if(!result.ok && payload?.error==="LEARNER_PROFILE_SECTION_STALE"){
+          router.refresh();
+          throw new Error("This section changed in another tab. Review the latest saved version before retrying.");
+        }
         if (!result.ok || !Array.isArray(payload?.items)) {
           throw new Error("Could not save this section; other profile details were not changed.");
         }
