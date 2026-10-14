@@ -1,4 +1,5 @@
 import { tpoCompanyKey } from "./tpo-company-memory-service";
+import { tpoCompanyOfferDetailHref } from "./tpo-company-action-model";
 
 export type TpoCompanyBase = {
   companyId: string;
@@ -314,8 +315,7 @@ export function buildTpoCompanyTimeline(input: {
   }
 
   for (const offer of input.offers) {
-    const href =
-      `/tpo/placements/jobs/${encodeURIComponent(offer.jobId)}`;
+    const href = tpoCompanyOfferDetailHref(offer.jobId, offer.id);
 
     events.push({
       id: `offer-issued:${offer.id}`,
