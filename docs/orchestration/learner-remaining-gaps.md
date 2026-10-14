@@ -864,3 +864,7 @@ membership, wrong role and persisted live revocation. These tests are
 authored; executed test/browser evidence remains outstanding. Do not
 mistake this for changing primary OTP/login phone or account email, which
 requires a separate verified-credential workflow. Profile is still PARTIAL.
+
+## 2026-10-14 temporary chat-4 Learner assignment
+
+PARTIAL — Implemented registered placement-only notification choice mutation and confirmation UI, backed by `placement_candidate_preferences` booleans. No generic notification-preferences table, saved-job persistence or application-note column was invented; the saved-jobs source remains staged and is not journal-confirmed. Positive-path/denial PostgreSQL fixtures, unit tests and audit checks authored; independent lint/tsc/DB/browser evidence remains outstanding. The original snapshot counts are unchanged.
