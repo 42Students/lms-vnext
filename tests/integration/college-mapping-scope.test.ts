@@ -129,9 +129,30 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
       listCollegeFacultyAssignments(foreign, { q: code }),
     ]);
     expect(ownCourses.items.map(item => item.id)).toContain(ids.offering);
+    const [core, elective] = await Promise.all([
+      listCollegeSemesterCourseMappings(admin, { q: code, type: "CORE" }),
+      listCollegeSemesterCourseMappings(admin, { q: code, type: "ELECTIVE" }),
+    ]);
+    expect(core.items.map(item => item.id)).toContain(ids.offering);
+    expect(elective.items).toEqual([]);
+    expect(ownCourses.items.find(item => item.id === ids.offering)).toMatchObject({
+      courseName: code, courseCode: code, cohortName: code, programName: code,
+      programId: ids.program, periodName: code, periodCode: code,
+    });
     expect(otherCourses.items).toEqual([]);
     expect(ownTeaching.items.map(item => item.id)).toContain(ids.teaching);
+    const [primary, assistant] = await Promise.all([
+      listCollegeFacultyAssignments(admin, { q: code, role: "PRIMARY" }),
+      listCollegeFacultyAssignments(admin, { q: code, role: "TA" }),
+    ]);
+    expect(primary.items.map(item => item.id)).toContain(ids.teaching);
+    expect(assistant.items).toEqual([]);
     expect(ownTeaching.items.find(item => item.id === ids.teaching)?.state).toBe("ACTIVE");
+    expect(ownTeaching.items.find(item => item.id === ids.teaching)).toMatchObject({
+      deliveryId: ids.delivery, offeringId: ids.offering,
+      courseName: code, sectionName: code, cohortName: code, periodName: code,
+      endedAt: null, deliveryEndedAt: null,
+    });
     expect(otherTeaching.items).toEqual([]);
   });
 

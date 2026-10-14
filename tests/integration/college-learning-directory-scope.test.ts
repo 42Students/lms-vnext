@@ -137,6 +137,12 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const lesson = lessonPage.items.find(row => row.id === ids.lesson);
     const progress = progressPage.items.find(row => row.offeringId === ids.offering);
     expect(lesson).toMatchObject({ contentCount: 1, publishedContentCount: 1 });
+    const [active, archived] = await Promise.all([
+      listCollegeLessons(own, { q: name, offeringStatus: "ACTIVE" }),
+      listCollegeLessons(own, { q: name, offeringStatus: "ARCHIVED" }),
+    ]);
+    expect(active.items.map(row => row.id)).toContain(ids.lesson);
+    expect(archived.items).toEqual([]);
     expect(progress).toMatchObject({ recordedRows: 0, completedRows: 0, learnersWithRecords: 0 });
   });
 
