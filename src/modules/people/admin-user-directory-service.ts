@@ -4,7 +4,7 @@ import { getDb } from "@/db/client";
 import { collegeMemberships, colleges, membershipRoles, users } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUsersPageCount, roleForPeopleTab } from "./admin-user-directory-model";
+import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUserDirectoryPaging, roleForPeopleTab } from "./admin-user-directory-model";
 export async function listSuperAdminUsers(context: RequestContext, raw: unknown) {
  const query=adminUsersQuerySchema.parse(raw);
  if(!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
@@ -14,7 +14,7 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  });
  const conditions:SQL[]=[];
  if(selected?.collegeId)conditions.push(eq(colleges.id,selected.collegeId));
- else if(selected?.organizationId)conditions.push(eq(colleges.organizationId,selected.organizationId));
+ if(selected?.organizationId)conditions.push(eq(colleges.organizationId,selected.organizationId));
  if(query.membershipStatus!=="ALL")conditions.push(eq(collegeMemberships.status,query.membershipStatus));
  if(query.platformStatus!=="ALL")conditions.push(eq(users.platformStatus,query.platformStatus));
  const role=roleForPeopleTab(query);
@@ -44,17 +44,16 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(colleges,eq(colleges.id,collegeMemberships.collegeId))
  .where(and(...conditions)).as("admin_user_scope");
- const [totals,rows]=await Promise.all([
-  db.select({n:count()}).from(source),
-  db.select().from(source).orderBy(asc(source.displayName),asc(source.membershipId))
-   .limit(ADMIN_USERS_PAGE_SIZE).offset((query.page-1)*ADMIN_USERS_PAGE_SIZE),
- ]);
+ const totals=await db.select({n:count()}).from(source);
+ const paging=adminUserDirectoryPaging(totals[0]?.n??0,query.page);
+ const rows=await db.select().from(source).orderBy(asc(source.displayName),asc(source.membershipId))
+  .limit(ADMIN_USERS_PAGE_SIZE).offset(paging.offset);
  const roleRows=rows.length?await db.select({membershipId:membershipRoles.membershipId,role:membershipRoles.role})
   .from(membershipRoles).where(inArray(membershipRoles.membershipId,rows.map(x=>x.membershipId))):[];
  const byId=new Map<string,string[]>();
  for(const row of roleRows)byId.set(row.membershipId,[...(byId.get(row.membershipId)??[]),row.role]);
  return {
-  query,contactVisible:Boolean(selected?.collegeId),total:totals[0]?.n??0,totalPages:adminUsersPageCount(totals[0]?.n??0),
+  query:{...query,page:paging.page},contactVisible:Boolean(selected?.collegeId),total:paging.total,totalPages:paging.totalPages,
   items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
  };
 }
