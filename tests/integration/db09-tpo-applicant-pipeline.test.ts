@@ -13,7 +13,7 @@ const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:
 const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"tpo-applicant-pipeline",
 platformStatus:"ACTIVE",systemRoles:[]},membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
 organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
-const ids:{company?:string;rel?:string;job?:string;role?:string;app?:string}={};let tpoRole:string|null=null;
+const ids:{company?:string;rel?:string;job?:string;role?:string;app?:string}={};const addedTpoRoleIds:string[]=[];
 async function fixture(){
  if(!pool)throw Error("isolated DB required");
  const name="Pipeline-"+randomUUID();
@@ -33,8 +33,22 @@ async function cleanup(){
  if(ids.company)await pool.query("DELETE FROM placement_companies WHERE id=$1",[ids.company]);
 }
 describe.skipIf(!enabled)("TPO applicant pipeline isolated PostgreSQL",()=>{
-beforeAll(async()=>{if(!pool)throw Error("DB required");const r=await pool.query<{id:string}>("INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",[SEED_IDS.facultyCollegeAMembership]);tpoRole=r.rows[0]?.id??null;});
-afterAll(async()=>{await cleanup();if(pool&&tpoRole)await pool.query("DELETE FROM membership_roles WHERE id=$1",[tpoRole]);await pool?.end();await closeDatabaseConnection();});
+beforeAll(async()=>{
+ if(!pool)throw Error("Isolated PostgreSQL required");
+ for(const membershipId of [SEED_IDS.facultyCollegeAMembership,SEED_IDS.facultyCollegeBMembership]){
+  const inserted=await pool.query<{id:string}>(
+   "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
+   [membershipId]);
+  if(inserted.rows[0]?.id)addedTpoRoleIds.push(inserted.rows[0].id);
+ }
+});
+afterAll(async()=>{
+ await cleanup();
+ if(pool)for(const id of addedTpoRoleIds)
+  await pool.query("DELETE FROM membership_roles WHERE id=$1",[id]);
+ await pool?.end();
+ await closeDatabaseConnection();
+});
 it("reads persisted pending applicants and denies foreign college / wrong role",async()=>{
 const jobId=await fixture();
 const result=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING"});
