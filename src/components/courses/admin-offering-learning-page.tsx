@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ZodError } from "zod";
+import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
@@ -26,7 +29,16 @@ export async function AdminOfferingLearningPage({
     await getAdminOfferingLearningWorkspace(
       context,
       offeringId,
-    );
+    ).catch((error: unknown) => {
+      if (
+        error instanceof ZodError ||
+        (error instanceof CoursesServiceError &&
+          error.code === "OFFERING_NOT_FOUND")
+      ) {
+        notFound();
+      }
+      throw error;
+    });
   const displayEnabled =
     courseDisplayRuntimeEnabled();
   const display = displayEnabled
