@@ -26,3 +26,14 @@ export function adminUsersPageCount(total:number) {
 export function roleForPeopleTab(input:{tab:"ALL"|"FACULTY"|"STUDENT";role:string}) {
  return input.tab==="FACULTY"?"FACULTY":input.tab==="STUDENT"?"LEARNER":input.role;
 }
+
+/** Render form intent independently from server validation; switching tabs resets conflicting role filters. */
+export function adminPeopleSearchState(input: {
+ tab: "ALL"|"FACULTY"|"STUDENT"; role: string;
+}) {
+ return {
+  hiddenTab: input.tab,
+  showExplicitRoleFilter: input.tab==="ALL",
+  effectiveRole: roleForPeopleTab(input),
+ };
+}

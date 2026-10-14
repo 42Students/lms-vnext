@@ -589,3 +589,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Module Access hierarchy mobile — PARTIAL:** Selected college Feature Controls detail now presents global/organization/college inheritance and paginated descendant override rows as mobile-first cards, with desktop table retained only at lg. Derived source-backed summary counts from visible override rows, without representing them as effective student entitlements. Existing authenticated college scope and learner trace semantics unchanged. Pure unit and isolated PG in-test own/foreign/wrong-role tests authored; tsc/lint/DB/browser unexecuted. Remaining: full editing/lock workflows and exact legacy interaction parity.
+
+
+**2026-10-14 Chat 6 / People Directory filter-tab continuation — PARTIAL:** Unscoped /admin/people now links to global Users & Roles read-only directory while keeping college-specific mutation actions scoped. All/Faculty/Students selection survives GET filtering via server-rendered hidden tab control; explicit role filter disabled when role locked by tab. Unit query/tab model and isolated PG faculty+disabled-learner fixtures with own/foreign/wrong-role checks authored (not executed). Remaining: legacy directory bulk/detail actions and browser accessibility acceptance.

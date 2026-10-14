@@ -95,6 +95,10 @@ export default async function SuperAdminPeoplePage({
           title="Select a college scope"
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
+        <Link href="/admin/people/directory"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Browse all permitted Users &amp; Roles without selecting a college →
+        </Link>
       </div>
     );
   }
