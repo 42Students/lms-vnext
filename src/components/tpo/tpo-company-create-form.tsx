@@ -35,7 +35,6 @@ export function TpoCompanyCreateForm() {
           name: form.name.trim(),
           ...(form.websiteUrl.trim() ? { websiteUrl: form.websiteUrl.trim() } : {}),
           ...(form.primaryDomain.trim() ? { primaryDomain: form.primaryDomain.trim().toLowerCase() } : {}),
-          isTrusted: false,
         }),
       });
       const body = (await response.json().catch(() => null)) as
