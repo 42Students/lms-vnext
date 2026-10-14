@@ -7,7 +7,7 @@ const preferred:readonly LearnerProfileSection[]=[
 export function learnerProfileMobileQuickLinks(items:readonly {
   section:LearnerProfileSection;label:string;completed:boolean;
 }[]){
- const rank=new Map(preferred.map((section,index)=>[section,index]));
+ const rank=new Map<LearnerProfileSection,number>(preferred.map((section,index)=>[section,index] as const));
  return items.filter(item=>!item.completed&&rank.has(item.section))
   .sort((a,b)=>rank.get(a.section)!-rank.get(b.section)!)
   .slice(0,4).map(({section,label})=>({section,label}));
