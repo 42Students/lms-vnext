@@ -478,3 +478,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter activity lifecycle filters — PARTIAL:** /hr/activity adds explicit Published/Closed/All URL filters at SQL query level after exact company+college job allowlist; counts remain bounded, raw audit metadata hidden. Unit and in-test PostgreSQL filters extended, not executed. Remaining full audit pagination and legacy Messages threading.
+
+
+**2026-10-15 chat-10 / Company Team search — PARTIAL:** Company & Team now has college-preserving GET name/designation/email search applied solely to exact company+relationship authorized active team returned by existing service, with explicit matching count and pure model/unit test. No new disclosure, company mutation or external messaging. Remaining DB paging at scale and browser acceptance.

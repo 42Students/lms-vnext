@@ -70,3 +70,5 @@
 - 2026-10-15 HR notification title search PARTIAL: scoped drive-name filters, URL persistence; unit+PG tests unexecuted.
 
 - 2026-10-15 — HR activity lifecycle filters PARTIAL: published/closed URL selection with persisted event filter, tests unexecuted.
+
+- 2026-10-15 — HR company team search PARTIAL: after exact employer-grant authorization, role/name/email matching and bounded GET filters; unit authored, unexecuted.
