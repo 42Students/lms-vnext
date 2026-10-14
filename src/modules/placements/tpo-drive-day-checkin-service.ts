@@ -9,6 +9,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { getTpoRoundDriveDay } from "./tpo-round-drive-day-service";
+import { dateInIndia } from "./drive-day-coordinator-service";
 import { placementRoundIdSchema } from "./validation";
 import { tpoDriveDayCheckInSchema, decideTpoAttendanceTransition } from "./tpo-drive-day-checkin-model";
 import { PlacementsServiceError } from "./errors";
@@ -42,11 +43,13 @@ export async function confirmTpoDriveDayCheckIn(
 
   return getDb().transaction(async (tx) => {
     const [round] = await tx.select({ id: placementJobRounds.id, jobId: placementJobRounds.jobId,
-      status: placementJobRounds.status }).from(placementJobRounds)
+      status: placementJobRounds.status,
+      scheduledAt: placementJobRounds.scheduledAt }).from(placementJobRounds)
       .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
       .where(and(eq(placementJobRounds.id, roundId), eq(placementJobs.collegeId, collegeId)))
       .for("share").limit(1);
-    if (!round || round.status === "CANCELLED" || round.status === "COMPLETED") {
+    if (!round || round.status !== "SCHEDULED" || !round.scheduledAt ||
+        dateInIndia(round.scheduledAt) !== dateInIndia(new Date())) {
       throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
     }
     const [candidate] = await tx.select({ id: placementApplications.id })
