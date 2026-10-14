@@ -8,6 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
+import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
@@ -91,12 +92,15 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Results due this week</h2>
-      <p className="mt-1 text-sm text-body">Only recorded result deadlines on this college&apos;s authorized employer rounds; no outside messages or invitations are sent.</p>
+      <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
         <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
           className="min-w-0 rounded-md border border-border p-3 hover:border-primary">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
           <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
+          <span className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-foreground">
+            {HR_DEADLINE_URGENCY_LABELS[hrResultDeadlineUrgency(item.dueAt,now)]}
+          </span>
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">

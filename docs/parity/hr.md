@@ -508,3 +508,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Company Team roster export — PARTIAL:** Adds scoped recruiter-team CSV (200 cap, formula-neutralized, no-store) from getRecruiterCompanyTeam's exact company+college active grant read. Shows existing authorized recruiter name/designation/email only; no learner contacts. Pure model/unit authored, PG scope remains covered by existing team reads but not re-executed. Remaining browser acceptance and large-team paging.
+
+
+**2026-10-15 chat-10 / Today deadline urgency — PARTIAL:** Adds Passed/Within 24h/Upcoming labels to persisted company+college-scoped results-due cards. Labels only describe clock distance, not unsent/stale result state. Pure boundary unit authored; existing scope fixture applicable but not executed. Remaining stale/live browser refresh proof.
