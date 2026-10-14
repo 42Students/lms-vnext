@@ -13,7 +13,9 @@ export function facultyReportHubHref(query:FacultyReportsHubQuery) {
   return "/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/reports"+(suffix?"?"+suffix:"");
 }
 export function publishedReportBreakdown(items:readonly {kind:"QUIZ"|"ASSIGNMENT";status:string}[]){
-  const active=items.filter(x=>x.status==="PUBLISHED");
+  // A closed quiz was published and still belongs in historical reporting.
+  const active=items.filter(x=>x.status==="PUBLISHED"||
+    (x.kind==="QUIZ"&&x.status==="CLOSED"));
   return {
     assignments:items.filter(x=>x.kind==="ASSIGNMENT").length,
     quizzes:items.filter(x=>x.kind==="QUIZ").length,
