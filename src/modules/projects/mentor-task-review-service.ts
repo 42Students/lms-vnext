@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -57,6 +57,7 @@ export async function getMentorTaskReviews(
     inArray(projectTaskSubmissions.projectId, ids),
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
+    query.priority==="ALL"?undefined:eq(projectTasks.priority,query.priority),
     sql`not exists (select 1 from project_task_submissions newer
       where newer.task_id=${projectTaskSubmissions.taskId}
         and newer.version>${projectTaskSubmissions.version})`,
@@ -95,8 +96,9 @@ export async function getMentorTaskReviews(
   const page=mentorTaskReviewSummary({
     total:Number(counts?.total??0),page:query.page,pageSize:query.pageSize,
   });
-  const items=await base.orderBy(desc(projectTaskSubmissions.submittedAt),
-    desc(projectTaskSubmissions.id)).limit(page.pageSize)
+  const ordering=query.order==="OLDEST"?asc:desc;
+  const items=await base.orderBy(ordering(projectTaskSubmissions.submittedAt),
+    ordering(projectTaskSubmissions.id)).limit(page.pageSize)
     .offset((page.page-1)*page.pageSize);
   return {enabled:true as const,query:{...query,page:page.page},...page,items};
 }

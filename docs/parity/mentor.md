@@ -655,3 +655,20 @@ suite and unique-project PostgreSQL fixture assert safe output, persisted
 read success, wrong-role, disabled and non-leaking foreign-college denial.
 **PARTIAL:** Run typecheck, lint, unit, PG and browser download tests, verify
 historic producer completeness and exact legacy activity filters.
+
+
+## 2026-10-14 chat-11 I — Mentor pending task-review priority triage (PARTIAL)
+
+The current assigned-project /mentor/task-reviews queue now supports strict
+priority filters (LOW/MEDIUM/HIGH/CRITICAL or ALL) and oldest/newest submission
+ordering in addition to existing task/project literal search, bounded pages
+and exact-task deep links. SQL applies priority and ordering only after
+persisted active Mentor project, tenant, live task IN_REVIEW and latest-version
+SUBMITTED checks. The queue does not expose learner contacts or submission
+URLs or create a parallel review-write endpoint. Pure Zod/filter/link unit
+tests and an isolated PostgreSQL own-project fixture cover registered
+HIGH/LOW submissions, deterministic ordering, forbidden role/disabled actors,
+foreign college non-leakage and forged query rejection. It is read-only;
+stale-token denial is provided by the separate audited task-review write,
+not by these query controls. **PARTIAL:** actual typecheck, lint, PostgreSQL,
+mobile browser and full legacy task review acceptance remain open.

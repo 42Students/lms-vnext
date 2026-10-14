@@ -77,3 +77,12 @@
 - Unit and unique-fixture positive/role/foreign/disabled PostgreSQL tests
   authored; no runtime test results claimed.
 - PARTIAL pending desktop/mobile download and actual CI/PG checks.
+
+
+## I — Mentor task review priority and queue ordering (2026-10-14)
+- Added typed priority triage to existing current-Mentor pending queue:
+  priority selection and oldest/newest persisted submittedAt ordering.
+- Existing exact-task submission action remains the only review mutation.
+- Own-project PostgreSQL test with HIGH/LOW task submissions, foreign/role/
+  disabled denial and pure query/href unit tests authored, not executed.
+- PARTIAL: real PG/CI/browser and historic review parity pending.
