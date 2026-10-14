@@ -1,9 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { useRouter } from "next/navigation";
 import {
   type FormEvent,
   useState,
+  useRef,
 } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
@@ -11,30 +14,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
+import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
+import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
 } from "./faculty-assessment-operation-model";
 
-type Submission = {
-  id: string;
-  assignmentId: string;
-  deliveryId: string;
-  membershipId: string;
-  submissionType: "TEXT" | "LINK";
-  textContent: string | null;
-  submissionUrl: string | null;
-  submittedAt: string;
-  pointsAwarded: number | null;
-  feedback: string | null;
-  gradingStatus:
-    | "NOT_GRADED"
-    | "GRADED";
-  gradePublished: boolean;
-  version: number;
-  learnerDisplayName: string | null;
-  learnerEmail: string | null;
-};
+type Submission = FacultySubmissionReviewRow;
+const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
 
 function learnerLabel(
   submission: Submission,
@@ -53,6 +41,7 @@ function formatDateTime(value: string) {
   }
 
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -62,11 +51,17 @@ function SubmissionGradeCard({
   submission,
   maxPoints,
   onUpdated,
+  filesEnabled,
 }: {
   submission: Submission;
   maxPoints: number;
+  filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
 }) {
+  const content = facultySubmissionContentView({
+    id:submission.id,submissionType:submission.submissionType,
+    textContent:submission.textContent,submissionUrl:submission.submissionUrl,
+  },filesEnabled);
   const actions =
     assignmentSubmissionActions({
       gradingStatus:submission.gradingStatus,gradePublished:submission.gradePublished,
@@ -263,21 +258,14 @@ function SubmissionGradeCard({
       </div>
 
       <div className="mt-3 rounded-md bg-[var(--lms-neutral-50)] p-3">
-        {submission.submissionType ===
-        "TEXT" ? (
-          <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">
-            {submission.textContent}
-          </p>
-        ) : submission.submissionUrl ? (
-          <a
-            href={submission.submissionUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm font-semibold text-primary-text hover:text-primary-hover"
-          >
-            Open learner submission ↗
-          </a>
-        ) : null}
+        {content.kind === "TEXT" ? (
+          <p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p>
+        ) : content.kind === "FILE" || content.kind === "LINK" ? (
+          <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
+            className="inline-flex min-h-10 items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
+            {content.label}
+          </Link>
+        ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
       </div>
 
       <form
@@ -387,7 +375,9 @@ export function FacultyAssignmentReview({
   deliveryId,
   maxPoints,
   status,
+  filesEnabled,
 }: {
+  filesEnabled: boolean;
   assignmentId: string;
   deliveryId: string;
   maxPoints: number;
@@ -405,44 +395,34 @@ export function FacultyAssignmentReview({
   const [error, setError] =
     useState<string | null>(null);
 
+  const [filter,setFilter] = useState<FacultySubmissionFilter>("ALL");
+  const [page,setPage] = useState(1);
+  const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
+  const loadSequence = useRef(0);
+
   if (status !== "PUBLISHED") {
     return null;
   }
 
-  async function load() {
-    setOpen(true);
-    setError(null);
-    setLoading(true);
-
+  async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
+    const sequence = ++loadSequence.current;
+    setOpen(true);setError(null);setLoading(true);setSubmissions(null);setPagination(null);
+    setFilter(next.filter);
     try {
-      const response = await fetch(
-        `/api/courses/assignment-submissions?assignmentId=${encodeURIComponent(
-          assignmentId,
-        )}&deliveryId=${encodeURIComponent(
-          deliveryId,
-        )}`,
-      );
-
-      if (!response.ok) {
-        setError(
-          await courseApiError(response),
-        );
-        return;
-      }
-
-      const payload =
-        (await response.json()) as {
-          submissions: Submission[];
-        };
-      setSubmissions(
-        payload.submissions,
-      );
-    } catch {
-      setError(
-        "Could not load Assignment submissions. Check your connection and try again.",
-      );
+      const response = await fetch(facultySubmissionReviewApiHref({
+        assignmentId,deliveryId,filter:next.filter,page:next.page,
+      }),{cache:"no-store"});
+      if (!response.ok) throw new Error(await courseApiError(response));
+      const parsed = facultySubmissionReviewResponseSchema.safeParse(await response.json());
+      if (!parsed.success) throw new Error("The submission list could not be read. Refresh and try again.");
+      const payload = parsed.data;
+      if (sequence !== loadSequence.current) return;
+      setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
+    } catch (caught) {
+      if (sequence === loadSequence.current) setError(caught instanceof Error ? caught.message :
+        "Could not load Assignment submissions. Check your connection and try again.");
     } finally {
-      setLoading(false);
+      if (sequence === loadSequence.current) setLoading(false);
     }
   }
 
@@ -476,7 +456,7 @@ export function FacultyAssignmentReview({
             size="sm"
             variant="ghost"
             disabled={loading}
-            onClick={load}
+            onClick={()=>void load()}
           >
             Refresh
           </Button>
@@ -485,6 +465,17 @@ export function FacultyAssignmentReview({
           </span>
         </div>
       </div>
+
+      <nav aria-label="Submission grading filters" className="flex flex-wrap gap-2">
+        {SUBMISSION_FILTERS.map(value=><Button key={value} type="button" size="sm"
+          variant={filter===value?"secondary":"ghost"} disabled={loading}
+          aria-pressed={filter===value} onClick={()=>void load({filter:value,page:1})}>
+          {value==="ALL"?"All":value==="UNGRADED"?"Needs grading":value==="GRADED"?"Graded":"Late"}
+        </Button>)}
+      </nav>
+      {pagination ? <p role="status" className="text-xs text-muted-foreground">
+        {pagination.total} matching submissions · Page {pagination.page} of {pagination.totalPages}
+      </p> : null}
 
       {loading ? (
         <p className="mt-4 text-sm text-muted-foreground">
@@ -505,8 +496,7 @@ export function FacultyAssignmentReview({
       submissions &&
       submissions.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          No learners have submitted this
-          Assignment yet.
+          No learner submissions match this filter.
         </p>
       ) : null}
 
@@ -519,20 +509,22 @@ export function FacultyAssignmentReview({
                 key={`${submission.id}:${submission.version}`}
                 submission={submission}
                 maxPoints={maxPoints}
-                onUpdated={(updated) => {
-                  setSubmissions((current) =>
-                    current?.map((item) =>
-                      item.id === updated.id ? updated : item,
-                    ) ?? null,
-                  );
-                  // Keep server-rendered report aggregates in sync after grade/publish.
-                  router.refresh();
+                filesEnabled={filesEnabled}
+                onUpdated={() => {
+                  // Re-query filters/counts so a newly graded row leaves Needs grading.
+                  void load();router.refresh();
                 }}
               />
             ),
           )}
         </div>
       ) : null}
+      {pagination ? <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
+        <Button type="button" size="sm" variant="secondary" disabled={loading||pagination.page<=1}
+          onClick={()=>void load({filter,page:pagination.page-1})}>Previous</Button>
+        <Button type="button" size="sm" variant="secondary" disabled={loading||pagination.page>=pagination.totalPages}
+          onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
+      </nav> : null}
       </div>
       </Drawer>
     </>
