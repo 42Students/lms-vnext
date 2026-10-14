@@ -556,3 +556,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Company Team filtered export — PARTIAL:** Team CSV now uses the same bounded name/designation/email search as the visible team page, applied only after exact persisted employer-college team authorization. Export link retains selected college and search; no unshared candidate contacts are added. Pure filter unit extended; PG/browser download proof remains.
+
+
+**2026-10-15 chat-10 R5 / Round calendar filter taxonomy — PARTIAL:** Fixed Rounds-only display to include exactly registered ROUND events rather than all non-deadline records. Unregistered or future SLOT/GENERAL items cannot be silently mislabeled as interviews. Pure regression test authored; existing employer-scoped calendar service remains the authorization boundary. Full legacy slot taxonomy still pending.
