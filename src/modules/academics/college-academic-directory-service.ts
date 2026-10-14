@@ -137,6 +137,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     name: cohorts.name,
     code: cohorts.code,
     status: cohorts.status,
+    updatedAt: cohorts.updatedAt,
     expectedEndPeriodId: cohorts.expectedEndPeriodId,
     programId: programs.id,
     programName: programs.name,

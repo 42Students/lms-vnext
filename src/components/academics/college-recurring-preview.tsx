@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { collegePreviewErrorLabel } from "@/modules/academics/college-recurring-preview-ui-model";
 
 type Option = { id: string; name: string };
-type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string };
+type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
 type FacultyOption = { id: string; displayName: string | null };
 type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[] }>;
   ready: number; blocked: number; notice: string };
@@ -14,6 +14,8 @@ export function CollegeRecurringPreview({
   classes, halls, faculty,
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[] }) {
   const [sectionId, setSectionId] = useState("");
+  const [title, setTitle] = useState("Class session");
+  const [created, setCreated] = useState<number | null>(null);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [startTime, setStartTime] = useState("09:00");
@@ -31,6 +33,7 @@ export function CollegeRecurringPreview({
     setFrom(entry?.periodStart ?? "");
     setTo(entry?.periodEnd ?? "");
     setResult(null);
+    setCreated(null);
   }
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,15 +57,44 @@ export function CollegeRecurringPreview({
       }
     });
   }
+  function execute() {
+    const version = selected?.updatedAt;
+    if (!version || !result || result.blocked>0 || result.ready===0) return;
+    if (!window.confirm("Create "+result.ready+" scheduled sessions? Every conflict is rechecked; either all sessions are committed or none.")) return;
+    setError("");
+    setCreated(null);
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/academics/sections/recurring-execute", {
+          method: "POST", headers: {"content-type":"application/json"},
+          body: JSON.stringify({
+            sectionId,from,to,weekdays,startTime,endTime,title,
+            facultyMembershipId:facultyId||null,lectureHallId:hallId||null,
+            expectedSectionUpdatedAt:version,confirm:true,
+          }),
+        });
+        const value = await response.json() as {created?:number;error?:string};
+        if (!response.ok) throw new Error(value.error ?? "Scheduling failed");
+        setCreated(value.created ?? 0);
+        setResult(null);
+      } catch (reason) {
+        setError(reason instanceof Error ? reason.message : "Scheduling failed");
+      }
+    });
+  }
   return (
     <section className="space-y-5">
-      <p className="text-sm text-body">Preview is read-only. No class sessions will be created.</p>
+      <p className="text-sm text-body">Preview does not create sessions. Confirmed execution below writes all or none after a fresh conflict check.</p>
       {classes.length === 0 ? (
         <p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
           No active classes are registered for this college. Create a class before previewing a schedule.
         </p>
       ) : (
         <form onSubmit={preview} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+          <label className="grid gap-1 text-sm font-semibold text-body">Session title
+            <input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Class
             <select required value={sectionId} onChange={(e) => onClass(e.target.value)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -127,9 +159,13 @@ export function CollegeRecurringPreview({
           {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
         </form>
       )}
+      {created !== null ? <p role="status" className="text-sm text-success">Created {created} scheduled sessions. No partial failures.</p> : null}
       {result ? <section aria-label="Schedule preview results" className="space-y-3">
         <h2 className="text-lg font-semibold text-foreground">Preview · {result.ready} clear, {result.blocked} blocked</h2>
         <p className="text-sm text-muted-foreground">{result.notice}</p>
+        <Button type="button" disabled={pending || !title.trim() || result.blocked>0 || result.ready===0}
+          onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
+        {result.blocked>0 ? <p className="text-xs text-error">Resolve all conflicts before creating this series.</p> : null}
         {result.slots.length === 0 ? <p className="text-sm text-body">No selected weekdays match this date range.</p> : (
           <div className="max-h-[32rem] overflow-auto rounded-lg border border-border">
             <table className="w-full min-w-[32rem] text-left text-sm">
