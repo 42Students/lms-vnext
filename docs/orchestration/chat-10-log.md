@@ -84,3 +84,5 @@
 - 2026-10-15 — HR Request Drive saved preview PARTIAL: validated session-only save/restore keyed by recruiter+college+source, expiry and Start Over clearing; tests authored, unexecuted.
 
 - 2026-10-15 — Self-review: moved activity filter labels to module-level const; documented deliberately ignored unavailable sessionStorage clear. No runtime gates in connector-only lane.
+
+- 2026-10-15 — Hiring activity export PARTIAL: 200-record formula-safe fixed-label employer history CSV; tests unexecuted.

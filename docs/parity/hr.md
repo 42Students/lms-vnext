@@ -496,3 +496,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Request Drive scoped saved-draft restore — PARTIAL:** Recruiter can explicitly save a *validated* unsent draft in sessionStorage (browser tab, 24-hour expiry) and restore it. Key includes recruiter user, selected college and authorized Hire Again source; JSON is Zod validated, length and TTL checked, Start Over clears it. No server persistence, external send or file storage. Pure model and own-company PG source fixture extended, unexecuted. Remaining restoration of incomplete drafts, approval workflow and browser acceptance.
+
+
+**2026-10-15 chat-10 / employer hiring activity CSV — PARTIAL:** Company/college-scoped history export caps at 200, formula-neutralizes titles, uses fixed event labels and IST timestamps without raw audit metadata or contacts. Rechecks scope before its second bounded page. Pure-model unit and in-test PG scope assertions added, unexecuted. Remaining browser acceptance and full-history export.
