@@ -90,4 +90,4 @@ jobs:
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty Assignment Report and private-safe CSV responsive browser
-        run: npx playwright test tests/e2e/faculty-assignment-report.spec.ts
+        run: npx playwright test tests/e2e/faculty-assignment-report.spec.ts --workers=1
