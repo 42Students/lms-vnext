@@ -4,17 +4,22 @@ import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/f
 export function localDateTimeInput(instant: string) {
   return authoringLocalDateTime(instant);
 }
-export function facultyScheduleInstants(start: string, end: string) {
+export function facultyScheduleInstants(start: string, end: string, original?: {startsAt:string;endsAt:string}) {
   if (!start || !end) throw new Error("Choose both a start and an end time.");
   let startsAt: string | null;
   let endsAt: string | null;
-  try { startsAt = authoringDueInstant(start); endsAt = authoringDueInstant(end); }
+  try {
+    startsAt = original && start === localDateTimeInput(original.startsAt)
+      ? new Date(original.startsAt).toISOString() : authoringDueInstant(start);
+    endsAt = original && end === localDateTimeInput(original.endsAt)
+      ? new Date(original.endsAt).toISOString() : authoringDueInstant(end);
+  }
   catch { throw new Error("Enter valid start and end times in IST."); }
   if (!startsAt || !endsAt) throw new Error("Enter valid start and end times in IST.");
   if (new Date(endsAt) <= new Date(startsAt)) throw new Error("The end time must be later than the start time.");
   return {startsAt, endsAt};
 }
-export function validateFacultyScheduleWindow(start: string, end: string): string | null {
-  try { facultyScheduleInstants(start, end); return null; }
+export function validateFacultyScheduleWindow(start: string, end: string, original?: {startsAt:string;endsAt:string}): string | null {
+  try { facultyScheduleInstants(start, end, original); return null; }
   catch (error) { return error instanceof Error ? error.message : "Enter valid start and end times in IST."; }
 }

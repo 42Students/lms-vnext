@@ -613,7 +613,13 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       ...facultyScheduleInstants("2026-10-22T02:15","2026-10-22T03:15")};
     const saved=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change);
     expect(saved.updatedAt.getTime()).toBeGreaterThan(version.rows[0]!.updated_at.getTime());
-    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change)).rejects.toBeDefined();
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change))
+      .rejects.toMatchObject({code:"FACULTY_ATTENDANCE_SCHEDULE_STALE_VERSION"});
+    await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},{
+      ...change,expectedUpdatedAt:saved.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE"});
+    const afterNoOp=await pool.query<{updated_at:Date}>("select updated_at from section_schedule_events where id=$1",[created.id]);
+    expect(afterNoOp.rows[0]?.updated_at.getTime()).toBe(saved.updatedAt.getTime());
     const audits=await pool.query<{count:number}>(
       "select count(*)::int as count from activity_events where subject_id=$1::text and summary like 'Faculty attendance session%'",[created.id]);
     expect(audits.rows[0]?.count).toBe(2);
