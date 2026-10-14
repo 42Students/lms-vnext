@@ -513,6 +513,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+**Teaching-presence filter PARTIAL (2026-10-15):** Faculty directory adds server-filtered ASSIGNED/NONE for persisted non-ended teaching assignments on live course deliveries in the admin’s college, before pagination. Counts are assignments, not teaching hours. Own/foreign/wrong-role and URL/model PG fixtures authored; browser evidence and legacy scheduling parity remain open.
 **Account-status filter PARTIAL (2026-10-15):** Faculty memberships now filter persisted ACTIVE/DISABLED platform account status independently from membership lifecycle, with strict Zod, URL-persisted pagination and isolated PG role/tenant checks. Browser and legacy profile/edit parity remain open.
 
 **Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.

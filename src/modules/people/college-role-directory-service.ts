@@ -53,6 +53,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "FACULTY" && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
+  if (kind === "LEARNER" && filter.teaching !== "ALL") {
+    throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
+  }
   const db = getDb();
   const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
     .from(learnerProgramEnrollments)
@@ -65,6 +68,17 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
     )));
+  const activeTeaching = exists(db.select({ assignmentId: courseTeachingAssignments.id })
+    .from(courseTeachingAssignments)
+    .innerJoin(courseSectionDeliveries, and(
+      eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId),
+      isNull(courseSectionDeliveries.endedAt),
+    ))
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(departments, and(eq(departments.id, courses.departmentId), eq(departments.collegeId, collegeId)))
+    .where(and(eq(courseTeachingAssignments.membershipId, collegeMemberships.id),
+      isNull(courseTeachingAssignments.endedAt))));
   const query = db.select({
     membershipId: collegeMemberships.id,
     name: users.displayName,
@@ -86,6 +100,8 @@ export async function listCollegeRoleDirectory(
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
+      kind !== "FACULTY" || filter.teaching === "ALL" ? undefined :
+        filter.teaching === "ASSIGNED" ? activeTeaching : not(activeTeaching),
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
