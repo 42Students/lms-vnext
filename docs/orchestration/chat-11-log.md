@@ -154,3 +154,6 @@
 
 ## T — Mentor project meeting log title search
 - Escaped literal search and shared count/page filters, tests authored not run.
+
+## U — Pending task review metadata export
+- 200-row capped safe CSV reusing scoped queue; model and PG tests authored.

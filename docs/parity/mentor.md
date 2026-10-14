@@ -829,3 +829,12 @@ meeting count and page query, alongside registered status and current-Mentor
 college/module access. Pure unit and in-test meeting PostgreSQL fixture checks
 cover search, percent literals and role denial. **PARTIAL:** test/browser and
 legacy meeting acceptance pending.
+
+## chat-11 backlog U — pending task-review safe CSV (PARTIAL)
+
+The current assigned-Mentor task-review queue now exports up to 200 registered
+IN_REVIEW/latest-version SUBMITTED rows honoring existing search, priority and
+oldest/newest filters. Formula-neutralized CSV includes no learner contact,
+submission URLs, feedback or actor identity. Every bounded page revalidates
+current grants; truncation is explicit. Unit and PG-fixture assertions authored,
+not executed. **PARTIAL:** verified runtime/export/browser and legacy parity open.
