@@ -552,6 +552,9 @@ Audited contract:
 
 ## Page: Student Group Detail
 
+**Waitlist and rule writes PARTIAL (2026-10-14):** `/college/groups/[groupId]` now exposes version-checked, confirmed manual promotion of the first unlocked WAITLISTED learner when group capacity permits, and scoped V1 criteria rule editing with a clearly identified autoRefresh setting (saving never executes refresh). Dedicated same-origin PATCH uses the persisted College Admin actor check, own-college STUDY_GROUP lock, integer group/member optimistic versions, exact learner role/capacity/FIFO guards and one atomic membership change plus immutable member event and activity audit. Rule changes validate linked programs/cohorts stay in college and reject unsupported rule versions, then audit atomically. Pure unit and disposable-PostgreSQL success/foreign/wrong-role/stale tests authored. Full rule refresh UI, automatic refresh scheduling, learner consent/queue fairness edge cases, complete legacy/browsers and independently executed database gates remain open; parity stays PARTIAL.
+
+
 **PARTIAL read-only dynamic rule preview:** College Admin can open `/college/groups/[groupId]/rule-preview` from the group detail for configured supported V1 rules. Shows persisted criteria and a bounded candidate eligibility projection without writing memberships or exposing applicant evidence. No assertion of capacity/waitlist outcome or full college-wide counts above cap. Rule edit/refresh controls, original legacy behavior, PG execution and browser verification remain open.
 
 **Legacy:** `/college-admin/student-groups/[id]`
