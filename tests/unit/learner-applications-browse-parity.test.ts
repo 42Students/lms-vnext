@@ -26,5 +26,7 @@ describe("Learner Applications list and detail route", () => {
     expect(browse).toContain("learnerApplicationMobileSummary(filters)");
     expect(browse).toContain("<Drawer open={selected!==null}");
     expect(browse).toContain("Round history");
+    expect(browse).toContain("learnerApplicationAttention(items)");
+    expect(browse).toContain("Application screening updates");
   });
 });

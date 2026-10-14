@@ -371,7 +371,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-012 | Interviews snapshot | placements dashboard | placements home | UNCHECKED |
 | L11-013 | Assessments snapshot | placements dashboard | placements home | UNCHECKED |
 | L11-014 | Needs-attention list | placements dashboard | placements home | UNCHECKED |
-| L11-015 | Attention overflow CTAs | placements dashboard | placements home | UNCHECKED |
+| L11-015 | Attention overflow CTAs | placements dashboard | persisted learner-scoped seven-day assessments/interviews show full eligible attention count, first 3 preview, true overflow CTA to own career calendar; missing schedule source remains unknown instead of zero. PARTIAL: PG/unit/typecheck/lint, mobile/browser navigation and time-window acceptance pending | PARTIAL |
 | L11-016 | Rolling 7-day calendar preview | placements dashboard | placements home | UNCHECKED |
 | L11-017 | Recent placement activity | placements dashboard | persisted own-application activity list | FIXED |
 | L11-018 | Loading skeletons | placements dashboard | placements home | UNCHECKED |
@@ -398,7 +398,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L12-014 | Unsave job | JobsListContent | learner jobs | UNCHECKED |
 | L12-015 | Pagination | JobsListContent | learner jobs | UNCHECKED |
 | L12-016 | Open/not-open/closed grouping | learner jobs | learner-specific open-to-apply/unavailable-to-apply/deadline-passed chips over authorized published roles, with honest counts; PARTIAL pending fresh PostgreSQL negative/read verification and mobile/browser acceptance; unpublished jobs remain intentionally hidden | PARTIAL |
-| L12-017 | Deadline urgency labels | JobsListContent | learner jobs | UNCHECKED |
+| L12-017 | Deadline urgency labels | JobsListContent | real published application deadline classified using server ISO snapshot into closed, within 24 hours, within seven days, future and not announced; no fabricated expiry for absent timestamps or changes to eligibility. PARTIAL pending fresh PG, unit, tsc/eslint, browser timezone acceptance | PARTIAL |
 | L12-018 | Eligibility state on card | JobsListContent | learner jobs | FIXED |
 | L12-019 | Existing application state on card | JobsListContent | learner jobs | FIXED |
 | L12-020 | Saved-jobs failure distinct from all-jobs failure | JobsListContent | learner jobs | UNCHECKED |
@@ -435,9 +435,9 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-003 | Stage filter chips | ApplicationsContent | applications page | UNCHECKED |
 | L14-004 | All / In Progress / Completed views | ApplicationsContent | applications page | UNCHECKED |
 | L14-005 | Sort recent activity | ApplicationsContent | applications page | UNCHECKED |
-| L14-006 | Sort stage | ApplicationsContent | applications page | UNCHECKED |
+| L14-006 | Sort stage | ApplicationsContent | explicit persisted screening-stage A–Z sort; stable latest-activity then ID tie breaks, URL validation and selection preserved. PARTIAL: fresh PostgreSQL, tsc, lint, unit and browser/back-forward acceptance remain | PARTIAL |
 | L14-007 | Sort company | ApplicationsContent | applications page | UNCHECKED |
-| L14-008 | Attention banner | ApplicationsContent | applications page | UNCHECKED |
+| L14-008 | Attention banner | ApplicationsContent | own persisted shortlisted/under-review stages presented as informational screening updates with scoped application deep links and overflow; no invented deadline, placement action or employer completion. PARTIAL pending isolated PostgreSQL, lint/tsc, mobile and browser acceptance | PARTIAL |
 | L14-009 | Review offers opens full offered list | applications route | own-offers page with status filters | FIXED |
 | L14-010 | Application cards | ApplicationsContent | applications page | UNCHECKED |
 | L14-011 | Journey/status visualization | ApplicationsContent | learner journey | FIXED |

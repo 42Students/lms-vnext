@@ -90,6 +90,10 @@ export function learnerPlacementDashboard(
     a.roundId.localeCompare(b.roundId));
 
   const weekEvents = events.filter((event) => event.when.getTime() <= weekEndMs);
+  const attentionEvents=[
+    ...weekEvents.filter(event=>event.kind==="ASSESSMENT"),
+    ...weekEvents.filter(event=>event.kind==="INTERVIEW"),
+  ];
   const firstWeek = (kind: PlacementDashboardEvent["kind"]) =>
     weekEvents.find((event) => event.kind === kind) ?? null;
   const priority =
@@ -137,10 +141,8 @@ export function learnerPlacementDashboard(
     ).size,
     firstRun: appliedIds.size === 0,
     nextAction,
-    needsAttention: [
-      ...weekEvents.filter((event) => event.kind === "ASSESSMENT"),
-      ...weekEvents.filter((event) => event.kind === "INTERVIEW"),
-    ].slice(0, 3),
+    needsAttention:attentionEvents.slice(0,3),
+    fullAttentionCount:attentionEvents.length,
     weekEvents: weekEvents.slice(0, 7),
     fullWeekEventCount: weekEvents.length,
   };
