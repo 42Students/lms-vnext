@@ -376,7 +376,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L11-017 | Recent placement activity | placements dashboard | persisted own-application activity list | FIXED |
 | L11-018 | Loading skeletons | placements dashboard | placements home | UNCHECKED |
 | L11-019 | Error counts remain unknown, not zero | placements dashboard | placements home | UNCHECKED |
-| L11-020 | All dashboard CTAs preserve intended filter/context | placements dashboard | placements routes | UNCHECKED |
+| L11-020 | All dashboard CTAs preserve intended filter/context | placements dashboard and own round pages | assessment/interview next-action and event CTAs carry persisted application+round IDs; own-scoped round service validates exact ID before opening drawer; metric CTAs remain aggregate. PARTIAL pending disposable PostgreSQL/negative-case and browser deep-link/back acceptance | PARTIAL |
 
 ## L12 — Drives/Jobs list
 
