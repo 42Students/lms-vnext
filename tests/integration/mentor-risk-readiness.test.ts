@@ -84,15 +84,27 @@ describe("Mentor exact-project risk and readiness drill-ins — PostgreSQL",()=>
       meetingId,project.id,"Requested checkpoint",
       SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,
     ]);
+    const scheduledId=randomUUID();
+    await pool.query(`insert into project_meetings
+      (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,
+       requested_by_membership_id,created_by_user_id,scheduled_by_user_id,
+       scheduled_by_membership_id,meeting_url)
+      values ($1,$2,'SCHEDULED','GENERAL','Past unclosed checkpoint',
+       '2026-09-01T08:00:00Z','2026-09-01T09:00:00Z','Asia/Kolkata',
+       $3,$4,$5,$6,'https://meet.example.org/checkpoint')`,[
+      scheduledId,project.id,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,
+      SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
+    ]);
     const query={projectId:project.id,focus:"ALL" as const,page:1};
     const view=await getMentorRiskReadiness(mentor,query);
     expect(view).toMatchObject({
       enabled:true,projectTitle:project.title,
-      counts:{blockedTasks:1,pendingMeetings:1,totalTasks:2},
+      counts:{blockedTasks:1,pendingMeetings:1,scheduledPastDay:1,totalTasks:2},
     });
     expect(view.items).toEqual(expect.arrayContaining([
       expect.objectContaining({key:"blocked:"+task.id,category:"RISK"}),
       expect.objectContaining({key:"meeting:"+meetingId,category:"RISK"}),
+      expect.objectContaining({key:"scheduled-past:"+scheduledId,category:"RISK"}),
       expect.objectContaining({key:"delivery",category:"READINESS"}),
     ]));
     const risk=await getMentorRiskReadiness(mentor,{...query,focus:"RISK"});

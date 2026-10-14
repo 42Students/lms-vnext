@@ -40,6 +40,11 @@ export default async function MentorReviewOverviewPage({
  <h2 className="font-semibold">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>
  <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
+ <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+  "/deliveries/"+encodeURIComponent(item.id)+"/review"}
+  className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+  View recorded review details
+ </Link>
  <p className="mt-1 text-xs text-muted-foreground">
  {item.submittedAt?"Submitted "+new Intl.DateTimeFormat("en-IN",{
  dateStyle:"medium",timeZone:"Asia/Kolkata",
