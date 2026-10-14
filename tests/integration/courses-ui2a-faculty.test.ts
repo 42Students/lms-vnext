@@ -1137,6 +1137,52 @@ describe("courses UI2A faculty read model", () => {
     });
   });
 
+  it("pages a busy Faculty discussion without skipping microsecond-neighbor messages", async () => {
+    const structure = await createStructure();
+    const messages: string[] = [];
+    for (let index = 0; index < 7; index++) {
+      const message = await createCourseDiscussionMessage(faculty, structure.deliveryA.id, {
+        messageText: "Paged class discussion " + index,
+      });
+      messages.push(message.id);
+      // All seven are inside the same millisecond. The server must retain
+      // PostgreSQL's microsecond precision in its cursor, not a JS Date.
+      await pool.query(
+        "update course_discussion_messages set created_at = $2::timestamptz + ($3::int * interval '1 microsecond') where id = $1",
+        [message.id, "2026-10-14T08:00:00.123000Z", index],
+      );
+    }
+    const first = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, { limit: 3 });
+    expect(first.messages.map(message => message.id)).toEqual(messages.slice(4));
+    expect(first.nextCursor).toMatchObject({ beforeId: messages[4] });
+    expect(first.nextCursor!.beforeCreatedAt).toMatch(/\.123004Z$/);
+
+    const second = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, {
+      limit: 3, ...first.nextCursor!,
+    });
+    expect(second.messages.map(message => message.id)).toEqual(messages.slice(1, 4));
+    const third = await listCourseDiscussionMessages(faculty, structure.deliveryA.id, {
+      limit: 3, ...second.nextCursor!,
+    });
+    expect(third.messages.map(message => message.id)).toEqual([messages[0]]);
+    expect(third.nextCursor).toBeNull();
+    expect(new Set([...first.messages, ...second.messages, ...third.messages].map(m => m.id)).size).toBe(7);
+
+    for (const invalid of [
+      { limit: 0 },
+      { limit: 101 },
+      { beforeId: messages[1] },
+      { beforeCreatedAt: first.nextCursor!.beforeCreatedAt },
+      { unknownField: "other college" },
+    ]) {
+      await expect(listCourseDiscussionMessages(faculty, structure.deliveryA.id, invalid))
+        .rejects.toBeDefined();
+    }
+    await expect(listCourseDiscussionMessages(faculty, structure.deliveryB.id, {
+      limit: 3, ...first.nextCursor!,
+    })).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
+  });
+
   it("keeps Faculty Contacts same-college and role-filtered", async () => {
     const learners = await listFacultyContacts(
       faculty,
