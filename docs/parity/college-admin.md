@@ -342,7 +342,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Lessons
 **Legacy:** `/college-admin/lessons`
 
-**Read-first PARTIAL:** `/college/lessons` lists migrated lessons with course, cohort, academic-period and learning-path context, status filter/search, 25-row pagination and persisted authored/published content counts. No create/edit/reorder/upload or learner-permission equivalence is claimed; detailed legacy and browser parity remain unverified.
+**Read-first PARTIAL:** `/college/lessons` lists migrated lessons with course, cohort, academic-period and learning-path context, status filter/search, 25-row pagination and persisted authored/published content counts. Create/edit are available in the existing offering editor and now include transaction-coupled immutable audit. Offering lesson up/down reorder adds a stale-sequence fence, same-origin API, and confirmation. Full bulk drag reorder, exact legacy modals, upload, and browser/PG execution remain open.
 
 - [ ] Aggregate Lessons list/search/filter matches.
 - [ ] Course/lesson path context is visible.
