@@ -332,6 +332,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Courses
 **Legacy:** `/college-admin/courses`
 
+**Write-side hardening PARTIAL:** Existing `/college/courses` create/edit/archive remains the operational entrypoint, with same-origin API guards, strict Zod, central `can()`/`courses.manage`, and database locks where needed. Create, edit and archive now record immutable college-scoped activity in the same transaction as their canonical row mutation; editing checks live department ownership under lock, while archive blocks active offerings. Confirmation UI already exists for archive. Existing course catalogue DONE status is not changed; legacy field-by-field and independently executed DB/browser acceptance are still open.
+
 - [ ] Course catalogue table/card fields match.
 - [ ] Create Course form/modal matches.
 - [ ] Edit Course flow matches.
