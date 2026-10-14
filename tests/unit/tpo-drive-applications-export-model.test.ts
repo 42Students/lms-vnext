@@ -10,6 +10,8 @@ describe("TPO applicant CSV cap and injection safety",()=>{
   expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,eligibility:"DISQUALIFIED"}).success).toBe(false);
   expect(tpoDriveApplicationsExportQuerySchema.parse({jobId:id,sort:"LEARNER_NAME"}).sort).toBe("LEARNER_NAME");
   expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,sort:"RESULT"}).success).toBe(false);
+  expect(tpoDriveApplicationsExportQuerySchema.parse({jobId:id,submittedWithin:"LAST_30_DAYS"}).submittedWithin).toBe("LAST_30_DAYS");
+  expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,submittedWithin:"FUTURE"}).success).toBe(false);
   expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,stage:"SELECTED"}).success).toBe(false);
   expect(tpoApplicantExportSearchPattern("50%_\\")).toBe("%50\\%\\_\\\\%");
   const csv=projectTpoDriveApplicationsExport([{applicationId:"a",studentName:"Candidate",roleTitle:"Role",
