@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, isNotNull } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,
@@ -79,6 +79,7 @@ export async function getTpoCompanyFeedback(context: RequestContext, raw: unknow
     eq(placementTpoLeads.companyRelationshipId, company.relationshipId),
     eq(placementTpoLeadActivities.type, "NOTE"),
     isNotNull(placementTpoLeadActivities.note),
+    sql`length(trim(${placementTpoLeadActivities.note})) > 0`,
   );
   const [counter] = await db.select({ total: count() })
     .from(placementTpoLeadActivities)
@@ -140,6 +141,6 @@ export async function createTpoCompanyFeedback(
     collegeId: company.collegeId,
     type: "NOTE",
     note: input.note,
-  });
+  }, company.relationshipId);
   return { id: activity.id };
 }
