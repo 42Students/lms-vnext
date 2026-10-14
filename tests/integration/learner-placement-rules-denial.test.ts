@@ -70,6 +70,19 @@ describe("Learner Placement Rules authenticated PostgreSQL denials", () => {
         .rejects.toBeInstanceOf(AuthorizationError);
     }
   });
+  it("rejects suspended membership and disabled principal before any evidence is read", async () => {
+    const suspended: RequestContext = {
+      ...learner, membership: { ...learner.membership!, status: "SUSPENDED" },
+    };
+    const disabled: RequestContext = {
+      ...learner, user: { ...learner.user, platformStatus: "DISABLED" },
+    };
+    for (const context of [suspended, disabled]) {
+      await expect(getOwnLearnerPlacementRulesView(context, {}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
+
   it("rejects invalid query input before reading any membership evidence", async () => {
     await expect(getOwnLearnerPlacementRulesView(learner, { from: "javascript:alert(1)" }))
       .rejects.toBeDefined();
