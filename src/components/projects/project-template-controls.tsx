@@ -276,7 +276,7 @@ export function CreateProjectTemplateControl() {
             </Button>
           </div>
         </form>
-      </Dialog>
+      </Dialog> : null}
     </>
   );
 }
@@ -287,12 +287,14 @@ export function ProjectTemplateActions({
   status,
   selectedCollegeId,
   assignedToSelectedCollege,
+  allowGlobalActions = true,
 }: {
   templateId: string;
   title: string;
   status: string;
   selectedCollegeId: string | null;
   assignedToSelectedCollege: boolean;
+  allowGlobalActions?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -377,7 +379,7 @@ export function ProjectTemplateActions({
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {status !== "PUBLISHED" ? (
+        {allowGlobalActions ? (status !== "PUBLISHED" ? (
           <Button
             size="sm"
             disabled={pending !== null}
@@ -419,9 +421,9 @@ export function ProjectTemplateActions({
               ? "Unpublishing…"
               : "Unpublish"}
           </Button>
-        )}
+        )) : null}
 
-        {status === "ARCHIVED" ? (
+        {allowGlobalActions && status === "ARCHIVED" ? (
           <Button
             size="sm"
             variant="secondary"
@@ -440,7 +442,7 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        <Button
+        {allowGlobalActions ? <Button
           size="sm"
           variant="secondary"
           disabled={pending !== null}
@@ -449,7 +451,7 @@ export function ProjectTemplateActions({
           {pending === "Duplicate template"
             ? "Duplicating…"
             : "Duplicate"}
-        </Button>
+        </Button> : null}
 
         {selectedCollegeId &&
         status === "PUBLISHED" ? (
@@ -481,7 +483,7 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        {status !== "ARCHIVED" ? (
+        {allowGlobalActions && status !== "ARCHIVED" ? (
           <Button
             size="sm"
             variant="secondary"
@@ -495,7 +497,7 @@ export function ProjectTemplateActions({
         ) : null}
       </div>
 
-      <Dialog
+      {allowGlobalActions ? <Dialog
         open={confirmArchive}
         onOpenChange={setConfirmArchive}
         title="Archive project template?"

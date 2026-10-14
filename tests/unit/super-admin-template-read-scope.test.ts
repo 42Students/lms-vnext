@@ -13,6 +13,7 @@ describe("Super Admin global template read vs write", () => {
     for (const scope of [null, { organizationId: org, collegeId: null }, { organizationId: org, collegeId: college }]) {
       expect(can(admin(scope), "project-template.read")).toBe(true);
       expect(can(admin(scope), "project-template.manage")).toBe(scope === null);
+      if (scope?.collegeId) expect(can(admin(scope), "project-template.assign", { collegeId: scope.collegeId, organizationId: scope.organizationId })).toBe(true);
     }
   });
   it("rejects wrong role and disabled Super Admin", () => {
