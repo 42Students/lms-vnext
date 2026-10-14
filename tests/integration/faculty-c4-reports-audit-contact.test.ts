@@ -1,0 +1,124 @@
+import {randomUUID} from "node:crypto";
+import {afterAll,afterEach,describe,expect,it} from "vitest";
+import {Pool} from "pg";
+import {closeDatabaseConnection} from "@/db/client";
+import type {RequestContext} from "@/modules/identity/context";
+import {createProgram} from "@/modules/academics/program-service";
+import {createAcademicPeriod} from "@/modules/academics/period-service";
+import {createCohort} from "@/modules/academics/cohort-service";
+import {createSection} from "@/modules/academics/section-service";
+import {createLearnerProgramEnrollment} from "@/modules/academics/enrollment-service";
+import {assignLearnerToSection} from "@/modules/academics/roster-service";
+import {createCourse} from "@/modules/courses/course-service";
+import {createCourseOffering} from "@/modules/courses/offering-service";
+import {createCourseSectionDelivery} from "@/modules/courses/delivery-service";
+import {createCourseTeachingAssignment} from "@/modules/courses/teaching-assignment-service";
+import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage} from "@/modules/courses/discussion-service";
+import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-history-service";
+import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-service";
+import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
+import {SEED_IDS} from "../../scripts/db-seed-data";
+
+if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
+const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+const admin:RequestContext={
+ user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
+ membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
+ organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
+};
+const faculty:RequestContext={
+ user:{id:SEED_IDS.facultyUser,identityUid:"seed-faculty",platformStatus:"ACTIVE",systemRoles:[]},
+ membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
+ organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["FACULTY"]},
+};
+const learner:RequestContext={
+ user:{id:SEED_IDS.learnerUser,identityUid:"seed-learner",platformStatus:"ACTIVE",systemRoles:[]},
+ membership:{id:SEED_IDS.learnerCollegeAMembership,collegeId:SEED_IDS.collegeA,
+ organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+};
+type Fixture={programId:string;periodId:string;cohortId:string;sectionId:string;
+ courseId:string;offeringId:string;deliveryId:string;enrollmentId:string};
+let active:Fixture|null=null;
+
+async function cleanup(){
+ const f=active;
+ if(!f)return;
+ // Only mutable fixture entities are removed. NEVER delete append-only activity_events.
+ await pool.query("delete from course_discussion_messages where delivery_id=$1",[f.deliveryId]);
+ await pool.query("delete from course_teaching_assignments where delivery_id=$1",[f.deliveryId]);
+ await pool.query("delete from course_section_deliveries where id=$1",[f.deliveryId]);
+ await pool.query("delete from course_offerings where id=$1",[f.offeringId]);
+ await pool.query("delete from courses where id=$1",[f.courseId]);
+ await pool.query("delete from section_enrollments where learner_enrollment_id=$1",[f.enrollmentId]);
+ await pool.query("delete from learner_program_enrollments where id=$1",[f.enrollmentId]);
+ await pool.query("delete from sections where id=$1",[f.sectionId]);
+ await pool.query("delete from cohorts where id=$1",[f.cohortId]);
+ await pool.query("delete from programs where id=$1",[f.programId]);
+ await pool.query("delete from academic_periods where id=$1",[f.periodId]);
+ active=null;
+}
+async function fixture(){
+ const suffix=randomUUID().slice(0,8).toUpperCase();
+ const program=await createProgram(admin,{departmentId:SEED_IDS.departmentA,
+  name:"Chat4 Report "+suffix,code:"C4RH-"+suffix+"-P",durationTerms:8});
+ const period=await createAcademicPeriod(admin,{collegeId:SEED_IDS.collegeA,
+  name:"Chat4 Report Period "+suffix,code:"C4RH-"+suffix+"-T",
+  startDate:"2026-07-01",endDate:"2027-12-31"});
+ const cohort=await createCohort(admin,{programId:program.id,
+  name:"Chat4 Report Intake "+suffix,code:"C4RH-"+suffix+"-C",startPeriodId:period.id});
+ const section=await createSection(admin,{cohortId:cohort.id,academicPeriodId:period.id,
+  name:"Chat4 Section "+suffix,code:"C4RH-"+suffix+"-S"});
+ const course=await createCourse(admin,{departmentId:SEED_IDS.departmentA,
+  name:"Chat4 Report Course "+suffix,code:"C4RH-"+suffix+"-R"});
+ const offering=await createCourseOffering(admin,{courseId:course.id,
+  cohortId:cohort.id,academicPeriodId:period.id,type:"CORE",credits:4,displayOrder:0});
+ const delivery=await createCourseSectionDelivery(admin,{offeringId:offering.id,sectionId:section.id});
+ await createCourseTeachingAssignment(admin,{deliveryId:delivery.id,
+  membershipId:SEED_IDS.facultyCollegeAMembership,role:"PRIMARY"});
+ const enrollment=await createLearnerProgramEnrollment(admin,{
+  membershipId:SEED_IDS.learnerCollegeAMembership,programId:program.id,cohortId:cohort.id});
+ await assignLearnerToSection(admin,{learnerEnrollmentId:enrollment.id,sectionId:section.id});
+ active={programId:program.id,periodId:period.id,cohortId:cohort.id,sectionId:section.id,
+  courseId:course.id,offeringId:offering.id,deliveryId:delivery.id,enrollmentId:enrollment.id};
+ return active;
+}
+afterEach(cleanup);
+afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
+describe("Faculty registered report/history positive and scope denials",()=>{
+ it("reads exact Section moderation history with real persisted pin/deletion audit",async()=>{
+  const f=await fixture();
+  const msg=await createCourseDiscussionMessage(faculty,f.deliveryId,{messageText:"Fixture moderation event"});
+  await toggleCourseDiscussionPin(faculty,msg.id,f.deliveryId);
+  await deleteCourseDiscussionMessage(faculty,msg.id,f.deliveryId);
+  const history=await getFacultyDiscussionHistory(faculty,{deliveryId:f.deliveryId});
+  expect(history.total).toBe(2);
+  expect(history.items.map(row=>row.action)).toEqual([
+   "Discussion deletion recorded","Pinned by moderator",
+  ]);
+  await expect(getFacultyDiscussionHistory(learner,{deliveryId:f.deliveryId})).rejects.toBeDefined();
+  await expect(getFacultyDiscussionHistory(faculty,{deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+  await expect(getFacultyDiscussionHistory(faculty,{deliveryId:f.deliveryId,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+ });
+ it("reports persisted current Section roster and unknown attendance without invented scores",async()=>{
+  const f=await fixture();
+  const report=await getFacultyReportsHub(faculty,{deliveryId:f.deliveryId});
+  expect(report.rosterSize).toBe(1);
+  expect(report.breakdown).toEqual({
+   assignments:0,quizzes:0,publishedAssignments:0,publishedQuizzes:0,
+  });
+  expect(report.attendance).toEqual({scheduled:0,marked:0});
+  expect(report.health.items).toEqual([]);
+  await expect(getFacultyReportsHub(learner,{deliveryId:f.deliveryId})).rejects.toBeDefined();
+  await expect(getFacultyReportsHub(faculty,{deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+  const disabled:RequestContext={...faculty,user:{...faculty.user,platformStatus:"DISABLED"}};
+  await expect(getFacultyReportsHub(disabled,{deliveryId:f.deliveryId})).rejects.toBeDefined();
+ });
+ it("keeps Faculty alternate contacts blocked even for a real authorized Faculty profile",async()=>{
+  const allowed=await getOwnFacultyContactAvailability(faculty,{});
+  expect(allowed.editable).toBe(false);
+  expect(allowed.alternatePhone).toBeNull();
+  expect(allowed.contactEmail).toBeNull();
+  await expect(getOwnFacultyContactAvailability(learner,{})).rejects.toBeDefined();
+  await expect(getOwnFacultyContactAvailability(faculty,{alternatePhone:"9999"})).rejects.toBeDefined();
+ });
+});
