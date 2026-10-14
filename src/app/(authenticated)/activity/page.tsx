@@ -84,6 +84,8 @@ export default async function ActivityPage({
           params.subjectType,
         ),
         subjectId: one(params.subjectId),
+        actorName: isSuperAdmin(context) ? one(params.actorName)?.trim() || undefined : undefined,
+        q: isSuperAdmin(context) ? one(params.q)?.trim() || undefined : undefined,
         from: one(params.from),
         to: one(params.to),
         beforeOccurredAt: one(
@@ -143,12 +145,15 @@ export default async function ActivityPage({
     "eventType",
     "subjectType",
     "subjectId",
+    "actorName",
+    "q",
     "collegeId",
     "from",
     "to",
   ]) {
     const value = one(params[name]);
     if (value) {
+      if ((name === "actorName" || name === "q") && !isSuperAdmin(context)) continue;
       nextParams.set(name, value);
     }
   }
@@ -297,6 +302,14 @@ export default async function ActivityPage({
           <input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
+        {isSuperAdmin(context) ? <>
+          <label><span className="mb-1 block text-xs font-semibold text-body">Actor name</span>
+            <input type="search" className={inputClass} name="actorName" maxLength={100}
+              defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
+          <label><span className="mb-1 block text-xs font-semibold text-body">Event / entity search</span>
+            <input type="search" className={inputClass} name="q" maxLength={100}
+              defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
+        </> : null}
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Actor user ID

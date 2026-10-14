@@ -3,6 +3,7 @@ import {
   desc,
   eq,
   gte,
+  ilike,
   lt,
   lte,
   or,
@@ -24,6 +25,7 @@ import {
 import {
   requirePermission,
 } from "@/modules/permissions/policy";
+import { adminAuditTextFilterSchema, auditLiteralLikePattern } from "./admin-audit-search-model";
 import { ActivityServiceError } from "./errors";
 import { parseActivityDateBoundary, type ActivityDateBoundary } from "./date-boundary";
 import { sanitizeActivityMetadata } from "./metadata-sanitizer";
@@ -82,6 +84,7 @@ const activityFilterSchema = z
       .max(80)
       .optional(),
     subjectId: z.string().trim().min(1).max(500).optional(),
+    ...adminAuditTextFilterSchema.shape,
     from: activityDateSchema("from").optional(),
     to: activityDateSchema("to").optional(),
     beforeOccurredAt:
@@ -566,6 +569,13 @@ export async function listActivityEvents(
   }
   if (input.subjectId) {
     conditions.push(eq(activityEvents.subjectId, input.subjectId));
+  }
+  if (input.actorName) conditions.push(ilike(users.displayName, auditLiteralLikePattern(input.actorName)));
+  if (input.q) {
+    const pattern = auditLiteralLikePattern(input.q);
+    conditions.push(or(ilike(activityEvents.summary, pattern), ilike(activityEvents.subjectLabel, pattern),
+      ilike(activityEvents.subjectId, pattern), ilike(activityEvents.eventType, pattern),
+      ilike(activityEvents.subjectType, pattern))!);
   }
   if (input.from) {
     conditions.push(
