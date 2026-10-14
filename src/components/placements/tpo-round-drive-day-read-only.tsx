@@ -10,6 +10,7 @@ import {
 import type {
   getTpoRoundDriveDay,
 } from "@/modules/placements/tpo-round-drive-day-service";
+import { TpoRoundResultRecorder } from "./tpo-round-result-recorder";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -131,7 +132,7 @@ export function TpoRoundDriveDayReadOnly({
           </StatusBadge>
 
           <StatusBadge>
-            Read-only
+            Audited stage / apply
           </StatusBadge>
         </div>
 
@@ -315,6 +316,11 @@ export function TpoRoundDriveDayReadOnly({
                           No result recorded
                         </span>
                       )}
+                      <TpoRoundResultRecorder
+                        roundId={data.round.id}
+                        round={{ kind: data.round.kind, status: data.round.status }}
+                        row={student}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -325,10 +331,11 @@ export function TpoRoundDriveDayReadOnly({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        This TPO page is read-only. Attendance marking,
-        bulk result submission, confirmation and other
-        operational actions remain in their existing
-        authorized workflows.
+        TPO operators can stage a PASS (shortlisted), FAIL (not selected),
+        HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:
+        only completed rounds permit explicit, audited apply. Existing
+        coordinator attendance controls and bulk result workflows remain
+        separate; no offer or final hiring selection is inferred.
       </p>
     </div>
   );
