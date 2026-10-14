@@ -390,6 +390,8 @@ Legacy includes:
 
 - [ ] round roster matches.
 - [ ] attendance/check-in actions match.
+
+**W58 PARTIAL:** TPO round roster now offers confirmed PRESENT check-in and explicit ABSENT no-show actions only on the currently scheduled India-local round date, for progression-eligible candidates. Strict Zod and same-origin POST, centralized college permission, row-locked expected-status checks, idempotent repeats and transactional immutable activity audit apply. IN_INTERVIEW/DONE marks cannot be downgraded. Bulk marking, final legacy UX, positive PostgreSQL and browser acceptance remain open.
 - [ ] result/outcome capture matches.
 - [ ] bulk result/attendance actions match.
 
