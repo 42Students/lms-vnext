@@ -119,7 +119,7 @@ export function FacultyCourseHomeSignals({
           />
           <SignalCard
             label="At-risk Students"
-            value={signals.atRisk.length}
+            value={signals.atRiskTotal}
             detail="Low attendance or repeated overdue missing submissions."
             href={`/teacher/courses/${deliveryId}/students`}
           />
@@ -136,7 +136,7 @@ export function FacultyCourseHomeSignals({
         </div>
       </section>
 
-      {signals.atRisk.length > 0 ? (
+      {signals.atRiskTotal > 0 ? (
         <section
           className="rounded-xl border border-border bg-surface p-5"
           aria-label="Needs attention"
@@ -147,14 +147,14 @@ export function FacultyCourseHomeSignals({
                 Needs attention
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {signals.atRisk.length} student{signals.atRisk.length === 1 ? "" : "s"} currently match the legacy risk rules.
+                {signals.atRiskTotal} student{signals.atRiskTotal === 1 ? "" : "s"} currently match the legacy risk rules.
               </p>
             </div>
             <Link
               href={`/teacher/courses/${deliveryId}/students`}
               className="text-sm font-semibold text-primary-text hover:underline"
             >
-              View all {signals.atRisk.length} students
+              View all {signals.atRiskTotal} students
             </Link>
           </div>
           <ul className="mt-4 divide-y divide-border">
