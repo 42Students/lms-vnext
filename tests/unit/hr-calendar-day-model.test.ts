@@ -20,6 +20,8 @@ describe("HR calendar results due day integration", () => {
     expect(combineHrCalendarDays(initial, [due]).map((item) => item.day))
       .toEqual(["2026-10-20", "2026-10-22"]);
     expect(hrResultsDueHref("a/b")).toBe("/hr/placements/jobs/a%2Fb?tab=rounds");
+    expect(hrResultsDueHref("job/one","round&two"))
+      .toBe("/hr/placements/jobs/job%2Fone?tab=rounds&roundId=round%26two");
     expect(selectHrMobileCalendarDays(combineHrCalendarDays(initial,[due]),["2026-10-22"]))
       .toMatchObject([{day:"2026-10-22"}]);
     expect(selectHrMobileCalendarDays(combineHrCalendarDays([],[]),["2026-10-22"]))
