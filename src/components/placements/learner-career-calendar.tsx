@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import {useSearchParams} from "next/navigation";
+import {readLearnerCalendarUrl,learnerCalendarHref,type LearnerCalendarUrlState} from "@/modules/placements/learner-career-calendar-url-model";
+import { useState } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Drawer } from "@/components/ui/drawer";
 import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
@@ -9,6 +11,7 @@ import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
 import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
 import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-career-agenda-model";
 import {
+  initialCareerCalendarDay,
   careerCalendarEvents,
   careerCalendarPeriod,
   learnerCareerIcal,
@@ -49,25 +52,28 @@ function hrefForEvent(event: CareerCalendarEvent) {
 export function LearnerCareerCalendar({
   rounds,
   initialAnchor,
+  todayAnchor=initialAnchor,
 }: {
   rounds: readonly CareerCalendarSourceRound[];
   initialAnchor: string;
+  todayAnchor?:string;
 }) {
-  const [anchor, setAnchor] = useState(initialAnchor);
-  const [view, setView] = useState<CareerCalendarView>("agenda");
-  const [filter, setFilter] = useState<EventFilter>("ALL");
+  const params=useSearchParams();
+  const state=readLearnerCalendarUrl(params.toString(),todayAnchor);
+  const {date:anchor,view,kind:filter}=state;
+  function changeCalendar(patch:Partial<LearnerCalendarUrlState>){
+    window.history.pushState(null,"",learnerCalendarHref({...state,...patch}));
+    setSelectedKey(null);
+  }
   const [selectedKey,setSelectedKey]=useState<string|null>(null);
 
-  const events = useMemo(() => careerCalendarEvents(rounds), [rounds]);
-  const filtered = useMemo(() => filter === "ALL"
+  const events = careerCalendarEvents(rounds);
+  const filtered = filter === "ALL"
     ? events
-    : events.filter((event) => event.kind === filter), [events, filter]);
-  const period = useMemo(
-    () => careerCalendarPeriod(filtered, anchor, view),
-    [filtered, anchor, view],
-  );
+    : events.filter((event) => event.kind === filter);
+  const period = careerCalendarPeriod(filtered, anchor, view);
 
-  const calendarDays = useMemo(() => {
+  const calendarDays = (() => {
     if (view !== "month" && view !== "week") return [];
     const first = view === "month" ? anchor.slice(0, 7) + "-01" : period.start;
     const offset = view === "month"
@@ -76,9 +82,9 @@ export function LearnerCareerCalendar({
     const start = shiftCareerCalendarDay(first, "day", -offset);
     return Array.from({ length: view === "month" ? 42 : 7 }, (_, index) =>
       shiftCareerCalendarDay(start, "day", index));
-  }, [anchor, period.start, view]);
+  })();
 
-  const byDay = useMemo(() => {
+  const byDay = (() => {
     const map = new Map<string, CareerCalendarEvent[]>();
     for (const event of filtered) {
       const bucket = map.get(event.dayKey) ?? [];
@@ -86,12 +92,12 @@ export function LearnerCareerCalendar({
       map.set(event.dayKey, bucket);
     }
     return map;
-  }, [filtered]);
+  })();
 
   const selected=findOwnCareerCalendarEvent(filtered,selectedKey);
   function showEventDetail(event:CareerCalendarEvent){setSelectedKey(event.key);}
 
-  const mobileDays=useMemo(()=>learnerMobileCareerAgenda(period.events),[period.events]);
+  const mobileDays=learnerMobileCareerAgenda(period.events);
 
   function downloadCalendar() {
     const file = learnerCareerIcal(filtered, new Date());
@@ -131,10 +137,10 @@ export function LearnerCareerCalendar({
               type="button"
               key={option}
               aria-pressed={view === option}
-              onClick={() => setView(option)}
+              onClick={() => changeCalendar({view:option})}
               className={view === option
-                ? "min-h-10 rounded-md bg-primary px-3 text-sm font-semibold capitalize text-on-primary"
-                : "min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold capitalize text-body hover:text-primary-text"}
+                ? "min-h-11 rounded-md bg-primary px-3 text-sm font-semibold capitalize text-on-primary"
+                : "min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-semibold capitalize text-body hover:text-primary-text"}
             >
               {option}
             </button>
@@ -144,19 +150,19 @@ export function LearnerCareerCalendar({
           <button
             type="button"
             aria-label="Previous calendar period"
-            onClick={() => setAnchor((current) => shiftCareerCalendarDay(current, view, -1))}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            onClick={() => changeCalendar({date:shiftCareerCalendarDay(anchor, view, -1)})}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
           >←</button>
           <button
             type="button"
-            onClick={() => setAnchor(initialAnchor)}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            onClick={() => changeCalendar({date:initialCareerCalendarDay()})}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
           >Today</button>
           <button
             type="button"
             aria-label="Next calendar period"
-            onClick={() => setAnchor((current) => shiftCareerCalendarDay(current, view, 1))}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            onClick={() => changeCalendar({date:shiftCareerCalendarDay(anchor, view, 1)})}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
           >→</button>
           <span className="text-sm font-semibold text-foreground">
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
@@ -168,7 +174,7 @@ export function LearnerCareerCalendar({
             min="2000-01-01" max="2100-12-31" value={anchor}
             onChange={(event)=>{
               const day=parseLearnerCareerDate(event.target.value);
-              if(day)setAnchor(day);
+              if(day)changeCalendar({date:day});
             }}
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
@@ -178,10 +184,10 @@ export function LearnerCareerCalendar({
               type="button"
               key={option.key}
               aria-pressed={filter === option.key}
-              onClick={() => setFilter(option.key)}
+              onClick={() => changeCalendar({kind:option.key})}
               className={filter === option.key
-                ? "min-h-10 rounded-full bg-primary-subtle px-3 text-xs font-bold text-primary-text ring-1 ring-primary"
-                : "min-h-10 rounded-full border border-border px-3 text-xs font-semibold text-body"}
+                ? "min-h-11 rounded-full bg-primary-subtle px-3 text-xs font-bold text-primary-text ring-1 ring-primary"
+                : "min-h-11 rounded-full border border-border px-3 text-xs font-semibold text-body"}
             >{option.label}</button>
           ))}
         </div>
@@ -203,7 +209,7 @@ export function LearnerCareerCalendar({
                   type="button"
                   key={day}
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
-                  onClick={() => { setAnchor(day); setView("day"); }}
+                  onClick={() => { changeCalendar({date:day,view:"day"}); }}
                   className={`min-h-24 rounded-md border border-border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${outside ? "opacity-50" : ""}`}
                 >
                   <span className="block text-xs font-semibold text-foreground">{day.slice(-2)}</span>
@@ -237,11 +243,11 @@ export function LearnerCareerCalendar({
                     <p className="mt-1 text-xs text-body">{displayDate(event.start)} · {event.kind}</p>
                     <div className="mt-2 flex flex-wrap gap-3">
                       <button type="button" onClick={()=>showEventDetail(event)}
-                        className="min-h-10 text-sm font-semibold text-primary-text">
+                        className="min-h-11 text-sm font-semibold text-primary-text">
                         Event details
                       </button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
                         Open exact round →
                       </Link>
                     </div>
@@ -288,11 +294,11 @@ export function LearnerCareerCalendar({
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
               <button type="button" onClick={()=>showEventDetail(event)}
-                className="min-h-10 text-sm font-semibold text-primary-text hover:underline">
+                className="min-h-11 text-sm font-semibold text-primary-text hover:underline">
                 Event details
               </button>
               <Link href={hrefForEvent(event)}
-                className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
                 View application →
               </Link>
             </div>
@@ -305,11 +311,11 @@ export function LearnerCareerCalendar({
         footer={
           <>
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
               Open exact round
             </Link>:null}
             <button type="button" onClick={()=>setSelectedKey(null)}
-              className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body">
+              className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body">
               Close
             </button>
           </>
