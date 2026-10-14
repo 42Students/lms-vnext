@@ -70,6 +70,14 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               <option value="ALL">All</option>
             </select>
           </label>
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
+              Minimum configured capacity
+              <input name="minimumCapacity" type="number" min={1} max={100000} step={1}
+                defaultValue={data.query.minimumCapacity ?? ""} placeholder="Any capacity"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

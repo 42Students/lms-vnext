@@ -3,6 +3,7 @@ import {
   classCapacityLabel,
   collegeStructureHref,
   collegeStructureQuerySchema,
+  collegeClassQuerySchema,
   collegeStructureTotalPages,
   electiveSelectionLabel,
   readCollegeStructureParams,
@@ -45,6 +46,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(collegeStructureHref("ELECTIVES", { q: "", status: "ACTIVE", page: 1 }))
       .toBe("/college/electives");
+    expect(collegeClassQuerySchema.parse({ minimumCapacity: "36" }).minimumCapacity).toBe(36);
+    expect(collegeClassQuerySchema.safeParse({ minimumCapacity: 0 }).success).toBe(false);
+    expect(collegeStructureQuerySchema.safeParse({ minimumCapacity: 36 }).success).toBe(false);
+    expect(collegeStructureHref("CLASSES", { ...query, minimumCapacity: 36 })).toContain("minimumCapacity=36");
     expect(collegeStructureTotalPages(0)).toBe(1);
     expect(collegeStructureTotalPages(26)).toBe(2);
   });
