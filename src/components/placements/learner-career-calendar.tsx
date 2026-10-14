@@ -20,7 +20,7 @@ import {
   initialCareerCalendarDay,
   careerCalendarEvents,
   careerCalendarPeriod,
-   shiftCareerCalendarDay,
+  shiftCareerCalendarDay,
   type CareerCalendarEvent,
   type CareerCalendarSourceRound,
   type CareerCalendarView,
@@ -208,7 +208,7 @@ export function LearnerCareerCalendar({
 
       {view === "month" ? (
         <section className="flex flex-wrap gap-3 rounded-xl border border-border bg-surface p-3 text-sm text-body" aria-label="Selected month round totals">
-          <strong className="text-foreground">{prettyDay(period.start).replace(/\s+\d{1,2},?\s*/, " ")}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
+          <strong className="text-foreground">{new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
           <span>{monthCounts.assessments} assessments</span>
           <span>{monthCounts.interviews} interviews</span>
           <span>{monthCounts.other} other</span>
