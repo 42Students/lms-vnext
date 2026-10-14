@@ -88,6 +88,14 @@ export function LearnerPlacementPreferences({
   async function save() {
     setPending(true);
     try {
+      if (splitList(roles).length > 20 || splitList(locations).length > 20 ||
+          splitList(roles).some(value => value.length > 120) ||
+          splitList(locations).some(value => value.length > 120) ||
+          (minimumLpa.trim() !== "" &&
+            (!Number.isFinite(Number(minimumLpa)) ||
+             Number(minimumLpa) < 0 || Number(minimumLpa) > 1000))) {
+        throw new Error("Up to 20 roles/locations (120 characters each) and 0–1000 LPA are allowed.");
+      }
       const response = await fetch(
         "/api/placements/preferences",
         {
@@ -284,6 +292,7 @@ export function LearnerPlacementPreferences({
             type="number"
             min={0}
             step="0.1"
+            max={1000}
             value={minimumLpa}
             onChange={(event) =>
               setMinimumLpa(
