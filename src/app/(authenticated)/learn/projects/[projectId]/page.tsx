@@ -1,4 +1,7 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { projectInstanceIdSchema } from "@/modules/projects/validation";
+import { ProjectsServiceError } from "@/modules/projects/errors";
+import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
@@ -19,6 +22,7 @@ export default async function LearnerProjectPage({
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
+  if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
   const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId } = await searchParams;
   const activeSection =
     tab === "board"
@@ -35,17 +39,28 @@ export default async function LearnerProjectPage({
   const access = await requireProjectReadAccess(
     context,
     projectId,
-  );
+  ).catch(error => {
+    if (error instanceof ProjectsServiceError &&
+        learnerProjectReadFailureDisposition(error.code) === "NOT_FOUND") {
+      notFound();
+    }
+    throw error;
+  });
 
   if (access.access !== "LEARNER") {
     redirect("/learn/projects");
   }
 
-  const workspace =
-    await getProjectWorkspaceView(
-      context,
-      projectId,
-    );
+  const workspace = await getProjectWorkspaceView(
+    context,
+    projectId,
+  ).catch(error => {
+    if (error instanceof ProjectsServiceError &&
+        learnerProjectReadFailureDisposition(error.code) === "NOT_FOUND") {
+      notFound();
+    }
+    throw error;
+  });
 
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";

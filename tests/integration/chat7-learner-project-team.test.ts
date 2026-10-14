@@ -10,6 +10,7 @@ import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-pr
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
+import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -315,5 +316,22 @@ describe("L25-008 exact task-detail selection from learner own persisted workspa
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
       {...context,membership:{...context.membership!,roles:["FACULTY"]}},
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L21-012 protected learner Project detail read",()=>{
+  it("loads own workspace and hides missing or foreign identifiers",async()=>{
+    expect((await getProjectInstanceWorkspace(context,ids.project)).project.id).toBe(ids.project);
+    await expect(getProjectInstanceWorkspace(context,randomUUID())).rejects.toMatchObject({
+      code:"PROJECT_NOT_FOUND",
+    });
+    expect(learnerProjectReadFailureDisposition("PROJECT_NOT_FOUND")).toBe("NOT_FOUND");
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toMatchObject({
+      code:"PROJECT_ACCESS_DENIED",
+    });
   });
 });
