@@ -4,6 +4,7 @@ import type { learnerPlacementDashboard } from "@/modules/placements/learner-das
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
 import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-onboarding-steps-model";
 import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
+import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -41,11 +42,12 @@ function Metric({
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,learnerName=null,
+  snapshot,availability,learnerName=null,applicationFunnel=null,
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
   learnerName?:string|null;
+  applicationFunnel?:ReturnType<typeof learnerPlacementApplicationFunnel>|null;
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
@@ -129,6 +131,20 @@ export function LearnerPlacementsDashboard({
         />
       </div>
 
+      <section aria-label="Application screening breakdown" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-foreground">Application stages</h3>
+          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
+        </div>
+        {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
+          : <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {applicationFunnel.stages.map(stage=><div key={stage.key} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+              <p className="text-2xl font-bold tabular-nums text-foreground">{stage.count}</p>
+              <p className="mt-1 text-xs font-semibold text-body">{stage.label}</p>
+            </div>)}
+          </div>}
+        <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
+      </section>
       {display.activeOffers !== null && display.activeOffers > 0 ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning bg-surface px-5 py-4">
           <div>
