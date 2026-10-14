@@ -6,6 +6,7 @@ import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-
 import {readLearnerCalendarUrl,learnerCalendarSelectedEvents} from "@/modules/placements/learner-career-calendar-url-model";
 import {learnerCareerDayChips} from "@/modules/placements/learner-career-day-chips-model";
 import {learnerCareerKindCounts} from "@/modules/placements/learner-career-kind-count-model";
+import {learnerCareerWeekDays} from "@/modules/placements/learner-career-week-days-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {newLearnerCareerCalendarFixture,seedLearnerCareerCalendarFixture,cleanupLearnerCareerCalendarFixture,type LearnerCareerCalendarFixture} from "../support/learner-career-calendar-fixture";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
@@ -21,6 +22,17 @@ describe("calendar URL filters over persisted own rounds",()=>{
     const state=readLearnerCalendarUrl("date=2026-10-17&view=day&kind=INTERVIEW&collegeId=foreign","2026-10-14");
     expect(learnerCalendarSelectedEvents(rows,state).map(x=>x.roundId)).toEqual([fixture.roundId]);
     expect(learnerCalendarSelectedEvents(rows,{...state,kind:"ASSESSMENT"})).toHaveLength(0);
+  },30000);
+  it("renders seven mobile days with actual own interview and honest empty days",async()=>{
+    const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
+    const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
+    const events=learnerCalendarSelectedEvents(rows,{date:"2026-10-17",view:"week",kind:"ALL"});
+    const days=learnerCareerWeekDays("2026-10-12",events);
+    expect(days).toHaveLength(7);
+    expect(days.find(x=>x.dayKey==="2026-10-17")?.events[0]?.roundId).toBe(fixture.roundId);
+    expect(days.find(x=>x.dayKey==="2026-10-12")?.events).toHaveLength(0);
+    const foreign:RequestContext={...fixture.drive.learner.context,membership:{...fixture.drive.learner.context.membership!,collegeId:SEED_IDS.collegeB}};
+    await expect(getLearnerPlacementRequestWorkspace(foreign)).rejects.toBeDefined();
   },30000);
   it("summarizes own month events by persisted kind",async()=>{
     const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
