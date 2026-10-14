@@ -45,6 +45,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "academics.program.created",
   ACADEMICS_PROGRAM_UPDATED: "academics.program.updated",
   ACADEMICS_PROGRAM_ARCHIVED: "academics.program.archived",
+  ACADEMICS_PERIOD_CLOSED: "academics.period.closed",
+  ACADEMICS_PERIOD_REOPENED: "academics.period.reopened",
   ACADEMICS_SEMESTER_CREATED: "academics.semester.created",
   ACADEMICS_SEMESTER_UPDATED: "academics.semester.updated",
   ACADEMICS_SEMESTER_DELETED: "academics.semester.deleted",

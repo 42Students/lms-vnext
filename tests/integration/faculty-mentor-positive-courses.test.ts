@@ -380,6 +380,8 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     });
     expect(csvQuiz.csv).toContain('"NOT_ATTEMPTED"');
     expect(csvQuiz.csv).not.toContain('"ATTEMPTED"');
+    expect(csvQuiz.omittedRows).toBe(0);
+    expect(csvQuiz.csv).not.toContain("NOTICE:");
 
     await expect(getFacultyReportCsvForDownload(learner,{
       kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,

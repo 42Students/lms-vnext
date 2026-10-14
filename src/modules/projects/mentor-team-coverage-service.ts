@@ -1,8 +1,8 @@
 import "server-only";
 
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships, projectMembers, users } from "@/db/schema";
+import { collegeMemberships, membershipRoles, projectMembers, users } from "@/db/schema";
 import {
   hasActiveMembership, hasMembershipRole, type RequestContext,
 } from "@/modules/identity/context";
@@ -37,7 +37,9 @@ export async function getMentorTeamCoverage(
   }
   const access = await resolveOptionalModuleAccess(context);
   const empty = (enabled: boolean) => ({
-    enabled, query, ...selectMentorTeamCoverage([],query),
+    enabled,query,projectCount:0,
+    summary:{zeroLearnerProjects:0,withoutPrimaryMentor:0},
+    ...selectMentorTeamCoverage([],query),
   });
   if (!access.projects.enabled) return empty(false);
 
@@ -54,6 +56,10 @@ export async function getMentorTeamCoverage(
     .innerJoin(collegeMemberships,
       eq(collegeMemberships.id,projectMembers.membershipId))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+    ))
     .where(and(
       inArray(projectMembers.projectId,projectIds),
       isNull(projectMembers.endedAt),
@@ -74,5 +80,12 @@ export async function getMentorTeamCoverage(
     status: row.project.status,
     ...summarizeActiveProjectTeam(grouped.get(row.project.id) ?? []),
   }));
-  return { enabled: true, query, ...selectMentorTeamCoverage(rows,query) };
+  return {
+    enabled:true,query,projectCount:rows.length,
+    summary:{
+      zeroLearnerProjects:rows.filter(row=>row.learners===0).length,
+      withoutPrimaryMentor:rows.filter(row=>!row.hasPrimaryMentor).length,
+    },
+    ...selectMentorTeamCoverage(rows,query),
+  };
 }

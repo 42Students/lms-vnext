@@ -52,6 +52,7 @@ type Session = {
   endsAt: string;
   location: string | null;
   eventStatus: string;
+  updatedAt?: string;
   attendanceStatus: string | null;
   markedAt: string | null;
   markedByUserId: string | null;
