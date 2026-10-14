@@ -110,6 +110,7 @@ export default async function FacultyContactsPage({
             </p>
           </div>
           <form
+            key={result.search + ":" + result.pageSize}
             action={baseHref}
             className="flex w-full max-w-2xl flex-wrap items-end gap-2"
           >

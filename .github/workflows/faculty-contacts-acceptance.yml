@@ -1,0 +1,110 @@
+name: Faculty Contacts acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/faculty-contacts-acceptance.yml"
+      - "tests/integration/faculty-contacts-*-acceptance.test.ts"
+      - "tests/e2e/faculty-contacts-*.spec.ts"
+      - "src/modules/courses/faculty-contacts-service.ts"
+      - "src/modules/courses/faculty-contact-detail-model.ts"
+      - "src/components/courses/faculty-contacts-table.tsx"
+      - "src/app/(authenticated)/teacher/contacts/**"
+
+permissions:
+  contents: read
+
+# Independent of long-lived multi-module CI. Subsequent unrelated main pushes
+# cannot cancel or mask this exact registered Faculty acceptance evidence.
+concurrency:
+  group: faculty-contacts-acceptance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered migration journal
+        run: npm run db:journal:verify
+      - name: Prepare and seed a disposable PostgreSQL 17 instance
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Execute all three registered Faculty Contacts PostgreSQL suites
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-contacts-all-acceptance.test.ts
+          tests/integration/faculty-contacts-teachers-acceptance.test.ts
+          tests/integration/faculty-contacts-students-acceptance.test.ts
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable E2E database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral E2E auth keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Execute Faculty Contacts desktop and mobile browser journeys
+        run: >-
+          npx playwright test
+          tests/e2e/faculty-contacts-all.spec.ts
+          tests/e2e/faculty-contacts-teachers.spec.ts
+          tests/e2e/faculty-contacts-students.spec.ts
