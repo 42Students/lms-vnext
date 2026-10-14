@@ -1,3 +1,4 @@
+import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -514,8 +515,14 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await expect(markFacultyAttendance({
       ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
     },session.id,request)).rejects.toBeDefined();
+    const prior=await pool.query<{membership_id:string}>(
+      "select membership_id from attendance_records where schedule_event_id=$1 and status='ABSENT'",[session.id]);
+    const preview=facultyAttendanceConfirmation(true,prior.rows.map(row=>row.membership_id),[],1);
+    expect(preview).toContain("0 changed to absent, 1 changed to present");
+    expect(preview).not.toContain(testLearnerMembershipId);
     const corrected=await markFacultyAttendance(facultyOnly,session.id,request);
     expect(corrected.markedPresent).toBe(1);
+    expect(facultyAttendanceConfirmation(true,[],[],1)).toBeNull();
     await expect(markFacultyAttendance(facultyOnly,session.id,request))
       .rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
     const audit=await pool.query<{metadata:{correction:boolean,markedAt:string}}>(`

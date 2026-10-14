@@ -1080,3 +1080,15 @@ ungraded and published states. The existing fresh-Section grading PostgreSQL
 fixture checks the editor against actual persisted grades while retaining
 success, foreign/role/stale and audit assertions. Existing writers unchanged.
 Remaining: database execution and browser/mobile/legacy grading acceptance.
+
+## 2026-10-14 Faculty attendance correction preview — PARTIAL
+The attendance editor now confirms first marks with present/absent counts and
+corrections with the actual counts moving to absent/present. The preview never
+contains learner identifiers. Unchanged corrections are disabled and rejected
+before requesting a mutation; the existing bounded correction-reason policy
+is reused in the UI. Same-origin, window, current roster, markedAt token and
+transactional immutable audit remain in the existing server writer.
+Pure tests cover count deltas, duplicate/reordered sets, no-op and invalid
+rosters. The fresh-Section PostgreSQL correction fixture derives the preview
+from its persisted absence while retaining stale, foreign/role and audit tests.
+Remaining: PostgreSQL execution and mobile/keyboard/legacy correction acceptance.
