@@ -4,9 +4,7 @@ import {
   and,
   desc,
   eq,
-  lt,
   not,
-  or,
   sql,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -104,14 +102,13 @@ export async function listCourseDiscussionMessages(
   } catch {
     canPost = false;
   }
+  // PostgreSQL timestamps have microsecond precision. A JS Date cursor
+  // would truncate them to milliseconds and skip messages at page boundaries.
+  // Compare the persisted timestamp plus UUID directly, with a microsecond
+  // ISO cursor returned by PostgreSQL.
   const before = page.beforeCreatedAt && page.beforeId
-    ? or(
-        lt(courseDiscussionMessages.createdAt, new Date(page.beforeCreatedAt)),
-        and(
-          eq(courseDiscussionMessages.createdAt, new Date(page.beforeCreatedAt)),
-          lt(courseDiscussionMessages.id, page.beforeId),
-        ),
-      )
+    ? sql`(${courseDiscussionMessages.createdAt}, ${courseDiscussionMessages.id})
+        < (${page.beforeCreatedAt}::timestamptz, ${page.beforeId}::uuid)`
     : undefined;
   const fetched = await getDb()
     .select({
@@ -123,6 +120,8 @@ export async function listCourseDiscussionMessages(
       messageText: courseDiscussionMessages.messageText,
       pinned: courseDiscussionMessages.pinned,
       createdAt: courseDiscussionMessages.createdAt,
+      cursorCreatedAt: sql<string>`to_char(${courseDiscussionMessages.createdAt}
+        AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
       updatedAt: courseDiscussionMessages.updatedAt,
     })
     .from(courseDiscussionMessages)
@@ -138,12 +137,12 @@ export async function listCourseDiscussionMessages(
   return {
     accessMode: mode,
     canPost,
-    messages: messages.map((row) => ({
+    messages: messages.map(({ cursorCreatedAt: _cursor, ...row }) => ({
       ...row,
       isMine: context.membership?.id === row.senderMembershipId,
     })),
     nextCursor: hasOlder && oldest
-      ? { beforeCreatedAt: oldest.createdAt.toISOString(), beforeId: oldest.id }
+      ? { beforeCreatedAt: oldest.cursorCreatedAt, beforeId: oldest.id }
       : null,
   };
 }
