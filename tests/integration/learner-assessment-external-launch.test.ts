@@ -13,6 +13,7 @@ afterEach(async()=>{await cleanupLearnerAssessmentBrowseFixture(pool,fixture);},
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();});
 describe("scoped employer launch confirmation",()=>{
  it("uses persisted own TEST round schedule and safe link",async()=>{
+  await pool.query("UPDATE placement_job_rounds SET test_url=$1 WHERE id=$2",["https://exam.example.test/start",fixture.roundId]);
   const rows=(await getOwnLearnerAssessmentBrowse(fixture.drive.learner.context)).rounds;
   const own=rows.find(row=>row.roundId===fixture.roundId)!;
   const action=learnerAssessmentExternalLaunch({
