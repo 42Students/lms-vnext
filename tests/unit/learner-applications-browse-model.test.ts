@@ -42,6 +42,12 @@ describe("Learner placement application browser", () => {
     expect(browseLearnerApplications(records,{...defaults,sort:"company"}).map(x=>x.applicationId))
       .toEqual(["a","c","b","d"]);
   });
+  it("sorts by persisted screening stage with stable recent-activity and ID tie breaks",()=>{
+    expect(browseLearnerApplications(records,{...defaults,sort:"stage"}).map(x=>x.applicationId))
+      .toEqual(["c","b","a","d"]);
+    expect(browseLearnerApplications(records,{...defaults,sort:"stage",stage:"SHORTLISTED"})
+      .map(x=>x.applicationId)).toEqual(["b"]);
+  });
   it("derives only stages actually present in the learner's journeys",()=>{
     expect(learnerApplicationStageOptions(records)).toEqual([
       "REJECTED","SHORTLISTED","UNDER_REVIEW","WITHDRAWN",

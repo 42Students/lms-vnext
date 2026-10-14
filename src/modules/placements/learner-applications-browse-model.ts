@@ -16,7 +16,7 @@ export type LearnerApplicationBrowseFilters = {
   search: string;
   view: "all" | "progress" | "completed";
   stage: string;
-  sort: "activity" | "company" | "oldest";
+  sort: "activity" | "company" | "oldest" | "stage";
 };
 
 export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilters = {
@@ -62,6 +62,11 @@ export function browseLearnerApplications<T extends LearnerApplicationBrowseItem
     if (filters.sort === "company") {
       return a.companyName.localeCompare(b.companyName) ||
         a.jobTitle.localeCompare(b.jobTitle) ||
+        a.applicationId.localeCompare(b.applicationId);
+    }
+    if (filters.sort === "stage") {
+      return learnerApplicationStage(a).localeCompare(learnerApplicationStage(b)) ||
+        learnerApplicationLatestActivity(b) - learnerApplicationLatestActivity(a) ||
         a.applicationId.localeCompare(b.applicationId);
     }
     if (filters.sort === "oldest") {

@@ -3,7 +3,7 @@ export const learnerApplicationUrlSchema=z.object({
 q:z.string().trim().max(100).optional().default(""),
 view:z.enum(["all","progress","completed"]).optional().default("all"),
 stage:z.string().max(64).optional().default("all"),
-sort:z.enum(["activity","company","oldest"]).optional().default("activity"),
+sort:z.enum(["activity","company","oldest","stage"]).optional().default("activity"),
 page:z.coerce.number().int().min(1).max(10000).optional().default(1),
 applicationId:z.string().uuid().optional(),
 }).strict();

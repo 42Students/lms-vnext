@@ -131,7 +131,7 @@ export function LearnerPlacementsDashboard({
               Needs attention
             </h3>
             <StatusBadge tone={display.attention?.length ? "warning" : "neutral"}>
-              {display.attention===null ? "Unknown" : display.attention.length ? `${display.attention.length} soon` : "All clear"}
+              {display.attentionTotal===null ? "Unknown" : display.attentionTotal ? `${display.attentionTotal} soon` : "All clear"}
             </StatusBadge>
           </div>
           {display.attention===null ? (
@@ -156,8 +156,17 @@ export function LearnerPlacementsDashboard({
               No assessment or interview rounds are scheduled within the next seven days.
             </p>
           )}
-          <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
-            Open career calendar →
+          {display.attentionOverflow!==null&&display.attentionOverflow>0 ? (
+            <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+              {display.attentionOverflow} additional scheduled {display.attentionOverflow===1?"event":"events"}
+              {" "}need attention. Only the first three are shown here.
+            </p>
+          ) : null}
+          <Link href="/learn/my-placements/calendar"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+            {display.attentionOverflow!==null&&display.attentionOverflow>0
+              ? `View ${display.attentionOverflow} more in career calendar →`
+              : "Open career calendar →"}
           </Link>
         </section>
 

@@ -47,6 +47,7 @@ export default async function FacultyQuizReportPage({
         </Link>
       </div>
       <FacultyReportCsvDownload
+        notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
         href={facultyReportCsvHref({
           kind:"quiz",assessmentId:quiz.id,deliveryId:quiz.deliveryId,
         })}

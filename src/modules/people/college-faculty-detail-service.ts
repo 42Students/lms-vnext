@@ -56,9 +56,9 @@ export async function getCollegeFacultyDetail(
   const base = db.select({
     id: sql<string>`${courseTeachingAssignments.id}`.as("assignment_id"),
     role: sql<string>`${courseTeachingAssignments.role}`.as("assignment_role"),
-    startedAt: sql<Date>`${courseTeachingAssignments.startedAt}`.as("assignment_started_at"),
-    endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.as("assignment_ended_at"),
-    deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.as("delivery_ended_at"),
+    startedAt: sql<Date>`${courseTeachingAssignments.startedAt}`.mapWith(courseTeachingAssignments.startedAt).as("assignment_started_at"),
+    endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.mapWith(courseTeachingAssignments.endedAt).as("assignment_ended_at"),
+    deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.mapWith(courseSectionDeliveries.endedAt).as("delivery_ended_at"),
     offeringId: sql<string>`${courseOfferings.id}`.as("offering_id"),
     courseName: sql<string>`${courses.name}`.as("course_name"),
     courseCode: sql<string>`${courses.code}`.as("course_code"),

@@ -336,6 +336,8 @@ Legacy:
 
 **W46 PARTIAL:** TPO drive workspace now links to a standalone current-shortlist view and formula-neutralized CSV at /tpo/placements/jobs/[jobId]/shortlist. Only persisted SUBMITTED applications with current SHORTLISTED screening, a same-job role option, and active same-college learner membership are shown; names, roll numbers, role options and known decision times are displayed without private screening comments. Counts reflect applications, not distinct learners. Legacy drawer/filter/share/export layout, historical shortlist versions, positive DB/browser acceptance remain open.
 
+**W61 D PARTIAL:** The operational shortlist now links to /tpo/placements/jobs/[jobId]/share-preview, a TPO-only read-only report and formula-neutralized capped CSV using exclusively the same application ID, display name and email candidate fields already returned by the authorized recruiter round workspace. Current submitted/shortlisted applications and active same-college memberships only; only published/closed drives. No send, share grant, token, file, score, phone, roll number or private comments are exposed. The CSV notes truncation above 500 rows. Actual secure sharing, user consent/disclosure snapshots, live PostgreSQL/browser acceptance and legacy sharing UI remain open.
+
 ### Tab: Rounds
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
@@ -542,6 +544,8 @@ Legacy event types include rounds, talks, deadlines and recruiter follow-ups.
 - [ ] move Follow-up modal matches.
 
 **W58 B — PARTIAL:** The TPO calendar links to a managed round scheduling page for existing migrated pending/scheduled drive rounds. A confirmed same-origin write uses IST wall-clock conversion, registered round action transactions/events, strict college-scoped permission, updated-at optimistic checks and conservative same-venue overlap assessment (unassessable venue durations are blocked). Creation means scheduling an existing pending round; it does not create a new arbitrary event or round. Cross-writer venue-lock serialization, room resources, owner confirmation of exact legacy UX, PostgreSQL/browser acceptance and comprehensive calendar modes remain open.
+
+**W61 C PARTIAL:** TPO Calendar now links to /tpo/calendar/export for a validated maximum 93-day IST-date range and downloadable current future-round CSV from registered P6B rounds. Source is scheduled PENDING/SCHEDULED rounds on published same-college drives only; CSV formula cells are neutralized, private meeting links are excluded, the result caps at 500 and explicitly flags truncation. No ICS or sync is claimed. Exact legacy column/timezone UX, positive PostgreSQL/browser evidence and full calendar parity remain open.
 
 **W38 PARTIAL:** The TPO calendar now offers a small create form for existing CRM leads and an IST reschedule form on each open follow-up event card, gated by the DB09 CRM write readiness flag. Same-origin POST/PATCH routes derive the college exclusively from the active TPO membership, validate payloads, and reuse the existing centralized placements scope and CRM follow-up mutations. Completion remains terminal. The legacy create/move modal UX, optimistic concurrency (no persisted follow-up version/update timestamp), browser acceptance, and executed disposable PostgreSQL tests are still open.
 - [ ] empty/loading/partial-failure states match.
