@@ -20,11 +20,14 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requireLearningReadAccess } from "./learning-access";
 import { loadCourseSectionDeliveryScope } from "./scope";
 import { CoursesServiceError } from "./errors";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
+import { formatDiscussionReply } from "./learner-discussion-reply-model";
 
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
-  messageText: z.string().trim().min(1).max(4000),
+  messageText: z.string().trim().min(1).max(3900),
+  replyToMessageId: messageIdSchema.optional(),
 }).strict();
 
 const historySchema = z.object({
@@ -96,6 +99,7 @@ export async function listCourseDiscussionMessages(
 ) {
   const page = historySchema.parse(rawPage);
   const { deliveryId, mode } = await discussionAccess(context, deliveryIdInput, true);
+  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
   let canPost = true;
   try {
     await discussionAccess(context, deliveryIdInput, false);
@@ -191,9 +195,15 @@ export async function createCourseDiscussionMessage(
   }
 
   const input =
-    createDiscussionMessageSchema.parse(
-      rawInput,
-    );
+    createDiscussionMessageSchema.parse(rawInput);
+  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  const parent = input.replyToMessageId
+    ? await loadDiscussionMessage(input.replyToMessageId)
+    : null;
+  if (parent && parent.deliveryId !== deliveryId) {
+    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+  }
+  const messageText = formatDiscussionReply(input.messageText, parent?.id ?? null);
   const senderRole =
     mode === "LEARNER"
       ? "LEARNER"
@@ -206,7 +216,7 @@ export async function createCourseDiscussionMessage(
       deliveryId,
       senderMembershipId: membership.id,
       senderRole,
-      messageText: input.messageText,
+      messageText,
     }).returning();
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
@@ -292,10 +302,10 @@ export async function deleteCourseDiscussionMessage(
     message.deliveryId,
   );
 
+  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
   const canDelete =
     mode !== "LEARNER" ||
-    context.membership?.id ===
-      message.senderMembershipId;
+    (context.membership?.id === message.senderMembershipId && !message.pinned);
 
   if (!canDelete) {
     throw new CoursesServiceError(
@@ -307,6 +317,10 @@ export async function deleteCourseDiscussionMessage(
     const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+      mode === "LEARNER" ? and(
+        eq(courseDiscussionMessages.senderMembershipId, context.membership!.id),
+        eq(courseDiscussionMessages.pinned, false),
+      ) : undefined,
     )).returning({ id: courseDiscussionMessages.id });
     if (!deleted) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
     await recordActivityEventInTransaction(tx, context, {

@@ -7,6 +7,10 @@ import { getDb } from "@/db/client";
 import {
   learnerContentProgress,
 } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
+import { manualContentCompletionGate } from "./learner-manual-completion-model";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   CoursesServiceError,
@@ -263,6 +267,49 @@ async function atomicProgressUpdate(
   return updated ?? null;
 }
 
+/** Idempotent manual completion with a single, same-transaction activity event. */
+async function completeManualContentOnce(
+  context: RequestContext, content: ProgressContent, membershipId: string, deliveryId: string,
+) {
+  const now = new Date();
+  const gate = manualContentCompletionGate(content.contentType, content.endsAt, now);
+  if (gate !== "ALLOWED") throw new CoursesServiceError(gate);
+  return getDb().transaction(async (tx) => {
+    const lockKey = membershipId + ":" + content.id;
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}), 72001)`);
+    const [existing] = await tx.select().from(learnerContentProgress).where(and(
+      eq(learnerContentProgress.membershipId, membershipId),
+      eq(learnerContentProgress.lessonContentId, content.id),
+    )).limit(1);
+    if (existing?.completedAt) return buildLearnerProgressView(content, existing);
+    let saved;
+    if (existing) {
+      [saved] = await tx.update(learnerContentProgress).set({
+        completedAt: now, updatedAt: now,
+      }).where(and(
+        eq(learnerContentProgress.id, existing.id),
+        sql`${learnerContentProgress.completedAt} is null`,
+      )).returning();
+    } else {
+      [saved] = await tx.insert(learnerContentProgress).values({
+        membershipId, lessonContentId: content.id, lastPositionSeconds: 0, completedAt: now,
+      }).returning();
+    }
+    if (!saved) throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_LEARNER_CONTENT_COMPLETED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "lesson_content",
+      subjectId: content.id,
+      summary: "Learner completed course content",
+      metadata: { deliveryId, membershipId },
+      dedupeKey: "learner-content:" + membershipId + ":" + content.id + ":completed",
+    });
+    return buildLearnerProgressView(content, saved);
+  });
+}
+
 export async function saveLearnerContentProgress(
   context: RequestContext,
   contentIdInput: string,
@@ -276,6 +323,7 @@ export async function saveLearnerContentProgress(
     saveLearnerContentProgressInputSchema.parse(
       rawInput,
     );
+  await requireOwnCourseLearnerRead(context);
   const { content, membershipId } =
     await requireLearnerProgressScope(
       context,
@@ -347,6 +395,7 @@ export async function saveLearnerContentProgress(
     }
 
     shouldComplete = true;
+    return completeManualContentOnce(context, content, membershipId, input.deliveryId);
   }
 
   const existing = await loadProgressRow(
