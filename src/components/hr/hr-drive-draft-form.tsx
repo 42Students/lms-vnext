@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
+import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 
 export function HrDriveDraftForm({
   initial,
@@ -121,6 +122,14 @@ export function HrDriveDraftForm({
             Add round
           </button>
         </div>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
+          {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
+            type="button" className="min-h-10 rounded-md border border-border px-3 text-sm text-primary-text"
+            onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
+            {preset.label}
+          </button>)}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
           {draft.rounds.map((round, index) => (
             <div key={index} className="grid min-w-0 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">

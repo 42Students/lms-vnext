@@ -74,3 +74,5 @@
 - 2026-10-15 — HR company team search PARTIAL: after exact employer-grant authorization, role/name/email matching and bounded GET filters; unit authored, unexecuted.
 
 - 2026-10-15 — HR Calendar category filters PARTIAL: All/Rounds/Deadlines/Results-due URL views and pure unit tests; gates pending.
+
+- 2026-10-15 — HR Drive round presets PARTIAL: three unsent draft templates plus calendar category typing correction, tests authored unexecuted.
