@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { COURSE_OFFERING_TYPES } from "@/modules/courses/constants";
 
 export const COLLEGE_MAPPING_PAGE_SIZE = 25;
 
 export const semesterCourseQuerySchema = z.object({
+  type: z.enum(["ALL", ...COURSE_OFFERING_TYPES]).default("ALL"),
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   periodId: z.string().uuid().optional(),
@@ -40,6 +42,7 @@ export function collegeMappingHref(
   if (query.q) params.set("q", query.q);
   if ("programId" in query && query.programId) params.set("programId", query.programId);
   if ("periodId" in query && query.periodId) params.set("periodId", query.periodId);
+  if ("type" in query && query.type !== "ALL") params.set("type", query.type);
   if ("status" in query && query.status !== "ACTIVE") params.set("status", query.status);
   if (query.page !== 1) params.set("page", String(query.page));
   const encoded = params.toString();

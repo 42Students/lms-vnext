@@ -9,11 +9,12 @@ import {
 
 describe("College Admin semester offering and faculty assignment models", () => {
   it("strictly validates academic mapping filters without a caller college override", () => {
-    expect(semesterCourseQuerySchema.parse({})).toEqual({ q: "", page: 1 });
+    expect(semesterCourseQuerySchema.parse({})).toEqual({ q: "", type: "ALL", page: 1 });
     expect(semesterCourseQuerySchema.parse({ q: "  Maths  ", page: "2" }))
-      .toEqual({ q: "Maths", page: 2 });
+      .toEqual({ q: "Maths", type: "ALL", page: 2 });
     for (const invalid of [
       { collegeId: "foreign" },
+      { type: "OPTIONAL" },
       { page: -1 },
       { page: "99999" },
       { periodId: "not-a-uuid" },
@@ -47,9 +48,11 @@ describe("College Admin semester offering and faculty assignment models", () => 
       q: "a & b",
       programId: "00000000-0000-4000-8000-000000000001",
       page: 2,
+      type: "ELECTIVE",
     }), "https://example.test");
     expect(url.pathname).toBe("/college/semester-courses");
     expect(url.searchParams.get("q")).toBe("a & b");
+    expect(url.searchParams.get("type")).toBe("ELECTIVE");
     expect(url.searchParams.has("collegeId")).toBe(false);
     const faculty = collegeMappingHref("FACULTY_ASSIGNMENTS", {
       q: "", status: "ENDED", page: 1,
