@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
+import {learnerApplicationCardActivity} from "@/modules/placements/learner-application-card-activity-model";
 
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
@@ -235,6 +236,17 @@ export function LearnerPlacementJourney({
                 )}
               </p>
             ) : null}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-subtle p-3">
+              <p className="text-xs text-body">
+                Last recorded activity · {formatWhen(learnerApplicationCardActivity(item).at)}
+              </p>
+              {learnerApplicationCardActivity(item).historyHref ? (
+                <Link href={learnerApplicationCardActivity(item).historyHref!}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
+                  Saved status history →
+                </Link>
+              ):null}
+            </div>
             {ownApplicationJobHref(item.jobId) ? <Link
               href={ownApplicationJobHref(item.jobId)!}
               className="mt-4 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
