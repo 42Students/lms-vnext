@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
+import {useRouter} from "next/navigation";
+import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
@@ -159,6 +161,9 @@ export function LearnerProfileWorkspace(props: {
   initialDocument: LearnerProfileDocument;
   initialSection?: LearnerProfileSection | null;
 }) {
+  const router=useRouter();
+  const lastRefreshAt=useRef(Date.now());
+  const serverSnapshot=useRef(props.initialDocument);
   const { showToast } = useToast();
   const [document, setDocument] = useState(props.initialDocument);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -177,6 +182,31 @@ export function LearnerProfileWorkspace(props: {
     [document],
   );
   const percent = checklist.percentage;
+
+  // Preserve unsaved local edits; adopt a new server snapshot only when
+  // the on-screen document was still equal to the previous saved snapshot.
+  useEffect(()=>{
+    const previous=serverSnapshot.current;
+    const next=props.initialDocument;
+    if(JSON.stringify(previous)===JSON.stringify(next))return;
+    setDocument(local=>learnerProfileReconcile(local,previous,next));
+    serverSnapshot.current=next;
+  },[props.initialDocument]);
+
+  useEffect(()=>{
+    const onVisible=()=>{
+      if(!learnerProfileCanRefresh({
+        visible:window.document.visibilityState==="visible",
+        editing:detailsOpen||contactOpen||collection!==null,
+        saving:pending||contactPending,
+        nowMs:Date.now(),lastRefreshMs:lastRefreshAt.current,
+      }))return;
+      lastRefreshAt.current=Date.now();
+      router.refresh();
+    };
+    window.document.addEventListener("visibilitychange",onVisible);
+    return ()=>window.document.removeEventListener("visibilitychange",onVisible);
+  },[router,detailsOpen,contactOpen,collection,pending,contactPending]);
 
   useEffect(() => {
     if (!props.initialSection) return;
@@ -307,6 +337,13 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
+        <Button size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
+          onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
+          Refresh saved profile
+        </Button>
+      </div>
       <section id="profile-introduction" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
