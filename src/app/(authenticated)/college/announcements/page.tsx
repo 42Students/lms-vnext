@@ -10,7 +10,7 @@ import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
 } from "@/modules/announcements/service";
-import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { announcementsRuntimeEnabled, announcementVisibilityEpochMs } from "@/modules/announcements/readiness";
 import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-inbox-service";
 
 export default async function AnnouncementsPage({
@@ -72,7 +72,7 @@ export default async function AnnouncementsPage({
       ]
     : [];
 
-  const now = Date.now();
+  const now = announcementVisibilityEpochMs();
   const items: AnnouncementAdminItem[] = page.items.map((item) => ({
     id: item.id,
     receiverType: item.receiverType as AnnouncementAdminItem["receiverType"],
