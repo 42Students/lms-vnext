@@ -14,6 +14,7 @@ import { LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { learnerBoardCardMetadata } from "@/modules/projects/learner-board-card-model";
+import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { canonicalLearnerProjectTab } from "@/modules/projects/learner-project-tab-alias-model";
 import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
@@ -404,5 +405,18 @@ describe("L21-010 exact learner final delivery tab",()=>{
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L20-014 archived own Project list card",()=>{
+  it("reflects only persisted archive state and preserves learner scope",async()=>{
+    await pool.query("update project_instances set status='ARCHIVED' where id=$1",[ids.project]);
+    const own=await listMyProjectInstances(context);
+    const status=own.find(row=>row.project.id===ids.project)?.project.status;
+    expect(status).toBe("ARCHIVED");
+    expect(learnerProjectArchiveState(status!).readOnly).toBe(true);
+    await expect(listMyProjectInstances({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}})).rejects.toBeDefined();
+    await expect(listMyProjectInstances({...context,membership:{...context.membership!,status:"SUSPENDED"}})).rejects.toBeDefined();
+    await expect(listMyProjectInstances({...context,membership:{...context.membership!,roles:["FACULTY"]}})).resolves.toBeDefined();
   });
 });
