@@ -310,6 +310,8 @@ Legacy table:
 
 ## Page: Edit Drive
 
+**Work Mode follow-up — PARTIAL:** Edit Drive now canonicalizes offset ISO optimistic tokens before its locked millisecond CAS, so the same version expressed in IST is accepted. Unit regression executed; integration regression authored against the existing in-test drive fixture. Typecheck, changed-file ESLint and complete unit suite are required before this push. PostgreSQL execution is blocked by sandbox account creation/user switching (apt and embedded-postgres attempted). Full legacy fields, dirty navigation, desktop/mobile browser acceptance and independently executed PG evidence remain open.
+
 **W66-1 PARTIAL — Edit Drive:** New `/tpo/placements/jobs/[jobId]/edit` edits title, description, locations, openings and INR CTC on active-season DRAFT jobs only. TPO college-actor scope, confirmed PATCH, row lock, millisecond-safe timestamp CAS, synchronized active primary role and immutable activity audit. Unit and disposable PG tests authored, unrun. Remaining: full legacy fields, navigation dirty-state checks, browser validation and independent PG certification.
 
 **Legacy:** `/tpo/drives/[jobId]/edit`

@@ -1,6 +1,7 @@
 import {z} from "zod";
 export const tpoDriveEditSchema=z.object({
- confirmed:z.literal(true),expectedUpdatedAt:z.string().datetime({offset:true}),
+ confirmed:z.literal(true),expectedUpdatedAt:z.iso.datetime({offset:true})
+  .transform(value=>new Date(value).toISOString()),
  reason:z.string().trim().min(10).max(1000),
  title:z.string().trim().min(2).max(200),description:z.string().trim().min(1).max(20000),
  locations:z.array(z.string().trim().min(1).max(120)).max(20),

@@ -4,9 +4,15 @@ import type { S3Config } from "./s3-client";
 import { PrivateObjectStorageError } from "./storage-errors";
 
 /**
- * Private object storage lives in its own R2 bucket. The legacy LMS bucket
- * (R2_BUCKET_NAME) is served publicly through R2_PUBLIC_URL, so it must never
- * hold vNext private files: the two names are required to differ.
+ * Private object storage normally lives in its own R2 bucket. The legacy LMS
+ * bucket (R2_BUCKET_NAME) is served publicly through R2_PUBLIC_URL, so the two
+ * names are required to differ.
+ *
+ * Temporary exception: in development only (APP_ENV=development), the legacy
+ * bucket may be shared when R2_PRIVATE_PREFIX is a non-empty prefix ending in
+ * "/" (for example "vnext-dev/"). Every key is then written under that prefix
+ * and objects are only ever served via short-lived signed URLs, never through
+ * R2_PUBLIC_URL. Production stays strict.
  */
 export function getPrivateR2Config(
   env: NodeJS.ProcessEnv = process.env,
@@ -18,13 +24,22 @@ export function getPrivateR2Config(
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_NOT_CONFIGURED");
   }
-  if (bucket === env.R2_BUCKET_NAME?.trim()) {
+  const keyPrefix = env.R2_PRIVATE_PREFIX?.trim() ?? "";
+  if (keyPrefix && (!keyPrefix.endsWith("/") || keyPrefix.startsWith("/") || keyPrefix.includes(".."))) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
+  }
+  if (bucket === env.R2_BUCKET_NAME?.trim()) {
+    const sharedBucketAllowed =
+      env.APP_ENV === "development" && keyPrefix.length > 0;
+    if (!sharedBucketAllowed) {
+      throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
+    }
   }
   return {
     endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
     bucket,
     accessKeyId,
     secretAccessKey,
+    ...(keyPrefix ? { keyPrefix } : {}),
   };
 }
