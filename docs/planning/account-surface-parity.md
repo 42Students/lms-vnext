@@ -149,7 +149,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Dashboard | `/college-admin/dashboard` | dashboard workspace | Exact command-center cards/actions parity pending. | PARTIAL |
-| Activity Log | `/college-admin/audit` | `/activity` | Activity Center exists; exact filtering/detail/noise-reduction parity pending. | PARTIAL |
+| Activity Log | `/college-admin/audit` | `/college/activity` and `/college/activity/[eventId]` | PARTIAL: dedicated College Admin activity table with actor UUID, entity type and IST date-range filters; validated newest-first 25-row cursor pagination; college-fenced sanitized detail view; honest loading/error/empty states. Reuses registered `activity_events` and central `activity.read` with current membership scope. Exact legacy event grouping, filter taxonomy/export, independent DB/browser acceptance remain open. | PARTIAL |
 | Self Profile | `/college-admin/profile` | `/college/profile` | Read-only account summary (name, mobile, email, college, organization, roles) keyed only by the signed-in user, role-guarded, linked to signed-in devices. Editing contacts and the legacy About sections are not built. Real-DB tested. | PARTIAL |
 | Placement Interview Calendar | `/college-admin/calendar` | `/college/placements/calendar` | Source-authored college-scoped placement-round calendar with Month/Week/Agenda, company/job/date and round-kind filters, IST grouping and job/round deep links. Defaults to INTERVIEW; other round kinds can be selected. Exact legacy calendar behavior, application drill-in, browser and database verification remain open. | PARTIAL |
 
