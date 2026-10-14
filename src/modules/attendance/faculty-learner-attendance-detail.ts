@@ -61,3 +61,60 @@ export function facultyLearnerAttendanceDetail(
     attendedPercent: marked > 0 ? Math.round((present / marked) * 100) : null,
   };
 }
+
+
+/** Health for active learners in an authorized Section, excluding historic
+ * departures from the class denominator and excluding unmarked sessions. */
+export function facultyAttendanceMonthSummary(
+  learnerIds: readonly string[],
+  sessions: readonly AttendanceDetailSession[],
+  records: readonly AttendanceDetailRecord[],
+  now: Date,
+) {
+  const ids = [...new Set(learnerIds)];
+  const eligible = new Set(ids);
+  const recordsByLearner = new Map<string, AttendanceDetailRecord[]>();
+  for (const record of records) {
+    if (!eligible.has(record.membershipId)) continue;
+    const group = recordsByLearner.get(record.membershipId) ?? [];
+    group.push(record);
+    recordsByLearner.set(record.membershipId, group);
+  }
+  const learners = ids.map((membershipId) => {
+    const detail = facultyLearnerAttendanceDetail(
+      membershipId, sessions, recordsByLearner.get(membershipId) ?? [], now,
+    );
+    return {
+      membershipId,
+      present: detail.present,
+      absent: detail.absent,
+      unmarked: detail.unmarked,
+      upcoming: detail.upcoming,
+      percentage: detail.attendedPercent,
+    };
+  });
+  const sum = (key: "present" | "absent" | "unmarked" | "upcoming") =>
+    learners.reduce((total, learner) => total + learner[key], 0);
+  const presentMarks = sum("present");
+  const absentMarks = sum("absent");
+  const markedMarks = presentMarks + absentMarks;
+  return {
+    learnerCount: ids.length,
+    sessionCount: sessions.length,
+    markedSessions: sessions.filter((s) => s.attendanceStatus === "MARKED").length,
+    unmarkedSessions: sessions.filter((s) =>
+      new Date(s.startsAt).getTime() <= now.getTime() &&
+      s.attendanceStatus !== "MARKED",
+    ).length,
+    upcomingSessions: sessions.filter((s) =>
+      new Date(s.startsAt).getTime() > now.getTime(),
+    ).length,
+    presentMarks,
+    absentMarks,
+    markedMarks,
+    unmarkedMarks: sum("unmarked"),
+    upcomingMarks: sum("upcoming"),
+    averagePercent: markedMarks > 0 ? Math.round(presentMarks / markedMarks * 100) : null,
+    learners,
+  };
+}
