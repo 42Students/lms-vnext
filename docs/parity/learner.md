@@ -1254,3 +1254,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L14-023 PARTIAL (round 6):** Learner Applications now distinguishes a true first-run zero-record history from a filtered zero-match view using a dedicated deterministic empty-state model. First run links to authorized published Drives; only a filtered mismatch offers reset. No missing source is converted to an empty account (server read failures remain errors). Pure-model regression authored; PG/browser/mobile acceptance outstanding.
+
+
+**2026-10-15 chat-5 L13-011 PARTIAL (round 6):** Authorized published drive detail now presents a per-role Registration and Evidence Requirements summary based solely on already-returned college eligibility checks, with pass/fail/missing counts and rules/profile routes. Since no independent registration/consent record is read, the UI explicitly says that this evidence checklist cannot certify placement-cell registration. A pure per-role test is authored; actual registration domain parity, browser/PG/CI acceptance remain open.
