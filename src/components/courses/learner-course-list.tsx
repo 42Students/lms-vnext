@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 
 const PAGE_SIZE = 48;
 
@@ -114,14 +115,7 @@ export function LearnerCourseList({
           String(row.course.offeringType).toUpperCase() === "ELECTIVE";
         if (typeFilter === "core" && elective) return false;
         if (typeFilter === "elective" && !elective) return false;
-        if (!needle) return true;
-        return [
-          row.course.courseName,
-          row.course.courseCode,
-          row.course.programName,
-          row.course.sectionName,
-          row.course.academicPeriodName,
-        ].some((value) => value.toLowerCase().includes(needle));
+        return learnerCourseMatchesSearch(row, needle);
       })
       .sort((left, right) => {
         const leftElective =
