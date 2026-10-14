@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
+import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 export function LearnerProjectBoardSearch({
   projectId, search, priority, sprintId, sprints, releaseId, releases, shown, total,
 }: {projectId:string;search:string;priority:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
-  return (
-    <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
+  const activeCount=learnerBoardActiveFilterCount({search,priority,sprintId,releaseId});
+  const form=(
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
-        method="get" className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
         <input type="hidden" name="tab" value="board" />
         <label className="flex-1 text-sm font-semibold text-foreground">
           Search tasks
@@ -47,6 +47,17 @@ export function LearnerProjectBoardSearch({
         <button type="submit" className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
         <Link href={base} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-body">Clear</Link>
       </form>
+  );
+  return (
+    <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
+      <details className="sm:hidden">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
+          <span>Board filters</span>
+          <span className="text-muted-foreground">{activeCount} active</span>
+        </summary>
+        {form}
+      </details>
+      <div className="hidden sm:block">{form}</div>
       <p className="mt-3 text-sm text-muted-foreground" role="status">
         {shown} of {total} authorized tasks match
       </p>
