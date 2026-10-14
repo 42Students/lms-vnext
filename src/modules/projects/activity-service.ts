@@ -2,9 +2,13 @@ import {
   and,
   desc,
   eq,
+  gte,
+  lt,
+  ilike,
   or,
   sql,
 } from "drizzle-orm";
+import { learnerProjectActivityFilterSchema, learnerProjectActivityDateBounds, learnerProjectActivityPrefixes } from "./learner-project-activity-filter-model";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
@@ -18,12 +22,17 @@ import {
 export async function listProjectActivity(
   context: RequestContext,
   projectIdInput: string,
+  filterInput: unknown = {},
 ) {
   const scope =
     await requireProjectReadAccess(
       context,
       projectIdInput,
     );
+
+  const filters = learnerProjectActivityFilterSchema.parse(filterInput);
+  const bounds = learnerProjectActivityDateBounds(filters);
+  const prefixes = learnerProjectActivityPrefixes(filters.category);
 
   const rows = await getDb()
     .select({
@@ -55,6 +64,9 @@ export async function listProjectActivity(
     )
     .where(
       and(
+        bounds.from ? gte(activityEvents.occurredAt, bounds.from) : undefined,
+        bounds.until ? lt(activityEvents.occurredAt, bounds.until) : undefined,
+        prefixes.length ? or(...prefixes.map(prefix => ilike(activityEvents.eventType, prefix + "%"))) : undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
