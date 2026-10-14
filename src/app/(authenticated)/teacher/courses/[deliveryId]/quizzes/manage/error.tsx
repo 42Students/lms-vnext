@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h2>Unable to load Section quizzes</h2><button type="button" onClick={reset} className="rounded border border-border p-2">Retry</button></section>}
