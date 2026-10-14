@@ -14,6 +14,9 @@ import { LearnerProjectGoals } from "@/components/projects/learner-project-goals
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
+import { learnerBoardTaskSelectionNotice } from "@/modules/projects/learner-board-selection-notice-model";
+import Link from "next/link";
+import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -91,6 +94,8 @@ export default async function LearnerProjectPage({
     ? findOwnLearnerBoardTask(workspace.tasks,taskId)
     : null;
   const boardFilters={taskSearch:search,priority,status,sprintId,releaseId};
+  const selectionNotice = activeSection === "tasks"
+    ? learnerBoardTaskSelectionNotice(taskId, Boolean(selectedTask)) : null;
   const shownWorkspace = activeSection === "tasks"
     ? { ...workspace, tasks: boardTasks }
     : workspace;
@@ -104,6 +109,13 @@ export default async function LearnerProjectPage({
       ) : null}
       {activeSection === "tasks" ? (
         <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} sprints={workspace.sprints} />
+      ) : null}
+      {selectionNotice ? (
+        <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
+          <span>{selectionNotice}</span>
+          <Link href={learnerBoardTaskHref(projectId, boardFilters)}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Return to Board</Link>
+        </div>
       ) : null}
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
