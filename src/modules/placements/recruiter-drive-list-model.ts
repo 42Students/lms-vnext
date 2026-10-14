@@ -45,7 +45,7 @@ export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
       (query.deadline === "SOON" && row.job.status === "PUBLISHED" && !!row.job.applicationDeadline &&
         row.job.applicationDeadline.getTime() >= now.getTime() &&
         row.job.applicationDeadline.getTime() <= now.getTime() + 7*86400000)) &&
-    query.view !== "WAITING"
+    (query.view as string) !== "WAITING"
   );
 }
 
