@@ -42,4 +42,16 @@ describe("HR recruiter Request Drive draft preview", () => {
       fixedAnnualCtcInr: "500000", variableAnnualCtcInr: "100000",
     }).success).toBe(true);
   });
+  it("checks complete fixed/variable annual CTC against both endpoints of the advertised range", () => {
+    const draft = {...emptyHrDriveDraft(), title:"Engineer",
+      description:"A full-stack engineering position with clear eligibility.",
+      location:"Hyderabad",minimumAnnualCtcInr:"500000",maximumAnnualCtcInr:"750000",
+      fixedAnnualCtcInr:"500000",variableAnnualCtcInr:"100000"};
+    expect(hrDriveDraftSchema.safeParse(draft).success).toBe(true);
+    expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:"300000"}).success).toBe(false);
+    expect(hrDriveDraftSchema.safeParse({...draft,fixedAnnualCtcInr:"350000"}).success).toBe(false);
+    // An unspecified component does not assert a complete salary breakdown.
+    expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:""}).success).toBe(true);
+  });
+
 });

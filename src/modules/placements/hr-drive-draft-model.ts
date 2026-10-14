@@ -33,6 +33,19 @@ export const hrDriveDraftSchema = z.strictObject({
   if (data.bondMonths && Number(data.bondMonths) > 120) {
     ctx.addIssue({ code: "custom", path: ["bondMonths"], message: "Bond must not exceed 120 months" });
   }
+  const fixed = data.fixedAnnualCtcInr ? Number(data.fixedAnnualCtcInr) : null;
+  const variable = data.variableAnnualCtcInr ? Number(data.variableAnnualCtcInr) : null;
+  if (fixed !== null && variable !== null) {
+    const combined = fixed + variable;
+    if (min !== null && combined < min) {
+      ctx.addIssue({ code: "custom", path: ["fixedAnnualCtcInr"],
+        message: "Fixed plus variable CTC must reach the stated minimum annual CTC" });
+    }
+    if (max !== null && combined > max) {
+      ctx.addIssue({ code: "custom", path: ["variableAnnualCtcInr"],
+        message: "Fixed plus variable CTC must not exceed the stated maximum annual CTC" });
+    }
+  }
   if (min !== null && max !== null && max < min) {
     ctx.addIssue({ code: "custom", path: ["maximumAnnualCtcInr"], message: "Maximum CTC must be at least minimum CTC" });
   }
