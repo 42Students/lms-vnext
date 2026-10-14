@@ -42,6 +42,7 @@ describe.skipIf(!enabled)("offer register scoped PostgreSQL",()=>{
  it("returns scoped offer and non-leaking foreign/wrong-role denial",async()=>{
   const own=await getTpoDriveOfferRegister(ctx,{jobId:ids.job,status:"ISSUED"});
   expect(own.rows.some(r=>r.id===ids.offer)).toBe(true);
+  expect((await getTpoDriveOfferRegister(ctx,{jobId:ids.job,page:999})).page).toBe(1);
   const foreign:RequestContext={...ctx,membership:{...ctx.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
   await expect(getTpoDriveOfferRegister(foreign,{jobId:ids.job})).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
   const wrong:RequestContext={...ctx,membership:{...ctx.membership!,roles:["LEARNER"]}};

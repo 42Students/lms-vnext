@@ -10,6 +10,16 @@ describe("offer register",()=>{
   expect(all.rows.find(r=>r.id==="3")?.joining).toBe("PENDING");
   expect(projectOfferRegister(facts,"ACCEPTED").rows).toHaveLength(2);
  });
+ it("pages every offer version beyond 200 without losing totals",()=>{
+  const facts=Array.from({length:251},(_,i)=>row(String(i+1),"ISSUED"));
+  const last=projectOfferRegister(facts,"ALL",11);
+  expect(last.counts.all).toBe(251);
+  expect(last.rows).toHaveLength(1);
+  expect(last.page).toBe(11);
+  expect(last.totalPages).toBe(11);
+  expect(projectOfferRegister(facts,"ALL",20).page).toBe(11);
+  expect(projectOfferRegister(facts,"ALL",2).rows).toHaveLength(25);
+ });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
   expect(offerRegisterQuery.safeParse({jobId,status:"SELECTED"}).success).toBe(false);
