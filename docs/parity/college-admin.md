@@ -224,6 +224,9 @@ Legacy contract audited:
 ## Page: Batch Promotion
 **Legacy:** `/college-admin/batch-promotion`
 
+**Read-first PARTIAL (2026-10-14):** `/college/batch-promotion` provides a server-authored, college-scoped preview of a selected cohort's registered progression state, next program term, proposed PROMOTE/GRADUATE action, displayed academic-year override, and per-learner persisted membership/enrollment/class blockers. The preview checks up to 2,000 learner enrollments and explicitly blocks completeness above that limit. It performs no database writes and does not offer promotion or graduation controls. Exact legacy modal/editable academic year, promotion confirmation, atomic write, rollback and full DB/browser acceptance remain open.
+
+
 Legacy contract:
 - select Program;
 - show/hide completed/inactive;
