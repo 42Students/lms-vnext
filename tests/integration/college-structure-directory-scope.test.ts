@@ -123,8 +123,20 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
       listCollegeClasses(adminA, { q: key }),
       listCollegeElectives(adminA, { q: key }),
     ]);
+    const [capacityFit, capacityTooHigh] = await Promise.all([
+      listCollegeClasses(adminA, { q: key, minimumCapacity: 36 }),
+      listCollegeClasses(adminA, { q: key, minimumCapacity: 37 }),
+    ]);
+    expect(capacityFit.items.map(item => item.id)).toContain(ids.section);
+    expect(capacityTooHigh.items).toEqual([]);
     expect(classes.items.find(item => item.id === ids.section))
       .toMatchObject({ capacity: 36, activeLearners: 0 });
+    const [firstTerm, secondTerm] = await Promise.all([
+      listCollegeElectives(adminA, { q: key, semesterNumber: 1 }),
+      listCollegeElectives(adminA, { q: key, semesterNumber: 2 }),
+    ]);
+    expect(firstTerm.items.map(item => item.id)).toContain(ids.elective);
+    expect(secondTerm.items).toEqual([]);
     expect(electives.items.find(item => item.id === ids.elective))
       .toMatchObject({ semesterNumber: 1, minPick: 1, maxPick: 2, activeOfferings: 0 });
   });

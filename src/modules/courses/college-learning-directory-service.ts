@@ -24,6 +24,7 @@ import {
   COLLEGE_LEARNING_PAGE_SIZE,
   collegeLearningPageCount,
   collegeLearningQuerySchema,
+  collegeLessonQuerySchema,
   type CollegeLessonRecord,
   type CollegeCourseProgressRecord,
 } from "./college-learning-directory-model";
@@ -67,7 +68,7 @@ function aliased<C extends Column>(column: C, name: string) {
 /** All source tables are in registered C1-C3 migrations. An unavailable table
  * is a hard operational error, not an empty list or a fabricated metric. */
 export async function listCollegeLessons(context: RequestContext, raw: unknown) {
-  const query = collegeLearningQuerySchema.parse(raw);
+  const query = collegeLessonQuerySchema.parse(raw);
   const collegeId = requireCollegeCoursesRead(context);
   const db = getDb();
   const scoped = db.select({
@@ -102,6 +103,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.q ? sql`(${courseLessons.name} ilike ${searchLike(query.q)} or
         ${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)})` : undefined,

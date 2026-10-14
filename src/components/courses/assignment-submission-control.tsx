@@ -8,16 +8,19 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 
-type SubmissionType = "TEXT" | "LINK";
+type SubmissionType = "TEXT" | "LINK" | "FILE";
 
 export function AssignmentSubmissionControl({
   assignmentId,
   deliveryId,
+  fileUploadsEnabled = false,
 }: {
   assignmentId: string;
   deliveryId: string;
+  fileUploadsEnabled?: boolean;
 }) {
   const router = useRouter();
   const [submissionType, setSubmissionType] =
@@ -37,6 +40,7 @@ export function AssignmentSubmissionControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (submissionType === "FILE") return;
     setError(null);
     setSuccess(false);
 
@@ -134,7 +138,7 @@ export function AssignmentSubmissionControl({
         </legend>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Submission is final. Choose a written
-          response or an HTTPS link.
+          response, an HTTPS link, or a file when uploads are available.
         </p>
 
         <div
@@ -176,9 +180,17 @@ export function AssignmentSubmissionControl({
           >
             HTTPS link
           </Button>
+          <Button type="button" size="sm" disabled={!fileUploadsEnabled}
+            variant={submissionType === "FILE" ? "primary" : "secondary"}
+            aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
+            File upload
+          </Button>
         </div>
 
-        {submissionType === "TEXT" ? (
+        {!fileUploadsEnabled ? <p className="mt-2 text-xs text-muted-foreground">File uploads are currently unavailable. You can submit a written response or an HTTPS link.</p> : null}
+        {submissionType === "FILE" ? <AssignmentFileSubmissionControl
+          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting}
+          onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Your response
@@ -224,7 +236,7 @@ export function AssignmentSubmissionControl({
           </p>
         ) : null}
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        {submissionType !== "FILE" ? <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button type="submit">
             {submitting
               ? "Submitting…"
@@ -234,7 +246,7 @@ export function AssignmentSubmissionControl({
             You cannot replace the submission
             after it is recorded.
           </span>
-        </div>
+        </div> : null}
       </fieldset>
     </form>
   );

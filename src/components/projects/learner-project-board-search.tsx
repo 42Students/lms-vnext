@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, sprintId, sprints, releaseId, releases, shown, total,
-}: {projectId:string;search:string;priority:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number}) {
+  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total,
+}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
-  const activeCount=learnerBoardActiveFilterCount({search,priority,sprintId,releaseId});
+  const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId});
   const form=(
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
         method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -24,6 +24,18 @@ export function LearnerProjectBoardSearch({
             <option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-foreground">
+          Status
+          <select name="taskStatus" defaultValue={status}
+            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            <option value="">All statuses</option>
+            <option value="TODO">To do</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="BLOCKED">Blocked</option>
+            <option value="IN_REVIEW">In review</option>
+            <option value="DONE">Done</option>
           </select>
         </label>
         <label className="text-sm font-semibold text-foreground">

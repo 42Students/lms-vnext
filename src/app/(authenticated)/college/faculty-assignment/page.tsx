@@ -24,7 +24,7 @@ export default async function CollegeFacultyAssignmentPage({
   const raw = await searchParams;
   const parsed = facultyAssignmentQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
-      q: first(raw.q), status: first(raw.status), page: first(raw.page),
+      q: first(raw.q), status: first(raw.status), role: first(raw.role), page: first(raw.page),
     }).filter(([, value]) => value !== undefined && value !== "")),
   );
   if (!parsed.success) return (
@@ -66,6 +66,16 @@ export default async function CollegeFacultyAssignmentPage({
               <option value="ACTIVE">Active</option>
               <option value="ENDED">Ended</option>
               <option value="ALL">All</option>
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Teaching role
+            <select name="role" defaultValue={query.role}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All roles</option>
+              <option value="PRIMARY">Primary</option>
+              <option value="CO_TEACHER">Co-teacher</option>
+              <option value="TA">Teaching assistant</option>
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
