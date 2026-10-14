@@ -310,3 +310,7 @@ Implemented a persisted, active Section-roster monthly health summary with P/A, 
 ### Calendar-to-Attendance Faculty flow (2026-10-14)
 
 Faculty-only calendar event cards link to the exact Section delivery Attendance tab with a server-resolved persisted session ID. The destination still queries via the active Faculty authorization path and checks that the session is among its scoped rows, discarding injected or revoked-session query IDs. On a valid session link, the editor starts with that exact session and its stored absence selections, and the existing live correction-window rule determines whether marking is enabled. Learner calendar links remain Course Overview and expose no Faculty attendance controls. Source and unit tests added; authenticated browser proof remains a release gate.
+
+### Faculty aggregate Assessment search and editor draft recovery (2026-10-14)
+
+All Assignments and All Quizzes now search by title, course, Section, lesson and description in already-authorized teaching data, combining with persisted status/delivery filters and resetting pagination when the search changes. The Edit drawer restores current server-provided values on every open; closing an unsaved edit can no longer inadvertently persist stale draft fields on subsequent re-open. Pure filter unit tests and complete authenticated Assignment create/edit/archive browser coverage are added; no aggregate surface is marked DONE without executed evidence.

@@ -228,6 +228,64 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
   await expect(quizzes.getByRole("button", { name: "Create draft" })).toBeVisible();
 });
 
+test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/allAssignments");
+  await page.getByRole("button", { name: "+ Create Assignment" }).click();
+  const create = page.getByRole("dialog", { name: "Create Assignment" });
+  await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
+  const first = "Faculty draft browser acceptance";
+  const renamed = "Faculty updated browser acceptance";
+  await create.getByLabel("Title", { exact: true }).fill(first);
+  const createdResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/courses/assignments");
+  await create.getByRole("button", { name: "Create draft" }).click();
+  const created = await createdResponse;
+  expect(created.status()).toBe(201);
+  const assignmentId: string = (await created.json()).assignment.id;
+  expect(assignmentId).toBeTruthy();
+  await page.reload();
+
+  const search = page.getByLabel("Search assessments");
+  await search.fill("no matching faculty assessment x-y-z");
+  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await search.fill(first);
+  const row = page.getByRole("article").filter({ hasText: first });
+  await expect(row).toBeVisible();
+  await expect(row).toContainText("DRAFT");
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  let dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await dialog.getByLabel("Title", { exact: true }).fill("Unsaved cancellation");
+  await dialog.getByRole("button", { name: "Close drawer" }).click();
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(first);
+
+  await dialog.getByLabel("Title", { exact: true }).fill(renamed);
+  const editedResponse = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId);
+  await dialog.getByRole("button", { name: "Save changes" }).click();
+  expect((await editedResponse).ok()).toBe(true);
+  await page.reload();
+  await page.getByLabel("Search assessments").fill(renamed);
+  const updatedRow = page.getByRole("article").filter({ hasText: renamed });
+  await expect(updatedRow).toBeVisible();
+  await updatedRow.getByRole("button", { name: "Edit", exact: true }).click();
+  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
+  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(renamed);
+
+  page.once("dialog", (confirm) => confirm.accept());
+  const archiveResponse = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId + "/transition");
+  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
+  const archive = await archiveResponse;
+  expect(archive.ok()).toBe(true);
+  expect((await archive.json()).assignment.status).toBe("ARCHIVED");
+});
+
 test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/contacts/allContacts");
