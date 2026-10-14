@@ -56,11 +56,15 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    sql`date_trunc('milliseconds', ${placementJobs.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`
   )).returning();
   if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
-  await tx.update(placementJobRoleOptions).set({
+  const [savedRole]=await tx.update(placementJobRoleOptions).set({
    title:updated.title,locations:updated.locations,openings:updated.openings,
    minimumAnnualCtcInr:updated.minimumAnnualCtcInr,
    maximumAnnualCtcInr:updated.maximumAnnualCtcInr,updatedAt:new Date(),
-  }).where(eq(placementJobRoleOptions.id,role.id));
+  }).where(and(eq(placementJobRoleOptions.id,role.id),
+   eq(placementJobRoleOptions.jobId,job.id),
+   eq(placementJobRoleOptions.isPrimary,true),
+   eq(placementJobRoleOptions.status,"ACTIVE"))).returning({id:placementJobRoleOptions.id});
+  if(!savedRole)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_PRIMARY_REQUIRED");
   await auditTpoJobChange(tx,context,updated,"PLACEMENTS_TPO_DRIVE_EDITED","edited",{
    reason:input.reason,fromTitle:job.title,toTitle:updated.title,
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
