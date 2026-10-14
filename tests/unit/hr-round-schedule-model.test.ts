@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {hrScheduledRoundRows,hrRoundConflictLabels,type RoundScheduleRow} from "@/modules/placements/hr-round-schedule-model";
+import {hrScheduledRoundRows,hrRoundConflictLabels,hrRoundConflictLinks,type RoundScheduleRow} from "@/modules/placements/hr-round-schedule-model";
 function round(id:string,offset:number,durationMinutes:number|null):RoundScheduleRow{
  return {id,name:id,sequence:offset,status:"SCHEDULED",
  scheduledAt:new Date(Date.UTC(2026,9,20,10,offset)),durationMinutes,mode:"VIRTUAL",venue:null};
@@ -21,4 +21,12 @@ describe("Recruiter round schedule",()=>{
   expect(hrRoundConflictLabels(rows,["foreign-id"])).toEqual([]);
  });
 
+ it("links only persisted overlapping rounds within the current authorized job",()=>{
+  const rows=hrScheduledRoundRows([round("alpha",0,60),round("beta",30,30)]);
+  expect(hrRoundConflictLinks(rows,rows[0]!.conflicts,"job/id")).toEqual([
+   {id:"beta",label:"beta (#30)",
+    href:"/hr/placements/jobs/job%2Fid?tab=rounds&roundId=beta"},
+  ]);
+  expect(hrRoundConflictLinks(rows,["foreign"],"job/id")).toEqual([]);
+ });
 });
