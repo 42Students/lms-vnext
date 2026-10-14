@@ -296,6 +296,87 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   expect((await archive.json()).assignment.status).toBe("ARCHIVED");
 });
 
+test("Faculty Quiz aggregate persists questions, metadata edits and archival", async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await facultyLogin(context);
+  await page.goto("/teacher/allQuizzes");
+  await page.getByRole("button", { name: "+ Create Quiz" }).click();
+  const create = page.getByRole("dialog", { name: "Create Quiz" });
+  await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
+  const title = "Faculty quiz browser acceptance";
+  const updated = "Faculty quiz amended acceptance";
+  await create.getByLabel("Title", { exact: true }).fill(title);
+  await create.getByLabel("Prompt", { exact: true }).fill("What is one plus one?");
+  await create.getByLabel("Option 1", { exact: true }).fill("Two");
+  await create.getByLabel("Option 2", { exact: true }).fill("Three");
+  const creation = page.waitForResponse((response) =>
+    response.request().method() === "POST" &&
+    new URL(response.url()).pathname === "/api/courses/quizzes");
+  await create.getByRole("button", { name: "Create draft" }).click();
+  const response = await creation;
+  const payload = await response.json();
+  expect(response.status(), JSON.stringify(payload)).toBe(201);
+  const quizId: string = payload.quiz.id;
+  expect(quizId).toBeTruthy();
+  await page.goto("/teacher/allQuizzes");
+
+  const search = page.getByLabel("Search assessments");
+  await search.fill("no-such-quiz-value");
+  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await search.fill(title);
+  const row = page.getByRole("article").filter({ hasText: title });
+  await expect(row).toContainText("DRAFT");
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Edit Quiz" });
+  await expect(editor.getByLabel("Title", { exact: true })).toHaveValue(title);
+  await editor.getByLabel("Title", { exact: true }).fill(updated);
+  await editor.getByLabel("Maximum attempts").fill("3");
+  const editResponse = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/courses/quizzes/" + quizId);
+  await editor.getByRole("button", { name: "Save changes" }).click();
+  const edit = await editResponse;
+  expect(edit.status(), await edit.text()).toBe(200);
+
+  await page.goto("/teacher/allQuizzes");
+  await page.getByLabel("Search assessments").fill(updated);
+  const amended = page.getByRole("article").filter({ hasText: updated });
+  await expect(amended).toBeVisible();
+  await expect(amended).toContainText("3 allowed attempts");
+  await amended.getByRole("button", { name: "Edit", exact: true }).click();
+  const editAgain = page.getByRole("dialog", { name: "Edit Quiz" });
+  await expect(editAgain.getByLabel("Title", { exact: true })).toHaveValue(updated);
+  await expect(editAgain.getByLabel("Maximum attempts")).toHaveValue("3");
+  page.once("dialog", (confirm) => confirm.accept());
+  const archiving = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/courses/quizzes/" + quizId + "/transition");
+  await editAgain.getByRole("button", { name: "Delete", exact: true }).click();
+  const archivedResponse = await archiving;
+  const archived = await archivedResponse.json();
+  expect(archivedResponse.status(), JSON.stringify(archived)).toBe(200);
+  expect(archived.quiz.status).toBe("ARCHIVED");
+});
+
+test("Faculty Notifications keep the Faculty route through unread and cursor recovery", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/notifications");
+  await expect(page.getByRole("heading", { name: "Notifications", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Personal notifications" })).toBeVisible();
+  const filters = page.getByRole("group", { name: "Notification filter" });
+  await filters.getByRole("link", { name: /Unread/ }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
+  await expect(page.getByRole("button", { name: "Mark all as read" })).toBeVisible();
+  await filters.getByRole("link", { name: "All", exact: true }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=all$/);
+
+  await page.goto("/teacher/notifications?view=unread&beforeCreatedAt=invalid&beforeId=bad-id");
+  const invalid = page.getByRole("alert").filter({ hasText: "notification page link is invalid" });
+  await expect(invalid).toBeVisible();
+  await invalid.getByRole("link", { name: "Return to the newest notifications" }).click();
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
+});
+
 test("Faculty Contacts matches the legacy tabs, college search and page size", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/contacts/allContacts");
