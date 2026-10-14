@@ -84,11 +84,13 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     expect(events.rows.map(row => row.event_type)).toContain("identity.membership.reactivated");
   });
   it("denies foreign college, non-admin and extra caller scope fields", async () => {
-    for (const ctx of [foreign, learner]) {
-      await expect(transitionCollegeFaculty(ctx, id.member, {
-        action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
-      })).rejects.toBeInstanceOf(AuthorizationError);
-    }
+    // Another college's admin must not learn the faculty member exists.
+    await expect(transitionCollegeFaculty(foreign, id.member, {
+      action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
+    })).rejects.toMatchObject({ code: expect.stringMatching(/^FACULTY_NOT_/) });
+    await expect(transitionCollegeFaculty(learner, id.member, {
+      action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
+    })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(transitionCollegeFaculty(admin, id.member, {
       action: "REACTIVATE", expectedStatus: "SUSPENDED", confirm: true,
       collegeId: SEED_IDS.collegeB,
