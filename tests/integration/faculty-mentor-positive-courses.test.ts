@@ -1,5 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { randomUUID } from "node:crypto";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createProgram } from "@/modules/academics/program-service";
@@ -28,6 +29,29 @@ if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Requires disposable PostgreSQL TEST_DATABASE_URL (never production DATABASE_URL)");
 }
 const pool = new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+// Each test module gets its own identities and unique codes, avoiding clashes
+// with a concurrent integration suite or an interrupted earlier run.
+const runId = randomUUID().slice(0, 12).toUpperCase();
+const codePrefix = "C4POS-" + runId;
+const codePattern = codePrefix + "-%";
+const facultyOnlyUserId = randomUUID();
+const facultyOnlyMembershipId = randomUUID();
+const facultyOnlyRoleId = randomUUID();
+const facultyOnly: RequestContext = {
+  user: {
+    id: facultyOnlyUserId,
+    identityUid: "c4pos-faculty-" + runId,
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: facultyOnlyMembershipId,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["FACULTY"],
+  },
+};
 const admin:RequestContext={
   user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
   membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
@@ -52,71 +76,76 @@ async function cleanup() {
       (select a.id::text from course_assignments a join course_lessons l on l.id=a.lesson_id
         join course_learning_paths lp on lp.id=l.learning_path_id
         join course_offerings co on co.id=lp.offering_id
-        join courses c on c.id=co.course_id where c.code like 'C4POS-%'))`);
+        join courses c on c.id=co.course_id where c.code like $1))`, [codePattern]);
   await pool.query(`delete from activity_events where subject_id in
     (select a.id::text from course_assignments a join course_lessons l on l.id=a.lesson_id
       join course_learning_paths lp on lp.id=l.learning_path_id
       join course_offerings co on co.id=lp.offering_id
-      join courses c on c.id=co.course_id where c.code like 'C4POS-%')`);
+      join courses c on c.id=co.course_id where c.code like $1)`, [codePattern]);
   await pool.query(`delete from quiz_options where question_id in (
     select question.id from quiz_questions question join course_quizzes quiz on quiz.id=question.quiz_id
     join course_lessons l on l.id=quiz.lesson_id join course_learning_paths lp on lp.id=l.learning_path_id
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
-    where c.code like 'C4POS-%')`);
+    where c.code like $1)`, [codePattern]);
   await pool.query(`delete from quiz_questions where quiz_id in (
     select quiz.id from course_quizzes quiz join course_lessons l on l.id=quiz.lesson_id
     join course_learning_paths lp on lp.id=l.learning_path_id
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
-    where c.code like 'C4POS-%')`);
+    where c.code like $1)`, [codePattern]);
   for(const table of ["course_quizzes","course_assignments"]) {
     await pool.query(`delete from ${table} where lesson_id in (
       select l.id from course_lessons l join course_learning_paths lp on lp.id=l.learning_path_id
       join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
-      where c.code like 'C4POS-%')`);
+      where c.code like $1)`, [codePattern]);
   }
   await pool.query(`delete from course_lessons where learning_path_id in (
     select lp.id from course_learning_paths lp join course_offerings co on co.id=lp.offering_id
-    join courses c on c.id=co.course_id where c.code like 'C4POS-%')`);
+    join courses c on c.id=co.course_id where c.code like $1)`, [codePattern]);
   await pool.query(`delete from course_learning_paths where offering_id in (
     select co.id from course_offerings co join courses c on c.id=co.course_id
-    where c.code like 'C4POS-%')`);
+    where c.code like $1)`, [codePattern]);
   await pool.query(`delete from course_teaching_assignments where delivery_id in (
     select d.id from course_section_deliveries d join course_offerings co on co.id=d.offering_id
-    join courses c on c.id=co.course_id where c.code like 'C4POS-%')`);
+    join courses c on c.id=co.course_id where c.code like $1)`, [codePattern]);
   await pool.query(`delete from course_section_deliveries where offering_id in (
     select co.id from course_offerings co join courses c on c.id=co.course_id
-    where c.code like 'C4POS-%')`);
+    where c.code like $1)`, [codePattern]);
   await pool.query(`delete from course_offerings where course_id in (
-    select id from courses where code like 'C4POS-%')`);
-  await pool.query("delete from courses where code like 'C4POS-%'");
+    select id from courses where code like $1)`, [codePattern]);
+  await pool.query("delete from courses where code like $1", [codePattern]);
   await pool.query(`delete from section_enrollments where learner_enrollment_id in (
     select e.id from learner_program_enrollments e
-    join programs p on p.id=e.program_id where p.code like 'C4POS-%')`);
+    join programs p on p.id=e.program_id where p.code like $1)`, [codePattern]);
   await pool.query(`delete from learner_program_enrollments where program_id in (
-    select id from programs where code like 'C4POS-%')`);
+    select id from programs where code like $1)`, [codePattern]);
   await pool.query(`delete from sections where cohort_id in (
-    select c.id from cohorts c join programs p on p.id=c.program_id where p.code like 'C4POS-%')`);
+    select c.id from cohorts c join programs p on p.id=c.program_id where p.code like $1)`, [codePattern]);
   await pool.query(`delete from cohorts where program_id in (
-    select id from programs where code like 'C4POS-%')`);
-  await pool.query("delete from programs where code like 'C4POS-%'");
-  await pool.query("delete from academic_periods where code like 'C4POS-%'");
+    select id from programs where code like $1)`, [codePattern]);
+  await pool.query("delete from programs where code like $1", [codePattern]);
+  await pool.query("delete from academic_periods where code like $1", [codePattern]);
+  // Only the principal created by THIS suite: do not mutate deterministic seed users.
+  await pool.query("delete from faculty_profiles where membership_id = $1", [facultyOnlyMembershipId]);
+  await pool.query("delete from membership_roles where membership_id = $1", [facultyOnlyMembershipId]);
+  await pool.query("delete from college_memberships where id = $1", [facultyOnlyMembershipId]);
+  await pool.query("delete from users where id = $1", [facultyOnlyUserId]);
 }
 async function fixture() {
   const program=await createProgram(admin,{
-    departmentId:SEED_IDS.departmentA,name:"Chat4 Positive CS",code:"C4POS-PROGRAM",durationTerms:8,
+    departmentId:SEED_IDS.departmentA,name:"Chat4 Positive CS " + runId,code:codePrefix+"-PROGRAM",durationTerms:8,
   });
   const period=await createAcademicPeriod(admin,{
-    collegeId:SEED_IDS.collegeA,name:"Chat4 Positive Semester",
-    code:"C4POS-PERIOD",startDate:"2026-07-01",endDate:"2027-12-31",
+    collegeId:SEED_IDS.collegeA,name:"Chat4 Positive Semester " + runId,
+    code:codePrefix+"-PERIOD",startDate:"2026-07-01",endDate:"2027-12-31",
   });
   const cohort=await createCohort(admin,{
-    programId:program.id,name:"Chat4 Intake",code:"C4POS-COHORT",startPeriodId:period.id,
+    programId:program.id,name:"Chat4 Intake " + runId,code:codePrefix+"-COHORT",startPeriodId:period.id,
   });
   const section=await createSection(admin,{
-    cohortId:cohort.id,academicPeriodId:period.id,name:"Chat4 Section A",code:"C4POS-A",
+    cohortId:cohort.id,academicPeriodId:period.id,name:"Chat4 Section A " + runId,code:codePrefix+"-A",
   });
   const course=await createCourse(admin,{
-    departmentId:SEED_IDS.departmentA,name:"Chat4 Algorithms",code:"C4POS-ALG",
+    departmentId:SEED_IDS.departmentA,name:"Chat4 Algorithms " + runId,code:codePrefix+"-ALG",
   });
   const offering=await createCourseOffering(admin,{
     courseId:course.id,cohortId:cohort.id,academicPeriodId:period.id,
@@ -128,6 +157,9 @@ async function fixture() {
   await createCourseTeachingAssignment(admin,{
     deliveryId:delivery.id,membershipId:SEED_IDS.facultyCollegeAMembership,role:"PRIMARY",
   });
+  await createCourseTeachingAssignment(admin,{
+    deliveryId:delivery.id,membershipId:facultyOnlyMembershipId,role:"CO_TEACHER",
+  });
   const enrollment=await createLearnerProgramEnrollment(admin,{
     membershipId:SEED_IDS.learnerCollegeAMembership,programId:program.id,cohortId:cohort.id,
   });
@@ -135,17 +167,17 @@ async function fixture() {
     learnerEnrollmentId:enrollment.id,sectionId:section.id,
   });
   const path=await createLearningPath(admin,{
-    offeringId:offering.id,title:"Chat4 Learning Path",
+    offeringId:offering.id,title:"Chat4 Learning Path " + runId,
   });
   const lesson=await createCourseLesson(admin,{
-    learningPathId:path.id,name:"Chat4 Fundamentals",sequence:0,
+    learningPathId:path.id,name:"Chat4 Fundamentals " + runId,sequence:0,
   });
   await transitionLearningPath(admin,path.id,{action:"PUBLISH"});
   const assignment=await createCourseAssignment(faculty,{
-    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Assignment",maxPoints:10,sequence:0,
+    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Assignment " + runId,maxPoints:10,sequence:0,
   });
   const quiz=await createCourseQuiz(faculty,{
-    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz",maxAttempts:2,sequence:1,
+    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz " + runId,maxAttempts:2,sequence:1,
     questions:[{
       type:"SINGLE_CHOICE",prompt:"Which is FIFO?",points:5,sequence:0,
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}],
@@ -155,7 +187,26 @@ async function fixture() {
   await transitionCourseQuiz(faculty,quiz.id,{action:"PUBLISH"});
   return {delivery,assignment,quiz};
 }
-beforeEach(cleanup);
+async function seedFacultyOnly() {
+  await pool.query(
+    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE')",
+    [facultyOnlyUserId, facultyOnly.user.identityUid,
+      "c4pos-faculty-" + runId.toLowerCase() + "@example.invalid",
+      "Chat4 Faculty " + runId],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    [facultyOnlyMembershipId, facultyOnlyUserId, SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'FACULTY')",
+    [facultyOnlyRoleId, facultyOnlyMembershipId],
+  );
+}
+beforeEach(async () => {
+  await cleanup();
+  await seedFacultyOnly();
+});
 afterAll(async()=>{
   try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}
 });
@@ -163,11 +214,16 @@ afterAll(async()=>{
 describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   it("reads live self-profile Section and registered learner contact",async()=>{
     const {delivery}=await fixture();
-    const teaching=await getOwnFacultyTeachingSection(faculty,{});
+    // The seeded College A actor is FACULTY + MENTOR, intentionally rejected
+    // from the Faculty-only self-profile. Exercise the success path with a
+    // separately persisted, active FACULTY-only user in the SAME college.
+    await expect(getOwnFacultyTeachingSection(faculty,{}))
+      .rejects.toThrow(/profile\.self\.manage/);
+    const teaching=await getOwnFacultyTeachingSection(facultyOnly,{});
     expect(teaching.items).toEqual(expect.arrayContaining([
-      expect.objectContaining({deliveryId:delivery.id,courseCode:"C4POS-ALG"}),
+      expect.objectContaining({deliveryId:delivery.id,courseCode:codePrefix+"-ALG"}),
     ]));
-    const contact=await getFacultyContactDetail(faculty,{
+    const contact=await getFacultyContactDetail(facultyOnly,{
       contactsTab:"students",membershipId:SEED_IDS.learnerCollegeAMembership,
     });
     expect(contact.membershipId).toBe(SEED_IDS.learnerCollegeAMembership);
