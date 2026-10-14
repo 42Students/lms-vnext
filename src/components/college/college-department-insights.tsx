@@ -9,7 +9,15 @@ import type { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-d
 
 type Data = Awaited<ReturnType<typeof listCollegeDepartmentInsights>>;
 
-export function CollegeDepartmentInsights({ data }: { data: Data }) {
+export function CollegeDepartmentInsights({
+  data, correctionPolicy,
+}: {
+  data: Data;
+  correctionPolicy?: {
+    correctionWindowHours: number;
+    eligibilityThresholdPercent: number;
+  };
+}) {
   const attendance = data.kind === "ATTENDANCE";
   const title = attendance ? "Attendance by Department" : "Placement Evidence by Department";
   const path = attendance
@@ -22,11 +30,32 @@ export function CollegeDepartmentInsights({ data }: { data: Data }) {
       description={attendance
         ? "College-scoped marked attendance sessions and explicit learner-status records, not attendance rates."
         : "Coverage of persisted academic evidence and placement preferences among active enrolled learners. No eligibility or readiness score is inferred."}
-      actions={<Link href={attendance ? "/college/attendance" : "/college/placements"}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-        {attendance ? "Attendance workspace" : "Placements workspace"}
-      </Link>}
+      actions={<>
+        {attendance ? <a href={"/api/attendance/admin/departments/export" +
+          (data.query.q ? "?q=" + encodeURIComponent(data.query.q) : "")}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Export CSV
+        </a> : null}
+        <Link href={attendance ? "/college/attendance" : "/college/placements"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          {attendance ? "Attendance workspace" : "Placements workspace"}
+        </Link>
+      </>}
     />
+    {attendance && correctionPolicy ? (
+      <section aria-label="College attendance correction policy"
+        className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-body">
+        <p className="font-semibold text-foreground">Attendance policy — read-only</p>
+        <p className="mt-1">Faculty marking/correction window: {correctionPolicy.correctionWindowHours} hours after class end.</p>
+        <p>Exam eligibility threshold: {correctionPolicy.eligibilityThresholdPercent}%.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          College Admin correction permissions are separate from Faculty marking windows.
+          These settings are policy context, not department attendance percentages.
+        </p>
+        <Link href="/college/attendance/settings"
+          className="mt-2 inline-block font-semibold text-primary-text">Attendance policy settings</Link>
+      </section>
+    ) : null}
     <section aria-label="Department filters" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
