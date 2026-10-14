@@ -11,6 +11,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AssignmentFileOpenControl } from "./assignment-file-open-control";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
 import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
@@ -110,11 +111,13 @@ export function LearnerAssessmentOverview({
   items,
   kind,
   snapshotNowMs,
+  fileUploadsEnabled = false,
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
   kind: "ASSIGNMENT" | "QUIZ";
   snapshotNowMs: number;
+  fileUploadsEnabled?: boolean;
 }) {
   const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
   const currentNowMs = learnerAssessmentClock(snapshotNowMs,
@@ -438,6 +441,9 @@ export function LearnerAssessmentOverview({
               </section>
             ) : null}
 
+            {selectedAssignment.submissionId && selectedAssignment.submissionType === "FILE" ?
+              <AssignmentFileOpenControl key={selectedAssignment.submissionId}
+                submissionId={selectedAssignment.submissionId} enabled={fileUploadsEnabled} /> : null}
             {selectedAssignment.submissionId ? (
               <section className="rounded-xl border border-border bg-surface-subtle p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -537,6 +543,7 @@ export function LearnerAssessmentOverview({
                 ) : null}
 
                 <AssignmentSubmissionControl
+                  fileUploadsEnabled={fileUploadsEnabled}
                   assignmentId={selectedAssignment.id}
                   deliveryId={selectedAssignment.deliveryId}
                 />

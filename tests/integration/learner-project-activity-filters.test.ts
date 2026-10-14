@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import { listProjectActivity } from "@/modules/projects/activity-service";
+import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -138,5 +138,35 @@ describe("Project Activity date filters precede the PostgreSQL row cap", () => {
       { ...context, membership: { ...context.membership!, status: "SUSPENDED" } },
       { ...context, membership: { ...context.membership!, roles: ["FACULTY"] } },
     ] as RequestContext[]) await expect(listProjectActivity(actor, ids.project, { from: "2026-10-14" })).rejects.toBeDefined();
+  });
+});
+
+describe("Project Activity cursor pages on equal microsecond timestamps", () => {
+  it("continues beyond 100 own events without duplicates, gaps or foreign access", async () => {
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,subject_type,subject_id,summary,occurred_at)
+      SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,'PROJECTS','projects.task.created','project',$4::text,
+        'Cursor fixture','2026-10-15T18:30:00.123456Z'::timestamptz FROM generate_series(1,101)`,
+      [SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project]);
+    const filters = { category: "TASK", from: "2026-10-16", to: "2026-10-16" };
+    const first = await getProjectActivityPage(context, ids.project, filters);
+    expect(first.events).toHaveLength(100);
+    expect(first.hasMore).toBe(true);
+    const cursor = first.events.at(-1)!;
+    expect(cursor.cursorOccurredAt).toBe("2026-10-15T18:30:00.123456Z");
+    const nextFilters = { ...filters, beforeTime: cursor.cursorOccurredAt, beforeId: cursor.id };
+    const second = await getProjectActivityPage(context, ids.project, nextFilters);
+    expect(second.events).toHaveLength(1);
+    expect(second.hasMore).toBe(false);
+    const allIds = [...first.events, ...second.events].map(event => event.id);
+    expect(new Set(allIds).size).toBe(101);
+    const persisted = await pool.query<{ id: string }>(`SELECT id FROM activity_events
+      WHERE college_id=$1 AND subject_id=$2::text AND summary='Cursor fixture'`, [ids.college, ids.project]);
+    expect([...allIds].sort()).toEqual(persisted.rows.map(row => row.id).sort());
+    for (const actor of [
+      { ...context, membership: { ...context.membership!, collegeId: SEED_IDS.collegeB } },
+      { ...context, membership: { ...context.membership!, status: "SUSPENDED" } },
+      { ...context, membership: { ...context.membership!, roles: ["FACULTY"] } },
+    ] as RequestContext[]) await expect(getProjectActivityPage(actor, ids.project, nextFilters)).rejects.toBeDefined();
   });
 });
