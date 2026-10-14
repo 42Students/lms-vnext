@@ -34,10 +34,12 @@ export function NotificationList({
   items,
   emptyText = "You are all caught up.",
   onSelect,
+  readEndpoint = "/api/notifications",
 }: {
   items: readonly NotificationListItem[];
   emptyText?: string;
   onSelect?: (item: NotificationListItem) => void;
+  readEndpoint?: "/api/notifications" | "/api/learn/notifications";
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -49,7 +51,7 @@ export function NotificationList({
     let acknowledged = false;
     try {
       const response = await fetch(
-        "/api/notifications/" + id + "/read",
+        readEndpoint + "/" + id + "/read",
         { method: "POST" },
       );
       if (!response.ok) {
