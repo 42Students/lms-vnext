@@ -24,7 +24,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
       { collegeId: "foreign" },
       { page: 0 },
       { page: 10001 },
-      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, { teaching: "RETIRED" }, {sort:"RANDOM"},
+      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, { teaching: "RETIRED" }, { facultyDepartmentId:"bad" }, {sort:"RANDOM"},
       { q: "x".repeat(101) },
     ]) {
       expect(collegeRoleDirectoryQuerySchema.safeParse(invalid).success).toBe(false);
@@ -33,7 +33,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
 
   it("builds only role-specific relative routes with escaped parameters", () => {
     const query = { q: "a & b", status: "ACTIVE" as const, accountStatus: "DISABLED" as const,
-      enrollment: "ACTIVE" as const, teaching: "ASSIGNED" as const, sort:"NEWEST" as const, page: 2 };
+      enrollment: "ACTIVE" as const, teaching: "ASSIGNED" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", sort:"NEWEST" as const, page: 2 };
     const faculty = new URL(collegeRoleDirectoryHref("FACULTY", query), "https://example.test");
     const students = new URL(collegeRoleDirectoryHref("LEARNER", query), "https://example.test");
     expect(faculty.pathname).toBe("/college/faculty");
@@ -45,6 +45,8 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(students.searchParams.get("enrollment")).toBe("ACTIVE");
     expect(faculty.searchParams.has("enrollment")).toBe(false);
     expect(faculty.searchParams.get("teaching")).toBe("ASSIGNED");
+    expect(faculty.searchParams.get("facultyDepartmentId")).toBe(query.facultyDepartmentId);
+    expect(students.searchParams.has("facultyDepartmentId")).toBe(false);
     expect(students.searchParams.has("teaching")).toBe(false);
     expect(students.searchParams.has("collegeId")).toBe(false);
     expect(collegeRoleDirectoryHref("LEARNER", {

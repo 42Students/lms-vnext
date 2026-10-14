@@ -11,6 +11,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   accountStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
+  facultyDepartmentId: z.string().uuid().optional(),
   sort: z.enum(["NAME", "NEWEST", "OLDEST"]).default("NAME"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -63,6 +64,7 @@ export function collegeRoleDirectoryHref(
   if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
   if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
   if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
+  if (kind === "FACULTY" && filter.facultyDepartmentId) params.set("facultyDepartmentId", filter.facultyDepartmentId);
   if (filter.sort !== "NAME") params.set("sort", filter.sort);
   if (filter.page > 1) params.set("page", String(filter.page));
   const base = kind === "FACULTY" ? "/college/faculty" : "/college/students";

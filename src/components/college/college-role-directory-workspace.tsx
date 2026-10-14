@@ -49,6 +49,7 @@ export async function CollegeRoleDirectoryWorkspace({
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
     teaching: first(params.teaching),
+    facultyDepartmentId: first(params.facultyDepartmentId),
     sort: first(params.sort),
     page: first(params.page),
   };
@@ -152,6 +153,17 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
             </select>
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Department
+            <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All departments</option>
+              {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
+            </select>
+            {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              Only first 200 departments shown; use name search for others.
+            </span> : null}
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching
