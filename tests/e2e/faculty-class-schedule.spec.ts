@@ -24,6 +24,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   page.on("pageerror",e=>errors.push(e.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
   const current=new URL(page.url());
   const deliveryId=current.pathname.split("/")[3]!;
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
