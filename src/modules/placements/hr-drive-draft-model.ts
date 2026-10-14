@@ -28,6 +28,15 @@ export const hrDriveDraftSchema = z.strictObject({
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
+  const uniqueRoundNames = new Set<string>();
+  for (const [index, item] of data.rounds.entries()) {
+    const label = item.name.trim().replace(/\s+/g," ").toLocaleLowerCase("en");
+    if (uniqueRoundNames.has(label)) {
+      ctx.addIssue({ code:"custom",path:["rounds",index,"name"],
+        message:"Give each hiring round a distinct name" });
+    }
+    uniqueRoundNames.add(label);
+  }
   const min = data.minimumAnnualCtcInr ? Number(data.minimumAnnualCtcInr) : null;
   const max = data.maximumAnnualCtcInr ? Number(data.maximumAnnualCtcInr) : null;
   if (data.bondMonths && Number(data.bondMonths) > 120) {

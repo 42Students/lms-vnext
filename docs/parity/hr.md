@@ -523,3 +523,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / draft annual CTC consistency — PARTIAL:** Request a Drive now validates a fully specified fixed-plus-variable amount against both the advertised minimum and maximum annual CTC; incomplete breakdowns are not misrepresented as totals. Cross-field errors attach to the relevant field. Pure unit coverage authored, execution pending; no submission, storage, or external notification.
+
+
+**2026-10-15 chat-10 round 4 / duplicate hiring-round validation — PARTIAL:** Request a Drive rejects ambiguous duplicate stage names even across kinds after case/whitespace normalization, identifying the offending round row while preserving legitimate multiple rounds. Pure Zod unit cases authored, unexecuted. No placement decision or actual round write.
