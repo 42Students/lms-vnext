@@ -469,3 +469,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Company Reports CSV — PARTIAL:** Existing scoped recruiter report now supports a read-only 200-drive capped formula-neutralized CSV of aggregate funnel metrics, no student identities or contact. Each page reuses the exact recruiter company/college report service; explicit omitted header and no-store. Pure-model unit + in-test PostgreSQL own/foreign-company/wrong-role fixtures authored but unexecuted. Remaining long-history de-dup, browser download acceptance.
+
+
+**2026-10-15 chat-10 / Notifications exact counts and pagination — PARTIAL:** DB-scoped exact total/unread aggregate replaces loaded-set estimate, and unread/all lists now serve 25-row pages with previous/next. Today displays actual authorized unread count. Company/college/recipient filters precede totals and rows; no private bodies. Pure model tests authored, PG existing fixtures applicable but unexecuted. Remaining thread parity and browser acceptance.
