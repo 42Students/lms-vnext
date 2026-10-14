@@ -145,6 +145,8 @@ export default async function ActivityPage({
       nextParams.set(name, value);
     }
   }
+  // Export starts from the newest matching activity, without an older-page cursor.
+  const exportParams = new URLSearchParams(nextParams);
   if (result.nextCursor) {
     nextParams.set(
       "beforeOccurredAt",
@@ -162,6 +164,13 @@ export default async function ActivityPage({
         eyebrow="Operations"
         title="Activity Center"
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
+        actions={hasMembershipRole(context, "COLLEGE_ADMIN") ? (
+          <a href={"/api/activity/college-export" +
+            (exportParams.size ? "?" + exportParams.toString() : "")}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export filtered CSV (max 1,000)
+          </a>
+        ) : undefined}
       />
 
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-4">
