@@ -108,3 +108,9 @@
 - Valid scheduled_meeting fixture includes scheduling actor and URL to satisfy DB check.
 - Model/PG tests authored, not executed; foreign/wrong-role read denial retained.
 - PARTIAL pending runtime/browser verification.
+
+## M — filtered per-Sprint Board summary (2026-10-14)
+- Added registered per-Sprint filtered DONE/BLOCKED/IN_REVIEW/total summary.
+- Reused scoped Board service and capped 100-row formula-neutralized CSV.
+- Own-project PostgreSQL and pure export model tests authored; not executed.
+- PARTIAL pending CLI/PG/browser and legacy parity verification.
