@@ -1,0 +1,45 @@
+import Link from "next/link";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {EmptyState} from "@/components/ui/empty-state";
+import {getMentorTaskFeedback} from "@/modules/projects/mentor-task-feedback-service";
+import {mentorTaskFeedbackParamsSchema,taskFeedbackStatusLabel} from "@/modules/projects/mentor-task-feedback-model";
+export default async function Page({params}:{
+ params:Promise<{projectId:string;taskId:string}>;
+}){
+ const ids=mentorTaskFeedbackParamsSchema.parse(await params);
+ const data=await getMentorTaskFeedback(await getCurrentRequestContext(),ids);
+ return <div className="space-y-6">
+  <PageHeader eyebrow="Mentor · Task Board" title="Recorded task review feedback"
+   description={data.task.title}/>
+  <section role="status" className="rounded-xl border border-border bg-surface p-4">
+   <h2 className="font-semibold">Conversation thread unavailable</h2>
+   <p className="mt-2 text-sm text-body">
+    The promoted Project schema stores one reviewer-feedback value per submission version.
+    It has no task-comments or reply table. Do not enter new comments here; threaded
+    conversations are blocked pending migration and product approval.
+   </p>
+  </section>
+  {data.feedback.length===0?<EmptyState title="No recorded reviewer feedback"
+   description="No persisted submission-version feedback exists for this authorized task. Missing messages are not reconstructed."/>
+   :<ol className="grid gap-3">{data.feedback.map(entry=><li key={entry.id}
+    className="rounded-xl border border-border bg-surface p-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+     <h2 className="text-sm font-semibold">Version {entry.version} · {taskFeedbackStatusLabel(entry.status)}</h2>
+     <span className="text-xs text-muted-foreground">
+      {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
+       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+      }).format(entry.reviewedAt)+" IST":"Review date unavailable"}
+     </span>
+    </div>
+    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{entry.feedback}</p>
+   </li>)}</ol>}
+  <Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
+   className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+   Back to authorized task Board
+  </Link>
+  <p className="text-xs text-muted-foreground">
+   Reviewer feedback is not a chat message. Learner identities, private notes and submission URLs are excluded from this read.
+  </p>
+ </div>;
+}
