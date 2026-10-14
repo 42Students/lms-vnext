@@ -30,3 +30,5 @@
 - 2026-10-14 — HR round contact privacy PARTIAL: user ACTIVE + same-college membership + submission/shortlist + company identity; defense-in-depth model and PG guard tests authored, gates pending.
 
 - 2026-10-14 — HR Calendar RESULTS_DUE day grouping PARTIAL: due-only IST days and agenda/calendar badges; unit and PG fixture updated, execution pending.
+
+- 2026-10-14 — HR selection readiness PARTIAL: all-round applied PASS intersection and conservative JOINED count; unit + PG fixture updated, unexecuted.
