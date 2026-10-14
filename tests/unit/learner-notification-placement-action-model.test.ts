@@ -36,6 +36,17 @@ describe("learner placement notification action links",()=>{
     expect(learnerNotificationPlacementAction("/learn/my-placements/applications/not-a-uuid")).toBeNull();
     expect(learnerNotificationPlacementAction(root+"/secret")).toBeNull();
   });
+  it("uses only canonical learner-course URLs without forged selectors",()=>{
+    const root="/learn/courses/"+id;
+    expect(learnerNotificationPlacementAction("/learn/courses?collegeId=foreign"))
+      .toEqual({href:"/learn/courses",label:"View courses"});
+    expect(learnerNotificationPlacementAction(root+"?membershipId=foreign"))
+      .toEqual({href:root,label:"View course"});
+    expect(learnerNotificationPlacementAction(root+"/home?userId=foreign"))
+      .toEqual({href:root+"/home",label:"View course"});
+    expect(learnerNotificationPlacementAction("/learn/courses/bad")).toBeNull();
+    expect(learnerNotificationPlacementAction(root+"/private")).toBeNull();
+  });
   it("rejects malformed, duplicate, cross-role and external actions",()=>{
     for(const value of [
       "/learn/my-placements/applications?applicationId=bad",
