@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const uuid = z.string().uuid();
-export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM")}).strict();
+export const tpoFollowupQueueQuerySchema=z.object({scope:z.enum(["TEAM","MINE"]).default("TEAM"),window:z.enum(["DUE","NEXT_7_DAYS"]).default("DUE")}).strict();
 export const confirmedTpoFollowupCreateSchema = z.object({
   confirmed: z.literal(true),
   leadId: uuid,

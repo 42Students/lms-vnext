@@ -157,6 +157,14 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     expect(after.rows.some((row) => row.id === created.id)).toBe(false);
   });
 
+  it("separates due from next-seven-day tasks using persisted scheduled times",async()=>{
+    const leadId=await fixture();
+    const upcoming=new Date(Date.now()+3*86400000).toISOString();
+    const task=await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt:upcoming});
+    expect((await getTpoDueFollowupQueue(tpo)).rows.some(row=>row.id===task.id)).toBe(false);
+    expect((await getTpoDueFollowupQueue(tpo,undefined,{window:"NEXT_7_DAYS"})).rows.some(row=>row.id===task.id)).toBe(true);
+  });
+
   it("rejects wrong roles and foreign college reads and writes without changing records", async () => {
     if (!pool) throw new Error("Disposable PostgreSQL is required");
     const leadId = await fixture();

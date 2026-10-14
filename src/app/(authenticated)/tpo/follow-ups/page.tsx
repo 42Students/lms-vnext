@@ -8,15 +8,16 @@ import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-
 
 export const dynamic = "force-dynamic";
 
-export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[]}>}) {
+export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
   const raw=await searchParams;
   const scope=(Array.isArray(raw.scope)?raw.scope[0]:raw.scope)==="MINE"?"MINE":"TEAM";
+  const window=(Array.isArray(raw.window)?raw.window[0]:raw.window)==="NEXT_7_DAYS"?"NEXT_7_DAYS":"DUE";
   const ready = process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
-  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope}) : null;
+  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window}) : null;
   return (
     <div className="space-y-6">
       <Link href="/tpo/recruiters"
@@ -26,10 +27,17 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data." />
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
-        {(["MINE","TEAM"] as const).map(view=><Link key={view} href={view==="TEAM"?"/tpo/follow-ups":"/tpo/follow-ups?scope=MINE"}
+        {(["MINE","TEAM"] as const).map(view=><Link key={view} href={"/tpo/follow-ups?scope="+view+"&window="+window}
           aria-current={view===scope?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           {view==="MINE"?"My Work":"Placement Team"}
+        </Link>)}
+      </nav>
+      <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
+        {(["DUE","NEXT_7_DAYS"] as const).map(view=><Link key={view} href={"/tpo/follow-ups?scope="+scope+"&window="+view}
+          aria-current={view===window?"page":undefined}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>

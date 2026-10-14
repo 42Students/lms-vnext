@@ -21,6 +21,8 @@ type Queue = {
   hasMoreDue: boolean;
   leads: Lead[];
   hasMoreLeads: boolean;
+  scope:"MINE"|"TEAM";
+  window:"DUE"|"NEXT_7_DAYS";
 };
 
 const field = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
@@ -76,7 +78,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         note: createNote.trim() || null,
       });
       setDueLocal(""); setCreateNote("");
-      setSuccess("Follow-up scheduled. Future-dated tasks appear here only when due.");
+      setSuccess("Follow-up scheduled. Use the Due now / Next 7 days views to locate open tasks.");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Follow-up scheduling failed.");
@@ -162,16 +164,16 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-base font-semibold text-foreground">
-            Follow-ups due ({data.rows.length}{data.hasMoreDue ? "+" : ""})
+            {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.rows.length}{data.hasMoreDue ? "+" : ""})
           </h2>
           <p className="mt-1 text-sm text-body">
-            Open tasks due now or earlier. Future tasks appear when due.
-            The list is limited to the earliest 200 rows; it is not a company-wide total.
+            {data.window==="DUE"?"Open tasks due now or earlier.":"Open tasks scheduled from now through the next seven days."}
+            The list is limited to the earliest 200 rows in this window and ownership scope, not a college-wide total.
           </p>
         </div>
         {data.rows.length === 0 ? (
           <p role="status" className="p-5 text-sm text-body">
-            No open follow-ups are due at this time. Future tasks are not counted as due.
+            {data.window==="DUE"?"No open follow-ups are due at this time.":"No open follow-ups are scheduled in the next seven days."}
           </p>
         ) : (
           <div className="divide-y divide-border">
