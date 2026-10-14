@@ -514,3 +514,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Results-due round deep links — PARTIAL:** Calendar (desktop/mobile/cards) and Today due cards now link directly to the persisted authorized `roundId` in the drive Rounds tab, instead of falling back to its first round. Existing job resolver re-authorizes exact company/college and rejects foreign/missing rounds. Unit URL encoding and existing scoped PG results-due fixture cover the contract but were not executed. Browser acceptance remains.
+
+
+**2026-10-15 chat-10 / HR Home authorized college-card metadata — PARTIAL:** College-less chooser now displays verified active grant's college code and access-granted IST date, using self-only company+college authorization checked against persisted relationships, and filters stale grants rather than rendering them. Does not invent logo or expiry fields. Pure unit extended; runtime/PG/browser proof pending.
