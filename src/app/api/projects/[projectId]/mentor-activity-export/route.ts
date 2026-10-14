@@ -13,7 +13,8 @@ export async function GET(request:Request,{params}:RouteContext){
     const {projectId}=await params;
     const url=new URL(request.url);
     const query=mentorProjectActivityQuerySchema.parse({
-      projectId,importance:url.searchParams.get("importance")??undefined,page:1,
+      projectId,importance:url.searchParams.get("importance")??undefined,
+      view:url.searchParams.get("view")??undefined,page:1,
     });
     const context=await getCurrentRequestContext();
     const first=await getMentorProjectActivityHistory(context,query);

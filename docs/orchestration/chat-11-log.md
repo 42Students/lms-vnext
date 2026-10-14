@@ -128,3 +128,9 @@
 - Added capped CSV of metadata but deliberately no raw URL or file data.
 - Own-project PG and pure unit tests authored, not executed.
 - PARTIAL pending CI/runtime/browser and legacy resource-write decision.
+
+## P — Sanitized Mentor project event-category filters (2026-10-14)
+- Added registered SQL event-type group filters for lifecycle, review, meeting
+  and task audit records; CSV honors identical controls and 200-row cap.
+- Unit and isolated PostgreSQL own-project tests authored, not executed.
+- No actor identities or raw metadata sent. PARTIAL until actual gates/browser.
