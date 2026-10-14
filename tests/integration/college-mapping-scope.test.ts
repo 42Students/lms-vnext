@@ -136,6 +136,11 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     expect(otherCourses.items).toEqual([]);
     expect(ownTeaching.items.map(item => item.id)).toContain(ids.teaching);
     expect(ownTeaching.items.find(item => item.id === ids.teaching)?.state).toBe("ACTIVE");
+    expect(ownTeaching.items.find(item => item.id === ids.teaching)).toMatchObject({
+      deliveryId: ids.delivery, offeringId: ids.offering,
+      courseName: code, sectionName: code, cohortName: code, periodName: code,
+      endedAt: null, deliveryEndedAt: null,
+    });
     expect(otherTeaching.items).toEqual([]);
   });
 

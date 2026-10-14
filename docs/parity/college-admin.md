@@ -502,6 +502,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Faculty Assignment
+**Teaching-assignment directory repair PARTIAL (2026-10-15):** Joined assignment/offering, course/class/cohort/period and two independently sourced end timestamps now carry unique subquery column aliases; the isolated-PG fixture checks the correct delivery and active/ended meaning. Atomic reassignment conflict and scheduling acceptance still needs executed PG/browser verification and legacy comparison.
+
 
 **Reassignment actor safety PARTIAL (2026-10-14):** The transaction now rechecks the persisted acting account, membership and College Admin role under SHARE locks and rejects revoked actors even with a cached active request context. Replacement Faculty account, membership and role are locked through commit; disabled accounts return TARGET_NOT_FOUND. Pure policy coverage and PostgreSQL revocation/no-side-effect fixtures added using a dedicated admin. PostgreSQL execution is blocked in this sandbox by OS user creation/switch restrictions; timetable conflicts, legacy/browser verification and remaining reassignment variants remain open.
 

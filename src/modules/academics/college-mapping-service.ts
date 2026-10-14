@@ -130,22 +130,22 @@ export async function listCollegeFacultyAssignments(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: courseTeachingAssignments.id,
+    id: sql<string>`${courseTeachingAssignments.id}`.mapWith(courseTeachingAssignments.id).as("college_teaching_assignment_id"),
     updatedAt: sql<Date>`${courseTeachingAssignments.updatedAt}`
       .mapWith(courseTeachingAssignments.updatedAt).as("assignment_updated_at"),
     deliveryId: courseTeachingAssignments.deliveryId,
     membershipId: courseTeachingAssignments.membershipId,
     facultyName: users.displayName,
-    courseName: courses.name,
+    courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("college_teaching_course_name"),
     courseCode: courses.code,
-    sectionName: sections.name,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
-    offeringId: courseOfferings.id,
+    sectionName: sql<string>`${sections.name}`.mapWith(sections.name).as("college_teaching_section_name"),
+    cohortName: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_teaching_cohort_name"),
+    periodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_teaching_period_name"),
+    offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("college_teaching_offering_id"),
     role: courseTeachingAssignments.role,
     startedAt: courseTeachingAssignments.startedAt,
-    endedAt: courseTeachingAssignments.endedAt,
-    deliveryEndedAt: courseSectionDeliveries.endedAt,
+    endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.mapWith(courseTeachingAssignments.endedAt).as("college_teaching_ended_at"),
+    deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.mapWith(courseSectionDeliveries.endedAt).as("college_teaching_delivery_ended_at"),
   }).from(courseTeachingAssignments)
     .innerJoin(collegeMemberships, and(
       eq(collegeMemberships.id, courseTeachingAssignments.membershipId),
