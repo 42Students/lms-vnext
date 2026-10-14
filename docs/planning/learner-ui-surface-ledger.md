@@ -721,14 +721,14 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-006 | Personal notifications | NotificationsContent | own-recipient paginated personal history + canonical notifications feed | FIXED |
 | L29-007 | Unread signal | NotificationsContent | notification list | FIXED |
 | L29-008 | Mark read | NotificationsContent | read API | FIXED |
-| L29-009 | Action: Take Assessment | NotificationsContent | actionHref | UNCHECKED |
+| L29-009 | Action: Take Assessment | NotificationsContent | personal assessment notifications now display explicit view-assessment action, validate strict UUID application+round pair, discard caller tenant selectors and navigate to own-scoped assessment detail; not an external provider submission. PARTIAL pending fresh PostgreSQL/unit, tsc/eslint and notification action-browser acceptance | PARTIAL |
 | L29-010 | Action: View Interview | NotificationsContent | actionHref | UNCHECKED |
 | L29-011 | Action: View in My Applications | NotificationsContent | actionHref | UNCHECKED |
 | L29-012 | Action: View Course | NotificationsContent | actionHref | UNCHECKED |
 | L29-013 | Project deep links | NotificationsContent | actionHref | UNCHECKED |
 | L29-014 | Loading state | NotificationsContent | notification page | UNCHECKED |
 | L29-015 | Empty state | NotificationsContent | notification list | FIXED |
-| L29-016 | Error/stale/retry behavior | NotificationsContent | notification page | UNCHECKED |
+| L29-016 | Error/stale/retry behavior | NotificationsContent | unreadable personal feed remains a hard failure; independent announcement-fetch errors retain authorized personal notifications with explicit partial-source warning and refresh retry; no false empty. PARTIAL pending executed unit/own-PG, TypeScript/ESLint, announcement failure-injection/browser acceptance | PARTIAL |
 | L29-017 | No cross-college/cross-role leakage | notification API | current persisted Learner membership, event college-scoped inbox/history and single/bulk read actions; DB success/denial tests authored, not run | FIXED |
 | L29-018 | Mobile notification list | NotificationsContent responsive | notification page | UNCHECKED |
 
@@ -766,7 +766,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-028 | Optional-section partial failure isolation | removed from current learner Profile composition | no separate optional placement-section fetches | RETIRED |
 | L30-029 | Loading skeleton | ProfileSkeleton | profile route | UNCHECKED |
 | L30-030 | Hard-error + Retry | profile route | profile route | UNCHECKED |
-| L30-031 | Visibility refresh | profile route | profile page | UNCHECKED |
+| L30-031 | Visibility refresh | profile route | guarded visibility-triggered router.refresh after 45s, manual saved-profile refresh, and reconciliation of newer server props only when on-screen document matches previous saved state (unsaved changes protected); PARTIAL pending fresh PostgreSQL/unit, tsc/eslint, multi-tab browser and concurrent-editor acceptance | PARTIAL |
 | L30-032 | Role fence/redirect | profile route | server context | FIXED |
 | L30-033 | Mobile profile cards/forms | profile responsive | profile workspace | UNCHECKED |
 | L30-034 | Profile Verification card | ProfileVerificationCard | no vNext verification domain/UI | GAP |

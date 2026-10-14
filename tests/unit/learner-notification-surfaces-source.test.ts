@@ -43,6 +43,7 @@ describe("Learner notification and placement UI source guards", () => {
     expect(bulk).toContain("markAllOwnLearnerNotificationsRead");
     expect(specific).toContain("isSameOriginRequest(request)");
     expect(list).toContain('readEndpoint + "/" + id + "/read"');
+    expect(list).toContain("item.actionLabel");
     expect(history).toContain("collegeId: membership.collegeId");
   });
 

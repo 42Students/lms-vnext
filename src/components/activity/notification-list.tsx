@@ -20,6 +20,7 @@ export type NotificationListItem = {
   /** Announcement rows have their own visibility policy, no recipient read flag. */
   source?: "ANNOUNCEMENT";
   pinned?: boolean;
+  actionLabel?:string;
 };
 
 function formatWhen(value: string) {
@@ -129,7 +130,7 @@ export function NotificationList({
                         href={item.actionHref}
                         className="inline-flex min-h-9 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
                       >
-                        Open
+                        {item.actionLabel??"Open"}
                       </Link>
                     ) : (
                       <Button
@@ -138,7 +139,7 @@ export function NotificationList({
                         disabled={pendingId !== null}
                         onClick={() => markRead(item.id, item.actionHref ?? undefined)}
                       >
-                        {pendingId === item.id ? "Opening…" : "Open"}
+                        {pendingId === item.id ? "Opening…" : (item.actionLabel??"Open")}
                       </Button>
                     )
                   ) : null}
