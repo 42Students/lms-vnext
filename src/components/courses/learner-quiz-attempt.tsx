@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
+import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 type QuizPayload = {
@@ -174,6 +175,7 @@ export function LearnerQuizAttempt() {
 
   const questions = quiz?.questions ?? [];
   const current = questions[step] ?? null;
+  const answerProgress=learnerQuizAnswerProgress(questions,answers);
   const latestAttempt = attempts.at(-1) ?? null;
   const answerMap = useMemo(
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
@@ -217,9 +219,7 @@ export function LearnerQuizAttempt() {
   async function submit() {
     if (!quiz || submittingRef.current || submitting || !attemptable) return;
 
-    const unanswered = questions.filter(
-      (question) => (answers[question.id] ?? []).length === 0,
-    ).length;
+    const unanswered = answerProgress.total-answerProgress.answered;
     const confirmation =
       unanswered > 0
         ? `You have ${unanswered} unanswered question${unanswered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
@@ -375,6 +375,15 @@ export function LearnerQuizAttempt() {
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
           </div>
           <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">Back</button>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
+          <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
+          {answerProgress.firstUnanswered!==null ? (
+            <button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-primary-text hover:bg-primary-subtle">
+              Go to first unanswered
+            </button>
+          ) : <span className="font-semibold text-success">All questions answered</span>}
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
           <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
