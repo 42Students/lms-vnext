@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -19,7 +20,8 @@ export default async function TpoCandidateSchedulePage({
   try {
     result = await getTpoCandidateScheduleReadiness(context, jobId);
   } catch (error) {
-    if (error instanceof Error && error.message === "PLACEMENT_JOB_NOT_FOUND") notFound();
+    if (error instanceof PlacementsServiceError &&
+      error.code === "PLACEMENT_JOB_NOT_FOUND") notFound();
     throw error;
   }
   const { drive, readiness, warning } = result;
