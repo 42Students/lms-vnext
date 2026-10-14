@@ -1,7 +1,7 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,isNull,ne,sql} from "drizzle-orm";
+import {and,eq,inArray,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   courseLearningPaths,courseLessons,lessonContents,
