@@ -12,6 +12,7 @@ import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attent
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
+import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -110,6 +111,9 @@ export default async function LearnerProjectsPage({
     });
 
   const total = filtered.length;
+  const emptyState = learnerProjectListEmptyState(
+    allRows.filter(row => row.memberRole === "LEARNER").length, total,
+  );
   const size = query.pageSize ?? 25;
   const totalPages = Math.max(1, Math.ceil(total / size));
   const page = Math.min(query.page ?? 1, totalPages);
@@ -159,16 +163,8 @@ export default async function LearnerProjectsPage({
           };
         })}
         basePath="/learn/projects"
-        emptyTitle={
-          query.search || query.status || query.attention
-            ? "No Projects match these filters"
-            : "No Projects yet"
-        }
-        emptyDescription={
-          query.search || query.status || query.attention
-            ? "Clear or change the filters to see other assigned Projects."
-            : "Projects will appear here after your college assigns you to a Project team."
-        }
+        emptyTitle={emptyState.title}
+        emptyDescription={emptyState.description}
       />
 
       <ProjectParticipantPagination

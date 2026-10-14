@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
+import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -130,5 +131,21 @@ describe("L20-013 PostgreSQL task-progress read",()=>{
     ];
     for(const actor of denied)
       await expect(listMyLearnerProjectProgress(actor,[ids.project])).rejects.toBeDefined();
+  });
+});
+
+describe("L20-016 project list data-state read (PostgreSQL)",()=>{
+  it("distinguishes a successful scoped project read from an empty search",async()=>{
+    const rows=(await listMyProjectInstances(context)).filter(row=>row.memberRole==="LEARNER");
+    expect(rows.some(row=>row.project.id===ids.project)).toBe(true);
+    expect(learnerProjectListEmptyState(rows.length,rows.length).reason).toBe("HAS_RESULTS");
+    const unmatched=rows.filter(row=>row.project.title==="Never-matches-this-project");
+    expect(learnerProjectListEmptyState(rows.length,unmatched.length).reason).toBe("FILTERED_EMPTY");
+  });
+  it("does not classify an authorization error as an empty project state",async()=>{
+    const suspended:RequestContext={
+      ...context,membership:{...context.membership!,status:"SUSPENDED"},
+    };
+    await expect(listMyProjectInstances(suspended)).rejects.toBeDefined();
   });
 });
