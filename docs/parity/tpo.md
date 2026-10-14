@@ -211,6 +211,8 @@ Legacy contract:
 - [ ] Company lookup is tenant-safe and case/identity stable.
 - [ ] Create Drive prefill matches.
 - [ ] Add Contact opens Leads add flow with company prefill.
+**W61 B PARTIAL:** Canonical Company detail links to /tpo/companies/[companyId]/manage. TPOs can edit only their own college's trusted relationship flag, archive it when no DRAFT/PUBLISHED drives remain, and restore it through the archived-company directory. All writes require a reason, confirmation, scoped principal and row-locked expected timestamp, with transaction-coupled immutable activity. The global company identity stays shared and is not editable here. Legacy global rename/domain UX, owner assignment, archived-filter scale/pagination, disposable PostgreSQL and browser proof remain open.
+
 - [ ] Company KPI strip matches.
 - [ ] People list/stage/activity/deep links match.
 
@@ -723,6 +725,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] personal notification preference options match.
 - [ ] preferences are user-specific, not college-wide.
 - [ ] save/error state matches.
+
+**W61 A BLOCKED:** placement_tpo_user_preferences is declared only in an unregistered staged schema; no CREATE TABLE is in the current registered Drizzle migration journal. The existing read-only page correctly shows UNAVAILABLE. Persisted user preference writes and audit cannot be enabled without migration promotion and owner disposition. No fake save state was added.
 
 ## Settings: What Companies See
 - [ ] field/data-sharing switches match.

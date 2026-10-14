@@ -92,7 +92,7 @@ export async function saveTpoCompanyLifecycle(
     );
     if (decision !== "ALLOW") throw new TpoCompanyLifecycleError(decision);
 
-    const now = new Date();
+    const now = new Date(Math.max(Date.now(), current.updatedAt.getTime() + 1));
     const nextStatus = input.action === "ARCHIVE" ? "ARCHIVED" as const :
       "ACTIVE" as const;
     const [saved] = await tx.update(placementCompanyRelationships).set({
