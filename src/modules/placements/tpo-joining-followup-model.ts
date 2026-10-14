@@ -1,15 +1,16 @@
 import { z } from "zod";
 import { placementReportCsv } from "./report-model";
+import { plusCalendarDays } from "./tpo-offer-expiry-model";
 export const tpoJoiningFollowupQuerySchema=z.object({
  seasonId:z.string().uuid().optional(),
- state:z.enum(["ALL","PENDING","DEFERRED","DATE_DUE","DATE_MISSING"]).default("ALL"),
+ state:z.enum(["ALL","PENDING","DEFERRED","DATE_DUE","DATE_MISSING","UPCOMING_7_DAYS"]).default("ALL"),
 }).strict();
 export type JoiningFollowupFact={
  offerId:string;jobId:string;jobTitle:string;companyName:string;
  candidateName:string|null;roleTitle:string;offerStatus:string;
  joiningStatus:string|null;scheduledDate:string|null;
 };
-export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],todayIst:string,state:"ALL"|"PENDING"|"DEFERRED"|"DATE_DUE"|"DATE_MISSING"){
+export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],todayIst:string,state:"ALL"|"PENDING"|"DEFERRED"|"DATE_DUE"|"DATE_MISSING"|"UPCOMING_7_DAYS"){
  const accepted=[...new Map(facts.filter(r=>r.offerStatus==="ACCEPTED")
    .map(r=>[r.offerId,r])).values()];
  const counts={
@@ -24,11 +25,13 @@ export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],
     r.scheduledDate===null).length,
  };
  const open=accepted.filter(r=>r.joiningStatus===null||r.joiningStatus==="PENDING"||r.joiningStatus==="DEFERRED");
+ const throughIst=plusCalendarDays(todayIst,7);
  const rows=open.filter(r=>state==="ALL"||
    (state==="PENDING"&&(r.joiningStatus===null||r.joiningStatus==="PENDING"))||
    (state==="DEFERRED"&&r.joiningStatus==="DEFERRED")||
    (state==="DATE_DUE"&&r.scheduledDate!==null&&r.scheduledDate<=todayIst)||
-   (state==="DATE_MISSING"&&r.scheduledDate===null&&(r.joiningStatus===null||r.joiningStatus==="PENDING")))
+   (state==="DATE_MISSING"&&r.scheduledDate===null&&(r.joiningStatus===null||r.joiningStatus==="PENDING"))||
+   (state==="UPCOMING_7_DAYS"&&r.scheduledDate!==null&&r.scheduledDate>todayIst&&r.scheduledDate<=throughIst))
    .sort((a,b)=>(a.scheduledDate??"9999-12-31").localeCompare(b.scheduledDate??"9999-12-31")||
      a.companyName.localeCompare(b.companyName)||a.offerId.localeCompare(b.offerId));
  return {counts,rows,todayIst};
