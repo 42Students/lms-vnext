@@ -52,6 +52,9 @@ export async function listCollegeRoleDirectory(
     collegeId,
   });
 
+  if (kind === "FACULTY" && filter.classPresence !== "ALL") {
+    throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
@@ -72,6 +75,25 @@ export async function listCollegeRoleDirectory(
     .where(and(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
+    )));
+  const assignedClass = exists(db.select({ enrollmentId: sectionEnrollments.id })
+    .from(sectionEnrollments)
+    .innerJoin(learnerProgramEnrollments, and(
+      eq(learnerProgramEnrollments.id, sectionEnrollments.learnerEnrollmentId),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+    ))
+    .innerJoin(sections, and(
+      eq(sections.id, sectionEnrollments.sectionId),
+      eq(sections.cohortId, learnerProgramEnrollments.cohortId),
+      eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId),
+      eq(sections.status, "ACTIVE"),
+    ))
+    .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+    .innerJoin(programs, and(eq(programs.id, cohorts.programId), eq(programs.id, learnerProgramEnrollments.programId)))
+    .innerJoin(departments, and(eq(departments.id, programs.departmentId), eq(departments.collegeId, collegeId)))
+    .where(and(
+      eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
+      eq(sectionEnrollments.status, "ACTIVE"),
     )));
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
@@ -132,6 +154,8 @@ export async function listCollegeRoleDirectory(
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind === "FACULTY" ? facultyInDepartment : undefined,
+      kind === "LEARNER" && filter.classPresence !== "ALL"
+        ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
       kind !== "FACULTY" || filter.teaching === "ALL" ? undefined :
