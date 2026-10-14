@@ -256,6 +256,16 @@ Legacy contract:
 
 ## Page: Placements Home
 
+**2026-10-14 activity addition (PARTIAL):** recent placement activity now
+projects up to eight persisted events from the learner's own journey:
+application submissions/withdrawals, published screening decisions and
+applied round results. No staged/internal results, inferred dates or
+fabricated history. The responsive dashboard section displays IST dates,
+links to the owned application and keeps a truthful no-events state.
+Exact legacy card layout, deep-link/browser proof and executed DB tests
+remain open.
+
+
 **2026-10-13 source parity expansion:** a real learner-scoped dashboard
 now summarizes distinct open drives, active applications, scheduled
 assessments/interviews and issued offers. Its next action prefers assessments
@@ -287,6 +297,16 @@ Legacy contract includes:
 - [ ] Every dashboard CTA lands on the intended filtered subpage.
 
 ## Page: Applications
+
+**2026-10-14 offers-browse addition (PARTIAL):** a dedicated
+`/learn/my-placements/offers` page lists all persisted offers belonging
+to the authenticated learner and provides All/Awaiting/Accepted/Closed
+views with honest first-run/filtered empty states. Applications and the
+placements dashboard link to it; existing offer-response actions are
+reused without adding a write endpoint. No unregistered notice or
+saved-job persistence is read. Full legacy offers modal and browser
+verification remain open.
+
 
 **2026-10-14 application detail extension (PARTIAL):** the existing
 applications drawer now links to separate read-only Application History and

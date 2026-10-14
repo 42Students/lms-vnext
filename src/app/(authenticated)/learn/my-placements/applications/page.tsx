@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
 import { LearnerApplicationsBrowse } from "@/components/placements/learner-applications-browse";
@@ -36,6 +37,9 @@ export default async function LearnerPlacementApplicationsPage() {
         title="Applications"
         description="Your placement applications and their current journey."
       />
+      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        Review all official offers →
+      </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
         <LearnerApplicationsBrowse items={items} />
       </Suspense>
