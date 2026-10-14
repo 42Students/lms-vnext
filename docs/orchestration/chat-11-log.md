@@ -187,3 +187,6 @@
 
 ## Round 3 AF — Meeting type filter (PARTIAL)
 - Filter registered meeting types with consistent count, paging and scoped SQL; pure/PG assertions source-authored, unexecuted.
+
+## Round 3 AG — Sprint Release status (PARTIAL)
+- Added registered Release status filter to Mentor Sprint progress and sanitized export, with unit tests authored only.
