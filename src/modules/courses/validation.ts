@@ -122,7 +122,7 @@ export const createCourseTeachingAssignmentInputSchema =
       courseSectionDeliveryIdSchema,
     membershipId: z.string().uuid(),
     role: z.enum(COURSE_TEACHING_ROLES),
-  });
+  }).strict();
 
 export type CreateCourseInput = z.infer<
   typeof createCourseInputSchema

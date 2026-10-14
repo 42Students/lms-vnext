@@ -19,6 +19,9 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { teachingAssignmentConflict } from "./teaching-assignment-guard";
 import {
   CoursesServiceError,
   postgresConstraintName,
@@ -32,7 +35,6 @@ import {
   courseSectionDeliveryIdSchema,
   courseTeachingAssignmentIdSchema,
   createCourseTeachingAssignmentInputSchema,
-  type CreateCourseTeachingAssignmentInput,
 } from "./validation";
 
 function mapTeachingConstraint(error: unknown) {
@@ -134,7 +136,7 @@ export async function listCourseTeachingAssignments(
 
 export async function createCourseTeachingAssignment(
   context: RequestContext,
-  rawInput: CreateCourseTeachingAssignmentInput,
+  rawInput: unknown,
 ) {
   const input =
     createCourseTeachingAssignmentInputSchema.parse(
@@ -184,7 +186,7 @@ export async function createCourseTeachingAssignment(
           eq(courseSectionDeliveries.id, input.deliveryId),
           isNull(courseSectionDeliveries.endedAt),
         ))
-        .for("share")
+        .for("update")
         .limit(1);
 
       if (!liveDelivery) {
@@ -226,10 +228,44 @@ export async function createCourseTeachingAssignment(
         throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
       }
 
+      const existing = await tx
+        .select({
+          membershipId: courseTeachingAssignments.membershipId,
+          role: courseTeachingAssignments.role,
+        })
+        .from(courseTeachingAssignments)
+        .where(and(
+          eq(courseTeachingAssignments.deliveryId, input.deliveryId),
+          isNull(courseTeachingAssignments.endedAt),
+        ));
+      const conflict = teachingAssignmentConflict(input, existing);
+      if (conflict) {
+        throw new CoursesServiceError(conflict);
+      }
+
       const [created] = await tx
         .insert(courseTeachingAssignments)
         .values(input)
         .returning();
+
+      if (!created) throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_TEACHING_ASSIGNED,
+        collegeId: delivery.collegeId,
+        organizationId: delivery.organizationId,
+        subjectType: "course_teaching_assignment",
+        subjectId: created.id,
+        subjectLabel: input.role,
+        summary: "Faculty teaching assignment created",
+        metadata: {
+          after: {
+            deliveryId: created.deliveryId,
+            membershipId: created.membershipId,
+            role: created.role,
+            endedAt: null,
+          },
+        },
+      });
 
       return created;
     });
@@ -324,6 +360,29 @@ export async function endCourseTeachingAssignment(
       throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
     }
 
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_TEACHING_ENDED,
+      collegeId: current.collegeId,
+      organizationId: current.organizationId,
+      subjectType: "course_teaching_assignment",
+      subjectId: updated.id,
+      subjectLabel: updated.role,
+      summary: "Faculty teaching assignment ended",
+      metadata: {
+        before: {
+          deliveryId: current.deliveryId,
+          membershipId: current.membershipId,
+          role: current.role,
+          endedAt: null,
+        },
+        after: {
+          deliveryId: updated.deliveryId,
+          membershipId: updated.membershipId,
+          role: updated.role,
+          endedAt: updated.endedAt?.toISOString() ?? null,
+        },
+      },
+    });
     return updated;
   });
 }

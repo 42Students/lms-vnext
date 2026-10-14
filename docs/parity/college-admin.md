@@ -437,7 +437,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Faculty Assignment
 **Legacy:** `/college-admin/faculty-assignment`
 
-**Read-first PARTIAL:** `/college/faculty-assignment` shows persisted college-scoped teaching assignments, Faculty identity, class/course context, active/ended lifecycle, filtering and pagination. Mutation dialogs, conflict warnings, exact legacy assignment behavior and browser acceptance remain open.
+**Write-side PARTIAL (2026-10-14):** `/college/faculty-assignment` retains the college-scoped list/search/status/pagination and adds a live course/class delivery + Faculty + role assignment form and end-assignment action. Both require explicit user confirmation. Existing registered `course_teaching_assignments` unique constraints remain the concurrency backstop; the create transaction also checks duplicate faculty/live primary teacher before insert, locks live delivery/membership/Faculty role and writes an immutable actor-scoped `activity_events` audit row. End keeps teaching history and audits in the same transaction. Read-only options filter active same-college deliveries, courses, cohorts/programs, academic periods, section and Faculty account/membership. A maximum 200-option truncation is disclosed; no silent fallback. Change/reassign in one operation, timetable conflict evaluation, exact legacy dialogs and executed DB/browser acceptance remain open.
 
 - [ ] Course/Class/Faculty selectors match.
 - [ ] Existing assignment list/table matches.
