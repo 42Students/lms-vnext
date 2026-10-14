@@ -80,6 +80,7 @@ describe.skipIf(!enabled)("College batch promotion execute, rollback-only dispos
 
       const command = { cohortId: ids.cohort, programId: ids.program,
         expectedVersion: 0, yearStart: 2028,
+        expectedCheckedLearners:1, expectedTargetTerm:2, expectedAcademicYearStart:2028,
         action: "PROMOTE" as const, confirm: true as const };
       const run = (ctx: RequestContext, input: unknown) =>
         executeCollegeBatchPromotion(ctx, input, (fn) => tx.transaction(fn));
@@ -98,6 +99,10 @@ describe.skipIf(!enabled)("College batch promotion execute, rollback-only dispos
       });
       await tx.execute(sql`update section_enrollments set status='ACTIVE',ended_at=null
         where id=${ids.sectionEnrollment}`);
+      await expect(run(admin, {...command,expectedCheckedLearners:2}))
+        .rejects.toMatchObject({code:"PROMOTION_PREVIEW_CHANGED"});
+      await expect(run(admin, {...command,expectedTargetTerm:3}))
+        .rejects.toMatchObject({code:"PROMOTION_PREVIEW_CHANGED"});
       const result = await run(admin, command);
       expect(result).toMatchObject({
         cohortId: ids.cohort, version: 1, currentTermNumber: 2,

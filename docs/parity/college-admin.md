@@ -247,6 +247,8 @@ Legacy contract audited:
 - [ ] Schedule conflicts are surfaced, not silently dropped.
 
 ## Page: Batch Promotion
+**Preview-binding PARTIAL (2026-10-14):** A confirmed PROMOTE now supplies the exact server-preview learner count, next term and academic year, and the transactional apply rechecks these after its normal blocker/version checks. A changed preview rejects with PROMOTION_PREVIEW_CHANGED instead of silently promoting a different cohort state. Unit and disposable PG stale-preview tests authored; the existing all-or-nothing progression history/audit remains. Graduation and independently executed browser/PG gates remain outstanding.
+
 **Legacy:** `/college-admin/batch-promotion`
 
 **Write-side PARTIAL (2026-10-14):** `/college/batch-promotion` retains the server-authored preview of up to 2,000 learner blocker checks and adds explicit confirmation for eligible **PROMOTE** cases. Same-origin POST requires strict Zod, College Admin and college scope. The transaction locks cohort/progression/enrollments, reruns the preview, rejects blockers and stale expected versions, updates term/year and version (+1), inserts registered cohort progression history and college-scoped immutable activity audit. No inferred period/class transfer. **GRADUATE** remains unavailable because registered history only permits PROMOTION (+1) and CORRECTION (same term); exact legacy/browser/runtime acceptance remains open.
