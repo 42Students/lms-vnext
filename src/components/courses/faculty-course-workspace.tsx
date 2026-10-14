@@ -362,6 +362,20 @@ export function FacultyCourseWorkspace({
 
       {view !== "BLUEPRINT" ? (
         <>
+      <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
+        <Link
+          href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
+          className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        >
+          Section reports hub
+        </Link>
+        <Link
+          href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        >
+          Current Section students
+        </Link>
+      </nav>
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
