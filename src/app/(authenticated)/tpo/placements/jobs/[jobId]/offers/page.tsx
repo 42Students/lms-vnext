@@ -19,6 +19,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e}
+ const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
  const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"");
@@ -47,7 +48,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role}</p></div><strong className="text-sm">{row.status}</strong></div>
-    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd>{row.issued.slice(0,10)}</dd></div><div><dt>Responded</dt><dd>{row.responded?.slice(0,10)??"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div></dl>
+    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
+    <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div>
+    {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>
     <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="text-primary-text" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
     <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="text-primary-text" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
