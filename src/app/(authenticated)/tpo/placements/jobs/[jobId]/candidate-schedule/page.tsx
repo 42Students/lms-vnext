@@ -2,14 +2,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
-import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
-import { requirePlacementManageScope } from "@/modules/placements/scope";
-import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
-import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import {
-  candidateScheduleJobIdSchema, projectTpoCandidateScheduleReadiness,
-} from "@/modules/placements/tpo-candidate-schedule-model";
+  getTpoCandidateScheduleReadiness,
+} from "@/modules/placements/tpo-candidate-schedule-service";
 
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -18,23 +13,16 @@ export default async function TpoCandidateSchedulePage({
   params,
 }: { params: Promise<{ jobId: string }> }) {
   const context = await getCurrentRequestContext();
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
-  const collegeId = membership.collegeId;
-  if (!can(context, "placements.manage", { collegeId })) {
-    throw new AuthorizationError("placements.manage");
-  }
-  requirePermission(context, "placements.manage", { collegeId });
-  await requirePlacementManageScope(context, collegeId);
+  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
-  const parsed = candidateScheduleJobIdSchema.safeParse(jobId);
-  if (!parsed.success) notFound();
-  const drive = await getPlacementDriveDay(context, parsed.data);
-  const readiness = projectTpoCandidateScheduleReadiness(drive.rounds);
-  const collisions = await getTpoScheduleConflicts(context, { days: 90 }).catch(() => null);
-  const warning = projectTpoDriveScheduleWarnings(
-    collisions, drive.rounds.map(round => round.id),
-  );
+  let result: Awaited<ReturnType<typeof getTpoCandidateScheduleReadiness>>;
+  try {
+    result = await getTpoCandidateScheduleReadiness(context, jobId);
+  } catch (error) {
+    if (error instanceof Error && error.message === "PLACEMENT_JOB_NOT_FOUND") notFound();
+    throw error;
+  }
+  const { drive, readiness, warning } = result;
   return <div className="space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
       className="text-sm font-semibold text-primary-text">← Back to drive</Link>
