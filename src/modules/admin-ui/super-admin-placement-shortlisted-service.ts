@@ -41,6 +41,6 @@ export async function listSuperAdminShortlisted(context:RequestContext,raw:unkno
  return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
   id:r.id,title:r.learnerName||"Unnamed applicant",subtitle:r.jobTitle+" · "+r.roleTitle,
   status:r.status,details:["Screening: Shortlisted","Decision: "+(r.decidedAt?fmt.format(r.decidedAt)+" IST":"Not recorded")],
-  href:`/admin/placements/jobs/${encodeURIComponent(r.jobId)}`,
+  href:`/admin/placements/shortlisted/${encodeURIComponent(r.id)}`,
  }))};
 }

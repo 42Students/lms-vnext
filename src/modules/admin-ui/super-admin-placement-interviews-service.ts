@@ -35,6 +35,6 @@ export async function listSuperAdminInterviews(context:RequestContext,raw:unknow
   id:row.id,title:row.roundName,subtitle:row.jobTitle+" · Round "+row.sequence,
   status:row.roundStatus,details:["Type: "+row.roundKind,"Mode: "+(row.mode??"Not scheduled"),
    "Schedule: "+(row.scheduledAt?fmt.format(row.scheduledAt)+" IST":"Not scheduled")],
-  href:`/admin/placements/jobs/${encodeURIComponent(row.jobId)}`,
+  href:`/admin/placements/interviews/${encodeURIComponent(row.id)}`,
  }))};
 }

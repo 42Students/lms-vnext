@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
@@ -25,6 +25,7 @@ import {
   type CollegeContentKind,
 } from "./college-content-aggregate-model";
 
+import {collegeLiveClassQuerySchema,istDayBoundary} from "./college-live-classes-model";
 const programDepartment = alias(departments, "content_program_department");
 
 /**
@@ -37,7 +38,10 @@ export async function listCollegeContentAggregate(
   kind: CollegeContentKind,
   rawQuery: unknown,
 ) {
-  const query = collegeContentQuerySchema.parse(rawQuery);
+  const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
+  const query = collegeContentQuerySchema.parse(live ? {
+    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,page:live.page,format:"ALL",
+  } : rawQuery);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "courses.read", {
@@ -70,6 +74,8 @@ export async function listCollegeContentAggregate(
     courseCode: aliasedColumn(courses.code, "content_course_code"),
     cohortName: aliasedColumn(cohorts.name, "content_cohort_name"),
     periodName: aliasedColumn(academicPeriods.name, "content_period_name"),
+    startsAt: aliasedColumn(lessonContents.startsAt,"content_starts_at"),
+    endsAt: aliasedColumn(lessonContents.endsAt,"content_ends_at"),
   }).from(lessonContents)
     .innerJoin(courseLessons, eq(courseLessons.id, lessonContents.lessonId))
     .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -94,6 +100,12 @@ export async function listCollegeContentAggregate(
         kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      kind !== "LIVE_CLASS" && query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
+      kind !== "LIVE_CLASS" && query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
+      live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
+      live?.view === "PAST" ? lt(lessonContents.endsAt,new Date()) : undefined,
+      live?.from ? gte(lessonContents.endsAt,istDayBoundary(live.from)) : undefined,
+      live?.to ? lt(lessonContents.startsAt,istDayBoundary(live.to,true)) : undefined,
       query.q ? or(
         ilike(lessonContents.title, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
         ilike(courseLessons.name, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"),
@@ -110,7 +122,7 @@ export async function listCollegeContentAggregate(
   ]);
   const total = counts[0]?.total ?? 0;
   return {
-    kind, query, items, total,
+    kind, query, view:live?.view??"ALL", from:live?.from, to:live?.to, items, total,
     totalPages: collegeContentPageCount(total),
   };
 }

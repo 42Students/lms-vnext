@@ -9,6 +9,7 @@ import {
   collegeSemesterDirectorySchema,
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeSemesters } from "@/modules/academics/college-academic-directory-service";
+import { academicExportHref } from "@/modules/academics/college-academic-export-model";
 
 export default async function CollegeSemestersPage({
   searchParams,
@@ -27,5 +28,11 @@ export default async function CollegeSemestersPage({
         action={<Link href="/college/semesters" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
-  return <CollegeAcademicDirectory data={await listCollegeSemesters(context, parsed.data)} />;
+  return <div className="space-y-4">
+    <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export filtered semesters CSV
+    </Link>
+    <CollegeAcademicDirectory data={await listCollegeSemesters(context, parsed.data)} />
+  </div>;
 }

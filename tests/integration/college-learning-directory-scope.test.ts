@@ -4,6 +4,8 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {exportCollegeLessons} from "@/modules/courses/college-lessons-export-service";
+import {exportCollegeCourseProgress} from "@/modules/courses/college-progress-export-service";
 import {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -134,7 +136,15 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
       listCollegeLessons(own, { q: name }),
       listCollegeCourseProgress(own, { q: name }),
     ]);
+    const exact=await listCollegeLessons(own,{courseCode:name});
+    const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
+    expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(unknown.items).toEqual([]);
     const lesson = lessonPage.items.find(row => row.id === ids.lesson);
+    const sameCode=await listCollegeCourseProgress(own,{courseCode:name});
+    const missingCode=await listCollegeCourseProgress(own,{courseCode:"NOT-THIS-CODE"});
+    expect(sameCode.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(missingCode.items).toEqual([]);
     const progress = progressPage.items.find(row => row.offeringId === ids.offering);
     expect(lesson).toMatchObject({ contentCount: 1, publishedContentCount: 1 });
     const [active, archived] = await Promise.all([
@@ -146,6 +156,23 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(progress).toMatchObject({ recordedRows: 0, completedRows: 0, learnersWithRecords: 0 });
   });
 
+  it("exports only own-college authored/published lesson counts",async()=>{
+    const ours=await exportCollegeLessons(own,{q:name});
+    const theirs=await exportCollegeLessons(otherCollege,{q:name});
+    expect(ours.csv).toContain(name);
+    expect(ours.csv).toContain("Published content");
+    expect(theirs.csv).not.toContain(name);
+    await expect(exportCollegeLessons(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("exports observed progress counts only under the current college",async()=>{
+    const ours=await exportCollegeCourseProgress(own,{q:name});
+    const theirs=await exportCollegeCourseProgress(otherCollege,{q:name});
+    expect(ours.csv).toContain(name);
+    expect(ours.csv).toContain("Recorded content rows");
+    expect(ours.csv).toContain("0");
+    expect(theirs.csv).not.toContain(name);
+    await expect(exportCollegeCourseProgress(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("does not reveal the seeded course or lesson to an admin from another college", async () => {
     const [lessons, progress] = await Promise.all([
       listCollegeLessons(otherCollege, { q: name }),

@@ -52,3 +52,25 @@ export function facultyQuizLegacyEdit(current: {
   expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
  });
 }
+
+/** Metadata-only edits should not add an audit event or bump the version
+ * when the persisted and requested values describe the same instant. */
+export function facultyQuizMetadataUnchanged(
+ current:{title:string;description:string|null;dueAt:Date|null;maxAttempts:number},
+ input:{title:string;description:string|null;dueAt:string|null;maxAttempts:number},
+):boolean {
+ const dueTime=input.dueAt===null?null:new Date(input.dueAt).getTime();
+ return current.title===input.title &&
+  current.description===input.description &&
+  (current.dueAt?.getTime()??null)===dueTime &&
+  current.maxAttempts===input.maxAttempts;
+}
+
+/** Attempt limits are part of a published Quiz's announced conditions.
+ * Only an unpublished draft may revise them. */
+export function facultyQuizAttemptLimitLocked(
+ status:"DRAFT"|"PUBLISHED"|"CLOSED"|"ARCHIVED",
+ persisted:number,requested:number,
+){
+ return status!=="DRAFT" && persisted!==requested;
+}

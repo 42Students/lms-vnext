@@ -1,7 +1,7 @@
 import "server-only";
 
-import { and, asc, count, eq, sql } from "drizzle-orm";
-import { facultyTeachingAssignmentState } from "./college-faculty-detail-model";
+import { and, asc, count, eq, isNull, isNotNull, or, sql } from "drizzle-orm";
+import { collegeFacultyAssignmentHistoryQuerySchema, facultyTeachingAssignmentState } from "./college-faculty-detail-model";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohorts, collegeMemberships, courseOfferings,
@@ -11,14 +11,14 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  collegePersonIdSchema, collegePersonDetailQuerySchema, CollegePersonNotFoundError,
+  collegePersonIdSchema, CollegePersonNotFoundError,
 } from "./college-person-detail-model";
 
 export async function getCollegeFacultyDetail(
   context: RequestContext, membershipIdInput: unknown, rawQuery: unknown = {},
 ) {
   const membershipId = collegePersonIdSchema.parse(membershipIdInput);
-  collegePersonDetailQuerySchema.parse(rawQuery);
+  const filter=collegeFacultyAssignmentHistoryQuerySchema.parse(rawQuery);
   const owner = context.membership;
   if (!owner || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "people.manage", {collegeId: owner.collegeId, organizationId: owner.organizationId}))
@@ -93,7 +93,10 @@ export async function getCollegeFacultyDetail(
       active: sql<number>`count(*) filter (where ${base.endedAt} is null and ${base.deliveryEndedAt} is null)`.mapWith(Number),
       distinctOfferings: sql<number>`count(distinct ${base.offeringId})`.mapWith(Number),
     }).from(base),
-    db.select().from(base).orderBy(asc(base.courseName), asc(base.sectionName), asc(base.id)).limit(101),
+    db.select().from(base).where(
+      filter.status === "ACTIVE" ? and(isNull(base.endedAt),isNull(base.deliveryEndedAt)) :
+      filter.status === "ENDED" ? or(isNotNull(base.endedAt),isNotNull(base.deliveryEndedAt)) : undefined,
+    ).orderBy(asc(base.courseName), asc(base.sectionName), asc(base.id)).limit(101),
   ]);
   const raw = rows.slice(0, 100);
   return {
@@ -110,6 +113,7 @@ export async function getCollegeFacultyDetail(
       activeAssignments: totals[0]?.active ?? 0,
       distinctOfferings: totals[0]?.distinctOfferings ?? 0,
     },
+    filter,
     assignments: raw.map(row => ({
       ...row,
       status: facultyTeachingAssignmentState(row.endedAt, row.deliveryEndedAt),
