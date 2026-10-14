@@ -1,3 +1,7 @@
+"use client";
+
+import {useState} from "react";
+import {filterLearnerProjectActivityText} from "@/modules/projects/learner-project-activity-text-model";
 import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
@@ -16,8 +20,11 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const category = learnerProjectActivityCategorySchema.safeParse(categoryInput).data ?? "ALL";
   const parsed = parseLearnerProjectActivityFilters({ category: categoryInput, from: fromInput, to: toInput,
     beforeTime: beforeTimeInput, beforeId: beforeIdInput });
-  const shown = parsed.success ? filterLearnerProjectActivity(events, category) : [];
-  const lastEvent = shown.at(-1);
+  const [textQuery,setTextQuery]=useState("");
+  const pageRows = parsed.success ? filterLearnerProjectActivity(events,category) : [];
+  const shown=filterLearnerProjectActivityText(pageRows,textQuery);
+  // Pagination must advance using the last *fetched* row, not the last text match.
+  const lastEvent=pageRows.at(-1);
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
@@ -41,6 +48,18 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <button type="submit" className="min-h-11 self-end rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
       <Link href={route + "?tab=activity"} className="inline-flex min-h-11 items-center justify-center self-end rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
+    {parsed.success && pageRows.length > 0 ? (
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-3">
+        <label className="min-w-0 flex-1 text-sm font-semibold text-foreground">Find in this activity page
+          <input type="search" maxLength={100} value={textQuery}
+            onChange={event=>setTextQuery(event.target.value)}
+            placeholder="Search summary, subject or actor"
+            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm font-normal" />
+        </label>
+        {textQuery ? <button type="button" onClick={()=>setTextQuery("")}
+          className="min-h-11 rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">Clear text search</button> : null}
+      </div>
+    ) : null}
     {!parsed.success ? <p role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">Choose valid dates with the start on or before the end, and a listed activity type. If this page link is invalid, use Clear to return to recent activity.</p> : null}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
@@ -52,7 +71,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       ) : null}
     </div>
     {shown.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-      {!parsed.success ? "Apply a valid filter to view activity." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."}
+      {!parsed.success ? "Apply a valid filter to view activity." : textQuery.trim() && pageRows.length ? "No events on this loaded page match your text. Clear the search or navigate to older events." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."
     </div> : <ol className="space-y-3">{shown.map(event => <li key={event.id}
       className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <p className="break-words text-sm font-semibold text-foreground">{event.summary}</p>
@@ -65,6 +84,6 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       {hasMore && lastEvent ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
         className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Older matching events →</Link> : null}
     </nav> : null}
-    <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to the authorized Project history. Each page shows up to 100 matching events; use Older matching events to continue. Unrecorded historical actions cannot appear here.</p>
+    <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older matching events uses the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;
 }
