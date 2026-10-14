@@ -9,6 +9,7 @@ import {
 } from "next/navigation";
 import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@/modules/attendance/learner-attendance-filter-model";
 import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, LEARNER_ATTENDANCE_HISTORY_OPTIONS, type LearnerAttendanceHistoryFilter } from "@/modules/attendance/learner-attendance-history-model";
+import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -228,6 +229,7 @@ export function LearnerAttendanceWorkspace({
     () => filterLearnerAttendanceHistory(monthRows,historyFilter),
     [monthRows,historyFilter],
   );
+  const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
 
   function updateUrl(
     nextDeliveryId: string,
@@ -479,6 +481,16 @@ export function LearnerAttendanceWorkspace({
           </Select>
         </label>
       </div>
+      {historyRows.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+          <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
+          <a download="learner-attendance-history.csv"
+            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
+            className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            Download attendance CSV
+          </a>
+        </div>
+      ) : null}
       {historyRows.length === 0 ? (
         <EmptyState
           title={monthRows.length ? "No sessions match this status" : "No attendance records"}
