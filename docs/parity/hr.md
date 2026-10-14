@@ -457,3 +457,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR read-only in-app notifications — PARTIAL:** New /hr/messages page safely lists persisted own-recipient in_app_notifications joined to allowlisted PLACEMENTS job lifecycle events and exact recruiter company+college job IDs; unread-only filter, chooser, bounded newest 100 and IST times. Never displays raw notification body/title or applicant contact. Pure unit and in-test PostgreSQL own positive/foreign-college/wrong-role fixtures authored, not executed. Remaining true legacy threads, read acknowledgement, real-time refresh, browser acceptance.
+
+
+**2026-10-15 chat-10 / recruiter notification acknowledgement — PARTIAL:** Same-origin POST marks only own-recipient, exact-company job-lifecycle notification readAt using strict createdAt optimistic CAS and no new external send or noisy audit event. Foreign-company notification resolves non-leaking PLACEMENT_JOB_NOT_FOUND; duplicate or stale becomes declared PLACEMENT_RECRUITER_NOTIFICATION_STALE. Read button refreshes inbox. Unit + isolated PG own/foreign/wrong-role/stale tests authored, unexecuted. Remaining legacy thread-level read semantics and browser acceptance.

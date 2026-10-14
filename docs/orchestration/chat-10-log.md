@@ -56,3 +56,5 @@
 - 2026-10-15 — Pre-merge self-review hotfix: fixed double-escaped regexes in recruiter display-name normalization and CSV formula neutralization; added leading whitespace/newline regressions. Pure tests authored, not executed.
 
 - 2026-10-15 — HR notifications PARTIAL: scoped own-recipient lifecycle inbox, no raw PII/title/body, unread-only display; unit/PG fixtures authored, unexecuted.
+
+- 2026-10-15 — HR notification mark read PARTIAL: same-origin, exact employer allowlist, createdAt CAS, new stale error and persisted readAt. Unit/PG authored; not run.

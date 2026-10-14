@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-model";
+import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-button";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[]}>
@@ -51,10 +52,12 @@ export default async function HrMessagesPage({searchParams}:{
       <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
      </div>
      <p className="mt-2 text-sm text-body">{row.label}{row.unread?" · Unread":""}</p>
+     {row.unread?<HrNotificationReadButton notificationId={row.id}
+        expectedCreatedAt={row.createdAt.toISOString()}/>:null}
     </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
    {result.truncated?<p className="text-sm text-muted-foreground">Showing newest 100 notifications only.</p>:null}
-   <p className="text-xs text-muted-foreground">Conversation threads, replies and marking as read are not yet available. No private applicant messages are displayed.</p>
+   <p className="text-xs text-muted-foreground">Conversation threads and replies remain unavailable. Read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }
