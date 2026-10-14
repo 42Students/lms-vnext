@@ -78,7 +78,9 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
       facultyMembershipId:input.facultyMembershipId??null,lectureHallId:input.lectureHallId??null,
     }))).returning({id:sectionScheduleEvents.id});
     // Advance the optimistic section token after creating this series.
-    await tx.update(sections).set({ updatedAt: new Date() })
+    await tx.update(sections).set({
+      updatedAt: sql<Date>`greatest(${sections.updatedAt} + interval '1 millisecond', clock_timestamp())`,
+    })
       .where(eq(sections.id,section.id));
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,

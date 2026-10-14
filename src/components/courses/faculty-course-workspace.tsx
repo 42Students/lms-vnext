@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { FacultyContentEditor } from "./faculty-content-editor";
+import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
@@ -160,19 +161,6 @@ function AssignmentItem({
   item: Workspace["lessons"][number]["assignments"][number];
   deliveryId: string;
 }) {
-  const actions = facultyOwnedItemActions({
-    deliveryId: item.deliveryId,
-    status: item.status,
-    kind: "ASSIGNMENT",
-  });
-  const available = [
-    ...(actions.canPublish
-      ? (["PUBLISH"] as const)
-      : []),
-    ...(actions.canArchive
-      ? (["ARCHIVE"] as const)
-      : []),
-  ];
 
   return (
     <article className="rounded-lg border border-border bg-surface p-4">
@@ -225,12 +213,14 @@ function AssignmentItem({
               description: item.description,
               dueAt: item.dueAt,
               status: item.status,
+              updatedAt: item.updatedAt,
               maxPoints: item.maxPoints,
             }}
           />
-          <FacultyItemActions
-            transitionUrl={`/api/courses/assignments/${item.id}/transition`}
-            actions={available}
+          <FacultyAssessmentLifecycle
+            key={item.id+":"+new Date(item.updatedAt).toISOString()}
+            kind="ASSIGNMENT" id={item.id} deliveryId={deliveryId}
+            status={item.status} updatedAt={item.updatedAt} owned={true}
           />
         </div>
       ) : null}
@@ -258,22 +248,6 @@ function QuizItem({
   item: Workspace["lessons"][number]["quizzes"][number];
   deliveryId: string;
 }) {
-  const actions = facultyOwnedItemActions({
-    deliveryId: item.deliveryId,
-    status: item.status,
-    kind: "QUIZ",
-  });
-  const available = [
-    ...(actions.canPublish
-      ? (["PUBLISH"] as const)
-      : []),
-    ...(actions.canClose
-      ? (["CLOSE"] as const)
-      : []),
-    ...(actions.canArchive
-      ? (["ARCHIVE"] as const)
-      : []),
-  ];
 
   return (
     <article className="rounded-lg border border-border bg-surface p-4">
@@ -326,6 +300,7 @@ function QuizItem({
               description: item.description,
               dueAt: item.dueAt,
               status: item.status,
+              updatedAt: item.updatedAt,
               maxAttempts: item.maxAttempts,
             }}
           />
@@ -335,9 +310,10 @@ function QuizItem({
               deliveryId={deliveryId}
             />
           ) : null}
-          <FacultyItemActions
-            transitionUrl={`/api/courses/quizzes/${item.id}/transition`}
-            actions={available}
+          <FacultyAssessmentLifecycle
+            key={item.id+":"+new Date(item.updatedAt).toISOString()}
+            kind="QUIZ" id={item.id} deliveryId={deliveryId}
+            status={item.status} updatedAt={item.updatedAt} owned={true}
           />
         </div>
       ) : null}
@@ -353,6 +329,7 @@ function QuizItem({
         deliveryId={deliveryId}
         status={item.status}
         resultsPublished={item.resultsPublished}
+        updatedAt={new Date(item.updatedAt).toISOString()}
         deliveryOwned={item.deliveryId !== null}
       />
     </article>

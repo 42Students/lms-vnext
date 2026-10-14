@@ -7,12 +7,12 @@ import {
   getFacultyAssignmentReport, getFacultyQuizReport,
 } from "./faculty-assessment-report-service";
 import {
-  facultyReportCsv, facultyReportCsvFilename,
-  type FacultyReportCsvInput,
+  facultyReportCsv, facultyReportCsvFilename, capFacultyReportCsvRows,
+  type FacultyReportCsvInput, facultyCsvLearnerLabel,
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
 import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
-import {capFacultyQuizCsvRows,facultyQuizCsvNotice} from "./faculty-quiz-csv-cap";
+import {capFacultyQuizCsvRows,facultyQuizCsvNotice,selectFacultyQuizCsvRows} from "./faculty-quiz-csv-cap";
 
 /** A GET export re-runs the persisted Section authorization; never trust cached UI report props. */
 export async function getFacultyReportCsvForDownload(
@@ -45,8 +45,8 @@ export async function getFacultyReportCsvForDownload(
           const scored = submission.gradingStatus === "GRADED" &&
             submission.pointsAwarded !== null && assignment.maxPoints > 0;
           return {
-            name:submission.learnerDisplayName || submission.learnerEmail || "Learner",
-            email:submission.learnerEmail,
+            name:facultyCsvLearnerLabel(submission.learnerDisplayName),
+            email:null,
             status:"SUBMITTED" as const,
             score:scored ? submission.pointsAwarded + "/" + assignment.maxPoints : null,
             percent:scored ? Math.round(submission.pointsAwarded! /
@@ -59,8 +59,8 @@ export async function getFacultyReportCsvForDownload(
         }),
         ...(query.filter===undefined||query.filter==="ALL" ? missingLearners : [])
           .map(learner => ({
-          name:learner.displayName || learner.email || "Learner",
-          email:learner.email,
+          name:facultyCsvLearnerLabel(learner.displayName),
+          email:null,
           status:"NOT_SUBMITTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded submission",
         })),
@@ -71,14 +71,16 @@ export async function getFacultyReportCsvForDownload(
       context,query.assessmentId,query.deliveryId,
     );
     const {quiz,latestAttempts,notAttemptedLearners} = report;
-    const capped=capFacultyQuizCsvRows(latestAttempts,notAttemptedLearners);
+    const selected=selectFacultyQuizCsvRows(latestAttempts,notAttemptedLearners,
+      query.filter??"ALL");
+    const capped=capFacultyQuizCsvRows(selected.attempted,selected.missing);
     omittedRows=capped.omittedRows;
     input = {
       kind:"quiz",title:quiz.title,sectionName:quiz.sectionName,
       rows:[
         ...capped.selectedAttempts.map(attempt => ({
-          name:attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
-          email:attempt.learnerEmail,
+          name:facultyCsvLearnerLabel(attempt.learnerDisplayName),
+          email:null,
           status:"ATTEMPTED" as const,
           score:attempt.score + "/" + attempt.maxScore,
           percent:attempt.maxScore > 0 ?
@@ -87,19 +89,22 @@ export async function getFacultyReportCsvForDownload(
           note:"Attempt " + attempt.attemptNumber,
         })),
         ...capped.selectedMissing.map(learner => ({
-          name:learner.displayName || learner.email || "Learner",
-          email:learner.email,
+          name:facultyCsvLearnerLabel(learner.displayName),
+          email:null,
           status:"NOT_ATTEMPTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded attempt",
         })),
       ],
     };
   }
-  const notice=input.kind==="quiz"?facultyQuizCsvNotice(omittedRows):null;
+  const bounded=capFacultyReportCsvRows(input.rows);
+  omittedRows+=bounded.omittedRows;
+  input={...input,rows:bounded.rows};
+  const notice=facultyQuizCsvNotice(omittedRows);
   // The notice is seven CSV fields like ordinary rows; numeric, server
   // authored metadata only. It cannot introduce a spreadsheet formula.
   const noteRow=notice?
-    '"' + notice.replaceAll('"','""') + '","","","","","",""\r\n':"";
+    '"' + notice.replaceAll('"','""') + '","","","",""\r\n':"";
   return {
     filename:facultyReportCsvFilename(input.kind,input.title,input.sectionName),
     csv:facultyReportCsv(input)+noteRow,

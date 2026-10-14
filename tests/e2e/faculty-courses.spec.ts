@@ -51,6 +51,29 @@ test("Faculty has five distinct, authorized Course tabs and editable Section Blu
   await expect(page).toHaveURL(/\/home$/);
 });
 
+test("Faculty empty discussion offers legacy starter drafts without posting them", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.route(url=>url.pathname.startsWith("/api/courses/deliveries/") && url.pathname.endsWith("/discussions"), async route=>{
+    if(route.request().method()!=="GET")return route.continue();
+    return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({
+      messages:[],highlightedPinned:null,nextCursor:null,canPost:true,
+    })});
+  });
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).click();
+  await page.getByRole("navigation",{name:"Faculty course tabs"})
+    .getByRole("link",{name:"Discussions"}).click();
+  await expect(page.getByText("Start the conversation")).toBeVisible();
+  await page.getByRole("button",{name:"Post a welcome message"}).click();
+  await expect(page.getByLabel("Write a message")).toHaveValue(
+    "Welcome! Use this space for questions about the course.",
+  );
+  await page.getByRole("button",{name:"Share this week's focus"}).click();
+  await expect(page.getByLabel("Write a message")).toHaveValue(
+    "This week we are focusing on: ",
+  );
+});
+
 test("Faculty posts, pins, unpins and deletes a Section discussion in the browser", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/courses");
@@ -76,10 +99,12 @@ test("Faculty posts, pins, unpins and deletes a Section discussion in the browse
   await article.getByRole("button", { name: "Pin", exact: true }).click();
   expect((await pin).ok()).toBe(true);
   await expect(article.getByRole("button", { name: "Unpin" })).toBeVisible();
+  const pinnedStripUnpin=page.getByRole("button",{name:"Unpin pinned message"});
+  await expect(pinnedStripUnpin).toBeVisible();
   page.once("dialog", dialog => dialog.accept());
   const unpin = page.waitForResponse(res =>
     res.request().method() === "PATCH" && new URL(res.url()).pathname.endsWith("/" + messageId));
-  await article.getByRole("button", { name: "Unpin" }).click();
+  await pinnedStripUnpin.click();
   expect((await unpin).ok()).toBe(true);
   page.once("dialog", dialog => dialog.accept());
   const removed = page.waitForResponse(res =>
@@ -464,7 +489,7 @@ test("Faculty Assessment results filter only assigned teaching Sections and pres
     expect(href).toContain("deliveryId=" + allowedId);
   }
   await page.goto("/teacher/results?deliveryId=not-a-uuid");
-  await expect(page.getByRole("alert")).toContainText("Invalid assessment filters");
+  await expect(page.getByRole("alert").filter({ hasText: "Invalid assessment filters" })).toBeVisible();
   await page.getByRole("link", { name: "Clear filters" }).click();
   await expect(page).toHaveURL(/\/teacher\/results$/);
 });

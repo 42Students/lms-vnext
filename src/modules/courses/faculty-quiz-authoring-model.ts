@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {createCourseQuizInputSchema} from "./quiz-validation";
+import {createCourseQuizInputSchema, updateCourseQuizInputSchema} from "./quiz-validation";
 
 export const facultyQuizParamsSchema=z.object({deliveryId:z.string().uuid()}).strict();
 const fields=z.object({
@@ -15,7 +15,8 @@ export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
   lessonId:z.string().uuid(),sequence:z.number().int().min(0).max(10000),
   confirmed:z.literal(true),
  }),
- fields.extend({
+ fields.omit({questions:true}).extend({
+  questions:createCourseQuizInputSchema.shape.questions.optional(),
   action:z.literal("EDIT"),
   quizId:z.string().uuid(),expectedUpdatedAt:z.iso.datetime({offset:true}),
   confirmed:z.literal(true),
@@ -28,4 +29,26 @@ export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
 export type FacultyQuizCommand=z.infer<typeof facultyQuizCommandSchema>;
 export function sumQuizPoints(questions:readonly {points:number}[]){
  return questions.reduce((sum,q)=>sum+q.points,0);
+}
+
+/** Compare database microsecond timestamps by their JS Date millisecond view. */
+export function facultyQuizVersionMatches(current:Date,expected:string){
+ const proposed=new Date(expected);
+ return Number.isFinite(proposed.getTime())&&current.getTime()===proposed.getTime();
+}
+
+/** Omitted questions preserve the persisted choice bank for metadata-only edits. */
+export function facultyQuizLegacyEdit(current: {
+ id:string;title:string;description:string|null;dueAt:Date|null;maxAttempts:number;sequence:number;
+},raw:unknown) {
+ const input=updateCourseQuizInputSchema.parse(raw);
+ if(input.sequence!==undefined)z.literal(current.sequence).parse(input.sequence);
+ return facultyQuizCommandSchema.parse({
+  action:"EDIT",quizId:current.id,title:input.title??current.title,
+  description:input.description===undefined?current.description:input.description,
+  dueAt:input.dueAt===undefined?current.dueAt?.toISOString()??null:input.dueAt,
+  maxAttempts:input.maxAttempts??current.maxAttempts,
+  ...(input.questions?{questions:input.questions}:{}),
+  expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
+ });
 }

@@ -130,7 +130,8 @@ export default async function CollegeBatchPromotionPage({
                 expectedVersion={preview.batch.version}
                 yearStart={parsed.data.yearStart}
                 targetTerm={preview.plan.targetTermNumber!}
-                learnerCount={preview.checkedLearners} />
+                learnerCount={preview.checkedLearners}
+                academicYearStart={preview.plan.academicYearStart!} />
             ) : null}
         </section>
         <section aria-label="Learner-level preview" className="overflow-x-auto rounded-xl border border-border bg-surface">

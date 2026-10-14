@@ -20,6 +20,7 @@ export async function getTpoInterviewReadiness(context:RequestContext,raw:unknow
   id:r.id,jobId:r.jobId,jobTitle:r.jobTitle,companyName:r.companyName,
   name:r.name,kind:r.kind,status:r.status,mode:r.mode,venue:r.venue,
   scheduledAt:r.scheduledAt?.toISOString()??null,durationMinutes:r.durationMinutes,
+  updatedAt:r.updatedAt.toISOString(),meetingUrl:r.meetingUrl,
  })),now.toISOString(),days);
  return {...result,days,asOf:now.toISOString(),limited:available.limited};
 }

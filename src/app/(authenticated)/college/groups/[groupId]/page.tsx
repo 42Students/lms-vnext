@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CollegeStudyMemberActions } from "@/components/groups/college-study-member-actions";
+import { CollegeGroupDetailWrites } from "@/components/groups/college-group-detail-writes";
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import {
   GroupReadError,
@@ -194,6 +195,20 @@ export default async function CollegeGroupDetailPage({
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
       </section> : null}
+
+      {group.kind === "STUDY_GROUP" ? <CollegeGroupDetailWrites
+        groupId={group.id} groupName={group.name} groupVersion={group.version}
+        groupStatus={group.status} capacity={group.capacity} activeCount={group.activeCount}
+        waitlisted={members.filter(m=>m.state==="WAITLISTED").map(m=>({
+          membershipId:m.membershipId,displayName:m.displayName,
+          version:m.version,isLocked:m.isLocked,waitlistPosition:m.waitlistPosition,
+        }))}
+        initialRule={JSON.stringify(rule?.criteriaJson??{
+          allowedProgramIds:[],allowedCohortIds:[],minCgpa:null,
+          maxActiveBacklogs:null,allowedPassingYears:[],
+        },null,2)}
+        initialAutoRefresh={rule?.autoRefresh??false}
+      /> : null}
 
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Recent activity</h2>

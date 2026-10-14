@@ -182,6 +182,7 @@ export function FacultyAssessmentOverview({
                           description: item.description,
                           dueAt: item.dueAt,
                           status: item.status,
+                          updatedAt: item.updatedAt,
                           ...(item.kind === "QUIZ"
                             ? { maxAttempts: item.maxAttempts }
                             : { maxPoints: item.maxPoints }),
@@ -237,6 +238,7 @@ export function FacultyAssessmentOverview({
                     deliveryId={item.deliveryId}
                     status={item.status}
                     resultsPublished={item.resultsPublished}
+                    updatedAt={new Date(item.updatedAt).toISOString()}
                     deliveryOwned={item.facultyOwned}
                   />
                 </>
