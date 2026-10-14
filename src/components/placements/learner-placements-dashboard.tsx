@@ -55,6 +55,7 @@ export function LearnerPlacementsDashboard({
   const safeFallback=learnerDashboardSafeFallback(availability);
   const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
+  const shownWeekEvents=display.weekDays?.reduce((count,day)=>count+day.events.length,0)??0;
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
       {next ? <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
@@ -287,9 +288,11 @@ export function LearnerPlacementsDashboard({
               ))}
             </ol>
           ) : null}
-          {display.fullWeekEventCount !== null && display.weekEvents !== null && display.fullWeekEventCount > display.weekEvents.length ? (
+          {display.fullWeekEventCount !== null && display.weekDays !== null &&
+            display.fullWeekEventCount > shownWeekEvents ? (
             <p className="text-xs text-muted-foreground">
-              And {display.fullWeekEventCount - display.weekEvents.length} more scheduled events.
+              {display.fullWeekEventCount-shownWeekEvents} further scheduled
+              {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
           <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
