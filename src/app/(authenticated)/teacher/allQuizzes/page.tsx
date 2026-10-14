@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessment-overview";
@@ -20,7 +21,7 @@ export default async function FacultyAllQuizzesPage() {
         title="All Quizzes"
         description="View quizzes across your active teaching Sections, review attempts and publish results with your existing Course permissions."
       />
-      <FacultyAssessmentOverview overview={overview} kind="QUIZ" />
+      <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" />
     </div>
   );
 }
