@@ -71,11 +71,14 @@ async function fixture(){
   const meetingId=randomUUID();
   await pool.query(`insert into project_meetings
     (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,
-     requested_by_membership_id,created_by_user_id)
+     requested_by_membership_id,created_by_user_id,scheduled_by_user_id,
+     scheduled_by_membership_id,meeting_url)
      values ($1,$2,'COMPLETED','GENERAL',$3,
-       '2026-10-13T09:00:00Z','2026-10-13T10:00:00Z','Asia/Kolkata',$4,$5)`,[
+       '2026-10-13T09:00:00Z','2026-10-13T10:00:00Z','Asia/Kolkata',$4,$5,$6,$7,
+       'https://meet.example.org/room')`,[
       meetingId,project.id,"Completed fixture "+suffix,
       SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,
+      SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
     ]);
   return {project,meetingId};
 }

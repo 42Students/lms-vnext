@@ -78,7 +78,7 @@ describe.skipIf(!enabled)("TPO review scoped PG",()=>{
   expect(saved.status).toBe("SHORTLISTED");
   await expect(reviewTpoApplicant(tpo,params,body)).rejects.toMatchObject({code:"PLACEMENT_SCREENING_STALE"});
   const history=await pool.query<{n:number}>("SELECT count(*)::int n FROM placement_application_screening_history WHERE application_id=$1",[ids.app]);
-  const audit=await pool.query<{n:number}>("SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_SCREENING_DECIDED'",[ids.app]);
+  const audit=await pool.query<{n:number}>("SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='placements.screening.decided'",[ids.app]);
   expect(history.rows[0]?.n).toBe(1);
   expect(audit.rows[0]?.n).toBe(1);
  });

@@ -459,10 +459,13 @@ export async function listOwnRecruiterPlacementJobs(
     )
     .orderBy(desc(placementJobs.createdAt));
 
-  for (const row of rows) {
-    if (!isExactRecruiterEmployerRow(context.recruiter!, row)) {
-      throw new AuthorizationError("placements.recruiter.read");
-    }
+  // A row whose relationship/college pair is not an exact grant (e.g. a grant
+  // id paired with another college) is silently excluded, never surfaced.
+  const visibleRows = rows.filter((row) =>
+    isExactRecruiterEmployerRow(context.recruiter!, row),
+  );
+
+  for (const row of visibleRows) {
     requirePermission(
       context,
       "placements.recruiter.read",
@@ -474,5 +477,5 @@ export async function listOwnRecruiterPlacementJobs(
     );
   }
 
-  return rows;
+  return visibleRows;
 }
