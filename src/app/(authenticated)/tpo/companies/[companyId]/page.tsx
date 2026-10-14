@@ -5,10 +5,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
-import {
-  getTpoCompanyDetailView,
-  tpoCompanyDetailQuerySchema,
-} from "@/modules/placements/tpo-companies-view-service";
+import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
+import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -53,9 +51,9 @@ export default async function TpoCompanyDetailPage({
 
   if (!parsed.success) notFound();
 
-  const detail = await getTpoCompanyDetailView(
+  const detail = await getTpoCompanyDetailReadOnly(
     context,
-    parsed.data,
+    parsed.data.companyId,
   );
 
   if (!detail) notFound();
@@ -68,6 +66,7 @@ export default async function TpoCompanyDetailPage({
     timeline,
     contactsAvailable,
     activitiesAvailable,
+    relationship,
   } = detail;
 
   return (
@@ -94,6 +93,22 @@ export default async function TpoCompanyDetailPage({
           </Link>
         }
       />
+
+      <section aria-label="College company relationship" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">College relationship and trust</h2>
+        <p className="mt-2 text-sm text-body">
+          Trust is this college&apos;s recorded relationship setting, not a platform-wide employer verification.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          <StatusBadge tone={relationship?.isTrusted ? "success" : "neutral"}>
+            {relationship?.trustLabel ?? "Trust unavailable"}
+          </StatusBadge>
+          <StatusBadge>{relationship?.relationshipStatus ?? "Status unavailable"}</StatusBadge>
+          <span className="text-sm text-body">
+            Updated {relationship?.updatedAt ? dateLabel(new Date(relationship.updatedAt)) + " IST" : "not recorded"}
+          </span>
+        </div>
+      </section>
 
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link

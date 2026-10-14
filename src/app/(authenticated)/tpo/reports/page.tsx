@@ -51,6 +51,16 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placement-summary",
         },
         {
+          title: "Placed students by branch",
+          description: "Season-scoped unique placed and confirmed joined learners, with current academic branch and capped CSV.",
+          path: "/tpo/reports/placed-branch",
+        },
+        {
+          title: "Season pipeline",
+          description: "Recorded applied, shortlisted, offer and joining stages, with unavailable final selection and capped CSV.",
+          path: "/tpo/reports/season-pipeline",
+        },
+        {
           title: "Company funnel & compensation intelligence",
           description: "Persisted applicant denominators and offer-versus-learner CTC measures, with CSV.",
           path: "/tpo/reports/intelligence",
@@ -79,6 +89,11 @@ export default async function TpoReportsPage({
           description:
             "Current registered placement-pool learners without an accepted offer in the selected reporting scope.",
           path: "/tpo/reports/unplaced",
+        },
+        {
+          title: "Offer expiry watchlist",
+          description: "Currently issued offers expiring in a validated IST day window, with safe capped CSV.",
+          path: "/tpo/reports/offers-expiry",
         },
         {
           title: "Offers & acceptance",

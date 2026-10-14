@@ -25,6 +25,9 @@ describe("partial source failures on learner Placements dashboard",()=>{
     });
     expect(result.failed).toEqual([]);
   });
+  it("does not show an apparently complete next-action when offers failed",()=>{
+    expect(learnerDashboardPartialState({...healthy,offers:false},snapshot).nextAction).toBeNull();
+  });
   it("flags evidence failure without masking healthy jobs and rounds",()=>{
     const partial=learnerDashboardPartialState({...healthy,academic:false},snapshot);
     expect(partial.failed).toEqual(["Academic placement evidence"]);

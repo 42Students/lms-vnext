@@ -10,8 +10,10 @@ import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
+import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
+import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -35,10 +37,11 @@ function formatDate(date: Date | null) {
 }
 
 export function LearnerApplicationsBrowse({
-  items,interviewLinks=[],
+  items,interviewLinks=[],assessmentLinks=[],
 }: {
   items: readonly LearnerPlacementJourneyItem[];
   interviewLinks?:readonly OwnApplicationInterviewLink[];
+  assessmentLinks?:readonly OwnApplicationAssessmentLink[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -137,9 +140,13 @@ export function LearnerApplicationsBrowse({
     ? Math.min(requested,totalPages) : 1;
   const paged = rows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
   const stages = learnerApplicationStageOptions(items);
+  const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
   const selected = items.find((item) =>
     item.applicationId === url.applicationId) ?? null;
+  const selectedAssessment=selected
+    ? assessmentLinks.find(link=>link.applicationId===selected.applicationId)??null
+    : null;
   const selectedInterview=selected
     ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
@@ -203,6 +210,17 @@ export function LearnerApplicationsBrowse({
                 ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}
             >{option.label}</button>
+          ))}
+        </div>
+        <div role="group" aria-label="Screening stage filter chips" className="flex flex-wrap gap-2">
+          {stageCounts.map(({stage:stageKey,count})=>(
+            <button type="button" key={stageKey} aria-pressed={filters.stage===stageKey}
+              onClick={()=>updateQuery({stage:stageKey})}
+              className={filters.stage===stageKey
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              {stageKey==="all"?"All screening stages":humanize(stageKey)} ({count})
+            </button>
           ))}
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -323,8 +341,9 @@ export function LearnerApplicationsBrowse({
               Withdraw application
             </Button>
           ) : null}
-          <Link href="/learn/my-placements/assessments" className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
-            Assessments
+          <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
+            {selectedAssessment?"Open this assessment":"Assessments"}
           </Link>
           <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}

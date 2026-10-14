@@ -144,11 +144,11 @@ async function cleanup() {
   await pool.query("delete from faculty_profiles where membership_id = $1", [facultyOnlyMembershipId]);
   await pool.query("delete from learner_profiles where membership_id = $1", [testLearnerMembershipId]);
   await pool.query("delete from membership_roles where membership_id = $1", [testLearnerMembershipId]);
-  await pool.query("delete from college_memberships where id = $1", [testLearnerMembershipId]);
-  await pool.query("delete from users where id = $1", [testLearnerUserId]);
+  await pool.query("delete from college_memberships where id = $1 and not exists (select 1 from activity_events where actor_membership_id = $1)", [testLearnerMembershipId]);
+  await pool.query("delete from users where id = $1 and not exists (select 1 from college_memberships where user_id = $1)", [testLearnerUserId]);
   await pool.query("delete from membership_roles where membership_id = $1", [facultyOnlyMembershipId]);
-  await pool.query("delete from college_memberships where id = $1", [facultyOnlyMembershipId]);
-  await pool.query("delete from users where id = $1", [facultyOnlyUserId]);
+  await pool.query("delete from college_memberships where id = $1 and not exists (select 1 from activity_events where actor_membership_id = $1)", [facultyOnlyMembershipId]);
+  await pool.query("delete from users where id = $1 and not exists (select 1 from college_memberships where user_id = $1)", [facultyOnlyUserId]);
 }
 async function fixture() {
   const program=await createProgram(admin,{
@@ -212,31 +212,31 @@ async function seedFacultyOnly() {
   // forbids a second active programme enrolment per membership; use a fresh
   // active learner principal so positive-path tests reflect production rules.
   await pool.query(
-    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE')",
+    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE') on conflict (id) do nothing",
     [testLearnerUserId, "c4pos-learner-" + runId,
       "c4pos-learner-" + runId.toLowerCase() + "@example.invalid",
       "Chat4 Learner " + runId],
   );
   await pool.query(
-    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE') on conflict (id) do nothing",
     [testLearnerMembershipId, testLearnerUserId, SEED_IDS.collegeA],
   );
   await pool.query(
-    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'LEARNER')",
+    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'LEARNER') on conflict (id) do nothing",
     [testLearnerRoleId, testLearnerMembershipId],
   );
   await pool.query(
-    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE')",
+    "insert into users (id, identity_uid, email, display_name, platform_status) values ($1, $2, $3, $4, 'ACTIVE') on conflict (id) do nothing",
     [facultyOnlyUserId, facultyOnly.user.identityUid,
       "c4pos-faculty-" + runId.toLowerCase() + "@example.invalid",
       "Chat4 Faculty " + runId],
   );
   await pool.query(
-    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE') on conflict (id) do nothing",
     [facultyOnlyMembershipId, facultyOnlyUserId, SEED_IDS.collegeA],
   );
   await pool.query(
-    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'FACULTY')",
+    "insert into membership_roles (id, membership_id, role) values ($1, $2, 'FACULTY') on conflict (id) do nothing",
     [facultyOnlyRoleId, facultyOnlyMembershipId],
   );
 }

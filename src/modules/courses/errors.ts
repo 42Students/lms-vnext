@@ -1,4 +1,5 @@
 export type CoursesServiceErrorCode =
+  | "DISCUSSION_STALE_VERSION"
   | "COLLEGE_NOT_FOUND"
   | "DEPARTMENT_NOT_FOUND"
   | "COURSE_NOT_FOUND"

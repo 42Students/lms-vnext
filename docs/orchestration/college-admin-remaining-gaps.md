@@ -83,3 +83,8 @@
 - Added read-only `/college/videos` and `/college/resources` over registered `lesson_contents` metadata with per-college course/program/period ancestry joins, central permission checks, Zod boundaries, search/status/pagination, loading/error/empty states and no content URL disclosures.
 - Added model tests and a disposable-PostgreSQL tenant/role-denial witness. **Neither test execution nor complete legacy parity is claimed by this inventory.**
 - Kept both source matrix rows `PARTIAL`; did not mark any tracker task DONE.
+
+
+### Timestamp concurrency precision audit (2026-10-14)
+
+Pure `timestampTokenIso` contract and source regression test now inspect all `src/modules/academics/*.ts`, `src/modules/people/*.ts` and `src/modules/placements/college-*.ts` for raw `updatedAt` equality; a gated PostgreSQL test creates an `academic_periods` row with SQL-default `updated_at=now()` and tests millisecond-normalized successful/stale updates. Status/version-guarded services are not changed. The tests are authored but runtime evidence is pending; no parity row is DONE.

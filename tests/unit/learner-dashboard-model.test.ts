@@ -84,6 +84,22 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.applicationCount).toBe(1);
   });
 
+  it("puts a genuinely expiring issued offer ahead of a scheduled interview", () => {
+    const state=learnerPlacementDashboard({
+      ...empty,
+      rounds:[round("interview","INTERVIEW","2026-10-13T03:00:00Z")],
+      offers:[{status:"ISSUED",expiresAt:new Date("2026-10-13T02:00:00Z")}],
+    },now);
+    expect(state.nextAction.href).toBe("/learn/my-placements/offers?status=pending");
+    expect(state.nextAction.label).toBe("Offer decision due soon");
+  });
+  it("ignores already expired offers in actionable count",()=>{
+    const state=learnerPlacementDashboard({...empty,offers:[
+      {status:"ISSUED",expiresAt:new Date("2026-10-12T00:00:00Z")},
+      {status:"ISSUED",expiresAt:null},
+    ]},now);
+    expect(state.activeOfferCount).toBe(1);
+  });
   it("counts only issued offers as actionable rather than treating accepted offers as pending", () => {
     const state = learnerPlacementDashboard({
       ...empty, offers: [

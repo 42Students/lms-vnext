@@ -206,6 +206,9 @@ export function ReportNavigation({
       label: "By branch",
     },
     { href: "/tpo/reports/by-company", label: "By company" },
+    { href: "/tpo/reports/placed-branch", label: "Placed by branch" },
+    { href: "/tpo/reports/season-pipeline", label: "Season pipeline" },
+    { href: "/tpo/reports/offers-expiry", label: "Offer expiry" },
     { href: "/tpo/reports/ctc", label: "CTC" },
     { href: "/tpo/reports/unplaced", label: "Unplaced students" },
     {
