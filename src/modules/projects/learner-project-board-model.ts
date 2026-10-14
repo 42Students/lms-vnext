@@ -35,8 +35,9 @@ export function learnerBoardEmptyState(total: number, shown: number): LearnerBoa
 }
 
 export function learnerBoardActiveFilterCount(filters: {
-  search: string; priority: string; status?: string; sprintId: string; releaseId: string;
+  search: string; priority: string; status?: string; sprintId: string; releaseId: string; taskSort?: string;
 }): number {
-  return [filters.search.trim(), filters.priority, filters.status, filters.sprintId, filters.releaseId]
+  return [filters.search.trim(), filters.priority, filters.status, filters.sprintId, filters.releaseId,
+      filters.taskSort && filters.taskSort !== "DEFAULT" ? filters.taskSort : ""]
     .filter(Boolean).length;
 }

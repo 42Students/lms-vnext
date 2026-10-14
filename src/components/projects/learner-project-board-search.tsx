@@ -8,7 +8,7 @@ export function LearnerProjectBoardSearch({
 }: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
-  const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId});
+  const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId,taskSort});
   const form=(
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
         method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -94,7 +94,7 @@ export function LearnerProjectBoardSearch({
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Task counts by priority">
         {LEARNER_BOARD_PRIORITY_LABELS.map(item => (
           <Link key={item.value} href={learnerBoardPriorityFilterHref(projectId,
-            {taskSearch:search,priority,status,sprintId,releaseId},item.value)}
+            {taskSearch:search,priority,status,sprintId,releaseId,taskSort},item.value)}
             aria-current={priority===item.value ? "true" : undefined}
             className={priority===item.value
               ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
