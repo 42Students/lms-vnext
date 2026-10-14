@@ -348,3 +348,7 @@ selectors. Loading/error, pure-model tests and PostgreSQL denial cases are
 authored; independent execution and legacy full Contact/Profile coverage remain
 OPEN. Preserve all previously authored Faculty attendance, roster and assessment
 parity sections. No checkbox is marked DONE by this source-only work.
+
+### Faculty Attendance PostgreSQL exclusion and editor accessibility repair (2026-10-14)
+
+E2E uncovered a real database overlap constraint (section_schedule_events_section_no_overlap_excl). The Faculty session write now maps only registered exclusion-constraint failures to a 409 SCHEDULE_EVENT_CONFLICT, preserving PostgreSQL's concurrency protection; other errors are not silenced. Browser E2E scheduling fixtures use separate non-overlapping session slots across two scenarios and retries. The existing shared Drawer used globally repeated HTML IDs, which caused multiple Faculty assessment editor dialogs to resolve the wrong accessible name; it now uses React useId per instance for title/description, maintaining accessible labels without hiding inactive row drawers. New pure tests assert error mapping and browser CRUD exercises the actual dialog labels. Full acceptance remains pending exact-SHA CI.
