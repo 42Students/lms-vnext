@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
+import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
+import { filterLearnerBoardTasks, learnerBoardSearchSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 
@@ -10,11 +12,11 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
-  const { tab } = await searchParams;
+  const { tab, taskSearch } = await searchParams;
   const activeSection =
     tab === "board"
       ? "tasks"
@@ -42,11 +44,23 @@ export default async function LearnerProjectPage({
       projectId,
     );
 
+  const search = learnerBoardSearchSchema.parse(taskSearch);
+  const boardTasks = activeSection === "tasks"
+    ? filterLearnerBoardTasks(workspace.tasks, search)
+    : workspace.tasks;
+  const shownWorkspace = activeSection === "tasks"
+    ? { ...workspace, tasks: boardTasks }
+    : workspace;
+
   return (
     <div className="space-y-6">
       <LearnerProjectTabs projectId={projectId} />
+      {activeSection === "tasks" ? (
+        <LearnerProjectBoardSearch projectId={projectId} search={search}
+          shown={boardTasks.length} total={workspace.tasks.length} />
+      ) : null}
       <ProjectWorkspace
-      workspace={workspace}
+      workspace={shownWorkspace}
       backHref="/learn/projects"
       backLabel="Projects"
       eyebrow="Learner Project"

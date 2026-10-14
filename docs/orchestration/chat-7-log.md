@@ -8,3 +8,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L20-016: Projects loading/error/retry plus accurate no-assignments/filtered-empty behavior; tests authored; runtime gates not run.
 - L20-017: mobile-only compact searchable Project filters, selection summary and touch pagination; unit/PG authored; runtime/browser pending.
 - Final source-review repair: test-created academic parents/program enrollment added to isolated PG fixture; Zod validates learner Project list query boundary; TypeScript tuple inference made explicit. Original four rows remain PARTIAL; no runtime gates executed.
+- L25-006: searchable learner Board using authorized Project task rows; pure/unit/PG authored, runtime tests unexecuted.
