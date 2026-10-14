@@ -838,3 +838,11 @@ oldest/newest filters. Formula-neutralized CSV includes no learner contact,
 submission URLs, feedback or actor identity. Every bounded page revalidates
 current grants; truncation is explicit. Unit and PG-fixture assertions authored,
 not executed. **PARTIAL:** verified runtime/export/browser and legacy parity open.
+
+## chat-11 backlog V — global Meeting calendar metadata CSV (PARTIAL)
+
+Exact current-Mentor global meetings export supports existing status/search/IST
+period filters, caps at 200 rows and formula-neutralizes human-supplied text.
+No join URLs, learner contacts, meeting notes or external sends. The same role,
+college and Projects-module gates are checked; model/unit and own-project PG
+assertions authored. **PARTIAL:** browser and executed DB/typecheck still open.

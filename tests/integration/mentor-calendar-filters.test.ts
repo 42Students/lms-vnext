@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {filterMentorCalendar,mentorCalendarFiltersSchema}
   from "@/modules/projects/mentor-calendar-filter-model";
@@ -93,6 +94,9 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     const all=await listMyMentorCalendarMeetings(mentor);
     const owned=all.filter(row=>row.projectId===project.id);
     expect(owned).toHaveLength(2);
+    const csv=mentorCalendarCsv(owned,0);
+    expect(csv).toContain("IST");
+    expect(csv).not.toContain("https://meet.example.org/room");
     const query=mentorCalendarFiltersSchema.parse({status:"REQUESTED",search:"checkpoint"});
     expect(filterMentorCalendar(owned,query).map(row=>row.id)).toEqual([meetingId]);
     expect(filterMentorCalendar(owned,{status:"ALL",search:"nonsense",period:"ALL"})).toEqual([]);
