@@ -1,6 +1,10 @@
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
+import {
+  TpoCalendarCreateFollowup,
+  TpoCalendarMoveFollowup,
+} from "@/components/placements/tpo-calendar-followup-actions";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
@@ -22,6 +26,8 @@ import {
 } from "@/modules/placements/placement-calendar-model";
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
+import { listTpoLeads } from "@/modules/placements/tpo-crm-service";
+import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
@@ -320,9 +326,11 @@ function eventTone(
 function CalendarEventCard({
   event,
   audience,
+  allowFollowupEditing,
 }: {
   event: PlacementCalendarEvent;
   audience: CalendarAudience;
+  allowFollowupEditing: boolean;
 }) {
   const href = eventHref(event, audience);
 
@@ -385,6 +393,14 @@ function CalendarEventCard({
               : "Open placement job"}{" "}
           →
         </Link>
+      ) : null}
+      {audience === "TPO" && allowFollowupEditing &&
+       event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
+       event.followupId ? (
+        <TpoCalendarMoveFollowup
+          followupId={event.followupId}
+          currentIst={calendarDueAtToIstLocal(event.startsAt)}
+        />
       ) : null}
     </article>
   );
@@ -484,6 +500,16 @@ export async function PlacementCalendarWorkspace({
     );
 
   const isTpo = audience === "TPO";
+  const calendarFollowupsWritable =
+    isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
+  const recruiterLeads = calendarFollowupsWritable
+    ? await listTpoLeads(context, collegeId)
+    : [];
+  const displayedLeads = recruiterLeads.slice(0, 100).map((lead) => ({
+    id: lead.id,
+    name: lead.name,
+    companyName: lead.companyName,
+  }));
 
   return (
     <div className="space-y-6">
@@ -522,6 +548,18 @@ export async function PlacementCalendarWorkspace({
           </Link>
         }
       />
+
+      {calendarFollowupsWritable ? (
+        <TpoCalendarCreateFollowup
+          leads={displayedLeads}
+          totalLeads={recruiterLeads.length}
+        />
+      ) : isTpo ? (
+        <p role="status" className="text-sm text-muted-foreground">
+          Calendar follow-up editing is unavailable until the DB09 CRM
+          write gate is verified. Existing calendar events remain read-only.
+        </p>
+      ) : null}
 
       <section
         aria-label="Calendar summary"
@@ -940,6 +978,7 @@ export async function PlacementCalendarWorkspace({
                     key={event.id}
                     event={event}
                     audience={audience}
+                    allowFollowupEditing={calendarFollowupsWritable}
                   />
                 ))}
               </div>
