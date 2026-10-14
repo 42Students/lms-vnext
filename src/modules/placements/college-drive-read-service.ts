@@ -1,0 +1,77 @@
+import "server-only";
+
+import { and, asc, count, eq, ilike, or, sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
+import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { requirePlacementManageScope } from "./scope";
+import { collegeDriveListQuerySchema, COLLEGE_DRIVE_PAGE_SIZE } from "./college-drive-read-model";
+
+export async function requireCollegePlacementAdmin(context: RequestContext) {
+  const member = context.membership;
+  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+    !can(context, "placements.manage", { organizationId: member.organizationId, collegeId: member.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", {
+    organizationId: member.organizationId, collegeId: member.collegeId,
+  });
+  await requirePlacementManageScope(context, member.collegeId);
+  return member.collegeId;
+}
+
+function pattern(value: string) {
+  return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
+}
+
+export async function listCollegeDrives(context: RequestContext, raw: unknown) {
+  const query = collegeDriveListQuerySchema.parse(raw);
+  const collegeId = await requireCollegePlacementAdmin(context);
+  const db = getDb();
+  const source = db.select({
+    id: placementJobs.id,
+    title: placementJobs.title,
+    status: placementJobs.status,
+    applicationDeadline: placementJobs.applicationDeadline,
+    openings: placementJobs.openings,
+    seasonId: sql<string>`${placementSeasons.id}`.as("season_id"),
+    seasonName: sql<string>`${placementSeasons.name}`.as("season_name"),
+    relationshipId: sql<string>`${placementCompanyRelationships.id}`.as("relationship_id"),
+    companyName: sql<string>`${placementCompanies.name}`.as("company_name"),
+  }).from(placementJobs)
+    .innerJoin(placementSeasons, and(
+      eq(placementSeasons.id, placementJobs.seasonId),
+      eq(placementSeasons.collegeId, collegeId),
+    ))
+    .innerJoin(placementCompanyRelationships, and(
+      eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId),
+      eq(placementCompanyRelationships.collegeId, collegeId),
+    ))
+    .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .where(and(
+      eq(placementJobs.collegeId, collegeId),
+      query.status === "ALL" ? undefined : eq(placementJobs.status, query.status),
+      query.seasonId ? eq(placementJobs.seasonId, query.seasonId) : undefined,
+      query.relationshipId ? eq(placementJobs.companyRelationshipId, query.relationshipId) : undefined,
+      query.q ? or(
+        ilike(placementJobs.title, pattern(query.q)),
+        ilike(placementCompanies.name, pattern(query.q)),
+      ) : undefined,
+    )).as("college_scoped_drives");
+  const [totals, items, seasons, companies] = await Promise.all([
+    db.select({ total: count() }).from(source),
+    db.select().from(source).orderBy(asc(source.title), asc(source.id))
+      .limit(COLLEGE_DRIVE_PAGE_SIZE).offset((query.page - 1) * COLLEGE_DRIVE_PAGE_SIZE),
+    db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)
+      .where(eq(placementSeasons.collegeId, collegeId)).orderBy(asc(placementSeasons.name)),
+    db.select({ id: placementCompanyRelationships.id, name: placementCompanies.name })
+      .from(placementCompanyRelationships)
+      .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
+      .where(eq(placementCompanyRelationships.collegeId, collegeId))
+      .orderBy(asc(placementCompanies.name)),
+  ]);
+  const total = totals[0]?.total ?? 0;
+  return { query, items, seasons, companies, total,
+    totalPages: Math.max(1, Math.ceil(total / COLLEGE_DRIVE_PAGE_SIZE)) };
+}

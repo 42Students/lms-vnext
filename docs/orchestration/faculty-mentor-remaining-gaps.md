@@ -214,6 +214,5 @@ audit specifications. No fake create/edit action is enabled. PARTIAL.
 Read-only exact assigned Mentor project review/feedback completeness view over
 migrated project_submissions and project_submission_reviews, with no raw
 feedback or private learner data, 20-version pagination and explicit gaps.
-No invented history, no new write route. The existing dedicated completeness view now shows page-local
-reviewed/feedback-recorded counts, avoiding a duplicate review page. PARTIAL pending executed PostgreSQL,
+No invented history, no new write route. PARTIAL pending executed PostgreSQL,
 browser and full legacy project overview acceptance.
