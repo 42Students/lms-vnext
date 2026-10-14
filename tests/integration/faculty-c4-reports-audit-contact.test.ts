@@ -235,7 +235,7 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    correctionReason:"Learner was absent at roll call",
   };
   await expect(markFacultyAttendance(faculty,event.id,{
-   ...correction,correctionReason:"too short",
+   ...correction,correctionReason:"short",
   })).rejects.toBeDefined();
   const second=await markFacultyAttendance(faculty,event.id,correction);
   expect(second.markedAbsent).toBe(1);
