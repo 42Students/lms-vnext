@@ -16,7 +16,7 @@ async function login(context:BrowserContext){
  ]);
 }
 for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile",width:390,height:844,day:"29"}]){
- test("Faculty Class Schedule "+view.name+" persists, filters and dates exact IST session",async({page,context})=>{
+ test("Faculty Class Schedule "+view.name+" persists, filters and dates exact IST session",async({page,context},testInfo)=>{
   test.setTimeout(90_000);
   await login(context);
   await page.setViewportSize({width:view.width,height:view.height});
@@ -29,17 +29,20 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   const deliveryId=current.pathname.split("/")[3]!;
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   const title="Calendar IST "+view.name+" "+randomUUID().slice(0,8);
-  const submitted=await page.evaluate(async ({deliveryId,title,day})=>{
+  const startHour=9+testInfo.retry*2;
+  const hour=String(startHour).padStart(2,"0");
+  const endHour=String(startHour+1).padStart(2,"0");
+  const submitted=await page.evaluate(async ({deliveryId,title,day,hour,endHour})=>{
    const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
      action:"CREATE",title,description:"Faculty schedule browser witness",
-     location:"Room 42",startsAt:"2026-10-"+day+"T09:00:00+05:30",
-     endsAt:"2026-10-"+day+"T10:00:00+05:30",confirm:true,
+     location:"Room 42",startsAt:"2026-10-"+day+"T"+hour+":00:00+05:30",
+     endsAt:"2026-10-"+day+"T"+endHour+":00:00+05:30",confirm:true,
     }),
    });
    return {status:response.status,data:await response.json()};
-  },{deliveryId,title,day:view.day});
+  },{deliveryId,title,day:view.day,hour,endHour});
   expect(submitted.status,JSON.stringify(submitted.data)).toBe(200);
   const createdId:string=submitted.data?.result?.id;
   expect(createdId).toMatch(/^[0-9a-f-]{36}$/i);
@@ -51,7 +54,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await expect(grid.getByText(title,{exact:true})).toHaveCount(1);
   const day=page.getByRole("region",{name:"2026-10-"+view.day+" IST"});
   await expect(day.getByText(title,{exact:true})).toBeVisible();
-  await expect(day.getByText(/9:00.*IST/)).toBeVisible();
+  await expect(day.getByText(new RegExp(startHour+":00.*IST"))).toBeVisible();
   await expect(day.getByRole("link",{name:"Course Section"})).toHaveAttribute(
    "href","/teacher/courses/"+deliveryId+"/home",
   );
@@ -62,9 +65,13 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
   await expect(page.getByText(title,{exact:true}).first()).toBeVisible();
   await expect(page.getByRole("heading",{name:"Detailed day/week schedule"})).toBeVisible();
-  await page.getByLabel("View",{exact:true}).selectOption("day");
-  await page.getByLabel("View",{exact:true}).selectOption("week");
-  await page.getByLabel("View",{exact:true}).selectOption("month");
+  const viewSelect=page.getByRole("combobox").filter({
+   has:page.getByRole("option",{name:"Day"}),
+  });
+  await expect(viewSelect).toBeVisible();
+  await viewSelect.selectOption("day");
+  await viewSelect.selectOption("week");
+  await viewSelect.selectOption("month");
   await page.goto("/teacher/calendar?month=2026-13");
   await expect(page.getByRole("alert")).toContainText("Invalid month or Section filter");
   const denied=await page.goto("/teacher/calendar?month=2026-10&deliveryId="+SEED_IDS.collegeB);
