@@ -11,6 +11,7 @@ export type ProjectParticipantListQuery = {
   attention?:
     | "MENTOR_REVIEW"
     | "LEARNER_ACTION";
+  work?: "BLOCKED";
   page?: number;
   pageSize?: number;
 };
@@ -99,6 +100,16 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
+      {learner ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Work attention
+          <select name="work" defaultValue={query.work ?? ""}
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="">All work</option>
+            <option value="BLOCKED">Has blocked tasks</option>
+          </select>
+        </label>
+      ) : null}
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Rows
         <select
@@ -162,6 +173,7 @@ export function ProjectParticipantPagination({
         query.attention,
       );
     }
+    if (query.work) params.set("work", query.work);
     if (
       query.pageSize &&
       query.pageSize !== 25
