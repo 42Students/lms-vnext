@@ -6,6 +6,7 @@ import {
   eq,
   inArray,
   isNull,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -30,6 +31,8 @@ import { AcademicsServiceError } from "@/modules/academics/errors";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
+import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
+ from "./faculty-correction-token-model";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -56,7 +59,9 @@ const bulkInputSchema = z
     deliveryId: uuid,
     absentMembershipIds: z.array(uuid).max(1000).default([]),
     presentMembershipIds: z.array(uuid).max(1000).default([]),
+    expectedMarkedAt:z.string().datetime({offset:true}).nullable().optional(),
   })
+  .strict()
   .superRefine((value, ctx) => {
     const absent = new Set(value.absentMembershipIds);
     const present = new Set(value.presentMembershipIds);
@@ -567,41 +572,41 @@ export async function markFacultyAttendance(
 
     const [existingSession] = await tx
       .select({
-        scheduleEventId:
-          attendanceSessions.scheduleEventId,
+        scheduleEventId:attendanceSessions.scheduleEventId,
+        status:attendanceSessions.status,
+        markedAt:attendanceSessions.markedAt,
       })
       .from(attendanceSessions)
-      .where(
-        eq(
-          attendanceSessions.scheduleEventId,
-          scheduleEventId,
-        ),
-      )
-      .for("update")
-      .limit(1);
+      .where(eq(attendanceSessions.scheduleEventId,scheduleEventId))
+      .for("update").limit(1);
+    if(!facultyAttendanceCorrectionTokenMatches(
+      existingSession?.status??null,existingSession?.markedAt??null,input.expectedMarkedAt,
+    ))throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
+    const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
 
     if (existingSession) {
-      await tx
+      const [changed]=await tx
         .update(attendanceSessions)
         .set({
           status: "MARKED",
           markedByUserId: context.user.id,
-          markedAt: now,
-          updatedAt: now,
+          markedAt: writtenAt,
+          updatedAt: writtenAt,
         })
-        .where(
-          eq(
-            attendanceSessions.scheduleEventId,
-            scheduleEventId,
-          ),
-        );
+        .where(and(
+          eq(attendanceSessions.scheduleEventId,scheduleEventId),
+          existingSession.status==="MARKED"?
+            sql`date_trunc('milliseconds', ${attendanceSessions.markedAt}) =
+              ${new Date(input.expectedMarkedAt!).toISOString()}::timestamptz`:undefined,
+        )).returning({id:attendanceSessions.scheduleEventId});
+      if(!changed)throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
     } else {
       await tx.insert(attendanceSessions).values({
         scheduleEventId,
         status: "MARKED",
         markedByUserId: context.user.id,
-        markedAt: now,
-        updatedAt: now,
+        markedAt: writtenAt,
+        updatedAt: writtenAt,
       });
     }
 
@@ -620,7 +625,9 @@ export async function markFacultyAttendance(
         deliveryId: delivery.deliveryId,
         markedAbsent: input.absentMembershipIds.length,
         markedPresent: input.presentMembershipIds.length,
-        correction: Boolean(existingSession),
+        correction: existingSession?.status==="MARKED",
+        previousMarkedAt:existingSession?.markedAt?.toISOString()??null,
+        markedAt:writtenAt.toISOString(),
       },
       groupKey: `attendance-session:${scheduleEventId}`,
     });
@@ -631,7 +638,7 @@ export async function markFacultyAttendance(
         input.absentMembershipIds.length,
       markedPresent:
         input.presentMembershipIds.length,
-      markedAt: now,
+      markedAt: writtenAt,
     };
   });
 }

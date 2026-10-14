@@ -114,6 +114,9 @@ async function errorMessage(
 ) {
   try {
     const body = await response.json();
+    if(body?.error==="ATTENDANCE_STALE_VERSION"){
+      return "Attendance changed in another tab. Refresh the class session before correcting again.";
+    }
     if (body?.error === "SCHEDULE_EVENT_CONFLICT") {
       return "Another class overlaps this time in the Section. Choose a different time.";
     }
@@ -331,6 +334,8 @@ export function FacultyAttendanceWorkspace({
             deliveryId: workspace.course.deliveryId,
             absentMembershipIds,
             presentMembershipIds,
+            ...(selectedSession.attendanceStatus==="MARKED"
+              ? {expectedMarkedAt:selectedSession.markedAt}:{}),
           }),
         },
       );
