@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 Blocked Project filter (PARTIAL):** Both desktop and mobile learner Project lists support a scoped `Has blocked tasks` filter derived only from persisted BLOCKED task counts, not an invented project blocker field. Archived projects are excluded; empty/filter-empty messaging and pagination remain intact. Pure-model check authored, tenant/role PG + browser acceptance still open.
+
 **2026-10-15 chat-7 Project list mentor search (PARTIAL):** Learner Project search includes the display name of the mentor from the same previously authorized project-team summary, without a global people directory or contact fields. Bounded pure matching model and unit test authored; persisted learner/foreign-team PG and browser proof remain open.
 
 **2026-10-15 chat-7 Semester-switch recovery (PARTIAL):** Switching the learner Course list semester now clears the prior search, resets the 48-card window, and crucially clears an elective-only filter. This avoids a hidden filter with no visible selector in a semester without electives. Pure-model regression authored; browser acceptance remains pending.
