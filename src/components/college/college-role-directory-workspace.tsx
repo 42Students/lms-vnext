@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
@@ -161,6 +162,11 @@ export async function CollegeRoleDirectoryWorkspace({
                   </td>
                   <td className="px-4 py-4 text-body">
                     {describeCollegeDirectoryContext(kind, item)}
+                    {kind === "LEARNER" && item.membershipStatus === "ACTIVE" &&
+                      item.userStatus === "ACTIVE" && item.cohort !== null ?
+                      <div className="mt-2">
+                        <StudentClassMoveAction membershipId={item.membershipId} name={item.name} />
+                      </div> : null}
                   </td>
                   <td className="px-4 py-4 text-body">
                     {joinedLabel(item.joinedAt)}
