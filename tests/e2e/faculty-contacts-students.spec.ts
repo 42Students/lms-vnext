@@ -22,7 +22,7 @@ for(const viewport of [{name:"desktop",width:1280,height:800},{name:"mobile",wid
     await page.goto("/teacher/contacts/students");
     await expect(page.getByRole("heading",{level:1,name:"Contacts"})).toBeVisible();
     await expect(page.getByRole("heading",{level:2,name:"Students"})).toBeVisible();
-    await expect(page.getByRole("link",{name:"Students"})).toHaveAttribute("aria-current","page");
+    await expect(page.getByRole("navigation",{name:"Contact types"}).getByRole("link",{name:"Students"})).toHaveAttribute("aria-current","page");
     const student=page.locator("article").filter({
       has:page.locator('a[href$="/'+SEED_IDS.learnerCollegeAMembership+'"]'),
     });
