@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -113,14 +114,17 @@ export default async function TpoCompanyMemoryPage({
       <PageHeader
         eyebrow="TPO · Recruiter relationships"
         title="Companies"
-        description="Explore college-linked employers, recruiter contacts, drives, offers and confirmed joining outcomes. This is a read-only company directory."
+        description="Explore college-linked employers, recruiter contacts, drives, offers and confirmed joining outcomes. Company records and activity are read-only here; authorized TPOs may create or link an employer."
         actions={
-          <Link
-            href="/tpo/recruiters"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-          >
-            Recruiter leads
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <TpoCompanyCreateForm />
+            <Link
+              href="/tpo/recruiters"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              Recruiter leads
+            </Link>
+          </div>
         }
       />
 
