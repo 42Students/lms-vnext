@@ -36,6 +36,12 @@ export default async function FacultyCourseStudentsPage({
           Published gradebook
         </Link>
       </div>
+      <div className="flex justify-end">
+        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/attendance-corrections"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Correction window &amp; request-history status
+        </Link>
+      </div>
       <FacultyCourseRoster
         learners={roster}
         sectionName={delivery.sectionName}
