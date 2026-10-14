@@ -25,9 +25,10 @@ function formatDeadline(value: string | null) {
 }
 
 export function LearnerPlacementJobDetail({
-  items,
+  items,returnHref="/learn/my-placements/jobs",
 }: {
   items: readonly LearnerPlacementJobItem[];
+  returnHref?:string;
 }) {
   const summary = learnerJobDetailSummary(items);
   if (!summary) return null; // route has already returned notFound()
@@ -42,7 +43,7 @@ export function LearnerPlacementJobDetail({
           My Placements
         </Link>
         <span aria-hidden="true">/</span>
-        <Link href="/learn/my-placements/jobs" className="text-primary-text hover:underline">
+        <Link href={returnHref} className="text-primary-text hover:underline">
           Drives
         </Link>
         <span aria-hidden="true">/</span>
@@ -137,7 +138,7 @@ export function LearnerPlacementJobDetail({
             Eligibility breakdown
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
-            Your college's published eligibility rules are checked separately for each role.
+            Your college&apos;s published eligibility rules are checked separately for each role.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <StatusBadge tone="success">{summary.eligibleCount} eligible role{summary.eligibleCount === 1 ? "" : "s"}</StatusBadge>

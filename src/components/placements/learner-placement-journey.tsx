@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
+  jobId: string;
   jobTitle: string;
   companyName: string;
   applicationStatus: string;
@@ -233,6 +235,11 @@ export function LearnerPlacementJourney({
                 )}
               </p>
             ) : null}
+            {ownApplicationJobHref(item.jobId) ? <Link
+              href={ownApplicationJobHref(item.jobId)!}
+              className="mt-4 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+              View published job and role options →
+            </Link> : null}
             <Link
               href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
