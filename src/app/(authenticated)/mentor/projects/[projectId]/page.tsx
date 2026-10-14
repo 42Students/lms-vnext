@@ -54,6 +54,12 @@ export default async function MentorProjectPage({
       />
       <div className="flex flex-wrap gap-3">
         <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+        >
+          Release &amp; Sprint timeline
+        </Link>
+        <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
         >
