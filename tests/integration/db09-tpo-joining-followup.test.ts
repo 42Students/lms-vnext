@@ -51,6 +51,8 @@ afterAll(async()=>{
 it("counts a persisted accepted offer and fences foreign-college and wrong role",async()=>{
  const offerId=await fixture();const own=await getTpoJoiningFollowups(tpo,{seasonId:SEED_IDS.placementSeasonA,state:"PENDING"});
  expect(own.rows.find(o=>o.offerId===offerId)?.scheduledDate).toBe("2026-10-15");
+ const upcoming=await getTpoJoiningFollowups(tpo,{seasonId:SEED_IDS.placementSeasonA,state:"UPCOMING_7_DAYS"},new Date("2026-10-14T00:00:00Z"));
+ expect(upcoming.rows.some(o=>o.offerId===offerId)).toBe(true);
  if(!pool)throw Error("Isolated PostgreSQL required");
  await pool.query("UPDATE placement_offers SET joining_date=NULL WHERE id=$1",[offerId]);
  const unknownDate=await getTpoJoiningFollowups(tpo,{seasonId:SEED_IDS.placementSeasonA,state:"DATE_MISSING"});
