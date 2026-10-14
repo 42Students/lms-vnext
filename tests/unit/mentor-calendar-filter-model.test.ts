@@ -16,6 +16,12 @@ describe("Mentor global calendar filters",()=>{
     expect(filterMentorCalendar(rows,query).map(row=>row.id)).toEqual(["a"]);
     expect(mentorCalendarFilterHref(query)).toContain("status=REQUESTED");
     expect(mentorCalendarFiltersSchema.safeParse({type:"SECRET"}).success).toBe(false);
+    expect(mentorCalendarFiltersSchema.safeParse({projectState:"DELETED"}).success).toBe(false);
+    const archived={...rows[0]!,projectStatus:"ARCHIVED"};
+    expect(filterMentorCalendar([rows[0]!,archived],
+      {...query,status:"ALL",search:"",projectState:"ARCHIVED"}).length).toBe(1);
+    expect(mentorCalendarFilterHref({...query,projectState:"ARCHIVED"}))
+      .toContain("projectState=ARCHIVED");
     const types=[{...rows[0]!,meetingType:"GENERAL" as const},
       {...rows[1]!,meetingType:"REVIEW" as const}];
     expect(filterMentorCalendar(types,{...query,status:"ALL",search:"",type:"REVIEW"})

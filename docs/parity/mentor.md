@@ -943,3 +943,6 @@ Registered currently assigned Mentor project reports now allow updated-first and
 
 ## 2026-10-15 chat-11 round 6 AX — written Resource description completeness (PARTIAL)
 Exact-project Resource Directory now filters records with/without nonblank registered descriptions, alongside required/safe HTTPS/ordering/search, before pagination and capped safe metadata CSV. Presence tests treat whitespace-only notes as absent. Current live same-college Mentor checks reused; no new resource writes or file providers. Unit/browser/PG/legacy parity remain PARTIAL.
+
+## 2026-10-15 chat-11 round 6 AY — Meetings assigned-project state (PARTIAL)
+Current-assignment global Mentor Meetings now filters actual registered PLANNED/ACTIVE/COMPLETED/ARCHIVED project lifecycle status alongside meeting status/type/IST period/search. The same scoped roster drives UI and capped metadata CSV; invalid states are rejected, archived data never gains new write rights. Pure tests authored. Execute typecheck, lint, unit/PG and browser to verify full legacy calendar parity.
