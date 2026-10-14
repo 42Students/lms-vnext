@@ -809,6 +809,31 @@ mobile/browser proof remain open.
 
 ## Page: Learner Profile
 
+**2026-10-14 confirmed alternate contact edit (PARTIAL, L30-007):**
+The Contacts card now has a mobile-friendly Edit contact details dialog for
+the optional **alternate phone** and **contact email** only. It requires a
+second confirmation, uses strict Zod and displays pending, safe-cancel, error
+and successful-save states. The authenticated
+`PATCH /api/profile/me/contacts` is same-origin protected, authorizes
+`can(context, "profile.self.manage")` and checks active persisted Learner
+membership/user/role in a transaction. It updates only the
+`learner_profiles.profile_document.contacts` JSON section rather than
+replacing other sections. A transactional
+`identity.learner_contact.updated` event records the actor/college and
+changed field names **without phone or email values**. Login phone and
+account email remain authoritative and unchanged; no verification or
+phone/email-change request workflow is implied.
+
+The generic Profile editor no longer offers separate contact text inputs;
+its other existing profile sections still use the existing PUT workflow.
+A fresh-fixture PostgreSQL integration suite covers saved contacts,
+preservation of other sections, audit privacy, forged-college, suspended,
+wrong-role, live suspension/role revocation and invalid-input denials.
+The tests are authored pending executable PG evidence. Profile image,
+resume storage, private identity, verification and browser/oracle
+acceptance remain open; parent Profile stays PARTIAL.
+
+
 **2026-10-14 contact deep-link and completion checklist (PARTIAL,
 L30-026):** Profile now accepts strictly validated `?section=contacts`
 (and other existing section IDs), scrolls to that actual card on navigation,
