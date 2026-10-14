@@ -1146,3 +1146,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-009 PARTIAL (round 4):** When a noncritical dashboard source is unavailable but the learner's published-drive source loaded successfully, the hero exposes a safe Browse Drives fallback without inventing a no-activity or zero-jobs state. When drives themselves fail, the CTA is suppressed instead of promising accessible jobs. No new service/scope bypass. Unit cases for partial failures authored; runtime/browser gate pending.
+
+
+**2026-10-15 chat-5 L11-006 PARTIAL (round 4):** Dashboard now exposes the nearest actual upcoming assessment as an independent, authorized assessment action, even if the general hero instead promotes an earlier interview or an expiring offer. Approved reschedule and own-learner deep-link selectors are preserved; no scheduled start is called an employer deadline. Fixed-clock model regression authored. Typecheck, PG and browser acceptance pending.

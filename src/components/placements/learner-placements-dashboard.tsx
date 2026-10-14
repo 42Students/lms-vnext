@@ -151,6 +151,20 @@ export function LearnerPlacementsDashboard({
           </div>}
         <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
       </section>
+      {display.urgentAssessment ? (
+        <aside aria-label="Upcoming assessment action"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Assessment in the next seven IST days</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentAssessment.roundName} · {display.urgentAssessment.companyName}</p>
+            <p className="mt-1 text-xs text-body">{formatWhen(display.urgentAssessment.when)} · Scheduled time, not provider submission deadline</p>
+          </div>
+          <Link href={display.urgentAssessment.href}
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            Review assessment →
+          </Link>
+        </aside>
+      ) : null}
       {display.activeOffers !== null && display.activeOffers > 0 ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning bg-surface px-5 py-4">
           <div>

@@ -152,6 +152,7 @@ export function learnerPlacementDashboard(
     firstRun: appliedIds.size === 0,
     nextAction,
     needsAttention:attentionEvents.slice(0,3),
+    urgentAssessment:attentionEvents.find(event=>event.kind==="ASSESSMENT")??null,
     fullAttentionCount:attentionEvents.length,
     weekEvents: weekEvents.slice(0, 7),
     weekDays: weekDays.map(day=>({...day,events:day.events.slice(0,2)})),
