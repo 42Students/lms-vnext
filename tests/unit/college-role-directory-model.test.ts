@@ -13,18 +13,18 @@ describe("College Admin Faculty/Students directory helpers", () => {
   });
   it("parses status/search/page filters and forbids caller-controlled college", () => {
     expect(collegeRoleDirectoryQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", sort: "NAME", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", sort: "NAME", page: 1,
     });
     expect(collegeRoleDirectoryQuerySchema.parse({
       q: "  test  ", status: "SUSPENDED", accountStatus: "DISABLED", page: "3",
     })).toEqual({
-      q: "test", status: "SUSPENDED", accountStatus: "DISABLED", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", sort: "NAME", page: 3,
+      q: "test", status: "SUSPENDED", accountStatus: "DISABLED", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", sort: "NAME", page: 3,
     });
     for (const invalid of [
       { collegeId: "foreign" },
       { page: 0 },
       { page: 10001 },
-      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, {rollPresence:"UNKNOWN"}, {registrationPresence:"NONE"}, {cohortId:"invalid"}, { classPresence:"CANCELLED" }, { teaching: "RETIRED" }, {teachingRole:"LECTURER"}, { facultyDepartmentId:"bad" }, { employmentType:"x".repeat(129) }, {sort:"RANDOM"},
+      { status: "DISABLED" }, { accountStatus: "SUSPENDED" }, { enrollment: "ARCHIVED" }, {rollPresence:"UNKNOWN"}, {registrationPresence:"NONE"}, {cohortId:"invalid"}, { classPresence:"CANCELLED" }, { teaching: "RETIRED" }, {teachingRole:"LECTURER"}, {titlePresence:"UNKNOWN"}, { facultyDepartmentId:"bad" }, { employmentType:"x".repeat(129) }, {sort:"RANDOM"},
       { q: "x".repeat(101) },
     ]) {
       expect(collegeRoleDirectoryQuerySchema.safeParse(invalid).success).toBe(false);
@@ -33,7 +33,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
 
   it("builds only role-specific relative routes with escaped parameters", () => {
     const query = { q: "a & b", status: "ACTIVE" as const, accountStatus: "DISABLED" as const,
-      enrollment: "ACTIVE" as const, rollPresence:"MISSING" as const, registrationPresence:"PRESENT" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", employmentType:"VISITING", sort:"NEWEST" as const, page: 2 };
+      enrollment: "ACTIVE" as const, rollPresence:"MISSING" as const, registrationPresence:"PRESENT" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, titlePresence:"MISSING" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", employmentType:"VISITING", sort:"NEWEST" as const, page: 2 };
     const faculty = new URL(collegeRoleDirectoryHref("FACULTY", query), "https://example.test");
     const students = new URL(collegeRoleDirectoryHref("LEARNER", query), "https://example.test");
     expect(faculty.pathname).toBe("/college/faculty");
@@ -54,6 +54,8 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(faculty.searchParams.has("enrollment")).toBe(false);
     expect(faculty.searchParams.get("teaching")).toBe("ASSIGNED");
     expect(faculty.searchParams.get("teachingRole")).toBe("TA");
+    expect(faculty.searchParams.get("titlePresence")).toBe("MISSING");
+    expect(students.searchParams.has("titlePresence")).toBe(false);
     expect(students.searchParams.has("teachingRole")).toBe(false);
     expect(faculty.searchParams.get("facultyDepartmentId")).toBe(query.facultyDepartmentId);
     expect(faculty.searchParams.get("employmentType")).toBe("VISITING");
@@ -62,7 +64,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(students.searchParams.has("teaching")).toBe(false);
     expect(students.searchParams.has("collegeId")).toBe(false);
     expect(collegeRoleDirectoryHref("LEARNER", {
-      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", sort:"NAME", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", sort:"NAME", page: 1,
     })).toBe("/college/students");
   });
 
