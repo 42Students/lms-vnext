@@ -568,6 +568,8 @@ Audited contract:
 
 ## Page: Student Group Detail
 
+**Waitlist eligibility safety PARTIAL (2026-10-14):** Promotion now locks the learner account, membership and learner role through commit and rejects disabled accounts without changing the seat count, queue row/version or member history. A pure decision model preserves lock, stale-member, FIFO and capacity denials; PostgreSQL fixtures cover disabled-account no-side-effects and stale member tokens. Local type/lint/unit evidence is required before publishing; PostgreSQL remains blocked by sandbox OS user restrictions. Rule refresh, automatic scheduling, legacy/browser proof and remaining waitlist workflows stay open.
+
 **Waitlist and rule writes PARTIAL (2026-10-14):** `/college/groups/[groupId]` now exposes version-checked, confirmed manual promotion of the first unlocked WAITLISTED learner when group capacity permits, and scoped V1 criteria rule editing with a clearly identified autoRefresh setting (saving never executes refresh). Dedicated same-origin PATCH uses the persisted College Admin actor check, own-college STUDY_GROUP lock, integer group/member optimistic versions, exact learner role/capacity/FIFO guards and one atomic membership change plus immutable member event and activity audit. Rule changes validate linked programs/cohorts stay in college and reject unsupported rule versions, then audit atomically. Pure unit and disposable-PostgreSQL success/foreign/wrong-role/stale tests authored. Full rule refresh UI, automatic refresh scheduling, learner consent/queue fairness edge cases, complete legacy/browsers and independently executed database gates remain open; parity stays PARTIAL.
 
 
