@@ -243,7 +243,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-011 | Submitted late state | AssignmentsContent | state mapping | CLOSED |
 | L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
 | L6-013 | View/submit primary action | AssignmentsContent | aggregate component | FIXED |
-| L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer | FIXED |
+| L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer + direct detail | FIXED |
 | L6-015 | Submission text/link/file fields | AssignmentsContent | text/link in aggregate drawer; file awaits secure storage | BLOCKED |
 | L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
 | L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | CLOSED |
