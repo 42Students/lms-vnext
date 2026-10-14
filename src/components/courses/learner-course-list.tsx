@@ -9,6 +9,7 @@ import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-car
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
 import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next-action-model";
+import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 
 const PAGE_SIZE = 48;
 
@@ -96,6 +97,7 @@ export function LearnerCourseList({
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
+  const [sortMode,setSortMode] = useState<LearnerCourseSortMode>("NAME");
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
 
   const periodRows = useMemo(
@@ -113,7 +115,7 @@ export function LearnerCourseList({
 
   const visibleRows = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return periodRows
+    return sortLearnerCourseCards(periodRows
       .filter(row => !continueOnly || learnerCourseHasContinueAction(row))
       .filter((row) => {
         const elective =
@@ -122,15 +124,8 @@ export function LearnerCourseList({
         if (typeFilter === "elective" && !elective) return false;
         return learnerCourseMatchesSearch(row, needle);
       })
-      .sort((left, right) => {
-        const leftElective =
-          String(left.course.offeringType).toUpperCase() === "ELECTIVE";
-        const rightElective =
-          String(right.course.offeringType).toUpperCase() === "ELECTIVE";
-        if (leftElective !== rightElective) return leftElective ? 1 : -1;
-        return left.course.courseName.localeCompare(right.course.courseName);
-      });
-  }, [periodRows, query, typeFilter, continueOnly]);
+      ,sortMode);
+  }, [periodRows, query, typeFilter, continueOnly,sortMode]);
 
   if (rows.length === 0) {
     return (
@@ -163,6 +158,7 @@ export function LearnerCourseList({
                   setQuery(reset.search);
                   setTypeFilter(reset.type);
                   setContinueOnly(false);
+                  setSortMode("NAME");
                   setVisibleLimit(reset.visibleLimit);
                 }}
                 className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
@@ -221,7 +217,15 @@ export function LearnerCourseList({
           ) : null}
         </div>
 
-        <div className="mt-3">
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
+            Sort Courses
+            <select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
+              className="min-h-11 rounded-lg border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
+              <option value="DUE">Next assessment due</option>
+            </select>
+          </label>
           <button type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
             className={continueOnly
