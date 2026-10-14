@@ -1,0 +1,2 @@
+"use client";
+export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="rounded border border-border bg-surface p-6">Could not load offer evidence. <button type="button" onClick={reset} className="min-h-10 underline">Retry</button></section>}
