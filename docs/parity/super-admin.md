@@ -668,3 +668,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Faculty Assignment follow-up — PARTIAL:** Self-review aliased both duplicated joined `ended_at` columns in the read subquery (PG 42702 guard), removed unused import, and extended in-test PG fixture to cover actual ended transition and ACTIVE/ENDED filters. Runtime tests still not executed; no DONE claim.
+
+
+**2026-10-15 chat-6 round 4 / Placement Interviews — PARTIAL:** Added `/admin/placements/interviews`: scope-fenced 25-row persisted interview/round view with PENDING/SCHEDULED/COMPLETED/CANCELLED, search, IST schedule, safe job links, mobile-first loading/empty/error. No meeting URL, candidate comments or TPO write access. Pure query unit test authored; full round action parity and executable PostgreSQL/browser acceptance remain open.
