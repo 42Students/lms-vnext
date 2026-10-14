@@ -301,3 +301,11 @@ do not promote any parity row to DONE.
 - PostgreSQL fixtures use unique Course and created Faculty-only/Learner members;
   read success plus role/foreign/forged selectors authored. No execution
   evidence in this session; legacy acceptance and browser states remain PARTIAL.
+
+## 2026-10-14 C — Mentor task board review slice (PARTIAL)
+
+Selected **Project Tasks / Board**, since Release/Sprint timeline already
+has a scoped read and DB evidence authored. Added persisted task status/priority/
+sprint read with 20-row paging, search and responsive cards. The full Board
+still lacks assignee/workload source fields in promoted DB07 and may not be
+declared DONE. Legacy board interaction, real PG and browser acceptance open.
