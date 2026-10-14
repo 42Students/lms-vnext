@@ -91,10 +91,10 @@ export function learnerPlacementDashboard(
     a.roundId.localeCompare(b.roundId));
 
   const weekEvents = events.filter((event) => event.when.getTime() <= weekEndMs);
-  const attentionEvents=[
-    ...weekEvents.filter(event=>event.kind==="ASSESSMENT"),
-    ...weekEvents.filter(event=>event.kind==="INTERVIEW"),
-  ];
+  // The timeline is already in effective-schedule order; grouping by round
+  // kind here hid earlier interviews behind later assessments.
+  const attentionEvents=weekEvents.filter(event=>
+    event.kind==="ASSESSMENT"||event.kind==="INTERVIEW");
   const firstWeek = (kind: PlacementDashboardEvent["kind"]) =>
     weekEvents.find((event) => event.kind === kind) ?? null;
   const priority =
