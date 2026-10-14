@@ -224,3 +224,19 @@ represent elapsed hours, velocity, historical assignments or release readiness.
 Pure tests and disposable PostgreSQL denial tests are authored but not
 executed. Full legacy Sprint parity and browser acceptance remain OPEN; the
 parent Sprint row stays PARTIAL.
+
+## Mentor cross-project team coverage (2026-10-14)
+
+A read-only `/mentor/team-coverage` route now links from the Mentor Projects
+page and reports active Learner/Mentor member counts and whether a primary
+Mentor membership is currently recorded, by currently assigned and non-archived
+project. Scope is derived exclusively from the existing persisted Mentor
+assignment reader, central `projects.read`, same-college active users and
+non-ended project memberships. Search, `NO_LEARNERS` and
+`NO_PRIMARY_MENTOR` filters and 20-project pagination operate on the
+authorized projects only. No individual member identities are loaded, and
+zero members are not interpreted as an approved staffing threshold. The page
+links to the existing team workspace and previously built per-project history
+view. Zod/unit and PostgreSQL denial tests are authored, not executed; full
+legacy lifecycle writes, privacy review and browser acceptance remain OPEN.
+This is PARTIAL, not a completed Project Team implementation.

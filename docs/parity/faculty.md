@@ -393,3 +393,23 @@ Assignment and Quiz report rows remain PARTIAL.
 ### Faculty Section roster CSV export and browser-acceptance fixes (2026-10-14)
 
 The exact scoped Students list can now export its currently filtered/sorted rows to CSV with roll, email and phone, without another backend query or wider membership access. The CSV serializer quotes fields and neutralizes spreadsheet formula prefixes (including phone numbers beginning with +), supports UTF-8, and names files by Section. Pure tests and an authenticated download test are authored. Faculty Attendance browser regressions now use exact, unique accessible names and preserve the captured delivery ID after scheduling rather than deriving it from a potentially changed browser URL. None of this independently closes full Faculty roster or attendance legacy parity until exact-commit browser/DB evidence is passing.
+
+## Faculty Section assessment-health drill-down (2026-10-14)
+
+A read-only `/teacher/courses/[deliveryId]/assessment-health` route is now
+linked from the exact Faculty Section Students page. It requires current
+Faculty role, central `courses.read` same-college permission, and a
+persisted active teaching assignment for the requested delivery. It reuses
+registered Section-specific Assignment/Quiz report readers and considers only
+PUBLISHED assessments. The view provides eligible, responded, missing and
+graded counts with a denominator-safe response percentage, plus a Faculty-only
+average where recorded grades exist. Five assessments per page bound report
+expansion; each has an authorized detailed report link. Pure-model tests and a
+disposable-PostgreSQL denial suite are authored, not claimed executed. It
+does not certify private grade publication, elective/Section roster visual
+parity, full historic reporting or authenticated browser acceptance. Existing
+Course Overview and reports stay PARTIAL.
+
+The previous chat-4 Faculty and Mentor additions were checked against the
+current GitHub tree: their dedicated pages each have both loading.tsx and
+error.tsx. Empty states remain per-page, not silently replaced by zero counts.
