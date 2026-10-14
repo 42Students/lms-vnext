@@ -138,6 +138,8 @@ Legacy contract:
 ## Page: Semester–Course Mapping
 **Legacy:** `/college-admin/semester-courses`
 
+**Read-first PARTIAL:** `/college/semester-courses` lists persisted college-owned course offerings by cohort/program/academic period with CORE/ELECTIVE type, credits, filters and offering links. Academic periods are not yet certified as legacy numbered semesters; no create/remove mapping writes and no complete browser parity.
+
 - [ ] Program + semester context selectors match.
 - [ ] Existing course mappings table/list matches.
 - [ ] Add/mapping form supports course, offering/type and required metadata present in legacy.
@@ -405,6 +407,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Faculty Assignment
 **Legacy:** `/college-admin/faculty-assignment`
+
+**Read-first PARTIAL:** `/college/faculty-assignment` shows persisted college-scoped teaching assignments, Faculty identity, class/course context, active/ended lifecycle, filtering and pagination. Mutation dialogs, conflict warnings, exact legacy assignment behavior and browser acceptance remain open.
 
 - [ ] Course/Class/Faculty selectors match.
 - [ ] Existing assignment list/table matches.
