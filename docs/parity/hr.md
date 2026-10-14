@@ -586,3 +586,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Draft destructive-reset guard — PARTIAL:** Start Over now confirms before discarding any edited or Hire Again-prefilled draft and clears the exact browser-tab scoped saved copy only after confirmation. Pure work-detection tests authored; no server writes, browser acceptance remains.
+
+
+**2026-10-15 chat-10 R6 / Hiring activity drive-title search — PARTIAL:** Activity history adds bounded role/drive-name URL search after the exact company+college authorized job allowlist, with stable published/closed filters, pagination, and matching CSV export. Unit and in-test PG company-scope assertions authored; tests/browser gates pending.

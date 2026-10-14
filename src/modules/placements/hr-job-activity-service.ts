@@ -5,7 +5,7 @@ import {activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrActivityQuerySchema,hrActivityEventFilter,hrActivityHasNext,projectHrJobActivity} from "./hr-job-activity-model";
+import {hrActivityQuerySchema,hrActivityEventFilter,hrActivityHasNext,projectHrJobActivity,searchHrActivityJobs} from "./hr-job-activity-model";
 export async function listRecruiterJobActivity(context:RequestContext,raw:unknown={}) {
  const query=hrActivityQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)
@@ -18,8 +18,8 @@ export async function listRecruiterJobActivity(context:RequestContext,raw:unknow
  if(!collegeId)return {status:grants.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
    choices:grants,events:[]};
  const owned=await listOwnRecruiterPlacementJobs(context);
- const jobs=owned.filter(row=>row.collegeId===collegeId&&row.companyId===context.recruiter!.companyId)
-  .map(row=>({id:row.job.id,title:row.job.title}));
+ const jobs=searchHrActivityJobs(owned.filter(row=>row.collegeId===collegeId&&row.companyId===context.recruiter!.companyId)
+  .map(row=>({id:row.job.id,title:row.job.title})),query.q);
  const ids=jobs.map(job=>job.id);
  const rows=ids.length?await getDb().select({
   id:activityEvents.id,subjectId:activityEvents.subjectId,
