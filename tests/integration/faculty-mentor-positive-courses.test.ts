@@ -20,7 +20,7 @@ import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/course
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
-import { createCourseQuiz, transitionCourseQuiz } from "@/modules/courses/quiz-service";
+import { createCourseQuiz, transitionCourseQuiz,setCourseQuizResults } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
 import {markFacultyAttendance} from "@/modules/attendance/faculty-service";
@@ -491,6 +491,31 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       order by created_at desc limit 1`,[session.id]);
     expect(reason.rows[0]?.metadata.correctionReason).toMatch(/official register/);
     expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
+  });
+  it("fences Faculty from old Quiz results endpoint and audits the Admin path",async()=>{
+    const {delivery,quiz}=await fixture();
+    await transitionCourseQuiz(faculty,quiz.id,{action:"CLOSE"});
+    await expect(setCourseQuizResults(facultyOnly,quiz.id,{published:true}))
+      .rejects.toMatchObject({code:"QUIZ_RESULTS_ADMIN_ONLY"});
+    await expect(setCourseQuizResults(learner,quiz.id,{published:true}))
+      .rejects.toBeDefined();
+    await expect(setCourseQuizResults({
+      ...admin,membership:{...admin.membership!,collegeId:SEED_IDS.collegeB},
+    },quiz.id,{published:true})).rejects.toBeDefined();
+    const published=await setCourseQuizResults(admin,quiz.id,{published:true});
+    expect(published.resultsPublished).toBe(true);
+    await expect(setCourseQuizResults(admin,quiz.id,{published:true}))
+      .rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    const hidden=await setCourseQuizResults(admin,quiz.id,{published:false});
+    expect(hidden.resultsPublished).toBe(false);
+    const audits=await pool.query<{n:string}>(`
+      select count(*)::text as n from activity_events
+      where subject_id=$1::text and event_type='courses.quiz.results_changed'`,[quiz.id]);
+    expect(audits.rows[0]?.n).toBe("2");
+    const visible=await pool.query<{results_published:boolean}>(
+      "select results_published from course_quizzes where id=$1",[quiz.id]);
+    expect(visible.rows[0]!.results_published).toBe(false);
+    expect(delivery.id).toBeTruthy();
   });
   it("toggles CLOSED Quiz result visibility with an audited SQL-default token",async()=>{
    const {delivery,quiz}=await fixture();

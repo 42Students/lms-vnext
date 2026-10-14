@@ -990,3 +990,14 @@ Pure policy/unit and self-created Section/Learner PG grading sequence now
 covers initial grade, publication, denied unexplained regrade, valid feedback,
 stale replay, wrong-role, foreign college and duplicate audit protection.
 Remains PARTIAL: orchestrator tests, mobile drawer and legacy review.
+
+## 2026-10-14 Faculty Quiz result release bypass sealed — PARTIAL
+The legacy generic Quiz results endpoint can no longer be used by Faculty to
+circumvent their confirmed, millisecond-versioned publish/hide route. It now
+permits only course-managing Admin actors and CLOSED quizzes; its own
+transaction locks the quiz, writes a conditional visibility transition, and
+records an immutable results-changed audit event. Duplicate writes and
+published/draft/archived states fail closed. Faculty's own exact Section route
+remains unchanged. Pure policy unit and disposable Section PG tests cover
+Faculty/wrong-role/foreign-denied, Admin publish/hide, no-op denial, and audit.
+PARTIAL: orchestrator gates, browser and legacy role continuity.
