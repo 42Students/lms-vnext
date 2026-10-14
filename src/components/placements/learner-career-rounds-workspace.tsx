@@ -9,6 +9,7 @@ import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
   learnerInterviewViewHref,type LearnerInterviewScheduleView }
   from "@/modules/placements/learner-interview-view-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
+import {learnerInterviewFocusState} from "@/modules/placements/learner-interview-focus-model";
 import {learnerInterviewMobileSummary} from "@/modules/placements/learner-interview-mobile-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -187,6 +188,9 @@ export function LearnerCareerRoundsWorkspace({
     // schedule or urgency filter and silently show an empty result.
     setFilters(defaults);
   }
+  const focus=kind==="INTERVIEW"
+    ? learnerInterviewFocusState(relevant,visibleRows,selectedKey)
+    : {highlightedKey:null,hiddenByFilters:false};
   const selected = relevant.find(
     (round) => round.applicationId + ":" + round.roundId === selectedKey,
   ) ?? null;
@@ -345,6 +349,18 @@ export function LearnerCareerRoundsWorkspace({
         </div>
       </section>
 
+      {kind==="INTERVIEW"&&focus.hiddenByFilters ? (
+        <aside role="status" className="rounded-xl border border-primary bg-primary-subtle p-4">
+          <p className="text-sm font-semibold text-foreground">
+            The linked interview is hidden by your current filters.
+          </p>
+          <button type="button" onClick={()=>{
+            setFilters(defaults);setDueBucket("all");
+          }} className="mt-2 min-h-11 text-sm font-semibold text-primary-text hover:underline">
+            Show linked interview
+          </button>
+        </aside>
+      ) : null}
       {visibleRows.length === 0 && relevant.length > 0 ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
@@ -361,6 +377,7 @@ export function LearnerCareerRoundsWorkspace({
           rounds={visibleRows}
           onSelect={(round) => setSelectedKey(round.applicationId + ":" + round.roundId)}
           snapshotNowIso={snapshotNowIso}
+          highlightedKey={focus.highlightedKey}
         />
       )}
 

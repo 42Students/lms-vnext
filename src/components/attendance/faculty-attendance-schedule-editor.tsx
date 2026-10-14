@@ -25,7 +25,7 @@ export function FacultyAttendanceScheduleEditor({
   const [success,setSuccess]=useState<string|null>(null);
   const eligible=sessions.filter(s=>!s.marked);
   const selected=eligible.find(s=>s.id===id);
-  function useExistingSession(session:Session){
+  function applyExistingSession(session:Session){
     setId(session.id);
     setTitle(session.title);
     setDescription(session.description??"");
@@ -36,7 +36,7 @@ export function FacultyAttendanceScheduleEditor({
   }
   function changeAction(next:"CREATE"|"RESCHEDULE"){
     setAction(next);setError(null);setSuccess(null);
-    if(next==="RESCHEDULE"&&eligible[0])useExistingSession(selected??eligible[0]);
+    if(next==="RESCHEDULE"&&eligible[0])applyExistingSession(selected??eligible[0]);
     if(next==="CREATE"){
       setTitle("");setDescription("");setLocation("");setStartsAt("");setEndsAt("");
     }
@@ -88,7 +88,7 @@ export function FacultyAttendanceScheduleEditor({
         </select>
       </label>
       {action==="RESCHEDULE"?<label className="grid gap-1 text-sm">Unmarked session
-        <select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)useExistingSession(next);}}
+        <select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
           className="min-h-10 rounded border border-border bg-background p-2">
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}

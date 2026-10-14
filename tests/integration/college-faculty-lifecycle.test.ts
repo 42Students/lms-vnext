@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { transitionCollegeFaculty } from "@/modules/people/college-faculty-lifecycle-service";
+import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -82,6 +83,15 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     );
     expect(events.rows.map(row => row.event_type)).toContain("identity.membership.suspended");
     expect(events.rows.map(row => row.event_type)).toContain("identity.membership.reactivated");
+    const history = await listCollegeActivity(admin, {
+      subjectType: "college_membership", subjectId: id.member,
+    });
+    expect(history.items.some(item => item.event.eventType === "identity.membership.suspended")).toBe(true);
+    expect(history.items.some(item => item.event.eventType === "identity.membership.reactivated")).toBe(true);
+    const noLeak = await listCollegeActivity(foreign, {
+      subjectType: "college_membership", subjectId: id.member,
+    });
+    expect(noLeak.items).toHaveLength(0);
   });
   it("denies foreign college, non-admin and extra caller scope fields", async () => {
     // Another college's admin must not learn the faculty member exists.
