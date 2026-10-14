@@ -9,8 +9,6 @@ export const collegeLiveClassQuerySchema=collegeContentQuerySchema.omit({format:
  view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
  from:collegeIstDateSchema.optional(),
  to:collegeIstDateSchema.optional(),
-  from:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
-  to:z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
 }).refine(q=>!q.from||!q.to||q.from<=q.to,{message:"Inverted date range"})
   .refine(q=>!q.from||!q.to||
    (Date.parse(q.to+"T00:00:00Z")-Date.parse(q.from+"T00:00:00Z"))/86400000<31,
