@@ -329,7 +329,7 @@ export function LearnerCareerRoundsWorkspace({
               All assessment rounds ({relevant.length})
             </button>
             <button type="button" aria-pressed={missingLinkOnly}
-              onClick={()=>{setMissingLinkOnly(value=>!value);selectDueBucket("all");}}
+              onClick={()=>{const next=!missingLinkOnly;selectDueBucket("all");setMissingLinkOnly(next);}}
               className={missingLinkOnly
                 ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
