@@ -1443,3 +1443,6 @@ After the initial persisted Faculty Course list is resolved, a single concurrent
 
 ## 2026-10-15 Round 5 Faculty Quiz metadata preflight — PARTIAL
 Quiz CREATE and EDIT now validate title, instructions, bounded integer attempt count and exact IST due-date calendar values before the destructive confirmation/API call; invalid values show field-specific guidance instead of generic write failure. Server-side Zod and persisted authorization remain mandatory. Unit cases authored; mobile and PG acceptance pending.
+
+## 2026-10-15 Round 5 Contacts Zod 4 default typing repair — PARTIAL
+Contacts selector defaults now use input-side Zod prefault values before numeric transforms, so the parser still returns numeric page/size without a mismatched output-default type. Unit/default and browser verification pending.
