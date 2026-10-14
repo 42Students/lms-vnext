@@ -35,6 +35,10 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered lessons CSV
     </Link>
+    <Link href="/college/live-classes"
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      View college live classes
+    </Link>
     <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} />
   </div>;
 }

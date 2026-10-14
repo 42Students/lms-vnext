@@ -60,6 +60,7 @@ const ids = {
   resource: randomUUID(),
   video: randomUUID(),
   youtube: randomUUID(),
+  live: randomUUID(),
 };
 const label = "W-CONTENT-" + ids.period.slice(0, 8);
 
@@ -118,12 +119,18 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       "VALUES($1,$2,'YOUTUBE',$3,'https://www.youtube.com/watch?v=example',70,2,$4)",
       [ids.youtube, ids.lesson, label, SEED_IDS.collegeAdminUser],
     );
+    await pool.query(
+      "INSERT INTO lesson_contents(id,lesson_id,content_type,title,external_url,starts_at,ends_at,sequence,created_by_user_id,status) " +
+      "VALUES($1,$2,'LIVE_CLASS',$3,'https://meet.example.test/private','2026-11-01T05:00:00Z','2026-11-01T06:00:00Z',3,$4,'PUBLISHED')",
+      [ids.live,ids.lesson,label,SEED_IDS.collegeAdminUser],
+    );
   });
 
   afterAll(async () => {
     try {
       if (pool) {
         const owned: ReadonlyArray<readonly [string, string]> = [
+          ["lesson_contents", ids.live],
           ["lesson_contents", ids.youtube],
           ["lesson_contents", ids.video],
           ["lesson_contents", ids.resource],
@@ -184,6 +191,22 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(serialized).not.toContain("youtube.com/watch");
   });
 
+  it("shows owned live-class schedule without private meeting URLs",async()=>{
+    const [mine,theirs]=await Promise.all([
+      listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label}),
+      listCollegeContentAggregate(adminB,"LIVE_CLASS",{q:label}),
+    ]);
+    expect(mine.items.find(r=>r.id===ids.live)).toMatchObject({
+      title:label,courseName:label,offeringId:ids.offering,status:"PUBLISHED",
+    });
+    expect(mine.items.find(r=>r.id===ids.live)?.startsAt).toBeInstanceOf(Date);
+    expect(theirs.items).toEqual([]);
+    expect(JSON.stringify(mine)).not.toContain("meet.example.test");
+    await expect(listCollegeContentAggregate(nonAdmin,"LIVE_CLASS",{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeContentAggregate(adminA,"LIVE_CLASS",{collegeId:SEED_IDS.collegeB}))
+      .rejects.toBeDefined();
+  });
   it("enforces tenant and role denials for both kinds", async () => {
     for (const kind of ["VIDEO", "RESOURCE"] as const) {
       const other = await listCollegeContentAggregate(adminB, kind, { q: label });

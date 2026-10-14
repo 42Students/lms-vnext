@@ -473,6 +473,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Live Classes
+**Persisted College Admin live-class catalogue PARTIAL (2026-10-15):** /college/live-classes now renders same-college LIVE_CLASS content with lesson/course links, IST start/end times, search, publication and 25-record pagination. It selects unique named Drizzle columns using the shared alias helper and never selects private meeting URLs or storage keys. Read-only mobile cards, strict URL schema and own/foreign/wrong-role disposable PostgreSQL fixtures authored. Upcoming/past state and editor parity, executed PG/browser gates remain open.
+
 **Legacy:** `lesson-content?type=live-classes`
 
 - [ ] Live-class aggregate list matches.

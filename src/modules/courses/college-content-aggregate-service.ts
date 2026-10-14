@@ -70,6 +70,8 @@ export async function listCollegeContentAggregate(
     courseCode: aliasedColumn(courses.code, "content_course_code"),
     cohortName: aliasedColumn(cohorts.name, "content_cohort_name"),
     periodName: aliasedColumn(academicPeriods.name, "content_period_name"),
+    startsAt: aliasedColumn(lessonContents.startsAt,"content_starts_at"),
+    endsAt: aliasedColumn(lessonContents.endsAt,"content_ends_at"),
   }).from(lessonContents)
     .innerJoin(courseLessons, eq(courseLessons.id, lessonContents.lessonId))
     .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
