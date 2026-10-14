@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {FacultyLiveClassEditor} from "@/components/courses/faculty-live-class-editor";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {facultyLiveClassesHref,facultyLiveClassesQuerySchema} from "@/modules/courses/faculty-live-classes-model";
@@ -19,6 +20,14 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
  return <div className="space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Live classes"
    description="Registered published live sessions for your active teaching Sections." />
+  <FacultyLiveClassEditor
+    choices={data.lessonChoices}
+    sessions={data.items.map(item=>({
+      id:item.id,deliveryId:item.deliveryId,title:item.title,
+      startsAt:item.startsAt.toISOString(),endsAt:item.endsAt.toISOString(),
+      expectedUpdatedAt:item.updatedAt?.toISOString()??null,
+    }))}
+  />
   <form action="/teacher/live-classes" method="get"
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="grid gap-1 text-sm">When
