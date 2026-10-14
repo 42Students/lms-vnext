@@ -14,7 +14,7 @@ import { LearnerProjectGoals } from "@/components/projects/learner-project-goals
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
-import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 
@@ -23,12 +23,12 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; taskStatus?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
   if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
-  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
   const activeSection =
     tab === "board" || tab === "tasks"
       ? "tasks"
@@ -80,16 +80,17 @@ export default async function LearnerProjectPage({
     : null;
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";
+  const status = learnerBoardStatusSchema.safeParse(taskStatusInput).data ?? "";
   const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
   const releaseId = learnerBoardReleaseSchema.safeParse(releaseInput).data ?? "";
   const sprintReleaseById = new Map(workspace.sprints.map(sprint => [sprint.id,sprint.releaseId]));
   const boardTasks = activeSection === "tasks"
-    ? filterLearnerBoardTasks(workspace.tasks, search, {priority,sprintId,releaseId,sprintReleaseById})
+    ? filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById})
     : workspace.tasks;
   const selectedTask=activeSection==="tasks"
     ? findOwnLearnerBoardTask(workspace.tasks,taskId)
     : null;
-  const boardFilters={taskSearch:search,priority,sprintId,releaseId};
+  const boardFilters={taskSearch:search,priority,status,sprintId,releaseId};
   const shownWorkspace = activeSection === "tasks"
     ? { ...workspace, tasks: boardTasks }
     : workspace;
@@ -98,7 +99,7 @@ export default async function LearnerProjectPage({
     <div className="space-y-6">
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "tasks" ? (
-        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
+        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} />
       ) : null}
       {activeSection === "tasks" ? (
