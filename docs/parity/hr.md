@@ -379,3 +379,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Company Profile hiring footprint — PARTIAL:** Company tab now shows exact college-relationship live/closed/total persisted drive counts and three recent recruiter-visible drive links, no individual recruiter attribution, plus a strict college ID parse and existing profile CTA. Pure projection and isolated PG fixture tests authored, not executed. Remaining: legacy industry/logo (industry absent from registered company schema; logo storage blocked), individual teammate drive counts require real assignment evidence, custom stale/error retry, browser acceptance and full legacy Company tab parity.
+
+
+**2026-10-14 Chat 10 / HR Round Results table — PARTIAL:** Added standalone chooser and per-drive round selector with outcome filters/counts, STAGED versus APPLIED status, score/waitlist display, responsive candidate rows and link back to the existing staging workspace. Read via recruiter job non-enumerating company/college grant guard and only screening-SHORTLISTED candidates; no internal comments are projected. Pure-model and isolated PG success/foreign/wrong-role tests authored, not executed. Remaining: exact legacy Results-from-table embed/tab, bulk submission/review and interview-slot workflows, share-policy audit, stale-state/cross-role/browser and PG acceptance.
