@@ -181,6 +181,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Academic-year progression filter PARTIAL (2026-10-15):** Batch list can select the exact persisted progression academic-year start, rather than deriving a year from names or start periods; strict bounds, URL paging, absent-progression exclusion and positive/negative isolated PostgreSQL checks are authored. Browser and integration execution remain open.
+
 **Subquery column collision repair PARTIAL (2026-10-15):** Batch directory now aliases cohort/program/starting-period IDs, names and codes individually before pagination (PostgreSQL 42702); the existing tenant-isolated fixture asserts joined identity and progression shape. No executed PostgreSQL/browser closure or legacy cohort form parity is claimed.
 
 

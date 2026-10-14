@@ -162,6 +162,12 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(matchedTerm.items.map((row) => row.id)).toContain(ids.term);
     expect(otherTerm.items).toEqual([]);
     expect(semestersB.items).toEqual([]);
+    const [year2026, year2027] = await Promise.all([
+      listCollegeBatches(adminA, { q: label, yearStart: 2026 }),
+      listCollegeBatches(adminA, { q: label, yearStart: 2027 }),
+    ]);
+    expect(year2026.items.map((row) => row.id)).toContain(ids.cohort);
+    expect(year2027.items).toEqual([]);
     expect(batchesB.items).toEqual([]);
   });
 

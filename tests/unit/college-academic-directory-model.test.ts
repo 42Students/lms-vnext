@@ -39,6 +39,9 @@ describe("College Admin semester and batch read models", () => {
     })).toEqual({ q: "", status: "COMPLETED", page: 3 });
     expect(collegeBatchDirectorySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);
     expect(collegeBatchDirectorySchema.safeParse({ collegeId: "foreign" }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({ yearStart: 1899 }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({ yearStart: 9999 }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.parse({ yearStart: "2026" }).yearStart).toBe(2026);
   });
 
   it("converts query values safely and never accepts duplicate selectors", () => {
@@ -66,6 +69,9 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,
     })).toBe("/college/batches");
+    expect(academicDirectoryHref("BATCHES", {
+      q: "", status: "ALL", page: 2, yearStart: 2026,
+    })).toContain("yearStart=2026");
     expect(academicDirectoryPageCount(0)).toBe(1);
     expect(academicDirectoryPageCount(26)).toBe(2);
   });

@@ -16,6 +16,7 @@ export const collegeSemesterDirectorySchema = z.object({
 
 export const collegeBatchDirectorySchema = z.object({
   ...common,
+  yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
@@ -32,6 +33,7 @@ export function academicDirectoryHref(
   if (query.q) params.set("q", query.q);
   if (query.programId) params.set("programId", query.programId);
   if ("termNumber" in query && query.termNumber !== undefined) params.set("termNumber", String(query.termNumber));
+  if ("yearStart" in query && query.yearStart !== undefined) params.set("yearStart", String(query.yearStart));
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
@@ -45,10 +47,10 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "status", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "yearStart", "status", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" || value !== "")) {
+    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "yearStart" || value !== "")) {
       result[key] = value;
     }
   }
