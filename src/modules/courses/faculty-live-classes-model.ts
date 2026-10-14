@@ -19,7 +19,7 @@ export function safeHttpsMeetingLink(value:string|null|undefined):string|null {
 export type FacultyLiveClass={
  id:string;deliveryId:string;courseName:string;sectionName:string;
  title:string;startsAt:Date;endsAt:Date;joinUrl:string|null;
- status:string;
+ status:string;updatedAt?:Date;
 };
 export function pageFacultyLiveClasses(
  sessions:readonly FacultyLiveClass[],query:FacultyLiveClassesQuery,now:Date,
