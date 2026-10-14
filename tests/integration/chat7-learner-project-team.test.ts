@@ -1,0 +1,102 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
+import { listMyProjectInstances } from "@/modules/projects/member-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error("Requires disposable TEST_DATABASE_URL");
+}
+const pool = new Pool({connectionString: process.env.TEST_DATABASE_URL, max:1});
+const ids = {
+  college:randomUUID(), learner:randomUUID(), membership:randomUUID(),
+  role:randomUUID(), mentor:randomUUID(), mentorMembership:randomUUID(),
+  mentorRole:randomUUID(), template:randomUUID(), version:randomUUID(),
+  assignment:randomUUID(), project:randomUUID(), projectMember:randomUUID(),
+  mentorProjectMember:randomUUID(),
+};
+const suffix = ids.college.slice(0,8);
+const context:RequestContext={
+  user:{id:ids.learner,identityUid:"chat7-learner-"+suffix,platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:ids.membership,collegeId:ids.college,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+};
+async function setup() {
+  await pool.query("insert into colleges(id,organization_id,name,code) values($1,$2,$3,$4)",
+    [ids.college,SEED_IDS.organization,"Chat7 College "+suffix,"C7-"+suffix]);
+  for(const [user,membership,role,roleName] of [
+    [ids.learner,ids.membership,ids.role,"LEARNER"],
+    [ids.mentor,ids.mentorMembership,ids.mentorRole,"MENTOR"],
+  ]) {
+    await pool.query("insert into users(id,identity_uid,display_name) values($1,$2,$3)",
+      [user,"chat7-"+user,user===ids.mentor?"Own Mentor":"Own Learner"]);
+    await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
+      [membership,user,ids.college]);
+    await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,$3)",
+      [role,membership,roleName]);
+  }
+  // Minimal project-template lineage is per-test and is not a shared seeded project.
+  await pool.query(`insert into project_templates
+    (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
+    [ids.template,"chat7-"+suffix,SEED_IDS.superAdminUser]);
+  await pool.query(`insert into project_template_versions
+    (id,template_id,version,title,blueprint,created_by_user_id)
+    values($1,$2,1,'Chat7 Template','{}'::jsonb,$3)`,
+    [ids.version,ids.template,SEED_IDS.superAdminUser]);
+  await pool.query(`insert into project_template_college_assignments
+    (id,template_id,template_version_id,college_id,assigned_by_user_id)
+    values($1,$2,$3,$4,$5)`,
+    [ids.assignment,ids.template,ids.version,ids.college,SEED_IDS.superAdminUser]);
+  await pool.query(`insert into project_instances
+    (id,college_id,template_id,template_version_id,slug,title,created_by_user_id)
+    values($1,$2,$3,$4,$5,'Chat7 own project',$6)`,
+    [ids.project,ids.college,ids.template,ids.version,"chat7-own-"+suffix,SEED_IDS.superAdminUser]);
+  await pool.query(`insert into project_members
+    (id,project_id,membership_id,role,created_by_user_id)
+    values($1,$2,$3,'LEARNER',$4)`,
+    [ids.projectMember,ids.project,ids.membership,SEED_IDS.superAdminUser]);
+  await pool.query(`insert into project_members
+    (id,project_id,membership_id,role,is_primary,created_by_user_id)
+    values($1,$2,$3,'MENTOR',true,$4)`,
+    [ids.mentorProjectMember,ids.project,ids.mentorMembership,SEED_IDS.superAdminUser]);
+}
+async function cleanup() {
+  await pool.query("delete from project_members where project_id=$1",[ids.project]);
+  await pool.query("delete from project_instances where id=$1",[ids.project]);
+  await pool.query("delete from project_template_college_assignments where id=$1",[ids.assignment]);
+  await pool.query("delete from project_template_versions where id=$1",[ids.version]);
+  await pool.query("delete from project_templates where id=$1",[ids.template]);
+  await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",
+    [[ids.membership,ids.mentorMembership]]);
+  await pool.query("delete from college_memberships where id=any($1::uuid[])",
+    [[ids.membership,ids.mentorMembership]]);
+  await pool.query("delete from users where id=any($1::uuid[])",[[ids.learner,ids.mentor]]);
+  await pool.query("delete from colleges where id=$1",[ids.college]);
+}
+let seeded=false;
+beforeEach(async()=>{await setup();seeded=true;},45000);
+afterEach(async()=>{if(seeded){await cleanup();seeded=false;}},45000);
+afterAll(async()=>{await pool.end();await closeDatabaseConnection();});
+describe("L20-012 learner project team read (PostgreSQL)",()=>{
+  it("returns the persisted team and mentor for an assigned learner",async()=>{
+    const list=await listMyProjectInstances(context);
+    expect(list.some(row=>row.project.id===ids.project)).toBe(true);
+    expect(await listMyLearnerProjectTeams(context,[ids.project])).toEqual([{
+      projectId:ids.project,mentorName:"Own Mentor",memberCount:2,
+    }]);
+  });
+  it("does not leak foreign ids or accept suspended, wrong role or forged college contexts",async()=>{
+    expect(await listMyLearnerProjectTeams(context,[randomUUID()])).toEqual([]);
+    const denied:RequestContext[]=[
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ];
+    for(const actor of denied){
+      await expect(listMyLearnerProjectTeams(actor,[ids.project])).rejects.toBeDefined();
+    }
+  });
+});

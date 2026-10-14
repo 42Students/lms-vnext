@@ -1,0 +1,6 @@
+# Chat-7 Learner Courses / Assessments / Projects / Attendance / Schedule
+
+Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, profile, notifications.
+
+## 2026-10-14
+- L20-012: scoped live Project team card counts and mentor fallback; model/unit/PG authored; runtime static/DB/browser gates unexecuted. Commit is the change containing this log.
