@@ -17,6 +17,7 @@ import { quizOverviewActionState } from "./quiz-overview-state";
 import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
 import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment-mobile-model";
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
+import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assessment-search-model";
 
 type CourseChoice = {
   id: string;
@@ -136,6 +137,7 @@ export function LearnerAssessmentOverview({
 
   const [courseId, setCourseId] =
     useState("");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [
     selectedAssignmentKey,
@@ -144,13 +146,11 @@ export function LearnerAssessmentOverview({
 
   const filtered = useMemo(
     () =>
-      courseId
-        ? items.filter(
-            (item) =>
-              item.courseId === courseId,
-          )
-        : items,
-    [courseId, items],
+      items.filter(item =>
+        (!courseId || item.courseId === courseId) &&
+        learnerAssessmentMatchesSearch(item, search),
+      ),
+    [courseId, items, search],
   );
 
   const totalPages = Math.max(
@@ -222,8 +222,15 @@ export function LearnerAssessmentOverview({
         />
       </div>
 
-      <div className="flex justify-end">
-        <label className="w-full max-w-sm">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="w-full">
+          <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
+          <input type="search" value={search} maxLength={100}
+            onChange={event => {setSearch(event.target.value);setPage(1);}}
+            placeholder="Title, lesson or course"
+            className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground" />
+        </label>
+        <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Course
           </span>
@@ -251,8 +258,8 @@ export function LearnerAssessmentOverview({
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="Nothing in this course"
-          description="Choose another course or All courses."
+          title="No matching assessments"
+          description="Change the search or course filter to see other published assessments."
         />
       ) : (
         <div
