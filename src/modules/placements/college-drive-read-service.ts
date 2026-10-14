@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -35,10 +35,10 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
     status: placementJobs.status,
     applicationDeadline: placementJobs.applicationDeadline,
     openings: placementJobs.openings,
-    seasonId: placementSeasons.id,
-    seasonName: placementSeasons.name,
-    relationshipId: placementCompanyRelationships.id,
-    companyName: placementCompanies.name,
+    seasonId: sql<string>`${placementSeasons.id}`.as("season_id"),
+    seasonName: sql<string>`${placementSeasons.name}`.as("season_name"),
+    relationshipId: sql<string>`${placementCompanyRelationships.id}`.as("relationship_id"),
+    companyName: sql<string>`${placementCompanies.name}`.as("company_name"),
   }).from(placementJobs)
     .innerJoin(placementSeasons, and(
       eq(placementSeasons.id, placementJobs.seasonId),
