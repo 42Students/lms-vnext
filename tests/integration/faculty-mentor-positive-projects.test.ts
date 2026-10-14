@@ -165,6 +165,30 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
     await expect(getMentorPersonalInbox(learner,{})).rejects.toBeDefined();
   });
 
+  it("approves an actual submission and audits the decision once",async()=>{
+    const {project,sprint,task}=await fixture();
+    await startProjectSprint(mentor,project.id,sprint.id);
+    const submission=await submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/chat4-approval",
+    });
+    const outcome=await reviewProjectTaskSubmission(
+      mentor,project.id,task.id,submission.id,{decision:"APPROVED"},
+    );
+    expect(outcome).toMatchObject({
+      task:{status:"DONE"},
+      submission:{status:"APPROVED",reviewedByUserId:SEED_IDS.facultyUser},
+    });
+    const event=await pool.query<{decision:string}>(`select metadata->>'decision' as decision
+      from activity_events where dedupe_key=$1`,[
+      "project-task-submission:"+submission.id+":reviewed",
+    ]);
+    expect(event.rows).toEqual([{decision:"APPROVED"}]);
+    const history=await getMentorTaskReviewHistory(mentor,{decision:"APPROVED"});
+    expect(history.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({id:submission.id,status:"APPROVED"}),
+    ]));
+  });
+
   it("reviews a real task, persists one audit event, and exposes reviewed history",async()=>{
     const {project,sprint,task}=await fixture();
     await startProjectSprint(mentor,project.id,sprint.id);
