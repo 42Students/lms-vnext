@@ -63,3 +63,8 @@ export function capFacultyReportCsvRows<T>(rows:readonly T[]){
  return {rows:rows.slice(0,FACULTY_REPORT_CSV_MAX_ROWS),
   omittedRows:Math.max(0,rows.length-FACULTY_REPORT_CSV_MAX_ROWS)};
 }
+
+/** Contact fields must never become a fallback name in Faculty CSV exports. */
+export function facultyCsvLearnerLabel(displayName: string | null | undefined) {
+  return displayName?.trim() || "Learner (name unavailable)";
+}
