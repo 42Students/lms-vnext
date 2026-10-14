@@ -16,6 +16,8 @@ import {createCourseTeachingAssignment} from "@/modules/courses/teaching-assignm
 import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDiscussionMessage} from "@/modules/courses/discussion-service";
 import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-history-service";
 import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-service";
+import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
+import {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {getFacultyStudentDetail} from "@/modules/courses/faculty-student-detail-service";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
@@ -130,6 +132,27 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   await expect(getFacultyDiscussionHistory(learner,{deliveryId:f.deliveryId})).rejects.toBeDefined();
   await expect(getFacultyDiscussionHistory(faculty,{deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
   await expect(getFacultyDiscussionHistory(faculty,{deliveryId:f.deliveryId,collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+ });
+ it("loads a real current teaching Section Overview with accurate no-mark/no-assessment signals",async()=>{
+  const f=await fixture();
+  const workspace=await getFacultyCourseWorkspace(faculty,f.deliveryId);
+  expect(workspace.course.deliveryId).toBe(f.deliveryId);
+  expect(workspace.course.sectionId).toBe(f.sectionId);
+  expect(workspace.course.courseName).toContain("Chat4 Report Course");
+  expect(workspace.summary).toMatchObject({
+   lessons:0,contents:0,assignments:0,quizzes:0,
+   draftItems:0,publishedItems:0,
+  });
+  const signals=await getFacultyCourseHomeSignals(faculty,workspace);
+  expect(signals.attendance.markedSessions).toBe(0);
+  expect(signals.attendance.averagePercent).toBeNull();
+  expect(signals.pendingSubmissions).toEqual([]);
+  expect(signals.atRiskTotal).toBe(0);
+  expect(signals.performance.averagePercent).toBeNull();
+  await expect(getFacultyCourseWorkspace(learner,f.deliveryId)).rejects.toBeDefined();
+  await expect(getFacultyCourseWorkspace(faculty,SEED_IDS.collegeB)).rejects.toBeDefined();
+  await expect(getFacultyCourseWorkspace({...faculty,user:{...faculty.user,platformStatus:"DISABLED"}},f.deliveryId)).rejects.toBeDefined();
+  await expect(getFacultyCourseWorkspace({...faculty,membership:{...faculty.membership!,collegeId:SEED_IDS.collegeB}},f.deliveryId)).rejects.toBeDefined();
  });
  it("reports persisted current Section roster and unknown attendance without invented scores",async()=>{
   const f=await fixture();
