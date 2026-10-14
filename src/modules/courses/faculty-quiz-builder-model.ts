@@ -124,3 +124,11 @@ export function facultyRemoveQuizQuestion<T>(rows:readonly T[],index:number):T[]
 export function facultyAppendQuizQuestion<T>(rows:readonly T[],question:T):T[]{
  return rows.length>=100?[...rows]:[...rows,question];
 }
+
+/** Never publish a draft when its question bank could not be loaded. */
+export function facultyQuizDraftLoadAllowsAction(
+ failed:boolean,status:string|undefined,
+ action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE",
+):boolean {
+ return !(failed&&status==="DRAFT"&&(action==="EDIT"||action==="PUBLISH"));
+}
