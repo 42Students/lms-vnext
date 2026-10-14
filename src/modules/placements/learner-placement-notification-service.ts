@@ -7,8 +7,9 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { type RequestContext, hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
+import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
-import { learnerPlacementNotificationInputSchema, placementNotificationChanges } from "./learner-placement-notification-model";
+import { learnerPlacementNotificationInputSchema, placementNotificationChanges, placementNotificationIsStale } from "./learner-placement-notification-model";
 
 /**
  * An independent, narrow write: never overwrite role, location, CTC or other
@@ -46,7 +47,7 @@ export async function updateOwnPlacementNotificationPreferences(
         eq(collegeMemberships.userId,context.user.id),
         eq(collegeMemberships.status,"ACTIVE"),
         eq(users.platformStatus,"ACTIVE"),
-      )).for("share").limit(1);
+      )).for("update", {of: collegeMemberships}).limit(1);
     if (!principal) throw new AuthorizationError("placements.read");
 
     const [previous] = await tx.select({
@@ -59,6 +60,9 @@ export async function updateOwnPlacementNotificationPreferences(
       notifyMatchingJobs:true,
       notifyApplicationUpdates:true,
     };
+    if (placementNotificationIsStale(before,input.expected)) {
+      throw new PlacementsServiceError("PLACEMENT_NOTIFICATION_PREFERENCES_STALE");
+    }
     const changed=placementNotificationChanges(before,input);
     if (!changed) {
       return {...before,changed:false};

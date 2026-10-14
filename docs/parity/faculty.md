@@ -38,12 +38,12 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [ ] Empty and partial-content states.
 - [ ] File/video storage-dependent actions remain explicit BLOCKED items until live.
 
-### Students
-- [ ] Class roster fields match.
-- [ ] Search/filter behavior matches.
-- [ ] Learner detail/profile drill-in behavior is accounted for.
-- [ ] Empty/loading/error states.
-- [x] Roster cannot expose another class.
+### Students — DONE (current Section roster acceptance 2026-10-14)
+- [x] Class roster fields follow approved Faculty need-to-know access: public name, roll, and learner contact for the assigned teaching Section only; CSV never exports contact.
+- [x] Search/filter, bounded pagination, responsive roster and spreadsheet-safe filtered CSV behave correctly.
+- [x] Read-only student detail/profile drill-in works for the exact active Section, with real Course attendance and explicit unknown/unmarked/upcoming distinctions; private photo and unrelated academic records are intentionally out of scope.
+- [x] Empty/no-match, source-authored loading/error/retry and desktop/mobile responsive states are represented and the authenticated no-match browser journey is exercised.
+- [x] Roster and drill-in cannot expose another Section or college.
 
 ### Attendance
 
@@ -73,7 +73,7 @@ Evidence: `1f374255579a3e2e09cc65a69c14c11276abb3be` CI [38595677626](https://gi
 **Legacy:** `/teacher/contacts/[contactsTab]`  
 Tabs: All Contacts, Teachers, Students.
 
-- [ ] All Contacts tab fields/columns match.
+- [x] All Contacts tab matches the approved public directory fields and role labels, same-college current memberships, server search and 10/20/50 pagination, public detail and browser/PG acceptance.
 - [x] Teachers tab matches the approved public directory fields (name, active role and department; private email/phone/profile withheld), with exact same-college role detail.
 - [x] Students tab matches approved public-only Learner directory (name, active Student role, department), same-college scope, search and role-checked detail, without exposing private learner contact details.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
@@ -1140,3 +1140,56 @@ Remaining: PostgreSQL execution and browser/legacy lifecycle acceptance.
 The `/teacher/contacts/students` surface and `/teacher/contacts/students/[membershipId]` drill-in are accepted as the **public directory** per the 2026-10-14 approved learner privacy decision. The server uses persisted active LEARNER grants with the requesting Faculty actor's live same-college membership, strict Zod validation, server-side public name/department search, 10/20/50-row bounded pagination, current role labels, and an active-role-checked detail. It does **not** reveal private email, mobile, verified identity or files to an unassigned faculty member. The legacy unrestricted contact fields intentionally do not override privacy policy.
 
 **Executed acceptance:** GitHub [CI run 38603899755](https://github.com/42Students/lms-vnext/actions/runs/38603899755), source SHA `ab63f45774fbf6122322ccb17540d77089fe840c`, containing commit `9645065197f2617b702c12c698e1895ff98f068e` (desktop selector correction). On disposable PostgreSQL `tests/integration/faculty-contacts-students-acceptance.test.ts` passed **3/3**: same-college active learner list and detail; private-field removal, public name search and inaccessible email search; foreign-college target, wrong-role, forged-actor and suspended/disabled/foreign-college-scope denials. The authenticated Chromium `tests/e2e/faculty-contacts-students.spec.ts` **desktop and mobile passed**, including Student tab navigation, public card/detail/return, private-field masking, empty search, mobile width and page-error checks (26 browser tests passed; none of the browser failures was from this surface). Unit, typecheck and build jobs passed. Overall CI remains **red** on other modules and repository lint, not a Faculty Students acceptance failure. No Contacts All, Contacts Teachers, other Faculty row or database tracker state is changed by this closure. A later comparison from this SHA to `9fc26ce920a58390e1f48b493a5bed457ee231c6` found **no changes to Faculty Contacts source or Students acceptance tests**.
+
+## Faculty Contacts — All: DONE (2026-10-14)
+
+**Scope:** `/teacher/contacts/allContacts` and read-only same-college
+`/teacher/contacts/allContacts/[membershipId]`. Registered PostgreSQL
+membership/role/user/department joins, active user and membership gates,
+strict Faculty permission and actor identity, 10/20/50 bounded server paging,
+name/department search, public role labels and drill-in; never private contact,
+identity, verification, files or unrelated tenants. This privacy restriction
+is an intentional approved change from legacy unrestricted contact columns.
+The server-owned search form now remounts from the URL on Clear search, fixing
+stale filter state on navigation.
+
+**Executed:** [Faculty Contacts acceptance workflow 38608927968](https://github.com/42Students/lms-vnext/actions/runs/38608927968)
+ran on source commit `8fba44b728c84f59e60c3aeb814930acada5cd38`.
+The registered-data PostgreSQL run passed **9/9 tests** for All, Teachers and
+Students: All-specific **3/3** included active college/role aggregation,
+foreign/forged/suspended/disabled denial, contact non-disclosure, true 13-row
+pagination, capped page sizes, and private-email search denial.
+The authenticated Chromium job passed **6/6 tests** across desktop/mobile All,
+Teachers, Students; All-specific **2/2** verified role cards, exact same-college
+detail/return, no private contacts, URL search reset, no page errors, and mobile
+horizontal-scroll bounds. The independent two-job workflow was green.
+This is a scoped Contacts All closure, not a claim of complete legacy contact
+storage, unrestricted contact fields, all Faculty rows, or global CI readiness.
+
+## Faculty Course Students — DONE (2026-10-14)
+
+**Accepted scope:** active teaching-Section learner roster and exact current-roster
+Student detail/attendance. Registered roster readers check the current Faculty
+teaching assignment and college; inactive, foreign, unrostered or non-Faculty
+callers do not see the detail. Displayed learner email/phone is available only
+to a Faculty member actively teaching that learner's exact Section, under the
+2026-10-14 need-to-know decision. Exports deliberately contain name and roll
+only (formula-neutralized, bounded); no sensitive email/phone, private photo,
+identity, documents or additional learner records are exported or fabricated.
+
+**Executed acceptance on source SHA
+`5f7b8850fdf13ca7f1d081dfd926c432f9289cb8`:**
+[Faculty Course Students workflow 38609626729](https://github.com/42Students/lms-vnext/actions/runs/38609626729)
+completed both independent jobs successfully. PostgreSQL 17 ran
+`faculty-c4-reports-audit-contact.test.ts` **4/4 PASS** including the
+persisted current-Section roster, positive student summary/drill-in, null
+attendance without marks, unrostered/current actor denial and malformed
+college request rejection. Authenticated Chromium ran
+`faculty-course-students.spec.ts` **2/2 PASS** for desktop and mobile:
+exact teaching delivery, student search and no-match, link to student details,
+Course attendance and recorded unknown states, safe CSV contents, return
+navigation, zero browser page errors and mobile no-overflow check.
+Existing `faculty-courses.spec.ts` source assertion was corrected from an
+outdated email/phone CSV expectation to the approved privacy-safe format.
+This DONE is scoped to Course Students, not full Faculty, institution-wide
+learner PII access, private-file/photo features or all LMS CI tests.

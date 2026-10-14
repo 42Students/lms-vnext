@@ -406,3 +406,15 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Recruiter cross-company list isolation — PARTIAL:** Extended shared recruiter job list with exact persisted placement-company ID filter and post-query grant+company invariant; this protects HR Drives, Today and Calendar from forged/mismatched relationship grants. Isolated PG success/foreign-company/wrong-role and pure policy tests authored but unexecuted. Also corrected designation whitespace normalization, typed form event and monotonic optimistic version timestamp. Remaining security review against revoked grants, runtime PG/lint/typecheck and browser acceptance.
+
+
+**2026-10-14 Chat 10 follow-up / recruiter scope placement — PARTIAL:** Corrected exact employer company filter placement: it belongs only on recruiter-owned job listing, not the TPO's administrator grant directory. Preserves TPO grant listing while retaining company enforcement on HR drives/calendar/dashboard. Auth regression test added below; execution remains orchestrator-gated.
+
+
+**2026-10-14 Chat 10 / Embedded HR round results table — PARTIAL:** Rounds tab now includes Results from table selector and validated outcome filtering using the same recruiter-grant-protected, SHORTLISTED candidate projection as the standalone view; stages distinguish STAGED from APPLIED with no private notes. Responsive cards and explicit zero/empty states. Pure model/unit and isolated PG success/foreign company/college/wrong-role tests authored, not executed. Remaining legacy bulk result workflow, interviewer slot UI, stale-result concurrency, browser acceptance.
+
+
+**2026-10-14 Chat 10 / Today result deadline task cards — PARTIAL:** Today now includes this-week results-due count and IST links for persisted employer-owned rounds, filtered again to the selected college job allowlist; no candidate identities/external notifications. Pure projection unit and in-test PG foreign-company/college/wrong-role fixtures authored, unexecuted. Remaining legacy Today task taxonomy, actual requests and waiting states, stale-last-success, browser/mobile acceptance.
+
+
+**2026-10-14 Chat 10 / Shared candidate contact privacy — PARTIAL:** Recruiter round read now explicitly requires an ACTIVE learner user, ACTIVE same-college membership, SUBMITTED application, SHORTLISTED screening, exact employer company and previously authorized job. Applies SQL active-user filter and pure post-query disclosure guard before round participant names/emails are projected. Unit privacy matrix + disposable PG own/foreign-company/college/wrong-role tests authored, unexecuted. Remaining genuine shortlist user fixture, share-marker parity, runtime/browser privacy acceptance.

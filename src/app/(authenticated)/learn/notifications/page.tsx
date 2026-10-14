@@ -71,6 +71,7 @@ export default async function NotificationsPage({searchParams}:{
         Browse older personal notifications →
       </Link>
       <LearnerNotificationsInbox
+        key={query.data.category+":"+query.data.unread+":"+query.data.q}
         personal={items}
         initialFilters={query.data}
         announcementsEnabled={announcementsEnabled}

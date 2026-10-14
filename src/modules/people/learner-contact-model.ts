@@ -3,6 +3,10 @@ import { learnerProfileDocumentSchema } from "./profile-validation";
 
 export const learnerContactEditSchema = z.object({
   confirmed: z.literal(true),
+  expectedContacts: z.object({
+    alternatePhone:z.string().trim().max(32),
+    contactEmail:z.string().trim().max(320),
+  }).strict().optional(),
   contacts: z.object({
     alternatePhone: z.string().trim().max(32),
     contactEmail: z.string().trim().max(320),
@@ -22,3 +26,11 @@ export const learnerContactEditSchema = z.object({
   }
 });
 
+
+export function learnerContactsAreStale(
+  current:{alternatePhone:string;contactEmail:string},
+  expected:{alternatePhone:string;contactEmail:string},
+){
+  return current.alternatePhone!==expected.alternatePhone ||
+    current.contactEmail!==expected.contactEmail;
+}
