@@ -632,3 +632,33 @@ delete events lack an actor-role snapshot and therefore show the neutral
 label **Discussion deletion recorded**, not an invented Faculty moderator.
 Historic actions before the event producer existed, full moderation analytics,
 browser and DB proof remain OPEN.
+
+
+## Faculty current-Section Reports hub (2026-10-14)
+
+PARTIAL: `/teacher/courses/[deliveryId]/reports` reuses the canonical exact
+teaching-Section assessment-health, Faculty assessment overview and attendance
+workspace readers. It displays actual registered total/published Quiz and
+Assignment counts, scheduled/marked class sessions, and up to five published
+assessment report summaries per page. Assignment/Quiz detailed reports, the
+published-gradebook reader and attendance workspace are linked directly.
+Unknown, unmarked or private grades are never shown as zero or as final
+weighted results. Strict Zod delivery/type/page filters, mobile cards,
+loading/error/empty recovery and current Faculty college/Section scope are
+present. Complete legacy reports/export, executed DB/browser acceptance and
+weighted-grade semantics remain OPEN.
+
+
+## Faculty own alternate contact storage decision (2026-10-14)
+
+C is BLOCKED by missing migrated storage. Registered faculty_profiles holds only
+primaryDepartmentId/employmentType/academicTitle, without alternate phone or
+contact email. The richer faculty-profile document is staged but not registered;
+users.email/phoneE164 are login identifiers and MUST NOT be repurposed.
+Read-only `/teacher/profile/contacts` is linked from Faculty Profile, scoped
+via active Faculty-only profile.self.manage and persisted own membership. It
+shows identity contact as noneditable and the explicit missing-storage state.
+No edit endpoint, audit fiction or accidental identity mutation was introduced.
+DB owner must migrate separate private contact fields and the product/privacy
+owner must decide edit scope, version concurrency and audit semantics before C
+can be delivered. The Self Profile parity row remains PARTIAL.
