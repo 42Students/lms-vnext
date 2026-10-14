@@ -6,6 +6,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { can } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   projectInstances,
@@ -240,6 +241,12 @@ export async function reviewProjectTaskSubmission(
       context,
       projectIdInput,
     );
+  if (!can(context, "projects.read", {
+    collegeId: scope.collegeId,
+    organizationId: scope.organizationId,
+  })) {
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  }
   const taskId =
     projectTaskIdSchema.parse(taskIdInput);
   const submissionId =
@@ -364,6 +371,28 @@ export async function reviewProjectTaskSubmission(
       );
     }
 
+    // Record the decision in the SAME transaction. A rejected/concurrent
+    // re-review cannot create an audit row because the conditional update
+    // and the event insertion must both commit.
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED,
+      collegeId: scope.collegeId,
+      organizationId: scope.organizationId,
+      subjectType: "project_task_submission",
+      subjectId: reviewed.id,
+      subjectLabel: "Reviewed task submission",
+      summary: input.decision === "APPROVED"
+        ? "Task submission approved"
+        : "Task submission changes requested",
+      metadata: {
+        projectId: scope.project.id,
+        taskId: task.id,
+        version: reviewed.version,
+        decision: input.decision,
+      },
+      groupKey: "project:" + scope.project.id + ":task-submissions",
+      dedupeKey: "project-task-submission:" + reviewed.id + ":reviewed",
+    });
     return { submission: reviewed, task: updatedTask };
   });
 }
