@@ -51,11 +51,11 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
     );
     await pool.query(
       "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
-      "VALUES($1,$2,$3,$3,'2026-07-01','2026-12-31')",
+      "VALUES($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')",
       [ids.period, SEED_IDS.collegeA, code],
     );
     await pool.query(
-      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$3,2)",
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3::text,$3::text,2)",
       [ids.program, SEED_IDS.departmentA, code],
     );
     await pool.query(
@@ -64,16 +64,16 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
     );
     await pool.query(
       "INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) " +
-      "VALUES($1,$2,$3,$3,$4,'ACTIVE')",
+      "VALUES($1,$2,$3::text,$3::text,$4,'ACTIVE')",
       [ids.cohort, ids.program, code, ids.period],
     );
     await pool.query(
       "INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id) " +
-      "VALUES($1,1,2026,$2)",
+      "VALUES($1,1,2026,$2) ON CONFLICT (cohort_id) DO NOTHING",
       [ids.cohort, ids.period],
     );
     await pool.query(
-      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$4)",
+      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4::text,$4::text)",
       [ids.section, ids.cohort, ids.period, code],
     );
     await pool.query(

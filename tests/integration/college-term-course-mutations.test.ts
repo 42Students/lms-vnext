@@ -36,7 +36,7 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
   beforeAll(async () => {
     if (!pool) throw Error("Isolated PG is required");
     await pool.query(
-      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$3,8)",
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3::text,$3::text,8)",
       [ids.program, SEED_IDS.departmentA, unique],
     );
     await pool.query(
@@ -44,21 +44,21 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
       [ids.term, ids.program, unique],
     );
     await pool.query(
-      "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$3)",
+      "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3::text,$3::text)",
       [ids.course, SEED_IDS.departmentA, unique],
     );
     await pool.query(
       "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
-      "VALUES($1,$2,$3,$3,'2026-07-01','2026-12-31')",
+      "VALUES($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')",
       [ids.period, SEED_IDS.collegeA, unique],
     );
     await pool.query(
       "INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) " +
-      "VALUES($1,$2,$3,$3,$4,'ACTIVE')",
+      "VALUES($1,$2,$3::text,$3::text,$4,'ACTIVE')",
       [ids.cohort, ids.program, unique, ids.period],
     );
     await pool.query(
-      "INSERT INTO cohort_progression_state(cohort_id,current_term_number) VALUES($1,1)",
+      "INSERT INTO cohort_progression_state(cohort_id,current_term_number) VALUES($1,1) ON CONFLICT (cohort_id) DO NOTHING",
       [ids.cohort],
     );
   });
