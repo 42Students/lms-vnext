@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
+import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
 import {
   DataTable,
   type DataTableColumn,
@@ -231,6 +232,12 @@ export function AdminCourseOverview({
             }}
             hideArchive={allowOfferingLifecycle}
           /> : null}
+          {allowOfferingLifecycle && offering.status === "ACTIVE" ?
+            <CollegeOfferingMetadataAction offering={{
+              id:offering.id,courseName:offering.courseName,type:offering.type,
+              credits:offering.credits,displayOrder:offering.displayOrder,
+              updatedAt:offering.updatedAt.toISOString(),
+            }} /> : null}
           {allowOfferingLifecycle ? <CollegeOfferingLifecycleAction
             id={offering.id} name={offering.courseName} status={offering.status} /> : null}
         </div>
