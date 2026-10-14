@@ -29,6 +29,10 @@ export default async function TpoCalendarPage({
 
   return (
     <div className="space-y-4">
+      <Link href="/tpo/calendar/export"
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        Export upcoming rounds CSV →
+      </Link>
       <Link href="/tpo/calendar/rounds"
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Create, reschedule or cancel a drive round →

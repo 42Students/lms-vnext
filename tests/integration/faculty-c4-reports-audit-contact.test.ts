@@ -113,12 +113,45 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   const disabled:RequestContext={...faculty,user:{...faculty.user,platformStatus:"DISABLED"}};
   await expect(getFacultyReportsHub(disabled,{deliveryId:f.deliveryId})).rejects.toBeDefined();
  });
- it("keeps Faculty alternate contacts blocked even for a real authorized Faculty profile",async()=>{
-  const allowed=await getOwnFacultyContactAvailability(faculty,{});
-  expect(allowed.editable).toBe(false);
-  expect(allowed.alternatePhone).toBeNull();
-  expect(allowed.contactEmail).toBeNull();
-  await expect(getOwnFacultyContactAvailability(learner,{})).rejects.toBeDefined();
-  await expect(getOwnFacultyContactAvailability(faculty,{alternatePhone:"9999"})).rejects.toBeDefined();
+ it("keeps Faculty alternate contacts blocked even for a real authorized Faculty-only profile",async()=>{
+  // Seeded College A Faculty ALSO has MENTOR: the self-profile permission
+  // deliberately rejects mixed roles. Use the same isolated Faculty-only
+  // principal shape as faculty-mentor-positive-courses.test.ts.
+  const suffix=randomUUID();
+  const userId=randomUUID(), membershipId=randomUUID(), roleId=randomUUID();
+  const facultyOnly:RequestContext={
+   user:{id:userId,identityUid:"c4rh-faculty-"+suffix,
+    platformStatus:"ACTIVE",systemRoles:[]},
+   membership:{id:membershipId,collegeId:SEED_IDS.collegeA,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["FACULTY"]},
+  };
+  try{
+   await pool.query(
+    "insert into users (id,identity_uid,email,display_name,platform_status) values ($1,$2,$3,$4,'ACTIVE')",
+    [userId,facultyOnly.user.identityUid,"c4rh-"+suffix+"@example.invalid","C4 Report Faculty "+suffix],
+   );
+   await pool.query(
+    "insert into college_memberships (id,user_id,college_id,status) values ($1,$2,$3,'ACTIVE')",
+    [membershipId,userId,SEED_IDS.collegeA],
+   );
+   await pool.query(
+    "insert into membership_roles (id,membership_id,role) values ($1,$2,'FACULTY')",
+    [roleId,membershipId],
+   );
+   const allowed=await getOwnFacultyContactAvailability(facultyOnly,{});
+   expect(allowed.editable).toBe(false);
+   expect(allowed.alternatePhone).toBeNull();
+   expect(allowed.contactEmail).toBeNull();
+   await expect(getOwnFacultyContactAvailability(learner,{})).rejects.toBeDefined();
+   await expect(getOwnFacultyContactAvailability(facultyOnly,{alternatePhone:"9999"})).rejects.toBeDefined();
+   // The dual-role seeded principal must continue to be refused; do not
+   // weaken the product's Faculty-only self-profile policy to pass a test.
+   await expect(getOwnFacultyContactAvailability(faculty,{})).rejects.toBeDefined();
+  }finally{
+   await pool.query("delete from faculty_profiles where membership_id=$1",[membershipId]);
+   await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
+   await pool.query("delete from college_memberships where id=$1",[membershipId]);
+   await pool.query("delete from users where id=$1",[userId]);
+  }
  });
 });

@@ -28,10 +28,12 @@ export async function getFacultyLiveClasses(context:RequestContext,rawQuery:unkn
    id:c.id,deliveryId:w.course.deliveryId,courseName:w.course.courseName,
    sectionName:w.course.sectionName,title:c.title,
    startsAt:c.startsAt!,endsAt:c.endsAt!,joinUrl:safeHttpsMeetingLink(c.externalUrl),
-   status:c.status,
+   status:c.status,updatedAt:c.updatedAt,
   }))
  ));
- return {query,courses:deliveries.map(x=>({
+ return {query,lessonChoices:workspaces.flatMap(w=>w.lessons.map(lesson=>({
+   id:lesson.id,title:lesson.name,deliveryId:w.course.deliveryId,
+ }))),courses:deliveries.map(x=>({
   deliveryId:x.deliveryId,courseName:x.courseName,sectionName:x.sectionName,
  })),...pageFacultyLiveClasses(sessions,query,new Date())};
 }

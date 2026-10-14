@@ -119,6 +119,12 @@ export default async function TpoCompanyMemoryPage({
           <div className="flex flex-wrap items-center gap-2">
             <TpoCompanyCreateForm />
             <Link
+              href="/tpo/companies/archived"
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            >
+              Archived relationships
+            </Link>
+            <Link
               href="/tpo/recruiters"
               className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
