@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerAttendanceWorkspace,
@@ -22,6 +23,12 @@ export default async function LearnerAttendancePage() {
         title="Attendance"
         description="Your marked attendance, unmarked sessions and College threshold across active Courses."
       />
+      <div className="flex flex-wrap justify-end gap-3">
+        <Link href="/learn/attendance/calendar"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Monthly attendance calendar →
+        </Link>
+      </div>
       <LearnerAttendanceWorkspace
         courses={workspace.courses}
         summaries={workspace.summaries}
