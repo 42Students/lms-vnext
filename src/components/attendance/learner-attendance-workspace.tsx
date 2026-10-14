@@ -13,6 +13,7 @@ import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@
 import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, LEARNER_ATTENDANCE_HISTORY_OPTIONS, type LearnerAttendanceHistoryFilter } from "@/modules/attendance/learner-attendance-history-model";
 import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
+import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -213,6 +214,7 @@ export function LearnerAttendanceWorkspace({
   const deliveryId = filters.deliveryId;
   const month = parseMonth(filters.month);
   const historyFilter = learnerAttendanceHistoryFilterSchema.catch("ALL").parse(params.get("status") ?? "ALL");
+  const historyOrder=learnerAttendanceOrderSchema.catch("NEWEST").parse(params.get("order")??"NEWEST");
 
   const course =
     courses.find(
@@ -229,8 +231,8 @@ export function LearnerAttendanceWorkspace({
     [monthRows],
   );
   const historyRows = useMemo(
-    () => filterLearnerAttendanceHistory(monthRows,historyFilter),
-    [monthRows,historyFilter],
+    () => sortLearnerAttendanceHistory(filterLearnerAttendanceHistory(monthRows,historyFilter),historyOrder),
+    [monthRows,historyFilter,historyOrder],
   );
   const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
 
@@ -247,6 +249,7 @@ export function LearnerAttendanceWorkspace({
     }
     next.set("month", monthKey(nextMonth));
     if (historyFilter !== "ALL") next.set("status", historyFilter);
+    if (historyOrder !== "NEWEST") next.set("order",historyOrder);
     router.replace(
       `/learn/attendance?${next.toString()}`,
       { scroll: false },
@@ -267,6 +270,16 @@ export function LearnerAttendanceWorkspace({
     if (deliveryId) next.set("deliveryId",deliveryId);
     next.set("month",filters.month);
     if (nextFilter !== "ALL") next.set("status",nextFilter);
+    if (historyOrder !== "NEWEST") next.set("order",historyOrder);
+    router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});
+  }
+
+  function changeHistoryOrder(nextOrder:LearnerAttendanceOrder) {
+    const next=new URLSearchParams();
+    if(deliveryId)next.set("deliveryId",deliveryId);
+    next.set("month",filters.month);
+    if(historyFilter!=="ALL")next.set("status",historyFilter);
+    if(nextOrder!=="NEWEST")next.set("order",nextOrder);
     router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});
   }
 
@@ -484,12 +497,21 @@ export function LearnerAttendanceWorkspace({
           <h2 className="text-sm font-semibold text-foreground">Session history</h2>
           <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
         </div>
-        <label className="w-full max-w-xs text-xs font-semibold text-body">Show
+        <div className="flex w-full flex-wrap gap-3 sm:w-auto">
+        <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Order
+          <Select className="mt-1.5 min-h-11 w-full" value={historyOrder}
+            onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
+            <option value="NEWEST">Newest first</option>
+            <option value="OLDEST">Oldest first</option>
+          </Select>
+        </label>
+        <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Show
           <Select className="mt-1.5 min-h-11 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         </label>
+        </div>
       </div>
       {historyRows.length > 0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
