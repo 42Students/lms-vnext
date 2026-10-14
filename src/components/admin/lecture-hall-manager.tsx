@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -210,7 +211,11 @@ export function LectureHallManager({
               header: "",
               className: "text-right",
               cell: (hall) => (
-                <div className="flex justify-end gap-2">
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Link href={`/college/lecture-halls/${hall.id}`}
+                    className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+                    Availability
+                  </Link>
                   <Button variant="secondary" size="sm" onClick={() => open(hall)}>
                     Edit
                   </Button>
