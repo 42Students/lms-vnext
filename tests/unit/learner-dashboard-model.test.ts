@@ -29,7 +29,8 @@ describe("Learner placement dashboard summary and priority", () => {
       ],
     }, now);
     expect(state.nextAction.title).toBe("test");
-    expect(state.nextAction.href).toBe("/learn/my-placements/assessments");
+    expect(state.nextAction.href).toBe(
+      "/learn/my-placements/assessments?applicationId=app-1&roundId=test");
     expect(state.weekEvents.map((event) => event.roundId)).toEqual(["interview", "test"]);
   });
 
@@ -41,6 +42,7 @@ describe("Learner placement dashboard summary and priority", () => {
       ],
     }, now);
     expect(state.nextAction.title).toBe("interview");
+    expect(state.nextAction.href).toContain("applicationId=app-1&roundId=interview");
   });
 
   it("respects an approved reschedule and ignores past or unscheduled events", () => {
