@@ -5,7 +5,7 @@ import {
   type FacultyAttendanceWorkspaceData,
 } from "@/components/attendance/faculty-attendance-workspace";
 import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-service";
-import { resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-attendance-edit-state";
 
 export default async function FacultyCourseAttendancePage({
   params,
@@ -58,7 +58,7 @@ export default async function FacultyCourseAttendancePage({
       </Link>
       <FacultyAttendanceWorkspace
         workspace={workspace}
-        initialSessionId={resolveFacultyAttendanceSession(
+        initialSessionId={resolveFacultyAttendanceDeepLink(
           workspace.sessions,
           query.sessionId,
         )}
