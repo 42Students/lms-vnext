@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, sql, type Column } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -59,6 +59,11 @@ function searchLike(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
 
+/** Aliases a selected column so subquery output names stay unique (Postgres 42702). */
+function aliased<C extends Column>(column: C, name: string) {
+  return sql<C["_"]["data"]>`${column}`.mapWith(column).as(name);
+}
+
 /** All source tables are in registered C1-C3 migrations. An unavailable table
  * is a hard operational error, not an empty list or a fabricated metric. */
 export async function listCollegeLessons(context: RequestContext, raw: unknown) {
@@ -66,17 +71,17 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
   const collegeId = requireCollegeCoursesRead(context);
   const db = getDb();
   const scoped = db.select({
-    id: courseLessons.id,
-    name: courseLessons.name,
+    id: aliased(courseLessons.id, "lesson_id_alias"),
+    name: aliased(courseLessons.name, "lesson_name_alias"),
     sequence: courseLessons.sequence,
-    status: courseLessons.status,
-    pathStatus: courseLearningPaths.status,
-    offeringId: courseOfferings.id,
-    offeringStatus: courseOfferings.status,
-    courseName: courses.name,
+    status: aliased(courseLessons.status, "lesson_status_alias"),
+    pathStatus: aliased(courseLearningPaths.status, "path_status_alias"),
+    offeringId: aliased(courseOfferings.id, "offering_id_alias"),
+    offeringStatus: aliased(courseOfferings.status, "offering_status_alias"),
+    courseName: aliased(courses.name, "course_name_alias"),
     courseCode: courses.code,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
+    cohortName: aliased(cohorts.name, "cohort_name_alias"),
+    periodName: aliased(academicPeriods.name, "period_name_alias"),
   }).from(courseLessons)
     .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
@@ -134,12 +139,12 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
   const collegeId = requireCollegeCoursesRead(context);
   const db = getDb();
   const scoped = db.select({
-    offeringId: courseOfferings.id,
-    offeringStatus: courseOfferings.status,
-    courseName: courses.name,
+    offeringId: aliased(courseOfferings.id, "offering_id_alias"),
+    offeringStatus: aliased(courseOfferings.status, "offering_status_alias"),
+    courseName: aliased(courses.name, "course_name_alias"),
     courseCode: courses.code,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
+    cohortName: aliased(cohorts.name, "cohort_name_alias"),
+    periodName: aliased(academicPeriods.name, "period_name_alias"),
   }).from(courseOfferings)
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, and(
