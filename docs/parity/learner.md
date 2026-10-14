@@ -1239,3 +1239,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-009 PARTIAL (round 6):** Drives employment-type filter options now show actual own-visible role-option counts from the same authorized browse rows, distinguishing multiple options at one employer from a separate drive. No extra people/employer query or inferred type; zero/missing types are not advertised. Unit regression authored; filter-navigation/mobile and PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-010 PARTIAL (round 6):** Drive location facets now trim and case-deduplicate the locations provided by own-authorized role records. Selecting one location matches all registered role locations case-insensitively, including multi-location roles, without creating new location guesses or changing eligibility. Pure regression authored; browser/PG/runtime acceptance pending.
