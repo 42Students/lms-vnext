@@ -15,7 +15,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   actorUserId: z.string().uuid().optional(),
   actorName: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
-  subjectId: z.string().uuid().optional(),
+  subjectId: z.string().trim().min(1).max(500).optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),

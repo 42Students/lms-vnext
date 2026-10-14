@@ -83,6 +83,13 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(missing.items).toHaveLength(0);
     await expect(listCollegeActivity(faculty,{q:"w-audit-own"})).rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("supports non-UUID persisted entity identifiers without widening tenant scope", async()=>{
+    const own=await listCollegeActivity(admin,{subjectType:subject,subjectId:ids.own});
+    expect(own.items).toHaveLength(1);
+    const missing=await listCollegeActivity(admin,{subjectType:subject,subjectId:"legacy-case:42"});
+    expect(missing.items).toHaveLength(0);
+    await expect(listCollegeActivity(faculty,{subjectId:"legacy-case:42"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
     const match=await listCollegeActivity(admin,{subjectType:subject,module:"ACADEMICS",
       importance:"NORMAL",eventType:"academics.program.updated"});

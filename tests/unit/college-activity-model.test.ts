@@ -13,8 +13,9 @@ describe("College activity model", () => {
       { actorName: "x".repeat(101) }, { q: "x".repeat(101) }, { collegeId: uuid }, { module: "FOREIGN" }, { importance: "IMPORTANT" },
       { eventType: "x".repeat(121) }, { from: "2026-02-30" }, { from: "2026-10-15", to: "2026-10-14" },
       { beforeId: uuid }, { beforeOccurredAt: "2026-10-14T12:00:00Z" },
-      { actorUserId: "not-a-uuid" }, { subjectId: "not-a-uuid" },
+      { actorUserId: "not-a-uuid" }, { subjectId: "x".repeat(501) },
     ]) expect(collegeActivityQuerySchema.safeParse(query).success).toBe(false);
+    expect(collegeActivityQuerySchema.parse({subjectId:"  legacy-case:42  "}).subjectId).toBe("legacy-case:42");
     expect(collegeActivityQuerySchema.safeParse(
       activitySearchParams({ subjectType: ["A", "B"] }),
     ).success).toBe(false);

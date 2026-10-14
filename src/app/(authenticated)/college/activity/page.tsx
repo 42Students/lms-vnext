@@ -44,7 +44,7 @@ export default async function CollegeActivityPage({
         Export filtered CSV (max 1,000)
       </a>} />
     <p className="text-xs text-muted-foreground">
-      The export uses severity, module, action, actor, entity type, entity UUID and IST date filters from the newest event,
+      The export uses severity, module, action, actor, entity type, entity identifier and IST date filters from the newest event,
       with a 1,000-row cap and an explicit CSV footer if truncated.
     </p>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
@@ -98,9 +98,9 @@ export default async function CollegeActivityPage({
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
-          Entity UUID
+          Entity identifier
           <input name="subjectId" defaultValue={data.query.subjectId ?? ""}
-            placeholder="Optional entity UUID"
+            maxLength={500} placeholder="Persisted entity identifier"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
