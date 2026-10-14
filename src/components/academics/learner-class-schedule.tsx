@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
+import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
+import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
+import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
+import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
   useMemo,
   useState,
@@ -110,6 +114,17 @@ function dayHeading(date: Date) {
   }).format(date);
 }
 
+function EventNotes({description}: {description:string|null}) {
+  const notes=learnerClassSessionNotes(description);
+  if(!notes)return null;
+  return (
+    <details className="border-t border-border px-3 py-2 text-sm text-body">
+      <summary className="min-h-10 cursor-pointer py-2 font-semibold text-primary-text">Session details</summary>
+      <p className="mt-2 whitespace-pre-wrap break-words leading-6">{notes}</p>
+    </details>
+  );
+}
+
 function EventCard({
   event,
   courseBasePath,
@@ -166,6 +181,7 @@ function EventCard({
       >
         {content}
       </Link>
+      <EventNotes description={event.description} />
       {courseBasePath === "/teacher/courses" ? (
         <Link
           href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
@@ -177,7 +193,10 @@ function EventCard({
       ) : null}
     </div>
   ) : (
-    content
+    <div className="min-w-0 overflow-hidden rounded-lg border border-border bg-surface">
+      {content}
+      <EventNotes description={event.description} />
+    </div>
   );
 }
 
@@ -227,6 +246,8 @@ export function LearnerClassSchedule({
   const [anchor, setAnchor] = useState(
     () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
+  const [sectionId, setSectionId] = useState("");
+  const [sessionSearch,setSessionSearch]=useState("");
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
@@ -234,11 +255,11 @@ export function LearnerClassSchedule({
 
   const filteredEvents = useMemo(
     () =>
-      filterScheduleEvents(
+      filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ),
-    [events, selectedDeliveryIds],
+      ), sectionId),sessionSearch),
+    [events, selectedDeliveryIds, sectionId,sessionSearch],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),
@@ -265,6 +286,7 @@ export function LearnerClassSchedule({
   );
   const monthKeys=useMemo(()=>istMonthGridKeys(anchor.getFullYear(),anchor.getMonth()+1),[anchor]);
   const agenda=useMemo(()=>istDayAgenda(filteredEvents,chosenDay),[filteredEvents,chosenDay]);
+  const dayIcs=useMemo(()=>learnerScheduleDayIcs(agenda,chosenDay),[agenda,chosenDay]);
   function movePeriod(direction:-1|1) {
     const next=shiftCalendarAnchor(anchor,view,direction);
     setAnchor(next);
@@ -405,6 +427,35 @@ export function LearnerClassSchedule({
           </label>
         </div>
 
+        {courseBasePath === "/learn/courses" ? (
+          <div className="mt-4 flex flex-wrap items-end gap-3 border-t border-border pt-4">
+            <label className="min-w-0 flex-1 text-xs font-semibold text-body">Find sessions
+              <input type="search" value={sessionSearch} maxLength={100}
+                onChange={event=>setSessionSearch(event.target.value)}
+                placeholder="Class title, faculty, location or course"
+                className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm font-normal text-foreground" />
+            </label>
+            {sessionSearch ? <button type="button" onClick={()=>setSessionSearch("")}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+              Clear search
+            </button> : null}
+            <span role="status" className="w-full text-xs text-muted-foreground">
+              {filteredEvents.length} matching authorized sessions
+            </span>
+          </div>
+        ) : null}
+        {sections.length > 1 ? (
+          <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
+            Section
+            <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
+              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 w-full">
+              <option value="">All my sections</option>
+              {sections.map(section => <option key={section.sectionId} value={section.sectionId}>
+                {section.sectionName} · {section.academicPeriodName}
+              </option>)}
+            </Select>
+          </label>
+        ) : null}
         {courses.length > 1 ? (
           <div className="mt-4 border-t border-border pt-4">
             <div className="flex flex-wrap items-center gap-2">
@@ -461,7 +512,7 @@ export function LearnerClassSchedule({
           <div className="mt-5">
             <EmptyState
               title="No scheduled classes in this view"
-              description="Try another date, view, or Course filter. General Section events remain visible even when Courses are filtered."
+              description="Try another date, view, section, Course filter or session search. General Section events remain visible unless a search excludes them."
             />
           </div>
         ) : (
@@ -495,9 +546,17 @@ export function LearnerClassSchedule({
                   })}
                 </div>
                 <section className="rounded-xl border border-border bg-surface-subtle p-3 sm:p-4" aria-label="Selected day agenda">
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
-                  </h3>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
+                    </h3>
+                    {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
+                      href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                      Download selected day (.ics)
+                    </a> : null}
+                  </div>
+                  {dayIcs.truncated ? <p className="mt-2 text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
                   {agenda.length ? <div className="mt-3 grid gap-3 md:grid-cols-2">
                     {agenda.map(event=><EventCard key={event.id} event={event} courseBasePath={courseBasePath}/>)}
                   </div> : <p className="mt-2 text-sm text-muted-foreground">No classes on this day.</p>}

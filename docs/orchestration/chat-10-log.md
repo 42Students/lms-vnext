@@ -66,3 +66,37 @@
 - 2026-10-15 — HR Company Reports CSV PARTIAL: company/college-scoped aggregate funnel, 200 cap and safe quoting, tests authored not executed.
 
 - 2026-10-15 — HR notification pagination PARTIAL: exact unread/total SQL counts and 25-row pages, Today count label fixed. Unit authored; PG/browser unexecuted.
+
+- 2026-10-15 HR notification title search PARTIAL: scoped drive-name filters, URL persistence; unit+PG tests unexecuted.
+
+- 2026-10-15 — HR activity lifecycle filters PARTIAL: published/closed URL selection with persisted event filter, tests unexecuted.
+
+- 2026-10-15 — HR company team search PARTIAL: after exact employer-grant authorization, role/name/email matching and bounded GET filters; unit authored, unexecuted.
+
+- 2026-10-15 — HR Calendar category filters PARTIAL: All/Rounds/Deadlines/Results-due URL views and pure unit tests; gates pending.
+
+- 2026-10-15 — HR Drive round presets PARTIAL: three unsent draft templates plus calendar category typing correction, tests authored unexecuted.
+
+- 2026-10-15 — HR activity pagination PARTIAL: bounded server pages and deterministic next/previous history links; tests unexecuted.
+
+- 2026-10-15 — HR drives sort PARTIAL: newest/deadline/title after recruiter-grant filtering and before 20-row pages; tests pending.
+
+- 2026-10-15 — HR Request Drive saved preview PARTIAL: validated session-only save/restore keyed by recruiter+college+source, expiry and Start Over clearing; tests authored, unexecuted.
+
+- 2026-10-15 — Self-review: moved activity filter labels to module-level const; documented deliberately ignored unavailable sessionStorage clear. No runtime gates in connector-only lane.
+
+- 2026-10-15 — Hiring activity export PARTIAL: 200-record formula-safe fixed-label employer history CSV; tests unexecuted.
+
+- 2026-10-15 — HR draft round reordering PARTIAL: immutable boundary-safe move up/down with unit coverage; execution pending.
+
+- 2026-10-15 — Draft preview PARTIAL: ordered round names/kinds and compensation/eligibility, static field descriptors; tests authored not executed.
+
+- 2026-10-15 — HR Team CSV PARTIAL: 200 cap and formula-neutralized exact-company roster export; tests authored, unexecuted.
+
+- 2026-10-15 — HR Today result-deadline urgency PARTIAL: time-bound, no invented outstanding results; tests authored unexecuted.
+
+- 2026-10-15 — HR results-due round drilldown PARTIAL: preserve actual round ID through authorized Today/Calendar links; pure unit extended, unexecuted.
+
+- 2026-10-15 — HR Home chooser metadata PARTIAL: exact active grants with code and granted date, stale candidates filtered; unit authored, execution pending.
+
+- 2026-10-15 — HR profile grant navigation PARTIAL: direct scoped Today/Drives/Team links for each own active college grant; tests unexecuted.
