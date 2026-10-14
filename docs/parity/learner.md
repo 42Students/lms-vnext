@@ -401,7 +401,7 @@ Legacy contract audited from `ApplicationsContent`:
 - [ ] **PARTIAL (L14-003):** stage chips now derive from own persisted application screening, display counts, and update the existing URL-backed filter. In Progress/Completed views already exist. Remaining: executed PostgreSQL/unit, TypeScript/ESLint and mobile/Back-Forward browser parity.
 - [ ] Sort options match.
 - [ ] Attention banner opens the complete relevant filtered list.
-- [ ] Journey/status timeline is reproduced.
+- [ ] **PARTIAL (2026-10-14 — application milestones):** the Applications detail drawer now presents an own-application timeline from real submitted/screening/round-result/withdrawal timestamps, newest first, with an exact link to the existing read-only persisted status-history page. It does not fabricate missing time/outcomes or duplicate append-only records. Pure and independently seeded PostgreSQL tests cover own data and forged-college, suspended, wrong-role denial. Remaining: executed tests, full legacy timeline/modal parity, browser accessibility and history consistency verification.
 - [ ] Detail modal contains every legacy section/action.
 - [ ] History modal is implemented.
 - [ ] Company-data preview modal is implemented with retry/empty states.
