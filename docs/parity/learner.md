@@ -580,6 +580,19 @@ Legacy contract:
 - [ ] Back/navigation behavior matches.
 
 ## Page: Placement Cell
+
+**2026-10-14 personal placement alerts (PARTIAL):** a read-only section on
+`/learn/my-placements/placement` shows up to eight actual PLACEMENTS-module
+personal notifications for the authorized learner, sourced from registered
+activity events and in-app notifications. The service checks persisted active
+learner membership, paid placement participation and central
+`placements.read`; events must belong to the same college and user.
+Unsafe action URLs are removed, and timestamps use IST. The UI explicitly
+does not call these records official college-wide notices: a separate
+college-published notice/dispute source is still absent, and L18-023/024
+remain GAP. No client mutation route was introduced; loading/error/empty
+states are explicit.
+
 **Legacy:** `/learn/my-placements/placement`
 
 Legacy contract audited from `PlacementCellContent`:
@@ -648,6 +661,19 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 # Notifications
 
 ## Page: Notifications
+
+**2026-10-14 personal notification history (PARTIAL):** added
+`/learn/notifications/history`, linked from the main learner inbox.
+Uses the existing registered own-recipient keyset pagination reader
+(40 records/page), validating the timestamp/UUID cursor and optional
+Unread view through strict Zod. Scope checks include current persisted
+active Learner role, membership and user plus central `academics.read`.
+Only personal notifications paginate here; readiness-gated announcements
+remain in the main inbox. Counts are explicitly page-local, not a fabricated
+all-history total. Existing read actions use their same-origin-guarded
+endpoint. Cross-role/cross-college DB denial tests and cursor/model/source
+tests are authored, but runtime test/CI and browser acceptance remain open.
+
 
 **Learner-only access and recovery:** `/learn/notifications` now checks
 the active Learner membership and existing central tenant permission before
