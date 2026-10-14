@@ -1,0 +1,180 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import {
+  listCollegeBatches,
+  listCollegeSemesters,
+} from "@/modules/academics/college-academic-directory-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+
+const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
+const pool = enabled
+  ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 })
+  : null;
+
+const adminA: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "w-ca-semester-batch",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const adminB: RequestContext = {
+  user: {
+    id: SEED_IDS.facultyUser,
+    identityUid: "w-ca-semester-batch-b",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.facultyCollegeBMembership,
+    collegeId: SEED_IDS.collegeB,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+const faculty: RequestContext = {
+  ...adminA,
+  membership: { ...adminA.membership!, roles: ["FACULTY"] },
+};
+
+const ids = {
+  period: randomUUID(),
+  program: randomUUID(),
+  term: randomUUID(),
+  cohort: randomUUID(),
+  course: randomUUID(),
+  termCourse: randomUUID(),
+  section: randomUUID(),
+};
+const label = "W-SB-" + ids.program.slice(0, 8);
+
+describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denial", () => {
+  beforeAll(async () => {
+    if (!pool) throw new Error("Isolated TEST_DATABASE_URL is required");
+    const check = await pool.query(
+      "SELECT to_regclass('public.program_terms') AS terms, " +
+      "to_regclass('public.program_term_courses') AS mappings, " +
+      "to_regclass('public.cohort_progression_state') AS progression",
+    );
+    for (const value of Object.values(check.rows[0] ?? {})) {
+      if (!value) throw new Error("DB0050/51 registered tables are required");
+    }
+    await pool.query(
+      "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) " +
+      "VALUES($1,$2,$3,$4,'2026-07-01','2026-12-31')",
+      [ids.period, SEED_IDS.collegeA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) " +
+      "VALUES($1,$2,$3,$4,8)",
+      [ids.program, SEED_IDS.departmentA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO program_terms(id,program_id,term_number,name,total_credits) " +
+      "VALUES($1,$2,1,$3,18)",
+      [ids.term, ids.program, label],
+    );
+    await pool.query(
+      "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
+      [ids.cohort, ids.program, label, label, ids.period],
+    );
+    await pool.query(
+      "INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id) " +
+      "VALUES($1,1,2026,$2)",
+      [ids.cohort, ids.period],
+    );
+    await pool.query(
+      "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$4)",
+      [ids.course, SEED_IDS.departmentA, label, label],
+    );
+    await pool.query(
+      "INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) " +
+      "VALUES($1,$2,$3,'CORE',3,1)",
+      [ids.termCourse, ids.term, ids.course],
+    );
+    await pool.query(
+      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$5)",
+      [ids.section, ids.cohort, ids.period, label, label],
+    );
+  });
+
+  afterAll(async () => {
+    try {
+      if (pool) {
+        const rows: ReadonlyArray<readonly [string, string, string]> = [
+          ["sections", "id", ids.section],
+          ["program_term_courses", "id", ids.termCourse],
+          ["courses", "id", ids.course],
+          ["cohort_progression_state", "cohort_id", ids.cohort],
+          ["cohorts", "id", ids.cohort],
+          ["program_terms", "id", ids.term],
+          ["programs", "id", ids.program],
+          ["academic_periods", "id", ids.period],
+        ];
+        for (const [table, column, id] of rows) {
+          // Only hardcoded test-owned table/column identifiers; bind UUID values.
+          await pool.query(`DELETE FROM ${table} WHERE ${column} = $1`, [id]);
+        }
+      }
+    } finally {
+      await pool?.end();
+      await closeDatabaseConnection();
+    }
+  });
+
+  it("exposes actual program term and batch progression only within owning college", async () => {
+    const [semestersA, batchesA, semestersB, batchesB] = await Promise.all([
+      listCollegeSemesters(adminA, { q: label }),
+      listCollegeBatches(adminA, { q: label }),
+      listCollegeSemesters(adminB, { q: label }),
+      listCollegeBatches(adminB, { q: label }),
+    ]);
+    expect(semestersA.items.find((row) => row.id === ids.term)).toMatchObject({
+      mappedCourses: 1, totalCredits: 18, termNumber: 1,
+    });
+    expect(batchesA.items.find((row) => row.id === ids.cohort)).toMatchObject({
+      currentTermNumber: 1, currentAcademicYearStart: 2026, activeSections: 1,
+      activeEnrolledLearners: 0,
+    });
+    expect(semestersB.items).toEqual([]);
+    expect(batchesB.items).toEqual([]);
+  });
+
+  it("denies Faculty and forged college controls before querying private rows", async () => {
+    await expect(listCollegeSemesters(faculty, {}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeBatches(faculty, {}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeSemesters(adminA, { collegeId: SEED_IDS.collegeB }))
+      .rejects.toBeDefined();
+    await expect(listCollegeBatches(adminA, { collegeId: SEED_IDS.collegeB }))
+      .rejects.toBeDefined();
+  });
+
+  it("returns honest empties for nonexistent filters", async () => {
+    const [semesters, batches] = await Promise.all([
+      listCollegeSemesters(adminA, { q: "never-a-term-w42" }),
+      listCollegeBatches(adminA, { q: "never-a-batch-w42" }),
+    ]);
+    expect(semesters.items).toEqual([]);
+    expect(batches.items).toEqual([]);
+    expect(semesters.total).toBe(0);
+    expect(batches.total).toBe(0);
+  });
+});
