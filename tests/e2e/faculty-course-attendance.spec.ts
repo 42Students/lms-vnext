@@ -1,0 +1,91 @@
+import {expect,test,type BrowserContext} from "@playwright/test";
+import {E2E_IDENTITY_COOKIE_NAME,E2E_SECRET_COOKIE_NAME} from "../../src/auth/e2e-identity";
+import {SEED_IDS} from "../../scripts/db-seed-data";
+
+const secret=process.env.E2E_AUTH_SECRET;
+test.skip(!secret||process.env.E2E_AUTH_ENABLED!=="true",
+ "Faculty Attendance browser requires disposable database and auth");
+
+async function login(context:BrowserContext){
+ await context.addCookies([
+  {name:E2E_IDENTITY_COOKIE_NAME,value:"seed-shared-faculty",
+   url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
+  {name:E2E_SECRET_COOKIE_NAME,value:secret!,
+   url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
+  {name:"lms_membership",value:SEED_IDS.facultyCollegeAMembership,
+   url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
+ ]);
+}
+
+for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:390,height:844}]){
+ test("Faculty Attendance "+view.name+" marks, corrects and shows real Section summary",async({page,context},testInfo)=>{
+  test.setTimeout(120_000);
+  await login(context);
+  await page.setViewportSize({width:view.width,height:view.height});
+  const errors:string[]=[];
+  page.on("pageerror",error=>errors.push(error.message));
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  const offset=(view.name==="mobile"?60:0)+testInfo.retry*180;
+  const start=new Date(Date.now()-(20+offset)*60_000).toISOString();
+  const end=new Date(Date.now()+(20-offset)*60_000).toISOString();
+  const creation=await page.evaluate(async ({deliveryId,start,end})=>{
+   const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     action:"CREATE",title:"Faculty Attendance acceptance",description:"Section roll call",
+     location:"Room A",startsAt:start,endsAt:end,confirm:true,
+    }),
+   });
+   return {status:response.status,body:await response.json()};
+  },{deliveryId,start,end});
+  expect(creation.status,JSON.stringify(creation.body)).toBe(200);
+  const sessionId:string=creation.body?.result?.id;
+  expect(sessionId).toMatch(/^[0-9a-f-]{36}$/i);
+  await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?sessionId="+sessionId);
+  await expect(page.getByRole("button",{name:"Mark attendance"})).toBeVisible();
+  await expect(page.getByLabel("Class session")).toHaveValue(sessionId);
+  await expect(page.getByText("Attendance has not been submitted for this session yet.")).toBeVisible();
+  await page.getByRole("button",{name:"Mark all present"}).click();
+  page.once("dialog",dialog=>dialog.accept());
+  const marking=page.waitForResponse(r=>r.request().method()==="PATCH" &&
+   new URL(r.url()).pathname==="/api/attendance/faculty/sessions/"+sessionId);
+  await page.getByRole("button",{name:"Submit Attendance"}).click();
+  const response=await marking;
+  expect(response.status(),await response.text()).toBe(200);
+  await expect(page.getByText("Attendance was already submitted. Saving again performs a correction.")).toBeVisible();
+  await page.getByRole("button",{name:"Mark all absent"}).click();
+  await page.getByPlaceholder("What changed in the recorded attendance?")
+   .fill("Confirmed correction following classroom roll call");
+  page.once("dialog",dialog=>dialog.accept());
+  const correction=page.waitForResponse(r=>r.request().method()==="PATCH" &&
+   new URL(r.url()).pathname==="/api/attendance/faculty/sessions/"+sessionId);
+  await page.getByRole("button",{name:"Submit Attendance"}).click();
+  const corrected=await correction;
+  expect(corrected.status(),await corrected.text()).toBe(200);
+  await page.getByRole("button",{name:"Attendance report"}).click();
+  await expect(page.getByRole("heading",{name:"Monthly class health"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Monthly class health"})).toContainText("0%");
+  await expect(page.getByRole("region",{name:"Attendance threshold guidance"})).toContainText("below guidance");
+  await page.getByRole("button",{name:/View attendance details for/}).first().click();
+  await expect(page.getByRole("dialog")).toContainText("Attendance");
+  await page.getByRole("button",{name:"Close drawer"}).click();
+  const foreign=await page.evaluate(async ({sessionId,otherCollege})=>{
+   const response=await fetch("/api/attendance/faculty/sessions/"+sessionId,{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     deliveryId:otherCollege,absentMembershipIds:[],presentMembershipIds:[],
+    }),
+   });
+   return response.status;
+  },{sessionId,otherCollege:SEED_IDS.collegeB});
+  expect(foreign).toBeGreaterThanOrEqual(400);
+  if(view.name==="mobile"){
+   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
+   expect(width).toBeLessThanOrEqual(view.width+1);
+  }
+  expect(errors).toEqual([]);
+ });
+}
