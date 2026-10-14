@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail-model";
+import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -165,7 +166,7 @@ function JobActions({
   const [pendingAction, setPendingAction] =
     useState<string | null>(null);
   const [confirmation, setConfirmation] =
-    useState<"WITHDRAW" | "EXTERNAL" | null>(null);
+    useState<"WITHDRAW" | "EXTERNAL" | "INTERNAL" | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
   const { job, roleOption, application } = item;
   const reason = withdrawReason.trim();
@@ -174,6 +175,14 @@ function JobActions({
   async function apply(
     channel: "INTERNAL" | "EXTERNAL",
   ) {
+    const preview=learnerDriveApplyGate({
+      hasApplication:Boolean(application),deadlinePassed:item.deadlinePassed,
+      canApply:item.canApply,applicationMode:job.applicationMode,channel,
+    });
+    const checked=learnerDriveApplySelectionSchema.safeParse({
+      roleOptionId:roleOption.id,channel,confirmed:true,
+    });
+    if(preview!=="READY" || !checked.success) return;
     setPendingAction(channel);
     try {
       await placementMutation(
@@ -193,7 +202,7 @@ function JobActions({
                 roleOptionId: roleOption.id,
               },
       );
-      if (channel === "EXTERNAL") setConfirmation(null);
+      setConfirmation(null);
       showToast({
         tone: "success",
         title:
@@ -364,7 +373,7 @@ function JobActions({
         <Button
           size="sm"
           disabled={pendingAction !== null}
-          onClick={() => apply("INTERNAL")}
+          onClick={() => setConfirmation("INTERNAL")}
         >
           {pendingAction === "INTERNAL"
             ? "Applying…"
@@ -393,6 +402,23 @@ function JobActions({
           </Button>
         </>
       ) : null}
+      <Dialog
+        open={confirmation === "INTERNAL"}
+        onOpenChange={(open) => {if(!open && pendingAction===null)setConfirmation(null);}}
+        title="Confirm placement drive application"
+        description={"Apply for "+roleOption.title+" at "+item.company.name+" through the college placement team."}
+        footer={<>
+          <Button variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Cancel</Button>
+          <Button disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
+            {pendingAction==="INTERNAL"?"Applying…":"Confirm application"}
+          </Button>
+        </>}
+      >
+        <p className="text-sm leading-6 text-body">
+          Eligibility and deadline are checked again when you confirm. A successful submission is recorded once.
+          The migrated screening records are placement-team decisions, not a learner screening questionnaire.
+        </p>
+      </Dialog>
       <Dialog
         open={confirmation === "EXTERNAL"}
         onOpenChange={(open) => {
