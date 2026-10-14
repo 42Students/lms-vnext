@@ -381,7 +381,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Student bulk Add to Drive | Students action | none | Missing. | MISSING |
 | Student bulk Nudge / WhatsApp prep | Students action | none | Missing. | MISSING |
 | Assign preparation | Students action | none | Missing. | MISSING |
-| Higher-studies / participation state | Students action | none | Missing. | MISSING |
+| Higher-studies / participation state | Students action | `/tpo/students/[membershipId]/participation` now provides a TPO-only learner membership eligibility override (ELIGIBLE, INELIGIBLE with reason, or clear to inherited class/batch decision), guarded by central placements.manage scope, active learner enrollment validation, optimistic stale-state rejection, same-origin PUT and transactionally persisted PLACEMENTS activity audit. Registered `placement_eligibility_decisions` is the only participation table changed. **This is not a Higher Studies registration:** choices/consent/history in unmigrated `placement_batch_registrations` remain unavailable, along with TPO batch/class bulk decision-event history. Exact legacy participation workflow, database/browser verification and registrations are still missing. | PARTIAL |
 | Debar | Students action | none | Missing. | MISSING |
 | Academic-details import | Students action | none | Missing. | MISSING |
 
