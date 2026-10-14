@@ -64,15 +64,15 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   const collegeId = requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
-    id: programTerms.id,
+    id: sql<string>`${programTerms.id}`.mapWith(programTerms.id).as("college_term_id"),
     updatedAt: sql<Date>`${programTerms.updatedAt}`.mapWith(programTerms.updatedAt).as("term_updated_at"),
-    name: programTerms.name,
+    name: sql<string>`${programTerms.name}`.mapWith(programTerms.name).as("college_term_name"),
     termNumber: programTerms.termNumber,
     totalCredits: programTerms.totalCredits,
     isActive: programTerms.isActive,
-    programName: programs.name,
+    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_term_program_name"),
     programCode: programs.code,
-    programId: programs.id,
+    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_term_program_id"),
   }).from(programTerms)
     .innerJoin(programs, eq(programs.id, programTerms.programId))
     .innerJoin(departments, and(

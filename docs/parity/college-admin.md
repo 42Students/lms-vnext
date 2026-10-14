@@ -132,6 +132,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Subquery column collision repair PARTIAL (2026-10-15):** Semester directory projects distinct SQL aliases for term and program IDs/names, preserving the existing paginated API while avoiding PostgreSQL ambiguous-column errors (42702). Existing disposable-PG scope fixture now checks joined program identity; execution, legacy field comparison and mobile/browser acceptance remain outstanding.
+
 **Term edit concurrency PARTIAL (2026-10-14):** The existing semester edit action now requires an explicit confirmed millisecond-safe updatedAt token and rejects stale writes. Deactivating a registered program term is blocked when its mapped curriculum courses exist or any active/non-archived cohort progression currently references its term number. Parent scope and immutable activity audit remain transactional; unit and in-test-fixture PostgreSQL stale/foreign-role/dependency checks updated. Exact legacy parity and executed gates remain open.
 
 **Legacy:** `/college-admin/semesters`
