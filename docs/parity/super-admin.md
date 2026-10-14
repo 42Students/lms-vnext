@@ -737,3 +737,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 6 / Semester–Course Mapping CSV — PARTIAL:** Added `/api/admin/semester-courses/export` and in-page filtered CSV download; mapping records use the authorized selected-college SQL joins for program AND course department, term state, course code, mapping credits/type. Strict filters forbid tenant/college/page override and duplicates. CSV capped to 250 with truncation footer and formula neutralization, no-store and pending/error states. Unit authored; mapping write UI and PG/browser parity remain open.
+
+
+**2026-10-15 chat-6 round 6 / Faculty Assignment CSV — PARTIAL:** Added `/api/admin/faculty-assignment/export` plus in-page filtered CSV on persisted teaching assignments; exact college-scoped course/section/faculty joins and active/ended state already enforced by the read service. Search/status retained and caller org/college/page/repeated filters rejected. Contact-free projection, 250-row bounded cap, formula-neutralized export and truncation footer, no-store, client pending/error. Unit authored; reassignment workflow and PostgreSQL/browser acceptance open.
