@@ -968,3 +968,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 L16-005: refreshed minute-by-minute own interview countdown and honest time-window badge from persisted scheduled time and optional duration. No employer attendance/completion inferred. Pure model and self-owned learner PG authored; runtime/browser acceptance pending.
 
 2026-10-14 L16-015: copyable approved-reschedule summary uses persisted scoped exception with original/approved IST times; never includes private join URL, consent, or employer send. Pure model and fresh-learner PG test with own approved request/exception authored; runtime/clipboard acceptance outstanding.
+
+2026-10-14 L16-009: own interview .ics export now folds UTF-8 content lines to RFC5545 75-octet limit and includes calendar method/scale, preserving exact UTC persisted schedule/duration and excluding join links. Pure and fresh-learner PG authored; manual import/CI acceptance outstanding.

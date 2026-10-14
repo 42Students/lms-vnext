@@ -23,6 +23,18 @@ function escapeCalendarText(value:string):string {
     .replace(/;/g,"\\;").replace(/,/g,"\\,");
 }
 
+/** RFC 5545 folds physical content lines at 75 UTF-8 octets, never inside a codepoint. */
+export function foldLearnerCalendarLine(line:string):string {
+  const encoder=new TextEncoder();
+  let output="",octets=0;
+  for(const char of line){
+    const length=encoder.encode(char).length;
+    if(octets+length>75){output+="\r\n ";octets=1;}
+    output+=char;octets+=length;
+  }
+  return output;
+}
+
 /**
  * These values are derived solely from the learner's already authorized round.
  * No calendar links are shown until BOTH the persisted start and duration exist.
@@ -38,7 +50,8 @@ export function learnerInterviewCalendarArtifacts(raw:CalendarInput, generatedAt
   const details="Placement interview for "+input.roleTitle;
   const venue=input.mode==="ON_CAMPUS" ? input.venue ?? "" : "";
   const ics=[
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42Students//Learner Interview//EN",
+    "BEGIN:VCALENDAR","VERSION:2.0","CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH","PRODID:-//42Students//Learner Interview//EN",
     "BEGIN:VEVENT",
     "UID:"+input.applicationId+"-"+input.roundId+"@lms.42students",
     "DTSTAMP:"+asUtcCalendarValue(generatedAt),
@@ -48,7 +61,7 @@ export function learnerInterviewCalendarArtifacts(raw:CalendarInput, generatedAt
     "DESCRIPTION:"+escapeCalendarText(details),
     ...(venue?["LOCATION:"+escapeCalendarText(venue)]:[]),
     "END:VEVENT","END:VCALENDAR","",
-  ].join("\r\n");
+  ].map(foldLearnerCalendarLine).join("\r\n");
   const params=new URLSearchParams({
     action:"TEMPLATE",text:title,dates:asUtcCalendarValue(start)+"/"+asUtcCalendarValue(end),
     details, ...(venue?{location:venue}:{}),

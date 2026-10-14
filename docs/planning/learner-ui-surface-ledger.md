@@ -491,7 +491,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-006 | Confirm interview | InterviewsContent | interviews page | GAP |
 | L16-007 | Join now | InterviewsContent | career rounds | FIXED |
 | L16-008 | Interview Detail modal | InterviewsContent | interviews page | GAP |
-| L16-009 | .ics download | InterviewsContent | interviews page | GAP |
+| L16-009 | .ics download | InterviewsContent | existing own persisted interview ICS export hardened with UTF-8 codepoint-safe RFC 5545 75-octet folding, calendar properties and injection-safe authored labels; no external send or fabricated duration. PARTIAL pending fresh-PG, typecheck/lint, native calendar import/browser verification | PARTIAL |
 | L16-010 | Google Calendar link | InterviewsContent | interviews page | GAP |
 | L16-011 | Request new slot | InterviewsContent | learner requests | GAP |
 | L16-012 | Reschedule reason | InterviewsContent | learner requests | GAP |
