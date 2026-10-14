@@ -504,6 +504,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Student Groups List
 **Legacy:** `/college-admin/student-groups`
 
+**CSV validation PARTIAL (2026-10-14):** For STUDY_GROUP only, `/college/groups/[groupId]/import-preview` reads a bounded email CSV (500 rows, 128 KiB) and reports in-college active learner matches, repeated rows, already-present members, capacity blockers and formula-neutralized validation CSV. This route performs no writes and does not claim confirmed imports or enrollment acceptance. All page checks remain open.
+
 **Write-side PARTIAL:** `/college/groups` now provides Study Group create/edit/activate/close/archive on migrated `lms_groups`, with same-college duplicate-name, version and member/capacity guards. All changes use persisted actor rechecks and transactional `activity_events` audits. Group types with additional semantics (PROJECT_TEAM/ELECTIVE) remain read-only here. Complete legacy dynamic rules, CSV, member moderation and browser acceptance remain open.
 
 Audited contract:
