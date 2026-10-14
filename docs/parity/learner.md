@@ -1003,3 +1003,5 @@ OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
 - **L22-002 PARTIAL (chat-7):** learner Project Overview now reads goal, description and deliverables solely from its authorized immutable assigned project-template version. Empty authored content is explicitly absent; no invented definition-of-done text. Pure model/unit and own-learner PG success and denial fixtures authored. **Remaining:** execute static/unit/isolated-PG and compare exact legacy Overview/mobile and template authoring producer.
 
 - **L21-008 PARTIAL (chat-7):** legacy learner Project URL `?tab=tasks` now renders canonical Board and sets correct active tab without changing project access rules; canonical links remain `?tab=board`. Pure-model unit and self-fixtured PG read/denial tests authored. **Remaining:** typecheck/lint/Vitest/isolated-PG, Back/Forward and mobile/browser parity.
+
+- **L21-009 PARTIAL:** legacy `?tab=meetings` opens the People & Meetings learner workspace. Unit and own-learner PG denial tests authored. Remaining: executed checks, legacy/browser/mobile acceptance.

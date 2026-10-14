@@ -18,3 +18,5 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L21-012: non-enumerating learner Project detail unavailable/loading/retry states; pure/unit/PG tests authored, unexecuted.
 - L22-002: authored immutable Project goals/deliverables in learner Overview, pure/unit/PG authored; unexecuted.
 - L21-008: legacy tasks→Board alias with active tab, unit/PG authored; gates unexecuted.
+
+- L21-009: legacy meetings-to-team compatibility implemented, tests authored but not executed.
