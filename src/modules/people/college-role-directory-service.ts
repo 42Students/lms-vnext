@@ -78,6 +78,17 @@ export async function listCollegeRoleDirectory(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
       or(ilike(learnerProfiles.rollNumber, search), ilike(learnerProfiles.registrationNumber, search)),
     )));
+  const matchesLearnerProgram = (search: string) => exists(db.select({enrollmentId:learnerProgramEnrollments.id})
+    .from(learnerProgramEnrollments)
+    .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,programs.id)))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .where(and(
+      eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+      eq(learnerProgramEnrollments.status,"ACTIVE"),
+      or(ilike(programs.name,search),ilike(programs.code,search),
+        ilike(cohorts.name,search),ilike(cohorts.code,search)),
+    )));
   const matchesFacultyIdentity = (search: string) => exists(db.select({ member: facultyProfiles.membershipId })
     .from(facultyProfiles)
     .leftJoin(departments, and(eq(departments.id, facultyProfiles.primaryDepartmentId), eq(departments.collegeId,collegeId)))
@@ -129,6 +140,7 @@ export async function listCollegeRoleDirectory(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
         kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
+        kind === "LEARNER" ? matchesLearnerProgram(escapedSearch(filter.q)) : undefined,
         kind === "FACULTY" ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
       ) : undefined,
     )).as("college_role_directory");
