@@ -58,14 +58,14 @@ export async function listCollegeSemesterCourseMappings(
   const collegeId = requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
-    id: courseOfferings.id,
-    courseName: courses.name,
-    courseCode: courses.code,
-    cohortName: cohorts.name,
-    programName: programs.name,
-    programId: programs.id,
-    periodName: academicPeriods.name,
-    periodCode: academicPeriods.code,
+    id: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("college_mapping_offering_id"),
+    courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("college_mapping_course_name"),
+    courseCode: sql<string>`${courses.code}`.mapWith(courses.code).as("college_mapping_course_code"),
+    cohortName: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_mapping_cohort_name"),
+    programName: sql<string>`${programs.name}`.mapWith(programs.name).as("college_mapping_program_name"),
+    programId: sql<string>`${programs.id}`.mapWith(programs.id).as("college_mapping_program_id"),
+    periodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_mapping_period_name"),
+    periodCode: sql<string>`${academicPeriods.code}`.mapWith(academicPeriods.code).as("college_mapping_period_code"),
     type: courseOfferings.type,
     credits: courseOfferings.credits,
     status: courseOfferings.status,
