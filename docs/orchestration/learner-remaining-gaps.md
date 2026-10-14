@@ -889,3 +889,7 @@ L11-003: partial-source placements dashboard now distinguishes read failures fro
 2026-10-14 L2-006: About panel now labels persisted content provenance instead of conflating author HTML, catalogue and path description; surfaces course code and missing faculty honestly. No rich HTML/storage field invented. Authored unit+PG and responsive acceptance outstanding.
 
 2026-10-14 L2-016: own course update feed now mixes persisted learner completion/submissions with course-team posts and upcoming deadlines. Grading events excluded without published grade timestamps. Fresh PG, unit, JSX/lint and browser acceptance pending.
+
+2026-10-14 L2-022: responsive Course Overview navigation targets only sections present for an authorized course; no fake mobile content or storage. Unit and fresh-learner PG assertions authored; browser/device and accessibility review remains.
+
+Skipped in this batch for missing canonical source or external dependencies: L1-021 course thumbnail (no verified migrated image association); L12-013/014 saved job (saved-job persistence unconfirmed in registered journal); L13-016 per-drive resume upload (storage/private-object handling missing); L30-034..L30-043 profile verification (no verified state machine, document upload or review process); external sends intentionally untouched without provider/consent contracts.

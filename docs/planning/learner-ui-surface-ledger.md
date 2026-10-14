@@ -130,7 +130,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-019 | Historical course Overview read-only messaging | course history | Overview | CLOSED |
 | L2-020 | Course not-found/access handling | course route | course detail | CLOSED |
 | L2-021 | Course loading/error state | course route | course detail | CLOSED |
-| L2-022 | Overview mobile behavior | Home responsive | Overview | UNCHECKED |
+| L2-022 | Overview mobile behavior | Home responsive | mobile-only horizontal accessible jump navigation, 44px targets, scroll offsets and small-screen padding for About/path/next/progress/updates; no dead links to absent sections. PARTIAL pending responsive browser, screen-reader, tsc/lint, fresh PostgreSQL acceptance | PARTIAL |
 | L2-023 | Authored introduction content | InThisCourseSection introduction_content | Course domain has description only | GAP |
 | L2-024 | Authored rich HTML overview + sanitization | InThisCourseSection html_content | Course domain has no rich overview field | GAP |
 | L2-025 | Authored takeaways list | InThisCourseSection takeaways | vNext currently derives lesson names | GAP |
