@@ -1,0 +1,259 @@
+import "server-only";
+
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  cohorts,
+  cohortProgressionState,
+  colleges,
+  departments,
+  learnerProgramEnrollments,
+  organizations,
+  programs,
+  programTerms,
+} from "@/db/schema";
+import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { postgresConstraintName } from "./errors";
+import {
+  archiveCollegeProgramSchema,
+  canReduceProgramDuration,
+  collegeProgramIdSchema,
+  createCollegeProgramSchema,
+  updateCollegeProgramSchema,
+} from "./college-program-mutation-model";
+
+export type CollegeProgramMutationErrorCode =
+  | "PROGRAM_NOT_FOUND"
+  | "DEPARTMENT_NOT_FOUND"
+  | "PROGRAM_NAME_CONFLICT"
+  | "PROGRAM_CODE_CONFLICT"
+  | "PROGRAM_DURATION_HAS_DEPENDENCIES"
+  | "PROGRAM_HAS_COHORTS"
+  | "PROGRAM_HAS_ENROLLMENTS"
+  | "PROGRAM_HAS_SEMESTERS"
+  | "PROGRAM_DEPENDENCY_CONFLICT";
+
+export class CollegeProgramMutationError extends Error {
+  constructor(public readonly code: CollegeProgramMutationErrorCode) {
+    super(code);
+    this.name = "CollegeProgramMutationError";
+  }
+}
+
+type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+function ownCollege(context: RequestContext) {
+  const member = context.membership;
+  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+    !can(context, "academics.manage", {
+      collegeId: member.collegeId,
+      organizationId: member.organizationId,
+    })) {
+    throw new AuthorizationError("academics.manage");
+  }
+  requirePermission(context, "academics.manage", {
+    collegeId: member.collegeId,
+    organizationId: member.organizationId,
+  });
+  return member;
+}
+
+async function lockedDepartment(tx: Tx, departmentId: string, collegeId: string) {
+  const [department] = await tx.select({ id: departments.id })
+    .from(departments)
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+    .where(and(
+      eq(departments.id, departmentId),
+      eq(departments.collegeId, collegeId),
+      isNull(departments.archivedAt),
+      eq(colleges.status, "ACTIVE"),
+      eq(organizations.status, "ACTIVE"),
+    ))
+    .for("update")
+    .limit(1);
+  if (!department) throw new CollegeProgramMutationError("DEPARTMENT_NOT_FOUND");
+  return department;
+}
+
+async function lockedProgram(tx: Tx, programId: string, collegeId: string) {
+  const [program] = await tx.select({
+    id: programs.id,
+    name: programs.name,
+    code: programs.code,
+    durationTerms: programs.durationTerms,
+    status: programs.status,
+    departmentId: programs.departmentId,
+  }).from(programs)
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, collegeId),
+      isNull(departments.archivedAt),
+    ))
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+    .where(and(
+      eq(programs.id, programId),
+      eq(colleges.status, "ACTIVE"),
+      eq(organizations.status, "ACTIVE"),
+    ))
+    .for("update").limit(1);
+  if (!program || program.status !== "ACTIVE") {
+    throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+  }
+  return program;
+}
+
+async function ensureUnique(
+  tx: Tx,
+  departmentId: string,
+  name: string,
+  code: string,
+  excludeId?: string,
+) {
+  const matches = await tx.select({
+    id: programs.id, name: programs.name, code: programs.code,
+  }).from(programs)
+    .where(and(
+      eq(programs.departmentId, departmentId),
+      eq(programs.status, "ACTIVE"),
+      sql`(lower(${programs.name}) = ${name.toLowerCase()} or lower(${programs.code}) = ${code.toLowerCase()})`,
+    ));
+  for (const row of matches) {
+    if (row.id === excludeId) continue;
+    if (row.name.toLowerCase() === name.toLowerCase()) {
+      throw new CollegeProgramMutationError("PROGRAM_NAME_CONFLICT");
+    }
+    if (row.code.toLowerCase() === code.toLowerCase()) {
+      throw new CollegeProgramMutationError("PROGRAM_CODE_CONFLICT");
+    }
+  }
+}
+
+function mapError(error: unknown): never {
+  if (error instanceof CollegeProgramMutationError || error instanceof AuthorizationError) {
+    throw error;
+  }
+  const constraint = postgresConstraintName(error);
+  if (constraint === "programs_active_department_name_uq") {
+    throw new CollegeProgramMutationError("PROGRAM_NAME_CONFLICT");
+  }
+  if (constraint === "programs_active_department_code_uq") {
+    throw new CollegeProgramMutationError("PROGRAM_CODE_CONFLICT");
+  }
+  let cursor: unknown = error;
+  for (let i = 0; i < 5 && cursor && typeof cursor === "object"; i++) {
+    if ("code" in cursor && cursor.code === "23503") {
+      throw new CollegeProgramMutationError("PROGRAM_DEPENDENCY_CONFLICT");
+    }
+    cursor = "cause" in cursor ? cursor.cause : null;
+  }
+  throw error;
+}
+
+export async function createCollegeProgram(context: RequestContext, raw: unknown) {
+  const input = createCollegeProgramSchema.parse(raw);
+  const member = ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      await lockedDepartment(tx, input.departmentId, member.collegeId);
+      await ensureUnique(tx, input.departmentId, input.name, input.code);
+      const [created] = await tx.insert(programs).values(input).returning();
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_CREATED,
+        organizationId: member.organizationId,
+        collegeId: member.collegeId,
+        subjectType: "program", subjectId: created.id,
+        subjectLabel: created.name, summary: "Program created",
+        metadata: { departmentId: created.departmentId, code: created.code, durationTerms: created.durationTerms },
+      });
+      return created;
+    });
+  } catch (error) { return mapError(error); }
+}
+
+export async function updateCollegeProgram(
+  context: RequestContext, programIdInput: unknown, raw: unknown,
+) {
+  const programId = collegeProgramIdSchema.parse(programIdInput);
+  const input = updateCollegeProgramSchema.parse(raw);
+  const member = ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const current = await lockedProgram(tx, programId, member.collegeId);
+      await ensureUnique(tx, current.departmentId, input.name, input.code, current.id);
+      if (input.durationTerms < current.durationTerms) {
+        const [highestTerm] = await tx.select({ term: programTerms.termNumber }).from(programTerms)
+          .where(eq(programTerms.programId, current.id))
+          .orderBy(desc(programTerms.termNumber)).limit(1);
+        const [highestCohort] = await tx.select({ term: cohortProgressionState.currentTermNumber })
+          .from(cohortProgressionState)
+          .innerJoin(cohorts, eq(cohorts.id, cohortProgressionState.cohortId))
+          .where(eq(cohorts.programId, current.id))
+          .orderBy(desc(cohortProgressionState.currentTermNumber)).limit(1);
+        const highestReference = Math.max(highestTerm?.term ?? 0, highestCohort?.term ?? 0);
+        if (!canReduceProgramDuration(input.durationTerms, highestReference)) {
+          throw new CollegeProgramMutationError("PROGRAM_DURATION_HAS_DEPENDENCIES");
+        }
+      }
+      const [updated] = await tx.update(programs).set({
+        name: input.name, code: input.code, durationTerms: input.durationTerms,
+        updatedAt: new Date(),
+      }).where(and(eq(programs.id, current.id), eq(programs.status, "ACTIVE"))).returning();
+      if (!updated) throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_UPDATED,
+        organizationId: member.organizationId, collegeId: member.collegeId,
+        subjectType: "program", subjectId: updated.id,
+        subjectLabel: updated.name, summary: "Program updated",
+        metadata: {
+          departmentId: updated.departmentId,
+          fromName: current.name, fromCode: current.code,
+          fromDurationTerms: current.durationTerms,
+          toCode: updated.code, toDurationTerms: updated.durationTerms,
+        },
+      });
+      return updated;
+    });
+  } catch (error) { return mapError(error); }
+}
+
+export async function archiveCollegeProgram(
+  context: RequestContext, programIdInput: unknown, raw: unknown,
+) {
+  const programId = collegeProgramIdSchema.parse(programIdInput);
+  archiveCollegeProgramSchema.parse(raw);
+  const member = ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const current = await lockedProgram(tx, programId, member.collegeId);
+      const [cohort, enrollment, semester] = await Promise.all([
+        tx.select({ id: cohorts.id }).from(cohorts)
+          .where(eq(cohorts.programId, current.id)).limit(1),
+        tx.select({ id: learnerProgramEnrollments.id }).from(learnerProgramEnrollments)
+          .where(eq(learnerProgramEnrollments.programId, current.id)).limit(1),
+        tx.select({ id: programTerms.id }).from(programTerms)
+          .where(eq(programTerms.programId, current.id)).limit(1),
+      ]);
+      // Fail closed even on archived/completed children: historical references persist.
+      if (cohort) throw new CollegeProgramMutationError("PROGRAM_HAS_COHORTS");
+      if (enrollment) throw new CollegeProgramMutationError("PROGRAM_HAS_ENROLLMENTS");
+      if (semester) throw new CollegeProgramMutationError("PROGRAM_HAS_SEMESTERS");
+      const [archived] = await tx.update(programs)
+        .set({ status: "ARCHIVED", updatedAt: new Date() })
+        .where(and(eq(programs.id, current.id), eq(programs.status, "ACTIVE"))).returning();
+      if (!archived) throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_ARCHIVED,
+        organizationId: member.organizationId, collegeId: member.collegeId,
+        subjectType: "program", subjectId: archived.id,
+        subjectLabel: archived.name, summary: "Program archived",
+        metadata: { departmentId: archived.departmentId, code: archived.code },
+      });
+      return archived;
+    });
+  } catch (error) { return mapError(error); }
+}
