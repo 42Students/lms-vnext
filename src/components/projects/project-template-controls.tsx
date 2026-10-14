@@ -10,6 +10,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { templateAssignmentRevocationNotice } from "@/modules/projects/template-college-availability-model";
 import { projectMutation } from "./project-api";
 
 export function CreateProjectTemplateControl() {
@@ -287,12 +288,14 @@ export function ProjectTemplateActions({
   status,
   selectedCollegeId,
   assignedToSelectedCollege,
+  allowGlobalActions = true,
 }: {
   templateId: string;
   title: string;
   status: string;
   selectedCollegeId: string | null;
   assignedToSelectedCollege: boolean;
+  allowGlobalActions?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -300,6 +303,8 @@ export function ProjectTemplateActions({
     useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] =
     useState(false);
+
+  const [confirmRevoke, setConfirmRevoke] = useState(false);
 
   async function mutate(
     label: string,
@@ -377,7 +382,7 @@ export function ProjectTemplateActions({
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {status !== "PUBLISHED" ? (
+        {allowGlobalActions ? (status !== "PUBLISHED" ? (
           <Button
             size="sm"
             disabled={pending !== null}
@@ -419,9 +424,9 @@ export function ProjectTemplateActions({
               ? "Unpublishing…"
               : "Unpublish"}
           </Button>
-        )}
+        )) : null}
 
-        {status === "ARCHIVED" ? (
+        {allowGlobalActions && status === "ARCHIVED" ? (
           <Button
             size="sm"
             variant="secondary"
@@ -440,7 +445,7 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        <Button
+        {allowGlobalActions ? <Button
           size="sm"
           variant="secondary"
           disabled={pending !== null}
@@ -449,31 +454,19 @@ export function ProjectTemplateActions({
           {pending === "Duplicate template"
             ? "Duplicating…"
             : "Duplicate"}
-        </Button>
+        </Button> : null}
 
         {selectedCollegeId &&
-        status === "PUBLISHED" ? (
+        (status === "PUBLISHED" || assignedToSelectedCollege) ? (
           <Button
             size="sm"
             variant="secondary"
             disabled={pending !== null}
-            onClick={() =>
-              void mutate(
-                assignedToSelectedCollege
-                  ? "Revoke college assignment"
-                  : "Assign to college",
-                "/api/projects/templates/" +
-                  templateId +
-                  "/assignments",
-                assignedToSelectedCollege
-                  ? "DELETE"
-                  : "POST",
-                {
-                  collegeId:
-                    selectedCollegeId,
-                },
-              )
-            }
+            onClick={() => {
+              if (assignedToSelectedCollege) setConfirmRevoke(true);
+              else void mutate("Assign to college", "/api/projects/templates/" + templateId + "/assignments",
+                "POST", { collegeId: selectedCollegeId });
+            }}
           >
             {assignedToSelectedCollege
               ? "Revoke selected college"
@@ -481,7 +474,7 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        {status !== "ARCHIVED" ? (
+        {allowGlobalActions && status !== "ARCHIVED" ? (
           <Button
             size="sm"
             variant="secondary"
@@ -495,7 +488,21 @@ export function ProjectTemplateActions({
         ) : null}
       </div>
 
-      <Dialog
+      <Dialog open={confirmRevoke} onOpenChange={setConfirmRevoke}
+        title="Revoke college assignment?" description={templateAssignmentRevocationNotice()}
+        footer={<>
+          <Button variant="secondary" disabled={pending !== null} onClick={() => setConfirmRevoke(false)}>Cancel</Button>
+          <Button disabled={pending !== null || !selectedCollegeId} onClick={() => {
+            if (!selectedCollegeId) return;
+            setConfirmRevoke(false);
+            void mutate("Revoke college assignment", "/api/projects/templates/" + templateId + "/assignments",
+              "DELETE", { collegeId: selectedCollegeId });
+          }}>Confirm revocation</Button>
+        </>}>
+        <p className="text-sm text-body">Only this college&apos;s availability changes.</p>
+      </Dialog>
+
+      {allowGlobalActions ? <Dialog
         open={confirmArchive}
         onOpenChange={setConfirmArchive}
         title="Archive project template?"
@@ -533,7 +540,7 @@ export function ProjectTemplateActions({
         <p className="m-0 text-sm leading-6 text-body">
           Existing project workspaces remain pinned to their materialized template version.
         </p>
-      </Dialog>
+      </Dialog> : null}
     </>
   );
 }
