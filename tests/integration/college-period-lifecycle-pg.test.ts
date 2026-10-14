@@ -5,7 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
-  changeCollegePeriodLifecycle, CollegePeriodLifecycleError,
+  changeCollegePeriodLifecycle,
 } from "@/modules/academics/college-period-lifecycle-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
