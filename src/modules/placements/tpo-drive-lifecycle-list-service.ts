@@ -72,7 +72,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .innerJoin(placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .where(and(scope,target?eq(placementJobs.status,target):undefined))
-    .orderBy(placementCompanies.name, placementJobs.title, placementJobs.id)
+    .orderBy(filters.sort==="DEADLINE_ASC"?sql`${placementJobs.applicationDeadline} asc nulls last`:
+      filters.sort==="DEADLINE_DESC"?sql`${placementJobs.applicationDeadline} desc nulls last`:placementCompanies.name,
+      placementCompanies.name,placementJobs.title,placementJobs.id)
     .limit(pagination.pageSize).offset(pagination.offset);
    return {counts:totals,...pagination,rows:rows.map((row) => ({
     ...row, applicationDeadline: row.applicationDeadline?.toISOString() ?? null,
@@ -80,7 +82,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"}):
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
   return {
-    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,
+    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
   };

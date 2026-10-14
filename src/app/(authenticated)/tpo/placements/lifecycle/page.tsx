@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];page?:string|string[] };
+type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -18,12 +18,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
     ...(first(params.workMode)?{workMode:first(params.workMode)}:{}),
     ...(first(params.employmentType)?{employmentType:first(params.employmentType)}:{}),
+    ...(first(params.sort)?{sort:first(params.sort)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,page,
+   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,page,
   }};}
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
@@ -65,6 +66,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <select name="employmentType" defaultValue={data.employmentType} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
           <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
+        </select>
+      </label>
+      <label className="min-w-36 flex-1 text-sm font-semibold text-body">Sort drives
+        <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
+          <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
