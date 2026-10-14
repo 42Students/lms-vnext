@@ -952,3 +952,5 @@ The rows below were considered but intentionally not promoted to PARTIAL; they r
 - **L30-041:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
 - **L30-042:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
 - **L30-043:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+
+2026-10-14 L14-020: exact own application to published drive and its role choices through scoped persisted `placement_applications.job_id` (not a guessed matching company). Similar-role recommendations remain BLOCKED until approved recommendation criteria and availability rules are registered. Skip L1-021 course image: no canonical migrated image association; L13-016 private resume: storage/consent authorization required; L30-034..043 profile verification: missing trusted document/review state machine.
