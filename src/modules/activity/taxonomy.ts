@@ -57,6 +57,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "projects.readiness.overridden",
   PROJECTS_TASK_SUBMITTED:
     "projects.task.submitted",
+  PROJECTS_TASK_REVIEWED:
+    "projects.task.reviewed",
   PROJECTS_EVALUATION_RECORDED:
     "projects.evaluation.recorded",
   PLACEMENTS_SEASON_STARTED:
