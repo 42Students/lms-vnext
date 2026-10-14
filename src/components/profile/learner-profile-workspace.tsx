@@ -307,6 +307,9 @@ export function LearnerProfileWorkspace(props: {
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+            Review full checklist
+          </Link>
           <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>
             {checklist.completed} of {checklist.total} sections filled
           </StatusBadge>

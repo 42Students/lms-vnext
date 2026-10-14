@@ -18,6 +18,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
+import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -456,6 +457,7 @@ export async function getMyQuizAttempts(
   quizIdInput: string,
   deliveryIdInput: string,
 ) {
+  await requireOwnCourseLearnerRead(context);
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
   const deliveryId =
