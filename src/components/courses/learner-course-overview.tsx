@@ -7,6 +7,7 @@ import { learnerProgressAvailability } from "@/modules/courses/learner-progress-
 import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
 import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
 import { learnerRecentCourseActivity } from "@/modules/courses/learner-recent-course-activity-model";
+import { learnerCourseOverviewJumps } from "@/modules/courses/learner-course-overview-mobile-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -236,8 +237,21 @@ export function LearnerCourseOverview({
     )
     .slice(0, 6);
 
+  const jumpLinks=learnerCourseOverviewJumps({
+    hasPublishedPath:pathPreview.totalLessons>0,
+    hasUpdates:unifiedUpdates.length>0,
+  });
   return (
     <div className="space-y-5">
+      <nav aria-label="Course overview sections"
+        className="sticky top-16 z-10 -mx-1 flex gap-2 overflow-x-auto rounded-lg border border-border bg-surface p-2 shadow-sm sm:hidden">
+        {jumpLinks.map(item=>(
+          <a key={item.id} href={"#"+item.id}
+            className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+            {item.label}
+          </a>
+        ))}
+      </nav>
       <div>
         <h2 className="sr-only">Overview</h2>
         <p className="m-0 text-sm text-body">
@@ -245,7 +259,7 @@ export function LearnerCourseOverview({
         </p>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section id="course-overview-about" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <h3 className="m-0 text-lg font-semibold text-foreground">
@@ -333,7 +347,7 @@ export function LearnerCourseOverview({
         </div>
       </section>
 
-      <section aria-label="Learning path preview" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
@@ -368,8 +382,8 @@ export function LearnerCourseOverview({
         </p>:null}
       </section>
 
-      <section
-        className="rounded-xl border border-primary bg-primary-subtle p-5"
+      <section id="course-overview-next"
+        className="scroll-mt-32 rounded-xl border border-primary bg-primary-subtle p-4 sm:p-5"
         aria-label="Next action"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -417,7 +431,7 @@ export function LearnerCourseOverview({
         </section>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
@@ -441,8 +455,8 @@ export function LearnerCourseOverview({
       </div>
 
       {unifiedUpdates.length > 0 ? (
-        <section className="rounded-xl border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
+        <section id="course-overview-updates" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="m-0 text-base font-semibold text-foreground">
                 Recent updates
