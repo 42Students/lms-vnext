@@ -14,7 +14,7 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
-import { hrScheduledRoundRows,hrRoundConflictLabels } from "@/modules/placements/hr-round-schedule-model";
+import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 function formatCtc(
@@ -382,7 +382,12 @@ export default async function HrPlacementJobPage({
               {round.conflicts.length?<div role="status" className="mt-2 text-sm font-semibold text-foreground">
                 <p>Potential time overlap with:</p>
                 <ul className="mt-1 list-inside list-disc text-sm font-normal">
-                  {hrRoundConflictLabels(roundSchedule,round.conflicts).map(label=><li key={label}>{label}</li>)}
+                  {hrRoundConflictLinks(roundSchedule,round.conflicts,workspace.job.id).map(link=>
+                    <li key={link.id}>
+                      <Link href={link.href} className="text-primary-text underline">
+                        {link.label} · inspect round
+                      </Link>
+                    </li>)}
                 </ul>
               </div>:null}
             </article>)}
