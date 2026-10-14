@@ -23,6 +23,8 @@ export type ActivityImportance =
 export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
+  PLATFORM_COLLEGE_CONTACT_UPDATED:
+    "platform.college.contact_updated",
   IDENTITY_PERSON_ONBOARDED:
     "identity.person.onboarded",
   IDENTITY_ROLES_CHANGED:

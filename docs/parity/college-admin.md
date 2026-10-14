@@ -57,6 +57,11 @@ Uses the shared Faculty-profile schema.
 - [ ] Loading/hard-error/retry/visibility-refresh behavior.
 - [ ] Learner/Faculty/Mentor/TPO role misroutes are fenced.
 
+
+## Page: College Contact Profile
+
+**Additional College Admin contact surface (PARTIAL):** `/college/college-profile` is separate from the legacy personal profile. Read public college display name, support email/phone and HTTPS terms/privacy links; confirmed edits use own-college scope, registered branding validation, optimistic version checks and a privacy-safe activity audit in one transaction. Does not expose personal account edits, sensitive identity data, college code/address or visual branding writes. Loading/error states and denial tests authored; executed disposable PostgreSQL/browser acceptance and final scope decision remain open.
+
 ## Page: Placement Interview Calendar
 **Legacy:** `/college-admin/calendar`
 

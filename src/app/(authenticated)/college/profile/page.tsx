@@ -90,6 +90,10 @@ export default async function CollegeAdminProfilePage() {
           </p>
         </div>
       </section>
+      <Link href="/college/college-profile"
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:underline">
+        Edit college display and support contacts
+      </Link>
     </div>
   );
 }
