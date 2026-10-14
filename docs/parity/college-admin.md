@@ -185,6 +185,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Capped batch CSV PARTIAL (2026-10-15):** Batch catalogue now exports current-college, filter-matched persisted program/progression and active counts in a spreadsheet-neutralized CSV (1,000 max, explicit truncation headers/footer). The in-test-fixture PostgreSQL suite includes own/foreign/wrong-role export assertions; executed CI, mobile and legacy export column parity remain outstanding.
+
 **Academic-year progression filter PARTIAL (2026-10-15):** Batch list can select the exact persisted progression academic-year start, rather than deriving a year from names or start periods; strict bounds, URL paging, absent-progression exclusion and positive/negative isolated PostgreSQL checks are authored. Browser and integration execution remain open.
 
 **Subquery column collision repair PARTIAL (2026-10-15):** Batch directory now aliases cohort/program/starting-period IDs, names and codes individually before pagination (PostgreSQL 42702); the existing tenant-isolated fixture asserts joined identity and progression shape. No executed PostgreSQL/browser closure or legacy cohort form parity is claimed.
