@@ -11,6 +11,9 @@ import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-co
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { listPlacementOfferCandidates } from "@/modules/placements/offer-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
+import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
+import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
+import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -62,7 +65,22 @@ export async function PlacementDriveWorkspace({
     ),
   ]);
 
-  const bulkCandidates = hasMembershipRole(context, "TPO") && job.status === "PUBLISHED"
+  const isTpo = hasMembershipRole(context, "TPO");
+  const [collisionAssessment, shortlist] = isTpo
+    ? await Promise.all([
+        getTpoScheduleConflicts(context, { days: 90 }).catch(() => null),
+        getTpoDriveShortlist(context, { jobId }).catch(() => null),
+      ])
+    : [null, null];
+
+  const scheduleWarnings = isTpo
+    ? projectTpoDriveScheduleWarnings(
+        collisionAssessment,
+        driveDay.rounds.map((round) => round.id),
+      )
+    : undefined;
+
+  const bulkCandidates = isTpo && job.status === "PUBLISHED"
     ? await listBulkDriveCandidates(context, jobId)
     : null;
 
@@ -215,6 +233,36 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {isTpo ? (
+        <section
+          aria-label="Current screening shortlist"
+          className="rounded-xl border border-border bg-surface p-5"
+        >
+          <h2 className="text-base font-semibold text-foreground">
+            Persisted screening shortlist
+          </h2>
+          <p className="mt-2 text-sm text-body">
+            {shortlist
+              ? String(shortlist.total) + " currently shortlisted submitted application(s). " +
+                "This is an application count, not a unique learner count."
+              : "Current shortlist could not be loaded. No count is inferred."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-4 text-sm">
+            <Link
+              href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
+              className="font-semibold text-primary-text hover:underline"
+            >
+              View persisted shortlist →
+            </Link>
+            <a
+              href={"/api/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist/export"}
+              className="font-semibold text-primary-text hover:underline"
+            >
+              Download formula-safe shortlist CSV
+            </a>
+          </div>
+        </section>
+      ) : null}
       {job.status === "DRAFT" ? (
         <PlacementDraftEditForm
           academicOptions={{
@@ -398,6 +446,7 @@ export async function PlacementDriveWorkspace({
       />
       <PlacementDriveControls
         data={controlData}
+        scheduleWarnings={scheduleWarnings}
       />
       <PlacementOfferControls
         jobId={jobId}

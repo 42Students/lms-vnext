@@ -54,6 +54,23 @@ describe("TPO schedule and shortlist database authorization", () => {
       .rejects.toBeInstanceOf(AuthorizationError);
   });
 
+  it("blocks cross-college and non-TPO reads before showing inline warnings/shortlist", async () => {
+    const foreign: RequestContext = {
+      ...tpo,
+      membership: { ...tpo.membership!, collegeId: SEED_IDS.collegeB },
+    };
+    await expect(requirePlacementManageScope(foreign, SEED_IDS.collegeA))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    const withoutRole: RequestContext = {
+      ...tpo,
+      membership: { ...tpo.membership!, roles: ["LEARNER"] },
+    };
+    await expect(getTpoScheduleConflicts(withoutRole, { days: 90 }))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoDriveShortlist(withoutRole, { jobId: randomUUID() }))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+
   it("returns a bounded tenant-owned schedule projection", async () => {
     const result = await getTpoScheduleConflicts(tpo, { days: 7 },
       new Date("2026-10-14T00:00:00.000Z"));
