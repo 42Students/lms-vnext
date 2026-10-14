@@ -9,7 +9,7 @@ describe("HR selection and offer read-only status",()=>{
   expect(result).toEqual({recorded:4,issued:2,accepted:1,declined:1,joined:1,awaitingReply:1,overdue:1});
  });
  it("requires completed APPLIED PASS final results before selection",()=>{
-  const rounds=[{kind:"TEST",status:"COMPLETED",participants:[{applicationId:"a",result:{status:"APPLIED",outcome:"PASS"}}]},
+  const rounds=[{kind:"TEST",status:"COMPLETED",participants:[{applicationId:"a",result:{status:"APPLIED",outcome:"PASS"}},
     {applicationId:"b",result:{status:"STAGED",outcome:"PASS"}}]}];
   expect(hrSelectionReadyApplicationIds(rounds)).toEqual(["a"]);
   expect(hrSelectionReadyApplicationIds([{...rounds[0],status:"SCHEDULED"}])).toEqual([]);
