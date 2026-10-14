@@ -6,6 +6,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
+import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -669,6 +670,8 @@ export async function gradeAssignmentSubmission(
   if(current.assignmentStatus!=="PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
+  if(!facultyRegradeFeedbackAllowed(current.gradePublished,input.feedback))
+    throw new CoursesServiceError("ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED");
   if (
     input.pointsAwarded > current.maxPoints
   ) {
@@ -721,6 +724,8 @@ export async function gradeAssignmentSubmission(
         deliveryId: updated.deliveryId,
         version: updated.version,
         gradePublished: false,
+        wasPublished:current.gradePublished,
+        feedbackProvided:Boolean(input.feedback?.trim()),
       },
       groupKey: `course-assignment:${updated.assignmentId}:grading`,
       dedupeKey: `assignment-submission:${updated.id}:graded:${updated.version}`,

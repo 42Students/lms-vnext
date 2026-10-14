@@ -977,3 +977,16 @@ Pure model unit and own-Section PG fixtures cover now() microseconds,
 successful edit, stale replay, foreign selector, wrong-role and event count.
 Remains PARTIAL: orchestrator gates, responsive builder/browser and legacy
 publish/release acceptance.
+
+## 2026-10-14 Faculty regrade of published Assignment requires feedback — PARTIAL
+The existing exact-Section, same-origin grade/regrade PATCH still uses an
+integer submission version, published parent-Assignment lock and immutable
+audit. When Faculty revise an already learner-visible grade, meaningful
+learner-facing feedback is now required; the update hides the old published
+grade until republished. The shared activity metadata records only the
+previous visibility and feedback-presence flags, never private score or
+freeform feedback. Mobile grading drawer explains the required rationale.
+Pure policy/unit and self-created Section/Learner PG grading sequence now
+covers initial grade, publication, denied unexplained regrade, valid feedback,
+stale replay, wrong-role, foreign college and duplicate audit protection.
+Remains PARTIAL: orchestrator tests, mobile drawer and legacy review.

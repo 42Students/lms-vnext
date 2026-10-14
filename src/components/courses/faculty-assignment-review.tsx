@@ -107,6 +107,10 @@ function SubmissionGradeCard({
       return;
     }
 
+    if(submission.gradePublished&&feedback.trim().length<8){
+      setError("Explain the regrade to the learner in at least 8 characters.");
+      return;
+    }
     if (
       submission.gradePublished &&
       !window.confirm(
@@ -301,6 +305,7 @@ function SubmissionGradeCard({
             Feedback
           </span>
           <Textarea
+            aria-required={submission.gradePublished}
             className="min-h-24"
             value={feedback}
             onChange={(event) =>
@@ -309,7 +314,9 @@ function SubmissionGradeCard({
               )
             }
             maxLength={10000}
-            placeholder="Optional feedback for the learner"
+            placeholder={submission.gradePublished
+              ? "Required: explain why the published grade is changing"
+              : "Optional feedback for the learner"}
           />
         </label>
 
