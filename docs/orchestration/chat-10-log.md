@@ -64,3 +64,5 @@
 - 2026-10-15 — Today unread notification CTA PARTIAL: grant-scoped unread 100-cap card plus links to Messages/Activity. Unit and PG fixture added, tests not executed.
 
 - 2026-10-15 — HR Company Reports CSV PARTIAL: company/college-scoped aggregate funnel, 200 cap and safe quoting, tests authored not executed.
+
+- 2026-10-15 — HR notification pagination PARTIAL: exact unread/total SQL counts and 25-row pages, Today count label fixed. Unit authored; PG/browser unexecuted.

@@ -3,7 +3,7 @@ export function hrTodayUnreadAction(input:{
 }) {
  if(input.status!=="READY")return null;
  return {
-  label:input.truncated?"Unread notifications (first 100)":"Unread notifications",
+  label:"Unread notifications",
   value:input.unread,
   url:"/hr/messages?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true",
  };
