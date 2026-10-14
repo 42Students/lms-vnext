@@ -49,6 +49,8 @@ Closure checklist:
 - [ ] Season pipeline matches.
 - [ ] Company funnel matches.
 
+**W62 D PARTIAL (L45):** New TPO season-pipeline report projects all recorded application IDs (including withdrawn), current shortlisted screenings, all offer versions, current accepted versions and explicit JOINED outcomes per selected season and drive. Selected remains null because a canonical final employer selection decision has no verified migrated source. Mobile page, neutralized CSV with full totals, 200-drive cap and truncation notice, pure unit and DB09-isolated integration tests are authored. Browser and executed PostgreSQL gates, parity definitions for historical outcomes and release sign-off are still open.
+
 **W54 PARTIAL (L46/L47):** A new TPO report and formula-neutralized CSV project company applications and accepted offers with an explicit accepted-learner / distinct SUBMITTED-applicant denominator (null if absent). Separate CTC measures distinguish accepted full-time offer versions from per-learner best packages, preserving missing values as null. Historical cohort conversion, unavailable external offers, executed tests and exact legacy/browser parity remain open.
 - [ ] Compensation intelligence matches.
 - [ ] Every KPI/queue CTA lands on the intended filtered destination.
