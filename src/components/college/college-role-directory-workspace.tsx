@@ -48,6 +48,7 @@ export async function CollegeRoleDirectoryWorkspace({
     status: first(params.status),
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
+    cohortId: first(params.cohortId),
     classPresence: first(params.classPresence),
     teaching: first(params.teaching),
     teachingRole: first(params.teachingRole),
@@ -155,6 +156,19 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
             </select>
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active batch
+            <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All batches</option>
+              {result.cohortOptions.map(cohort=><option key={cohort.id} value={cohort.id}>
+                {cohort.programName} · {cohort.name}
+              </option>)}
+            </select>
+            {result.cohortOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              First 200 batches shown; search by name for others.
+            </span> : null}
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement

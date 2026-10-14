@@ -11,6 +11,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   status: z.enum(["ALL", "ACTIVE", "SUSPENDED", "ENDED"]).default("ALL"),
   accountStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
+  cohortId: z.string().uuid().optional(),
   classPresence: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teachingRole: z.union([z.literal("ALL"), z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
@@ -66,6 +67,7 @@ export function collegeRoleDirectoryHref(
   if (filter.status !== "ALL") params.set("status", filter.status);
   if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
   if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
+  if (kind === "LEARNER" && filter.cohortId) params.set("cohortId",filter.cohortId);
   if (kind === "LEARNER" && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
   if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
   if (kind === "FACULTY" && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
