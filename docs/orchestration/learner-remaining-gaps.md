@@ -879,3 +879,5 @@ PARTIAL — Implemented registered placement-only notification choice mutation a
 L17-007: date picker uses only persisted learner-scoped placement rounds, converted to ISO strings at the client boundary; acceptance remains PARTIAL until fresh disposable PostgreSQL, static checks and mobile/browser timezone review.
 
 L17-010: own-scoped calendar event details backed by migrated placement rounds; event IDs are checked against the returned membership-scoped events rather than accepted from caller input. New unit and disposable PostgreSQL tests authored, browser/DB acceptance pending.
+
+L17-015: month/week mobile fallback now groups only real authorized events by IST calendar day and retains exact round and details links. No fabricated schedule entries; database and responsive acceptance pending.

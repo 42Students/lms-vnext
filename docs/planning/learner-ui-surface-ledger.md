@@ -522,7 +522,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-012 | Partial-source failure + retry | CareerCalendarContent | career calendar | GAP |
 | L17-013 | Empty calendar state | CareerCalendarContent | career calendar | FIXED |
 | L17-014 | Timezone handling | CareerCalendarContent | career rounds | UNCHECKED |
-| L17-015 | Mobile agenda fallback | CareerCalendarContent responsive | career calendar | GAP |
+| L17-015 | Mobile agenda fallback | learner career calendar | month/week show accessible mobile IST day-grouped agenda rather than 38rem horizontal grid; same persisted filtered own events, details and exact deep links; pure and fresh-learner PG tests authored. PARTIAL pending executed tests, responsive screen-reader and browser acceptance | PARTIAL |
 
 ## L18 — Placement Cell
 
