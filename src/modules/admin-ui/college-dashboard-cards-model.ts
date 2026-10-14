@@ -16,6 +16,17 @@ export const COLLEGE_DASHBOARD_CARD_DEFINITIONS = [
 
 type DashboardCountKey = (typeof COLLEGE_DASHBOARD_CARD_DEFINITIONS)[number]["key"];
 
+/** These are inspection suggestions, not errors, launch blockers, or completion scores. */
+export function collegeDashboardEmptyRecordPrompts(
+  cards: readonly { key: DashboardCountKey; label: string; count: number | null; href: string }[],
+) {
+  return cards.filter(card => card.count === 0).map(card => ({
+    key: card.key, label: card.label, href: card.href,
+    hint: "No matching active records. Review this directory if you expected entries.",
+  }));
+}
+
+
 export function collegeDashboardCardsProjection(
   counts: Readonly<Partial<Record<DashboardCountKey, number | null>>>,
 ) {

@@ -20,6 +20,7 @@ describe("Mentor portfolio deny-by-default PostgreSQL gates", () => {
   it("rejects learner role for both screens", async () => {
     await expect(getMentorReviewQueue(learner, {})).rejects.toBeDefined();
     await expect(getMentorPortfolioActivity(learner, {})).rejects.toBeDefined();
+    await expect(getMentorPortfolioActivity(learner, {importance:"HIGH"})).rejects.toBeDefined();
   });
   it("rejects disabled mentor principal for both screens", async () => {
     const disabled: RequestContext = {...learner,

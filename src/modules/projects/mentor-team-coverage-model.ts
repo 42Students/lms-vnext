@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
-  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR"]).default("ALL"),
+  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR"]).default("ALL"),
+  status: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -35,9 +36,12 @@ export function selectMentorTeamCoverage(
   const term = query.search.toLowerCase();
   const matches = rows.filter(row =>
     (!term || row.title.toLowerCase().includes(term)) &&
+    (query.status === "ALL" || row.status === query.status) &&
     (query.filter === "ALL" ||
       (query.filter === "NO_LEARNERS" && row.learners === 0) ||
-      (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor)),
+      (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor) ||
+      (query.filter === "HAS_LEARNERS" && row.learners > 0) ||
+      (query.filter === "HAS_PRIMARY_MENTOR" && row.hasPrimaryMentor)),
   ).sort((a,b) => a.title.localeCompare(b.title) ||
     a.projectId.localeCompare(b.projectId));
   const total = matches.length;
@@ -53,6 +57,7 @@ export function selectMentorTeamCoverage(
 export function mentorTeamCoverageHref(query: MentorTeamCoverageQuery) {
   const params = new URLSearchParams();
   if (query.filter !== "ALL") params.set("filter",query.filter);
+  if (query.status !== "ALL") params.set("status",query.status);
   if (query.search) params.set("search",query.search);
   if (query.page > 1) params.set("page",String(query.page));
   const suffix = params.toString();

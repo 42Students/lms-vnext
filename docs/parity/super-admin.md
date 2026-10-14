@@ -653,3 +653,45 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Semester–Course Mapping — PARTIAL:** `/admin/semester-courses` read-first maps persisted program-term course records, joins both course and program departments to the exact selected college, exposes search, term active/inactive status and 25-row pagination with mobile/error/empty states. No assumption that numbered terms equal offering academic periods. Pure and disposable PostgreSQL fixture with foreign/wrong-role assertions authored, not executed; mapping writes, full legacy selectors and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty Assignment — PARTIAL:** `/admin/faculty-assignment` read-first persisted teaching assignments, joined course, section, program and faculty membership to exact selected college; search, active/ended lifecycle, IST start, bounded 25-row cards, loading/error/empty/mobile states. No reassignment write privileges. Unit and disposable PG in-test fixture foreign/wrong-role assertions authored, unexecuted; atomic reassignment, selector UI and legacy parity still open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty — PARTIAL:** `/admin/faculty` distinct read-first selected-college faculty memberships with search/status/25-row paging, IST join date, safe membership detail and no phone/email fields. Central people.manage, exact selected college and organization SQL predicates, role membership join. Pure tests and in-test PG user/faculty fixture success, foreign-scope and wrong-role assertions authored, unexecuted. Management/import/edit and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Students — PARTIAL:** `/admin/students` distinct read-first selected-college learner membership page, uses central people.manage and SQL-selected organization/college role membership, search/status, 25-row paging, IST dates, mobile and safe membership detail. No email/phone selected. Pure tests and disposable PG in-test learner fixture with faculty exclusion, foreign-college denial and wrong-role tests authored, unexecuted. Import/transfer, academic roster and full legacy detail parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Placement Applications — PARTIAL:** `/admin/placements/applications` read-first SQL joins placement job, role option and applicant membership, requiring all to match selected college/org. Search, SUBMITTED/WITHDRAWN, paginated mobile cards and IST submitted date are present. No private contact or screening comments projected, no invented shortlist/selection state, navigation to scoped job detail. Pure unit and disposable PostgreSQL job/role/application fixture with wrong-role/foreign-college assertions authored, unexecuted. Legacy bulk actions, candidate detail/export and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty Assignment follow-up — PARTIAL:** Self-review aliased both duplicated joined `ended_at` columns in the read subquery (PG 42702 guard), removed unused import, and extended in-test PG fixture to cover actual ended transition and ACTIVE/ENDED filters. Runtime tests still not executed; no DONE claim.
+
+
+**2026-10-15 chat-6 round 4 / Placement Interviews — PARTIAL:** Added `/admin/placements/interviews`: scope-fenced 25-row persisted interview/round view with PENDING/SCHEDULED/COMPLETED/CANCELLED, search, IST schedule, safe job links, mobile-first loading/empty/error. No meeting URL, candidate comments or TPO write access. Pure query unit test authored; full round action parity and executable PostgreSQL/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Shortlisted — PARTIAL:** `/admin/placements/shortlisted` has read-only, persisted SHORTLISTED screening outcomes, selected-college joined applicant/job/membership, safe search and application status paging, IST decision date, responsive error/empty/loading; strips screening internalReason, candidate contact and recruiter notes. Pure query tests authored. Bulk shortlist/export, details and PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Job Settings — PARTIAL:** Added `/admin/placements/job-settings`, read-only job lifecycle/deadline and persisted optional eligibility rules (minimum CGPA, backlog/gap and missing-evidence policy), including explicit missing-policy states. Search/status/paging, safe job link, IST, mobile states, central selected-college authorization; no mutation or candidate private data. Pure unit test authored. Complete eligibility editor and PG/browser gates remain open.
+
+
+**2026-10-15 chat-6 round 4 / Hiring Dashboard — PARTIAL:** `/admin/placements/hiring` now uses real job-level application counts (submitted/withdrawn) from selected-college jobs and same-college learner memberships, 25-row status/search paging and mobile/error/empty states; explicitly does not represent per-application counts as distinct students, placements or interview conversion. No fabricated zero on query failures. Pure pagination/status unit authored; full season funnel/CTC/branch outcome metrics and PG/browser validation remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Offers oversight — PARTIAL:** Added `/admin/placements/offers`, read-only persisted offer versions, ISSUED/ACCEPTED/DECLINED/WITHDRAWN, INR compensation, joining date and expiry, IST issue, selected-college job/applicant membership and organization joins, search, 25-row cards and safe job link. No recruiter/TPO writes or evidence keys. Pure query tests authored; PG/browser gates, full offers action/detail parity remain open.
+
+
+**2026-10-15 chat-6 round 4 / Joining Outcomes oversight — PARTIAL:** `/admin/placements/joining` read-only persisted offer joining-outcome rows with PENDING/JOINED/DID_NOT_JOIN/DEFERRED, joining date/IST recorded date, applicant/job search and 25-row pagination. Explicitly excludes missing records from pending and hides internal reason/contact; exact college/org joins, mobile loading/error states. Pure unit authored; mutations, history/detail, PG/browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Seasons — PARTIAL:** `/admin/placements/seasons` selected-college persisted placement-season name/code, registered start/end dates, ACTIVE/CLOSED lifecycle with IST close time, strict search/status, 25-row paging and responsive loading/empty/error. No default/global scope leak or season mutation. Pure unit authored; season config/closeout management, PostgreSQL and browser acceptance open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Screening Queue — PARTIAL:** Added `/admin/placements/screenings`, read-only PENDING/HOLD/REJECTED screening state in selected college, search, pagination, IST decisions, safe job deep links and private-notes masking; separate SHORTLISTED view. Added eight-route mobile-wrapping oversight navigation on Placements entry page. Pure query unit authored, PostgreSQL/browser checks unexecuted. Decision actions, exports and exact legacy parity remain open.
+
+
+**2026-10-15 chat-6 round 4 / Read-first oversight verification — PARTIAL:** Added an isolated PostgreSQL in-test CLOSED placement season fixture with explicit UUID/text raw parameter casts to prevent ambiguous inferred parameter type, cross-college/org non-leaking empty result and wrong-role denial; corrected placements-navigation JSX indentation. Authored, not executed; the full 8-route PostgreSQL, lint, TypeScript and 375px browser gates still require orchestration run. Prior unrelated test repairs remain main-owned.

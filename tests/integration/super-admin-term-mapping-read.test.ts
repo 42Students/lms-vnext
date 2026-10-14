@@ -16,10 +16,10 @@ const ids={program:randomUUID(),term:randomUUID(),course:randomUUID(),mapping:ra
 const name="admin-map-"+ids.mapping.slice(0,8);
 describe.skipIf(!enabled)("Super Admin term course mapping PostgreSQL",()=>{
  beforeAll(async()=>{
-  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3,$3,8)",[ids.program,SEED_IDS.departmentA,name]);
+  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3::text,$3::text,8)",[ids.program,SEED_IDS.departmentA,name]);
   await pool!.query("insert into program_terms(id,program_id,term_number,name,is_active) values ($1,$2,1,$3,true)",[ids.term,ids.program,name]);
-  await pool!.query("insert into courses(id,department_id,name,code) values ($1,$2,$3,$3)",[ids.course,SEED_IDS.departmentA,name]);
-  await pool!.query("insert into program_term_courses(id,program_term_id,course_id,type,display_order) values ($1,$2,$3,'CORE',0)",[ids.mapping,ids.term,ids.course]);
+  await pool!.query("insert into courses(id,department_id,name,code) values ($1,$2,$3::text,$3::text)",[ids.course,SEED_IDS.departmentA,name]);
+  await pool!.query("insert into program_term_courses(id,program_term_id,course_id,type,display_order) values ($1,$2,$3,'CORE',1)",[ids.mapping,ids.term,ids.course]);
  });
  afterAll(async()=>{try{
   for(const [table,id] of [["program_term_courses",ids.mapping],["courses",ids.course],["program_terms",ids.term],["programs",ids.program]] as const)

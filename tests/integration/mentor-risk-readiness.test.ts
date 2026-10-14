@@ -107,6 +107,14 @@ describe("Mentor exact-project risk and readiness drill-ins — PostgreSQL",()=>
       expect.objectContaining({key:"scheduled-past:"+scheduledId,category:"RISK"}),
       expect.objectContaining({key:"delivery",category:"READINESS"}),
     ]));
+    const highPriority=await getMentorRiskReadiness(mentor,{
+      ...query,taskPriority:"HIGH",
+    });
+    expect(highPriority.items.some(row=>row.key==="blocked:"+task.id)).toBe(true);
+    const lowPriority=await getMentorRiskReadiness(mentor,{
+      ...query,taskPriority:"LOW",
+    });
+    expect(lowPriority.items.some(row=>row.key==="blocked:"+task.id)).toBe(false);
     const risk=await getMentorRiskReadiness(mentor,{...query,focus:"RISK"});
     expect(risk.items.every(row=>row.category==="RISK")).toBe(true);
     await expect(getMentorRiskReadiness(learner,query)).rejects.toBeDefined();

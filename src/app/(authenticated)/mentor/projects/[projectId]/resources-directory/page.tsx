@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
  from "@/modules/projects/mentor-resource-directory-model";
-type Search={required?:string|string[];search?:string|string[];page?:string|string[]};
+type Search={required?:string|string[];link?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -13,6 +13,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const [{projectId},raw]=await Promise.all([params,searchParams]);
  const parsed=mentorResourceDirectoryQuerySchema.safeParse({
   projectId,required:first(raw.required)??undefined,
+  link:first(raw.link)??undefined,
   search:first(raw.search)??undefined,page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
@@ -48,6 +49,13 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       className="min-h-10 rounded-md border border-border bg-background px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
+     </select>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link availability
+     <select name="link" defaultValue={data.query.link}
+      className="min-h-10 rounded-md border border-border bg-background px-3">
+      <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
+      <option value="UNAVAILABLE">No safe HTTPS link</option>
      </select>
     </label>
     <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

@@ -12,6 +12,7 @@ import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-s
 
 type Params = {
   filter?: string | string[];
+  status?: string | string[];
   search?: string | string[];
   page?: string | string[];
 };
@@ -25,6 +26,7 @@ export default async function MentorTeamCoveragePage({
   const raw = await searchParams;
   const parsed = mentorTeamCoverageQuerySchema.safeParse({
     filter:first(raw.filter) ?? undefined,
+    status:first(raw.status) ?? undefined,
     search:first(raw.search) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
@@ -61,6 +63,16 @@ export default async function MentorTeamCoveragePage({
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
+              <option value="HAS_LEARNERS">Has active learners</option>
+              <option value="HAS_PRIMARY_MENTOR">Has active primary Mentor</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Project state
+            <select name="status" defaultValue={data.query.status}
+              className="min-h-10 rounded-md border border-border bg-background px-3">
+              <option value="ALL">All current assignments</option>
+              <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
             </select>
           </label>
           <button type="submit"
