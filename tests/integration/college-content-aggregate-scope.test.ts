@@ -233,6 +233,10 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(liveCsv.csv).toContain(label);
     expect(liveCsv.csv).toContain("Starts at (UTC)");
     expect(liveCsv.csv).not.toContain("meet.example.test");
+    const datedCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,from:"2026-11-01",to:"2026-11-01"});
+    const wrongDayCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,from:"2026-11-02",to:"2026-11-02"});
+    expect(datedCsv.csv).toContain(label);
+    expect(wrongDayCsv.csv).not.toContain(label);
     const historicalCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
     const futureCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
     expect(historicalCsv.csv).toContain(label);

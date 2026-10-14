@@ -10,7 +10,8 @@ export async function exportCollegeContentMetadata(
  const query=collegeContentCsvSchema.parse(raw);
  const result=await collectCollegeExportRows(page=>listCollegeContentAggregate(context,kind,
   kind==="LIVE_CLASS" ? {
-    q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,view:query.view,page,
+    q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,
+    view:query.view,from:query.from,to:query.to,page,
   } : {
     q:query.q,courseCode:query.courseCode,status:query.status,
     format:query.format,scope:query.scope,page,
