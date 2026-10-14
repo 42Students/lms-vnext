@@ -14,6 +14,7 @@ import { learnerCareerDayChips } from "@/modules/placements/learner-career-day-c
 import { learnerCareerKindCounts } from "@/modules/placements/learner-career-kind-count-model";
 import { learnerCareerWeekDays } from "@/modules/placements/learner-career-week-days-model";
 import { learnerCareerDayTimeline } from "@/modules/placements/learner-career-day-timeline-model";
+import { learnerCareerNavigationDate } from "@/modules/placements/learner-career-navigation-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
@@ -65,6 +66,8 @@ export function LearnerCareerCalendar({
   const params=useSearchParams();
   const state=readLearnerCalendarUrl(params.toString(),todayAnchor);
   const {date:anchor,view,kind:filter}=state;
+  const previousDate=learnerCareerNavigationDate(anchor,view,-1);
+  const nextDate=learnerCareerNavigationDate(anchor,view,1);
   function changeCalendar(patch:Partial<LearnerCalendarUrlState>){
     window.history.pushState(null,"",learnerCalendarHref({...state,...patch}));
     setSelectedKey(null);
@@ -158,8 +161,9 @@ export function LearnerCareerCalendar({
           <button
             type="button"
             aria-label="Previous calendar period"
-            onClick={() => changeCalendar({date:shiftCareerCalendarDay(anchor, view, -1)})}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            onClick={() => {if(previousDate)changeCalendar({date:previousDate});}}
+            disabled={previousDate===null}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
           >←</button>
           <button
             type="button"
@@ -169,8 +173,9 @@ export function LearnerCareerCalendar({
           <button
             type="button"
             aria-label="Next calendar period"
-            onClick={() => changeCalendar({date:shiftCareerCalendarDay(anchor, view, 1)})}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            onClick={() => {if(nextDate)changeCalendar({date:nextDate});}}
+            disabled={nextDate===null}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
           >→</button>
           <span className="text-sm font-semibold text-foreground">
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}

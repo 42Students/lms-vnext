@@ -8,6 +8,7 @@ import {learnerCareerDayChips} from "@/modules/placements/learner-career-day-chi
 import {learnerCareerKindCounts} from "@/modules/placements/learner-career-kind-count-model";
 import {learnerCareerWeekDays} from "@/modules/placements/learner-career-week-days-model";
 import {learnerCareerDayTimeline} from "@/modules/placements/learner-career-day-timeline-model";
+import {learnerCareerNavigationDate} from "@/modules/placements/learner-career-navigation-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {newLearnerCareerCalendarFixture,seedLearnerCareerCalendarFixture,cleanupLearnerCareerCalendarFixture,type LearnerCareerCalendarFixture} from "../support/learner-career-calendar-fixture";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
@@ -23,6 +24,16 @@ describe("calendar URL filters over persisted own rounds",()=>{
     const state=readLearnerCalendarUrl("date=2026-10-17&view=day&kind=INTERVIEW&collegeId=foreign","2026-10-14");
     expect(learnerCalendarSelectedEvents(rows,state).map(x=>x.roundId)).toEqual([fixture.roundId]);
     expect(learnerCalendarSelectedEvents(rows,{...state,kind:"ASSESSMENT"})).toHaveLength(0);
+  },30000);
+  it("retains tenant-safe calendar after bounded navigation and invalid edge controls",async()=>{
+    const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
+    const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
+    const next=learnerCareerNavigationDate("2026-10-16","day",1);
+    expect(next).toBe("2026-10-17");
+    expect(learnerCalendarSelectedEvents(rows,{date:next!,view:"day",kind:"INTERVIEW"}).map(x=>x.roundId)).toEqual([fixture.roundId]);
+    expect(learnerCareerNavigationDate("2100-12-31","day",1)).toBeNull();
+    const wrong:RequestContext={...fixture.drive.learner.context,membership:{...fixture.drive.learner.context.membership!,roles:["TPO"]}};
+    await expect(getLearnerPlacementRequestWorkspace(wrong)).rejects.toBeDefined();
   },30000);
   it("builds selected IST day timeline from learner-authorized persisted rounds",async()=>{
     const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
