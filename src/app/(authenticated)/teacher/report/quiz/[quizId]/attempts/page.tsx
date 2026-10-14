@@ -1,27 +1,37 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { z } from "zod";
+import { hidesFacultyQuizRouteError } from "@/modules/courses/faculty-quiz-report-route-errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
+import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 
 type Query={deliveryId?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function FacultyQuizAttemptPage({
   params,searchParams,
 }:{
   params:Promise<{quizId:string}>;searchParams:Promise<Query>;
 }) {
   const [{quizId},raw]=await Promise.all([params,searchParams]);
+  if (!z.string().uuid().safeParse(quizId).success) notFound();
+  const search=facultyQuizAttemptSearchSchema.safeParse(raw);
   const parsed=facultyQuizAttemptsQuerySchema.safeParse({
-    quizId,deliveryId:first(raw.deliveryId),page:first(raw.page)??undefined,
+    quizId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Quiz Section or pagination</h1>
     <Link href="/teacher/allQuizzes" className="text-primary-text underline">All Quizzes</Link>
   </section>;
   const context=await getCurrentRequestContext();
-  const data=await getFacultyQuizAttemptDrilldown(context,parsed.data);
+  let data: Awaited<ReturnType<typeof getFacultyQuizAttemptDrilldown>>;
+  try {
+    data = await getFacultyQuizAttemptDrilldown(context, parsed.data);
+  } catch (error) {
+    if (hidesFacultyQuizRouteError(error)) notFound();
+    throw error;
+  }
   const back="/teacher/report/quiz/"+encodeURIComponent(quizId)+
     "?deliveryId="+encodeURIComponent(data.query.deliveryId);
   return <div className="space-y-6">

@@ -28,8 +28,22 @@ describe("Faculty published Section gradebook",()=>{
   it("neutralizes spreadsheet formulas for roster fields",()=>{
     const csv=facultyGradebookCsv(facultyPublishedGradeRows(roster,[],0));
     expect(csv).toContain('"\' =NOW()"');
-    expect(csv).toContain('"\'+unsafe@x.y"');
+    expect(csv).not.toContain("+unsafe@x.y");
+    expect(csv).not.toContain('"Email"');
     expect(csv).toContain('"\'@SUM(1,2)"');
+  });
+  it("caps gradebook export to 500 learners with explicit omission count",()=>{
+    const rows=Array.from({length:522},(_,i)=>({
+      membershipId:"learner-"+i, displayName:"Learner "+i,email:"private"+i+"@example.test",
+      rollNumber:"R"+i, gradedCount:0,publishedAssessments:0,
+      earned:null,possible:null,percent:null,hasUnknown:false,
+    }));
+    const output=facultyGradebookCsv(rows);
+    const lines=output.trimEnd().split("\r\n");
+    expect(lines).toHaveLength(502);
+    expect(output).toContain("22 additional rows omitted");
+    expect(output).not.toContain("private0@example.test");
+    expect(output).not.toContain("Learner 500");
   });
   it("validates only the UUID delivery selector",()=>{
     const id="00000000-0000-4000-8000-000000000001";

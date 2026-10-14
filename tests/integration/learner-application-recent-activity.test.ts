@@ -17,7 +17,7 @@ describe("learner application persisted recent activity",()=>{
   const journey=await getLearnerPlacementJourney(own.drive.learner.context);
   const row=journey.find(x=>x.applicationId===own.applicationId);
   expect(row).toBeDefined();
-  expect(learnerApplicationLatestActivity(row!)).toBeGreaterThan(0);
+  expect(learnerApplicationLatestActivity({...row!,jobTitle:row!.job.title,companyName:row!.company.name})).toBeGreaterThan(0);
  },30000);
  it("rejects foreign-college, suspended and wrong-role journey access",async()=>{
   const ctx=own.drive.learner.context;
