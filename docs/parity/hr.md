@@ -406,3 +406,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Recruiter cross-company list isolation — PARTIAL:** Extended shared recruiter job list with exact persisted placement-company ID filter and post-query grant+company invariant; this protects HR Drives, Today and Calendar from forged/mismatched relationship grants. Isolated PG success/foreign-company/wrong-role and pure policy tests authored but unexecuted. Also corrected designation whitespace normalization, typed form event and monotonic optimistic version timestamp. Remaining security review against revoked grants, runtime PG/lint/typecheck and browser acceptance.
+
+
+**2026-10-14 Chat 10 follow-up / recruiter scope placement — PARTIAL:** Corrected exact employer company filter placement: it belongs only on recruiter-owned job listing, not the TPO's administrator grant directory. Preserves TPO grant listing while retaining company enforcement on HR drives/calendar/dashboard. Auth regression test added below; execution remains orchestrator-gated.

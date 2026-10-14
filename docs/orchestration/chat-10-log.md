@@ -20,3 +20,5 @@
 - 2026-10-14 — Recruiter designation write PARTIAL: same-origin self-only audited PATCH and stale token; PG fixtures success/foreign/wrong/stale and model tests authored, unexecuted.
 
 - 2026-10-14 — Recruiter company boundary PARTIAL: extra SQL exact employer ID and pure post-query guard; forged cross-company PG fixture authored. Designation follow-up fixes included. Gates not run.
+
+- 2026-10-14 — HOTFIX: exact employer filter relocated from TPO grant listing (incorrect) to recruiter-owned jobs SQL. Added regression test. Must gate before merge.
