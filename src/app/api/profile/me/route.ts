@@ -4,8 +4,9 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   getOwnLearnerProfileWithRuntime,
-  upsertOwnLearnerProfileDocumentWithRuntime,
 } from "@/modules/people/runtime";
+
+import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-document-edit-service";
 
 export const runtime = "nodejs";
 
@@ -36,7 +37,7 @@ export async function PUT(request: Request) {
     const context =
       await getCurrentRequestContext();
     const profile =
-      await upsertOwnLearnerProfileDocumentWithRuntime(
+      await updateOwnLearnerProfileDocument(
         context,
         await request.json(),
       );
