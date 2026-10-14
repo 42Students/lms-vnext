@@ -656,3 +656,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Faculty Assignment — PARTIAL:** `/admin/faculty-assignment` read-first persisted teaching assignments, joined course, section, program and faculty membership to exact selected college; search, active/ended lifecycle, IST start, bounded 25-row cards, loading/error/empty/mobile states. No reassignment write privileges. Unit and disposable PG in-test fixture foreign/wrong-role assertions authored, unexecuted; atomic reassignment, selector UI and legacy parity still open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty — PARTIAL:** `/admin/faculty` distinct read-first selected-college faculty memberships with search/status/25-row paging, IST join date, safe membership detail and no phone/email fields. Central people.manage, exact selected college and organization SQL predicates, role membership join. Pure tests and in-test PG user/faculty fixture success, foreign-scope and wrong-role assertions authored, unexecuted. Management/import/edit and browser parity remain open.
