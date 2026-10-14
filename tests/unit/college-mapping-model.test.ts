@@ -9,12 +9,13 @@ import {
 
 describe("College Admin semester offering and faculty assignment models", () => {
   it("strictly validates academic mapping filters without a caller college override", () => {
-    expect(semesterCourseQuerySchema.parse({})).toEqual({ q: "", type: "ALL", page: 1 });
+    expect(semesterCourseQuerySchema.parse({})).toEqual({ q: "", type: "ALL", status:"ALL", page: 1 });
     expect(semesterCourseQuerySchema.parse({ q: "  Maths  ", page: "2" }))
-      .toEqual({ q: "Maths", type: "ALL", page: 2 });
+      .toEqual({ q: "Maths", type: "ALL", status:"ALL", page: 2 });
     for (const invalid of [
       { collegeId: "foreign" },
       { type: "OPTIONAL" },
+      { status: "DELETED" },
       { page: -1 },
       { page: "99999" },
       { periodId: "not-a-uuid" },
@@ -51,10 +52,12 @@ describe("College Admin semester offering and faculty assignment models", () => 
       programId: "00000000-0000-4000-8000-000000000001",
       page: 2,
       type: "ELECTIVE",
+      status:"ARCHIVED",
     }), "https://example.test");
     expect(url.pathname).toBe("/college/semester-courses");
     expect(url.searchParams.get("q")).toBe("a & b");
     expect(url.searchParams.get("type")).toBe("ELECTIVE");
+    expect(url.searchParams.get("status")).toBe("ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
     const faculty = collegeMappingHref("FACULTY_ASSIGNMENTS", {
       q: "", status: "ENDED", role: "ALL", page: 1,

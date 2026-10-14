@@ -168,6 +168,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semester–Course Mapping
+**Persisted offering lifecycle filter PARTIAL (2026-10-15):** Course-mapping directory and CSV can now filter exact ACTIVE/ARCHIVED offering states before college-scoped pagination, independently of CORE/ELECTIVE type. Uses the authoritative offering-state enum, strict URL schema, safe export retention and gated own-college PG fixture assertions. Numbered program-term mapping and executed/browser parity remain open.
+
 **Offering mapping CSV PARTIAL (2026-10-15):** Own-college academic-period offerings can be exported with the same persisted program/period/type filters as the directory, formula-safe capped 1,000 rows, truncation headers and status fields. This is explicitly *not* the separate numbered-term curriculum mapping export. Gated PostgreSQL in-test-fixture success/foreign/wrong-role coverage authored; runtime and legacy column acceptance open.
 
 **Registered offering-type filter PARTIAL (2026-10-15):** College Admin can filter mapped course offerings by CORE/ELECTIVE using the shared authoritative type enum, strict URL state and same-college SQL filtering before pagination; isolated PostgreSQL fixture checks the positive and excluded type. The separate numbered-semester mapping workflow and executed PG/browser parity remain outstanding.
