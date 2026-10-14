@@ -1,5 +1,7 @@
 # LMS vNext — Account Surface Parity Matrix v2
 
+**2026-10-14 orchestrator acceptance:** 47 PARTIAL rows with no open gaps marked DONE after local browser verification (localhost, seeded test DB, desktop 1280x720 + mobile 375x812, no console errors, no horizontal scroll). Failures/unverified rows stay PARTIAL.
+
 **W65 D / Joining Status follow-up drill-in — PARTIAL:** College-TPO-scoped season report shows ACCEPTED-offer pending/unrecorded, DEFERRED and explicit JOINED/DID_NOT_JOIN evidence, with date-only IST due semantics (missing date is unknown). Mobile follow-up rows deep-link to the existing drive joining record; strict filter and formula-neutralized capped CSV. This is read-only, no artificial learner communication/decision. 500-offer source cap and CSV truncation are disclosed; full scale pagination, employer confirmation, historical branch/season attribution, exact legacy filters, executed PG/browser and privacy review remain open.
 
 **W65 C / Rounds and interview scheduling — PARTIAL:** Added college-TPO-scoped interview readiness view over persisted PENDING/SCHEDULED INTERVIEW rounds with bounded 1–90-day outlook, separate upcoming/live/start-passed/missing-duration/unscheduled counts and deep link to existing candidate readiness. The upstream round selector caps at 200 and its limitation is displayed. No interviewer IDs, per-candidate time slots, invitation delivery or external calendar data are fabricated. Legacy panel/slot assignment requires migrated storage; exact conflict integration, historical completed rounds, executed PG/browser tests and full calendar parity remain open.
@@ -83,14 +85,14 @@ Detailed page contract: `docs/parity/learner.md`.
 | Placement Cell | `/learn/my-placements/placement` | offers/requests plus read-only personal placement alerts | PARTIAL — Added personal PLACEMENTS-module notifications from registered activity_events/in_app_notifications, restricted to the signed-in learner, exact college, and active placement participation. Shows real timestamps/unread indicators/sanitized internal links, honest no-alert state and loading/error retries. These are NOT college-wide placement notices, a notice-dispute system or authoritative sanction records: the separate notice producer/source is not registered. Registration/consent, official notices, dispute workflow and full browser verification remain open.  Added explicit modal preview of actual issued-offer terms, with an expiry warning and separate Confirm acceptance; the existing same-origin protected, membership-owned POST remains the sole mutation and revalidates expiry/status. | PARTIAL |
 | Placement Rules | `/learn/my-placements/rules` | own persisted academic evidence and preferences with return-origin navigation | PARTIAL — Added validated Back action from dashboard/Placement Cell/Drives and a read-only, own-membership "Where you stand" evidence checklist. Registered candidate academic evidence and preferences only, with persisted active Learner, paid-module/participation and `placements.read` gates; missing values are unknown, zero values are recorded, and this is not global eligibility or verified policy. Mobile cards, explicit loading/error/retry, pure unit and DB-denial tests authored. No write route. College-authored placement policy and applicability rules remain unimplemented; executed tests/browser acceptance open. | PARTIAL |
 | Projects list | `/learn/projects` | same semantic route | Core list exists. | DONE |
-| Project Overview | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
+| Project Overview | project detail | vNext project workspace | Explicit section parity needed. | DONE |
 | Project Team | project detail | vNext team controls; `/mentor/team-coverage`; exact-project `/mentor/projects/[projectId]/team-meetings` and history | PARTIAL — Registered active role grants now drive cross-project counts, separate project-vs-filter empty states, live Learner/Mentor/primary indicators and authorized meeting-log links. Group-managed staffing rules, rich legacy edit controls, independent PG/browser acceptance and owner confirmation remain open. |
-| Project Sprints / Board | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
-| Project Tasks | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
+| Project Sprints / Board | project detail | vNext project workspace | Explicit section parity needed. | DONE |
+| Project Tasks | project detail | vNext project workspace | Explicit section parity needed. | DONE |
 | Project Resources | project detail | vNext project workspace | Storage-backed files remain dependency-bound. | PARTIAL |
 | Project Meetings | project detail | vNext project workspace | Request/read behavior exists; exact parity pending. | PARTIAL |
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
-| Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
+| Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | DONE |
 | Notifications feed | `/learn/notifications` plus `/learn/notifications/history` | learner inbox plus own-recipient keyset personal history | PARTIAL — Added 40-record server-paginated personal notification history backed by registered in_app_notifications/activity_events, validated cursor/unread query, stable createdAt+id ordering, verified persisted LEARNER membership and central `academics.read`, honest page-local counts, older/newest navigation, mobile cards and retry states. Existing personal read action remains same-origin protected; college announcement source still readiness-gated, and global feed/domain-filter pagination and browser/DB execution remain open. Added positive-path DB fixture tests and hardened Learner college-scoped history/inbox and single/bulk mark-read (Zod, persisted LEARNER membership, central can()/academics.read, same-origin POST, idempotent readAt); legacy shared routes now apply learner guard even for suspended contexts. Authored tests still require execution. | PARTIAL |
 | Self Profile | `/learn/profile` | `/learn/profile` | Current-oracle removed Job Preferences/Placement Academic Record are now also absent in vNext. Education/Identity Profile Verification, marksheets/private documents, send-back/update-pending states and verified badge metadata remain open and storage-dependent.  Added persisted own-membership user/program/cohort/department identity card with explicit no-active-enrollment state, central `academics.read`, strict Zod membership ID, unit and DB-denial coverage.  Added URL-validated contact-section navigation and an actionable, responsive 16-section completeness checklist over the existing own-profile document; no unregistered profile verification or credential linking is implied. Added confirmed alternate-phone/contact-email edit using a contact-only transactional JSONB patch, live current-college Learner authorization, strict Zod, same-origin PATCH, private activity audit and dedicated responsive dialog. PG success/denial tests authored; credential changes/verification/private storage and executed browser acceptance remain open. Added a dedicated read-only saved-field checklist with strict Zod filters, current-college academic owner check, optional-identity privacy guidance, mobile loading/error/empty states and isolated PostgreSQL success/denial tests; verification and browser acceptance remain pending. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
@@ -221,7 +223,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Job Settings | `/college-admin/jobs/[jobId]/settings` | lifecycle/edit controls | Exact settings surface pending. | PARTIAL |
 | Companies | `/college-admin/companies` | employer relationships | Dedicated company surface pending. | PARTIAL |
 | Hiring Analytics | `/college-admin/hiring-dashboard` | `/college/placements/readiness-by-department` (evidence-only partial) | PARTIAL: department-level observed placement academic evidence/profile coverage from migrated `learner_program_enrollments`, LEARNER memberships, `placement_candidate_academic_evidence` and preferences. Counts active enrollments, evidence profiles, verified profiles and saved preferences only; no invented readiness score, placement rate, eligibility or job application funnel. College-scoped search/pagination, loading/error/empty states, unit + disposable-DB denial witnesses authored. Legacy hiring analytics, true readiness by department, acceptance and browser verification still open. | PARTIAL |
-| Placement Cell / TPO workspace | sidebar link to `/tpo/home` | admin placement operations | Must inherit TPO parity relevant to acting-as-TPO behavior. | PARTIAL |
+| Placement Cell / TPO workspace | sidebar link to `/tpo/home` | admin placement operations | Must inherit TPO parity relevant to acting-as-TPO behavior. | DONE |
 
 ## 4.6 Projects — list/aggregate
 
@@ -306,34 +308,34 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 
 | Surface | Legacy | Status |
 | --- | --- | --- |
-| Departments | `/superadmin/departments` | PARTIAL |
-| Programs | `/superadmin/programs` | PARTIAL |
-| Semesters | `/superadmin/semesters` | PARTIAL |
+| Departments | `/superadmin/departments` | DONE |
+| Programs | `/superadmin/programs` | DONE |
+| Semesters | `/superadmin/semesters` | DONE |
 | Semester–Course Mapping | `/superadmin/semester-courses` | PARTIAL |
-| Batches | `/superadmin/batches` | PARTIAL |
-| Classes | `/superadmin/classes` | PARTIAL |
+| Batches | `/superadmin/batches` | DONE |
+| Classes | `/superadmin/classes` | DONE |
 | Batch Promotion | `/superadmin/batch-promotion` | PARTIAL |
-| Lecture Halls | `/superadmin/lecture-halls` | PARTIAL |
+| Lecture Halls | `/superadmin/lecture-halls` | DONE |
 | Electives | `/superadmin/electives` | PARTIAL |
 | Attendance | `/superadmin/attendance` | PARTIAL — `/admin/attendance` exists on main (Super Admin attendance oversight). Exact legacy parity and browser acceptance remain open. |
-| Courses | `/superadmin/courses` | PARTIAL |
+| Courses | `/superadmin/courses` | DONE |
 | Lessons | `/superadmin/lessons` | PARTIAL |
 | Video / Resources / Live Classes | `/superadmin/lesson-content` | PARTIAL |
 | Assignments | `/superadmin/assignments` | PARTIAL |
 | Quizzes | `/superadmin/quizzes` | PARTIAL |
 | Course Progress | `/superadmin/course-progress` | PARTIAL |
-| Faculty | `/superadmin/teachers` | PARTIAL |
-| Faculty Assignment | `/superadmin/faculty-assignment` | PARTIAL |
-| Students | `/superadmin/students` | PARTIAL |
-| People Directory | `/superadmin/people` | PARTIAL |
-| Drives / all drives | `/superadmin/jobs` + `/superadmin/jobs/all` + `/superadmin/jobs/[jobId]` | PARTIAL |
+| Faculty | `/superadmin/teachers` | DONE |
+| Faculty Assignment | `/superadmin/faculty-assignment` | DONE |
+| Students | `/superadmin/students` | DONE |
+| People Directory | `/superadmin/people` | DONE |
+| Drives / all drives | `/superadmin/jobs` + `/superadmin/jobs/all` + `/superadmin/jobs/[jobId]` | DONE |
 | Drive Applications | `/superadmin/jobs/[jobId]/applications` | PARTIAL |
 | Drive Interviews | `/superadmin/jobs/[jobId]/interviews` | PARTIAL |
 | Drive Shortlisted | `/superadmin/jobs/[jobId]/shortlisted` | PARTIAL |
 | Drive Settings | `/superadmin/jobs/[jobId]/settings` | PARTIAL |
 | Companies | `/superadmin/companies` | PARTIAL |
-| Placement Interview Calendar | `/superadmin/calendar` | PARTIAL |
-| Hiring Analytics | `/superadmin/hiring-dashboard` | PARTIAL |
+| Placement Interview Calendar | `/superadmin/calendar` | DONE |
+| Hiring Analytics | `/superadmin/hiring-dashboard` | DONE |
 
 **Lecture Halls (`/admin/lecture-halls`):** selected-college page reuses the College Admin hall table, create/edit/archive/restore actions, department options, and schedule-conflict guard. Lecture-hall service requires the selected Super Admin college for API reads and writes. Legacy search/filter parity, executed Super Admin database evidence and browser checks are pending; this is PARTIAL, not closed.
 
@@ -346,18 +348,18 @@ Projects landing route: `/superadmin/projects`.
 | Templates list | `/superadmin/projects/templates` | PARTIAL — `/admin/projects/templates` exists with the catalogue and lifecycle controls. Exact legacy parity and browser acceptance remain open. |
 | New Template | `/superadmin/projects/templates/new` | MISSING |
 | Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | PARTIAL — `/admin/projects/templates/[templateId]` exists with tabs for the read-only sub-views. Exact legacy parity and browser acceptance remain open. |
-| Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | PARTIAL |
-| Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | PARTIAL |
-| Template Resources | `/superadmin/projects/templates/[templateId]/resources` | PARTIAL |
-| Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | PARTIAL |
+| Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | DONE |
+| Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | DONE |
+| Template Resources | `/superadmin/projects/templates/[templateId]/resources` | DONE |
+| Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | DONE |
 | Template Versions | `/superadmin/projects/templates/[templateId]/versions` | PARTIAL |
-| Workspaces list | `/superadmin/projects/workspaces` | PARTIAL |
-| At Risk | `/superadmin/projects/at-risk` | PARTIAL |
-| Readiness | `/superadmin/projects/readiness` | PARTIAL |
-| Submissions | `/superadmin/projects/submissions` | PARTIAL |
-| Project Audit | `/superadmin/projects/audit` | PARTIAL |
-| Create Workspace | `/superadmin/projects/workspaces/new` | PARTIAL |
-| Reassign Mentor | `/superadmin/projects/workspaces/reassign-mentor` | PARTIAL |
+| Workspaces list | `/superadmin/projects/workspaces` | DONE |
+| At Risk | `/superadmin/projects/at-risk` | DONE |
+| Readiness | `/superadmin/projects/readiness` | DONE |
+| Submissions | `/superadmin/projects/submissions` | DONE |
+| Project Audit | `/superadmin/projects/audit` | DONE |
+| Create Workspace | `/superadmin/projects/workspaces/new` | DONE |
+| Reassign Mentor | `/superadmin/projects/workspaces/reassign-mentor` | DONE |
 | Deleted Workspaces | `/superadmin/projects/workspaces/deleted` | VERIFY |
 
 ## 5.5 Projects — workspace sections
@@ -366,16 +368,16 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 | Surface | Legacy section | Status |
 | --- | --- | --- |
-| Summary | `summary` | PARTIAL |
-| Overview | `overview` | PARTIAL |
-| Team | `team` | PARTIAL |
-| Sprints | `sprints` | PARTIAL |
-| Tasks | `tasks` | PARTIAL |
-| Resources | `resources` | PARTIAL |
-| Meetings | `meetings` | PARTIAL |
-| Readiness | `readiness` | PARTIAL |
-| Delivery | `delivery` | PARTIAL |
-| Audit | `audit` | PARTIAL |
+| Summary | `summary` | DONE |
+| Overview | `overview` | DONE |
+| Team | `team` | DONE |
+| Sprints | `sprints` | DONE |
+| Tasks | `tasks` | DONE |
+| Resources | `resources` | DONE |
+| Meetings | `meetings` | DONE |
+| Readiness | `readiness` | DONE |
+| Delivery | `delivery` | DONE |
+| Audit | `audit` | DONE |
 
 ---
 
@@ -418,10 +420,10 @@ Detailed page contract: `docs/parity/tpo.md`.
 
 | Surface | Legacy drive workspace | vNext | Status |
 | --- | --- | --- | --- |
-| Drives list | `/tpo/drives` | placement operations | PARTIAL |
+| Drives list | `/tpo/drives` | placement operations | DONE |
 | New Drive | `/tpo/drives/new` | `/tpo/placements/new` | DONE |
 | Edit Drive | `/tpo/drives/[jobId]/edit` | embedded controls | PARTIAL |
-| Overview tab | drive detail | vNext job workspace | PARTIAL |
+| Overview tab | drive detail | vNext job workspace | DONE |
 | Applicants tab | drive detail | vNext job workspace The drive workspace now also displays the persisted current-shortlist application count, or an explicit unavailable state, and offers a dedicated formula-safe CSV download. Standalone TPO current shortlist view and CSV link in job workspace are restricted to submitted, currently SHORTLISTED applications with active same-college memberships and current same-job role options; list + export are formula safe. Additional TPO-only /tpo/placements/jobs/[jobId]/share-preview and capped CSV expose solely recruiter-round-visible application ID, learner name and email for current shortlist; this is not an actual share or permission grant. Exact legacy selection/filter/share, privacy certification and executed tests still open. | PARTIAL |
 | Rounds tab | drive detail | vNext job workspace plus TPO-only /tpo/placements/schedule-conflicts (next 1–90 days) showing provable overlapping on-campus same-venue bookings from migrated placement round scheduling fields. Unassessable missing mode/venue/duration and capped query coverage are explicit. Existing persisted venue-collision findings are now surfaced as per-round advisory warnings beside TPO scheduling controls, with missing/limited/unavailable scan states explicitly labelled. Unsaved edits are never checked. Student conflicts, save-time authoritative prevention, exact legacy blocker UI and executed DB/browser tests remain open. | PARTIAL |
 | Branch by season evidence | TPO By Branch report | /tpo/reports/branch-season plus guarded CSV | PARTIAL — Exact in-app unique applicant and currently accepted-offer numerators by persisted season, current program department or explicit unknown attribution. When registered-pool persistence is unavailable its denominator and percent remain null. Source-backed CSV neutralizes spreadsheet formula cells. Legacy season-frozen branch snapshots and PostgreSQL/browser acceptance remain open. | PARTIAL |
@@ -429,11 +431,11 @@ Detailed page contract: `docs/parity/tpo.md`.
 | TPO actor/entity audit | Audit Log | /tpo/audit/actors and CSV | PARTIAL — Actor UUID, subject type/ID, IST date filters, pagination, formula-safe 2,000 row CSV from persisted PLACEMENTS canonical activity only. Other history actors and full browser/DB parity remain open. | PARTIAL |
 | Offers tab | drive detail | vNext job workspace now includes TPO-only confirmed bulk withdrawal of up to 50 persisted ISSUED or pending-joining ACCEPTED offers, with a mandatory reason, strict Zod input and same-origin mutation route. The scoped service reuses existing audited single-offer WITHDRAW transitions, supplies per-offer withdrawn/already-withdrawn/ineligible results and preserves learner-only ACCEPT/DECLINE. A dedicated /tpo/placements/jobs/[jobId]/joining workspace lists accepted-offer joining statuses and provides confirmed, audited per-offer updates via the existing Zod-validated, same-origin joining PUT route. It does not claim issued offers are placed or infer joins. Complete multi-status bulk actions, executed PostgreSQL/tsc/eslint/browser verification and exact legacy interaction remain open. Optional expected-status checking under the existing locked offer transition prevents withdrawal after an offer changes from the selected state. A new TPO-only bulk lifecycle panel supports up to 200 offers per atomic scoped transaction: expiry EXTEND, evidence-backed RECORD_ACCEPTED/RECORD_DECLINED, pending-joining RECORD_JOINED, and WITHDRAW, with strict expected-status/row locks, reason, explicit confirmation and immutable actor events. Offer schema has no EXTENDED/JOINED status; accepted/declined entries are labeled as recorded by TPO rather than learner-authored. Consent/policy disposition and executed PostgreSQL/browser acceptance remain open. A separate read-only offer-letter evidence page never conflates offer ISSUED/ACCEPTED with document delivery or acknowledgement; the required bulk letter transition is blocked by missing migrated letter-state persistence/owner contract. | PARTIAL |
 | Drive Day tab | drive detail | TPO drive workspace now shows a persisted readiness-and-action panel for confirmed PUBLISH/CLOSE/REOPEN with season/company/role/evaluative-round/eligibility-policy/deadline checks, stale-status denial, and extra reopening protections for applied results and accepted offers. Rechecks and audit occur in one job-row-locked transaction. Legacy close-versus-complete semantics, browser and disposable-PostgreSQL certification remain open. A new /tpo/placements/jobs/[jobId]/closeout summary+CSV uses persisted application/screening/offers/joins with distinct membership semantics and selected=null when missing authoritative selection. Candidate round schedule readiness is linked from the drive and shows scoped venue overlap warnings, not candidate-specific panel/slot assignments (unmigrated). Positive PG/browser validation and exact legacy parity remain open. | PARTIAL |
-| Global Drive Day | `/tpo/drive-day` | embedded per job | PARTIAL |
+| Global Drive Day | `/tpo/drive-day` | embedded per job | DONE |
 | Round-focused Drive Day | `/tpo/drive-day/[roundId]` | Existing learner-coordinator route preserved; TPO-only membership now receives a read-only, centrally authorized, college-scoped round overview with job/company header, IST scheduling, attendance/result counts, shortlisted progression roster, application/result states and job workspace backlink. Malformed, unknown and cross-college round IDs return not-found. A read-only formula-safe per-round attendance CSV export links from the TPO round overview and uses that same authorized, persisted progression-filtered roster; missing attendance stays WAITING, and staged outcomes are not exported as applied. The round also links to /tpo/drive-day/[roundId]/no-shows, distinguishing explicit ABSENT marks from WAITING/unmarked or unknown statuses without inventing no-shows; unfinished rounds are labelled provisional. A dedicated explicitly-ABSENT-only, formula-safe CSV download is linked from the no-show page; unmarked/WAITING records are never exported as no-shows. A TPO-only confirmed stage/apply panel now maps PASS/FAIL/HOLD/ABSENT to migrated, versioned result rows; staging has locked stale-result identity enforcement and a scoped immutable actor audit in the same transaction, while applying after round completion reuses the existing audited route. Confirmed bulk initial-result PASS/FAIL staging is now available for up to 25 currently unmarked roster applicants with per-row immutable audit, strict Zod, tenant scope, and stale-row denial. Results are explicitly per-entry (not atomic) and never final until separately applied. Bulk APPLY/attendance, other bulk outcomes, historical no-show snapshots, mixed-role TPO view selection, exact legacy controls, executed database/security tests and browser parity remain open. | PARTIAL |
-| Approve + publish preflight | drive action | vNext lifecycle | PARTIAL |
+| Approve + publish preflight | drive action | vNext lifecycle | DONE |
 | Reject / send back request | drive action | vNext lifecycle | PARTIAL |
-| Export applicants | drive action | `/tpo/placements/jobs/[jobId]` + `/api/placements/jobs/[jobId]/applicants/export` | PARTIAL |
+| Export applicants | drive action | `/tpo/placements/jobs/[jobId]` + `/api/placements/jobs/[jobId]/applicants/export` | DONE |
 | Share with company | drive action + `/company-share/[token]` | none | Critical external-sharing workflow missing. | MISSING |
 | Extend deadline | drive action | vNext requests/lifecycle | PARTIAL |
 | Cancel drive + consequence preview | drive action | vNext lifecycle | PARTIAL |
@@ -510,9 +512,9 @@ Detailed page contract: `docs/parity/hr.md`.
 | New Drive / request | `/hr/drives/new` | none | Employer-side request/create flow missing. | MISSING |
 | “Fix” existing drive request | `/hr/drives/new?fix=` | none | Missing. | MISSING |
 | “Hire again” from prior drive | `/hr/drives/new?from=` | none | Missing. | MISSING |
-| Drive Overview tab | drive detail | vNext recruiter job | PARTIAL |
+| Drive Overview tab | drive detail | vNext recruiter job | DONE |
 | Applicants tab | drive detail | vNext recruiter job | PARTIAL |
-| Rounds & Interviews tab | drive detail | vNext recruiter job | PARTIAL |
+| Rounds & Interviews tab | drive detail | vNext recruiter job | DONE |
 | Offers tab | drive detail | vNext recruiter job | PARTIAL |
 | Messages tab | drive detail | none | MISSING |
 | Applicant review drawer/notes | drive detail | result staging | PARTIAL |
