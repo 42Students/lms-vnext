@@ -1173,3 +1173,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-006 PARTIAL (round 5):** Deadline-first learner drive sorting now places published, not-expired and parseable upcoming deadlines ahead of expired and malformed/missing deadlines, while preserving explicit closed and eligibility filters. This uses the existing learner-scoped published-drive dataset and does not turn a missing provider deadline into urgency. Pure regression for closed/malformed/valid tie cases authored; CI/mobile/PG gate pending.
+
+
+**2026-10-15 chat-5 L14-007 PARTIAL (round 5):** Learner Applications' Company A–Z sort now uses stable case-insensitive natural ordering (e.g., Company 2 before Company 10), breaks ties by role then application ID, and never mutates the own scoped input. Real application screening/status filters remain unchanged. Pure-model regression authored; CI/browser/PG acceptance pending.
