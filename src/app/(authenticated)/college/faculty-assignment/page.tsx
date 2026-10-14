@@ -52,7 +52,7 @@ export default async function CollegeFacultyAssignmentPage({
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
       />
-      <Link prefetch={false} href={facultyAssignmentCsvHref(query)}
+      <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Export filtered faculty assignments CSV
       </Link>

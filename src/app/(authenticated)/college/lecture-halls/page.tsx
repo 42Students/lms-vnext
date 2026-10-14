@@ -93,7 +93,7 @@ export default async function CollegeLectureHallsPage({
           ". Find rooms by name, room type, department or archive status."}
       />
 
-      <Link prefetch={false} href={lectureHallsCsvHref(query)}
+      <Link prefetch={false} download href={lectureHallsCsvHref(query)}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Export filtered lecture halls CSV
       </Link>
