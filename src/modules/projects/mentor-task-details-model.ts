@@ -15,7 +15,8 @@ export type MentorTaskDetailsFields=Pick<MentorTaskDetailsInput,
   "title"|"description"|"acceptanceCriteria"|"priority">;
 
 export function taskDetailsChangedFields(
-  old:MentorTaskDetailsFields,next:MentorTaskDetailsFields,
+  old:{title:string;description:string|null;acceptanceCriteria:string|null;priority:string},
+  next:MentorTaskDetailsFields,
 ) {
   return (["title","description","acceptanceCriteria","priority"] as const)
     .filter(key=>(old[key]??null)!==(next[key]??null));
