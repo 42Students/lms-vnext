@@ -489,7 +489,7 @@ test("Faculty Assessment results filter only assigned teaching Sections and pres
     expect(href).toContain("deliveryId=" + allowedId);
   }
   await page.goto("/teacher/results?deliveryId=not-a-uuid");
-  await expect(page.getByRole("alert")).toContainText("Invalid assessment filters");
+  await expect(page.getByRole("alert").filter({ hasText: "Invalid assessment filters" })).toBeVisible();
   await page.getByRole("link", { name: "Clear filters" }).click();
   await expect(page).toHaveURL(/\/teacher\/results$/);
 });
