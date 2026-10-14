@@ -1,0 +1,129 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  interactionConfirmationSummary,
+  type TpoCompanyInteractionKind,
+} from "@/modules/placements/tpo-company-interaction-model";
+
+export function TpoCompanyInteractionForm({
+  companyId,
+  contacts,
+}: {
+  companyId: string;
+  contacts: readonly { id: string; name: string; updatedAtIso: string }[];
+}) {
+  const router = useRouter();
+  const [leadId, setLeadId] = useState(contacts[0]?.id ?? "");
+  const [type, setType] = useState<TpoCompanyInteractionKind>("CALL");
+  const [outcome, setOutcome] = useState("");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  async function submit() {
+    if (busy) return;
+    const chosen = contacts.find((contact) => contact.id === leadId);
+    if (!chosen || note.trim().length < 3 || note.trim().length > 2000 ||
+      (outcome.trim().length > 0 && (outcome.trim().length < 2 || outcome.trim().length > 30))) {
+      setError("Choose a linked contact and enter 3–2000 note characters. Outcome must be 2–30 characters if supplied.");
+      return;
+    }
+    if (!window.confirm(interactionConfirmationSummary({
+      type, contactName: chosen.name,
+    }))) return;
+
+    setBusy(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const response = await fetch(
+        "/api/placements/tpo/companies/" +
+          encodeURIComponent(companyId) + "/contact-log",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            confirmed: true,
+            leadId: chosen.id,
+            expectedLeadUpdatedAt: chosen.updatedAtIso,
+            type,
+            outcome: outcome.trim() || null,
+            note: note.trim(),
+          }),
+        },
+      );
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as
+          { error?: string } | null;
+        throw new Error(payload?.error === "TPO_COMPANY_INTERACTION_STALE"
+          ? "Contact changed since the page loaded. Refresh and review before retrying."
+          : "Could not confirm the saved activity. Refresh before retrying to avoid duplicates.");
+      }
+      setNote("");
+      setOutcome("");
+      setSaved(true);
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Could not record activity.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <h2 className="text-base font-semibold text-foreground">Record a contact interaction</h2>
+      <p className="text-sm leading-6 text-body">
+        This records an internal CRM event, not a delivered call, email or message.
+        All entries are permanent, actor-attributed history. No contact stage changes.
+      </p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="text-sm font-semibold text-foreground">
+          Contact
+          <select value={leadId} onChange={(event) => setLeadId(event.target.value)}
+            disabled={busy}
+            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
+            {contacts.map((contact) => (
+              <option key={contact.id} value={contact.id}>{contact.name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-foreground">
+          Interaction type
+          <select value={type}
+            onChange={(event) => setType(event.target.value as TpoCompanyInteractionKind)}
+            disabled={busy}
+            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
+            {(["CALL", "EMAIL", "WHATSAPP", "MEETING", "NOTE"] as const).map((kind) => (
+              <option key={kind} value={kind}>{kind}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="block text-sm font-semibold text-foreground">
+        Outcome (optional)
+        <input value={outcome} onChange={(event) => setOutcome(event.target.value)}
+          maxLength={30} disabled={busy}
+          className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal" />
+      </label>
+      <label className="block text-sm font-semibold text-foreground">
+        Notes (required)
+        <textarea value={note} onChange={(event) => setNote(event.target.value)}
+          maxLength={2000} rows={3} disabled={busy}
+          className="mt-1 block w-full rounded-md border border-border bg-surface p-3 font-normal" />
+      </label>
+      <button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
+        className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+        {busy ? "Recording..." : "Review and confirm activity"}
+      </button>
+      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {saved ? <p role="status" className="text-sm text-body">
+        Activity recorded. The page is refreshing.
+      </p> : null}
+    </section>
+  );
+}

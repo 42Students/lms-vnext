@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export type TpoCompanyInteractionKind =
+  "CALL" | "WHATSAPP" | "EMAIL" | "MEETING" | "NOTE";
+
 export const confirmedTpoCompanyInteractionSchema = z.object({
   confirmed: z.literal(true),
   leadId: z.string().uuid(),
