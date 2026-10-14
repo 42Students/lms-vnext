@@ -677,3 +677,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Job Settings — PARTIAL:** Added `/admin/placements/job-settings`, read-only job lifecycle/deadline and persisted optional eligibility rules (minimum CGPA, backlog/gap and missing-evidence policy), including explicit missing-policy states. Search/status/paging, safe job link, IST, mobile states, central selected-college authorization; no mutation or candidate private data. Pure unit test authored. Complete eligibility editor and PG/browser gates remain open.
+
+
+**2026-10-15 chat-6 round 4 / Hiring Dashboard — PARTIAL:** `/admin/placements/hiring` now uses real job-level application counts (submitted/withdrawn) from selected-college jobs and same-college learner memberships, 25-row status/search paging and mobile/error/empty states; explicitly does not represent per-application counts as distinct students, placements or interview conversion. No fabricated zero on query failures. Pure pagination/status unit authored; full season funnel/CTC/branch outcome metrics and PG/browser validation remain open.
