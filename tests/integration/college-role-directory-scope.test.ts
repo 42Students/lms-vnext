@@ -79,6 +79,17 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
         .rejects.toBeInstanceOf(AuthorizationError);
     }
   });
+  it("partitions college learners by persisted active enrollment without mixing foreign memberships", async () => {
+    const all = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {});
+    const active = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {enrollment:"ACTIVE"});
+    const none = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {enrollment:"NONE"});
+    expect(active.total + none.total).toBe(all.total);
+    expect(active.items.every(row => row.membershipId !== SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(facultyInCollegeB, "LEARNER", {enrollment:"ACTIVE"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeRoleDirectory(collegeAdmin, "FACULTY", {enrollment:"NONE"}))
+      .rejects.toThrow("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {

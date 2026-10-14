@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, exists, ilike, inArray, isNull, not, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -50,7 +50,21 @@ export async function listCollegeRoleDirectory(
     collegeId,
   });
 
+  if (kind === "FACULTY" && filter.enrollment !== "ALL") {
+    throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
+  }
   const db = getDb();
+  const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
+    .from(learnerProgramEnrollments)
+    .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, collegeId),
+    ))
+    .where(and(
+      eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+    )));
   const query = db.select({
     membershipId: collegeMemberships.id,
     name: users.displayName,
@@ -70,6 +84,8 @@ export async function listCollegeRoleDirectory(
         ? undefined
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
+      kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
+        filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),

@@ -557,6 +557,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Enrollment-presence filter PARTIAL (2026-10-15):** Student directory can distinguish an active college-owned program enrollment from no active enrollment using a correlated registered-table EXISTS predicate *before pagination*. It does not infer missing enrollment as a failed student record. Pure URL/Zod and isolated PG partition/role/tenant tests authored; full legacy moves and browser acceptance remain open.
 **Account-status filter PARTIAL (2026-10-15):** Learner memberships now filter persisted ACTIVE/DISABLED platform account status independently from cohort/class context, with the same college-only query, URL-persisted pagination and PG isolation witness. Browser and full learner lifecycle parity remain open.
 
 **Class-move guard PARTIAL (2026-10-14):** Directory move now returns the same non-leaking `STUDENT_NOT_FOUND` code for a foreign or absent membership, resets stale destination selection on reopening, and distinguishes no alternative eligible section. Persisted move remains version-checked, same-cohort and same-period, transactionally audited. Legacy modal/browser acceptance remains outstanding.
