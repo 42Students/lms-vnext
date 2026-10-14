@@ -49,6 +49,12 @@ export default async function HrJobActivityPage({searchParams}:{
      <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
     </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
      No visible publication or closure activity at this college.</p>}
+   <div className="flex justify-end">
+     <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind}
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+       Export activity CSV
+     </Link>
+   </div>
    <nav aria-label="Activity history pages" className="flex flex-wrap items-center gap-3">
      {input.data.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&page="+(input.data.page-1)}
        className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}

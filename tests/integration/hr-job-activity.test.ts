@@ -4,6 +4,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
+import {buildHrActivityCsv} from "@/modules/placements/hr-activity-csv-model";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -34,6 +35,9 @@ describe.skipIf(!enabled)("HR job activity PG scopes",()=>{
   expect(result.status).toBe("READY");
   expect(result.events.some(e=>e.jobId===own.id)).toBe(true);
   expect(result.events.some(e=>e.jobId===other.id)).toBe(false);
+  const csv=buildHrActivityCsv(result.events,false).csv;
+  expect(csv).toContain(own.id);
+  expect(csv).not.toContain(other.id);
   const second=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
     {collegeId:SEED_IDS.collegeA,page:2,limit:40});
   expect(second.status).toBe("READY");
