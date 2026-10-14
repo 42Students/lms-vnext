@@ -252,7 +252,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-020 | Zero assignments | AssignmentsContent | EmptyState | CLOSED |
 | L6-021 | Filtered empty | AssignmentsContent | EmptyState | CLOSED |
 | L6-022 | Deep link exact assignment | AssignmentsContent | roadmap query | CLOSED |
-| L6-023 | Mobile assignment cards/drawer | AssignmentsContent responsive | aggregate page | UNCHECKED |
+| L6-023 | Mobile assignment cards/drawer | AssignmentsContent responsive | mobile-first full-width submission action and drawer links; derived due/submitted/grade-visible quick status only from own persisted assignment; card titles wrap. PARTIAL pending fresh PG, unit, tsc/eslint, touch-device and screen-reader acceptance | PARTIAL |
 
 ## L7 — All Quizzes: `/learn/allQuizzes`
 
