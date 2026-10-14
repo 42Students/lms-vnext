@@ -17,6 +17,7 @@ import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
+import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -25,6 +26,7 @@ function one(value: string | string[] | undefined) {
 const searchSchema = z.string().trim().max(100);
 const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
 const attentionSchema = z.literal("LEARNER_ACTION");
+const workSchema = z.literal("BLOCKED");
 
 function parsePageSize(value: string | undefined) {
   const parsed = z.coerce.number().int().safeParse(value);
@@ -50,10 +52,12 @@ export default async function LearnerProjectsPage({
   const params = await searchParams;
   const status = one(params.status);
   const attention = one(params.attention);
+  const work = one(params.work);
   const query: ProjectParticipantListQuery = {
     search: searchSchema.safeParse(one(params.search)).data || undefined,
     status: statusSchema.safeParse(status).data,
     attention: attentionSchema.safeParse(attention).data,
+    work: workSchema.safeParse(work).data,
     page: parsePage(one(params.page)),
     pageSize: parsePageSize(one(params.pageSize)),
   };
@@ -95,6 +99,9 @@ export default async function LearnerProjectsPage({
       query.attention !== "LEARNER_ACTION" ||
       attentionByProject.has(row.project.id),
     )
+    .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
+      row.project.status, progressByProject.get(row.project.id),
+    ))
     .sort((a, b) => {
       const archivedOrder =
         Number(a.project.status === "ARCHIVED") -
