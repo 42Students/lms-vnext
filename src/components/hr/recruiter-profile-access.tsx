@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
 
 type Grant = {
   id: string;
@@ -41,7 +43,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-base font-semibold text-foreground">College Access</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Leaving access takes effect immediately. The placement cell must grant access again if you need to return.
+        Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
         <div role="alert" className="mt-3 rounded-md border border-error/30 bg-error/5 p-3 text-sm text-error">
@@ -57,6 +59,15 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
               <div>
                 <div className="font-medium text-foreground">{grant.collegeName}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Active recruiter access</div>
+                <nav aria-label={"Open "+grant.collegeName+" recruiter pages"}
+                  className="mt-2 flex flex-wrap gap-3 text-xs">
+                  {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
+                    <Link key={link.label} href={link.href}
+                      className="inline-flex min-h-10 items-center font-medium text-primary-text hover:underline">
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
               </div>
               <button
                 type="button"

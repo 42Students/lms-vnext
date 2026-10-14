@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { useRouter } from "next/navigation";
 import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
@@ -16,6 +18,7 @@ export function LearnerBoardTaskDetailDialog({
   sprintTitle:string|null;
 }) {
   const ref=useRef<HTMLDialogElement>(null);
+  const navigatingRef=useRef(false);
   const router=useRouter();
   const returnHref=learnerBoardTaskHref(projectId,filters);
   useEffect(()=>{
@@ -26,7 +29,7 @@ export function LearnerBoardTaskDetailDialog({
   },[task.id]);
   return (
     <dialog ref={ref} aria-labelledby="learner-task-dialog-title"
-      onClose={()=>router.replace(returnHref)}
+      onClose={()=>{if(!navigatingRef.current)router.replace(returnHref);}}
       className="fixed inset-0 m-auto max-h-[85dvh] w-[min(94vw,38rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -50,7 +53,14 @@ export function LearnerBoardTaskDetailDialog({
         <h3 className="font-semibold">Acceptance criteria</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
-      <p className="mt-4 text-xs leading-5 text-muted-foreground">Task status changes and submissions remain available only through the authorized workspace controls.</p>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
+          onClick={() => { navigatingRef.current=true; }}
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">
+          Open task actions in Board
+        </Link>
+      </div>
+      <p className="mt-3 text-xs leading-5 text-muted-foreground">Actions and submissions use the authorized Project workspace, not this read-only preview.</p>
     </dialog>
   );
 }
