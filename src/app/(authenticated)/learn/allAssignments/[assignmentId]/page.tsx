@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -62,7 +63,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
             The deadline has passed; this published assignment accepts late submissions.
           </p>
         ) : null}
-        <AssignmentSubmissionControl assignmentId={item.id} deliveryId={item.deliveryId} />
+        <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
       </div>}
     </section>
   </div>;
