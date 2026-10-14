@@ -934,3 +934,6 @@ Currently assigned Mentor task-review history now supports oldest/newest recorde
 
 ## 2026-10-15 chat-11 round 6 AU — exact recorded delivery version lookup (PARTIAL)
 The current assigned Mentor exact-project delivery review overview now filters by an actual positive registered version number, shared by SQL count/page and metadata-only capped export; status and feedback-presence controls remain. Strict Zod rejects unknown tenant selectors and invalid versions. Unit cases authored; browser/PG and full legacy delivery parity remain open.
+
+## 2026-10-15 chat-11 round 6 AV — team assignment history chronology (PARTIAL)
+The current authorized Mentor exact-project Team history supports earliest/latest recorded membership start order, stable UUID tie-break, scope-aware SQL pagination and view/role/primary filters retained in page links. Former/inactive names remain masked; no membership changes. Strict-selector source tests authored; CLI/PG/browser and complete historic data coverage unverified.

@@ -28,11 +28,15 @@ describe("Mentor team lifecycle read model", () => {
     expect(mentorTeamHistoryQuerySchema.safeParse({projectId,collegeId:projectId}).success).toBe(false);
     expect(mentorTeamHistoryQuerySchema.safeParse({projectId,view:"SUSPENDED"}).success).toBe(false);
     expect(mentorTeamHistoryQuerySchema.safeParse({projectId,primary:"OTHER"}).success).toBe(false);
+    expect(mentorTeamHistoryQuerySchema.safeParse({projectId,order:"RANDOM"}).success).toBe(false);
+    expect(mentorTeamHistoryQuerySchema.parse({projectId,order:"NEWEST"}).order).toBe("NEWEST");
     expect(mentorTeamHistoryQuerySchema.parse({projectId,primary:"PRIMARY"}).primary).toBe("PRIMARY");
     expect(mentorTeamHistoryQuerySchema.safeParse({projectId:"foo"}).success).toBe(false);
     expect(mentorTeamHistoryQuerySchema.safeParse({projectId,page:0}).success).toBe(false);
   });
   it("preserves pagination filters without leaking the tenant scope", () => {
+    expect(mentorTeamHistoryHref(projectId,{view:"ENDED",order:"NEWEST",page:2}))
+      .toContain("order=NEWEST&page=2");
     expect(mentorTeamHistoryHref(projectId,{view:"ENDED",primary:"PRIMARY",page:2})).toContain("primary=PRIMARY");
     expect(mentorTeamHistoryHref(projectId,{view:"ENDED",page:2}))
       .toBe("/mentor/projects/" + projectId + "/team-history?view=ENDED&page=2");
