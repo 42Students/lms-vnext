@@ -7,6 +7,16 @@ export const learnerNotificationInboxQuerySchema = z.object({
   q:z.string().trim().max(100).optional().default(""),
 }).strict();
 export type LearnerInboxQuery = z.infer<typeof learnerNotificationInboxQuerySchema>;
+/** Only validated learner inbox filters become navigable URLs; never identity selectors. */
+export function learnerNotificationInboxHref(raw: unknown) {
+  const state=learnerNotificationInboxQuerySchema.parse(raw);
+  const search=new URLSearchParams();
+  if(state.category!=="all")search.set("category",state.category);
+  if(state.unread!=="all")search.set("unread",state.unread);
+  if(state.q)search.set("q",state.q);
+  const q=search.toString();
+  return "/learn/notifications"+(q?"?"+q:"");
+}
 export function learnerNotificationTarget(href:string|null|undefined):string|null {
   const safe=safeNotificationActionHref(href);
   if (!safe) return null;
