@@ -148,17 +148,18 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [ ] Empty/loading/error states.
 - [x] Report resolves exact assigned Section through authoritative Faculty aggregate and reused authorized submission reader; wrong-tenant DB tests OPEN.
 
-## Page: Quiz Report
+## Page: Quiz Report — DONE (2026-10-14)
+
 **Legacy:** `/teacher/report/quiz/[quizId]`
 
-- [x] Report displays quiz summary, attempted, distinct learners and average normalized score from the authorized attempt reader.
-- [x] Report table renders per-learner attempt, score and submit date; detailed response analytics remain OPEN.
-- [ ] Score/response analytics present in legacy are accounted for.
-- [x] Quiz report shows explicit results-published vs private state.
-- [ ] Attempt detail drill-in matches.
-- [ ] Empty/loading/error states.
-- [x] A shared-offering quiz must resolve exactly one authorized delivery or fail closed; source-level only, DB/browser tests OPEN.
+- [x] Authorized current-Section quiz summary, attempted/missing learners, latest attempt and normalized scores.
+- [x] Score distribution, question-level answered/correct/accuracy from persisted answers and attempts (missing remains unknown).
+- [x] Per-learner attempt drill-in, results published/private badges and response filters.
+- [x] Printable PDF, capped 500-row formula-neutralized CSV downloads for learner responses and aggregate question accuracy; no private contacts.
+- [x] Honest empty, loading and error states; desktop/mobile responsive navigation.
+- [x] Strict current active teaching-Section scope; foreign/forged delivery and wrong role rejected.
 
+**Independent evidence:** [Faculty Quiz Report workflow 38618101294](https://github.com/42Students/lms-vnext/actions/runs/38618101294) on commit `1d8d4a9e8bec8571e714bf66efd41af7ba67b8fc`: **7/7 PostgreSQL**, **14/14 unit**, **2/2 authenticated desktop/mobile Chromium**, including real quiz creation, question/filtered learner CSV downloads, foreign delivery denial and no mobile overflow. Both independent jobs passed. Does not imply completion of quiz authoring, private learner PII access or the entire LMS CI.
 ## Page: Notifications
 - [ ] Faculty announcements/personal notifications match legacy feed.
 - [ ] Read/unread/deep-link behavior is verified.
@@ -1238,3 +1239,7 @@ CSV download and 4xx unauthorized delivery; no browser page errors, retries,
 or mobile overflow. Browser fixtures run sequentially to prevent competing
 same-lesson draft sequence conflicts. Other Faculty authoring and global CI
 rows remain separate.
+
+## Faculty closure evidence reconciliation (2026-10-14)
+
+Course Overview is restored to DONE in the master matrix, matching the already completed detailed Overview checklist and the two green independent CI jobs in [run 38615289795](https://github.com/42Students/lms-vnext/actions/runs/38615289795) (5 registered PostgreSQL and 2 browser). Quiz Report is closed on [run 38618101294](https://github.com/42Students/lms-vnext/actions/runs/38618101294) (7 PostgreSQL, 14 unit, 2 browser). Neither row claims global CI release readiness.
