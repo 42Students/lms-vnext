@@ -6,6 +6,16 @@ export const mentorTaskReviewQuerySchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
 }).strict();
 
+/** Escape LIKE metacharacters; this queue searches literal human text. */
+export function mentorTaskReviewLiteralSearch(input:string){
+ return input.replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_");
+}
+export function mentorTaskReviewTargetHref(projectId:string,taskId:string){
+ const project=z.string().uuid().parse(projectId);
+ const task=z.string().uuid().parse(taskId);
+ return "/mentor/projects/"+encodeURIComponent(project)+
+   "?tab=board#mentor-task-"+encodeURIComponent(task);
+}
 export function mentorTaskReviewHref(query: {
   search?: string; page?: number; pageSize?: number;
 }) {
@@ -20,12 +30,10 @@ export function mentorTaskReviewHref(query: {
 export function mentorTaskReviewSummary(input: {
   total: number; page: number; pageSize: number;
 }) {
-  return {
-    total: input.total,
-    page: input.page,
-    pageSize: input.pageSize,
-    totalPages: Math.max(1, Math.ceil(input.total / input.pageSize)),
-    first: input.total === 0 ? 0 : (input.page - 1) * input.pageSize + 1,
-    last: Math.min(input.total, input.page * input.pageSize),
+  const totalPages=Math.max(1,Math.ceil(input.total/input.pageSize));
+  const page=Math.min(input.page,totalPages);
+  return {total:input.total,page,pageSize:input.pageSize,totalPages,
+    first:input.total===0?0:(page-1)*input.pageSize+1,
+    last:Math.min(input.total,page*input.pageSize),
   };
 }
