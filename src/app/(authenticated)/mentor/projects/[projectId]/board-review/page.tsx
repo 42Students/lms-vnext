@@ -5,7 +5,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {mentorBoardReviewHref,mentorBoardReviewQuerySchema}
   from "@/modules/projects/mentor-board-review-model";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
-type Params={status?:string|string[];search?:string|string[];page?:string|string[]};
+type Params={status?:string|string[];priority?:string|string[];
+  sprintId?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorBoardReviewPage({
   params,searchParams,
@@ -13,6 +14,7 @@ export default async function MentorBoardReviewPage({
   const [{projectId},raw]=await Promise.all([params,searchParams]);
   const validated=mentorBoardReviewQuerySchema.safeParse({
     projectId,status:first(raw.status)??undefined,
+    priority:first(raw.priority)??undefined,sprintId:first(raw.sprintId)??undefined,
     search:first(raw.search)??undefined,page:first(raw.page)??undefined,
   });
   if(!validated.success)return <section role="alert" className="space-y-3">
@@ -56,11 +58,36 @@ export default async function MentorBoardReviewPage({
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </select>
         </label>
+        <label className="grid gap-1 text-sm">Priority
+          <select name="priority" defaultValue={data.query.priority??"ALL"}
+            className="min-h-10 rounded border border-border bg-background p-2">
+            {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
+              <option key={value} value={value}>{value}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm">Sprint
+          <select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
+            className="min-h-10 rounded border border-border bg-background p-2">
+            <option value="ALL">All sprints</option>
+            {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
+          </select>
+        </label>
         <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href={base+"/board-review"} className="px-3 py-2 text-primary-text underline">Clear</Link>
       </form>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
+          (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
+            "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
+          download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          Download filtered CSV (max 500)
+        </Link>
+        {data.exportOmitted>0?<span role="status">
+          CSV omits {data.exportOmitted} matching tasks beyond the export cap.
+        </span>:null}
+      </div>
       {data.items.length===0?<EmptyState
         title={data.count===0?"No registered project tasks":"No tasks match these filters"}
         description={data.count===0?

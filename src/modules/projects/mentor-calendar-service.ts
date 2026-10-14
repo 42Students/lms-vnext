@@ -7,6 +7,7 @@ import {
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
 import { ProjectsServiceError } from "./errors";
+import { can } from "@/modules/permissions/policy";
 import type { MentorMeetingCalendarItem } from "./mentor-calendar-view";
 
 /**
@@ -19,7 +20,9 @@ export async function listMyMentorCalendarMeetings(
 ): Promise<MentorMeetingCalendarItem[]> {
   const membership = context.membership;
   if (!hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR") ||
-      !membership) {
+      !membership || !can(context,"projects.read",{
+        collegeId:membership.collegeId,organizationId:membership.organizationId,
+      })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
 

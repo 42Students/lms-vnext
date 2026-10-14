@@ -61,7 +61,7 @@ describe("W03 mentor calendar legacy behavior", () => {
     expect(mentorMeetingDisplayStatus(previousLocalDay,instant)).toBe("MISSED");
     expect(mentorMeetingDisplayStatus(sameLocalDay,instant)).toBe("SCHEDULED");
     expect(mentorMeetingDisplayStatus({...previousLocalDay,timeZone:"Invalid/Zone"},instant))
-      .toBe("SCHEDULED");
+      .toBe("MISSED");
   });
   it("hides cancelled, javascript and data meeting URLs",()=>{
     const safe=item("ok","SCHEDULED",future,futureEnd,{meetingUrl:"https://meet.example.com/room"});

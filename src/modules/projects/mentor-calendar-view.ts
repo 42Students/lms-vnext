@@ -1,6 +1,6 @@
 /**
  * Mentor calendar rules mirrored from legacy /mentor/calendar.
- * All times are UTC instants from timestamptz; display uses the viewer timezone.
+ * All instants are stored in UTC; display and date boundaries use Asia/Kolkata.
  * REQUESTED stays actionable even when its requested slot has passed.
  */
 export type MentorMeetingCalendarItem = {
@@ -53,11 +53,10 @@ export function mentorMeetingDisplayStatus(
   // do not persist a synthetic MISSED state in PostgreSQL.
   const start = Date.parse(item.startsAt);
   if (!Number.isFinite(start)) return item.status;
-  // Compare calendar dates in the meeting's declared IANA timezone, not
-  // the server process timezone (which is often UTC in production).
+  // Product decision: use IST calendar dates for all colleges.
   try {
     const formatter = new Intl.DateTimeFormat("en-CA", {
-      timeZone: item.timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
     });
     const dateKey = (date: Date) => {
       const parts = formatter.formatToParts(date);
