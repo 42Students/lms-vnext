@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   useMemo,
 } from "react";
@@ -9,6 +11,7 @@ import {
 } from "next/navigation";
 import { filterLearnerAttendanceMonth, resolveLearnerAttendanceFilters } from "@/modules/attendance/learner-attendance-filter-model";
 import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, LEARNER_ATTENDANCE_HISTORY_OPTIONS, type LearnerAttendanceHistoryFilter } from "@/modules/attendance/learner-attendance-history-model";
+import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -347,10 +350,17 @@ export function LearnerAttendanceWorkspace({
         </div>
 
         {course ? (
-          <p className="mt-3 text-xs text-muted-foreground">
-            {course.sectionName} ·{" "}
-            {course.academicPeriodName}
-          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">
+              {course.sectionName} ·{" "}{course.academicPeriodName}
+            </p>
+            {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
+              <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
+                className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                Full course attendance history →
+              </Link>
+            ) : null}
+          </div>
         ) : null}
       </section>
 
