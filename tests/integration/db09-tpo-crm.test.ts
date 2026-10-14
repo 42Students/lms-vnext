@@ -134,6 +134,95 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     ).rejects.toMatchObject({ code: "23514" });
   });
 
+  it("atomically creates an audited lead and records idempotent Not Now changes", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Audited recruiter",
+      email: "audited-lead@example.org",
+      source: "ALUMNI",
+    });
+    const createdActivities = await listTpoLeadActivities(
+      tpo, SEED_IDS.collegeA, lead.id,
+    );
+    expect(createdActivities.filter(x =>
+      x.type === "NOTE" &&
+      !x.isSystem &&
+      x.note === "Recruiter lead created" &&
+      x.createdByUserId === SEED_IDS.facultyUser
+    )).toHaveLength(1);
+
+    const paused = await markTpoLeadNotNow(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Campus hiring deferred",
+      revisitDate: "2027-04-11",
+    });
+    expect(paused.manualStage).toBe("NOT_NOW");
+    expect(paused.notNowReason).toBe("Campus hiring deferred");
+    expect(paused.notNowUntil).toBe("2027-04-11");
+
+    await markTpoLeadNotNow(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Campus hiring deferred",
+      revisitDate: "2027-04-11",
+    });
+    let activities = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, lead.id);
+    expect(activities.filter(x =>
+      x.type === "NOTE" && x.note === "Manual stage changed to Not Now"
+    )).toHaveLength(1);
+
+    await markTpoLeadNotNow(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Hiring moved",
+      revisitDate: "2027-05-11",
+    });
+    activities = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, lead.id);
+    expect(activities.filter(x =>
+      x.type === "NOTE" && x.note === "Not Now reason or revisit date updated"
+    )).toHaveLength(1);
+    expect((await getTpoLead(tpo, SEED_IDS.collegeA, lead.id)).notNowReason)
+      .toBe("Hiring moved");
+  });
+
+  it("rolls back lead creation when the persisted audit actor is unauthorized", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    const email = "rollback-actor@example.org";
+    const forged: RequestContext = {
+      ...tpo,
+      user: { ...tpo.user, id: SEED_IDS.learnerUser },
+    };
+    await expect(createTpoLead(forged, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Must roll back",
+      email,
+    })).rejects.toBeDefined();
+    const result = await pool.query(
+      "SELECT id FROM placement_tpo_leads WHERE college_id = $1 AND email_norm = $2",
+      [SEED_IDS.collegeA, email],
+    );
+    expect(result.rows).toHaveLength(0);
+  });
+
+  it("denies a foreign-college and nonstaff Not Now update without audit rows", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Protected lead",
+      email: "protected-not-now@example.org",
+    });
+    const before = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, lead.id);
+    await expect(markTpoLeadNotNow(learner, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Unauthorized",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(markTpoLeadNotNow(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeB,
+      reason: "Cross-college attempt",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    const after = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, lead.id);
+    expect(after).toHaveLength(before.length);
+    expect((await getTpoLead(tpo, SEED_IDS.collegeA, lead.id)).manualStage)
+      .toBe("NEW");
+  });
+
   it("creates tenant-scoped lead, lists it, and transitions NEW to CONTACTED on real activity", async () => {
     const lead = await createTpoLead(tpo, {
       collegeId: SEED_IDS.collegeA,
@@ -633,8 +722,11 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     );
     expect(detail.people.map(person => person.id).sort())
       .toEqual([first.id, second.id].sort());
-    expect(detail.timeline).toHaveLength(1);
-    expect(detail.timeline[0]?.person).toBe("Alice HR");
+    expect(detail.timeline).toHaveLength(3);
+    expect(detail.timeline.filter(event => event.note === "Recruiter lead created"))
+      .toHaveLength(2);
+    expect(detail.timeline.find(event => event.note === "Discussed campus hiring")?.person)
+      .toBe("Alice HR");
     expect(detail.documents).toEqual([]);
     expect(detail.documentsStatus)
       .toBe("PENDING_DB09_SHARE_LINK_PERSISTENCE");
