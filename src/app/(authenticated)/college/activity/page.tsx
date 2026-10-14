@@ -29,9 +29,23 @@ export default async function CollegeActivityPage({
       action={<Link href="/college/activity" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
+  const exportParams = new URLSearchParams();
+  for (const key of ["actorUserId", "subjectType", "from", "to"] as const) {
+    const value = data.query[key];
+    if (value) exportParams.set(key, value);
+  }
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
-      description="College-scoped immutable event history, with actor, entity and date filters. Newest events first." />
+      description="College-scoped immutable event history, with actor, entity and date filters. Newest events first."
+      actions={<a href={"/api/activity/college-export" +
+        (exportParams.size ? "?" + exportParams.toString() : "")}
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        Export filtered CSV (max 1,000)
+      </a>} />
+    <p className="text-xs text-muted-foreground">
+      The export uses these actor, entity and IST date filters, from the newest event,
+      with a 1,000-row cap and an explicit CSV footer if truncated.
+    </p>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
