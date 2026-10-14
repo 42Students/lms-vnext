@@ -54,4 +54,19 @@ describe("HR recruiter Request Drive draft preview", () => {
     expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:""}).success).toBe(true);
   });
 
+  it("rejects confusing duplicate hiring-round names after spacing/case normalization",()=>{
+    const draft={...emptyHrDriveDraft(),title:"Engineer",
+      description:"A full role description for the college placement cell.",
+      location:"Hyderabad",rounds:[
+        {kind:"TEST" as const,name:"Technical assessment"},
+        {kind:"INTERVIEW" as const,name:"  technical   ASSESSMENT  "},
+      ]};
+    const parsed=hrDriveDraftSchema.safeParse(draft);
+    expect(parsed.success).toBe(false);
+    if(!parsed.success)expect(parsed.error.issues.some(i=>i.path.join(".")==="rounds.1.name")).toBe(true);
+    expect(hrDriveDraftSchema.safeParse({
+      ...draft,rounds:[draft.rounds[0],{kind:"INTERVIEW" as const,name:"Panel interview"}],
+    }).success).toBe(true);
+  });
+
 });
