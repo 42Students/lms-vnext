@@ -80,7 +80,7 @@ export const createCourseOfferingInputSchema =
       .max(10000)
       .optional()
       .default(0),
-  });
+  }).strict();
 
 export const updateCourseOfferingInputSchema =
   z
@@ -101,7 +101,7 @@ export const updateCourseOfferingInputSchema =
         .min(0)
         .max(10000)
         .optional(),
-    })
+    }).strict()
     .refine(
       (value) =>
         Object.values(value).some(
