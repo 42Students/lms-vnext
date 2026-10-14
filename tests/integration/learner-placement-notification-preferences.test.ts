@@ -12,7 +12,8 @@ if (!process.env.TEST_DATABASE_URL) {
 }
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const id={
-  user:randomUUID(),membership:randomUUID(),role:randomUUID(),period:randomUUID(),
+  user:randomUUID(),membership:randomUUID(),role:randomUUID(),
+  college:randomUUID(),department:randomUUID(),period:randomUUID(),
   program:randomUUID(),cohort:randomUUID(),enrollment:randomUUID(),
   access:randomUUID(),decision:randomUUID(),
 };
@@ -21,7 +22,7 @@ const code="C4NP-"+suffix;
 const learner:RequestContext={
   user:{id:id.user,identityUid:"c4-notify-"+suffix,platformStatus:"ACTIVE",systemRoles:[]},
   membership:{
-    id:id.membership,collegeId:SEED_IDS.collegeA,
+    id:id.membership,collegeId:id.college,
     organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"],
   },
 };
@@ -41,26 +42,38 @@ async function cleanup(){
   await pool.query("DELETE FROM cohorts WHERE id=$1",[id.cohort]);
   await pool.query("DELETE FROM programs WHERE id=$1",[id.program]);
   await pool.query("DELETE FROM academic_periods WHERE id=$1",[id.period]);
+  await pool.query("DELETE FROM departments WHERE id=$1",[id.department]);
+  await pool.query("DELETE FROM colleges WHERE id=$1",[id.college]);
 }
 
 beforeAll(async()=>{
+  // Placement module rules below COLLEGE are intentionally ignored (V188).
+  // Use an isolated college so no seeded tenant module rule is changed.
+  await pool.query(
+    "INSERT INTO colleges(id,organization_id,name,code) VALUES($1,$2,$3,$4)",
+    [id.college,SEED_IDS.organization,code+" College",code+"-COLLEGE"],
+  );
+  await pool.query(
+    "INSERT INTO departments(id,college_id,name) VALUES($1,$2,$3)",
+    [id.department,id.college,code+" Department"],
+  );
   await pool.query(
     "INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,$3,'ACTIVE')",
     [id.user,learner.user.identityUid,"C4 Preferences Test Learner "+suffix],
   );
   await pool.query(
     "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
-    [id.membership,id.user,SEED_IDS.collegeA],
+    [id.membership,id.user,id.college],
   );
   await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER')",
     [id.role,id.membership]);
   await pool.query(
     "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) VALUES($1,$2,$3,$4,'2026-07-01','2027-12-31')",
-    [id.period,SEED_IDS.collegeA,code+" Period",code+"-PERIOD"],
+    [id.period,id.college,code+" Period",code+"-PERIOD"],
   );
   await pool.query(
     "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,8)",
-    [id.program,SEED_IDS.departmentA,code+" Program",code+"-PROGRAM"],
+    [id.program,id.department,code+" Program",code+"-PROGRAM"],
   );
   await pool.query(
     "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
@@ -71,12 +84,12 @@ beforeAll(async()=>{
     [id.enrollment,id.membership,id.program,id.cohort],
   );
   await pool.query(
-    "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled,locked) VALUES($1,'MEMBERSHIP',$2,'placements',true,false)",
-    [id.access,id.membership],
+    "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled,locked) VALUES($1,'COLLEGE',$2,'placements',true,false)",
+    [id.access,id.college],
   );
   await pool.query(
     "INSERT INTO placement_eligibility_decisions(id,college_id,scope_type,scope_id,status,decided_by_user_id) VALUES($1,$2,'MEMBERSHIP',$3,'ELIGIBLE',$4)",
-    [id.decision,SEED_IDS.collegeA,id.membership,SEED_IDS.collegeAdminUser],
+    [id.decision,id.college,id.membership,SEED_IDS.collegeAdminUser],
   );
 });
 beforeEach(reset);
@@ -107,7 +120,7 @@ describe("Learner placement notification choice write against fresh PostgreSQL",
     expect(audit.rows[0]).toMatchObject({
       event_type:"placements.notification_preferences.updated",
       actor_user_id:id.user,actor_membership_id:id.membership,
-      college_id:SEED_IDS.collegeA,subject_id:id.membership,
+      college_id:id.college,subject_id:id.membership,
     });
     const retry=await updateOwnPlacementNotificationPreferences(learner,{
       notifyMatchingJobs:false,notifyApplicationUpdates:true,confirmed:true,
