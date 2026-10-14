@@ -169,6 +169,7 @@ export async function logTpoLeadActivity(
   context: RequestContext,
   rawLeadId: string,
   raw: LogTpoLeadActivityInput,
+  expectedCompanyRelationshipId?: string,
 ) {
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
   const input = logTpoLeadActivitySchema.parse(raw);
@@ -179,6 +180,7 @@ export async function logTpoLeadActivity(
       .select({
         id: placementTpoLeads.id,
         manualStage: placementTpoLeads.manualStage,
+        companyRelationshipId: placementTpoLeads.companyRelationshipId,
       })
       .from(placementTpoLeads)
       .where(and(
@@ -187,7 +189,12 @@ export async function logTpoLeadActivity(
       ))
       .for("update")
       .limit(1);
-    if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    if (!lead || (
+      expectedCompanyRelationshipId &&
+      lead.companyRelationshipId !== expectedCompanyRelationshipId
+    )) {
+      throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    }
 
     const [activity] = await tx
       .insert(placementTpoLeadActivities)

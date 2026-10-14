@@ -57,7 +57,7 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
   {
     title: "Lecture Halls & Jobs (Optional)",
     steps: [
-      { label: "Add Lecture Halls", key: "lecture-halls", href: null },
+      { label: "Add Lecture Halls", key: "lecture-halls", href: "/college/lecture-halls" },
       { label: "Jobs & Placements", key: "jobs", href: "/college/placements" },
     ],
   },

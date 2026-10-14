@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, gt, ilike, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -87,6 +87,7 @@ export const updateLectureHallSchema = z
 
 export const listLectureHallsSchema = z.object({
   collegeId: z.string().uuid(),
+  q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
   departmentId: z.string().uuid().optional(),
@@ -163,6 +164,10 @@ export async function listLectureHalls(
 
   const filters = [
     eq(lectureHalls.collegeId, college.id),
+    ...(query.q ? [ilike(
+      lectureHalls.name,
+      "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%",
+    )] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
     ...(query.departmentId
@@ -193,6 +198,7 @@ export async function listLectureHalls(
       .orderBy(
         asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
         asc(sql`lower(${lectureHalls.name})`),
+        asc(lectureHalls.id),
       )
       .limit(query.limit)
       .offset(query.offset),

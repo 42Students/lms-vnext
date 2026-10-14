@@ -82,10 +82,12 @@ export function LectureHallManager({
   collegeId,
   halls,
   departments,
+  emptyState,
 }: {
   collegeId: string;
   halls: readonly HallRow[];
   departments: readonly { id: string; name: string }[];
+  emptyState?: { title: string; description: string };
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -102,7 +104,7 @@ export function LectureHallManager({
   }
 
   function save() {
-    const capacity = Number.parseInt(draft.capacity, 10);
+    const capacity = Number(draft.capacity);
     if (!draft.name.trim()) return setFormError("Enter a name.");
     if (!Number.isInteger(capacity) || capacity < 1 || capacity > 5000) {
       return setFormError("Capacity must be between 1 and 5000.");
@@ -177,8 +179,8 @@ export function LectureHallManager({
 
       {halls.length === 0 ? (
         <EmptyState
-          title="No lecture halls yet"
-          description="Add the rooms your college teaches in, so classes can be scheduled into them."
+          title={emptyState?.title ?? "No lecture halls yet"}
+          description={emptyState?.description ?? "Add the rooms your college teaches in, so classes can be scheduled into them."}
         />
       ) : (
         <DataTable
