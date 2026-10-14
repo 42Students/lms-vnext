@@ -52,6 +52,9 @@ export async function listCollegeRoleDirectory(
     collegeId,
   });
 
+  if (kind === "FACULTY" && filter.cohortId) {
+    throw new RangeError("FACULTY_COHORT_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.classPresence !== "ALL") {
     throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
   }
@@ -98,6 +101,16 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(sectionEnrollments.status, "ACTIVE"),
     )));
+  const belongsToCohort = filter.cohortId ? exists(db.select({enrollmentId:learnerProgramEnrollments.id})
+    .from(learnerProgramEnrollments)
+    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .where(and(
+      eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+      eq(learnerProgramEnrollments.cohortId,filter.cohortId),
+      eq(learnerProgramEnrollments.status,"ACTIVE"),
+    ))) : undefined;
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
@@ -159,6 +172,7 @@ export async function listCollegeRoleDirectory(
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind === "FACULTY" ? facultyInDepartment : undefined,
+      kind === "LEARNER" ? belongsToCohort : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
@@ -280,8 +294,14 @@ export async function listCollegeRoleDirectory(
   const departmentRows = kind === "FACULTY" ? await db.select({id:departments.id,name:departments.name})
     .from(departments).where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
     .orderBy(asc(departments.name),asc(departments.id)).limit(201) : [];
+  const cohortRows = kind === "LEARNER" ? await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
+    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201) : [];
   return {
     kind, filter, items, total,
+    cohortOptions:cohortRows.slice(0,200),
+    cohortOptionsTruncated:cohortRows.length>200,
     departmentOptions:departmentRows.slice(0,200),
     departmentOptionsTruncated:departmentRows.length>200,
     pageSize: COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
