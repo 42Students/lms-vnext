@@ -1140,3 +1140,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-014 PARTIAL (round 4):** Needs Attention preview now preserves true chronological ordering across authorized interview and assessment rounds rather than presenting every later test ahead of an earlier interview. Approved reschedules are the effective schedule, with stable ties and a truthful full-count overflow. Fixed-date pure-model regressions authored. PG/browser/CI execution pending.
+
+
+**2026-10-15 chat-5 L11-016 PARTIAL (round 4):** The Placement dashboard calendar preview now shows seven contiguous Asia/Kolkata calendar days, including days without events, with two own-scheduled rounds per day and honest overflow. This replaces a misleading rolling-168-hour list that could cover eight local dates around midnight. Approved reschedule UTC instants remain authoritative; date-boundary/leap-year pure tests authored. Browser/PG/runtime checks pending.
