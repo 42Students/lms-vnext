@@ -1,0 +1,57 @@
+import "server-only";
+import { and, asc, count, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { collegeMemberships, colleges, membershipRoles, users } from "@/db/schema";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUsersPageCount } from "./admin-user-directory-model";
+export async function listSuperAdminUsers(context: RequestContext, raw: unknown) {
+ const query=adminUsersQuerySchema.parse(raw);
+ if(!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
+ const selected=context.adminScope;
+ requirePermission(context,"people.manage",{
+  organizationId:selected?.organizationId,collegeId:selected?.collegeId,
+ });
+ const conditions:SQL[]=[];
+ if(selected?.collegeId)conditions.push(eq(colleges.id,selected.collegeId));
+ else if(selected?.organizationId)conditions.push(eq(colleges.organizationId,selected.organizationId));
+ if(query.membershipStatus!=="ALL")conditions.push(eq(collegeMemberships.status,query.membershipStatus));
+ if(query.platformStatus!=="ALL")conditions.push(eq(users.platformStatus,query.platformStatus));
+ if(query.role!=="ALL") {
+  const roleIds=getDb().select({id:membershipRoles.membershipId}).from(membershipRoles)
+   .where(eq(membershipRoles.role,query.role));
+  conditions.push(inArray(collegeMemberships.id,roleIds));
+ }
+ if(query.q) {
+  const pattern="%"+query.q.replace(/[\\%_]/g,"\\$&")+"%";
+  conditions.push(or(ilike(users.displayName,pattern),ilike(colleges.name,pattern))!);
+ }
+ const db=getDb();
+ const source=db.select({
+  membershipId:collegeMemberships.id,
+  userId:users.id,
+  displayName:users.displayName,
+  platformStatus:users.platformStatus,
+  membershipStatus:collegeMemberships.status,
+  collegeName:colleges.name,
+  collegeId:colleges.id,
+  organizationId:colleges.organizationId,
+  updatedAt:collegeMemberships.updatedAt,
+ }).from(collegeMemberships)
+ .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .innerJoin(colleges,eq(colleges.id,collegeMemberships.collegeId))
+ .where(and(...conditions)).as("admin_user_scope");
+ const [totals,rows]=await Promise.all([
+  db.select({n:count()}).from(source),
+  db.select().from(source).orderBy(asc(source.displayName),asc(source.membershipId))
+   .limit(ADMIN_USERS_PAGE_SIZE).offset((query.page-1)*ADMIN_USERS_PAGE_SIZE),
+ ]);
+ const roleRows=rows.length?await db.select({membershipId:membershipRoles.membershipId,role:membershipRoles.role})
+  .from(membershipRoles).where(inArray(membershipRoles.membershipId,rows.map(x=>x.membershipId))):[];
+ const byId=new Map<string,string[]>();
+ for(const row of roleRows)byId.set(row.membershipId,[...(byId.get(row.membershipId)??[]),row.role]);
+ return {
+  query,total:totals[0]?.n??0,totalPages:adminUsersPageCount(totals[0]?.n??0),
+  items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
+ };
+}

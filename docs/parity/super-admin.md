@@ -559,3 +559,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Platform tenant directory/detail — PARTIAL:** New /admin/tenants active-college directory (query/organization filters, 20-row paging, mobile cards), /admin/colleges/[collegeId] read-only scoped detail and setup links. Uses authorized listColleges/listOrganizations; non-leaking COLLEGE_NOT_FOUND for inaccessible IDs. Pure unit plus isolated PG in-test success/foreign-scope/wrong-role tests authored, unexecuted. Remaining: onboarding Create/Set up tabs, archived tenants, lifecycle management, scope switch browser verification, test execution.
+
+
+**2026-10-14 Chat 6 / Super Admin User & Role Directory — PARTIAL:** Added /admin/people/directory, global/org/college-safe persisted memberships, role and ACTIVE|DISABLED platform filters, membership-status/name filters, 30-row server paging, mobile cards and IST timestamps. Contact data and unassigned global identities are deliberately not selected. Existing /admin/people edit controls unchanged. Authored strict query unit + disposable PG fixture success/foreign college/wrong role tests (unexecuted). Remains: legacy People Directory tabs, global user identities without memberships, detail and session actions, browser/DB gates.
