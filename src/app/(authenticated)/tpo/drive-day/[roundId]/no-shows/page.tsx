@@ -58,12 +58,20 @@ export default async function TpoNoShowReportPage({
         description={data.job.title + " · " + data.round.name +
           " · Only explicitly marked ABSENT attendance is counted as no-show."}
         actions={
-          <a
-            href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
-          >
-            Export complete attendance CSV
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
+              className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+            >
+              Export explicit no-shows CSV
+            </a>
+            <a
+              href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
+              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+            >
+              Export complete attendance CSV
+            </a>
+          </div>
         }
       />
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Attendance reconciliation">
