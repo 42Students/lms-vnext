@@ -114,7 +114,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-003 | Blueprint hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
 | L2-004 | Students hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
 | L2-005 | Back to Courses | course shell | course detail header | CLOSED |
-| L2-006 | About this course | Home | Overview | GAP |
+| L2-006 | About this course | Home | transparent authored/catalogue/path fallback provenance, persisted course code and context, explicit no-faculty state and zero-credit display; retains sanitized display-content renderer. PARTIAL pending fresh PG/tsc/lint, browser responsive and authored-html privacy acceptance | PARTIAL |
 | L2-007 | What you&apos;ll learn / learning-path summary | Home | published ordered lesson preview with own persisted item counts and null for no denominator; authored takeaways remain separate and are not fabricated. PARTIAL: fresh PostgreSQL test, tsc/lint, responsive browser and learning-path navigation acceptance not executed | PARTIAL |
 | L2-008 | Faculty/teacher context | Home | Overview | CLOSED |
 | L2-009 | Section + semester context | Home | Overview | CLOSED |

@@ -5,6 +5,7 @@ import { ExpandableCourseUpdate } from "./expandable-course-update";
 import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overview-priority";
 import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
 import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
+import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -92,6 +93,11 @@ export function LearnerCourseOverview({
 }) {
   const summary = workspace.summary;
   const pathPreview = learnerCoursePathPreview(workspace.lessons);
+  const aboutSource = learnerCourseAboutSource({
+    safeBodyHtml: meta.bodyHtml,
+    courseDescription:meta.courseDescription,
+    learningPathDescription:workspace.learningPath?.description??null,
+  });
   const progressAvailability = learnerProgressAvailability({
     hasPublishedLearningPath: workspace.learningPath !== null,
     publishedLessonCount: workspace.lessons.length,
@@ -234,6 +240,9 @@ export function LearnerCourseOverview({
             <h3 className="m-0 text-lg font-semibold text-foreground">
               About this course
             </h3>
+            <p className="mt-1 text-xs text-muted-foreground" role="note">
+              {aboutSource.label}
+            </p>
             {meta.introductionText?.trim() ? (
               <p className="mt-2 text-sm font-medium leading-6 text-foreground">
                 {meta.introductionText}
@@ -276,7 +285,10 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
           <div className="flex max-w-md flex-wrap gap-2">
-            {meta.credits ? (
+            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+              {workspace.course.code}
+            </span>
+            {meta.credits !== null ? (
               <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
                 {meta.credits} Credits
               </span>
@@ -287,6 +299,11 @@ export function LearnerCourseOverview({
             <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
               {meta.academicPeriodName}
             </span>
+            {meta.instructors.length===0 ? (
+              <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+                Faculty not recorded
+              </span>
+            ) : null}
             {meta.instructors.map((instructor) => (
               <span
                 key={instructor.membershipId}

@@ -885,3 +885,5 @@ L17-015: month/week mobile fallback now groups only real authorized events by IS
 L11-003: partial-source placements dashboard now distinguishes read failures from empty data, prevents swallowed authorization errors with an upfront persisted learner gate, shows successful sections and a refresh control, and masks missing metric sources as unknown. Fresh-learner PostgreSQL tests and pure-model tests authored, independent error-injection/CI/browser acceptance pending.
 
 2026-10-14 L2-007: published learner learning-path preview and measured item completion now shown on Course Home; authored takeaways remain separate. All unit, PG, typecheck/lint and responsive acceptance still required.
+
+2026-10-14 L2-006: About panel now labels persisted content provenance instead of conflating author HTML, catalogue and path description; surfaces course code and missing faculty honestly. No rich HTML/storage field invented. Authored unit+PG and responsive acceptance outstanding.
