@@ -66,7 +66,7 @@ export default async function FacultyContactsPage({
       <PageHeader
         eyebrow="Faculty"
         title="Contacts"
-        description="Find active people in your college by name, email or phone."
+        description="Public directory of active college names, roles and recorded departments only."
       />
 
       <nav
@@ -120,7 +120,7 @@ export default async function FacultyContactsPage({
                 name="q"
                 maxLength={200}
                 defaultValue={result.search}
-                placeholder="Name, email or phone"
+                placeholder="Name or department"
               />
             </label>
             <label className="text-xs font-semibold text-body">

@@ -1215,7 +1215,7 @@ describe("courses UI2A faculty read model", () => {
       faculty,
       {
         tab: "LEARNER",
-        search: "learner.seed@example.com",
+        search: "seed",
         page: 1,
         pageSize: 20,
       },
@@ -1224,7 +1224,7 @@ describe("courses UI2A faculty read model", () => {
       expect.objectContaining({
         membershipId:
           SEED_IDS.learnerCollegeAMembership,
-        email: "learner.seed@example.com",
+        departmentName: null,
         roles: expect.arrayContaining([
           "LEARNER",
         ]),
