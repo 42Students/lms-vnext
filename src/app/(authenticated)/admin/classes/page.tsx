@@ -7,6 +7,7 @@ export default async function SuperAdminClassesPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Classes / Sections" path="/admin/classes" statuses={statuses}
+  exportPath="/api/admin/classes/export" exportFilename="super-admin-classes-ist.csv"
   description="Read-only class structure in your selected college. Open a class workspace for scoped roster and schedule."
   searchParams={searchParams} loader={query=>listAdminClasses(context,query)}/>;
 }
