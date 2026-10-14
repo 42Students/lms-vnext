@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerSupportRequests } from "@/modules/placements/learner-support-request-service";
 import { placementRequestTypeLabel } from "@/modules/placements/learner-support-request-model";
+import {LearnerSupportCancel} from "@/components/placements/learner-support-cancel";
 export default async function LearnerSupportHistory({searchParams}:{
   searchParams:Promise<{status?:string|string[]}>;
 }) {
@@ -44,6 +45,12 @@ export default async function LearnerSupportHistory({searchParams}:{
           {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.request.requestedAt)}
         </p>
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{row.request.reason}</p>
+        {row.request.status==="PENDING" ? (
+          <div className="mt-3">
+            <LearnerSupportCancel requestId={row.request.id}
+              expectedUpdatedAt={row.request.updatedAt.toISOString()}/>
+          </div>
+        ) : null}
         {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words rounded-md bg-surface-subtle p-3 text-sm text-body">
           Placement-team note: {row.request.decisionNote}
         </p>:null}
