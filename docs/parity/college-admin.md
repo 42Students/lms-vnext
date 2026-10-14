@@ -523,6 +523,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Recorded content activity export PARTIAL (2026-10-15):** The College Admin Course Progress page now exports a max-1,000-row CSV of actual per-offering learner-content records, completed content rows and distinct learners with recorded activity (not eligible learner denominator or course completion). Export is restricted to active own-college admins, formula neutralized and truncation labeled. Isolated PG own/foreign/wrong-role coverage authored, unexecuted.
+
 **Legacy:** `/college-admin/course-progress`
 
 **Read-first PARTIAL:** `/college/course-progress` reports persisted per-offering learner-content activity, completed content records and distinct learners with any progress records. Absent activity displays zero recorded rows, not zero learner completion. Cohort/section eligibility denominators, detailed learner breakdown, completion rate, export, exact legacy and browser parity remain open.
