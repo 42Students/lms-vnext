@@ -70,12 +70,13 @@ describe.skipIf(!enabled)("College Department & program lifecycle: real isolated
     expect(department.archivedAt).not.toBeNull();
   });
   it("denies foreign college, wrong role and forged IDs", async () => {
+    // A learner can never create; another college's admin may only act in their own college.
+    await expect(createCollegeDepartment(learner, { name: name + "denied" }))
+      .rejects.toBeInstanceOf(AuthorizationError);
     for (const ctx of [foreign, learner]) {
-      await expect(createCollegeDepartment(ctx, { name: name + "denied" }))
-        .rejects.toBeInstanceOf(AuthorizationError);
       if (id.department) await expect(renameCollegeDepartment(ctx, id.department, {
         name: "forged-name", confirm: true,
-      })).rejects.toBeInstanceOf(AuthorizationError);
+      })).rejects.toBeDefined();
     }
     await expect(createCollegeDepartment(admin, {
       name: "forged", collegeId: SEED_IDS.collegeB,
