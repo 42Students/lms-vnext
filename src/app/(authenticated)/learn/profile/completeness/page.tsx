@@ -12,10 +12,9 @@ export default async function ProfileCompleteness({searchParams}:{
   const query=await searchParams;
   const context=await getCurrentRequestContext();
   // The academic read validates current college, actor, persisted learner role.
-  const [academic, data]=await Promise.all([
-    getOwnLearnerAcademicSummary(context),
-    getOwnLearnerProfileWithRuntime(context),
-  ]);
+  // Verify persisted learner ownership before loading private profile data.
+  const academic=await getOwnLearnerAcademicSummary(context);
+  const data=await getOwnLearnerProfileWithRuntime(context);
   const readiness=ownLearnerProfileReadiness(data.profile.profileDocument,query);
   if(!readiness) notFound();
   const options=[
