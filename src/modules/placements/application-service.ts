@@ -38,7 +38,8 @@ import {
   hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import { AuthorizationError, can } from "@/modules/permissions/policy";
+import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
 import { evaluatePlacementEligibility } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
@@ -928,7 +929,11 @@ export async function getPlacementApplication(
 export async function withdrawPlacementApplication(
   context: RequestContext,
   applicationIdInput: string,
+  reasonInput?: string,
 ) {
+  // Older internal callers may omit a reason; confirmed UI writes must supply
+  // one through the strict route schema. No invented default reason is stored.
+  const reason = learnerWithdrawalReasonSchema.optional().parse(reasonInput) ?? null;
   const applicationId =
     placementApplicationIdSchema.parse(
       applicationIdInput,
@@ -939,6 +944,12 @@ export async function withdrawPlacementApplication(
     context,
     row.job.collegeId,
   );
+  if (!can(context, "placements.read", {
+    collegeId: row.job.collegeId,
+    organizationId: membership.organizationId,
+  })) {
+    throw new AuthorizationError("placements.read");
+  }
 
   if (
     membership.id !==
@@ -1015,6 +1026,7 @@ export async function withdrawPlacementApplication(
               placementApplications.status,
               "SUBMITTED",
             ),
+            eq(placementApplications.membershipId, membership.id),
           ),
         )
         .returning();
@@ -1030,6 +1042,7 @@ export async function withdrawPlacementApplication(
           fromStatus: "SUBMITTED",
           toStatus: "WITHDRAWN",
           actorUserId: context.user.id,
+          reason,
         });
 
       await recordActivityEventInTransaction(
@@ -1050,6 +1063,7 @@ export async function withdrawPlacementApplication(
             roleOptionId:
               row.roleOption.id,
             membershipId: membership.id,
+            reasonProvided: reason !== null,
           },
           groupKey:
             `placement-job:${row.job.id}:applications`,
