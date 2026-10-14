@@ -287,3 +287,98 @@ stale replay denial, and unchanged record. Existing Mentor task-details
 service-level PG success/foreign/stale coverage remains in place.
 No independent PostgreSQL execution or tsc/eslint evidence in this chat;
 do not promote any parity row to DONE.
+
+## 2026-10-14 B — Faculty read-first incremental rows (PARTIAL)
+
+- **Course Discussions:** newly registered-message participation overview
+  (own Section, role counts and latest 12 timestamps), no inferred reply tree,
+  unanswered-learner flag or deleted text.
+- **Course Attendance:** Section session-status coverage (marked/ended-unmarked/
+  upcoming) with bounded 40-row display and explicit truncation, no invented
+  individual marks or final attendance percentages.
+- **Skipped Faculty Section notices:** DB10 announcement and Section-targeting
+  tables not registered. Existing notice screen remains transparently blocked.
+- PostgreSQL fixtures use unique Course and created Faculty-only/Learner members;
+  read success plus role/foreign/forged selectors authored. No execution
+  evidence in this session; legacy acceptance and browser states remain PARTIAL.
+
+## 2026-10-14 C — Mentor task board review slice (PARTIAL)
+
+Selected **Project Tasks / Board**, since Release/Sprint timeline already
+has a scoped read and DB evidence authored. Added persisted task status/priority/
+sprint read with 20-row paging, search and responsive cards. The full Board
+still lacks assignee/workload source fields in promoted DB07 and may not be
+declared DONE. Legacy board interaction, real PG and browser acceptance open.
+
+## 2026-10-14 D — explicit A–D skipped-row disposition, no parity promotion
+
+**Scope:** A audited existing optimistic token readers/writers, B improved two
+Faculty read-first slices (Course Discussions and Course Attendance), and C
+improved the Mentor Project Tasks / Board read. The rows below are **every
+other unresolved or intentionally retired Faculty/Mentor master-matrix row**
+from the authoritative tables above. A row is not DONE because a page exists
+or because an integration test has been authored. This work does not alter any
+existing DONE parity row.
+
+### Faculty rows deliberately skipped (15)
+
+| Skipped row | Current status | Primary blocker | Why skipped / required proof |
+| --- | --- | --- | --- |
+| Course Overview | PARTIAL | buildable | Verify exact legacy summary/actions, progress signals and browser states using current migrated Course deliveries. |
+| Blueprint | PARTIAL | owner decision | Storage-backed file/video/live-class workflows require an approved provider and product semantics; remaining lesson/assessment controls are buildable. |
+| Course Students | PARTIAL | owner decision | Private learner profile/photo fields need a visibility and storage decision; current roster/detail behavior still needs browser proof. |
+| Contacts — All | PARTIAL | owner decision | Decide public contact profile/photo depth versus private identity fields; verify pagination/deep links and mobile layouts. |
+| Contacts — Teachers | PARTIAL | owner decision | Specify Faculty-to-Faculty profile/contact action visibility; private sections are deliberately not exposed. |
+| Contacts — Students | PARTIAL | owner decision | Specify student contact/profile disclosure and photo policy; keep sensitive documents excluded. |
+| Notifications | PARTIAL | buildable | Verify scoped announcement producers, recipient read/unread deep links, stale states and authenticated browser behavior. |
+| Class Schedule | PARTIAL | owner decision | Confirm source/college timezone policy before closing IST/locale-boundary parity; browser mobile navigation remains. |
+| All Quizzes | PARTIAL | buildable | Complete legacy create/edit/question drawer, attempt/result workflows and positive DB/browser verification. |
+| All Assignments | PARTIAL | buildable | Complete legacy create/edit/delete/view-submissions modal and grading interactions with browser/DB validation. |
+| Assignment report | PARTIAL | buildable | Run exact-Section CSV GET, distribution, grading drill-down, empty/error and real download browser/DB acceptance. |
+| Quiz report | PARTIAL | buildable | Run exact-Section CSV GET, question accuracy, per-attempt analysis, result masking and browser/DB acceptance. |
+| Self Profile | PARTIAL | missing migrated table | Rich Faculty self-document sections (resume, social, qualifications, certifications, awards, verification) lack promoted Faculty document storage; new live teaching-assignment subpage covers registered subset only. |
+| File Explorer | RETIRED | owner decision | RETIRED by product decision: legacy redirects to Courses, so do not build a standalone explorer. |
+| `/teacher` redirect | RETIRED | owner decision | RETIRED redirect-only route; ensure redirect behavior but no new page. |
+
+### Mentor rows deliberately skipped (18)
+
+| Skipped row | Current status | Primary blocker | Why skipped / required proof |
+| --- | --- | --- | --- |
+| Mentor landing / Projects-disabled state | PARTIAL | buildable | Verify module enable/disable routing, notifications fallback, and role-denied browser behavior. |
+| Project Overview | PARTIAL | buildable | Complete existing workspace review/feedback/read-only presentation and browser acceptance; do not invent archived history. |
+| Project Team | PARTIAL | owner decision | Confirm allowed Mentor/team lifecycle writes, group-managed assignments and identity privacy; registered history/coverage reads exist. |
+| Project Sprints | PARTIAL | buildable | A scoped, confirmation-gated sprint title/description PATCH now exists using migrated project_sprints, same-origin, transaction + audit, and optimistic locking; tests are authored. Sprint date/goal fields are not… |
+| Mentor pending task reviews | PARTIAL | buildable | Complete legacy task detail and review-control parity; confirm positive DB/role-denial and browser evidence. |
+| Project Resources | PARTIAL | owner decision | Storage-backed uploads depend on an approved live provider; link/resource metadata can be built, but files cannot be invented. |
+| Project Meetings | PARTIAL | buildable | Reconcile schedule/confirm/reschedule/decline/cancel/complete, expired requests, timezone and meeting notes in browser/DB. |
+| Project Delivery / review | PARTIAL | buildable | Check review/approve/reopen/revision transitions, archived states and full feedback history against legacy. |
+| Project Activity | PARTIAL | buildable | New exact-project sanitized activity history added; verify event producers, detail parity, paging and legacy browser evidence. |
+| Global Meetings calendar | PARTIAL | buildable | Verify requested past-date behavior, client clock/timezone and real responsive calendar; use persisted meetings. |
+| Mentor Notifications | PARTIAL | buildable | Inbox page already exists; verify producers, reopen deduplication, unread actions, deep links and full legacy/browsers parity. |
+| Mentor delivery review queue | PARTIAL | buildable | Confirm exact pending/delivery transitions and scoped browser/DB status recovery; workspace owns writes. |
+| Mentor portfolio activity | PARTIAL | buildable | Cross-project safe timeline exists; audit complete registered producer coverage and browser/tenant checks. |
+| Mentor Courses routes | RETIRED | owner decision | RETIRED redirect stub by established product decision; no Course feature to build. |
+| Mentor Contacts routes | RETIRED | owner decision | RETIRED redirect stub; no Mentor directory surface to build. |
+| Mentor All Quizzes | RETIRED | owner decision | RETIRED redirect stub; no Mentor aggregate Quiz feature to build. |
+| Mentor File Explorer | RETIRED | owner decision | RETIRED redirect stub; no standalone storage explorer to build. |
+| Mentor Profile | RETIRED | owner decision | RETIRED redirect stub by explicit product design; not a missing Mentor profile page. |
+
+### Detailed sub-capabilities skipped despite existing parent rows
+
+| Sub-capability | Parent row | Reason it was not fabricated |
+| --- | --- | --- |
+| Section notices/announcements for Faculty and learners | Faculty Course Discussions / Notifications | DB10 Section-targeted announcement storage is not promoted; current read-only notice page states the blocker; no fictional posts or sends |
+| Faculty reply threads as true parent-child relationships | Faculty Course Discussions | Current discussion reply is encoded in flattened text with short parent prefix, not a migrated parent-message FK; preserve existing reply action, but do not invent a reconstructable tree |
+| Faculty rich profile contacts, documents, badges and certificates | Faculty Self Profile | No approved promoted privacy/storage fields for these values; changing email/phone would mutate login identifiers |
+| Mentor task assignment, effort estimates and workload balance | Mentor Project Tasks / Board | DB07 has no authoritative assignee/workload columns; the new board read shows only task status, priority and sprint |
+| Mentor task comment/reply persistence | Mentor Project Tasks / Board | No promoted task-comments or reply store; registered task submission feedback is read-only evidence, not a threaded write destination |
+| Mentor storage-backed file uploads | Mentor Project Resources | Storage provider/owner decision not approved; do not create placeholder attachment URLs |
+| Historical mentor staffing adequacy | Mentor Project Team | Registered active member roles exist, but staffing policy, historical snapshots and identity disclosure require owner decisions |
+
+**Still outstanding for the A–C implementation slices:** Execute focused unit,
+ESLint and TypeScript checks; independently run disposable PostgreSQL success,
+wrong-role, forged/foreign-selector, stale-token and SQL-default-microsecond
+cases; then perform authenticated mobile/browser and legacy-oracle acceptance.
+These tests have been authored and reviewed as source, but are not claimed as
+executed. Existing PARTIAL rows remain PARTIAL, existing RETIRED decisions
+remain RETIRED; no DONE parity row was changed.
