@@ -5,6 +5,8 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
+import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
+import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -14,6 +16,8 @@ if (!process.env.TEST_DATABASE_URL) {
 const pool = new Pool({connectionString: process.env.TEST_DATABASE_URL, max:1});
 const ids = {
   college:randomUUID(), learner:randomUUID(), membership:randomUUID(),
+  department:randomUUID(),program:randomUUID(),period:randomUUID(),
+  cohort:randomUUID(),enrollment:randomUUID(),
   role:randomUUID(), mentor:randomUUID(), mentorMembership:randomUUID(),
   mentorRole:randomUUID(), template:randomUUID(), version:randomUUID(),
   assignment:randomUUID(), project:randomUUID(), projectMember:randomUUID(),
@@ -40,6 +44,23 @@ async function setup() {
     await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,$3)",
       [role,membership,roleName]);
   }
+  // Produce all academic parentage locally, including the learner's enrollment.
+  await pool.query("insert into departments(id,college_id,name) values($1,$2,'Own Project Test Department')",
+    [ids.department,ids.college]);
+  await pool.query(`insert into programs(id,department_id,name,code,duration_terms)
+    values($1,$2,'Own Project Program',$3,8)`,
+    [ids.program,ids.department,"P7-"+suffix]);
+  await pool.query(`insert into academic_periods
+    (id,college_id,name,code,start_date,end_date,status)
+    values($1,$2,'Own Project Term',$3,'2026-07-01','2026-12-31','ACTIVE')`,
+    [ids.period,ids.college,"T7-"+suffix]);
+  await pool.query(`insert into cohorts(id,program_id,name,code,start_period_id,status)
+    values($1,$2,'Own Project Cohort',$3,$4,'ACTIVE')`,
+    [ids.cohort,ids.program,"B7-"+suffix,ids.period]);
+  await pool.query(`insert into learner_program_enrollments
+    (id,membership_id,program_id,cohort_id,status)
+    values($1,$2,$3,$4,'ACTIVE')`,
+    [ids.enrollment,ids.membership,ids.program,ids.cohort]);
   // Minimal project-template lineage is per-test and is not a shared seeded project.
   await pool.query(`insert into project_templates
     (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
@@ -74,6 +95,11 @@ async function cleanup() {
   await pool.query("delete from project_template_college_assignments where id=$1",[ids.assignment]);
   await pool.query("delete from project_template_versions where id=$1",[ids.version]);
   await pool.query("delete from project_templates where id=$1",[ids.template]);
+  await pool.query("delete from learner_program_enrollments where id=$1",[ids.enrollment]);
+  await pool.query("delete from cohorts where id=$1",[ids.cohort]);
+  await pool.query("delete from academic_periods where id=$1",[ids.period]);
+  await pool.query("delete from programs where id=$1",[ids.program]);
+  await pool.query("delete from departments where id=$1",[ids.department]);
   await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",
     [[ids.membership,ids.mentorMembership]]);
   await pool.query("delete from college_memberships where id=any($1::uuid[])",
@@ -130,5 +156,38 @@ describe("L20-013 PostgreSQL task-progress read",()=>{
     ];
     for(const actor of denied)
       await expect(listMyLearnerProjectProgress(actor,[ids.project])).rejects.toBeDefined();
+  });
+});
+
+describe("L20-016 project list data-state read (PostgreSQL)",()=>{
+  it("distinguishes a successful scoped project read from an empty search",async()=>{
+    const rows=(await listMyProjectInstances(context)).filter(row=>row.memberRole==="LEARNER");
+    expect(rows.some(row=>row.project.id===ids.project)).toBe(true);
+    expect(learnerProjectListEmptyState(rows.length,rows.length).reason).toBe("HAS_RESULTS");
+    const unmatched=rows.filter(row=>row.project.title==="Never-matches-this-project");
+    expect(learnerProjectListEmptyState(rows.length,unmatched.length).reason).toBe("FILTERED_EMPTY");
+  });
+  it("does not classify an authorization error as an empty project state",async()=>{
+    const suspended:RequestContext={
+      ...context,membership:{...context.membership!,status:"SUSPENDED"},
+    };
+    await expect(listMyProjectInstances(suspended)).rejects.toBeDefined();
+  });
+});
+
+describe("L20-017 persisted scoped Projects mobile filter inputs",()=>{
+  it("offers real own-project state for mobile filter choices",async()=>{
+    const assigned=(await listMyProjectInstances(context))
+      .filter(row=>row.memberRole==="LEARNER");
+    expect(assigned.some(row=>row.project.id===ids.project)).toBe(true);
+    expect(learnerProjectMobileFilterSummary({status:"CURRENT",pageSize:25}))
+      .toMatchObject({count:1,labels:["Current"]});
+    expect(assigned.filter(row=>row.project.status!=="ARCHIVED" &&
+      row.project.status!=="COMPLETED").map(row=>row.project.id)).toContain(ids.project);
+  });
+  it("does not surface a suspended learner's project list",async()=>{
+    const denied:RequestContext={...context,
+      membership:{...context.membership!,status:"SUSPENDED"}};
+    await expect(listMyProjectInstances(denied)).rejects.toBeDefined();
   });
 });
