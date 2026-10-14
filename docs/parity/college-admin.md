@@ -833,6 +833,8 @@ Authored regression: `tests/unit/activity-date-boundary.test.ts` covers IST→UT
 
 ### W06 College Admin announcements staging — 2026-10-10
 
+**Personal college notice read PARTIAL (2026-10-14):** The college announcements page now also shows up to 50 persisted `in_app_notifications` addressed to the active College Admin and tied to activity events within the same college, with an explicit link to the full personal inbox. This does not implement, infer or enable the unregistered DB10 college-wide `announcements` table; no broadcast publication/delivery is claimed. New isolated PostgreSQL read-positive/foreign-recipient/foreign-event/wrong-role checks and pure projection tests are authored. Runtime/browser acceptance remains pending.
+
 A College Admin management workspace is source-authored at `/college/announcements` with server-derived own-college audience targets, create/edit/retarget, schedule/expiry, pin, soft delete/restore, active/deleted views and stable older-page continuation. Cross-college target IDs are resolved and rejected server-side. The page is deliberately inactive until W01 promotes DB10 Announcements; browser evidence is absent, so this is **not a DONE page**.
 
 
