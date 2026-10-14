@@ -29,7 +29,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role}</p></div><strong className="text-sm">{row.status}</strong></div>
     <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd>{row.issued.slice(0,10)}</dd></div><div><dt>Responded</dt><dd>{row.responded?.slice(0,10)??"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div></dl>
-    <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="text-primary-text" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>\n    <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
+    <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="text-primary-text" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
+    <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="text-primary-text" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
    </article>)}</section>}
   <p className="text-xs text-muted-foreground">Counts include offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
