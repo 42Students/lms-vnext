@@ -998,3 +998,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 Profile sections: same-section stale versions now denied transactionally under row lock; other sections preserved with jsonb_set. Optimistic request includes expectedItems; no identity documents/files and no new external sending. Added pure-model and own-learner PostgreSQL tests, multi-tab/CI acceptance pending.
 
 2026-10-14 private learner contacts: optimistic compare of own saved alternate phone/email, transactional jsonb_set and no-op audit suppression; no identity upload and no contact disclosure to other roles. Requires fresh PostgreSQL/TypeScript/ESLint and browser/multi-tab acceptance.
+
+2026-10-14 learner issued-offer extension: in-place confirmation uses existing transactional placement request with persisted expiry optimistic token under offer row lock. No external sending or files. Fresh-learner PostgreSQL and pure-model tests authored; browser/date boundary/CI acceptance pending.

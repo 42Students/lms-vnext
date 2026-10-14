@@ -1276,6 +1276,7 @@ export const createPlacementRequestInputSchema =
           offerId: placementOfferIdSchema,
           reason: placementRequestReasonSchema,
           requestedExpiresAt: z.coerce.date(),
+          expectedExpiresAt: z.string().datetime({offset:true}).optional(),
         })
         .strict(),
     ])

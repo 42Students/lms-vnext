@@ -367,6 +367,8 @@ async function validateRequestTarget(
     if (
       offer.status !== "ISSUED" ||
       !offer.expiresAt ||
+      (input.expectedExpiresAt!==undefined &&
+        offer.expiresAt.toISOString()!==input.expectedExpiresAt) ||
       input.requestedExpiresAt.getTime() <=
         offer.expiresAt.getTime() ||
       input.requestedExpiresAt.getTime() <=
@@ -436,6 +438,23 @@ export async function createPlacementRequest(
   const db = getDb();
 
   const created = await db.transaction(async (tx) => {
+    if(input.requestType==="OFFER_EXTENSION"){
+      // Revalidate against a locked, persisted offer rather than a stale card.
+      const [currentOffer]=await tx.select({
+        applicationId:placementOffers.applicationId,
+        status:placementOffers.status,
+        expiresAt:placementOffers.expiresAt,
+      }).from(placementOffers).where(eq(placementOffers.id,input.offerId))
+        .for("update").limit(1);
+      if(!currentOffer || currentOffer.applicationId!==input.applicationId ||
+        currentOffer.status!=="ISSUED" || !currentOffer.expiresAt ||
+        (input.expectedExpiresAt!==undefined &&
+          currentOffer.expiresAt.toISOString()!==input.expectedExpiresAt) ||
+        input.requestedExpiresAt.getTime()<=currentOffer.expiresAt.getTime() ||
+        input.requestedExpiresAt.getTime()<=now.getTime()){
+        throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+      }
+    }
     const [request] = await tx
       .insert(placementLearnerRequests)
       .values({
