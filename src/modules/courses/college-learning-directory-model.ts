@@ -10,12 +10,18 @@ export const collegeLearningQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
+export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
+  offeringStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
+});
+export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 
-export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLearningQuery) {
+export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLearningQuery | CollegeLessonQuery) {
   const base = kind === "LESSONS" ? "/college/lessons" : "/college/course-progress";
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if (kind === "LESSONS" && "offeringStatus" in query && query.offeringStatus !== "ALL")
+    params.set("offeringStatus", query.offeringStatus);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }

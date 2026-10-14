@@ -1,18 +1,19 @@
-import { collegeStructureQuerySchema } from "./college-structure-directory-model";
+import { collegeClassQuerySchema } from "./college-structure-directory-model";
 import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
 
 export const CLASSES_EXPORT_CAP = 1000;
-export const collegeClassesExportSchema = collegeStructureQuerySchema.omit({ page: true });
+export const collegeClassesExportSchema = collegeClassQuerySchema.omit({ page: true });
 
 export type ClassExportRow = {
   name: string; code: string; programName: string; cohortName: string;
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; status: "ALL" | "ACTIVE" | "ARCHIVED" }) {
+export function classesExportHref(raw: { q: string; programId?: string; minimumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
+  if (raw.minimumCapacity !== undefined) params.set("minimumCapacity", String(raw.minimumCapacity));
   if (raw.status !== "ACTIVE") params.set("status", raw.status);
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
