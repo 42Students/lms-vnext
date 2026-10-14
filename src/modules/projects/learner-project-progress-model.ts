@@ -11,7 +11,9 @@ export function summarizeLearnerProjectProgress(
   projectIds: readonly string[],
   tasks: readonly LearnerProjectTaskStatus[],
 ): LearnerProjectProgress[] {
-  const byId = new Map(projectIds.map(id => [id, {total:0,done:0,blocked:0}]));
+  const byId = new Map<string, { total: number; done: number; blocked: number }>(
+    projectIds.map(id => [id, {total:0,done:0,blocked:0}]),
+  );
   for (const task of tasks) {
     const item = byId.get(task.projectId);
     if (!item) continue;

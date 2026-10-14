@@ -20,7 +20,7 @@ describe("recruiter job visibility", () => {
   it("rejects wrong-role, disabled and stale grants", () => {
     expect(isRecruiterJobVisible({ ...ctx, recruiter: null, membership: { id: uid, collegeId: college, organizationId: uid, status: "ACTIVE", roles: ["TPO"] } },
       college, relationship)).toBe(false);
-    expect(isRecruiterJobVisible({ ...ctx, user: { ...ctx.user, platformStatus: "SUSPENDED" } }, college, relationship)).toBe(false);
+    expect(isRecruiterJobVisible({ ...ctx, user: { ...ctx.user, platformStatus: "DISABLED" } }, college, relationship)).toBe(false);
     expect(isRecruiterJobVisible({ ...ctx, recruiter: { ...ctx.recruiter!, grants: [] } }, college, relationship)).toBe(false);
   });
 });

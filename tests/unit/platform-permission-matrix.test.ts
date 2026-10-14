@@ -203,6 +203,9 @@ const expectedOwnActors = {
     "superadmin",
     "collegeAdmin",
   ],
+  "project-template.read": [
+    "superadmin",
+  ],
   "project-template.manage": [
     "superadmin",
   ],
