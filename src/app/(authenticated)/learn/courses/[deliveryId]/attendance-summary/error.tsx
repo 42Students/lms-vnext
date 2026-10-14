@@ -1,0 +1,28 @@
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function LearnerCourseDrilldownError({
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <ErrorState
+      title="Could not load course attendance history"
+      description="The authorized course records could not be loaded. This does not mean the learner has no data."
+      action={
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button variant="secondary" onClick={reset}>Retry</Button>
+          <Link href="/learn/attendance"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body">
+            Attendance
+          </Link>
+        </div>
+      }
+    />
+  );
+}
