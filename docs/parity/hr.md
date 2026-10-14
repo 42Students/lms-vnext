@@ -592,3 +592,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Company report current-page funnel totals — PARTIAL:** Adds clear page-only sums for authorized persisted application and outstanding/accepted/declined/joined offer counts, explicitly avoiding claims about full employer totals or distinct candidate identities. No new backend query/contact exposure. Pure aggregate model/unit authored; runtime/browser checks pending.
+
+
+**2026-10-15 chat-10 R6 / Team state correctness — PARTIAL:** Company & Team distinguishes a true self-only authorized roster from zero persisted members, search misses and out-of-range pages; matching teammate rows remain visible, including the You marker. Pure unit cases authored; PG/browser validation pending.
