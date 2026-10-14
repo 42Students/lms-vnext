@@ -11,6 +11,7 @@ import {CollegeFacultyReassignAction} from "@/components/college/college-faculty
 import { PageHeader } from "@/components/ui/page-header";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
+import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-assignment-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -51,6 +52,10 @@ export default async function CollegeFacultyAssignmentPage({
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
       />
+      <Link prefetch={false} href={facultyAssignmentCsvHref(query)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Export filtered faculty assignments CSV
+      </Link>
       <CollegeFacultyAssignmentCreate {...options} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
