@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne,sql} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,placementJobRoundEvents,placementJobRounds,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -7,7 +7,8 @@ import {PlacementsServiceError} from "./errors";
 import {placementRoundIdSchema} from "./validation";
 import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {tpoInterviewRescheduleSchema,parseIstRoundLocalTime,
-  overlappingInterviewVenue,validInterviewWindow} from "./tpo-interview-reschedule-model";
+  validInterviewWindow} from "./tpo-interview-reschedule-model";
+import {requireAvailableRoundVenue} from "./round-venue-booking-service";
 export async function rescheduleTpoInterview(context:RequestContext,rawRoundId:unknown,raw:unknown){
  const collegeId=await requireTpoJobCollege(context),roundId=placementRoundIdSchema.parse(rawRoundId);
  const input=tpoInterviewRescheduleSchema.parse(raw);
@@ -26,25 +27,9 @@ export async function rescheduleTpoInterview(context:RequestContext,rawRoundId:u
    throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_EDITABLE");
   if(round.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
-  const normalizedVenue=input.venue?.trim().toLocaleLowerCase()??"";
   if(input.mode==="ON_CAMPUS"){
-   if(!round.durationMinutes||round.durationMinutes<=0)
-    throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
-   // Serialize this college+venue among reschedules through this writer.
-   await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${collegeId}::text || '|' || ${normalizedVenue}::text))`);
-   const competitors=await tx.select({
-    id:placementJobRounds.id,scheduledAt:placementJobRounds.scheduledAt,
-    durationMinutes:placementJobRounds.durationMinutes,
-   }).from(placementJobRounds)
-    .innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
-    .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"),
-     ne(placementJobRounds.id,roundId),eq(placementJobRounds.status,"SCHEDULED"),
-     eq(placementJobRounds.mode,"ON_CAMPUS"),
-     sql`lower(btrim(${placementJobRounds.venue})) = ${normalizedVenue}`))
-    .limit(1001);
-   if(competitors.length>1000||overlappingInterviewVenue(at,round.durationMinutes,
-    competitors.flatMap(r=>r.scheduledAt?[{start:r.scheduledAt,durationMinutes:r.durationMinutes}]:[])))
-    throw new PlacementsServiceError("PLACEMENT_ROUND_VENUE_CONFLICT");
+   await requireAvailableRoundVenue(tx,{collegeId,roundId,venue:input.venue??"",
+    start:at,durationMinutes:round.durationMinutes});
   }
   const [updated]=await tx.update(placementJobRounds).set({
    scheduledAt:at,timezone:"Asia/Kolkata",mode:input.mode,

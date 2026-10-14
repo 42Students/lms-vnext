@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
 import {rescheduleTpoInterview} from "@/modules/placements/tpo-interview-reschedule-service";
+import {actOnPlacementRound} from "@/modules/placements/round-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=process.env.DB09_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
@@ -13,7 +14,7 @@ const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:
 const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"tpo-interview-reschedule",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
-const ids:{company?:string;relationship?:string;job?:string;first?:string;second?:string}={};const roles:string[]=[];
+const ids:{company?:string;relationship?:string;job?:string;otherJob?:string;first?:string;second?:string}={};const roles:string[]=[];
 async function fixture(){
  if(!pool)throw Error("Disposable PG required");const title="Interview "+randomUUID();
  ids.company=(await pool.query<{id:string}>(
@@ -25,10 +26,13 @@ async function fixture(){
  ids.job=(await pool.query<{id:string}>(
   "INSERT INTO placement_jobs(college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,application_mode,status,published_at,created_by_user_id) VALUES($1,$2,$3,$4,'Interview fixture','FULL_TIME','ONSITE','INTERNAL','PUBLISHED',now(),$5) RETURNING id",
   [SEED_IDS.collegeA,SEED_IDS.placementSeasonA,ids.relationship,title,SEED_IDS.facultyUser])).rows[0]!.id;
+ ids.otherJob=(await pool.query<{id:string}>(
+  "INSERT INTO placement_jobs(college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,application_mode,status,published_at,created_by_user_id) SELECT college_id,season_id,company_relationship_id,title||' competitor',description,employment_type,work_mode,application_mode,status,published_at,created_by_user_id FROM placement_jobs WHERE id=$1 RETURNING id",
+  [ids.job])).rows[0]!.id;
  for(const [index,delay] of [[1,3],[2,4]] as const){
   const row=await pool.query<{id:string}>(
    "INSERT INTO placement_job_rounds(job_id,sequence,kind,name,created_by_user_id,status,scheduled_at,timezone,mode,venue,duration_minutes) VALUES($1,$2,'INTERVIEW',$3,$4,'SCHEDULED',now()+($5::int * interval '1 day'),'Asia/Kolkata','ON_CAMPUS','Room A',60) RETURNING id",
-   [ids.job,index,"Round "+index,SEED_IDS.facultyUser,delay]);
+   [index===1?ids.job:ids.otherJob,index,"Round "+index,SEED_IDS.facultyUser,delay]);
   if(index===1)ids.first=row.rows[0]!.id;else ids.second=row.rows[0]!.id;
  }
  await pool.query("UPDATE placement_job_rounds SET updated_at=date_trunc('milliseconds',updated_at)+interval '413 microseconds' WHERE id=$1",[ids.first]);
@@ -44,6 +48,7 @@ async function cleanup(){
   await pool.query("DELETE FROM placement_job_rounds WHERE id=$1",[id]);
  }
  if(ids.job)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.job]);
+ if(ids.otherJob)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.otherJob]);
  if(ids.relationship)await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[ids.relationship]);
  if(ids.company)await pool.query("DELETE FROM placement_companies WHERE id=$1",[ids.company]);
 }
@@ -76,12 +81,36 @@ describe.skipIf(!enabled)("TPO interview reschedule PG",()=>{
   const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
   await expect(rescheduleTpoInterview(wrong,id,base)).rejects.toBeInstanceOf(AuthorizationError);
   const target=new Date(competitor.scheduled_at.getTime()+86400000);
-  const saved=await rescheduleTpoInterview(tpo,id,{...base,localDateTime:localIst(target)});
+  const offsetToken=new Date(new Date(base.expectedUpdatedAt).getTime()+19800000)
+   .toISOString().replace("Z","+05:30");
+  const saved=await rescheduleTpoInterview(tpo,id,{...base,expectedUpdatedAt:offsetToken,localDateTime:localIst(target)});
   expect(saved.scheduledAt).toBe(new Date(localIst(target)+":00+05:30").toISOString());
   await expect(rescheduleTpoInterview(tpo,id,{...base,localDateTime:localIst(target)}))
    .rejects.toMatchObject({code:"PLACEMENT_ROUND_STALE"});
   const audit=await pool.query<{n:number}>(
    "SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_TPO_INTERVIEW_RESCHEDULED'",[id]);
   expect(audit.rows[0]?.n).toBe(1);
+  // The generic calendar writer must honor bookings made by the reschedule writer.
+  await expect(actOnPlacementRound(tpo,ids.second!,{action:"SCHEDULE",
+   scheduledAt:new Date(saved.scheduledAt!),timezone:"Asia/Kolkata",mode:"ON_CAMPUS",venue:" room a "}))
+   .rejects.toMatchObject({code:"PLACEMENT_ROUND_VENUE_CONFLICT"});
+  // A boundary-touching booking is not an overlap.
+  const adjacent=await actOnPlacementRound(tpo,ids.second!,{action:"SCHEDULE",
+   scheduledAt:new Date(new Date(saved.scheduledAt!).getTime()+3600000),
+   timezone:"Asia/Kolkata",mode:"ON_CAMPUS",venue:"Room A"});
+  expect(adjacent.status).toBe("SCHEDULED");
+  const raceVenue="Race "+randomUUID();
+  const raceLocal=localIst(new Date(target.getTime()+86400000));
+  const competition=await Promise.allSettled([
+   rescheduleTpoInterview(tpo,id,{...base,expectedUpdatedAt:saved.updatedAt,
+    localDateTime:raceLocal,venue:raceVenue}),
+   actOnPlacementRound(tpo,ids.second!,{action:"SCHEDULE",
+    scheduledAt:new Date(raceLocal+":00+05:30"),timezone:"Asia/Kolkata",
+    mode:"ON_CAMPUS",venue:raceVenue},adjacent.updatedAt.toISOString()),
+  ]);
+  expect(competition.filter(result=>result.status==="fulfilled")).toHaveLength(1);
+  const denied=competition.find(result=>result.status==="rejected");
+  expect(denied?.status==="rejected"?denied.reason:null)
+   .toMatchObject({code:"PLACEMENT_ROUND_VENUE_CONFLICT"});
  });
 });

@@ -17,6 +17,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
+import {requireAvailableRoundVenue} from "./round-venue-booking-service";
 import {
   createPlacementRoundInputSchema,
   placementJobIdSchema,
@@ -312,14 +313,23 @@ export async function actOnPlacementRound(
         ? "RESCHEDULED"
         : "SCHEDULED";
     return db.transaction(async (tx) => {
+      const [lockedJob] = await tx.select({status:placementJobs.status})
+        .from(placementJobs).where(eq(placementJobs.id,current.job.id)).for("update").limit(1);
+      if(!lockedJob||lockedJob.status==="CLOSED"||lockedJob.status==="ARCHIVED")
+        throw new PlacementsServiceError("PLACEMENT_ROUND_JOB_READ_ONLY");
       const [locked] = await tx.select({
         updatedAt: placementJobRounds.updatedAt,
         status: placementJobRounds.status,
+        durationMinutes: placementJobRounds.durationMinutes,
       }).from(placementJobRounds)
         .where(eq(placementJobRounds.id, roundId)).for("update").limit(1);
       if (!locked || locked.status !== current.round.status ||
         (expectedUpdatedAt && locked.updatedAt.toISOString() !== expectedUpdatedAt))
         throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
+      if(input.mode==="ON_CAMPUS")await requireAvailableRoundVenue(tx,{
+        collegeId:current.job.collegeId,roundId,venue:input.venue??"",
+        start:input.scheduledAt!,durationMinutes:locked.durationMinutes,
+      });
       const [updated] = await tx
         .update(placementJobRounds)
         .set({
@@ -337,7 +347,7 @@ export async function actOnPlacementRound(
               : null,
           resultsDueAt:
             input.resultsDueAt ?? null,
-          updatedAt: new Date(),
+          updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobRounds.updatedAt}) + interval '1 millisecond')`,
         })
         .where(
           and(

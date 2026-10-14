@@ -9,6 +9,10 @@ describe("TPO interview reschedule policy",()=>{
   expect(tpoInterviewRescheduleSchema.safeParse({...valid,venue:undefined}).success).toBe(false);
   expect(tpoInterviewRescheduleSchema.safeParse({...valid,confirmed:false}).success).toBe(false);
   expect(tpoInterviewRescheduleSchema.safeParse({...valid,collegeId:"forged"}).success).toBe(false);
+  expect(tpoInterviewRescheduleSchema.parse({...valid,expectedUpdatedAt:"2026-10-14T17:30:00.123+05:30"})
+   .expectedUpdatedAt).toBe(valid.expectedUpdatedAt);
+  expect(tpoInterviewRescheduleSchema.safeParse({...valid,mode:"VIRTUAL",meetingUrl:"javascript:alert(1)"}).success).toBe(false);
+  expect(tpoInterviewRescheduleSchema.safeParse({...valid,mode:"VIRTUAL",meetingUrl:"https://meet.example.org/panel"}).success).toBe(true);
  });
  it("compares half-open venue intervals and rejects unknown duration",()=>{
   const start=parseIstRoundLocalTime("2026-10-20T10:00");
