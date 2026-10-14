@@ -11,7 +11,7 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
   id:x.id,lessonId:l.id,title:x.title,description:x.description,dueAt:x.dueAt?.toISOString()??null,
   maxAttempts:x.maxAttempts,sequence:x.sequence,status:x.status,updatedAt:x.updatedAt.toISOString(),
  })));
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Section quizzes"
    description={workspace.course.courseName+" · "+workspace.course.sectionName}/>
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}

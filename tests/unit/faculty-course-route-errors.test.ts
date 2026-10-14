@@ -4,7 +4,7 @@ import { hidesFacultyCourseRouteError } from "@/modules/courses/faculty-course-r
 
 describe("Faculty course detail private 404 policy", () => {
   it("does not disclose missing or foreign teaching Sections", () => {
-    for (const code of ["SECTION_DELIVERY_NOT_FOUND", "FACULTY_TEACHING_SCOPE_REQUIRED", "LEARNING_ACCESS_DENIED"] as const) {
+    for (const code of ["SECTION_DELIVERY_NOT_FOUND", "OFFERING_NOT_FOUND", "FACULTY_TEACHING_SCOPE_REQUIRED", "LEARNING_ACCESS_DENIED"] as const) {
       expect(hidesFacultyCourseRouteError(new CoursesServiceError(code))).toBe(true);
     }
   });

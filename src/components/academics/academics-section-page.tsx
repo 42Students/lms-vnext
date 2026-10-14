@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ZodError } from "zod";
+import { AcademicsServiceError } from "@/modules/academics/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionOperations } from "./section-operations";
@@ -23,7 +26,16 @@ export async function AcademicsSectionPage({
     await getSectionOperationsWorkspace(
       context,
       sectionId,
-    );
+    ).catch((error: unknown) => {
+      if (
+        error instanceof ZodError ||
+        (error instanceof AcademicsServiceError &&
+          error.code === "SECTION_NOT_FOUND")
+      ) {
+        notFound();
+      }
+      throw error;
+    });
 
   return (
     <div className="space-y-6">
