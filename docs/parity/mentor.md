@@ -865,3 +865,12 @@ active learner memberships and projects with recorded active primary Mentors,
 complementing missing-coverage signals. No members, inferred staffing scores
 or private learner contacts are introduced. Unit and existing in-test PG
 staffing scope checks authored; **PARTIAL:** CLI/browser verification open.
+
+## chat-11 backlog AA — Mentor risk/readiness task-priority drill-ins (PARTIAL)
+
+Existing exact-project readiness supports optional HIGH/MEDIUM/LOW/CRITICAL
+filters on persisted task drill-ins, while keeping overall task counts and
+non-task risk evidence visible and honest. This filter does not invent risk
+scores or hide the existence of recorded lower-priority tasks. Pure and
+owned-PostgreSQL fixture checks authored; **PARTIAL:** actual PG/tsc/browser
+and full legacy readiness behavior remain unverified.
