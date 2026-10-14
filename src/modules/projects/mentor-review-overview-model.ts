@@ -4,6 +4,7 @@ export const mentorReviewOverviewSchema=z.object({
  projectId:z.string().uuid(),
  status:z.enum(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"]).default("ALL"),
  feedback:z.enum(["ALL","WITH","WITHOUT"]).default("ALL"),
+ version:z.coerce.number().int().min(1).max(1000000).optional(),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorReviewOverviewQuery=z.infer<typeof mentorReviewOverviewSchema>;
@@ -11,6 +12,7 @@ export function mentorReviewOverviewHref(query:MentorReviewOverviewQuery){
  const params=new URLSearchParams();
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.feedback!=="ALL")params.set("feedback",query.feedback);
+ if(query.version!==undefined)params.set("version",String(query.version));
  if(query.page>1)params.set("page",String(query.page));
  const suffix=params.toString();
  return "/mentor/projects/"+encodeURIComponent(query.projectId)+"/review-overview"+

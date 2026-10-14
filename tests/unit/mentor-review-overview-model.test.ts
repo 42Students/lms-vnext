@@ -30,6 +30,10 @@ describe("Mentor final-delivery feedback completeness",()=>{
   });
   expect(mentorReviewOverviewHref(q)).toContain("feedback=WITH");
   expect(mentorReviewOverviewSchema.safeParse({projectId:id,feedback:"PERSONAL"}).success).toBe(false);
+  expect(mentorReviewOverviewSchema.safeParse({projectId:id,version:"0"}).success).toBe(false);
+  expect(mentorReviewOverviewSchema.safeParse({projectId:id,version:"1.5"}).success).toBe(false);
+  expect(mentorReviewOverviewHref(mentorReviewOverviewSchema.parse({projectId:id,version:"2"})))
+   .toContain("version=2");
  });
  it("rejects caller-supplied scope and invalid page and retains authorized project",()=>{
   expect(mentorReviewOverviewSchema.safeParse({projectId:id,collegeId:id}).success).toBe(false);
