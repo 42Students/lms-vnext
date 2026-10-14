@@ -5,6 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
   from "@/modules/placements/learner-round-search-query-model";
+import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
+  learnerInterviewViewHref,type LearnerInterviewScheduleView }
+  from "@/modules/placements/learner-interview-view-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -58,6 +61,7 @@ export function LearnerCareerRoundsWorkspace({
   membershipId = null,
   initialSelectedKey = null,
   initialSearch = "",
+  initialTimeView = "all",
 }: {
   kind: Kind;
   rounds: readonly LearnerCareerRound[];
@@ -65,9 +69,10 @@ export function LearnerCareerRoundsWorkspace({
   membershipId?: string | null;
   initialSelectedKey?: string | null;
   initialSearch?: string;
+  initialTimeView?: LearnerInterviewScheduleView;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
-  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch}));
+  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
@@ -84,6 +89,27 @@ export function LearnerCareerRoundsWorkspace({
     window.addEventListener("popstate",onPop);
     return ()=>window.removeEventListener("popstate",onPop);
   },[kind]);
+
+  useEffect(()=>{
+    if(kind!=="INTERVIEW")return;
+    const onPop=()=>{
+      const view=learnerInterviewScheduleViewSchema.safeParse(
+        new URLSearchParams(window.location.search).get("view")??"all",
+      );
+      if(view.success)setFilters(current=>({...current,time:view.data}));
+    };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  function chooseTimeView(value:LearnerRoundTimeBucket){
+    setFilter("time",value);
+    if(kind==="INTERVIEW") {
+      const parsed=learnerInterviewScheduleViewSchema.safeParse(value);
+      if(parsed.success)window.history.pushState(null,"",
+        learnerInterviewViewHref(window.location.href,parsed.data));
+    }
+  }
 
   function saveSearchInUrl(){
     const parsed=learnerRoundSearchQuerySchema.safeParse({q:filters.search});
@@ -137,6 +163,10 @@ export function LearnerCareerRoundsWorkspace({
   const relevant = useMemo(
     () => browseLearnerCareerRounds(rounds, kind, defaults, nowMs),
     [rounds, kind, nowMs],
+  );
+  const interviewCounts=useMemo(
+    ()=>kind==="INTERVIEW" ? learnerInterviewScheduleCounts(relevant,nowMs) : null,
+    [kind,relevant,nowMs],
   );
   const dueCounts = useMemo(
     () => learnerAssessmentDueBuckets(relevant, nowMs),
@@ -207,13 +237,20 @@ export function LearnerCareerRoundsWorkspace({
               type="button"
               key={value}
               aria-pressed={filters.time === value}
-              onClick={() => setFilter("time", value)}
+              onClick={() => chooseTimeView(value)}
               className={filters.time === value
                 ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"}
-            >{label}</button>
+            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</button>
           ))}
         </div>
+        {kind==="INTERVIEW" ? (
+          <p role="status" className="text-xs text-muted-foreground">
+            Upcoming and past refer only to scheduled interview times. Past does
+            not confirm attendance, recruiter feedback or a completed interview.
+            Unscheduled interviews remain visible under Awaiting schedule.
+          </p>
+        ) : null}
         {kind === "ASSESSMENT" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Assessment due buckets">
             <button type="button" aria-pressed={dueBucket === "all"}
