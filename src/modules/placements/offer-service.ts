@@ -471,6 +471,7 @@ export async function actOnPlacementOffer(
   offerIdInput: string,
   rawInput: PlacementOfferActionInput,
   now: Date = new Date(),
+  expectedStatus?: "ISSUED" | "ACCEPTED",
 ) {
   const offerId =
     placementOfferIdSchema.parse(
@@ -527,6 +528,11 @@ export async function actOnPlacementOffer(
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_NOT_FOUND",
       );
+    }
+
+    // Guard selected status beneath the same offer row lock as the transition.
+    if (expectedStatus && offer.status !== expectedStatus) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
     }
 
     if (
