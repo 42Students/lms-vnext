@@ -1,0 +1,128 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  mentorTeamCoverageHref, mentorTeamCoverageQuerySchema,
+} from "@/modules/projects/mentor-team-coverage-model";
+import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
+
+type Params = {
+  filter?: string | string[];
+  search?: string | string[];
+  page?: string | string[];
+};
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function MentorTeamCoveragePage({
+  searchParams,
+}: { searchParams: Promise<Params> }) {
+  const raw = await searchParams;
+  const parsed = mentorTeamCoverageQuerySchema.safeParse({
+    filter:first(raw.filter) ?? undefined,
+    search:first(raw.search) ?? undefined,
+    page:first(raw.page) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid team coverage filters</h1>
+    <Link href="/mentor/team-coverage" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+
+  const context = await getCurrentRequestContext();
+  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  const data = await getMentorTeamCoverage(context,parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
+      description="Active team composition across your currently assigned, non-archived projects."
+      actions={<Link href="/mentor/projects"
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Projects
+      </Link>} />
+    {!data.enabled
+      ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          Projects access is disabled for this membership. No team records were loaded.
+        </section>
+      : <>
+        <form method="get" action="/mentor/team-coverage"
+          className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+          <label className="grid gap-1 text-sm font-semibold text-body">Project search
+            <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
+              className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"
+              placeholder="Project name" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Team coverage
+            <select name="filter" defaultValue={data.query.filter}
+              className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="ALL">All projects</option>
+              <option value="NO_LEARNERS">No active learners</option>
+              <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
+            </select>
+          </label>
+          <button type="submit"
+            className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+          <Link href="/mentor/team-coverage" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+        </form>
+        <p className="text-sm text-body">
+          {data.total} matching project{data.total === 1 ? "" : "s"}
+        </p>
+        {data.items.length === 0
+          ? <EmptyState title="No matching active team records"
+              description="Your active assigned projects do not match this filter. No learner or primary-Mentor status has been inferred from incomplete histories." />
+          : <div className="grid gap-3">{data.items.map(item =>
+            <article key={item.projectId} className="rounded-xl border border-border bg-surface p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-semibold text-foreground">{item.title}</h2>
+                <span className="text-xs font-semibold text-body">{item.status}</span>
+              </div>
+              <dl className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <dt className="text-xs font-semibold text-muted-foreground">Active learners</dt>
+                  <dd className="mt-1 text-xl font-semibold tabular-nums">{item.learners}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold text-muted-foreground">Active Mentors</dt>
+                  <dd className="mt-1 text-xl font-semibold tabular-nums">{item.mentors}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold text-muted-foreground">Active primary Mentor</dt>
+                  <dd className="mt-1 text-sm font-semibold text-foreground">
+                    {item.hasPrimaryMentor ? "Recorded" : "Not recorded"}
+                  </dd>
+                </div>
+              </dl>
+              <div className="mt-4 flex flex-wrap gap-4">
+                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
+                  className="text-sm font-semibold text-primary-text hover:underline">
+                  Team workspace →
+                </Link>
+                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
+                  className="text-sm font-semibold text-primary-text hover:underline">
+                  Membership history →
+                </Link>
+              </div>
+            </article>)}</div>}
+        <nav aria-label="Team coverage pagination"
+          className="flex items-center justify-between gap-3">
+          <span className="text-sm text-muted-foreground">
+            Page {data.page} of {data.totalPages}
+          </span>
+          <div className="flex gap-3">
+            {data.page > 1 && <Link href={mentorTeamCoverageHref({...data.query,page:data.page-1})}
+              className="text-sm font-semibold text-primary-text">Previous</Link>}
+            {data.page < data.totalPages && <Link href={mentorTeamCoverageHref({...data.query,page:data.page+1})}
+              className="text-sm font-semibold text-primary-text">Next</Link>}
+          </div>
+        </nav>
+      </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      Counts include currently active project memberships backed by active college
+      accounts only. Historic team changes, staffing adequacy and mentor workload
+      are not inferred from these counts. Team changes remain in authorized project controls.
+    </p>
+  </div>;
+}

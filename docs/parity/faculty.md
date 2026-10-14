@@ -393,3 +393,11 @@ Assignment and Quiz report rows remain PARTIAL.
 ### Faculty Section roster CSV export and browser-acceptance fixes (2026-10-14)
 
 The exact scoped Students list can now export its currently filtered/sorted rows to CSV with roll, email and phone, without another backend query or wider membership access. The CSV serializer quotes fields and neutralizes spreadsheet formula prefixes (including phone numbers beginning with +), supports UTF-8, and names files by Section. Pure tests and an authenticated download test are authored. Faculty Attendance browser regressions now use exact, unique accessible names and preserve the captured delivery ID after scheduling rather than deriving it from a potentially changed browser URL. None of this independently closes full Faculty roster or attendance legacy parity until exact-commit browser/DB evidence is passing.
+
+### Faculty per-Section assessment results rate (2026-10-14)
+
+The aggregate Assessment Results route now filters by the exact active teaching Section in addition to assessment type/status/search, retaining the Section selector in pagination links and never fetching another college's Section. It displays a recorded response rate computed from eligible/responded membership counts; missing or inconsistent denominators show Unknown, while a valid Section with zero responses shows 0%. Pure model tests and authenticated Section selector/browser checks have been authored; final exact-SHA browser and PostgreSQL proof is required before closing Results parity.
+
+### Faculty Attendance navigation-mode correctness (2026-10-14)
+
+Fixed a verified browser-root-cause bug: the server previously converted a missing Calendar session parameter into a fallback first-session ID, inadvertently opening Mark mode for plain Attendance navigation and hiding the monthly report/selector. It now passes a deep-link ID only when the URL requested an exact persisted authorized session; no/invalid link starts in Report mode. The editor can still choose the first authorized session as an internal fallback. New pure unit tests distinguish these cases. This is a functional repair, not only a Playwright selector change, and full browser proof remains required.

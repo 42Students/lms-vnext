@@ -93,6 +93,30 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
+test("Faculty Students links an authorized roster member to mobile-readable attendance history", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Students" }).click();
+  const detailLink = page.getByRole("link", { name: "View student details" }).first();
+  await expect(detailLink).toBeVisible();
+  const href = await detailLink.getAttribute("href");
+  expect(href).toMatch(/\/teacher\/courses\/[^/]+\/students\/[0-9a-f-]{36}$/i);
+  await detailLink.click();
+  await expect(page).toHaveURL(/\/students\/[0-9a-f-]{36}$/i);
+  await expect(page.getByRole("heading", { name: "Course attendance" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Session history" })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("heading", { name: "Session history" })).toBeVisible();
+  // When persisted sessions exist, the mobile-friendly history replaces the wide table.
+  const mobileHistory = page.getByRole("list", { name: "Mobile session history" });
+  if (await mobileHistory.count()) {
+    await expect(mobileHistory).toBeVisible();
+    await expect(page.getByRole("table")).toBeHidden();
+  }
+});
+
 test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
@@ -381,6 +405,30 @@ test("Faculty Quiz aggregate persists questions, metadata edits and archival", a
   const archived = await archivedResponse.json();
   expect(archivedResponse.status(), JSON.stringify(archived)).toBe(200);
   expect(archived.quiz.status).toBe("ARCHIVED");
+});
+
+test("Faculty Assessment results filter only assigned teaching Sections and preserve deep links", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/results");
+  await expect(page.getByRole("heading", { name: "Assessment results", level: 1 })).toBeVisible();
+  const section = page.getByRole("combobox", { name: "Teaching Section" });
+  await expect(section.locator("option").first()).toHaveText("All teaching sections");
+  const choices = section.locator("option");
+  expect(await choices.count()).toBeGreaterThan(1);
+  const allowedId = await choices.nth(1).getAttribute("value");
+  expect(allowedId).toMatch(/^[0-9a-f-]{36}$/i);
+  await section.selectOption(allowedId!);
+  await page.getByRole("button", { name: "Filter", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp("deliveryId=" + allowedId));
+  await expect(page.getByRole("combobox", { name: "Teaching Section" })).toHaveValue(allowedId!);
+  const reports = page.getByRole("link", { name: "Open Section report" });
+  for (const href of await reports.evaluateAll((links) => links.map((link) => link.getAttribute("href")))) {
+    expect(href).toContain("deliveryId=" + allowedId);
+  }
+  await page.goto("/teacher/results?deliveryId=not-a-uuid");
+  await expect(page.getByRole("alert")).toContainText("Invalid assessment filters");
+  await page.getByRole("link", { name: "Clear filters" }).click();
+  await expect(page).toHaveURL(/\/teacher\/results$/);
 });
 
 test("Faculty Notifications keep the Faculty route through unread and cursor recovery", async ({ page, context }) => {

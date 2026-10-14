@@ -12,7 +12,7 @@ describe("Faculty authorized roster CSV export", () => {
   });
   it("neutralizes spreadsheet-formula injection and escapes CSV quoting", () => {
     const csv=facultyRosterCsv([{...base,displayName:' =HYPERLINK("https://evil.example")',rollNumber:'@SUM(1,2)',email:'x"@example.com'}]);
-    expect(csv).toContain("\"' =HYPERLINK(\"\"https://evil.example\"\")\"");
+    expect(csv).toContain("\"'=HYPERLINK(\"\"https://evil.example\"\")\"");
     expect(csv).toContain("\"'@SUM(1,2)\"");
     expect(csv).toContain('"x""@example.com"');
   });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { initialAbsencesForSession, resolveFacultyAttendanceSession, resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-attendance-edit-state";
 
 const roster = [
   { membershipId: "a" }, { membershipId: "b" }, { membershipId: "c" },
@@ -32,5 +32,17 @@ describe("Faculty calendar-to-attendance selection", () => {
     expect(resolveFacultyAttendanceSession(exact, undefined)).toBe("session-1");
     expect(resolveFacultyAttendanceSession(exact, { id: "session-2" })).toBe("session-1");
     expect(resolveFacultyAttendanceSession([], "session-2")).toBe("");
+  });
+});
+
+describe("Faculty Attendance URL mode selection", () => {
+  const sessions = [{id:"one"},{id:"two"}];
+  it("opens Report when there is no valid Calendar link", () => {
+    expect(resolveFacultyAttendanceDeepLink(sessions, undefined)).toBeNull();
+    expect(resolveFacultyAttendanceDeepLink(sessions, "other-delivery")).toBeNull();
+    expect(resolveFacultyAttendanceDeepLink([], "one")).toBeNull();
+  });
+  it("opens Mark only for an exact authorized persisted session", () => {
+    expect(resolveFacultyAttendanceDeepLink(sessions, "two")).toBe("two");
   });
 });
