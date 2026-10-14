@@ -75,7 +75,7 @@ Tabs: All Contacts, Teachers, Students.
 
 - [ ] All Contacts tab fields/columns match.
 - [x] Teachers tab matches the approved public directory fields (name, active role and department; private email/phone/profile withheld), with exact same-college role detail.
-- [ ] Students tab fields/columns match.
+- [x] Students tab matches approved public-only Learner directory (name, active Student role, department), same-college scope, search and role-checked detail, without exposing private learner contact details.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
 - [ ] Contact actions/deep links are matched.
 - [ ] Empty/loading/error states are verified.
@@ -1134,3 +1134,9 @@ fixtures test successful legacy-route publication, stale/missing-version and
 scope/role denial with audit; older Faculty PG fixtures now read actual
 persisted assessment versions using a test-only helper. No cleanup changes.
 Remaining: PostgreSQL execution and browser/legacy lifecycle acceptance.
+
+## Faculty Contacts — Students: DONE (2026-10-14)
+
+The `/teacher/contacts/students` surface and `/teacher/contacts/students/[membershipId]` drill-in are accepted as the **public directory** per the 2026-10-14 approved learner privacy decision. The server uses persisted active LEARNER grants with the requesting Faculty actor's live same-college membership, strict Zod validation, server-side public name/department search, 10/20/50-row bounded pagination, current role labels, and an active-role-checked detail. It does **not** reveal private email, mobile, verified identity or files to an unassigned faculty member. The legacy unrestricted contact fields intentionally do not override privacy policy.
+
+**Executed acceptance:** GitHub [CI run 38603899755](https://github.com/42Students/lms-vnext/actions/runs/38603899755), source SHA `ab63f45774fbf6122322ccb17540d77089fe840c`, containing commit `9645065197f2617b702c12c698e1895ff98f068e` (desktop selector correction). On disposable PostgreSQL `tests/integration/faculty-contacts-students-acceptance.test.ts` passed **3/3**: same-college active learner list and detail; private-field removal, public name search and inaccessible email search; foreign-college target, wrong-role, forged-actor and suspended/disabled/foreign-college-scope denials. The authenticated Chromium `tests/e2e/faculty-contacts-students.spec.ts` **desktop and mobile passed**, including Student tab navigation, public card/detail/return, private-field masking, empty search, mobile width and page-error checks (26 browser tests passed; none of the browser failures was from this surface). Unit, typecheck and build jobs passed. Overall CI remains **red** on other modules and repository lint, not a Faculty Students acceptance failure. No Contacts All, Contacts Teachers, other Faculty row or database tracker state is changed by this closure. A later comparison from this SHA to `9fc26ce920a58390e1f48b493a5bed457ee231c6` found **no changes to Faculty Contacts source or Students acceptance tests**.
