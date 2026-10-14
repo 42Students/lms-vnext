@@ -224,3 +224,22 @@ represent elapsed hours, velocity, historical assignments or release readiness.
 Pure tests and disposable PostgreSQL denial tests are authored but not
 executed. Full legacy Sprint parity and browser acceptance remain OPEN; the
 parent Sprint row stays PARTIAL.
+
+## Mentor personal notifications pagination and announcements (2026-10-14)
+
+The existing `/mentor/notifications` page now reads personal notifications
+through the shared owner-scoped keyset page service (50 records per page,
+all/unread views, unread count, mark-all-read toolbar) instead of truncating
+to 60 latest messages. Malformed/incomplete cursors are rejected with an
+explicit recovery link, never a fabricated empty feed. A dedicated persisted
+active MENTOR membership/role check precedes personal reads and uses central
+academics.read same-college permission; user identity comes only from the
+server request context. The existing project review/meeting/stalled attention
+cards remain subject to optional Projects enablement and active membership
+scope. The existing college-audience announcement feed is now visible via
+the same enabled reader used by Faculty; no new announcement or read-write
+routes were created. The previously established notification API controls
+continue handling read acknowledgments with same-origin checks.
+Pure-model and disposable PostgreSQL denial tests are authored, not claimed
+executed. Complete legacy notification producers, scrolling behavior,
+mobile/browser validation and independent CI remain OPEN; parity is PARTIAL.
