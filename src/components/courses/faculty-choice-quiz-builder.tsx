@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -102,7 +102,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
   <label className="grid gap-1 text-sm">Quiz
-   <select value={selected} onChange={e=>void choose(e.target.value)}
+   <select value={selected} disabled={pending} onChange={e=>void choose(e.target.value)}
     className="min-h-10 rounded border border-border p-2">
     <option value="">Create new draft</option>
     {quizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
@@ -114,20 +114,20 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </select></label>:null}
   <label className="grid gap-1 text-sm">Quiz title
-   <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
+   <input value={title} disabled={!editable} maxLength={255} onChange={e=>setTitle(e.target.value)}
     className="min-h-10 rounded border border-border p-2"/></label>
   <label className="grid gap-1 text-sm">Instructions
-   <textarea value={description} maxLength={10000} rows={2}
+   <textarea value={description} disabled={!editable} maxLength={10000} rows={2}
     onChange={e=>setDescription(e.target.value)}
     className="rounded border border-border p-2"/></label>
   <label className="grid gap-1 text-sm">Due date (IST, optional)
-   <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
+   <input type="datetime-local" disabled={!editable} value={dueAt} onChange={e=>setDueAt(e.target.value)}
     className="min-h-10 rounded border border-border p-2"/></label>
   <label className="grid gap-1 text-sm">Maximum attempts
-   <input type="number" min={1} max={20} value={maxAttempts}
+   <input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>setMaxAttempts(Number(e.target.value))}
     className="min-h-10 rounded border border-border p-2"/></label>
-  {questions.map((q,i)=><fieldset key={i} disabled={pending||Boolean(chosen&&chosen.status!=="DRAFT")}
+  {questions.map((q,i)=><fieldset key={i} disabled={!editable}
    className="space-y-3 rounded-lg border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    <label className="grid gap-1 text-sm">Prompt
@@ -169,7 +169,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>setQuestions(old=>old.filter((_,n)=>n!==i))}
     className="ml-2 rounded border border-border px-3 py-2 text-sm">Remove question</button>
   </fieldset>)}
-  <button type="button" disabled={questions.length>=100}
+  <button type="button" disabled={!editable||questions.length>=100}
    onClick={()=>setQuestions(old=>[...old,{...fresh(),sequence:old.length}])}
    className="rounded border border-border px-4 py-2 text-sm">Add question</button>
   <label className="flex gap-2 text-sm"><input type="checkbox" checked={confirmed}
