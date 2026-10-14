@@ -67,6 +67,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "LEARNER" && filter.teaching !== "ALL") {
     throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
   }
+  if (kind === "LEARNER" && filter.employmentType) {
+    throw new RangeError("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
+  }
   if (kind === "LEARNER" && filter.facultyDepartmentId) {
     throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
@@ -135,6 +138,10 @@ export async function listCollegeRoleDirectory(
       ilike(facultyProfiles.employmentType,search),
       ilike(departments.name,search),
     ))));
+  const matchesEmployment = filter.employmentType ? exists(db.select({membershipId:facultyProfiles.membershipId})
+    .from(facultyProfiles)
+    .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),
+      eq(facultyProfiles.employmentType,filter.employmentType)))) : undefined;
   const facultyInDepartment = filter.facultyDepartmentId ? exists(db.select({member:facultyProfiles.membershipId})
     .from(facultyProfiles)
     .innerJoin(departments,and(eq(departments.id,facultyProfiles.primaryDepartmentId),eq(departments.collegeId,collegeId)))
@@ -172,6 +179,7 @@ export async function listCollegeRoleDirectory(
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind === "FACULTY" ? facultyInDepartment : undefined,
+      kind === "FACULTY" ? matchesEmployment : undefined,
       kind === "LEARNER" ? belongsToCohort : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
@@ -298,8 +306,16 @@ export async function listCollegeRoleDirectory(
     .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
     .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201) : [];
+  const employmentRows = kind === "FACULTY" ? await db.selectDistinct({employmentType:facultyProfiles.employmentType})
+    .from(facultyProfiles).innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
+    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
+    .where(eq(collegeMemberships.collegeId,collegeId))
+    .orderBy(asc(facultyProfiles.employmentType)).limit(101) : [];
+  const employmentOptions=employmentRows.map(row=>row.employmentType).filter((value):value is string=>Boolean(value)).slice(0,100);
   return {
     kind, filter, items, total,
+    employmentOptions,
+    employmentOptionsTruncated:employmentRows.length>100,
     cohortOptions:cohortRows.slice(0,200),
     cohortOptionsTruncated:cohortRows.length>200,
     departmentOptions:departmentRows.slice(0,200),
