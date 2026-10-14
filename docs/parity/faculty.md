@@ -1371,3 +1371,6 @@ Server-owned gradebook CSV now caps export at 500 learner rows, appending a form
 
 ## 2026-10-15 Faculty published Quiz metadata editor parity — PARTIAL
 The Quiz builder now exposes confirmed, optimistic EDIT of title/instructions/IST deadline for PUBLISHED and CLOSED Section quizzes while keeping the question bank and attempt limit locked. The UI omits sealed questions in metadata-only writes; ARCHIVED remains immutable. Pure tests cover lifecycle and Zod commands. PG positive/denial and mobile browser verification remain pending.
+
+## 2026-10-15 Faculty Section Reports strict URL selectors — PARTIAL
+The Section reports hub rejects duplicate or unknown query parameters instead of selecting the first value and silently widening a filter. Typed Zod query parsing preserves legitimate assessment-type and bounded page selectors; existing per-Section scope remains authoritative. Unit tests authored; PG and mobile browser acceptance not executed.

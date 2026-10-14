@@ -26,3 +26,12 @@ export function publishedReportBreakdown(items:readonly {kind:"QUIZ"|"ASSIGNMENT
 export function attendanceReportCounts(sessions:readonly {markedAt:Date|null}[]){
   return {scheduled:sessions.length,marked:sessions.filter(x=>x.markedAt!==null).length};
 }
+
+/** Parse the full, untrusted URL selector bag without collapsing duplicates. */
+export function parseFacultyReportsHubLocation(deliveryId:string,raw:unknown){
+ const query=z.object({kind:z.enum(["ALL","QUIZ","ASSIGNMENT"]).optional(),
+  page:z.string().regex(/^[1-9]\\d{0,3}$/).optional(),
+ }).strict().safeParse(raw);
+ if(!query.success)return facultyReportsHubQuerySchema.safeParse({deliveryId,invalid:true});
+ return facultyReportsHubQuerySchema.safeParse({deliveryId,...query.data});
+}
