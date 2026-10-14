@@ -1,0 +1,2 @@
+"use client";
+export default function Error({reset}:{error:Error;reset:()=>void}){return <div role="alert" className="rounded border border-border bg-surface p-6">Offers could not be loaded. <button className="min-h-10 underline" onClick={reset}>Retry</button></div>}
