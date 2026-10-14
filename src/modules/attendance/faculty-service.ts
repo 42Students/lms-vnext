@@ -236,6 +236,7 @@ export async function getFacultyAttendanceWorkspace(
       endsAt: sectionScheduleEvents.endsAt,
       location: sectionScheduleEvents.location,
       eventStatus: sectionScheduleEvents.status,
+      updatedAt: sectionScheduleEvents.updatedAt,
       attendanceStatus: attendanceSessions.status,
       markedAt: attendanceSessions.markedAt,
       markedByUserId:
