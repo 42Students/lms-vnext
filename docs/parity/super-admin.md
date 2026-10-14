@@ -620,3 +620,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 Chat 6 / section detail unknown-ID 404 — PARTIAL:** `/admin/academics/sections/[sectionId]` preflights validated section UUID against selected college/organization, maps absent and foreign-scoped details to the same 404, and denies wrong roles through central permission policy. Pure scope and disposable-Postgres fixture tests authored; not executed. Full classes UI parity/browser acceptance remains open.
+
+
+**2026-10-15 Chat 6 / course-offering detail unknown-ID 404 — PARTIAL:** `/admin/courses/offerings/[offeringId]` preflights Zod UUID and exact Super Admin selected-college/org visibility, renders not-found for malformed, missing, archived or foreign offering resources while central authorization rejects wrong roles. Pure guard and disposable PG fixture regressions authored, not executed; authoring and legacy course detail parity remain open.
