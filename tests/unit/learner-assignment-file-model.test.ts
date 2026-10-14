@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema } from "@/modules/courses/learner-assignment-file-model";
+import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema, validateLearnerAssignmentReadGrant } from "@/modules/courses/learner-assignment-file-model";
 import { transferLearnerAssignmentFile } from "@/components/courses/assignment-file-transfer";
 const delivery = "00000000-0000-4000-8000-000000000001";
 const receipt = "00000000-0000-4000-8000-000000000002";
@@ -49,5 +49,21 @@ describe("learner assignment private-file boundary", () => {
       .mockResolvedValueOnce(new Response(null, { status: 403 }));
     await expect(transferLearnerAssignmentFile("assignment", delivery,
       new File(["proof"], "proof.pdf", { type: "application/pdf" }), new AbortController().signal, fetcher)).rejects.toThrow("has not been submitted");
+  });
+});
+
+describe("transient assignment file read grants", () => {
+  const now = Date.parse("2026-10-14T10:00:00Z");
+  const read = { readUrl: "https://storage.example.test/private?signature=secret", expiresAt: "2026-10-14T10:05:00Z",
+    originalName: "proof.pdf", mimeType: "application/pdf", sizeBytes: 100 };
+  it("accepts only a validated short-lived HTTPS file grant", () => {
+    expect(validateLearnerAssignmentReadGrant({ grant: read }, now)).toEqual(read);
+  });
+  it("rejects expired, public-protocol, credential-bearing and overlong grants", () => {
+    for (const patch of [
+      { expiresAt: "2026-10-14T09:59:59Z" }, { expiresAt: "2026-10-14T11:00:00Z" },
+      { readUrl: "http://storage.example.test/file" }, { readUrl: "javascript:alert(1)" },
+      { readUrl: "https://user:password@storage.example.test/file" }, { sizeBytes: 0 },
+    ]) expect(() => validateLearnerAssignmentReadGrant({ grant: { ...read, ...patch } }, now)).toThrow();
   });
 });

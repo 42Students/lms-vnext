@@ -2,6 +2,7 @@ import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-open-control";
 import { AssignmentSubmissionControl } from "@/components/courses/assignment-submission-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
@@ -13,7 +14,7 @@ type Props = {
 };
 function formatDate(date: Date | null) {
   return date ? new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short",
+    timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
   }).format(date) : "No deadline";
 }
 export default async function LearnerAssignmentDetail({ params, searchParams }: Props) {
@@ -52,7 +53,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           <a href={item.submissionUrl} target="_blank" rel="noopener noreferrer"
             className="block break-all text-primary-text underline">{item.submissionUrl}</a>
-        ) : <p>File submitted. Its attachment is only available from the authorized Course workspace.</p>}
+        ) : <AssignmentFileOpenControl key={item.submissionId}
+          submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
         {item.gradePublished ? <div className="rounded-lg bg-surface-subtle p-4">
           <p className="font-semibold text-foreground">Published grade: {item.pointsAwarded ?? 0} / {item.maxPoints}</p>
           <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>

@@ -11,6 +11,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AssignmentFileOpenControl } from "./assignment-file-open-control";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
 import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
@@ -440,6 +441,9 @@ export function LearnerAssessmentOverview({
               </section>
             ) : null}
 
+            {selectedAssignment.submissionId && selectedAssignment.submissionType === "FILE" ?
+              <AssignmentFileOpenControl key={selectedAssignment.submissionId}
+                submissionId={selectedAssignment.submissionId} enabled={fileUploadsEnabled} /> : null}
             {selectedAssignment.submissionId ? (
               <section className="rounded-xl border border-border bg-surface-subtle p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
