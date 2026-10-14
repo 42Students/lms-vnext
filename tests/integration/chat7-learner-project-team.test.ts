@@ -248,3 +248,22 @@ describe("L25-003 Board sprint filter from persisted assigned project",()=>{
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
+
+describe("L25-005 authorized learner Board release filter",()=>{
+  it("scopes persisted tasks through their sprint-to-release linkage",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'release-filter','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'release-sprint','Sprint',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence) values($1,$2,$3,'release-task','Task',0)",[ids.taskA,ids.project,ids.sprint]);
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    const links=new Map(workspace.sprints.map(sprint=>[sprint.id,sprint.releaseId]));
+    expect(filterLearnerBoardTasks(workspace.tasks,"",{releaseId:ids.release,
+      sprintReleaseById:links}).map(task=>task.id)).toEqual([ids.taskA]);
+    expect(filterLearnerBoardTasks(workspace.tasks,"",{releaseId:randomUUID(),
+      sprintReleaseById:links})).toEqual([]);
+    for(const denied of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(denied,ids.project)).rejects.toBeDefined();
+  });
+});

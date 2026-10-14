@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
-import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardSprintSchema } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 
@@ -12,11 +12,11 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string; releaseId?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
-  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput, releaseId: releaseInput } = await searchParams;
   const activeSection =
     tab === "board"
       ? "tasks"
@@ -47,8 +47,10 @@ export default async function LearnerProjectPage({
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";
   const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
+  const releaseId = learnerBoardReleaseSchema.safeParse(releaseInput).data ?? "";
+  const sprintReleaseById = new Map(workspace.sprints.map(sprint => [sprint.id,sprint.releaseId]));
   const boardTasks = activeSection === "tasks"
-    ? filterLearnerBoardTasks(workspace.tasks, search, {priority,sprintId})
+    ? filterLearnerBoardTasks(workspace.tasks, search, {priority,sprintId,releaseId,sprintReleaseById})
     : workspace.tasks;
   const shownWorkspace = activeSection === "tasks"
     ? { ...workspace, tasks: boardTasks }
@@ -58,7 +60,7 @@ export default async function LearnerProjectPage({
     <div className="space-y-6">
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "tasks" ? (
-        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} sprintId={sprintId} sprints={workspace.sprints}
+        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} />
       ) : null}
       <ProjectWorkspace
