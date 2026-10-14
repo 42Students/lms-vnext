@@ -2,6 +2,7 @@
 
 import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-request";
 import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
+import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/modules/placements/learner-assessment-link-state-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,7 @@ export function LearnerCareerRoundsWorkspace({
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
+  const [missingLinkOnly,setMissingLinkOnly]=useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
@@ -163,6 +165,7 @@ export function LearnerCareerRoundsWorkspace({
     key: K, value: LearnerRoundBrowseFilters[K],
   ) => {
     setDueBucket("all");
+    setMissingLinkOnly(false);
     setFilters((current) => ({ ...current, [key]: value }));
   };
   const rows = useMemo(
@@ -181,16 +184,17 @@ export function LearnerCareerRoundsWorkspace({
     () => learnerAssessmentDueBuckets(relevant, nowMs),
     [relevant, nowMs],
   );
-  const visibleRows = useMemo(
-    () => kind === "ASSESSMENT"
-      ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs)
-      : rows,
-    [rows, dueBucket, nowMs, kind],
-  );
+  const visibleRows = useMemo(() => {
+    const dueRows = kind === "ASSESSMENT"
+      ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs) : rows;
+    return kind === "ASSESSMENT" && missingLinkOnly
+      ? filterLearnerAssessmentsMissingLink(dueRows) : dueRows;
+  },[rows,dueBucket,nowMs,kind,missingLinkOnly]);
   function selectDueBucket(rawBucket: unknown) {
     const parsed = learnerAssessmentDueBucketSchema.safeParse(rawBucket);
     if (!parsed.success) return;
     setDueBucket(parsed.data);
+    setMissingLinkOnly(false);
     // A quick bucket must not accidentally combine with a conflicting
     // schedule or urgency filter and silently show an empty result.
     setFilters(defaults);
@@ -298,6 +302,13 @@ export function LearnerCareerRoundsWorkspace({
                 : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
               All assessment rounds ({relevant.length})
             </button>
+            <button type="button" aria-pressed={missingLinkOnly}
+              onClick={()=>{setMissingLinkOnly(value=>!value);setDueBucket("all");setFilters(defaults);}}
+              className={missingLinkOnly
+                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
+                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              Waiting on employer link ({relevant.filter(row=>learnerAssessmentLinkState(row)==="MISSING").length})
+            </button>
             <button type="button" aria-pressed={dueBucket === "today"}
               onClick={() => selectDueBucket("today")}
               className={dueBucket === "today"
@@ -393,7 +404,7 @@ export function LearnerCareerRoundsWorkspace({
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <button type="button"
-            onClick={() => { setFilters(defaults); setDueBucket("all"); }}
+            onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
             className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
             Clear filters
           </button>

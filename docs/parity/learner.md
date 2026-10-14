@@ -1113,3 +1113,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L30-033 PARTIAL:** Learner Profile on narrow screens now has direct quick links to up to four unfinished, non-sensitive career sections; verified/identity status is not inferred. Profile cards/long names wrap within their grid cells, and collection edit/delete actions use full-width minimum-44px mobile hit targets. Unit and own-profile PostgreSQL access/denial tests authored; 375px, keyboard, dialog resizing and browser/mobile verification pending.
+
+
+**2026-10-15 chat-5 L15-008 PARTIAL:** Assessment rounds can isolate those without an actionable web employer test URL, including dated rounds lacking a link. Filter uses existing own scoped rounds; no submission status is inferred. Pure model and own-fixture PostgreSQL tests authored; execution and mobile/browser acceptance pending.
