@@ -294,6 +294,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Lifecycle PARTIAL (2026-10-14):** College Admin elective slot rows expose confirmation-gated ARCHIVE/RESTORE using strict Zod, same-origin PATCH, college-scoped active role and revalidated persisted actor, integer version CAS and immutable activity audit. Archive is blocked when any active offering or persisted learner selection exists; restore requires a currently active parent program and eligible IST academic period. The registered slot only supports ACTIVE/ARCHIVED; selection FINALIZE was intentionally not invented. Pure-model/unit and disposable PG own/foreign/wrong-role/stale tests authored, unexecuted. Full selection/finalization mechanics, UI/browser acceptance and real PG gates remain open.
+
 **Legacy:** `/college-admin/electives`
 
 **Write-side PARTIAL:** `/college/electives` includes confirmed slot create/edit via same-origin POST/PATCH, own-college program/period checks, versioned update, enrollment-impacting edit guard, atomic audit, unit and gated DB tests. Feature enablement, full offering capacity, learner choice/finalize and exact legacy/browser parity remain open.
