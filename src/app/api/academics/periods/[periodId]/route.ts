@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { CollegePeriodLifecycleError } from "@/modules/academics/college-period-lifecycle-service";
 import {
   transitionAcademicPeriod,
   updateAcademicPeriod,
@@ -46,6 +47,11 @@ export async function PATCH(
 
     return NextResponse.json({ period });
   } catch (error) {
+    if (error instanceof CollegePeriodLifecycleError) {
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "PERIOD_NOT_FOUND" ? 404 : 409,
+      });
+    }
     return apiErrorResponse(error);
   }
 }

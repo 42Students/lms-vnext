@@ -16,6 +16,8 @@ Every page below also requires:
 ## Page: Dashboard
 **Legacy:** `/college-admin/dashboard`
 
+**Count cards PARTIAL (2026-10-14):** `/college` now renders eight source-authored overview cards (active student/faculty memberships, active courses, non-archived batches, active classes, active teaching assignments, active lecture halls and published jobs). Counts reuse the same signed-in-college `getCollegeSetupChecklist` query as the setup evidence, with central `can()/requirePermission()` and fixed internal deep links. The pure model renders missing values as Unavailable, not zero; failing DB reads surface the dashboard error boundary. These are registered record counts, not attendance, readiness or total hours. Legacy KPI/attention definitions and executed browser/DB acceptance remain open.
+
 **Setup evidence PARTIAL:** `/college` now renders the canonical dashboard setup phases with registered, college-scoped persisted counts for departments, courses, active lessons, published lesson content, programs, program terms, curriculum mappings, cohorts, sections, faculty/student role memberships, active teaching assignments, lecture halls and published jobs. Each step deep-links to its actual College Admin page. Nonzero count means source records exist, never that the complete legacy job or all setup prerequisites are finished. Counts load atomically as a response (no silent partial failure), with dashboard loading/error states. Exact KPI/attention cards, full readiness rules and browser acceptance remain open.
   
 Legacy route maps dashboard quick actions to Departments, Courses, Programs, Faculty, Students, Lessons, Content, Semesters, Semester-Course Mapping, Batches, Classes, Batch Promotion, Faculty Assignment, Lecture Halls, Jobs, Hiring Dashboard, Attendance, Assignments, Quizzes and People.
@@ -131,6 +133,8 @@ Legacy contract:
 
 ## Page: Semesters
 **Legacy:** `/college-admin/semesters`
+
+**Academic-period lifecycle PARTIAL:** The separate `/college/academics` Academic Period table now requires confirmation for close/reopen. Registered `academic_periods` rows are locked in one transaction, active sections/scheduled sessions block closure, a stale or foreign-college target is rejected, and the same transaction writes immutable activity events. Reopen is explicit CLOSED → ACTIVE, distinct from PLANNED → ACTIVE. This does not equate an academic period with a numbered semester; browser/real-DB execution remains pending.
 
 **Write-side PARTIAL (2026-10-14):** `/college/semesters` now supports create/edit/delete on registered DB-0050 `program_terms` via `/api/academics/semesters` and `/api/academics/semesters/[semesterId]`. Strict Zod requires semester name and validates configured credits/term number; editing keeps program and term number immutable. College role and central `academics.manage` scope are verified from request context, with same-origin checks on every mutation. Service locks program/term records in a transaction, validates program-duration limits, denies duplicate term numbers, and blocks deletion for mapped curriculum courses or any non-archived program cohort; all three mutation outcomes write an `activity_events` row in the same transaction. Inline edit and explicit deletion confirmation provided with honest errors. Added unit and disposable-PostgreSQL success/cross-tenant denial tests. Legacy dialog styling, final dependency inventory, independent executed lint/typecheck/DB/browser evidence remain open.
 
@@ -452,6 +456,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Faculty
 **Legacy:** `/college-admin/teachers`
 
+**Detail PARTIAL (2026-10-14):** `/college/faculty/[membershipId]` now provides scoped Faculty name, academic title, employment type, department and persisted teaching assignment history with active/ended counts and distinct offerings. No hours or availability are inferred and no private identity fields are disclosed. Foreign-college/nonexistent memberships get indistinguishable not-found behavior. Browser/PG acceptance and full legacy workload parity remain open.
+
 **Read-first PARTIAL:** `/college/faculty` lists persisted Faculty-role college memberships with search, status/pagination, user status, and count of active college-owned teaching assignments. The College Admin shell and dashboard link to it. This is not the legacy faculty onboarding, edit or complete-profile workflow; exact legacy and browser acceptance remain open.
 
 **Lifecycle PARTIAL:** Faculty rows now include a confirmed deactivate/reactivate action. The transaction locks the same-college FACULTY membership, requires the expected status, blocks deactivation while any live course teaching or section faculty assignment remains, and writes the state transition plus immutable actor-scoped activity event. No cross-college lifecycle writes are permitted. Legacy complete profile editing and independent runtime/browser evidence remain open.
@@ -479,6 +485,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Students
 **Legacy:** `/college-admin/students`
+
+**Detail PARTIAL (2026-10-14):** `/college/students/[membershipId]` shows in-college learner name, roll/registration numbers, program/cohort, active section and explicitly recorded marked-session attendance statuses. It excludes identity documents and other private profile fields; foreign-college/missing IDs get the same not-found. Attendance denominator intentionally excludes unrecorded present defaults, so this is not an overall attendance rate. Browser and exact legacy drill-in acceptance remain open.
 
 **Read-first PARTIAL:** `/college/students` lists persisted Learner-role college memberships with search, status/pagination, and active program/batch/class information when registered. Missing enrollments are shown explicitly, not inferred. Create/import/edit, academic moves, full-profile detail, exact legacy/browser verification remain open.
 
