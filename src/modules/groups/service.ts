@@ -8,6 +8,8 @@ import {
 } from "@/db/schema";
 import { hasActiveMembership, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasElectiveAcademicEligibility } from "./elective-eligibility";
 import { assertPersistedGroupActor } from "./actor-access";
 
@@ -211,6 +213,7 @@ export async function joinGroup(
   groupIdInput: string,
   memberIdInput: string,
   requestedMode: "SELF" | "MANUAL" = "SELF",
+  requireStudyGroup = false,
 ) {
   const groupId = uuid.parse(groupIdInput);
   const memberId = uuid.parse(memberIdInput);
@@ -218,6 +221,8 @@ export async function joinGroup(
   return getDb().transaction(async tx => {
     const slot = await lockElectiveSlot(tx, groupId);
     const group = await lockGroup(tx, groupId);
+    if (requireStudyGroup && (group.kind !== "STUDY_GROUP" || group.ownerScope !== "COLLEGE"))
+      throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
     assertScope(context, group, mode, memberId);
     await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
     await assertTargetMembership(tx, group, memberId);
@@ -338,12 +343,15 @@ export async function leaveGroup(
   groupIdInput: string,
   memberIdInput: string,
   requestedMode: "SELF" | "MANUAL" = "SELF",
+  requireStudyGroup = false,
 ) {
   const groupId = uuid.parse(groupIdInput), memberId = uuid.parse(memberIdInput);
   const mode = supportedMode.parse(requestedMode);
   return getDb().transaction(async tx => {
     const slot = await lockElectiveSlot(tx, groupId);
     const group = await lockGroup(tx, groupId);
+    if (requireStudyGroup && (group.kind !== "STUDY_GROUP" || group.ownerScope !== "COLLEGE"))
+      throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
     assertScope(context, group, mode, memberId);
     await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
     // Legacy configFlag(..., true): self-leave is enabled unless explicitly false.
@@ -550,5 +558,54 @@ export async function moveElectiveMember(
       await promoteEligibleWaitlist(tx, fromGroup, slot, context, now);
     }
     return target!;
+  });
+}
+
+/** Serializes roster locks against add/leave using the SAME locked group row.
+ * A locked membership still permits a deliberately confirmed admin removal. */
+export async function setCollegeStudyMemberLock(
+  context: RequestContext, groupIdInput: string, memberIdInput: string, locked: boolean,
+) {
+  const groupId = uuid.parse(groupIdInput), memberId = uuid.parse(memberIdInput);
+  return getDb().transaction(async (tx) => {
+    const group = await lockGroup(tx, groupId);
+    if (group.ownerScope !== "COLLEGE" || group.kind !== "STUDY_GROUP" ||
+        !group.collegeId || !context.membership ||
+        context.membership.collegeId !== group.collegeId)
+      throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
+    requirePermission(context, "academics.manage", {
+      collegeId: group.collegeId,
+      organizationId: context.membership.organizationId,
+    });
+    await assertPersistedGroupActor(tx, context, {
+      collegeId: group.collegeId, mode: "MANUAL", memberId,
+    });
+    const [existing] = await tx.select().from(lmsGroupMembers).where(and(
+      eq(lmsGroupMembers.groupId, groupId),
+      eq(lmsGroupMembers.membershipId, memberId),
+    )).for("update");
+    if (!existing || existing.state === "REMOVED")
+      throw new GroupServiceError("GROUP_MEMBER_NOT_FOUND");
+    if (existing.isLocked === locked) return existing;
+    const [updated] = await tx.update(lmsGroupMembers).set({
+      isLocked: locked, version: sql.raw('"version" + 1'), updatedAt: new Date(),
+    }).where(eq(lmsGroupMembers.id, existing.id)).returning();
+    await tx.insert(lmsGroupMemberEvents).values({
+      groupId, membershipId: memberId, fromState: existing.state, toState: existing.state,
+      memberType: existing.memberType, source: "MANUAL", actorType: "COLLEGE_ADMIN",
+      actorUserId: context.user.id,
+      reason: locked ? "MANUAL_LOCK" : "MANUAL_UNLOCK",
+    });
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_UPDATED,
+      organizationId: context.membership.organizationId,
+      collegeId: group.collegeId,
+      subjectType: "lms_group_member", subjectId: existing.id,
+      subjectLabel: group.name,
+      summary: locked ? "Study group member locked" : "Study group member unlocked",
+      metadata: { groupId, membershipId: memberId, before: { isLocked: existing.isLocked },
+        after: { isLocked: locked } },
+    });
+    return updated!;
   });
 }
