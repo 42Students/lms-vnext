@@ -43,7 +43,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     title,description:description||null,dueAt:authoringDueInstant(dueAt),maxPoints,
    }:action==="EDIT"?{
     ...base,assignmentId:existing?.id,expectedUpdatedAt:existing?.updatedAt,
-    title,description:description||null,dueAt:dueAt?new Date(dueAt).toISOString():null,maxPoints,
+    title,description:description||null,dueAt:authoringDueInstant(dueAt),maxPoints,
    }:{...base,assignmentId:existing?.id,expectedUpdatedAt:existing?.updatedAt};
    const response=await fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
@@ -74,7 +74,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   <label className="grid gap-1 text-sm">Text instructions
    <textarea value={description} onChange={e=>setDescription(e.target.value)}
     maxLength={10000} rows={4} className="rounded border border-border p-2" /></label>
-  <label className="grid gap-1 text-sm">Due date (optional)
+  <label className="grid gap-1 text-sm">Due date (IST, optional)
    <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Maximum points
