@@ -1,5 +1,7 @@
 # TPO — Detailed Page Parity Spec
 
+**W65 A / Drives List lifecycle tabs/counts — PARTIAL:** A TPO-only mobile drive lifecycle list now filters persisted non-archived draft/published/closed jobs by college and season with deadline-within-seven-days counts and links to the canonical drive workspace. The legacy Requests tab is not fabricated from job status; source request-state reconciliation, 500-row pagination, search/export, exact legacy columns, stale-success caching, browser acceptance and executed PG tests remain outstanding.
+
 **W64 D PARTIAL:** New TPO-only offers-expiry watchlist uses migrated ISSUED offers with non-null expiry, strict 1–90 day selector and lexically compared IST YYYY-MM-DD boundaries. Capped to 200 with honest truncation and formula-neutralized CSV. Pure-model/isolated PG success, tenant/role and status-exclusion tests authored, not executed. Browser and runtime acceptance remain open.
 
 **W64 C PARTIAL:** Existing canonical TPO company detail already has linked contacts, drive history and offer/join timeline. It now shows college relationship trust/status/updatedAt from persisted scoped lifecycle read; a pure model and gated PostgreSQL success/foreign/wrong-role tests are authored. Historical CRM parity, executed PG/browser verification and full detail performance review remain open.

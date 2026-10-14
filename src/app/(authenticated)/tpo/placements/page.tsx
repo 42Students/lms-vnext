@@ -21,6 +21,10 @@ export default async function TpoPlacementsPage() {
         description="One prioritized command center for screening, drives, results and upcoming rounds."
         actions={
           <div className="flex flex-wrap gap-2">
+            <Link href="/tpo/placements/lifecycle"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              Drive lifecycle
+            </Link>
             <Link
               href="/tpo/placements/schedule-conflicts"
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
