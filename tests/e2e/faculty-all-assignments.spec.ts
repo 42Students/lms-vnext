@@ -28,7 +28,13 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
   const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
-  await expect(page.getByRole("heading",{level:1,name:"Section assignments"})).toBeVisible();
+  const manageHeading=page.getByRole("heading",{level:1,name:"Section assignments"});
+  try{
+   await manageHeading.waitFor({state:"visible",timeout:8000});
+  }catch{
+   const rendered=(await page.locator("body").innerText()).slice(0,2300);
+   throw new Error("Faculty manage route "+page.url()+" rendered: "+rendered);
+  }
   await expect(page.getByRole("heading",{name:"Assignment authoring"})).toBeVisible();
   const baseTitle="Faculty Assignment "+view.name+" "+randomUUID().slice(0,8);
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(baseTitle);
