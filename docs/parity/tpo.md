@@ -1,3 +1,5 @@
+**Chat-2 / Company offer/joining timeline links — PARTIAL (2026-10-15):** Offer-issued, response and recorded-joining events now deep-link to their exact persisted TPO offer record instead of the drive only. The destination retains college/role checks. Unit regression added; legacy parity and PG/mobile/browser proof remain open.
+
 **Chat-2 / Company hiring-history offer drill-in — PARTIAL (2026-10-15):** Each persisted company offer version can now open the canonical TPO offer detail page, preserving the exact job ID and offer ID instead of linking only to the parent drive. The destination independently authorizes its TPO college scope; no learner contact is exported. Pure-model regression authored; PG/browser acceptance remains open.
 
 **Chat-2 / Company directory → Create Drive — PARTIAL (2026-10-15):** Every canonical, college-linked employer in the Companies directory now has a direct Create Draft Drive action; recruiter-only free-text company groups do not receive the action, because they are not proof of a canonical employer identity. The destination revalidates the active scoped relationship. Model tests authored; mobile and PG acceptance still open.
