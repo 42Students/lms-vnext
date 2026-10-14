@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {exportCollegeLessons} from "@/modules/courses/college-lessons-export-service";
 import {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -146,6 +147,14 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(progress).toMatchObject({ recordedRows: 0, completedRows: 0, learnersWithRecords: 0 });
   });
 
+  it("exports only own-college authored/published lesson counts",async()=>{
+    const ours=await exportCollegeLessons(own,{q:name});
+    const theirs=await exportCollegeLessons(otherCollege,{q:name});
+    expect(ours.csv).toContain(name);
+    expect(ours.csv).toContain("Published content");
+    expect(theirs.csv).not.toContain(name);
+    await expect(exportCollegeLessons(nonAdmin,{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("does not reveal the seeded course or lesson to an admin from another college", async () => {
     const [lessons, progress] = await Promise.all([
       listCollegeLessons(otherCollege, { q: name }),
