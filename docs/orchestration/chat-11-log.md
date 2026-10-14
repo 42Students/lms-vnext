@@ -190,3 +190,6 @@
 
 ## Round 3 AG — Sprint Release status (PARTIAL)
 - Added registered Release status filter to Mentor Sprint progress and sanitized export, with unit tests authored only.
+
+## Round 3 AH — Review history project-title search (PARTIAL)
+- SQL-scoped escaped literal project title search plus decision/pagination state, source-authored model/PG assertions not executed.

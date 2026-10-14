@@ -892,3 +892,6 @@ The registered Team & Meeting log filters by GENERAL, PLANNING, STANDUP, REVIEW 
 
 ## 2026-10-15 chat-11 AG — Mentor Sprint progress Release status (PARTIAL)
 Cross-project Sprint progress now filters persisted PLANNED, IN_PROGRESS and SHIPPED Release status in the same SQL scope/count/page as Sprint filters, retaining it in pagination and capped CSV. Strict Zod and unit query cases are source-authored. No phantom velocity, scope override or write; CLI/PG/browser and full Sprint/Release legacy acceptance remain open.
+
+## 2026-10-15 chat-11 AH — persisted final-review history title search (PARTIAL)
+Delivery decision history now filters by literal project title with SQL wildcard escape, preserving decision filter/page and limiting reads to currently assigned Mentor project review records. Strict Zod, unit and unique-project DB fixture assertions source-authored. Raw feedback/learner contact not returned. Actual PG/type/lint/browser and legacy history parity remain open.
