@@ -19,6 +19,7 @@ import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assessment-search-model";
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
+import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
   id: string;
@@ -140,6 +141,7 @@ export function LearnerAssessmentOverview({
     useState("");
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState<LearnerAssessmentStateFilter>("ALL");
+  const [sort, setSort] = useState<LearnerAssessmentSort>("DUE");
   const [page, setPage] = useState(1);
   const [
     selectedAssignmentKey,
@@ -148,12 +150,12 @@ export function LearnerAssessmentOverview({
 
   const filtered = useMemo(
     () =>
-      items.filter(item =>
+      learnerAssessmentSort(items.filter(item =>
         (!courseId || item.courseId === courseId) &&
         learnerAssessmentMatchesSearch(item, search) &&
         learnerAssessmentMatchesState(item, stateFilter, currentNowMs),
-      ),
-    [courseId, items, search, stateFilter, currentNowMs],
+      ),sort),
+    [courseId, items, search, stateFilter, currentNowMs,sort],
   );
 
   const totalPages = Math.max(
@@ -225,7 +227,7 @@ export function LearnerAssessmentOverview({
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <input type="search" value={search} maxLength={100}
@@ -265,6 +267,16 @@ export function LearnerAssessmentOverview({
               setPage(1);
             }}>
             {LEARNER_ASSESSMENT_STATE_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </Select>
+        </label>
+        <label className="w-full">
+          <span className="mb-1.5 block text-xs font-semibold text-body">Sort</span>
+          <Select value={sort} onChange={event => {
+            setSort(event.target.value as LearnerAssessmentSort);setPage(1);
+          }}>
+            {LEARNER_ASSESSMENT_SORT_OPTIONS.map(option => (
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
           </Select>
