@@ -139,6 +139,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.request.submitted",
   PLACEMENTS_REQUEST_DECIDED:
     "placements.request.decided",
+  PLACEMENTS_CANDIDATE_PREFERENCES_UPDATED:
+    "placements.candidate_preferences.updated",
   PLACEMENTS_NOTIFICATION_PREFERENCES_UPDATED:
     "placements.notification_preferences.updated",
 } as const;

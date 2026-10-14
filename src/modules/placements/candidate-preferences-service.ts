@@ -1,11 +1,13 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCandidatePreferences } from "@/db/schema";
+import { collegeMemberships, membershipRoles, placementCandidatePreferences, users } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   candidatePreferencesInputSchema,
@@ -67,32 +69,50 @@ export async function upsertCandidatePreferences(
   context: RequestContext,
   rawInput: CandidatePreferencesInput,
 ) {
+  const input = candidatePreferencesInputSchema.parse(rawInput);
   const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
-  const input =
-    candidatePreferencesInputSchema.parse(rawInput);
-  const now = new Date();
+  if (!can(context, "placements.read", {
+    collegeId: membership.collegeId,
+    organizationId: membership.organizationId,
+  })) throw new AuthorizationError("placements.read");
 
-  const [preferences] = await getDb()
-    .insert(placementCandidatePreferences)
-    .values({
-      membershipId: membership.id,
-      ...input,
-    })
-    .onConflictDoUpdate({
-      target: placementCandidatePreferences.membershipId,
-      set: {
-        ...input,
-        updatedAt: now,
-      },
-    })
-    .returning();
+  return getDb().transaction(async (tx) => {
+    const [owner] = await tx.select({
+      userId: collegeMemberships.userId,
+      collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+    }).from(collegeMemberships)
+      .where(eq(collegeMemberships.id, membership.id)).for("share").limit(1);
+    const [actor] = await tx.select({status: users.platformStatus})
+      .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
+    const [role] = await tx.select({id: membershipRoles.id})
+      .from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId, membership.id), eq(membershipRoles.role, "LEARNER")))
+      .for("share").limit(1);
+    if (!owner || owner.userId !== context.user.id ||
+        owner.collegeId !== membership.collegeId || owner.status !== "ACTIVE" ||
+        !actor || actor.status !== "ACTIVE" || !role) {
+      throw new AuthorizationError("placements.read");
+    }
 
-  if (!preferences) {
-    throw new Error(
-      "Candidate preferences upsert returned no row",
-    );
-  }
+    const [preferences] = await tx.insert(placementCandidatePreferences)
+      .values({ membershipId: membership.id, ...input })
+      .onConflictDoUpdate({
+        target: placementCandidatePreferences.membershipId,
+        set: { ...input, updatedAt: new Date() },
+      }).returning();
+    if (!preferences) throw new Error("Candidate preferences upsert returned no row");
 
-  return preferences;
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_CANDIDATE_PREFERENCES_UPDATED,
+      collegeId: membership.collegeId,
+      organizationId: membership.organizationId,
+      subjectType: "placement_candidate_preferences",
+      subjectId: membership.id,
+      summary: "Learner updated placement preferences",
+      metadata: { changedSections: ["preferredRoles", "preferredLocations", "minimumCtc", "otherPreferences"] },
+    });
+    return preferences;
+  });
 }

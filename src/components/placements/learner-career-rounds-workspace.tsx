@@ -53,16 +53,18 @@ export function LearnerCareerRoundsWorkspace({
   rounds,
   snapshotNowIso,
   membershipId = null,
+  initialSelectedKey = null,
 }: {
   kind: Kind;
   rounds: readonly LearnerCareerRound[];
   snapshotNowIso: string;
   membershipId?: string | null;
+  initialSelectedKey?: string | null;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(defaults);
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
 
@@ -265,6 +267,16 @@ export function LearnerCareerRoundsWorkspace({
               : "/learn/my-placements/applications"}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
           >View application</Link>
+          {kind === "INTERVIEW" && selected ? (
+            <Link
+              href={"/learn/my-placements/interviews?applicationId=" +
+                encodeURIComponent(selected.applicationId) +
+                "&roundId=" + encodeURIComponent(selected.roundId)}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+            >
+              Direct link
+            </Link>
+          ) : null}
           {kind === "INTERVIEW" && selected ? (
             <Link
               href={"/learn/my-placements?requestRoundId=" +
