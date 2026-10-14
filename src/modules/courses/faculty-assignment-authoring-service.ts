@@ -1,0 +1,112 @@
+import "server-only";
+
+import {randomUUID} from "node:crypto";
+import {and,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {assignmentSubmissions,courseAssignments,courseSectionDeliveries} from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
+import {requireDeliveryContentMutation} from "./learning-access";
+import {CoursesServiceError,postgresConstraintName} from "./errors";
+import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignmentParamsSchema} from "./faculty-assignment-authoring-model";
+
+/** Own-Section, confirmed text-only commands. Uses row locks + millisecond tokens,
+ * which match JS Date precision even when PostgreSQL stores microseconds. */
+export async function commandFacultyAssignment(
+  context:RequestContext,rawParams:unknown,rawInput:unknown,
+){
+  const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
+  const input=facultyAssignmentCommandSchema.parse(rawInput);
+  const membership=context.membership;
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const delivery=await loadCourseSectionDeliveryScope(deliveryId);
+  if(delivery.collegeId!==membership.collegeId||
+     !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const actor=await requireDeliveryContentMutation(context,deliveryId);
+  if(actor!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  if(input.action==="CREATE"){
+    const lesson=await loadCourseLessonScope(input.lessonId);
+    if(lesson.offeringId!==delivery.offeringId)
+      throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+  }
+  try{
+    return await getDb().transaction(async tx=>{
+      const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
+        .from(courseSectionDeliveries)
+        .where(eq(courseSectionDeliveries.id,deliveryId)).for("update").limit(1);
+      if(!liveDelivery||liveDelivery.endedAt)
+        throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+      let result:typeof courseAssignments.$inferSelect;
+      let changedFields:string[]=[];
+      let eventType:string;
+      if(input.action==="CREATE"){
+        const [created]=await tx.insert(courseAssignments).values({
+          lessonId:input.lessonId,deliveryId,
+          title:input.title,description:input.description,
+          dueAt:input.dueAt?new Date(input.dueAt):null,
+          maxPoints:input.maxPoints,sequence:input.sequence,
+          status:"DRAFT",createdByUserId:context.user.id,
+        }).returning();
+        if(!created)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+        result=created;changedFields=["created"];eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_CREATED;
+      }else{
+        const [current]=await tx.select().from(courseAssignments)
+          .where(and(eq(courseAssignments.id,input.assignmentId),
+            eq(courseAssignments.deliveryId,deliveryId)))
+          .for("update").limit(1);
+        if(!current)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+        if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()||
+           current.status==="ARCHIVED")throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+        const [submission]=await tx.select({id:assignmentSubmissions.id}).from(assignmentSubmissions)
+          .where(eq(assignmentSubmissions.assignmentId,current.id)).limit(1);
+        if(input.action==="EDIT"){
+          if(current.status!=="DRAFT"||submission)
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          changedFields=assignmentFieldsChanged(current,input);
+          if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
+        }else if(input.action==="PUBLISH"){
+          if(current.status!=="DRAFT"||(current.dueAt&&current.dueAt.getTime()<=Date.now()))
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          changedFields=["status"];eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_PUBLISHED;
+        }else{
+          if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+          changedFields=["status"];eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_ARCHIVED;
+        }
+        const now=new Date(Math.max(Date.now(),current.updatedAt.getTime()+1));
+        const [updated]=await tx.update(courseAssignments).set(
+          input.action==="EDIT"?{
+            title:input.title,description:input.description,
+            dueAt:input.dueAt?new Date(input.dueAt):null,
+            maxPoints:input.maxPoints,updatedAt:now,
+          }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
+        ).where(and(eq(courseAssignments.id,current.id),
+          eq(courseAssignments.deliveryId,deliveryId))).returning();
+        if(!updated)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+        result=updated;
+      }
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:eventType as typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES],
+        collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+        subjectType:"course_assignment",subjectId:result.id,
+        subjectLabel:result.title,summary:"Faculty assignment "+input.action.toLowerCase(),
+        metadata:{deliveryId,assignmentId:result.id,changedFields},
+        groupKey:"course-delivery:"+deliveryId,
+        dedupeKey:"faculty-assignment:"+result.id+":"+input.action+":"+randomUUID(),
+      });
+      return result;
+    });
+  }catch(error){
+    const constraint=postgresConstraintName(error);
+    if(constraint?.includes("course_assignments_delivery_active_name_uq"))
+      throw new CoursesServiceError("ASSIGNMENT_NAME_CONFLICT");
+    if(constraint?.includes("course_assignments_delivery_active_sequence_uq"))
+      throw new CoursesServiceError("ASSIGNMENT_SEQUENCE_CONFLICT");
+    throw error;
+  }
+}
