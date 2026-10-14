@@ -410,6 +410,8 @@ Legacy includes:
 - [ ] Reject request modal/reason/consequence matches.
 - [ ] Send Back modal/reason matches.
 - [ ] Publish Preview modal checks and consequences match.
+**W66-2 PARTIAL — Extend Deadline:** A confirmed TPO published-drive extension at /tpo/placements/jobs/[jobId]/extend-deadline updates only persisted applicationDeadline for an active season, requires a later future IST deadline, row-locked expectedUpdatedAt with millisecond-safe SQL CAS, and immutable actor audit. Unit/PG tests authored, unexecuted. Legacy overlay placement, borrower notifications, browser/race validation remain open.
+
 - [ ] Extend Deadline modal validation matches.
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.

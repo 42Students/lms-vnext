@@ -1,0 +1,25 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {TpoDriveDeadlineForm} from "@/components/placements/tpo-drive-deadline-form";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {PlacementsServiceError} from "@/modules/placements/errors";
+import {getTpoDriveDeadlineState} from "@/modules/placements/tpo-drive-deadline-service";
+export default async function TpoExtendDeadlinePage({params}:{params:Promise<{jobId:string}>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {jobId}=await params;
+ let job:Awaited<ReturnType<typeof getTpoDriveDeadlineState>>;
+ try{job=await getTpoDriveDeadlineState(context,jobId);}catch(error){
+  if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
+  throw error;
+ }
+ return <div className="space-y-5">
+  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+  <PageHeader eyebrow="TPO · Drive deadline" title={job.title}
+   description="Extend a published application deadline with a validated IST date and immutable audit."/>
+  {job.extendable?<TpoDriveDeadlineForm job={job}/>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+   Only published active-season drives with an existing application deadline can be extended.</p>}
+ </div>;
+}
