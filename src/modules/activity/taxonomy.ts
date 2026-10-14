@@ -58,6 +58,9 @@ export const ACTIVITY_EVENT_TYPES = {
   ACADEMICS_GROUP_STATUS_CHANGED: "academics.group.status_changed",
   ACADEMICS_LEARNER_ENROLLED:
     "academics.learner.enrolled",
+  COURSES_CATALOG_CREATED: "courses.catalog.created",
+  COURSES_CATALOG_UPDATED: "courses.catalog.updated",
+  COURSES_CATALOG_ARCHIVED: "courses.catalog.archived",
   COURSES_LEARNING_PATH_PUBLISHED:
     "courses.learning_path.published",
   COURSES_LEARNING_PATH_UNPUBLISHED: "courses.learning_path.unpublished",
@@ -119,6 +122,10 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.season.started",
   PLACEMENTS_SEASON_CLOSED:
     "placements.season.closed",
+  PLACEMENTS_COMPANY_LINKED:
+    "placements.company.linked",
+  PLACEMENTS_JOB_DRAFT_CREATED:
+    "placements.job.draft_created",
   PLACEMENTS_JOB_PUBLISHED:
     "placements.job.published",
   PLACEMENTS_JOB_CLOSED:

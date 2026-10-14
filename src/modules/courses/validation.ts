@@ -39,7 +39,7 @@ export const createCourseInputSchema = z.object({
     .max(5000)
     .nullable()
     .optional(),
-});
+}).strict();
 
 export const updateCourseInputSchema = z
   .object({
@@ -51,7 +51,7 @@ export const updateCourseInputSchema = z
       .max(5000)
       .nullable()
       .optional(),
-  })
+  }).strict()
   .refine(
     (value) =>
       Object.values(value).some(
