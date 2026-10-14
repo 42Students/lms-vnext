@@ -41,7 +41,7 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
     steps: [
       { label: "Setup Programs", key: "programs", href: "/college/programs" },
       { label: "Create Semesters", key: "semesters", href: null },
-      { label: "Map Semester-Courses", key: "semester-courses", href: "/college/semester-courses" },
+      { label: "Map Semester-Courses", key: "semester-courses", href: null },
       { label: "Create Batches", key: "batches", href: null },
       { label: "Create Classes", key: "classes", href: null },
     ],
@@ -50,7 +50,7 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
     title: "People",
     steps: [
       { label: "Register Faculty", key: "faculty", href: null },
-      { label: "Assign Faculty", key: "faculty-assignment", href: "/college/faculty-assignment" },
+      { label: "Assign Faculty", key: "faculty-assignment", href: null },
       { label: "Register Students", key: "students", href: null },
     ],
   },
