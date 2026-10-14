@@ -366,3 +366,6 @@ Legacy states:
 - [ ] duplicate/replayed token behavior is safe.
 - [ ] loading/error/success states match.
 - [ ] public route leaks no applicant/college-private information before acceptance.
+
+
+**2026-10-14 Chat 6 HR job Applicants/Offers — PARTIAL:** Tabs use persisted job-scoped applicant + screening records for placement-cell-SHORTLISTED candidates only, with active/withdrawn counts and filters, 200-row source cap, and job offers read-only for shared applicants. Recruiter grant is checked before both reads; no internal screening reasons or unshared candidates are queried. Remaining: exact legacy share marker semantics, private/no-share placeholders, applicant drawers/review writes, pagination, executed PG/browser verification, and privacy review.
