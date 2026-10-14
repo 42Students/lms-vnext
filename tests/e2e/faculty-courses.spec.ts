@@ -51,6 +51,42 @@ test("Faculty has five distinct, authorized Course tabs and editable Section Blu
   await expect(page).toHaveURL(/\/home$/);
 });
 
+test("Faculty posts, pins, unpins and deletes a Section discussion in the browser", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Discussions" }).click();
+  const text = "Faculty moderation browser proof " + Date.now();
+  await page.getByLabel("Write a message").fill(text);
+  const create = page.waitForResponse(res =>
+    res.request().method() === "POST" && /\\/discussions$/.test(new URL(res.url()).pathname));
+  await page.getByRole("button", { name: "Post", exact: true }).click();
+  const posted = await create;
+  expect(posted.status()).toBe(201);
+  const messageId = (await posted.json()).message.id;
+  const article = page.getByRole("article").filter({ hasText: text });
+  await expect(article).toBeVisible();
+  const actionPath = "/api/courses/deliveries/";
+  const pin = page.waitForResponse(res =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname.includes(actionPath) &&
+    new URL(res.url()).pathname.endsWith("/" + messageId));
+  await article.getByRole("button", { name: "Pin", exact: true }).click();
+  expect((await pin).ok()).toBe(true);
+  await expect(article.getByRole("button", { name: "Unpin" })).toBeVisible();
+  const unpin = page.waitForResponse(res =>
+    res.request().method() === "PATCH" && new URL(res.url()).pathname.endsWith("/" + messageId));
+  await article.getByRole("button", { name: "Unpin" }).click();
+  expect((await unpin).ok()).toBe(true);
+  page.once("dialog", dialog => dialog.accept());
+  const removed = page.waitForResponse(res =>
+    res.request().method() === "DELETE" && new URL(res.url()).pathname.endsWith("/" + messageId));
+  await article.getByRole("button", { name: "Delete", exact: true }).click();
+  expect((await removed).ok()).toBe(true);
+  await expect(article).toHaveCount(0);
+});
+
 test("Faculty Blueprint persists an authorized Section Resource edit after a full reload", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/courses");
@@ -246,7 +282,7 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
 
   await expect(page.getByRole("button", { name: "Mark attendance", exact: true })).toBeVisible();
   await expect(page.getByLabel("Class session", { exact: true })).toHaveValue(sessionId);
-  const absentButton = page.getByRole("button", { name: /^Mark .* absent$/ }).first();
+  const absentButton = page.locator('[aria-label="Attendance roster"]').getByRole("button", { name: /^Mark .+ absent$/ }).first();
   await expect(absentButton).toBeEnabled();
   await absentButton.click();
   const firstMark = page.waitForResponse((res) =>
@@ -255,10 +291,10 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   await page.getByRole("button", { name: "Submit Attendance" }).click();
   expect((await firstMark).ok()).toBe(true);
   await page.reload();
-  await expect(page.getByRole("button", { name: /^Mark .* absent$/ }).first())
+  await expect(page.locator('[aria-label="Attendance roster"]').getByRole("button", { name: /^Mark .+ absent$/ }).first())
     .toHaveAttribute("aria-pressed", "true");
 
-  const presentButton = page.getByRole("button", { name: /^Mark .* present$/ }).first();
+  const presentButton = page.locator('[aria-label="Attendance roster"]').getByRole("button", { name: /^Mark .+ present$/ }).first();
   await presentButton.click();
   const correction = page.waitForResponse((res) =>
     res.request().method() === "PATCH" &&
@@ -266,7 +302,7 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   await page.getByRole("button", { name: "Submit Attendance" }).click();
   expect((await correction).ok()).toBe(true);
   await page.reload();
-  await expect(page.getByRole("button", { name: /^Mark .* present$/ }).first())
+  await expect(page.locator('[aria-label="Attendance roster"]').getByRole("button", { name: /^Mark .+ present$/ }).first())
     .toHaveAttribute("aria-pressed", "true");
 });
 
