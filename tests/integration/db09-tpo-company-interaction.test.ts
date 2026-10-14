@@ -187,7 +187,16 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
       [data.leadId],
     )).rows[0];
     expect(lead.manual_stage).toBe("NEW");
-    expect((lead.updated_at as Date).toISOString()).toBe(data.expectedLeadUpdatedAt);
+    expect((lead.updated_at as Date).getTime())
+      .toBeGreaterThan(new Date(data.expectedLeadUpdatedAt).getTime());
+    await expect(createConfirmedTpoCompanyInteraction(
+      tpo, data.companyId, payload(data.leadId, data.expectedLeadUpdatedAt),
+    )).rejects.toBeInstanceOf(TpoCompanyInteractionConflict);
+    const unchangedAudits = (await pool.query<{ total: number }>(
+      "SELECT count(*)::integer AS total FROM placement_tpo_lead_activities WHERE lead_id=$1",
+      [data.leadId],
+    )).rows[0];
+    expect(unchangedAudits.total).toBe(1);
 
     await expect(pool.query(
       "UPDATE placement_tpo_lead_activities SET note='tampered' WHERE id=$1",
