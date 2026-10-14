@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
+import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -14,6 +15,7 @@ type Lead = {
   designation: string | null;
   source: string | null;
   manualStage: string;
+  ownerMembershipId: string | null;
   notNowReason: string | null;
   inviteSentAt: string | null;
   recruiterUserId: string | null;
@@ -315,7 +317,10 @@ export function RecruiterLeadsWorkspace({
             Showing {visible.length} of {rows.length} recruiter leads
           </p>
           {view !== "companies" ? (
-            <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
+            <div className="space-y-3">
+              <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
+              <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
+            </div>
           ) : null}
           {visible.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
