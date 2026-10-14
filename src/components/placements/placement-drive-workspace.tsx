@@ -2,7 +2,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
-import type { RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
+import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -59,6 +61,10 @@ export async function PlacementDriveWorkspace({
       jobId,
     ),
   ]);
+
+  const bulkCandidates = hasMembershipRole(context, "TPO") && job.status === "PUBLISHED"
+    ? await listBulkDriveCandidates(context, jobId)
+    : null;
 
   const programs =
     job.status === "DRAFT"
@@ -304,6 +310,16 @@ export async function PlacementDriveWorkspace({
           status: role.status,
         }))}
       />
+      {bulkCandidates ? (
+        <PlacementBulkAddApplicants
+          jobId={jobId}
+          initial={bulkCandidates}
+          roles={roleOptions.filter((role) => role.status === "ACTIVE").map((role) => ({
+            id: role.id,
+            title: role.title,
+          }))}
+        />
+      ) : null}
       <PlacementRequestQueue
         requests={placementRequests.map(
           (row) => ({

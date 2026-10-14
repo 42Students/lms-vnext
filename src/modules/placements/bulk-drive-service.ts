@@ -1,0 +1,301 @@
+import "server-only";
+
+import { and, asc, eq, ilike } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import {
+  collegeMemberships, membershipRoles, placementApplications,
+  placementApplicationScreenings, placementApplicationStatusHistory,
+  placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
+  placementJobs, placementSeasons, users,
+} from "@/db/schema";
+import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { evaluatePlacementEligibility } from "./eligibility-service";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
+import {
+  bulkDriveAddSchema, bulkDriveCandidatesQuerySchema,
+  bulkDriveOutcome, bulkDriveCounts, type BulkDriveResult,
+} from "./bulk-drive-model";
+import { placementJobIdSchema } from "./validation";
+import { requirePlacementManageScope } from "./scope";
+import { PlacementsServiceError } from "./errors";
+
+type Db = ReturnType<typeof getDb>;
+type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
+
+function requireTpo(context: RequestContext) {
+  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", {
+    collegeId: context.membership.collegeId,
+  });
+  return context.membership;
+}
+
+async function loadManagedDrive(context: RequestContext, jobId: string) {
+  const membership = requireTpo(context);
+  const [job] = await getDb().select({
+    id: placementJobs.id, collegeId: placementJobs.collegeId,
+    status: placementJobs.status, archivedAt: placementJobs.archivedAt,
+    applicationDeadline: placementJobs.applicationDeadline,
+    applicationMode: placementJobs.applicationMode,
+  }).from(placementJobs).where(and(
+    eq(placementJobs.id, jobId),
+    eq(placementJobs.collegeId, membership.collegeId),
+  )).limit(1);
+  if (!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  await requirePlacementManageScope(context, job.collegeId);
+  if (!can(context, "placements.manage", { collegeId: job.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  return job;
+}
+
+/** Paginated active-learner roster, not a claim that every listed learner is eligible. */
+export async function listBulkDriveCandidates(
+  context: RequestContext, rawJobId: string, rawQuery: unknown = {},
+) {
+  requireTpo(context);
+  const jobId = placementJobIdSchema.parse(rawJobId);
+  const query = bulkDriveCandidatesQuerySchema.parse(rawQuery);
+  const job = await loadManagedDrive(context, jobId);
+  const conditions = and(
+    eq(collegeMemberships.collegeId, job.collegeId),
+    eq(collegeMemberships.status, "ACTIVE"),
+    eq(users.platformStatus, "ACTIVE"),
+    eq(membershipRoles.role, "LEARNER"),
+    query.search ? ilike(users.displayName, "%" + query.search + "%") : undefined,
+  );
+  const rows = await getDb().select({
+    membershipId: collegeMemberships.id,
+    displayName: users.displayName,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
+    .where(conditions)
+    .orderBy(asc(users.displayName), asc(collegeMemberships.id))
+    .limit(26).offset((query.page - 1) * 25);
+  return {
+    learners: rows.slice(0, 25).map((row) => ({
+      membershipId: row.membershipId,
+      displayName: row.displayName || "Unnamed learner",
+    })),
+    page: query.page,
+    hasMore: rows.length > 25,
+  };
+}
+
+async function loadLearner(tx: Tx, collegeId: string, membershipId: string) {
+  const [row] = await tx.select({
+    membershipId: collegeMemberships.id,
+    collegeId: collegeMemberships.collegeId,
+    userId: users.id,
+    identityUid: users.identityUid,
+    platformStatus: users.platformStatus,
+    membershipStatus: collegeMemberships.status,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id, membershipId),
+      eq(collegeMemberships.collegeId, collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+    )).for("share").limit(1);
+  return row ?? null;
+}
+
+async function addOne(
+  context: RequestContext,
+  job: Awaited<ReturnType<typeof loadManagedDrive>>,
+  roleOptionId: string,
+  membershipId: string,
+): Promise<BulkDriveResult> {
+  // Run the existing learner participation and job eligibility readers
+  // BEFORE opening a write transaction: those readers use getDb() and
+  // otherwise exhaust a DB_POOL_MAX=1 connection pool.
+  const [existingBefore] = await getDb().select({
+    status: placementApplications.status,
+  }).from(placementApplications).where(and(
+    eq(placementApplications.roleOptionId, roleOptionId),
+    eq(placementApplications.membershipId, membershipId),
+  )).limit(1);
+  if (existingBefore) return bulkDriveOutcome(membershipId, {
+    existingStatus: existingBefore.status, eligible: false,
+  });
+
+  const [preflight] = await getDb().select({
+    membershipId: collegeMemberships.id,
+    collegeId: collegeMemberships.collegeId,
+    userId: users.id,
+    identityUid: users.identityUid,
+    platformStatus: users.platformStatus,
+    membershipStatus: collegeMemberships.status,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id, membershipId),
+      eq(collegeMemberships.collegeId, job.collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+    )).limit(1);
+  if (!preflight) return bulkDriveOutcome(membershipId, {
+    eligible: false, reason: "Not an active learner in this college",
+  });
+  // A persisted identity used only to run the existing placement gate.
+  // The real TPO remains the recorded application actor.
+  const learnerContext: RequestContext = {
+    user: {
+      id: preflight.userId, identityUid: preflight.identityUid,
+      platformStatus: preflight.platformStatus, systemRoles: [],
+    },
+    membership: {
+      id: preflight.membershipId, collegeId: preflight.collegeId,
+      organizationId: context.membership!.organizationId,
+      status: preflight.membershipStatus, roles: ["LEARNER"],
+    },
+  };
+  try {
+    await requireLearnerPlacementAccess(learnerContext);
+  } catch (error) {
+    if (!(error instanceof AuthorizationError)) throw error;
+    return bulkDriveOutcome(membershipId, {
+      eligible: false, reason: "Learner placement participation is not enabled",
+    });
+  }
+  const eligibility = await evaluatePlacementEligibility(context, job.id, membershipId);
+  if (eligibility.status === "INELIGIBLE" || eligibility.status === "NEEDS_DATA") {
+    return bulkDriveOutcome(membershipId, {
+      eligible: false, reason: eligibility.status === "NEEDS_DATA"
+        ? "Required evidence is missing" : "Drive eligibility requirements not met",
+    });
+  }
+
+  return getDb().transaction(async (tx) => {
+    // Match the self-apply job/role lock order to prevent mid-flight closures.
+    const [live] = await tx.select({
+      status: placementJobs.status,
+      archivedAt: placementJobs.archivedAt,
+      mode: placementJobs.applicationMode,
+      deadline: placementJobs.applicationDeadline,
+      collegeId: placementJobs.collegeId,
+      seasonStatus: placementSeasons.status,
+    }).from(placementJobs)
+      .innerJoin(placementSeasons, eq(placementSeasons.id, placementJobs.seasonId))
+      .where(and(
+        eq(placementJobs.id, job.id),
+        eq(placementJobs.collegeId, job.collegeId),
+        eq(placementSeasons.collegeId, job.collegeId),
+      )).for("update").limit(1);
+    if (!live || live.status !== "PUBLISHED" ||
+      live.archivedAt !== null || live.seasonStatus !== "ACTIVE" ||
+      live.mode === "EXTERNAL_ONLY" ||
+      isPlacementApplicationDeadlinePassed(live.deadline, new Date())) {
+      return bulkDriveOutcome(membershipId, {
+        eligible: false, reason: "Drive is not open for internal additions",
+      });
+    }
+    const [role] = await tx.select({ id: placementJobRoleOptions.id })
+      .from(placementJobRoleOptions).where(and(
+        eq(placementJobRoleOptions.id, roleOptionId),
+        eq(placementJobRoleOptions.jobId, job.id),
+        eq(placementJobRoleOptions.status, "ACTIVE"),
+      )).for("share").limit(1);
+    if (!role) return bulkDriveOutcome(membershipId, {
+      eligible: false, reason: "Role is not active for this drive",
+    });
+
+    const learner = await loadLearner(tx, job.collegeId, membershipId);
+    if (!learner || learner.userId !== preflight.userId) {
+      return bulkDriveOutcome(membershipId, {
+        eligible: false, reason: "Learner membership changed before addition",
+      });
+    }
+    const [existing] = await tx.select({ status: placementApplications.status })
+      .from(placementApplications).where(and(
+        eq(placementApplications.roleOptionId, roleOptionId),
+        eq(placementApplications.membershipId, membershipId),
+      )).limit(1);
+    if (existing) return bulkDriveOutcome(membershipId, {
+      existingStatus: existing.status, eligible: false,
+    });
+
+    const [coordinator] = await tx.select({ id: placementDriveDayCoordinatorAssignments.id })
+      .from(placementDriveDayCoordinatorAssignments).where(and(
+        eq(placementDriveDayCoordinatorAssignments.jobId, job.id),
+        eq(placementDriveDayCoordinatorAssignments.collegeId, job.collegeId),
+        eq(placementDriveDayCoordinatorAssignments.learnerMembershipId, membershipId),
+      )).limit(1);
+    if (coordinator) return bulkDriveOutcome(membershipId, {
+      eligible: false, reason: "Drive-day coordinators cannot be applicants",
+    });
+
+    // Preflight ran outside the transaction; this lock-held path has
+    // rechecked the live job, role, learner, coordinator and existing row.
+    // Concurrency-sensitive policy/evidence parity remains PARTIAL.
+    const [created] = await tx.insert(placementApplications).values({
+      jobId: job.id, roleOptionId, membershipId,
+      channel: "INTERNAL", eligibilityStatus: eligibility.status,
+      eligibilitySnapshot: {
+        ...eligibility, source: "TPO_BULK_ADD", addedByUserId: context.user.id,
+      },
+      submittedByUserId: context.user.id,
+    }).onConflictDoNothing().returning({ id: placementApplications.id });
+    if (!created) {
+      const [conflict] = await tx.select({ status: placementApplications.status })
+        .from(placementApplications).where(and(
+          eq(placementApplications.roleOptionId, roleOptionId),
+          eq(placementApplications.membershipId, membershipId),
+        )).limit(1);
+      return bulkDriveOutcome(membershipId, {
+        existingStatus: conflict?.status ?? "CONFLICT", eligible: false,
+      });
+    }
+
+    await tx.insert(placementApplicationStatusHistory).values({
+      applicationId: created.id, fromStatus: null,
+      toStatus: "SUBMITTED", actorUserId: context.user.id,
+      reason: "TPO bulk Add-to-Drive",
+    });
+    await tx.insert(placementApplicationScreenings).values({
+      applicationId: created.id,
+    });
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_SUBMITTED,
+      collegeId: job.collegeId,
+      subjectType: "placement_application", subjectId: created.id,
+      subjectLabel: "TPO bulk addition",
+      summary: "TPO added a learner to a placement drive",
+      metadata: {
+        jobId: job.id, roleOptionId, membershipId, source: "TPO_BULK_ADD",
+      },
+      groupKey: "placement-job:" + job.id + ":applications",
+      dedupeKey: "placement-application:" + created.id + ":submitted",
+    });
+    return bulkDriveOutcome(membershipId, { eligible: true });
+  });
+}
+
+export async function bulkAddLearnersToDrive(
+  context: RequestContext, rawJobId: string, rawInput: unknown,
+) {
+  requireTpo(context);
+  const input = bulkDriveAddSchema.parse(rawInput);
+  const job = await loadManagedDrive(context, placementJobIdSchema.parse(rawJobId));
+  const results: BulkDriveResult[] = [];
+  for (const id of input.membershipIds) {
+    results.push(await addOne(context, job, input.roleOptionId, id));
+  }
+  return { results, counts: bulkDriveCounts(results) };
+}
