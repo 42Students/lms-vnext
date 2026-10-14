@@ -93,6 +93,30 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
+test("Faculty Students links an authorized roster member to mobile-readable attendance history", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Students" }).click();
+  const detailLink = page.getByRole("link", { name: "View student details" }).first();
+  await expect(detailLink).toBeVisible();
+  const href = await detailLink.getAttribute("href");
+  expect(href).toMatch(/\/teacher\/courses\/[^/]+\/students\/[0-9a-f-]{36}$/i);
+  await detailLink.click();
+  await expect(page).toHaveURL(/\/students\/[0-9a-f-]{36}$/i);
+  await expect(page.getByRole("heading", { name: "Course attendance" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Session history" })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("heading", { name: "Session history" })).toBeVisible();
+  // When persisted sessions exist, the mobile-friendly history replaces the wide table.
+  const mobileHistory = page.getByRole("list", { name: "Mobile session history" });
+  if (await mobileHistory.count()) {
+    await expect(mobileHistory).toBeVisible();
+    await expect(page.getByRole("table")).toBeHidden();
+  }
+});
+
 test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }, testInfo) => {
   test.setTimeout(90_000);
   await facultyLogin(context);
