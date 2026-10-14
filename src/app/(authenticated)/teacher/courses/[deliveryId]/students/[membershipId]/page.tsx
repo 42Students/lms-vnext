@@ -61,7 +61,8 @@ export default async function FacultyStudentDetailPage({
       {data.sessions.length === 0
         ? <EmptyState title="No scheduled sessions"
             description="No scheduled class sessions exist for this Course delivery." />
-        : <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+        : <div className="space-y-3">
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
           <table className="w-full min-w-[38rem] text-left text-sm">
             <thead className="bg-surface-subtle"><tr>
               <th scope="col" className="px-4 py-3">Session</th>
@@ -70,12 +71,35 @@ export default async function FacultyStudentDetailPage({
               <th scope="col" className="px-4 py-3">Recorded</th>
             </tr></thead>
             <tbody>{data.sessions.map(row => <tr key={row.id} className="border-t border-border">
-              <td className="px-4 py-3 font-medium">{row.title}</td>
+              <td className="px-4 py-3 font-medium">
+                {row.title}
+                {row.note ? <p className="mt-1 max-w-sm whitespace-pre-wrap text-xs font-normal text-body">Note: {row.note}</p> : null}
+              </td>
               <td className="px-4 py-3">{dateText(row.startsAt)}</td>
               <td className="px-4 py-3">{row.label}</td>
               <td className="px-4 py-3">{row.markedAt ? dateText(row.markedAt) : "Not recorded"}</td>
             </tr>)}</tbody>
           </table>
+          </div>
+          <ol aria-label="Mobile session history" className="grid gap-3 md:hidden">
+            {data.sessions.map(row => (
+              <li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h3 className="font-semibold text-foreground">{row.title}</h3>
+                  <span className="rounded-md bg-surface-subtle px-2 py-1 text-xs font-semibold text-body">
+                    {row.label}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-body">{dateText(row.startsAt)}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {row.markedAt ? "Recorded " + dateText(row.markedAt) : "Attendance not recorded"}
+                </p>
+                {row.note ? (
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-body">Note: {row.note}</p>
+                ) : null}
+              </li>
+            ))}
+          </ol>
         </div>}
       <Link href={root + "/attendanceDetail"}
         className="inline-flex text-sm font-semibold text-primary-text hover:underline">
