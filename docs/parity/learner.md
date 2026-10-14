@@ -1152,3 +1152,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-007 PARTIAL (round 4):** Dashboard now separately offers a direct action to the earliest owned upcoming interview, even if a different assessment or offer owns the primary hero. It uses the current saved/approved interview time and the existing application+round membership-scoped destination; it never infers attended/confirmed outcomes. Fixed-date regression authored; PG/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-008 PARTIAL (round 4):** Placement dashboard now retains an independent chronological Next Scheduled Event card and exact learner-scoped destination. Hero urgency can legitimately prefer an expiring offer or later assessment without hiding the actual next scheduled round. UTC effective reschedule sorting remains authoritative, with explicit unavailable/empty distinction. Pure regression authored; PG/browser verification pending.

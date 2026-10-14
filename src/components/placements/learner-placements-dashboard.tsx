@@ -195,6 +195,24 @@ export function LearnerPlacementsDashboard({
         </div>
       ) : null}
 
+      {display.nextScheduledEvent ? (
+        <aside aria-label="Next scheduled placement calendar event"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Next scheduled placement event</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">
+              {display.nextScheduledEvent.roundName} · {display.nextScheduledEvent.companyName}
+            </p>
+            <p className="mt-1 text-xs text-body">
+              {formatWhen(display.nextScheduledEvent.when)} · {display.nextScheduledEvent.rescheduled?"Approved reschedule":"Recorded schedule"}
+            </p>
+          </div>
+          <Link href={display.nextScheduledEvent.href}
+            className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+            View event details →
+          </Link>
+        </aside>
+      ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-labelledby="placement-attention-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
