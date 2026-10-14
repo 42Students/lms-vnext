@@ -41,6 +41,33 @@ afterEach(async()=>{
 },30000);
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
 describe("own education skills projects jsonb_set PATCH on fresh PostgreSQL",()=>{
+  it("rejects a stale same-section version, preserves unrelated edits, and never audits the denied write",async()=>{
+    const {ids,context}=fixture!;
+    const first={id:randomUUID(),name:"React"};
+    const second={id:randomUUID(),name:"PostgreSQL"};
+    await updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"skills",items:[first],expectedItems:[],
+    });
+    await expect(updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"skills",items:[second],expectedItems:[],
+    })).rejects.toMatchObject({code:"LEARNER_PROFILE_SECTION_STALE"});
+    await updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"education",
+      items:[{id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"}],
+      expectedItems:[],
+    });
+    const rows=await pool.query<{profile_document:Record<string,unknown>}>(
+      "SELECT profile_document FROM learner_profiles WHERE membership_id=$1",[ids.membership]);
+    expect(rows.rows[0]?.profile_document).toMatchObject({
+      skills:[expect.objectContaining({name:"React"})],
+      education:[expect.objectContaining({program:"B.Tech"})],
+    });
+    const audits=await pool.query<{total:string}>(
+      "SELECT count(*)::text AS total FROM activity_events WHERE actor_membership_id=$1 AND event_type='identity.learner_profile_section.updated'",
+      [ids.membership]);
+    expect(audits.rows[0]?.total).toBe("2");
+  },30000);
+
   it("patches only each submitted section, preserves all others and audits without payload",async()=>{
     const {ids,context}=fixture!;
     const edu={id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"};

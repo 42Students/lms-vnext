@@ -6,7 +6,9 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
-import { validateLearnerProfileSectionEdit } from "./learner-profile-section-model";
+import { validateLearnerProfileSectionEdit,isLearnerProfileSectionStale } from "./learner-profile-section-model";
+import {learnerProfileDocumentSchema} from "./profile-validation";
+import { PeopleServiceError } from "./errors";
 
 export async function updateOwnLearnerProfileSection(context:RequestContext,rawInput:unknown) {
   const input=validateLearnerProfileSectionEdit(rawInput);
@@ -29,21 +31,33 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
        owner.status!=="ACTIVE" || !account || account.status!=="ACTIVE" || !role) {
       throw new AuthorizationError("profile.self.manage");
     }
-    const [saved]=await tx.insert(learnerProfiles).values({
-      membershipId:membership.id,
-      profileDocument:{[input.section]:input.items},
-    }).onConflictDoUpdate({
-      target:learnerProfiles.membershipId,
-      set:{
-        profileDocument:sql`jsonb_set(
-          ${learnerProfiles.profileDocument},
-          ARRAY[${input.section}]::text[],
-          ${JSON.stringify(input.items)}::jsonb,
-          true
-        )`,
-        updatedAt:new Date(),
-      },
-    }).returning({document:learnerProfiles.profileDocument});
+    // Serialize all edits to this profile before comparing only the target
+    // section; other section updates remain independent, and can merge.
+    await tx.insert(learnerProfiles).values({
+      membershipId:membership.id,profileDocument:{},
+    }).onConflictDoNothing();
+    const [locked]=await tx.select({document:learnerProfiles.profileDocument})
+      .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membership.id))
+      .for("update").limit(1);
+    const document=(locked?.document??{}) as Record<string,unknown>;
+    const current=learnerProfileDocumentSchema.shape[input.section].parse(document[input.section]??[]);
+    if(input.expectedItems!==undefined){
+      const before=input.expectedItems;
+      if(isLearnerProfileSectionStale(current,before))
+        throw new PeopleServiceError("LEARNER_PROFILE_SECTION_STALE");
+    }
+    if(!isLearnerProfileSectionStale(current,input.items))
+      return {section:input.section,items:current};
+    const [saved]=await tx.update(learnerProfiles).set({
+      profileDocument:sql`jsonb_set(
+        ${learnerProfiles.profileDocument},
+        ARRAY[${input.section}]::text[],
+        ${JSON.stringify(input.items)}::jsonb,
+        true
+      )`,
+      updatedAt:new Date(),
+    }).where(eq(learnerProfiles.membershipId,membership.id))
+      .returning({document:learnerProfiles.profileDocument});
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_PROFILE_SECTION_UPDATED,
       collegeId:membership.collegeId,
