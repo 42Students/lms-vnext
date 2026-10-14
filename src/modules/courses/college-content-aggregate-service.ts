@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -53,22 +53,22 @@ export async function listCollegeContentAggregate(
 
   const db = getDb();
   const scoped = db.select({
-    id: lessonContents.id,
-    title: lessonContents.title,
+    id: sql<string>`${lessonContents.id}`.mapWith(lessonContents.id).as("college_content_id"),
+    title: sql<string>`${lessonContents.title}`.mapWith(lessonContents.title).as("college_content_title"),
     contentType: lessonContents.contentType,
-    status: lessonContents.status,
+    status: sql<string>`${lessonContents.status}`.mapWith(lessonContents.status).as("college_content_status"),
     sequence: lessonContents.sequence,
     durationSeconds: lessonContents.durationSeconds,
     deliveryId: lessonContents.deliveryId,
-    lessonName: courseLessons.name,
-    learningPathTitle: courseLearningPaths.title,
-    learningPathStatus: courseLearningPaths.status,
-    offeringId: courseOfferings.id,
-    offeringStatus: courseOfferings.status,
-    courseName: courses.name,
+    lessonName: sql<string>`${courseLessons.name}`.mapWith(courseLessons.name).as("college_content_lesson_name"),
+    learningPathTitle: sql<string>`${courseLearningPaths.title}`.mapWith(courseLearningPaths.title).as("college_content_path_title"),
+    learningPathStatus: sql<string>`${courseLearningPaths.status}`.mapWith(courseLearningPaths.status).as("college_content_path_status"),
+    offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("college_content_offering_id"),
+    offeringStatus: sql<string>`${courseOfferings.status}`.mapWith(courseOfferings.status).as("college_content_offering_status"),
+    courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("college_content_course_name"),
     courseCode: courses.code,
-    cohortName: cohorts.name,
-    periodName: academicPeriods.name,
+    cohortName: sql<string>`${cohorts.name}`.mapWith(cohorts.name).as("college_content_cohort_name"),
+    periodName: sql<string>`${academicPeriods.name}`.mapWith(academicPeriods.name).as("college_content_period_name"),
   }).from(lessonContents)
     .innerJoin(courseLessons, eq(courseLessons.id, lessonContents.lessonId))
     .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))

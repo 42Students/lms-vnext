@@ -154,6 +154,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       expect.arrayContaining([ids.video, ids.youtube]),
     );
     expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    expect(videos.items.find((item) => item.id === ids.video)).toMatchObject({
+      title: label, lessonName: label, learningPathTitle: label,
+      courseName: label, cohortName: label, periodName: label, offeringId: ids.offering,
+    });
+    expect(resources.items.find((item) => item.id === ids.resource)).toMatchObject({
+      title: label, courseName: label, offeringId: ids.offering,
+    });
     expect(videos.items.some((item) => item.id === ids.resource)).toBe(false);
     expect(resources.items.some((item) => item.id === ids.video)).toBe(false);
     const serialized = JSON.stringify({ videos, resources });
