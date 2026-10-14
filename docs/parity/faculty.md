@@ -717,3 +717,14 @@ Section roster is rechecked and arbitrary membership identifiers return a
 non-leaking NOT_FOUND error. The drill-down is not a weighted final grade.
 Pure model and positive/denial PostgreSQL tests are authored, not independently
 executed; mobile/browser and legacy gradebook acceptance remain open.
+
+## 2026-10-14 Faculty attendance scheduling co-teacher editor parity (PARTIAL)
+
+The Section attendance schedule editor now limits **reschedule choices** to
+events authored by the current signed-in Faculty membership. Selecting an
+existing unmarked event prefills title, description, location and local-time
+start/end for safe correction. Client-side time validation avoids invalid
+Date serialization, but strict Zod, transaction locks, optimistic token and
+same-origin command authorization remain server authoritative. Existing
+isolated PostgreSQL create/reschedule/denial test and new pure model tests
+are authored; TypeScript, browser and PostgreSQL reruns remain open.

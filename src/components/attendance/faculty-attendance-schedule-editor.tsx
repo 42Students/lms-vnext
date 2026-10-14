@@ -2,10 +2,12 @@
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {localDateTimeInput,validateFacultyScheduleWindow} from
+  "@/modules/attendance/faculty-schedule-editor-model";
 
 type Session={
   id:string;title:string;startsAt:string;endsAt:string;
-  updatedAt:string;marked:boolean;
+  updatedAt:string;marked:boolean;description:string|null;location:string|null;
 };
 export function FacultyAttendanceScheduleEditor({
   deliveryId,sessions,
@@ -20,11 +22,37 @@ export function FacultyAttendanceScheduleEditor({
   const [endsAt,setEndsAt]=useState("");
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState<string|null>(null);
-  const selected=sessions.find(s=>s.id===id);
+  const [success,setSuccess]=useState<string|null>(null);
+  const eligible=sessions.filter(s=>!s.marked);
+  const selected=eligible.find(s=>s.id===id);
+  function useExistingSession(session:Session){
+    setId(session.id);
+    setTitle(session.title);
+    setDescription(session.description??"");
+    setLocation(session.location??"");
+    setStartsAt(localDateTimeInput(session.startsAt));
+    setEndsAt(localDateTimeInput(session.endsAt));
+    setError(null);setSuccess(null);
+  }
+  function changeAction(next:"CREATE"|"RESCHEDULE"){
+    setAction(next);setError(null);setSuccess(null);
+    if(next==="RESCHEDULE"&&eligible[0])useExistingSession(selected??eligible[0]);
+    if(next==="CREATE"){
+      setTitle("");setDescription("");setLocation("");setStartsAt("");setEndsAt("");
+    }
+  }
   async function save(){
-    if(busy||action==="RESCHEDULE"&&(!selected||selected.marked))return;
+    if(busy)return;
+    if(action==="RESCHEDULE"&&!selected){
+      setError("Choose an unmarked attendance session you own.");return;
+    }
+    if(title.trim().length<3){
+      setError("Enter a session title of at least three characters.");return;
+    }
+    const timingError=validateFacultyScheduleWindow(startsAt,endsAt);
+    if(timingError){setError(timingError);return;}
     if(!window.confirm("Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"))return;
-    setBusy(true);setError(null);
+    setBusy(true);setError(null);setSuccess(null);
     try{
       const payload={
         action,title,description:description||null,location:location||null,
@@ -39,6 +67,7 @@ export function FacultyAttendanceScheduleEditor({
       );
       if(!response.ok)throw new Error(
         "Session was not saved. Check the current schedule, Section ownership and version.");
+      setSuccess(action==="CREATE"?"Session scheduled.":"Session rescheduled.");
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Session update failed.");}
     finally{setBusy(false);}
@@ -48,20 +77,20 @@ export function FacultyAttendanceScheduleEditor({
     <h2 className="font-semibold text-foreground">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
       Times are entered in your device time zone and saved as offset-aware instants.
-      Sessions already marked for attendance cannot be moved.
+      Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="grid gap-1 text-sm">Action
-        <select value={action} onChange={e=>setAction(e.target.value as typeof action)}
+        <select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
           className="min-h-10 rounded border border-border bg-background p-2">
           <option value="CREATE">Schedule</option>
-          <option value="RESCHEDULE">Reschedule</option>
+          <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
         </select>
       </label>
       {action==="RESCHEDULE"?<label className="grid gap-1 text-sm">Unmarked session
-        <select value={id} onChange={e=>setId(e.target.value)}
+        <select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)useExistingSession(next);}}
           className="min-h-10 rounded border border-border bg-background p-2">
-          {sessions.filter(s=>!s.marked).map(s=>
+          {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
         </select>
       </label>:null}
@@ -92,5 +121,6 @@ export function FacultyAttendanceScheduleEditor({
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
     </button>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   </section>;
 }
