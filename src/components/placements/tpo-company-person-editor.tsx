@@ -8,6 +8,7 @@ type Person = {
   email: string | null;
   designation: string | null;
   updatedAt: string;
+  editable: boolean;
 };
 
 export function TpoCompanyPersonEditor({
@@ -24,11 +25,11 @@ export function TpoCompanyPersonEditor({
   const [designation, setDesignation] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const current = contacts.find((item) => item.id === selected);
+  const current = contacts.find((item) => item.id === selected && item.editable);
 
   function select(value: string) {
     setSelected(value);
-    const item = contacts.find((candidate) => candidate.id === value);
+    const item = contacts.find((candidate) => candidate.id === value && candidate.editable);
     setName(item?.name ?? "");
     setEmail(item?.email ?? "");
     setDesignation(item?.designation ?? "");
@@ -75,14 +76,15 @@ export function TpoCompanyPersonEditor({
       <h2 className="text-base font-semibold text-foreground">Add or edit contact person</h2>
       <p className="text-sm text-body">
         Only contacts explicitly linked to this company appear. Email is required and
-        must be unique in this college; existing phone-only contacts can still be edited
+        must be unique in this college; only non-joined, non-unsubscribed contacts are editable.
+        Existing phone-only contacts can still be edited
         once an email is provided. No messages are sent.
       </p>
       <label className="block text-sm font-medium">Contact
         <select value={selected} onChange={event => select(event.target.value)}
           className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface p-2">
           <option value="NEW">Add new person</option>
-          {contacts.map(item => (
+          {contacts.filter(item => item.editable).map(item => (
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
         </select>
