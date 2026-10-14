@@ -6,6 +6,7 @@ import { colleges, organizations } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listOrganizations } from "@/modules/organizations/service";
+import { TENANT_DIRECTORY_CSV_CAP, buildTenantDirectoryCsv, tenantDirectoryExportQuerySchema } from "./admin-tenant-export-model";
 import { CollegeServiceError } from "./service";
 import { TENANT_LIFECYCLE_PAGE_SIZE, tenantLifecyclePaging, tenantLifecycleQuerySchema } from "./admin-tenant-lifecycle-model";
 function scopedTenantSource(context: RequestContext, query?: z.output<typeof tenantLifecycleQuerySchema>) {
@@ -52,4 +53,14 @@ export async function getSuperAdminTenantLifecycleDetail(context: RequestContext
   const [row] = await getDb().select().from(source).where(eq(source.id, parsed.data)).limit(1);
   if (!row) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
   return row;
+}
+
+export async function exportSuperAdminTenantDirectory(context: RequestContext, raw: unknown) {
+  const query = tenantDirectoryExportQuerySchema.parse(raw);
+  const source = scopedTenantSource(context, { ...query, page: 1 });
+  const rows = await getDb().select().from(source).orderBy(asc(source.name), asc(source.id))
+    .limit(TENANT_DIRECTORY_CSV_CAP + 1);
+  const truncated = rows.length > TENANT_DIRECTORY_CSV_CAP;
+  return { csv: buildTenantDirectoryCsv(rows, truncated), truncated,
+    exported: Math.min(rows.length, TENANT_DIRECTORY_CSV_CAP), cap: TENANT_DIRECTORY_CSV_CAP };
 }
