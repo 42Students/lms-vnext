@@ -568,3 +568,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Round conflict deep links — PARTIAL:** Existing within-drive, known-duration overlap indicators now deep-link each *authorized persisted* conflicting round to the Rounds selector using an encoded roundId. Unknown IDs are filtered rather than projected, and this does not infer interviewer or room conflicts. Pure model regression authored; foreign-company not-found behavior remains with existing job resolver. Browser acceptance pending.
+
+
+**2026-10-15 chat-10 R5 / Activity query typing repair — PARTIAL:** Read-only HR Activity route now declares `page` in the typed Next searchParams and parses it through the existing strict Zod schema, preserving bounded numeric page validation. Additional unit bounds authored; runtime TypeScript/browser gates still pending. Avoids the reported TS property error while retaining company/college authorization.
