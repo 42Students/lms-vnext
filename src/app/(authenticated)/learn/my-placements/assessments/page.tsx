@@ -2,11 +2,11 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
-import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
+import { getOwnLearnerAssessmentBrowse } from "@/modules/placements/learner-assessment-browse-service";
 
 export default async function LearnerPlacementAssessmentsPage() {
   const context = await getCurrentRequestContext();
-  const workspace = await getLearnerPlacementRequestWorkspace(context);
+  const workspace = await getOwnLearnerAssessmentBrowse(context);
   const rounds = workspace.rounds.map((row) => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,

@@ -383,6 +383,23 @@ Legacy contract audited from `ApplicationsContent`:
 
 ## Page: Assessments
 
+**2026-10-14 assessment due-bucket addition (PARTIAL, L15-005/006):**
+The Assessments workspace now provides count-backed "Due today" and
+"Due this week" quick filters sourced only from the learner's own
+shortlisted, scheduled TEST/VENDOR_TEST rounds in registered tables.
+Buckets use effective approved reschedules and Asia/Kolkata days; the
+calendar week is Monday–Sunday (including due today), not a rolling seven
+days. Past and unscheduled rounds are not in these due buckets. No
+scheduled round is inferred to be submitted or employer-completed.
+Conflicting generic filters are reset when choosing a quick bucket.
+An adapter checks the persisted active learner access and central
+`placements.read` before reading rounds. Dedicated route loading/error
+with Retry, responsive filter chips and truthful filtered-empty behavior
+are authored, as are IST boundary unit and PostgreSQL denial tests.
+Employer-submission/other bucket/source parity, executed tests and
+browser acceptance remain open.
+
+
 **2026-10-14 official-results extension (PARTIAL):** linked, read-only
 `/learn/my-placements/assessments/results` lists persisted, applied
 TEST/VENDOR_TEST results from the Learner's authorized applications.
