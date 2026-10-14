@@ -66,10 +66,13 @@ export function learnerPlacementDashboard(
     const kind: PlacementDashboardEvent["kind"] = isCareerRoundVisible("ASSESSMENT", row.roundKind)
       ? "ASSESSMENT"
       : isCareerRoundVisible("INTERVIEW", row.roundKind) ? "INTERVIEW" : "OTHER";
+    const exactQuery = "?applicationId=" +
+      encodeURIComponent(row.applicationId) +
+      "&roundId=" + encodeURIComponent(row.roundId);
     const href = kind === "ASSESSMENT"
-      ? "/learn/my-placements/assessments"
+      ? "/learn/my-placements/assessments" + exactQuery
       : kind === "INTERVIEW"
-        ? "/learn/my-placements/interviews"
+        ? "/learn/my-placements/interviews" + exactQuery
         : "/learn/my-placements/calendar";
     return [{
       applicationId: row.applicationId,
