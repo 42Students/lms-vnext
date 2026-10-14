@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { facultyLifecycleConfirmation } from "@/modules/people/college-faculty-lifecycle-model";
 
 export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
@@ -43,6 +44,8 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
     });
   }
   return <div className="mt-2">
+    <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
+      className="mr-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">Audit history</Link>
     <button type="button" onClick={() => setEditing(value => !value)} disabled={busy}
       className="rounded-md border border-border px-3 py-2 text-xs font-semibold text-primary-text">
       {action === "DEACTIVATE" ? "Deactivate" : "Reactivate"}

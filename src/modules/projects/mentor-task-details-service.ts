@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -75,6 +75,9 @@ export async function updateMentorTaskDetails(
       updatedAt:now,
     }).where(and(
       eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
+      // PostgreSQL stores microseconds but incoming Date tokens store milliseconds.
+      // This predicate remains true for a row created by SQL DEFAULT now().
+      sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${expected.toISOString()}::timestamptz`,
     )).returning();
     if(!updated) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{

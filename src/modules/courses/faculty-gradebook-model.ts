@@ -50,3 +50,27 @@ export function facultyGradebookCsv(rows:readonly FacultyGradebookRow[]){
     row.percent,row.hasUnknown?"YES":"NO",
   ].map(csv).join(","))].join("\r\n")+"\r\n";
 }
+
+/** Only published, Section-scoped assessment evidence belongs in this view. */
+export type FacultyGradebookAssessment = {
+  assessmentId:string;kind:"ASSIGNMENT"|"QUIZ";title:string;
+};
+export function facultyPublishedLearnerBreakdown(
+  learnerMembershipId:string,
+  assessments:readonly FacultyGradebookAssessment[],
+  scores:readonly GradebookScore[],
+) {
+  return assessments.map(assessment=>{
+    const score=scores.find(item=>item.membershipId===learnerMembershipId&&
+      item.assessmentId===assessment.assessmentId&&item.kind===assessment.kind);
+    if(!score||!Number.isFinite(score.earned)||!Number.isFinite(score.possible)||
+      score.possible<=0||score.earned<0||score.earned>score.possible){
+      return {...assessment,earned:null,possible:null,percent:null,
+        status:"UNKNOWN" as const};
+    }
+    return {...assessment,earned:score.earned,possible:score.possible,
+      percent:Math.round(score.earned/score.possible*100),
+      status:"PUBLISHED_SCORE" as const};
+
+  });
+}
