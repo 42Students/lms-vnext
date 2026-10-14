@@ -37,7 +37,7 @@ export function learnerPlacementPreparation(input: PlacementPreparationInput) {
       label: "CGPA recorded",
       recorded: has(input.evidence?.cgpa),
       detail: has(input.evidence?.cgpa)
-        ? String(input.evidence!.cgpa) + " (recorded)"
+        ? String(input.evidence?.cgpa) + " (recorded)"
         : "CGPA is not recorded",
     },
     {
@@ -45,7 +45,7 @@ export function learnerPlacementPreparation(input: PlacementPreparationInput) {
       label: "Active backlog count recorded",
       recorded: has(input.evidence?.activeBacklogs),
       detail: has(input.evidence?.activeBacklogs)
-        ? String(input.evidence!.activeBacklogs) + " active backlogs recorded"
+        ? String(input.evidence?.activeBacklogs) + " active backlogs recorded"
         : "Active backlog count is not recorded",
     },
     {
@@ -53,7 +53,7 @@ export function learnerPlacementPreparation(input: PlacementPreparationInput) {
       label: "Gap years recorded",
       recorded: has(input.evidence?.gapYears),
       detail: has(input.evidence?.gapYears)
-        ? String(input.evidence!.gapYears) + " gap years recorded"
+        ? String(input.evidence?.gapYears) + " gap years recorded"
         : "Gap-year count is not recorded",
     },
     {
