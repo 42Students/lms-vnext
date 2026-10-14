@@ -48,6 +48,9 @@ describe.skipIf(!enabled)("College Activity export own-scope PostgreSQL", () => 
       summary: "Private activity B",
     });
     const result = await exportCollegeActivity(adminA, { subjectType });
+    const selected = await exportCollegeActivity(adminA, { subjectType, subjectId: ownEvent.subjectId });
+    expect(selected.csv).toContain(ownEvent.subjectId);
+    expect(selected.csv).not.toContain(foreignEvent.subjectId);
     expect(result.csv).toContain(ownEvent.subjectId);
     expect(result.csv).not.toContain(foreignEvent.subjectId);
     expect(result.csv).toContain("'=INJECT");
