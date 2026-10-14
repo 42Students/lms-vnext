@@ -1,6 +1,6 @@
 import {placementReportCsv} from "./report-model";
 import {tpoApplicantPipelineParams} from "./tpo-applicant-pipeline-model";
-export const tpoDriveApplicationsExportQuerySchema=tpoApplicantPipelineParams;
+export const tpoDriveApplicationsExportQuerySchema=tpoApplicantPipelineParams.omit({page:true});
 /** Search text is literal, never an operator-controlled SQL wildcard. */
 export function tpoApplicantExportSearchPattern(search:string){
  return "%"+search.replace(/[\\%_]/g,"\\$&")+"%";

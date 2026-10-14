@@ -14,6 +14,7 @@ const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"tpo-applica
 platformStatus:"ACTIVE",systemRoles:[]},membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
 organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
 const ids:{company?:string;rel?:string;job?:string;role?:string;app?:string}={};const addedTpoRoleIds:string[]=[];
+const extraApps:string[]=[],extraMembers:string[]=[],extraUsers:string[]=[];
 async function fixture(){
  if(!pool)throw Error("isolated DB required");
  const name="Pipeline-"+randomUUID();
@@ -27,6 +28,11 @@ async function fixture(){
 async function cleanup(){
  if(!pool)return;
  if(ids.app)await pool.query("DELETE FROM placement_applications WHERE id=$1",[ids.app]);
+ for(const id of extraApps)await pool.query("DELETE FROM placement_applications WHERE id=$1",[id]);
+ // These read-only learner fixtures never receive activity_events references.
+ for(const id of extraMembers){await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[id]);
+  await pool.query("DELETE FROM college_memberships WHERE id=$1",[id]);}
+ for(const id of extraUsers)await pool.query("DELETE FROM users WHERE id=$1",[id]);
  if(ids.role)await pool.query("DELETE FROM placement_job_role_options WHERE id=$1",[ids.role]);
  if(ids.job)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.job]);
  if(ids.rel)await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[ids.rel]);
@@ -50,9 +56,30 @@ afterAll(async()=>{
  await closeDatabaseConnection();
 });
 it("reads persisted pending applicants and denies foreign college / wrong role",async()=>{
+if(!pool)throw Error("PG required");
 const jobId=await fixture();
 const result=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING"});
 expect(result.rows.some(r=>r.id===ids.app)).toBe(true);
+for(let i=0;i<25;i++){
+ const user=(await pool.query<{id:string}>("INSERT INTO users(identity_uid,display_name) VALUES($1,$2) RETURNING id",
+  ["pipeline-page-"+randomUUID(),"Pipeline candidate "+i])).rows[0]!.id;extraUsers.push(user);
+ const member=(await pool.query<{id:string}>("INSERT INTO college_memberships(user_id,college_id) VALUES($1,$2) RETURNING id",
+  [user,SEED_IDS.collegeA])).rows[0]!.id;extraMembers.push(member);
+ await pool.query("INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",[member]);
+ const app=(await pool.query<{id:string}>("INSERT INTO placement_applications(job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
+  [jobId,ids.role,member,user])).rows[0]!.id;extraApps.push(app);
+}
+const first=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:1});
+const second=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:2});
+expect(first.rows).toHaveLength(25);expect(second.rows).toHaveLength(1);
+expect(first.counts.pending).toBe(26);expect(second.totalMatching).toBe(26);
+expect(new Set([...first.rows,...second.rows].map(row=>row.id)).size).toBe(26);
+expect((await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:999})).page).toBe(2);
+expect((await getTpoApplicantPipeline(tpo,{jobId,search:"%"})).rows).toHaveLength(0);
+await pool.query("UPDATE placement_applications SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",[extraApps[0]]);
+const withdrawn=await getTpoApplicantPipeline(tpo,{jobId,stage:"WITHDRAWN"});
+expect(withdrawn.rows.map(row=>row.id)).toEqual([extraApps[0]]);
+expect(withdrawn.counts.pending).toBe(25);
 const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
 await expect(getTpoApplicantPipeline(foreign,{jobId})).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
 const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
