@@ -889,3 +889,6 @@ Assigned-project reports now distinguish registered current primary versus suppo
 
 ## 2026-10-15 chat-11 AF — exact-project meeting type filter (PARTIAL)
 The registered Team & Meeting log filters by GENERAL, PLANNING, STANDUP, REVIEW or RETRO in the same scoped SQL count and paginated query as status/title. URL pagination retains meeting type, with strict invalid-selector unit tests and test-owned PostgreSQL fixture assertions. Existing Mentor role/college/current project checks unchanged; execution and full meeting legacy parity open.
+
+## 2026-10-15 chat-11 AG — Mentor Sprint progress Release status (PARTIAL)
+Cross-project Sprint progress now filters persisted PLANNED, IN_PROGRESS and SHIPPED Release status in the same SQL scope/count/page as Sprint filters, retaining it in pagination and capped CSV. Strict Zod and unit query cases are source-authored. No phantom velocity, scope override or write; CLI/PG/browser and full Sprint/Release legacy acceptance remain open.
