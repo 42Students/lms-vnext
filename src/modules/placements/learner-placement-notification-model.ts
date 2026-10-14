@@ -6,6 +6,10 @@ export const learnerPlacementNotificationInputSchema = z.object({
   notifyMatchingJobs: z.boolean(),
   notifyApplicationUpdates: z.boolean(),
   confirmed: z.literal(true),
+  expected: z.object({
+    notifyMatchingJobs: z.boolean(),
+    notifyApplicationUpdates: z.boolean(),
+  }).strict(),
 }).strict();
 
 export type LearnerPlacementNotificationInput =
@@ -17,4 +21,12 @@ export function placementNotificationChanges(
 ) {
   return before.notifyMatchingJobs !== after.notifyMatchingJobs ||
     before.notifyApplicationUpdates !== after.notifyApplicationUpdates;
+}
+
+export function placementNotificationIsStale(
+  current: {notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean},
+  expected: {notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean},
+) {
+  return current.notifyMatchingJobs !== expected.notifyMatchingJobs ||
+    current.notifyApplicationUpdates !== expected.notifyApplicationUpdates;
 }

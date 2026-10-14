@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { updateOwnLearnerProfileSection } from "@/modules/people/learner-profile-section-service";
+import {updateOwnLearnerContacts} from "@/modules/people/learner-contact-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -41,6 +42,61 @@ afterEach(async()=>{
 },30000);
 afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
 describe("own education skills projects jsonb_set PATCH on fresh PostgreSQL",()=>{
+  it("denies stale contact edits and audits without storing phone/email in events",async()=>{
+    const {ids,context}=fixture!;
+    const original={alternatePhone:"",contactEmail:"saved@example.test"};
+    const newContacts={alternatePhone:"+919000000000",contactEmail:"changed@example.test"};
+    const result=await updateOwnLearnerContacts(context,{
+      confirmed:true,contacts:newContacts,expectedContacts:original,
+    });
+    expect(result.contacts).toEqual(newContacts);
+    await expect(updateOwnLearnerContacts(context,{
+      confirmed:true,contacts:{alternatePhone:"",contactEmail:"stale@example.test"},
+      expectedContacts:original,
+    })).rejects.toMatchObject({code:"LEARNER_CONTACT_STALE"});
+    await expect(updateOwnLearnerContacts({...context,membership:{
+      ...context.membership!,collegeId:SEED_IDS.collegeB,
+    }},{
+      confirmed:true,contacts:original,expectedContacts:newContacts,
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    const persisted=await pool.query<{profile_document:Record<string,unknown>}>(
+      "SELECT profile_document FROM learner_profiles WHERE membership_id=$1",[ids.membership]);
+    expect(persisted.rows[0]?.profile_document.contacts).toEqual(newContacts);
+    const audits=await pool.query<{metadata:Record<string,unknown>}>(
+      "SELECT metadata FROM activity_events WHERE actor_membership_id=$1 AND event_type='identity.learner_contact.updated'",
+      [ids.membership]);
+    expect(audits.rows).toHaveLength(1);
+    expect(JSON.stringify(audits.rows)).not.toContain("changed@example.test");
+    expect(JSON.stringify(audits.rows)).not.toContain("+919000000000");
+  },30000);
+
+  it("rejects a stale same-section version, preserves unrelated edits, and never audits the denied write",async()=>{
+    const {ids,context}=fixture!;
+    const first={id:randomUUID(),name:"React"};
+    const second={id:randomUUID(),name:"PostgreSQL"};
+    await updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"skills",items:[first],expectedItems:[],
+    });
+    await expect(updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"skills",items:[second],expectedItems:[],
+    })).rejects.toMatchObject({code:"LEARNER_PROFILE_SECTION_STALE"});
+    await updateOwnLearnerProfileSection(context,{
+      confirmed:true,section:"education",
+      items:[{id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"}],
+      expectedItems:[],
+    });
+    const rows=await pool.query<{profile_document:Record<string,unknown>}>(
+      "SELECT profile_document FROM learner_profiles WHERE membership_id=$1",[ids.membership]);
+    expect(rows.rows[0]?.profile_document).toMatchObject({
+      skills:[expect.objectContaining({name:"React"})],
+      education:[expect.objectContaining({program:"B.Tech"})],
+    });
+    const audits=await pool.query<{total:string}>(
+      "SELECT count(*)::text AS total FROM activity_events WHERE actor_membership_id=$1 AND event_type='identity.learner_profile_section.updated'",
+      [ids.membership]);
+    expect(audits.rows[0]?.total).toBe("2");
+  },30000);
+
   it("patches only each submitted section, preserves all others and audits without payload",async()=>{
     const {ids,context}=fixture!;
     const edu={id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"};

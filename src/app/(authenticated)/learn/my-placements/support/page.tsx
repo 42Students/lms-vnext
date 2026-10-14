@@ -2,13 +2,15 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerSupportRequests } from "@/modules/placements/learner-support-request-service";
-import { placementRequestTypeLabel } from "@/modules/placements/learner-support-request-model";
+import { placementRequestTypeLabel,learnerSupportHistoryHref } from "@/modules/placements/learner-support-request-model";
+import {LearnerSupportCancel} from "@/components/placements/learner-support-cancel";
 export default async function LearnerSupportHistory({searchParams}:{
-  searchParams:Promise<{status?:string|string[]}>;
+  searchParams:Promise<{status?:string|string[];type?:string|string[];page?:string|string[]}>;
 }) {
   const query=await searchParams;
   const data=await getOwnLearnerSupportRequests(await getCurrentRequestContext(),query);
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
+  const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
   return <div className="space-y-6">
     <Link href="/learn/my-placements/placement" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
     <PageHeader eyebrow="My Placements" title="My support requests"
@@ -22,12 +24,24 @@ export default async function LearnerSupportHistory({searchParams}:{
     <nav aria-label="Request status" className="flex flex-wrap gap-2">
       {choices.map(status=><Link key={status}
         aria-current={data.status===status?"page":undefined}
-        href={"/learn/my-placements/support?status="+status}
+        href={learnerSupportHistoryHref({status,type:data.type})}
         className={"inline-flex min-h-10 items-center rounded-lg border px-3 text-xs font-semibold "+
           (data.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
         {status==="ALL"?"All requests":status.charAt(0)+status.slice(1).toLowerCase()}
       </Link>)}
     </nav>
+    <nav aria-label="Request category" className="flex flex-wrap gap-2">
+      {requestTypes.map(type=><Link key={type}
+        aria-current={data.type===type?"page":undefined}
+        href={learnerSupportHistoryHref({status:data.status,type})}
+        className={"inline-flex min-h-11 items-center rounded-lg border px-3 text-xs font-semibold "+
+          (data.type===type?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
+        {type==="ALL"?"All types":placementRequestTypeLabel(type)}
+      </Link>)}
+    </nav>
+    <p role="status" className="text-xs text-muted-foreground">
+      {data.total} matching requests · Page {data.page} of {data.totalPages}
+    </p>
     {data.items.length===0?<section role="status" className="rounded-xl border border-border bg-surface p-6">
       <h2 className="text-base font-semibold text-foreground">No requests in this view</h2>
       <p className="mt-2 text-sm text-body">
@@ -44,11 +58,26 @@ export default async function LearnerSupportHistory({searchParams}:{
           {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.request.requestedAt)}
         </p>
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{row.request.reason}</p>
+        {row.request.status==="PENDING" ? (
+          <div className="mt-3">
+            <LearnerSupportCancel requestId={row.request.id}
+              expectedUpdatedAt={row.request.updatedAt.toISOString()}/>
+          </div>
+        ) : null}
         {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words rounded-md bg-surface-subtle p-3 text-sm text-body">
           Placement-team note: {row.request.decisionNote}
         </p>:null}
       </li>)}
     </ol>}
-    {data.hasMore?<p className="text-sm text-muted-foreground">Showing the most recent 30 requests for this status. See Placement Cell for the full history.</p>:null}
+    <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
+      {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        ← Newer requests
+      </Link>:null}
+      {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Older requests →
+      </Link>:null}
+    </nav>
   </div>;
 }

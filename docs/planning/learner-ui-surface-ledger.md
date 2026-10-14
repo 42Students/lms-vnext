@@ -499,7 +499,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-014 | Cancel reschedule request | InterviewsContent | learner requests | GAP |
 | L16-015 | Reschedule summary + copy | InterviewsContent | approved own application-round exception displayed with original and new IST date plus venue; copyable sanitized personal schedule excludes meeting credentials and does not send employer messages. PARTIAL pending actual PG/tsc/eslint, clipboard permission and browser/mobile acceptance | PARTIAL |
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
-| L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
+| L16-017 | Withdrawal request | InterviewsContent | confirmed owned-interview application withdrawal request, strict same-origin POST, locked millisecond stale token + existing audited pending producer; PARTIAL pending PG/browser/team approval acceptance | PARTIAL |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
 | L16-019 | Mobile interview actions/modals | InterviewsContent responsive | mobile-safe interview filter scroller, 44px full-width drawer links/close, wrapping titles and IST effective scheduled/rescheduled summary drawn only from authorized round; PARTIAL pending device keyboard/screen-reader acceptance plus PG/unit/tsc/lint/browser verification | PARTIAL |
 | L16-020 | Deterministic assessment vs interview round-kind classification | Rounds are typed TEST/VENDOR_TEST/GD/INTERVIEW; names editable | learner-career-rounds typed policy | FIXED |
@@ -731,6 +731,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-016 | Error/stale/retry behavior | NotificationsContent | unreadable personal feed remains a hard failure; independent announcement-fetch errors retain authorized personal notifications with explicit partial-source warning and refresh retry; no false empty. PARTIAL pending executed unit/own-PG, TypeScript/ESLint, announcement failure-injection/browser acceptance | PARTIAL |
 | L29-017 | No cross-college/cross-role leakage | notification API | current persisted Learner membership, event college-scoped inbox/history and single/bulk read actions; DB success/denial tests authored, not run | FIXED |
 | L29-018 | Mobile notification list | NotificationsContent responsive | notification page | UNCHECKED |
+
+| L29-019 | Placement notification choices with conflict protection | registered placement preferences | required expected flags, membership serialization, 409/reload recovery and audit; PARTIAL pending PG/browser/producer acceptance | PARTIAL |
 
 ## L30 — Profile: `/learn/profile`
 
