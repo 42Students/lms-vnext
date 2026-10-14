@@ -647,3 +647,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Batches — PARTIAL:** `/admin/batches` now has explicit selected-college read-only registered cohorts, program/start period, name/code search, lifecycle filter, 25-row paging, mobile cards, empty/error/loading and no cross-scope fallback. Pure model plus in-test disposable PG fixture including foreign-scope/wrong-role denial authored, not executed. Promotion/edit/student transfer and browser acceptance remain open.
+
+
+**2026-10-15 chat-6 round 3 / Classes — PARTIAL:** New `/admin/classes` read-first persisted sections with search, active/archived filter, capacity, program/cohort/period, 25-row stable pagination, scoped section detail links and mobile-first states. No mutation permissions added. Unit and disposable PG class fixtures for own, foreign and wrong-role cases authored, unexecuted; create/edit/delete/recurring modal and browser checks remain.
