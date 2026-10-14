@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   ReportCsvLink,
@@ -131,6 +132,7 @@ export default async function TpoJoiningStatusReportPage({
         ])}
         emptyDescription="No company joining outcomes match these filters."
       />
+      <TpoReportRecordLinks kind="JOINING" drives={byDrive} companies={byCompany} />
     </div>
   );
 }
