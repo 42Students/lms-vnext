@@ -801,7 +801,7 @@ mobile/browser proof remain open.
 - [ ] Announcement feed behavior matches legacy.
 - [ ] Personal notification feed behavior matches legacy.
 - [ ] Unread/read semantics are defined and verified.
-- [ ] Deep links land on the intended learner context.
+- [ ] **PARTIAL (L29-009):** recognized assessment notifications retain validated application+round UUID context and show an accurate learner assessment action; destination still enforces own membership. Other notification deep-link types need separate review. Remaining: executed PG/unit/tsc/eslint and browser navigation acceptance.
 - [ ] **PARTIAL (L29-016):** personal-feed errors still fail closed; optional announcement failures show a retry alert without hiding the authorized personal inbox. Remaining: executed PostgreSQL/unit, lint/tsc, simulated-announcement-failure and mobile/browser proof.
 - [ ] No cross-role or cross-college notifications leak.
 

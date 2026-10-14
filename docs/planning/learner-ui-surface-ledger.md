@@ -721,7 +721,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L29-006 | Personal notifications | NotificationsContent | own-recipient paginated personal history + canonical notifications feed | FIXED |
 | L29-007 | Unread signal | NotificationsContent | notification list | FIXED |
 | L29-008 | Mark read | NotificationsContent | read API | FIXED |
-| L29-009 | Action: Take Assessment | NotificationsContent | actionHref | UNCHECKED |
+| L29-009 | Action: Take Assessment | NotificationsContent | personal assessment notifications now display explicit view-assessment action, validate strict UUID application+round pair, discard caller tenant selectors and navigate to own-scoped assessment detail; not an external provider submission. PARTIAL pending fresh PostgreSQL/unit, tsc/eslint and notification action-browser acceptance | PARTIAL |
 | L29-010 | Action: View Interview | NotificationsContent | actionHref | UNCHECKED |
 | L29-011 | Action: View in My Applications | NotificationsContent | actionHref | UNCHECKED |
 | L29-012 | Action: View Course | NotificationsContent | actionHref | UNCHECKED |
