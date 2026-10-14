@@ -1,5 +1,8 @@
 # TPO — Remaining Parity Gaps
 
+- **W61 A — Missing migrated table / BLOCKED:** per-user TPO notification preferences are staged at `placement_tpo_user_preferences` but absent from the registered migration journal. Keep settings read-only until schema ownership/privacy and audit acceptance are approved.
+- **W61 B — Buildable / PARTIAL:** College-owned company relationship trust edit/archive/restore implemented with confirmed row-locked actor audit and active-drive blockers. Dedicated archived listing; global company name/domain editing remains outside this tenant-scoped action. Database/browser acceptance outstanding.
+
 **Source:** `docs/parity/tpo.md` at the recorded TPO checklist snapshot; this is a derived inventory, not a second task tracker.
 **Scope:** Every explicit `- [ ]` checklist row in that file (332 rows). Existing `Wxx PARTIAL` implementation notes do not make an unchecked criterion DONE.
 
