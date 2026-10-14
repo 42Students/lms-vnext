@@ -57,6 +57,14 @@ export default async function MentorCalendarPage({searchParams}:{
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       <Link href="/mentor/calendar" className="inline-flex min-h-10 items-center text-sm text-primary-text underline">Clear</Link>
     </form>
+    <div className="flex flex-wrap items-center gap-3 text-sm">
+      <Link href={"/api/mentor/calendar/export?"+new URLSearchParams({
+        status:parsed.data.status,search:parsed.data.search,period:parsed.data.period,
+      }).toString()} download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+        Export filtered meeting metadata CSV (max 200)
+      </Link>
+      {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
+    </div>
     <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
     <MentorMeetingsCalendar meetings={displayed}
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.

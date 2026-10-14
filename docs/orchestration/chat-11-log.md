@@ -157,3 +157,6 @@
 
 ## U — Pending task review metadata export
 - 200-row capped safe CSV reusing scoped queue; model and PG tests authored.
+
+## V — Mentor global meeting calendar CSV
+- 200-row sanitized CSV from scoped filtered meetings, model/PG tests authored.
