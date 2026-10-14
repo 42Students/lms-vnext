@@ -1065,3 +1065,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L29-011 PARTIAL:** Personal notification actions now support strict direct links to the persisted application detail and its status-history page, not only the generic Applications drawer. Only UUID IDs survive; user/college selectors and unregistered path suffixes are rejected. Destination rechecks own learner scope. Existing owned-application PG tests expanded; static, PostgreSQL and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L29-012 PARTIAL:** Learner notifications now canonicalize the course list, persisted delivery detail and course home actions, rejecting malformed delivery IDs and unexpected course paths while removing caller-supplied scope parameters. Existing course delivery routes enforce enrollment and learner membership. New pure-model/own-course PostgreSQL tests authored; runtime and mobile navigation acceptance pending. Course feature files remain under chat-7 ownership.

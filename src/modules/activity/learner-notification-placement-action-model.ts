@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {learnerNotificationTarget} from "./learner-notification-inbox-model";
 import {learnerNotificationAssessmentAction} from "./learner-notification-assessment-action-model";
+import {learnerNotificationCourseAction} from "./learner-notification-course-action-model";
 const uuid=z.string().uuid();
 const offerView=z.enum(["pending","accepted","closed"]);
 /** Destination pages re-check own-member permissions; URLs never select a tenant. */
@@ -40,5 +41,8 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
     return {href:"/learn/my-placements/interviews?applicationId="+encodeURIComponent(app[0]!)+
       "&roundId="+encodeURIComponent(round[0]!),label:"View interview details"};
   }
+  const course=learnerNotificationCourseAction(safe);
+  if(course)return course;
+  if(url.pathname==="/learn/courses"||url.pathname.startsWith("/learn/courses/"))return null;
   return learnerNotificationAssessmentAction(safe);
 }
