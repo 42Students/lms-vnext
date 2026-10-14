@@ -10,7 +10,16 @@ export const tpoDraftDriveStepOneSchema = z.object({
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "REMOTE", "HYBRID"]),
   applicationDeadline: z.iso.datetime({ offset: true }).nullable(),
-}).strict();
+}).strict().superRefine((value, ctx) => {
+  if (value.applicationDeadline &&
+      Date.parse(value.applicationDeadline) <= Date.now()) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["applicationDeadline"],
+      message: "Application deadline must be a future, offset-qualified instant",
+    });
+  }
+});
 
 export function normalizedTpoDraftDeadline(value: string | null): Date | null {
   if (value === null) return null;

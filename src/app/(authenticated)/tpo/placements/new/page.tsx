@@ -18,11 +18,11 @@ export default async function TpoNewPlacementPage() {
         Quick draft: Step 1 →
       </Link>
       <PlacementJobCreateWorkspace
-      context={context}
-      collegeId={context.membership.collegeId}
-      eyebrow="TPO"
-      basePath="/tpo/placements"
-    />
+        context={context}
+        collegeId={context.membership.collegeId}
+        eyebrow="TPO"
+        basePath="/tpo/placements"
+      />
     </div>
   );
 }

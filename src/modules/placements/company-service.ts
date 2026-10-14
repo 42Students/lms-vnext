@@ -351,6 +351,10 @@ export async function createPlacementCompany(
       })
       .returning();
 
+    if (!relationship) {
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+    }
+
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
       collegeId: input.collegeId,
