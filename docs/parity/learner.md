@@ -345,6 +345,9 @@ cover real success/history/audit, idempotence, forged-college, suspended,
 wrong-role and bad-input denial; executable/browser acceptance remains open.
 
 
+
+**2026-10-14 offer expiry visibility (PARTIAL):** `LearnerPlacementOffers` now prioritizes issued actionable offers by the recorded nearest expiry, warns for a response due within 48 hours, and hides Accept/Decline after a recorded expiry while showing why. The action endpoint still transactionally enforces eligibility/status/expiry. The clock is a server-authored ISO snapshot, not `Date.now()` in React render. Pure unit and independent learner PostgreSQL tests cover timing and own-member denials. Remaining: execution of typecheck/lint/unit/PG, responsive browser test of an expiry boundary, offer history/legacy modal comparison.
+
 **2026-10-14 offers-browse addition (PARTIAL):** a dedicated
 `/learn/my-placements/offers` page lists all persisted offers belonging
 to the authenticated learner and provides All/Awaiting/Accepted/Closed
@@ -398,7 +401,7 @@ Legacy contract audited from `ApplicationsContent`:
 - [ ] **PARTIAL (L14-003):** stage chips now derive from own persisted application screening, display counts, and update the existing URL-backed filter. In Progress/Completed views already exist. Remaining: executed PostgreSQL/unit, TypeScript/ESLint and mobile/Back-Forward browser parity.
 - [ ] Sort options match.
 - [ ] Attention banner opens the complete relevant filtered list.
-- [ ] Journey/status timeline is reproduced.
+- [ ] **PARTIAL (2026-10-14 — application milestones):** the Applications detail drawer now presents an own-application timeline from real submitted/screening/round-result/withdrawal timestamps, newest first, with an exact link to the existing read-only persisted status-history page. It does not fabricate missing time/outcomes or duplicate append-only records. Pure and independently seeded PostgreSQL tests cover own data and forged-college, suspended, wrong-role denial. Remaining: executed tests, full legacy timeline/modal parity, browser accessibility and history consistency verification.
 - [ ] Detail modal contains every legacy section/action.
 - [ ] History modal is implemented.
 - [ ] Company-data preview modal is implemented with retry/empty states.
@@ -745,6 +748,9 @@ Legacy areas include Overview, Team, Sprints/Board, Tasks, Resources, Meetings, 
 
 ## Page: Notifications
 
+**2026-10-14 placement-notification deep links (PARTIAL):** Personal placement notifications now validate and canonicalize persisted application UUID drawer links and offers status tabs, removing untrusted college/user query selectors. Assessment actions retain their own round validation; all targets still enforce the signed-in learner at the destination. Unit and isolated PostgreSQL tests use a fresh learner and scoped notification, with forged-college/suspended/wrong-role denial. Remaining: test execution, producer-level link coverage, browser navigation and unread/read acceptance.
+
+
 **2026-10-14 Learner positive-path + scoped acknowledgement addition
 (PARTIAL, L29-017):** New disposable PostgreSQL integration fixture
 creates a learner user, active college membership and enrollment,
@@ -808,6 +814,9 @@ mobile/browser proof remain open.
 # Profile
 
 ## Page: Learner Profile
+
+**2026-10-14 career-profile coverage (PARTIAL):** The learner Profile page now reports progress across the 15 non-sensitive career sections, excluding optional Aadhaar/PAN fields from the completion denominator. It recommends an actual missing editable section through a learner-only profile deep link without claiming that fields are verified or that the learner is placement-eligible. The original 16-section detailed checklist remains unchanged. Unit tests and a PostgreSQL read test use a fresh learner and cover foreign-college/suspended/wrong-role denials. Remaining: executed unit/PG/tsc/eslint and responsive/keyboard/browser acceptance, plus separately approved verification-storage workflows.
+
 
 **2026-10-14 confirmed alternate contact edit (PARTIAL, L30-007):**
 The Contacts card now has a mobile-friendly Edit contact details dialog for

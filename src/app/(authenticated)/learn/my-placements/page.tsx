@@ -214,6 +214,7 @@ export default async function LearnerPlacementsPage({
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
       {offerRows ? <LearnerPlacementOffers
+        snapshotNowIso={new Date().toISOString()}
         offers={offerRows.map((row) => ({
           offerId: row.offer.id,
           applicationId:

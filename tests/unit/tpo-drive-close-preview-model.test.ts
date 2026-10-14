@@ -1,0 +1,19 @@
+import {describe,expect,it} from "vitest";
+import {evaluateTpoDriveClosure,tpoDriveCloseSchema} from "@/modules/placements/tpo-drive-close-preview-model";
+const before={applications:3,rounds:2,offers:1};
+describe("TPO drive close preview",()=>{
+ it("permits confirmed published active-season closure only against the same counts",()=>{
+  expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,before)).toBe("ALLOW");
+  expect(evaluateTpoDriveClosure("DRAFT","ACTIVE",before,before)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",before,before)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,{...before,offers:0})).toBe("PREVIEW_STALE");
+ });
+ it("refuses arbitrary status, forged college and missing confirmation",()=>{
+  const valid={action:"CLOSE",confirmed:true,expectedUpdatedAt:"2026-10-14T14:00:00.123Z",
+   expectedCounts:before,reason:"Closing after hiring round"};
+  expect(tpoDriveCloseSchema.safeParse(valid).success).toBe(true);
+  expect(tpoDriveCloseSchema.safeParse({...valid,action:"CANCEL"}).success).toBe(false);
+  expect(tpoDriveCloseSchema.safeParse({...valid,confirmed:false}).success).toBe(false);
+  expect(tpoDriveCloseSchema.safeParse({...valid,collegeId:"forged"}).success).toBe(false);
+ });
+});
