@@ -39,10 +39,16 @@ export default async function FacultyAssessmentResultsPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
-      actions={<Link href="/teacher/allAssignments"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
-        All Assignments
-      </Link>} />
+      actions={<div className="flex flex-wrap gap-2">
+        <Link href="/teacher/response-followups"
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          Response follow-ups
+        </Link>
+        <Link href="/teacher/allAssignments"
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          All Assignments
+        </Link>
+      </div>} />
     <form method="get" action="/teacher/results"
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Search

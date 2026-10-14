@@ -1,0 +1,110 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { hasMembershipRole } from "@/modules/identity/context";
+import {
+  mentorSprintProgressHref, mentorSprintProgressQuerySchema,
+} from "@/modules/projects/mentor-sprint-progress-model";
+import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
+
+type Params = { state?: string | string[]; search?: string | string[]; page?: string | string[] };
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function MentorSprintProgressPage({
+  searchParams,
+}: { searchParams: Promise<Params> }) {
+  const raw = await searchParams;
+  const parsed = mentorSprintProgressQuerySchema.safeParse({
+    state: first(raw.state) ?? undefined,
+    search: first(raw.search) ?? undefined,
+    page: first(raw.page) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid sprint progress filters</h1>
+    <Link href="/mentor/sprint-progress" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+  const context = await getCurrentRequestContext();
+  if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
+  const data = await getMentorSprintProgress(context, parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
+      description="Registered sprint, release and task status across your current project assignments."
+      actions={<Link href="/mentor/projects" className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Mentoring projects
+      </Link>} />
+    {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      Projects access is disabled. Sprint progress was not loaded.
+    </section> : <>
+      <form action="/mentor/sprint-progress" method="get"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Search
+          <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
+            placeholder="Sprint, release or project" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
+          <select name="state" defaultValue={data.query.state}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="ALL">All</option><option value="ACTIVE">Active</option>
+            <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Filter
+        </button>
+        <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+      </form>
+      <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
+      {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
+        description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
+      : <div className="grid gap-3">{data.items.map(item =>
+        <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div><h2 className="font-semibold text-foreground">{item.title}</h2>
+              <p className="mt-1 text-sm text-body">{item.projectTitle} · {item.releaseTitle}</p>
+            </div>
+            <span className="text-xs font-semibold text-body">{item.status}</span>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">Release: {item.releaseStatus}</p>
+          <dl className="mt-4 grid gap-3 sm:grid-cols-4">
+            {([
+              ["Tasks", item.tasks.total],
+              ["Done", item.tasks.completed],
+              ["In review", item.tasks.inReview],
+              ["Blocked", item.tasks.blocked],
+            ] as const).map(([label, value]) =>
+              <div key={label}>
+                <dt className="text-xs text-muted-foreground">{label}</dt>
+                <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
+              </div>)}
+          </dl>
+          <p className="mt-3 text-sm text-body">
+            Completion: {item.tasks.completionPercent === null
+              ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
+          </p>
+          <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
+            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            Open authorized sprint workspace →
+          </Link>
+        </article>)}</div>}
+      <nav aria-label="Sprint progress pages" className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+        <div className="flex gap-3">
+          {data.page > 1 && <Link href={mentorSprintProgressHref({...data.query, page:data.page-1})}
+            className="text-sm font-semibold text-primary-text">Previous</Link>}
+          {data.page < data.totalPages && <Link href={mentorSprintProgressHref({...data.query, page:data.page+1})}
+            className="text-sm font-semibold text-primary-text">Next</Link>}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      Counts reflect registered tasks and workflow statuses, not hours, sprint velocity or
+      release readiness. Archived projects and projects without a current Mentor assignment
+      are not included. Lifecycle changes remain in the authorized project workspace.
+    </p>
+  </div>;
+}
