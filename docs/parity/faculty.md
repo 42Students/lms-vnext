@@ -964,3 +964,16 @@ Model/unit plus disposable lesson/Section PG tests cover SQL now() precision,
 authorized edit, wrong-role/foreign delivery, stale replay and audit.
 Remains PARTIAL: orchestrator execution gate, keyboard/mobile authoring drawer
 and legacy assignment lifecycle proof.
+
+## 2026-10-14 Faculty Quiz authoring SQL optimistic CAS — PARTIAL
+The registered exact-Section Faculty question builder now emits the declared
+FACULTY_QUIZ_STALE_VERSION error independently of invalid publish/close/archive
+transitions and checks the millisecond-normalized updatedAt version in both
+EDIT and lifecycle SQL UPDATE statements, under the existing locks. Immutable
+questions/answers for published attempts remain protected; no new assessment
+score overrides are introduced. The existing audited transaction continues
+to encompass question replacements and state transitions.
+Pure model unit and own-Section PG fixtures cover now() microseconds,
+successful edit, stale replay, foreign selector, wrong-role and event count.
+Remains PARTIAL: orchestrator gates, responsive builder/browser and legacy
+publish/release acceptance.

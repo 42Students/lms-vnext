@@ -1,6 +1,6 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseQuizzes,courseSectionDeliveries,quizQuestions,quizOptions,quizAttempts} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -10,7 +10,8 @@ import {can} from "@/modules/permissions/policy";
 import {requireDeliveryContentMutation} from "./learning-access";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
-import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints} from "./faculty-quiz-authoring-model";
+import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints,
+ facultyQuizVersionMatches} from "./faculty-quiz-authoring-model";
 
 /** Choice-question authoring with transaction, locked token, audit and no edits
  * after the quiz publishes or any registered attempt exists. */
@@ -52,8 +53,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      .where(and(eq(courseQuizzes.id,input.quizId),eq(courseQuizzes.deliveryId,deliveryId)))
      .for("update").limit(1);
     if(!current)throw new CoursesServiceError("QUIZ_NOT_FOUND");
-    if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()||
-     ((input.action==="EDIT"||input.action==="PUBLISH") && current.status!=="DRAFT") ||
+    if(!facultyQuizVersionMatches(current.updatedAt,input.expectedUpdatedAt))
+     throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
+    if(((input.action==="EDIT"||input.action==="PUBLISH") && current.status!=="DRAFT") ||
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
@@ -76,8 +78,12 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       title:input.title,description:input.description,
       dueAt:input.dueAt?new Date(input.dueAt):null,maxAttempts:input.maxAttempts,
       totalPoints:sumQuizPoints(input.questions),updatedAt:now,
-     }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId))).returning();
-     if(!edited)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+     }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId),
+      eq(courseQuizzes.status,current.status),
+      sql`date_trunc('milliseconds', ${courseQuizzes.updatedAt}) =
+        ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
+     )).returning();
+     if(!edited)throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
      result=edited;eventType=ACTIVITY_EVENT_TYPES.COURSES_QUIZ_UPDATED;
     }else{
      if(input.action==="PUBLISH" && current.dueAt &&
@@ -88,8 +94,12 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      const [transitioned]=await tx.update(courseQuizzes).set({
       status:isArchive?"ARCHIVED":isClose?"CLOSED":"PUBLISHED",
       updatedAt:new Date(Math.max(Date.now(),current.updatedAt.getTime()+1)),
-     }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId))).returning();
-     if(!transitioned)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+     }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId),
+      eq(courseQuizzes.status,current.status),
+      sql`date_trunc('milliseconds', ${courseQuizzes.updatedAt}) =
+        ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
+     )).returning();
+     if(!transitioned)throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
      result=transitioned;
      eventType=isArchive?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_ARCHIVED:
       isClose?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_CLOSED:

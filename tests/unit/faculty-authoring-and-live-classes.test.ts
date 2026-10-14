@@ -2,7 +2,7 @@ import {describe,it,expect} from "vitest";
 import {
  facultyAssignmentCommandSchema,assignmentFieldsChanged,facultyAssignmentVersionMatches,
 } from "@/modules/courses/faculty-assignment-authoring-model";
-import {facultyQuizCommandSchema,sumQuizPoints} from "@/modules/courses/faculty-quiz-authoring-model";
+import {facultyQuizCommandSchema,sumQuizPoints,facultyQuizVersionMatches} from "@/modules/courses/faculty-quiz-authoring-model";
 import {facultyLiveClassesQuerySchema,safeHttpsMeetingLink,pageFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-model";
 import {mentorTaskFeedbackParamsSchema,taskFeedbackStatusLabel} from "@/modules/projects/mentor-task-feedback-model";
 const id="00000000-0000-4000-8000-000000000001";
@@ -40,6 +40,12 @@ describe("Faculty/Mentor authoring and registered read boundaries",()=>{
    {...question,options:[{...question.options[0],text:"Queue"},{
     ...question.options[1],text:"queue"}]},
   ]}).success).toBe(false);
+ });
+ it("refuses stale Quiz builder tokens without conflating them with lifecycle state",()=>{
+   const at=new Date("2026-10-14T13:00:00.456Z");
+   expect(facultyQuizVersionMatches(at,at.toISOString())).toBe(true);
+   expect(facultyQuizVersionMatches(at,"2026-10-14T13:00:00.457Z")).toBe(false);
+   expect(facultyQuizVersionMatches(at,"invalid")).toBe(false);
  });
  it("filters publishable live classes and refuses unsafe meeting URLs",()=>{
   for(const unsafe of ["javascript:alert(1)","http://meet.example/a",

@@ -29,3 +29,9 @@ export type FacultyQuizCommand=z.infer<typeof facultyQuizCommandSchema>;
 export function sumQuizPoints(questions:readonly {points:number}[]){
  return questions.reduce((sum,q)=>sum+q.points,0);
 }
+
+/** Compare database microsecond timestamps by their JS Date millisecond view. */
+export function facultyQuizVersionMatches(current:Date,expected:string){
+ const proposed=new Date(expected);
+ return Number.isFinite(proposed.getTime())&&current.getTime()===proposed.getTime();
+}
