@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { buildHrOfferOverview, hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
+import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 
 function formatCtc(
@@ -53,6 +54,7 @@ export default async function HrPlacementJobPage({
   const now = new Date();
   const offerSummary = buildHrOfferOverview(offers, now);
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
+  const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
 
   const ctc =
@@ -144,6 +146,36 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
+      {filters.tab === "overview" ? (
+        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
+              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant and offer counts cover the newest 200 shared rows at most, not the full drive.</p></div>
+            {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
+              <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
+                {driveOverview.deadlineState.replaceAll("_"," ")}
+              </StatusBadge>}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {label:"Shared applications (capped)",value:driveOverview.shared},
+              {label:"Active shortlist",value:driveOverview.active},
+              {label:"Withdrawn",value:driveOverview.withdrawn},
+              {label:"Evaluative rounds completed",value:driveOverview.completedRounds+" / "+driveOverview.totalRounds},
+              {label:"Issued offers (capped)",value:driveOverview.issuedOffers},
+              {label:"Accepted offers (capped)",value:driveOverview.acceptedOffers},
+            ].map(card=><div key={card.label} className="rounded-md border border-border bg-surface-secondary p-3">
+              <p className="text-xs text-muted-foreground">{card.label}</p>
+              <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{card.value}</p>
+            </div>)}
+          </div>
+          <div className="flex flex-wrap gap-3 text-sm">
+            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Review applicants</Link>
+            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Rounds & results</Link>
+            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">View offers</Link>
+          </div>
+        </section>
+      ) : null}
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
         {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
           <Link key={tab} href={`/hr/placements/jobs/${workspace.job.id}?tab=${tab}`}
