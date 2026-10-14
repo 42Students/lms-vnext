@@ -94,6 +94,17 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.fullAttentionCount).toBe(5);
     expect(state.fullWeekEventCount).toBe(5);
   });
+  it("distinguishes published before deadline from learner actionability across duplicate role options",()=>{
+    const result=learnerPlacementDashboard({...empty,jobs:[
+      {jobId:"one",deadlinePassed:false,canApply:false},
+      {jobId:"one",deadlinePassed:false,canApply:true},
+      {jobId:"two",deadlinePassed:false,canApply:false},
+      {jobId:"three",deadlinePassed:true,canApply:true},
+    ]},now);
+    expect(result.openJobCount).toBe(2);
+    expect(result.eligibleToApplyCount).toBe(1);
+    expect(result.notOpenToApplyJobCount).toBe(1);
+  });
   it("does not inflate job or application counts from multiple roles", () => {
     const state = learnerPlacementDashboard({
       ...empty,

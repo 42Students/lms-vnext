@@ -24,6 +24,7 @@ export function learnerDashboardPartialState(
     failed,
     partial:failed.length>0,
     openJobs:availability.jobs?snapshot.openJobCount:null,
+    notOpenToApplyJobs:availability.jobs?snapshot.notOpenToApplyJobCount:null,
     eligibleJobs:availability.jobs?snapshot.eligibleToApplyCount:null,
     applications:availability.journey?snapshot.applicationCount:null,
     activeApplications:availability.journey?snapshot.activeApplicationCount:null,

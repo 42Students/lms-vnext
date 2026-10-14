@@ -113,10 +113,10 @@ export function LearnerPlacementsDashboard({
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
-          label="Open drives"
+          label="Published drives before deadline"
           value={display.openJobs}
           href="/learn/my-placements/jobs"
-          detail={`${display.eligibleJobs ?? "Unknown"} currently eligible to apply`}
+          detail={`${display.eligibleJobs ?? "Unknown"} eligible · ${display.notOpenToApplyJobs ?? "Unknown"} not currently open to apply`}
         />
         <Metric
           label="Applications"
