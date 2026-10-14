@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -176,11 +176,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{text:"",correct:false,sequence:old.options.length}]}))}
     className="rounded border border-border px-3 py-2 text-sm">Add option</button>
    <button type="button" disabled={questions.length<=1}
-    onClick={()=>setQuestions(old=>old.filter((_,n)=>n!==i))}
+    onClick={()=>{setConfirmed(false);setQuestions(old=>facultyRemoveQuizQuestion(old,i));}}
     className="ml-2 rounded border border-border px-3 py-2 text-sm">Remove question</button>
   </fieldset>)}
   <button type="button" disabled={!editable||questions.length>=100}
-   onClick={()=>setQuestions(old=>[...old,{...fresh(),sequence:old.length}])}
+   onClick={()=>{setConfirmed(false);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
    className="rounded border border-border px-4 py-2 text-sm">Add question</button>
   <label className="flex gap-2 text-sm"><input type="checkbox" checked={confirmed}
    onChange={e=>setConfirmed(e.target.checked)}/>

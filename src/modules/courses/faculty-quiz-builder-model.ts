@@ -116,3 +116,11 @@ export function facultyQuizConfirmationAfterEdit<T>(
 ):boolean {
  return Object.is(previous,next)?confirmed:false;
 }
+
+export function facultyRemoveQuizQuestion<T>(rows:readonly T[],index:number):T[]{
+ if(rows.length<=1||index<0||index>=rows.length)return [...rows];
+ return rows.filter((_,i)=>i!==index);
+}
+export function facultyAppendQuizQuestion<T>(rows:readonly T[],question:T):T[]{
+ return rows.length>=100?[...rows]:[...rows,question];
+}
