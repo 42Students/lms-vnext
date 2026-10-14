@@ -383,6 +383,30 @@ test("Faculty Quiz aggregate persists questions, metadata edits and archival", a
   expect(archived.quiz.status).toBe("ARCHIVED");
 });
 
+test("Faculty Assessment results filter only assigned teaching Sections and preserve deep links", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/results");
+  await expect(page.getByRole("heading", { name: "Assessment results", level: 1 })).toBeVisible();
+  const section = page.getByRole("combobox", { name: "Teaching Section" });
+  await expect(section.locator("option").first()).toHaveText("All teaching sections");
+  const choices = section.locator("option");
+  expect(await choices.count()).toBeGreaterThan(1);
+  const allowedId = await choices.nth(1).getAttribute("value");
+  expect(allowedId).toMatch(/^[0-9a-f-]{36}$/i);
+  await section.selectOption(allowedId!);
+  await page.getByRole("button", { name: "Filter", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp("deliveryId=" + allowedId));
+  await expect(page.getByRole("combobox", { name: "Teaching Section" })).toHaveValue(allowedId!);
+  const reports = page.getByRole("link", { name: "Open Section report" });
+  for (const href of await reports.evaluateAll((links) => links.map((link) => link.getAttribute("href")))) {
+    expect(href).toContain("deliveryId=" + allowedId);
+  }
+  await page.goto("/teacher/results?deliveryId=not-a-uuid");
+  await expect(page.getByRole("alert")).toContainText("Invalid assessment filters");
+  await page.getByRole("link", { name: "Clear filters" }).click();
+  await expect(page).toHaveURL(/\/teacher\/results$/);
+});
+
 test("Faculty Notifications keep the Faculty route through unread and cursor recovery", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/notifications");
