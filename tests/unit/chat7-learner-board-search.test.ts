@@ -5,6 +5,21 @@ const tasks=[
   {id:"2",title:"Mobile board",description:null},
   {id:"3",title:"Regression test",description:"API consistency"},
 ];
+describe("L25-005 learner Board release filter",()=>{
+  it("filters by actual sprint-release ancestry and composes with priority",()=>{
+    const releaseA="00000000-0000-4000-8000-000000000001";
+    const releaseB="00000000-0000-4000-8000-000000000002";
+    const taskRows=[
+      {id:"a",title:"API",description:null,priority:"HIGH",sprintId:"s1"},
+      {id:"b",title:"API",description:null,priority:"HIGH",sprintId:"s2"},
+    ];
+    const links=new Map([["s1",releaseA],["s2",releaseB]]);
+    expect(filterLearnerBoardTasks(taskRows,"",{releaseId:releaseA,
+      priority:"HIGH",sprintReleaseById:links}).map(t=>t.id)).toEqual(["a"]);
+    expect(filterLearnerBoardTasks(taskRows,"",{releaseId:releaseB,
+      sprintReleaseById:links}).map(t=>t.id)).toEqual(["b"]);
+  });
+});
 describe("L25-003 project Board sprint scope",()=>{
   it("filters only own workspace task sprint alongside other choices",()=>{
     const tasks=[
