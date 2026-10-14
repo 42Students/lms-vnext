@@ -691,3 +691,16 @@ review visibility, forged input, wrong role, disabled user and foreign-college
 nonleakage. Read-only: no mutation or stale-token check is introduced.
 **PARTIAL:** typecheck/lint/unit/PostgreSQL tests and responsive browser CSV
 acceptance remain unexecuted, as does complete legacy review history parity.
+
+## 2026-10-14 chat-11 K — exact-version Mentor delivery review detail (PARTIAL)
+
+A currently assigned Mentor can follow each recorded delivery version to an exact
+project/submission detail displaying its persisted status, decision, timestamps
+and written review feedback. The scoped reader enforces active current Mentor
+membership, college scope, central projects.read and Projects enablement; no
+learner contact, private submission URL/notes or reviewer identities are returned.
+Responsive loading/error and no-feedback states are explicit. A pure model/unit
+suite and in-test-project PostgreSQL fixture cover positive review, forged IDs,
+wrong role, disabled user and foreign college. Read-only: no new review mutation
+or optimistic write token. **PARTIAL:** independent PG, TypeScript, lint, browser
+and legacy author/feedback parity verification remain open.

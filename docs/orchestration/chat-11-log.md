@@ -96,3 +96,9 @@
 - Pure unit and disposable PostgreSQL successful/foreign/wrong-role/disabled
   fixtures authored, not run. No new permissions or schema writes.
 - PARTIAL pending full CLI and browser evidence.
+
+## K — exact-version persisted Mentor delivery review (2026-10-14)
+- Added exact current-assignment read and version-scoped rendered feedback.
+- Existing Delivery workflow remains the only review-write path.
+- Unit and isolated positive/foreign/wrong-role PG tests authored, not executed.
+- PARTIAL pending runtime, mobile and legacy checks.
