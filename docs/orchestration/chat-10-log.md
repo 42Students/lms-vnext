@@ -48,3 +48,5 @@
 - 2026-10-15 — HR applicant CSV PARTIAL: existing grant-scoped applicant pages, formula-neutralized capped CSV, contact always masked; unit+PG authored, not executed.
 
 - 2026-10-15 — HR hiring activity PARTIAL: employer-scoped publish/close timeline, no applicant data. Unit+PG fixtures authored; gates pending.
+
+- 2026-10-15 — HR round schedule PARTIAL: read-only IST timeline + conservative known-duration collision hints. Unit/PG written, not run.

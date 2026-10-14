@@ -14,6 +14,7 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import { hrScheduledRoundRows } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 function formatCtc(
@@ -69,6 +70,9 @@ export default async function HrPlacementJobPage({
     ? projectRecruiterRoundResults(workspace.rounds, selectedRound.id, filters.outcome)
     : null;
   const outcomeOptions = hrInlineRoundResultFilters(inlineResults?.counts);
+  const roundSchedule=hrScheduledRoundRows(workspace.rounds);
+  const formatRoundTime=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
+    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(d);
 
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
@@ -356,6 +360,19 @@ export default async function HrPlacementJobPage({
             Stage employer outcomes here. The college placement team retains final apply authority.
           </p>
         </div>
+        {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h3 className="font-semibold text-foreground">Scheduled rounds and potential time conflicts</h3>
+          <p className="text-sm text-body">IST times from this employer-owned drive. Overlap is calculated only for rounds with recorded durations; room and interviewer availability is unknown.</p>
+          {roundSchedule.length?<div className="grid gap-3 sm:grid-cols-2">
+            {roundSchedule.map(round=><article key={round.id} className="rounded-lg border border-border bg-surface-secondary p-4">
+              <h4 className="font-semibold text-foreground">{round.sequence}. {round.name}</h4>
+              <p className="mt-1 text-sm text-body">{formatRoundTime(round.startsAt)} IST</p>
+              <p className="text-xs text-muted-foreground">{round.endsAt?"Ends "+formatRoundTime(round.endsAt)+" IST":"Duration not recorded"}</p>
+              <p className="text-xs text-muted-foreground">{round.mode??"Mode not set"} · {round.venue??"Venue not set"}</p>
+              {round.conflicts.length?<p role="status" className="mt-2 text-sm font-semibold text-foreground">Potential overlap with {round.conflicts.length} other round(s)</p>:null}
+            </article>)}
+          </div>:<p className="text-sm text-muted-foreground">No scheduled rounds recorded.</p>}
+        </section>:null}
         <RecruiterResultControls
           rounds={workspace.rounds.map(
             (round) => ({
