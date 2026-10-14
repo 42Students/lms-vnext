@@ -45,3 +45,20 @@ describe("Faculty PDF reports", () => {
     expect([...pdf].every((character) => character.charCodeAt(0) <= 127)).toBe(true);
   });
 });
+
+
+describe("Faculty monthly Attendance PDF", () => {
+  it("exports the current Section's marked and unknown outcomes as a valid PDF", () => {
+    const pdf = buildFacultyReportPdf({
+      kind: "attendance", title: "October class health",
+      subtitle: "Course A · Section One",
+      summary: ["Absent: 1", "Unmarked: 3 excluded from percentage"],
+      sections: [{ title: "Student attendance", rows: ["Learner A | P 2 | A 1 | 67%"] }],
+      generatedAt: new Date("2026-10-14T00:00:00Z"),
+    });
+    expect(pdf.startsWith("%PDF-1.4\n")).toBe(true);
+    expect(pdf).toContain("FACULTY ATTENDANCE REPORT");
+    expect(pdf).toContain("Unmarked: 3 excluded from percentage");
+    expect(pdf).toContain("Learner A | P 2 | A 1 | 67%");
+  });
+});

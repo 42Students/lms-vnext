@@ -16,7 +16,8 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
-import { facultyLearnerAttendanceDetail } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
@@ -247,10 +248,13 @@ export function FacultyAttendanceWorkspace({
   const canMarkSelectedLearner = selectedLearnerId !== null &&
     workspace.roster.some((learner) => learner.membershipId === selectedLearnerId);
 
-  const markedCount = monthSessions.filter(
-    (session) =>
-      session.attendanceStatus === "MARKED",
-  ).length;
+  const monthSummary = useMemo(
+    () => facultyAttendanceMonthSummary(
+      workspace.roster.map((learner) => learner.membershipId),
+      monthSessions, workspace.records, clock,
+    ),
+    [workspace.roster, workspace.records, monthSessions, clock],
+  );
 
   function chooseSession(id: string) {
     setSelectedSessionId(id);
@@ -456,13 +460,13 @@ export function FacultyAttendanceWorkspace({
                 </StatusBadge>
                 <StatusBadge
                   tone={
-                    markedCount === monthSessions.length &&
+                    monthSummary.markedSessions === monthSessions.length &&
                     monthSessions.length > 0
                       ? "success"
                       : "warning"
                   }
                 >
-                  {markedCount} marked
+                  {monthSummary.markedSessions} marked
                 </StatusBadge>
               </div>
               <div className="flex items-end gap-2">
@@ -503,6 +507,70 @@ export function FacultyAttendanceWorkspace({
                 </Button>
               </div>
             </div>
+          </section>
+
+          <section aria-label="Monthly class health" className="rounded-xl border border-border bg-surface p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
+                <p className="mt-2 text-3xl font-semibold text-foreground">
+                  {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}
+                </p>
+                <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
+                  {monthSummary.markedMarks} recorded learner-session marks for active Section learners.
+                  Unmarked and upcoming sessions are excluded, never assumed present.
+                </p>
+              </div>
+              {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
+                <FacultyReportDownload
+                  kind="attendance"
+                  title={workspace.course.courseName + " " + month}
+                  subtitle={workspace.course.courseCode + " · " + workspace.course.sectionName}
+                  summary={[
+                    "Month: " + month + " (Asia/Kolkata)",
+                    "Active students: " + monthSummary.learnerCount,
+                    "Sessions: " + monthSummary.sessionCount,
+                    "Marked sessions: " + monthSummary.markedSessions,
+                    "Unmarked sessions: " + monthSummary.unmarkedSessions,
+                    "Upcoming sessions: " + monthSummary.upcomingSessions,
+                    "Present marks: " + monthSummary.presentMarks,
+                    "Absent marks: " + monthSummary.absentMarks,
+                    "Unmarked learner-session cells: " + monthSummary.unmarkedMarks,
+                    "Attendance: " + (monthSummary.averagePercent === null ? "Unknown" : monthSummary.averagePercent + "%"),
+                  ]}
+                  sections={[{
+                    title: "Active Section learner attendance",
+                    rows: monthSummary.learners.map((row) => {
+                      const learner = workspace.roster.find((item) => item.membershipId === row.membershipId);
+                      return [
+                        learner?.displayName ?? learner?.email ?? row.membershipId,
+                        learner?.rollNumber ? "Roll " + learner.rollNumber : "",
+                        "P " + row.present,
+                        "A " + row.absent,
+                        "Not marked " + row.unmarked,
+                        "Upcoming " + row.upcoming,
+                        row.percentage === null ? "Not available" : row.percentage + "%",
+                      ].filter(Boolean).join(" | ");
+                    }),
+                  }]}
+                />
+              ) : null}
+            </div>
+            <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+              {[
+                ["Students", monthSummary.learnerCount],
+                ["Sessions", monthSummary.sessionCount],
+                ["Present", monthSummary.presentMarks],
+                ["Absent", monthSummary.absentMarks],
+                ["Unmarked", monthSummary.unmarkedMarks],
+                ["Upcoming", monthSummary.upcomingSessions],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg bg-surface-subtle p-3">
+                  <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+                  <dd className="mt-1 text-xl font-semibold text-foreground">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </section>
 
           {monthSessions.length === 0 ? (

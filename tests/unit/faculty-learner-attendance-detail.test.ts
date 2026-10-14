@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { facultyLearnerAttendanceDetail } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
 
 const session = (id: string, startsAt: string, status: string | null) => ({
   id, title: "Faculty class " + id, startsAt,
@@ -47,5 +47,37 @@ describe("Faculty attendance learner detail (read-only)", () => {
     );
     expect(result).toMatchObject({ absent: 1, marked: 1, attendedPercent: 0 });
     expect(result.rows[0]).toMatchObject({ code: "A", note: "medical" });
+  });
+});
+
+
+describe("Faculty monthly class-health report", () => {
+  it("excludes unmarked, future and out-of-roster historical marks", () => {
+    const sessions = [
+      session("marked", "2026-10-10T03:00:00Z", "MARKED"),
+      session("unmarked", "2026-10-11T03:00:00Z", null),
+      session("future", "2026-10-15T03:00:00Z", null),
+    ];
+    const records = [
+      { scheduleEventId: "marked", membershipId: "A", status: "ABSENT", note: null, markedAt: "2026-10-10T05:00:00Z" },
+      { scheduleEventId: "marked", membershipId: "historical", status: "ABSENT", note: null, markedAt: "2026-10-10T05:00:00Z" },
+    ];
+    const health = facultyAttendanceMonthSummary(["A", "B", "A"], sessions, records, NOW);
+    expect(health).toMatchObject({
+      learnerCount: 2, sessionCount: 3, markedSessions: 1,
+      unmarkedSessions: 1, upcomingSessions: 1,
+      presentMarks: 1, absentMarks: 1, unmarkedMarks: 2,
+      upcomingMarks: 2, markedMarks: 2, averagePercent: 50,
+    });
+    expect(health.learners.find((row) => row.membershipId === "B")?.percentage).toBe(100);
+  });
+
+  it("does not claim attendance when no sessions have been marked", () => {
+    expect(facultyAttendanceMonthSummary(["A"],
+      [session("held", "2026-10-11T03:00:00Z", null)], [], NOW,
+    )).toMatchObject({ averagePercent: null, markedMarks: 0, unmarkedMarks: 1 });
+    expect(facultyAttendanceMonthSummary([], [], [], NOW)).toMatchObject({
+      learnerCount: 0, sessionCount: 0, averagePercent: null,
+    });
   });
 });

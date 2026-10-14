@@ -301,3 +301,8 @@ The monthly grid's learner name now opens a read-only detail drawer that breaks 
 ### India-local month selector consistency (2026-10-14)
 
 The Faculty monthly attendance report now initializes and shifts its month in Asia/Kolkata, matching the established session grouping and avoiding false empty grids at UTC/local month boundaries. The pure grid-model regressions exercise midnight and year rollover. Full visual/role and exact-SHA acceptance remains pending.
+
+
+### Faculty monthly class-health and PDF parity (2026-10-14)
+
+Implemented a persisted, active Section-roster monthly health summary with P/A, unmarked and upcoming counts and an exact marked-only attendance denominator. The missing percentage is shown as unknown (not 100%). Departed/historic learners remain in per-learner historical detail but do not inflate current Section health. An on-demand PDF for that same authorized Section/selected India-local month includes the aggregated figures and each active learner's marks. Added pure-model negative/edge-case unit tests and authenticated browser assertions; exact-SHA executed evidence is required before closing the Attendance checklist and whole page remains PARTIAL.

@@ -124,6 +124,11 @@ test("Faculty Attendance student detail shows a real future session without fabr
 
   await page.reload();
   await page.locator('input[type="month"]').fill(month);
+  const health = page.getByRole("region", { name: "Monthly class health" });
+  await expect(health).toBeVisible();
+  await expect(health).toContainText("Upcoming");
+  await expect(health).toContainText("Unmarked and upcoming sessions are excluded");
+  await expect(health.getByRole("button", { name: "Download PDF" })).toBeVisible();
   await expect(page.getByText("Attendance report")).toBeVisible();
   const learner = page.getByRole("button", { name: /^View attendance details for / });
   await expect(learner.first()).toBeVisible();
