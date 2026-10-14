@@ -9,7 +9,7 @@ import {
 describe("College Admin Faculty/Students directory helpers", () => {
   it("describes learner identifier search without exposing it as a filter for Faculty", () => {
     expect(collegeDirectorySearchHint("LEARNER")).toContain("registration number");
-    expect(collegeDirectorySearchHint("FACULTY")).toBe("Name or email");
+    expect(collegeDirectorySearchHint("FACULTY")).toContain("department");
   });
   it("parses status/search/page filters and forbids caller-controlled college", () => {
     expect(collegeRoleDirectoryQuerySchema.parse({})).toEqual({

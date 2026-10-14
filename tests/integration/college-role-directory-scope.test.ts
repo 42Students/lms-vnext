@@ -87,6 +87,31 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
       await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
     }
   });
+  it("finds Faculty by registered academic title, employment type and college-owned department",async()=>{
+    if (!profilePool) throw Error("Disposable PG required");
+    const userId=randomUUID(),memberId=randomUUID(),roleId=randomUUID(),deptId=randomUUID();
+    const token="Prof"+userId.slice(0,10);
+    try {
+      await profilePool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",[userId,"faculty-search-"+userId,"Metadata Fixture"]);
+      await profilePool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1::uuid,$2::uuid,$3::uuid)",[memberId,userId,SEED_IDS.collegeA]);
+      await profilePool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1::uuid,$2::uuid,'FACULTY')",[roleId,memberId]);
+      await profilePool.query("INSERT INTO departments(id,college_id,name) VALUES($1::uuid,$2::uuid,$3::text)",[deptId,SEED_IDS.collegeA,token+" Dept"]);
+      await profilePool.query("INSERT INTO faculty_profiles(membership_id,primary_department_id,academic_title,employment_type) VALUES($1::uuid,$2::uuid,$3::text,$4::text)",[memberId,deptId,token+" Title",token+" Employee"]);
+      for(const q of [token+" Title",token+" Dept",token+" Employee"]){
+        const own=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{q});
+        expect(own.items.map(r=>r.membershipId)).toContain(memberId);
+        await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{q})).rejects.toBeInstanceOf(AuthorizationError);
+      }
+      const learner=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:token+" Title"});
+      expect(learner.items.map(r=>r.membershipId)).not.toContain(memberId);
+    } finally {
+      await profilePool.query("DELETE FROM faculty_profiles WHERE membership_id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM departments WHERE id=$1::uuid",[deptId]);
+      await profilePool.query("DELETE FROM membership_roles WHERE id=$1::uuid",[roleId]);
+      await profilePool.query("DELETE FROM college_memberships WHERE id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
+    }
+  });
   it("denies a non-admin in another college before any directory read", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {}))

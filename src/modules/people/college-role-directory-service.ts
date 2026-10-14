@@ -6,6 +6,7 @@ import {
   collegeMemberships,
   membershipRoles,
   learnerProfiles,
+  facultyProfiles,
   users,
   cohorts,
   departments,
@@ -74,6 +75,14 @@ export async function listCollegeRoleDirectory(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
       or(ilike(learnerProfiles.rollNumber, search), ilike(learnerProfiles.registrationNumber, search)),
     )));
+  const matchesFacultyIdentity = (search: string) => exists(db.select({ member: facultyProfiles.membershipId })
+    .from(facultyProfiles)
+    .leftJoin(departments, and(eq(departments.id, facultyProfiles.primaryDepartmentId), eq(departments.collegeId,collegeId)))
+    .where(and(eq(facultyProfiles.membershipId, collegeMemberships.id),or(
+      ilike(facultyProfiles.academicTitle,search),
+      ilike(facultyProfiles.employmentType,search),
+      ilike(departments.name,search),
+    ))));
   const activeTeaching = exists(db.select({ assignmentId: courseTeachingAssignments.id })
     .from(courseTeachingAssignments)
     .innerJoin(courseSectionDeliveries, and(
@@ -112,6 +121,7 @@ export async function listCollegeRoleDirectory(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
         kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
+        kind === "FACULTY" ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
       ) : undefined,
     )).as("college_role_directory");
 
