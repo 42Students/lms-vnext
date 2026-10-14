@@ -1236,3 +1236,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-002 PARTIAL (round 6):** Drives browser explicitly summarizes all owned-visible published drives separately from their role-option count and distinct drives with actual recorded learner applications. This avoids presenting role rows as a drive count; filters still apply to the role list below. Model regression for multi-role duplicate applications authored; CI/mobile/PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-009 PARTIAL (round 6):** Drives employment-type filter options now show actual own-visible role-option counts from the same authorized browse rows, distinguishing multiple options at one employer from a separate drive. No extra people/employer query or inferred type; zero/missing types are not advertised. Unit regression authored; filter-navigation/mobile and PG acceptance pending.

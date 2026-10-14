@@ -9,6 +9,7 @@ import {
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
   learnerDriveAvailabilityCounts,
+  learnerJobEmploymentTypeCounts,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
@@ -71,6 +72,7 @@ export function LearnerJobsBrowse({
 
   const filters:LearnerJobBrowseFilters={...urlState.filters,search};
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
+  const employmentCounts=useMemo(()=>learnerJobEmploymentTypeCounts(items),[items]);
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
@@ -112,7 +114,7 @@ export function LearnerJobsBrowse({
               className={selectClass}>
               <option value="all">All types</option>
               {facets.types.map((type) => (
-                <option key={type} value={type}>{humanize(type)}</option>
+                <option key={type} value={type}>{humanize(type)} ({employmentCounts.get(type)??0})</option>
               ))}
             </select>
           </label>
