@@ -677,3 +677,18 @@ transaction audit records action and times but never the raw meeting URL.
 Unit and disposable PG fixture tests (success, foreign/role/stale denials,
 activity count) are authored but **not executed**. Multi-instructor cross
 tenant conflict/original legacy modal and browser proof remain PARTIAL.
+
+## B — Faculty attendance-session create/reschedule (2026-10-14)
+
+A confirmation form on the exact course Attendance page invokes
+`POST /api/courses/faculty/attendance/[deliveryId]/schedule`. Only
+registered section_schedule_events and their course-delivery link are written.
+Strict Zod, `courses.read` plus live Faculty teaching scope, actor+Section
+transaction advisory locks, explicit academic-period time bounds, overlap
+detection for same Section or teacher, optimistic updatedAt and a single
+per-change actor/college activity row are source-authored. Rescheduling
+already MARKED attendance is refused; no attendance records are moved.
+The existing page's marking flow remains separate. Unit and disposable PG
+fixtures with success, conflict, stale and role/foreign denial are authored
+but not executed. Mobile/browser and full registrar calendar semantics remain
+PARTIAL; no parity rows are promoted.
