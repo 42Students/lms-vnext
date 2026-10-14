@@ -88,6 +88,14 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Maximum configured capacity
+              <input name="maximumCapacity" type="number" min={1} max={100000} step={1}
+                defaultValue={data.query.maximumCapacity??""} placeholder="No upper bound"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Minimum configured capacity
               <input name="minimumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.minimumCapacity ?? ""} placeholder="Any capacity"

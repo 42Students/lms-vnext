@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
@@ -91,6 +91,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.minimumCapacity !== undefined ? gte(sections.capacity, query.minimumCapacity) : undefined,
+      query.maximumCapacity !== undefined ? lte(sections.capacity, query.maximumCapacity) : undefined,
       query.status === "ALL" ? undefined : eq(sections.status, query.status),
       query.q ? or(
         ilike(sections.name, searchPattern(query.q)),
