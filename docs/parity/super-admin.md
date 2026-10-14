@@ -689,3 +689,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 4 / Placement Seasons — PARTIAL:** `/admin/placements/seasons` selected-college persisted placement-season name/code, registered start/end dates, ACTIVE/CLOSED lifecycle with IST close time, strict search/status, 25-row paging and responsive loading/empty/error. No default/global scope leak or season mutation. Pure unit authored; season config/closeout management, PostgreSQL and browser acceptance open.
+
+
+**2026-10-15 chat-6 round 4 / Placement Screening Queue — PARTIAL:** Added `/admin/placements/screenings`, read-only PENDING/HOLD/REJECTED screening state in selected college, search, pagination, IST decisions, safe job deep links and private-notes masking; separate SHORTLISTED view. Added eight-route mobile-wrapping oversight navigation on Placements entry page. Pure query unit authored, PostgreSQL/browser checks unexecuted. Decision actions, exports and exact legacy parity remain open.
