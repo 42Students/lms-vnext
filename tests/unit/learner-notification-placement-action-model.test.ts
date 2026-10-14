@@ -47,6 +47,17 @@ describe("learner placement notification action links",()=>{
     expect(learnerNotificationPlacementAction("/learn/courses/bad")).toBeNull();
     expect(learnerNotificationPlacementAction(root+"/private")).toBeNull();
   });
+  it("canonicalizes only project links with allowed tab selectors",()=>{
+    const root="/learn/projects/"+id;
+    expect(learnerNotificationPlacementAction(root+"?tab=board&collegeId=forged"))
+      .toEqual({href:root+"?tab=board",label:"View project board"});
+    expect(learnerNotificationPlacementAction(root+"?tab=delivery"))
+      .toEqual({href:root+"?tab=delivery",label:"View project delivery"});
+    expect(learnerNotificationPlacementAction("/learn/projects?userId=other"))
+      .toEqual({href:"/learn/projects",label:"View projects"});
+    expect(learnerNotificationPlacementAction(root+"?tab=private")).toBeNull();
+    expect(learnerNotificationPlacementAction("/learn/projects/not-a-uuid")).toBeNull();
+  });
   it("rejects malformed, duplicate, cross-role and external actions",()=>{
     for(const value of [
       "/learn/my-placements/applications?applicationId=bad",
