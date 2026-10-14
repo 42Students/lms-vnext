@@ -980,3 +980,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 L13-012: authorized published job detail displays an honest no-new-application reason from scoped role and deadline state; never treats a withdrawn or rejected application as a new entitlement. Fresh-learner PG and pure-model coverage authored, not yet executed.
 
 2026-10-14 L14-003: own application screening-stage chips and counts use existing persisted learner-scoped journey. Skipped L13-016 (private storage/resume consent), L18-023/024 (no migrated official college notices/dispute source), L30-034..043 (no approved verification/review state). Execution and browser acceptance outstanding.
+
+2026-10-14 L29-016: healthy personal notifications survive optional announcement-source errors, while authorization errors still propagate. Own learner + personal event/notification PG fixture authored; append-only audit event intentionally retained. Browser failure-injection and execution pending. Skipped L18-023/024 college notices/disputes: no migrated authoritative notice source or dispute policy.

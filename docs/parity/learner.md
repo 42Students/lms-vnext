@@ -802,7 +802,7 @@ mobile/browser proof remain open.
 - [ ] Personal notification feed behavior matches legacy.
 - [ ] Unread/read semantics are defined and verified.
 - [ ] Deep links land on the intended learner context.
-- [ ] Loading/empty/error/stale states are explicit.
+- [ ] **PARTIAL (L29-016):** personal-feed errors still fail closed; optional announcement failures show a retry alert without hiding the authorized personal inbox. Remaining: executed PostgreSQL/unit, lint/tsc, simulated-announcement-failure and mobile/browser proof.
 - [ ] No cross-role or cross-college notifications leak.
 
 # Profile

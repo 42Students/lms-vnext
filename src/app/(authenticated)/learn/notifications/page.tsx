@@ -9,6 +9,7 @@ import { listOwnNotifications } from "@/modules/activity/notification-service";
 import { requirePersistedLearnerNotificationMembership } from "@/modules/activity/learner-notification-membership-service";
 import { learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
 import { notFound } from "next/navigation";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 export default async function NotificationsPage({searchParams}:{
   searchParams:Promise<{category?:string|string[];unread?:string|string[];q?:string|string[]}>;
@@ -20,18 +21,21 @@ export default async function NotificationsPage({searchParams}:{
   const membership = await requirePersistedLearnerNotificationMembership(context);
   const announcementsEnabled =
     announcementsRuntimeEnabled();
-  const [rows, announcements] =
-    await Promise.all([
-      listOwnNotifications(
-        context,
-        { limit: 60, collegeId: membership.collegeId },
-      ),
-      announcementsEnabled
-        ? listVisibleAnnouncementsForMembership(
-            context,
-          )
-        : Promise.resolve([]),
-    ]);
+  // Personal notifications are required. A failed announcement source must
+  // not turn a healthy personal inbox into an empty state or hard error.
+  const rows = await listOwnNotifications(context,{
+    limit:60,collegeId:membership.collegeId,
+  });
+  let announcements:Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>>=[];
+  let announcementsLoadFailed=false;
+  if(announcementsEnabled){
+    try {
+      announcements=await listVisibleAnnouncementsForMembership(context);
+    }catch(error){
+      if(error instanceof AuthorizationError)throw error;
+      announcementsLoadFailed=true;
+    }
+  }
 
   const items: NotificationListItem[] =
     rows.map(
@@ -70,6 +74,7 @@ export default async function NotificationsPage({searchParams}:{
         personal={items}
         initialFilters={query.data}
         announcementsEnabled={announcementsEnabled}
+        announcementsLoadFailed={announcementsLoadFailed}
         announcements={announcements.map((announcement) => ({
           id: announcement.id,
           title: announcement.title,
