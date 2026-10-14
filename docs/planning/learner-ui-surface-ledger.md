@@ -782,6 +782,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-042 | Aadhaar/PAN private document upload/view tied to Identity verification | identity + PrivateDocLink | no vNext verification/private-doc flow | GAP |
 | L30-043 | Verification status refresh while page remains visible | ProfileVerificationCard polling | no vNext equivalent | GAP |
 
+| L30-044 | Whole-profile save conflict protection + audit | learner Profile edit workflow | strict saved baseline, locked live own-profile write, stale-before-no-op, private-value-free field-name audit; PARTIAL pending PG and multi-tab/browser acceptance | PARTIAL |
+
 ## L31 — Conditional Drive Day learner entry
 
 The old learner sidebar can dynamically expose `Drive Day` but the actual route lives under `/tpo/drive-day`. Treat this as a cross-role learner-access surface, not as permission to expose TPO controls.
