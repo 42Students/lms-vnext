@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
+import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
 import {
   useMemo,
   useState,
@@ -227,6 +228,7 @@ export function LearnerClassSchedule({
   const [anchor, setAnchor] = useState(
     () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
+  const [sectionId, setSectionId] = useState("");
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
@@ -234,11 +236,11 @@ export function LearnerClassSchedule({
 
   const filteredEvents = useMemo(
     () =>
-      filterScheduleEvents(
+      filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ),
-    [events, selectedDeliveryIds],
+      ), sectionId),
+    [events, selectedDeliveryIds, sectionId],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),
@@ -405,6 +407,18 @@ export function LearnerClassSchedule({
           </label>
         </div>
 
+        {sections.length > 1 ? (
+          <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
+            Section
+            <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
+              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 w-full">
+              <option value="">All my sections</option>
+              {sections.map(section => <option key={section.sectionId} value={section.sectionId}>
+                {section.sectionName} · {section.academicPeriodName}
+              </option>)}
+            </Select>
+          </label>
+        ) : null}
         {courses.length > 1 ? (
           <div className="mt-4 border-t border-border pt-4">
             <div className="flex flex-wrap items-center gap-2">
