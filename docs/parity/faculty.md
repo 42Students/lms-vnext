@@ -848,3 +848,18 @@ Unit tests cover duplicate/foreign evidence, malformed scores, missing
 grading, 12-student risk counts and preview truncation. These additions are
 source-authored only; legacy behavior, real PostgreSQL and authenticated
 mobile/browser verification remain open. Course Overview stays PARTIAL.
+
+## Faculty assessment review drawers and append-only notification fixture (2026-10-14)
+
+PARTIAL: The existing Faculty All Assignments submission-grading panel and All
+Quizzes immutable-attempt review now use the shared accessible native-dialog
+Drawer (Escape handling, titled panel, responsive mobile width, dismissal
+control) instead of a long inline list. Existing exact-Section API reads,
+optimistic per-submission grade writes and explicit result visibility controls
+are preserved; publishing Quiz results now asks for confirmation as hiding
+already did. The authenticated PostgreSQL Faculty Notifications fixture was
+corrected to remove only mutable notification recipients, never immutable
+activity_events or the user/membership/role records referenced by their audit
+history. This is a regression-safety correction, not a passed database run.
+Authenticated keyboard/Playwright, real PostgreSQL and exact legacy overlay
+acceptance remain OPEN; no detailed or master parity row is marked DONE.
