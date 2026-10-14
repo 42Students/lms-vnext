@@ -665,3 +665,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 3 / Placement Applications — PARTIAL:** `/admin/placements/applications` read-first SQL joins placement job, role option and applicant membership, requiring all to match selected college/org. Search, SUBMITTED/WITHDRAWN, paginated mobile cards and IST submitted date are present. No private contact or screening comments projected, no invented shortlist/selection state, navigation to scoped job detail. Pure unit and disposable PostgreSQL job/role/application fixture with wrong-role/foreign-college assertions authored, unexecuted. Legacy bulk actions, candidate detail/export and browser parity remain open.
+
+
+**2026-10-15 chat-6 round 3 / Faculty Assignment follow-up — PARTIAL:** Self-review aliased both duplicated joined `ended_at` columns in the read subquery (PG 42702 guard), removed unused import, and extended in-test PG fixture to cover actual ended transition and ACTIVE/ENDED filters. Runtime tests still not executed; no DONE claim.

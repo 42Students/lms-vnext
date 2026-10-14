@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,ilike,or,isNull,isNotNull,sql} from "drizzle-orm";
+import {and,asc,count,eq,ilike,or,isNull,isNotNull} from "drizzle-orm";
 import {alias} from "drizzle-orm/pg-core";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
@@ -15,7 +15,8 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  const source=db.select({
   id:aliasedColumn(courseTeachingAssignments.id,"admin_teacher_assignment_id"),
   role:courseTeachingAssignments.role,startedAt:courseTeachingAssignments.startedAt,
-  teachingEnded:courseTeachingAssignments.endedAt,deliveryEnded:courseSectionDeliveries.endedAt,
+  teachingEnded:aliasedColumn(courseTeachingAssignments.endedAt,"admin_teacher_assignment_ended_at"),
+  deliveryEnded:aliasedColumn(courseSectionDeliveries.endedAt,"admin_teacher_delivery_ended_at"),
   teacherName:aliasedColumn(users.displayName,"admin_teacher_name"),
   courseName:aliasedColumn(courses.name,"admin_teacher_course_name"),
   courseCode:courses.code,

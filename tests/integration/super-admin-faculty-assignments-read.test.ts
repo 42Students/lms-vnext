@@ -36,6 +36,10 @@ describe.skipIf(!enabled)("Super Admin faculty assignment PostgreSQL",()=>{
   expect((await listAdminFacultyAssignments(admin,{q:name})).items).toEqual([expect.objectContaining({id:ids.assignment,status:"ACTIVE"})]);
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
   expect((await listAdminFacultyAssignments(foreign,{q:name})).items).toHaveLength(0);
+  await pool!.query("update course_teaching_assignments set ended_at=now() where id=$1",[ids.assignment]);
+  expect((await listAdminFacultyAssignments(admin,{q:name,status:"ENDED"})).items)
+   .toEqual([expect.objectContaining({id:ids.assignment,status:"ENDED"})]);
+  expect((await listAdminFacultyAssignments(admin,{q:name,status:"ACTIVE"})).items).toHaveLength(0);
   await expect(listAdminFacultyAssignments({...admin,user:{...admin.user,systemRoles:[]}},{})).rejects.toBeInstanceOf(AuthorizationError);
  });
 });
