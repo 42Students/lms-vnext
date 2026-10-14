@@ -1355,3 +1355,6 @@ Quiz title, instructions, due date, attempt limit, question add/remove and selec
 
 ## 2026-10-15 Faculty notification deep-link boundary — PARTIAL
 Faculty inbox destinations are now normalized through a pure same-origin Faculty-path policy. External, protocol-relative, wrong-account and control-character links are suppressed; authorized items can still be marked read. Unit tests cover valid Course links and malicious/wrong-role cases. Existing persisted membership-scoped feed and same-origin write route are unchanged. Producer audit and real PG/browser acceptance remain open.
+
+## 2026-10-15 Faculty inbox strict query parsing — PARTIAL
+The existing 50-row persisted Faculty notification feed now rejects duplicate `view` values, unknown URL selectors, malformed unread filters and incomplete/forged cursor pairs with a recoverable newest-page link instead of silently widening scope. A pure Zod model and unit cases cover valid cursor and denial states. Real Faculty PG/browser verification and producer/deep-link parity remain open.
