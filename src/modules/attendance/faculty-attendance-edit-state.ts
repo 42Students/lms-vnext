@@ -21,3 +21,14 @@ export function initialAbsencesForSession(
       .map((member) => member.membershipId),
   );
 }
+
+/** Never open a cross-Section or invented session from URL input. */
+export function resolveFacultyAttendanceSession(
+  sessions: readonly { id: string }[],
+  requested: unknown,
+) {
+  if (typeof requested === "string" && sessions.some((session) => session.id === requested)) {
+    return requested;
+  }
+  return sessions[0]?.id ?? "";
+}

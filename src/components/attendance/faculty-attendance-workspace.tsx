@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
 import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
@@ -120,13 +120,16 @@ async function errorMessage(
 
 export function FacultyAttendanceWorkspace({
   workspace,
+  initialSessionId,
 }: {
   workspace: FacultyAttendanceWorkspaceData;
+  initialSessionId?: string | null;
 }) {
+  const selection = resolveFacultyAttendanceSession(workspace.sessions, initialSessionId);
   const router = useRouter();
   const [mode, setMode] = useState<
     "REPORT" | "MARK"
-  >("REPORT");
+  >(initialSessionId && selection === initialSessionId ? "MARK" : "REPORT");
   const [clock, setClock] = useState(() => new Date());
   useEffect(() => {
     const timer = window.setInterval(() => setClock(new Date()), 60000);
@@ -136,13 +139,13 @@ export function FacultyAttendanceWorkspace({
     () => indiaAttendanceMonthKey(new Date()),
   );
   const [selectedSessionId, setSelectedSessionId] =
-    useState(workspace.sessions[0]?.id ?? "");
+    useState(selection);
   const [search, setSearch] = useState("");
   const [absent, setAbsent] = useState<Set<string>>(() =>
     initialAbsencesForSession(
       workspace.roster,
       workspace.records,
-      workspace.sessions[0]?.id ?? "",
+      selection,
     ),
   );
   const [submitting, setSubmitting] =
