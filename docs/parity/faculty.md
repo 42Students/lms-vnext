@@ -306,3 +306,15 @@ The Faculty monthly attendance report now initializes and shifts its month in As
 ### Faculty monthly class-health and PDF parity (2026-10-14)
 
 Implemented a persisted, active Section-roster monthly health summary with P/A, unmarked and upcoming counts and an exact marked-only attendance denominator. The missing percentage is shown as unknown (not 100%). Departed/historic learners remain in per-learner historical detail but do not inflate current Section health. An on-demand PDF for that same authorized Section/selected India-local month includes the aggregated figures and each active learner's marks. Added pure-model negative/edge-case unit tests and authenticated browser assertions; exact-SHA executed evidence is required before closing the Attendance checklist and whole page remains PARTIAL.
+
+## Faculty Course Student drill-in (2026-10-14)
+
+Source-authored read-only `/teacher/courses/[deliveryId]/students/[membershipId]`
+links from the current authorized Section/elective delivery roster. The current
+Faculty role, central courses.read college scope and persisted active teaching
+assignment are required before the target learner is resolved against the exact
+current roster. Course-level attendance counts exclude unknown/unmarked and
+future sessions from recorded attendance. The existing monthly attendance report
+is unchanged. Loading/error and pure-model/denial tests are authored only;
+full private profile, positive database/browser tests and exact legacy drill-in
+parity remain OPEN. No checklist item is closed solely from source work.
