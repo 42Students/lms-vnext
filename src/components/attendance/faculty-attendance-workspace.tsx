@@ -99,13 +99,14 @@ function dateTime(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Asia/Kolkata",
   }).format(new Date(value));
 }
 
 function sessionTime(value: Session) {
   return `${dateTime(value.startsAt)} – ${new Intl.DateTimeFormat(
     "en-IN",
-    { hour: "numeric", minute: "2-digit" },
+    { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" },
   ).format(new Date(value.endsAt))}`;
 }
 
