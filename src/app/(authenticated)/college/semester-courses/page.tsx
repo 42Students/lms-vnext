@@ -7,6 +7,7 @@ import { CollegeTermMappingManager } from "@/components/academics/college-term-m
 import { listCollegeTermMappings } from "@/modules/academics/college-term-mapping-service";
 import { semesterCourseQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeSemesterCourseMappings } from "@/modules/academics/college-mapping-service";
+import { offeringMappingCsvHref } from "@/modules/academics/college-mapping-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -25,6 +26,7 @@ export default async function CollegeSemesterCoursesPage({
         programId: first(raw.programId),
         periodId: first(raw.periodId),
         type: first(raw.type),
+        status: first(raw.status),
         page: first(raw.page),
       }).filter(([, value]) => value !== undefined && value !== ""),
     ),
@@ -53,6 +55,10 @@ export default async function CollegeSemesterCoursesPage({
           Course offerings
         </Link>}
       />
+      <Link prefetch={false} download href={offeringMappingCsvHref(query)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Export filtered offering mappings CSV
+      </Link>
       <CollegeTermMappingManager data={curriculumData} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/semester-courses" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -84,6 +90,14 @@ export default async function CollegeSemesterCoursesPage({
               <option value="ALL">All types</option>
               <option value="CORE">Core</option>
               <option value="ELECTIVE">Elective</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Offering lifecycle
+            <select name="status" defaultValue={query.status}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All states</option><option value="ACTIVE">Active</option>
+              <option value="ARCHIVED">Archived</option>
             </select>
           </label>
           <div className="flex items-end gap-2">

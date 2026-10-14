@@ -2,15 +2,13 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
-import {facultyReportsHubQuerySchema,facultyReportHubHref} from "@/modules/courses/faculty-reports-hub-model";
+import {parseFacultyReportsHubLocation,facultyReportHubHref} from "@/modules/courses/faculty-reports-hub-model";
 import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-service";
 type Search={kind?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function FacultyReportsHubPage({params,searchParams}:{
 params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  const [{deliveryId},raw]=await Promise.all([params,searchParams]);
- const parsed=facultyReportsHubQuerySchema.safeParse({
- deliveryId,kind:first(raw.kind)??undefined,page:first(raw.page)??undefined});
+ const parsed=parseFacultyReportsHubLocation(deliveryId,raw);
  if(!parsed.success)return <section role="alert">
  <h1 className="text-xl font-semibold">Invalid report filters</h1>
  <Link href="/teacher/courses" className="text-primary-text underline">Courses</Link>

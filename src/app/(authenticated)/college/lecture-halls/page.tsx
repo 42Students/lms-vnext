@@ -14,6 +14,7 @@ import {
 import { listLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
+import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -92,6 +93,10 @@ export default async function CollegeLectureHallsPage({
           ". Find rooms by name, room type, department or archive status."}
       />
 
+      <Link prefetch={false} download href={lectureHallsCsvHref(query)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Export filtered lecture halls CSV
+      </Link>
       <section aria-label="Lecture hall filters" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/lecture-halls" method="get" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <label className="grid gap-1 text-sm font-semibold text-body">

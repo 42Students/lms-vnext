@@ -44,6 +44,6 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   subtitle:row.jobTitle+" · "+row.roleTitle,
   status:row.status,details:["Channel: "+row.channel,"Eligibility: "+row.eligibilityStatus,
    "Submitted: "+fmt.format(row.submittedAt)+" IST"],
-  href:`/admin/placements/jobs/${encodeURIComponent(row.jobId)}`,
+  href:`/admin/placements/applications/${encodeURIComponent(row.id)}`,
  }))};
 }

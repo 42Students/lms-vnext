@@ -1161,3 +1161,75 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L30-033 PARTIAL:** Learner Profile on narrow screens now has direct quick links to up to four unfinished, non-sensitive career sections; verified/identity status is not inferred. Profile cards/long names wrap within their grid cells, and collection edit/delete actions use full-width minimum-44px mobile hit targets. Unit and own-profile PostgreSQL access/denial tests authored; 375px, keyboard, dialog resizing and browser/mobile verification pending.
+
+
+**2026-10-15 chat-5 L15-008 PARTIAL:** Assessment rounds can isolate those without an actionable web employer test URL, including dated rounds lacking a link. Filter uses existing own scoped rounds; no submission status is inferred. Pure model and own-fixture PostgreSQL tests authored; execution and mobile/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L15-013 PARTIAL:** Clicking an authorized employer assessment URL now opens a confirmation dialog before any external navigation. It explains that leaving LMS is not assessment submission, and a time-critical note comes from the saved round start with an explicit no-official-deadline caveat. HTTP(S) URLs only; no external sending. Pure fixed-clock model and own-fixture PostgreSQL denial tests authored; executed browser focus/window, timezone and producer checks pending.
+
+
+**2026-10-15 chat-5 L11-004 PARTIAL:** The Placements hero now greets the authenticated learner by a bounded persisted display name only after live membership/user/college validation, otherwise uses a generic greeting without fabricating a name. Authorization revocations remain hard denials, while a noncritical name read failure leaves the dashboard functional. Pure sanitization and own-fixture PostgreSQL success/denial cases authored; browser/source and executed CI still pending.
+
+
+**2026-10-15 chat-5 L11-011 PARTIAL:** The learner dashboard now shows a true five-stage breakdown sourced only from the current own-learner application/screening journey. Withdrawals are separated before screening; no inferred offer, hire, provider completion, or cross-college data. Failure to load the journey displays Unknown rather than zero. Pure-model and own-fixture PostgreSQL authorization tests authored; CI/device/source parity pending.
+
+
+**2026-10-15 chat-5 L15-007 PARTIAL:** Assessment due buckets, including Later (after the current IST Monday–Sunday calendar week), now support validated, shareable `?due=` navigation. Back/Forward restores the chosen bucket, unknown/duplicate values are rejected on server, and pure URL model strips untrusted selectors without changing learner scope. Owned TEST-round PostgreSQL/denial tests authored; browser/navigation and CI acceptance pending.
+
+
+**2026-10-15 chat-5 L15-009 PARTIAL:** The no-date assessment bucket now exposes an explicit, scoped and accessible warning: an absent scheduled round time does NOT prove the provider has no deadline. It also counts missing employer URLs independently rather than conflating link availability with scheduling. UTC/IST round date and link data come from the existing own-learner reader. Pure model and independent own-learner PostgreSQL denial tests authored; real browser/source acceptance pending.
+
+
+**2026-10-15 chat-5 L15-010 PARTIAL:** The past-scheduled assessment bucket now explicitly separates saved round start times from employer submission, attendance, overdue policy, or completion. A real CTA opens the existing authorized, applied-results workspace rather than treating elapsed time as a failed attempt. Pure fixed-UTC-clock model and own-learner PostgreSQL denial tests authored; browser/source and executed CI still pending.
+
+
+**2026-10-15 chat-5 L29-005 PARTIAL:** Learner Notifications now highlights up to three genuinely college-pinned, learner-visible announcements with a mobile-wrapping, accessible detail action. Pins are sourced solely from the existing authorized college announcement reader; personal notifications cannot be promoted to a pinned college notice even with a forged client flag. Announcement-read status remains separate from personal receipts, and source failure never fabricates a zero. Pure unit and persisted own-learner authorization/notification tests authored; runtime, announcement-producer and browser checks pending.
+
+
+**2026-10-15 chat-5 L11-014 PARTIAL (round 4):** Needs Attention preview now preserves true chronological ordering across authorized interview and assessment rounds rather than presenting every later test ahead of an earlier interview. Approved reschedules are the effective schedule, with stable ties and a truthful full-count overflow. Fixed-date pure-model regressions authored. PG/browser/CI execution pending.
+
+
+**2026-10-15 chat-5 L11-016 PARTIAL (round 4):** The Placement dashboard calendar preview now shows seven contiguous Asia/Kolkata calendar days, including days without events, with two own-scheduled rounds per day and honest overflow. This replaces a misleading rolling-168-hour list that could cover eight local dates around midnight. Approved reschedule UTC instants remain authoritative; date-boundary/leap-year pure tests authored. Browser/PG/runtime checks pending.
+
+
+**2026-10-15 chat-5 L11-009 PARTIAL (round 4):** When a noncritical dashboard source is unavailable but the learner's published-drive source loaded successfully, the hero exposes a safe Browse Drives fallback without inventing a no-activity or zero-jobs state. When drives themselves fail, the CTA is suppressed instead of promising accessible jobs. No new service/scope bypass. Unit cases for partial failures authored; runtime/browser gate pending.
+
+
+**2026-10-15 chat-5 L11-006 PARTIAL (round 4):** Dashboard now exposes the nearest actual upcoming assessment as an independent, authorized assessment action, even if the general hero instead promotes an earlier interview or an expiring offer. Approved reschedule and own-learner deep-link selectors are preserved; no scheduled start is called an employer deadline. Fixed-clock model regression authored. Typecheck, PG and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-007 PARTIAL (round 4):** Dashboard now separately offers a direct action to the earliest owned upcoming interview, even if a different assessment or offer owns the primary hero. It uses the current saved/approved interview time and the existing application+round membership-scoped destination; it never infers attended/confirmed outcomes. Fixed-date regression authored; PG/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-008 PARTIAL (round 4):** Placement dashboard now retains an independent chronological Next Scheduled Event card and exact learner-scoped destination. Hero urgency can legitimately prefer an expiring offer or later assessment without hiding the actual next scheduled round. UTC effective reschedule sorting remains authoritative, with explicit unavailable/empty distinction. Pure regression authored; PG/browser verification pending.
+
+
+**2026-10-15 chat-5 L30-027 PARTIAL (round 4):** Profile social-account deep links now scroll to the exact Social Profiles card, which provides a direct Connect or edit accounts action. The existing confirmed profile editor opens from that card, focuses its LinkedIn entry for this validated deep-link section, and reuses document stale-write/version handling; no OAuth or verification is inferred. Pure-model test for allowed focus targets authored; device focus/browser and PG update acceptance pending.
+
+
+**2026-10-15 chat-5 L14-010 PARTIAL (round 4):** Learner application cards now expose a truthful Last Recorded Activity timestamp drawn from saved submission, withdrawal, screening decision and applied result times, plus a direct saved status-history link for a validated application UUID. This adds discoverable per-application context without exposing reviewer/audit reasons or fabricating a provider outcome. Unit and new own-fixture PG/role/tenant tests authored; browser and runtime verification pending.
+
+
+**2026-10-15 chat-5 L11-010 PARTIAL (round 5):** Published-drives snapshot distinguishes unique non-expired drives from actionable role options and counts currently not-open-to-apply drives without double-counting multi-role jobs. A nonexpired drive is not falsely labeled eligible for every learner; the published row reader remains own-membership scoped. Fixed-unit duplicate/deadline cases authored. CI/browser gate outstanding.
+
+
+**2026-10-15 chat-5 L11-012 PARTIAL (round 5):** Interview snapshot distinguishes all future authorized scheduled interview/GD rounds from those in the next seven Asia/Kolkata calendar dates. It respects approved reschedules and never calls schedules confirmed attendance. Fixed-clock unit regression authored; executable PG, lint and browser checks pending.
+
+
+**2026-10-15 chat-5 L11-013 PARTIAL (round 5):** Upcoming-assessments card differentiates all future authorized TEST/VENDOR_TEST schedules from assessments in the next seven IST calendar dates, reusing approved reschedule instants. The metric does not claim employer submission or a provider deadline. Fixed-clock unit regression authored; PG, lint and browser checks pending.
+
+
+**2026-10-15 chat-5 L12-006 PARTIAL (round 5):** Deadline-first learner drive sorting now places published, not-expired and parseable upcoming deadlines ahead of expired and malformed/missing deadlines, while preserving explicit closed and eligibility filters. This uses the existing learner-scoped published-drive dataset and does not turn a missing provider deadline into urgency. Pure regression for closed/malformed/valid tie cases authored; CI/mobile/PG gate pending.
+
+
+**2026-10-15 chat-5 L14-007 PARTIAL (round 5):** Learner Applications' Company A–Z sort now uses stable case-insensitive natural ordering (e.g., Company 2 before Company 10), breaks ties by role then application ID, and never mutates the own scoped input. Real application screening/status filters remain unchanged. Pure-model regression authored; CI/browser/PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-008 PARTIAL (round 5):** Highest-CTC learner Drives sorting now computes an actual highest valid disclosed min/max annual pay among registered own-visible role options. Missing, negative, or nonfinite compensation never ranks above known valid salary; ties stay deterministic and no pay amount is inferred for incomplete employer data. Pure model regression authored; PG/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L29-014 PARTIAL (round 5):** Learner Notifications now shows responsive route loading skeletons for independent personal-inbox and college-announcement sources, keeping filter controls noninteractive until their actual scoped data arrives. Accessible loading text does not fabricate a zero inbox, announcement count or unread receipts. Static-section regression authored; hydrated screen-reader/browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-019 PARTIAL (round 5):** Every learner placement dashboard numeric card now explicitly distinguishes an authorized successful zero from a failed source as the word Unknown, with a source-specific accessible action/description to open its own list and retry. Screen readers no longer hear only a dash or falsely imply no records. Pure zero/null/positive state regressions authored; CI/PG/browser acceptance still open.

@@ -90,6 +90,7 @@ export async function listCollegeSemesterCourseMappings(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.periodId ? eq(academicPeriods.id, query.periodId) : undefined,
       query.type !== "ALL" ? eq(courseOfferings.type, query.type) : undefined,
+      query.status !== "ALL" ? eq(courseOfferings.status,query.status) : undefined,
       query.q ? or(
         ilike(courses.name, pattern(query.q)),
         ilike(courses.code, pattern(query.q)),

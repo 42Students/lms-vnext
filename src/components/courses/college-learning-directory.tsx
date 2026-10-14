@@ -47,6 +47,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </select>
           </label>
           {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
+              <input name="courseCode" type="search" maxLength={64}
+                defaultValue={data.query.courseCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Offering lifecycle
               <select name="offeringStatus" defaultValue={data.query.offeringStatus}
@@ -55,6 +62,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                 <option value="ACTIVE">Active offerings</option>
                 <option value="ARCHIVED">Archived offerings</option>
               </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
+              <input name="courseCode" type="search" maxLength={64}
+                defaultValue={data.query.courseCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           <button type="submit"

@@ -1,0 +1,1 @@
+"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){return <ErrorState title="Offer detail unavailable" description="Could not read the selected-college offer." action={<Button onClick={reset}>Retry</Button>}/>;}

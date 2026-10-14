@@ -3,6 +3,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
 import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-onboarding-steps-model";
+import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
+import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
+import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboard-fallback-model";
+import {learnerDashboardMetricView} from "@/modules/placements/learner-dashboard-metric-view-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -25,36 +29,43 @@ function Metric({
   href: string;
   detail: string;
 }) {
+  const metric=learnerDashboardMetricView(value,label,detail);
   return (
     <Link
       href={href}
+      aria-label={metric.ariaLabel}
       className="group rounded-xl border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value===null?"—":value}</p>
-      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{value===null?"Currently unavailable; retry loading":detail} →</p>
+      <p className="mt-2 break-words text-2xl font-bold tabular-nums text-foreground sm:text-3xl">{metric.display}</p>
+      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{metric.detail} →</p>
     </Link>
   );
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,
+  snapshot,availability,learnerName=null,applicationFunnel=null,
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
+  learnerName?:string|null;
+  applicationFunnel?:ReturnType<typeof learnerPlacementApplicationFunnel>|null;
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
+  const safeFallback=learnerDashboardSafeFallback(availability);
+  const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
+  const shownWeekEvents=display.weekDays?.reduce((count,day)=>count+day.events.length,0)??0;
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
       {next ? <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              {display.firstRun ? "Welcome to placements" : next.label}
+              {greeting}
             </p>
             <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">
               {next.title}
@@ -80,6 +91,10 @@ export function LearnerPlacementsDashboard({
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
+          {safeFallback ? <Link href={safeFallback.href}
+            className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4">
+            {safeFallback.label} →
+          </Link> : null}
         </p>
       )}
 
@@ -101,10 +116,10 @@ export function LearnerPlacementsDashboard({
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
-          label="Open drives"
+          label="Published drives before deadline"
           value={display.openJobs}
           href="/learn/my-placements/jobs"
-          detail={`${display.eligibleJobs ?? "Unknown"} currently eligible to apply`}
+          detail={`${display.eligibleJobs ?? "Unknown"} eligible · ${display.notOpenToApplyJobs ?? "Unknown"} not currently open to apply`}
         />
         <Metric
           label="Applications"
@@ -116,16 +131,62 @@ export function LearnerPlacementsDashboard({
           label="Upcoming assessments"
           value={display.assessments}
           href="/learn/my-placements/assessments"
-          detail="View scheduled employer assessments"
+          detail={display.thisWeekAssessments===null
+            ?"Assessment schedule unavailable"
+            :`${display.thisWeekAssessments} in next seven IST calendar dates · not employer completion`}
         />
         <Metric
           label="Upcoming interviews"
           value={display.interviews}
           href="/learn/my-placements/interviews"
-          detail="View scheduled interview rounds"
+          detail={display.thisWeekInterviews===null
+            ?"Interview schedule unavailable"
+            :`${display.thisWeekInterviews} in the next seven IST calendar dates · view all scheduled`}
         />
       </div>
 
+      <section aria-label="Application screening breakdown" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-foreground">Application stages</h3>
+          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
+        </div>
+        {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
+          : <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {applicationFunnel.stages.map(stage=><div key={stage.key} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+              <p className="text-2xl font-bold tabular-nums text-foreground">{stage.count}</p>
+              <p className="mt-1 text-xs font-semibold text-body">{stage.label}</p>
+            </div>)}
+          </div>}
+        <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
+      </section>
+      {display.urgentAssessment ? (
+        <aside aria-label="Upcoming assessment action"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Assessment in the next seven IST days</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentAssessment.roundName} · {display.urgentAssessment.companyName}</p>
+            <p className="mt-1 text-xs text-body">{formatWhen(display.urgentAssessment.when)} · Scheduled time, not provider submission deadline</p>
+          </div>
+          <Link href={display.urgentAssessment.href}
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            Review assessment →
+          </Link>
+        </aside>
+      ) : null}
+      {display.urgentInterview ? (
+        <aside aria-label="Upcoming interview action"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Interview in the next seven IST days</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentInterview.roundName} · {display.urgentInterview.companyName}</p>
+            <p className="mt-1 text-xs text-body">{formatWhen(display.urgentInterview.when)} · Scheduled, not attendance-confirmed</p>
+          </div>
+          <Link href={display.urgentInterview.href}
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            Review interview →
+          </Link>
+        </aside>
+      ) : null}
       {display.activeOffers !== null && display.activeOffers > 0 ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning bg-surface px-5 py-4">
           <div>
@@ -142,6 +203,24 @@ export function LearnerPlacementsDashboard({
         </div>
       ) : null}
 
+      {display.nextScheduledEvent ? (
+        <aside aria-label="Next scheduled placement calendar event"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Next scheduled placement event</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">
+              {display.nextScheduledEvent.roundName} · {display.nextScheduledEvent.companyName}
+            </p>
+            <p className="mt-1 text-xs text-body">
+              {formatWhen(display.nextScheduledEvent.when)} · {display.nextScheduledEvent.rescheduled?"Approved reschedule":"Recorded schedule"}
+            </p>
+          </div>
+          <Link href={display.nextScheduledEvent.href}
+            className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+            View event details →
+          </Link>
+        </aside>
+      ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-labelledby="placement-attention-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -197,25 +276,30 @@ export function LearnerPlacementsDashboard({
           </div>
           {display.weekEvents===null ? (
             <p role="status" className="text-sm text-body">Schedule data unavailable; please retry.</p>
-          ) : display.weekEvents.length ? (
-            <ul className="divide-y divide-border">
-              {display.weekEvents.map((event) => (
-                <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-                    <p className="text-sm font-semibold text-foreground">{event.companyName} · {event.roundName}</p>
-                    <p className="mt-1 text-xs text-body">{formatWhen(event.when)} · {event.roleTitle}</p>
-                  </Link>
+          ) : display.weekDays ? (
+            <ol className="divide-y divide-border">
+              {display.weekDays.map(day=>(
+                <li key={day.date} className="py-3 first:pt-0 last:pb-0">
+                  <p className="text-xs font-semibold text-foreground">{day.label} · {day.total} {day.total===1?"event":"events"}</p>
+                  {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
+                    <ul className="mt-2 space-y-2">{day.events.map(event=>(
+                      <li key={event.applicationId+":"+event.roundId}>
+                        <Link href={event.href} className="block min-h-11 rounded-md text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                          {event.companyName} · {event.roundName}
+                          <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
+                        </Link>
+                      </li>
+                    ))}</ul>}
+                  {day.total>day.events.length?<p className="mt-1 text-xs text-muted-foreground">{day.total-day.events.length} more that day · open full calendar</p>:null}
                 </li>
               ))}
-            </ul>
-          ) : (
-            <p className="text-sm leading-6 text-body">
-              No scheduled placement events in the coming week.
-            </p>
-          )}
-          {display.fullWeekEventCount !== null && display.weekEvents !== null && display.fullWeekEventCount > display.weekEvents.length ? (
+            </ol>
+          ) : null}
+          {display.fullWeekEventCount !== null && display.weekDays !== null &&
+            display.fullWeekEventCount > shownWeekEvents ? (
             <p className="text-xs text-muted-foreground">
-              And {display.fullWeekEventCount - display.weekEvents.length} more scheduled events.
+              {display.fullWeekEventCount-shownWeekEvents} further scheduled
+              {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
           <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
