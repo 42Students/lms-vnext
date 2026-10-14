@@ -181,6 +181,22 @@ export function LearnerApplicationsBrowse({
         title={selected ? selected.companyName + " · " + selected.jobTitle : "Application"}
         description={selected ? "Your application history and confirmed outcome" : undefined}
         footer={<>
+          {selected ? (
+            <>
+              <Link
+                href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+              >
+                Full history
+              </Link>
+              <Link
+                href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+              >
+                Company preview
+              </Link>
+            </>
+          ) : null}
           <Link href="/learn/my-placements/assessments" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
             Assessments
           </Link>

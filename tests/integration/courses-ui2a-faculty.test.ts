@@ -1082,6 +1082,19 @@ describe("courses UI2A faculty read model", () => {
 
   it("gives College Admin a scoped attendance grid and correction path without granting Faculty admin access", async () => {
     const structure = await createStructure();
+    // This is a live correction path, not an expiry test. Keep the fixture
+    // within the configured correction window rather than pinning it to a
+    // calendar date that becomes invalid as CI moves forward.
+    const startsAt = new Date(Date.now() - 5 * 60_000);
+    const endsAt = new Date(Date.now() - 60_000);
+    const localParts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+    }).formatToParts(startsAt);
+    const sessionMonth =
+      localParts.find((part) => part.type === "year")!.value + "-" +
+      localParts.find((part) => part.type === "month")!.value;
     const session =
       await createFacultyAttendanceSession(
         faculty,
@@ -1089,10 +1102,8 @@ describe("courses UI2A faculty read model", () => {
           deliveryId:
             structure.deliveryA.id,
           title: "FUI2A Admin Review",
-          startsAt:
-            "2026-10-02T09:00:00.000Z",
-          endsAt:
-            "2026-10-02T10:00:00.000Z",
+          startsAt: startsAt.toISOString(),
+          endsAt: endsAt.toISOString(),
         },
       );
 
@@ -1122,7 +1133,7 @@ describe("courses UI2A faculty read model", () => {
           collegeId: SEED_IDS.collegeA,
           deliveryId:
             structure.deliveryA.id,
-          month: "2026-10",
+          month: sessionMonth,
         },
       );
     expect(
@@ -1159,7 +1170,7 @@ describe("courses UI2A faculty read model", () => {
           collegeId: SEED_IDS.collegeA,
           deliveryId:
             structure.deliveryA.id,
-          month: "2026-10",
+          month: sessionMonth,
         },
       );
     expect(excused.records).toEqual([
@@ -1196,7 +1207,7 @@ describe("courses UI2A faculty read model", () => {
           collegeId: SEED_IDS.collegeA,
           deliveryId:
             structure.deliveryA.id,
-          month: "2026-10",
+          month: sessionMonth,
         },
       );
     expect(corrected.records).toHaveLength(0);

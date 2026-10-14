@@ -16,8 +16,8 @@ export const COLLEGE_ADMIN_QUICK_ACTIONS = [
   { key: "jobs", label: "Jobs", href: "/college/placements" },
   { key: "hiring-dashboard", label: "Hiring Dashboard", href: null },
   { key: "attendance", label: "Attendance", href: null },
-  { key: "assignments", label: "Assignments", href: null },
-  { key: "quizzes", label: "Quizzes", href: null },
+  { key: "assignments", label: "Assignments", href: "/college/assignments" },
+  { key: "quizzes", label: "Quizzes", href: "/college/quizzes" },
   { key: "people", label: "People Directory", href: null },
 ] as const;
 

@@ -356,6 +356,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Assignments
 **Legacy:** `/college-admin/assignments`
 
+**Read-first aggregate PARTIAL:** `/college/assignments` lists persisted college-owned assignments, with title/status filters, due dates, lesson/course context, submission-row counts, an offering deep link, loading/error/empty states and no assignment or file-storage mutations. Legacy authoring/edit/delete, report and browser parity remain unchecked.
+
 - [ ] Aggregate list/filter/pagination match.
 - [ ] Create Assignment fields/validation match.
 - [ ] Edit/delete actions match.
@@ -366,6 +368,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Quizzes
 **Legacy:** `/college-admin/quizzes`
+
+**Read-first aggregate PARTIAL:** `/college/quizzes` lists persisted college-owned quizzes, with title/status filters, due dates, lesson/course context, attempt-row counts, an offering deep link, loading/error/empty states and no quiz-answer disclosure. Legacy authoring/edit/question/results management and browser parity remain unchecked.
 
 - [ ] Aggregate list/filter/pagination match.
 - [ ] Create/Edit Quiz workflow matches.
