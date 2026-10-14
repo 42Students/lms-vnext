@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
+import { MentorTaskCreate } from "./mentor-task-create";
 import {
   ReleaseLifecycleActions,
   SprintLifecycleActions,
@@ -546,6 +547,15 @@ export function ProjectWorkspace({
                                 updatedAt={sprint.updatedAt.toISOString()}
                               />
                             ) : null}
+                          {mode === "MENTOR" &&
+                          ["PLANNED","ACTIVE"].includes(sprint.status) &&
+                          release.status !== "SHIPPED" ? (
+                            <MentorTaskCreate
+                              projectId={workspace.project.id}
+                              sprintId={sprint.id}
+                              updatedAt={sprint.updatedAt.toISOString()}
+                            />
+                          ) : null}
                           {mode === "MENTOR" ? (
                             <MentorSprintTransition
                               projectId={workspace.project.id}
