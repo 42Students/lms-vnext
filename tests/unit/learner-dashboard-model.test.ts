@@ -34,6 +34,15 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.weekEvents.map((event) => event.roundId)).toEqual(["interview", "test"]);
   });
 
+  it("surfaces the nearest scheduled own assessment even when interview occurs first",()=>{
+    const state=learnerPlacementDashboard({...empty,rounds:[
+      round("first-interview","INTERVIEW","2026-10-14T08:00:00Z"),
+      round("second-test","TEST","2026-10-15T08:00:00Z"),
+      round("third-test","VENDOR_TEST","2026-10-16T08:00:00Z"),
+    ]},now);
+    expect(state.urgentAssessment?.roundId).toBe("second-test");
+    expect(state.urgentAssessment?.href).toContain("/assessments?applicationId=app-1&roundId=second-test");
+  });
   it("keeps interview priority when assessments are outside the urgent week", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
