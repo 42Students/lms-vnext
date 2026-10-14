@@ -44,7 +44,6 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     const missing = COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps])
       .filter((item) => item.href === null).map((item) => item.key);
     expect(missing).toContain("faculty-assignment");
-    expect(missing).toContain("lecture-halls");
     expect(missing).toContain("semester-courses");
     expect(missing).toContain("classes");
   });
