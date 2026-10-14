@@ -39,6 +39,6 @@ export async function listSuperAdminScreeningQueue(context:RequestContext,raw:un
   status:r.status,details:["Application: "+r.appStatus,
    "Decision: "+(r.decidedAt?fmt.format(r.decidedAt)+" IST":"Not decided"),
    "Internal review notes are deliberately withheld."],
-  href:`/admin/placements/jobs/${encodeURIComponent(r.jobId)}`,
+  href:`/admin/placements/screenings/${encodeURIComponent(r.id)}`,
  }))};
 }
