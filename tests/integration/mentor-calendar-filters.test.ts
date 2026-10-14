@@ -94,7 +94,10 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     expect(owned).toHaveLength(2);
     const query=mentorCalendarFiltersSchema.parse({status:"REQUESTED",search:"checkpoint"});
     expect(filterMentorCalendar(owned,query).map(row=>row.id)).toEqual([meetingId]);
-    expect(filterMentorCalendar(owned,{status:"ALL",search:"nonsense"})).toEqual([]);
+    expect(filterMentorCalendar(owned,{status:"ALL",search:"nonsense",period:"ALL"})).toEqual([]);
+    const inNovember=filterMentorCalendar(owned,{...query,period:"NEXT_7_DAYS"},
+      new Date("2026-11-01T00:00:00Z"));
+    expect(inNovember.map(row=>row.id)).toEqual([meetingId]);
     await expect(listMyMentorCalendarMeetings(learner)).rejects.toBeDefined();
     const disabled:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
     await expect(listMyMentorCalendarMeetings(disabled)).rejects.toBeDefined();

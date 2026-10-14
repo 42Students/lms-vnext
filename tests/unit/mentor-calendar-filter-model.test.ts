@@ -18,7 +18,21 @@ describe("Mentor global calendar filters",()=>{
     expect(filterMentorCalendar(rows,{...query,search:"another"}).map(row=>row.id))
       .toEqual(["c"]);
   });
+  it("uses IST calendar days without dropping a past REQUESTED item from ALL",()=>{
+    const instant=new Date("2026-10-14T20:00:00Z");
+    const rows=[item("a","REQUESTED","Past"),{
+      ...item("b","SCHEDULED","Today"),startsAt:"2026-10-14T19:00:00Z",
+    },{...item("c","SCHEDULED","Tomorrow"),startsAt:"2026-10-15T19:00:00Z"}];
+    const all=mentorCalendarFiltersSchema.parse({});
+    expect(filterMentorCalendar(rows,all,instant)).toHaveLength(3);
+    expect(filterMentorCalendar(rows,{...all,period:"TODAY"},instant)
+      .map(row=>row.id)).toEqual(["b"]);
+    expect(filterMentorCalendar(rows,{...all,period:"NEXT_7_DAYS"},instant)
+      .map(row=>row.id)).toEqual(["b","c"]);
+    expect(mentorCalendarFilterHref({...all,period:"TODAY"})).toContain("period=TODAY");
+  });
   it("rejects untrusted scope and nonregistered status",()=>{
+    expect(mentorCalendarFiltersSchema.safeParse({period:"NEVER"}).success).toBe(false);
     expect(mentorCalendarFiltersSchema.safeParse({status:"REMOVED"}).success).toBe(false);
     expect(mentorCalendarFiltersSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
     expect(mentorCalendarFiltersSchema.safeParse({search:"x".repeat(101)}).success).toBe(false);

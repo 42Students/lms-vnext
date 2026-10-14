@@ -147,3 +147,7 @@
 - No learner contact or raw descriptions, no new mutation or external send.
 - Unit/PG own-project positive and denial tests authored but not run.
 - PARTIAL pending actual CI/PG and responsive browser proof.
+
+## S — Global Mentor Meetings IST period filters
+- Added strict 4-way daypart period query, IST day boundaries and URL controls.
+- Authenticated scope reused; pure and PG fixture cases authored, not executed.
