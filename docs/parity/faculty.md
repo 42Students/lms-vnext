@@ -401,3 +401,22 @@ The aggregate Assessment Results route now filters by the exact active teaching 
 ### Faculty Attendance navigation-mode correctness (2026-10-14)
 
 Fixed a verified browser-root-cause bug: the server previously converted a missing Calendar session parameter into a fallback first-session ID, inadvertently opening Mark mode for plain Attendance navigation and hiding the monthly report/selector. It now passes a deep-link ID only when the URL requested an exact persisted authorized session; no/invalid link starts in Report mode. The editor can still choose the first authorized session as an internal fallback. New pure unit tests distinguish these cases. This is a functional repair, not only a Playwright selector change, and full browser proof remains required.
+
+## Faculty Section report CSV downloads (2026-10-14)
+
+The existing Section-scoped Assignment and Quiz report pages now offer an
+additional **Download CSV** control alongside their PDF export. It serializes
+only the already-authorized report responses from persisted registered
+assessment/roster tables: learner name, email, response state, score when
+recorded, percentage when valid, submitted timestamp and timing/review note.
+The view includes current eligible learners with no recorded response as
+explicit NOT_SUBMITTED / NOT_ATTEMPTED rows, rather than inventing zero scores.
+Every cell is quoted, double quotes are escaped, UTF-8 is supported, and
+formula-like values (including whitespace/BOM/zero-width prefixes followed
+by =,+,-,@) receive a leading apostrophe to prevent spreadsheet execution.
+A strict Zod schema checks CSV props at export time. The existing Faculty
+Section report reader supplies data; no new report/identity read or mutation
+endpoint is added. Unit tests and a PostgreSQL denial suite for the report
+readers are authored, not executed. Large-report browser acceptance, exact
+legacy export shape, offline download reliability and report semantic parity
+remain OPEN. The existing Assignment/Quiz report rows stay PARTIAL.
