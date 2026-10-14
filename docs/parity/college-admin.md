@@ -184,6 +184,8 @@ Legacy contract audited:
 ## Page: Classes / Sections
 **Legacy:** `/college-admin/classes`
 
+**Read-first PARTIAL (2026-10-14):** `/college/classes` now shows migrated class/section rows with program, cohort, academic period, configured capacity, active enrollments and lifecycle state. Includes program/status filters, search, 25-row pagination, college-scoped permissions, honest empty/loading/error states and a link to the existing section detail. Active enrollment counts use joined learner program/section enrollments with current in-college LEARNER memberships; no attendance, scheduled-session, or capacity-utilization metric is inferred. Legacy create/edit/delete, recurring-series scheduling, conflicts, moving learners, real-DB execution and browser parity remain open.
+
 Legacy contract audited:
 - Program;
 - Batch;
@@ -250,6 +252,8 @@ Legacy contract:
 
 ## Page: Electives
 **Legacy:** `/college-admin/electives`
+
+**Read-first PARTIAL (2026-10-14):** `/college/electives` now shows registered DB-0037 elective slots with program, term, optional academic year/period, choice constraints, credits, status and counts of active college-owned course offerings. Search, program/status filters, 25-row pagination, loading/error and honest empty states included. Presence of a slot does **not** verify the college feature switch or a learner choice window. Feature-disabled state, creation/editing, selection/enrollment, capacity enforcement, close/finalize, executed DB/browser parity remain open.
 
 - [ ] Feature-disabled state matches ("Electives is turned off for this college").
 - [ ] Elective offerings/list match.
