@@ -532,3 +532,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 - [ ] Execute `tests/unit/admin-dashboard-navigation.test.ts`, typecheck/build and Super Admin no-scope/org-scope/college-scope browser tests.
 
 **State: PARTIAL, not full dashboard parity or verified.**
+
+
+**2026-10-14 Chat 6 / scoped Super Admin template reads — PARTIAL:** Introduced centralized `project-template.read` for active Super Admin regardless of selected org/college, while `project-template.manage` remains unscoped-only. Template catalogue/detail/subview reads now work in either scope and the catalogue hides global create actions while scoped. Authored pure permission and isolated PG fixture tests (not executed) cover global/college reads, wrong role and mutation denial. Remaining: browser verification of all Overview/Versions/Sprints/Tasks/Resources/Colleges tabs and selected college assignment controls, source legacy parity, actual PostgreSQL execution and UI acceptance.

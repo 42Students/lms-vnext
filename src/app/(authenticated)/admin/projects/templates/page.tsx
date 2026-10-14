@@ -5,6 +5,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { CreateProjectTemplateControl } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listProjectTemplates } from "@/modules/projects/template-service";
+import { can } from "@/modules/permissions/policy";
 
 function tone(status: string) {
   return status === "PUBLISHED"
@@ -28,8 +29,8 @@ export default async function SuperAdminProjectTemplatesPage() {
       <PageHeader
         eyebrow="Projects"
         title="Template catalogue"
-        description="Global project templates and their current publication state."
-        actions={<CreateProjectTemplateControl />}
+        description="Global project templates and their current publication state. With a selected organization or college scope the catalogue is read-only."
+        actions={can(context, "project-template.manage") ? <CreateProjectTemplateControl /> : undefined}
       />
       {!templates.length ? (
         <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
