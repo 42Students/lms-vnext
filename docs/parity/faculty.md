@@ -306,3 +306,7 @@ The Faculty monthly attendance report now initializes and shifts its month in As
 ### Faculty monthly class-health and PDF parity (2026-10-14)
 
 Implemented a persisted, active Section-roster monthly health summary with P/A, unmarked and upcoming counts and an exact marked-only attendance denominator. The missing percentage is shown as unknown (not 100%). Departed/historic learners remain in per-learner historical detail but do not inflate current Section health. An on-demand PDF for that same authorized Section/selected India-local month includes the aggregated figures and each active learner's marks. Added pure-model negative/edge-case unit tests and authenticated browser assertions; exact-SHA executed evidence is required before closing the Attendance checklist and whole page remains PARTIAL.
+
+### Calendar-to-Attendance Faculty flow (2026-10-14)
+
+Faculty-only calendar event cards link to the exact Section delivery Attendance tab with a server-resolved persisted session ID. The destination still queries via the active Faculty authorization path and checks that the session is among its scoped rows, discarding injected or revoked-session query IDs. On a valid session link, the editor starts with that exact session and its stored absence selections, and the existing live correction-window rule determines whether marking is enabled. Learner calendar links remain Course Overview and expose no Faculty attendance controls. Source and unit tests added; authenticated browser proof remains a release gate.

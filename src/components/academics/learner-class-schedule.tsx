@@ -156,12 +156,23 @@ function EventCard({
   );
 
   return event.deliveryId ? (
-    <Link
-      href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
-      className="block rounded-lg outline-none transition hover:-translate-y-px hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-    >
-      {content}
-    </Link>
+    <div className="overflow-hidden rounded-lg border border-border bg-surface">
+      <Link
+        href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
+        className="block rounded-lg outline-none transition hover:-translate-y-px hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      >
+        {content}
+      </Link>
+      {courseBasePath === "/teacher/courses" ? (
+        <Link
+          href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
+          aria-label={`Open attendance for ${event.title}`}
+          className="block border-t border-border px-3 py-2 text-xs font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary"
+        >
+          Open class attendance
+        </Link>
+      ) : null}
+    </div>
   ) : (
     content
   );

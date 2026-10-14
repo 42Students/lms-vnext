@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
 
 const roster = [
   { membershipId: "a" }, { membershipId: "b" }, { membershipId: "c" },
@@ -19,5 +19,18 @@ describe("Faculty attendance editor current absence state", () => {
   });
   it("starts all learners present when a new session has no absence records", () => {
     expect(initialAbsencesForSession(roster, records, "new").size).toBe(0);
+  });
+});
+
+describe("Faculty calendar-to-attendance selection", () => {
+  const exact = [{ id: "session-1" }, { id: "session-2" }];
+  it("keeps a requested session inside the authorized delivery", () => {
+    expect(resolveFacultyAttendanceSession(exact, "session-2")).toBe("session-2");
+    expect(resolveFacultyAttendanceSession(exact, "other-delivery-session")).toBe("session-1");
+  });
+  it("handles absent, arbitrary and empty session links without rendering a fake session", () => {
+    expect(resolveFacultyAttendanceSession(exact, undefined)).toBe("session-1");
+    expect(resolveFacultyAttendanceSession(exact, { id: "session-2" })).toBe("session-1");
+    expect(resolveFacultyAttendanceSession([], "session-2")).toBe("");
   });
 });

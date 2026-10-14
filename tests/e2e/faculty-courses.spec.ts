@@ -145,6 +145,73 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await expect(page.getByRole("dialog", { name: "Schedule Class" })).toBeVisible();
 });
 
+test("Faculty marks and corrects a persisted session from its Calendar class link", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Attendance" }).click();
+  const deliveryId = page.url().match(/\/courses\/([^/]+)\/attendanceDetail/)?.[1];
+  expect(deliveryId).toBeTruthy();
+
+  // Held class inside the correction window in disposable E2E PostgreSQL.
+  const started = new Date(Date.now() - 10 * 60_000);
+  const ended = new Date(Date.now() - 5 * 60_000);
+  const localTime = (date: Date) =>
+    new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+      .toISOString().slice(0, 16);
+  const title = "Faculty marking browser proof";
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  const form = page.getByRole("dialog", { name: "Schedule Class" });
+  await form.getByLabel("Class title").fill(title);
+  await form.getByLabel("Starts at").fill(localTime(started));
+  await form.getByLabel("Ends at").fill(localTime(ended));
+  const scheduled = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty");
+  await form.getByRole("button", { name: "Schedule Class" }).click();
+  const scheduleResponse = await scheduled;
+  expect(scheduleResponse.ok()).toBe(true);
+  const sessionId: string = (await scheduleResponse.json()).session.id;
+  expect(sessionId).toBeTruthy();
+
+  await page.goto("/teacher/calendar");
+  await page.getByLabel("View", { exact: true }).selectOption("day");
+  await page.getByRole("button", { name: "Today", exact: true }).click();
+  const exactLink = page.locator(
+    'a[href="/teacher/courses/' + deliveryId + '/attendanceDetail?sessionId=' + sessionId + '"]',
+  ).first();
+  await expect(exactLink).toBeVisible();
+  await expect(exactLink).toHaveText("Open class attendance");
+  await exactLink.click();
+  await expect(page).toHaveURL(new RegExp("/attendanceDetail\\?sessionId=" + sessionId + "$"));
+
+  await expect(page.getByRole("button", { name: "Mark attendance", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Class session", { exact: true })).toHaveValue(sessionId);
+  const absentButton = page.getByRole("button", { name: /^Mark .* absent$/ }).first();
+  await expect(absentButton).toBeEnabled();
+  await absentButton.click();
+  const firstMark = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty/sessions/" + sessionId);
+  await page.getByRole("button", { name: "Submit Attendance" }).click();
+  expect((await firstMark).ok()).toBe(true);
+  await page.reload();
+  await expect(page.getByRole("button", { name: /^Mark .* absent$/ }).first())
+    .toHaveAttribute("aria-pressed", "true");
+
+  const presentButton = page.getByRole("button", { name: /^Mark .* present$/ }).first();
+  await presentButton.click();
+  const correction = page.waitForResponse((res) =>
+    res.request().method() === "PATCH" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty/sessions/" + sessionId);
+  await page.getByRole("button", { name: "Submit Attendance" }).click();
+  expect((await correction).ok()).toBe(true);
+  await page.reload();
+  await expect(page.getByRole("button", { name: /^Mark .* present$/ }).first())
+    .toHaveAttribute("aria-pressed", "true");
+});
+
 test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pages", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");
