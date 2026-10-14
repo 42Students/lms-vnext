@@ -18,7 +18,7 @@ if (!process.env.TEST_DATABASE_URL) {
 const pool = new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const fixture = newLearnerPositiveFixture();
 const ids = {
-  period:randomUUID(),section:randomUUID(),course:randomUUID(),
+  section:randomUUID(),course:randomUUID(),
   offering:randomUUID(),delivery:randomUUID(),sectionEnrollment:randomUUID(),
   absentEvent:randomUUID(),unmarkedEvent:randomUUID(),
   presentEvent:randomUUID(),futureEvent:randomUUID(),
@@ -35,14 +35,24 @@ async function setup() {
   );
   if(parent.rowCount!==1) throw new Error("Positive enrollment fixture is not unique");
   const {cohort_id}=parent.rows[0]!;
+  // The Section and offering must share the enrolled cohort's start period.
+  // The passing learner fixture creates that academic period explicitly.
+  const period=await pool.query<{
+    id:string;start_date:string;end_date:string;
+  }>(`SELECT ap.id,ap.start_date::text AS start_date,ap.end_date::text AS end_date
+    FROM cohorts c JOIN academic_periods ap ON ap.id=c.start_period_id
+    WHERE c.id=$1`,[cohort_id]);
+  if(period.rowCount!==1) throw new Error("Cohort start period is missing");
+  const academicPeriodId=period.rows[0]!.id;
+  // Dates must fit the W04 cohort start period (2026-07-01..2026-12-31).
+  if(period.rows[0]!.start_date>"2026-08-10" ||
+      period.rows[0]!.end_date<"2026-11-13") {
+    throw new Error("Attendance events must fit cohort academic period");
+  }
   const unique=ids.course.slice(0,8);
   await pool.query(
-    "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) VALUES($1,$2,$3,$4,'2025-01-01','2040-12-31')",
-    [ids.period,SEED_IDS.collegeA,"Attendance Calendar "+unique,"C4CAL-T-"+unique],
-  );
-  await pool.query(
     "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$5)",
-    [ids.section,cohort_id,ids.period,"Attendance Calendar "+unique,"C4CAL-S-"+unique],
+    [ids.section,cohort_id,academicPeriodId,"Attendance Calendar "+unique,"C4CAL-S-"+unique],
   );
   await pool.query(
     "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$4)",
@@ -50,7 +60,7 @@ async function setup() {
   );
   await pool.query(
     "INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id) VALUES($1,$2,$3,$4)",
-    [ids.offering,ids.course,cohort_id,ids.period],
+    [ids.offering,ids.course,cohort_id,academicPeriodId],
   );
   await pool.query(
     "INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3)",
@@ -58,13 +68,13 @@ async function setup() {
   );
   await pool.query(
     "INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
-    [ids.sectionEnrollment,fixture.ids.enrollment,ids.section,ids.period],
+    [ids.sectionEnrollment,fixture.ids.enrollment,ids.section,academicPeriodId],
   );
   for(const [eventId,title,starts,ends] of [
-    [ids.absentEvent,"Recorded absence","2025-03-10T04:00:00Z","2025-03-10T05:00:00Z"],
-    [ids.unmarkedEvent,"Awaiting college marking","2025-03-11T04:00:00Z","2025-03-11T05:00:00Z"],
-    [ids.presentEvent,"Recorded attendance","2025-03-12T04:00:00Z","2025-03-12T05:00:00Z"],
-    [ids.futureEvent,"Future scheduled class","2035-03-13T04:00:00Z","2035-03-13T05:00:00Z"],
+    [ids.absentEvent,"Recorded absence","2026-08-10T04:00:00Z","2026-08-10T05:00:00Z"],
+    [ids.unmarkedEvent,"Awaiting college marking","2026-08-11T04:00:00Z","2026-08-11T05:00:00Z"],
+    [ids.presentEvent,"Recorded attendance","2026-08-12T04:00:00Z","2026-08-12T05:00:00Z"],
+    [ids.futureEvent,"Future scheduled class","2026-11-13T04:00:00Z","2026-11-13T05:00:00Z"],
   ]) {
     await pool.query(
       "INSERT INTO section_schedule_events(id,section_id,title,starts_at,ends_at) VALUES($1,$2,$3,$4,$5)",
@@ -97,7 +107,6 @@ async function cleanup() {
   await pool.query("DELETE FROM course_offerings WHERE id=$1",[ids.offering]);
   await pool.query("DELETE FROM courses WHERE id=$1",[ids.course]);
   await pool.query("DELETE FROM sections WHERE id=$1",[ids.section]);
-  await pool.query("DELETE FROM academic_periods WHERE id=$1",[ids.period]);
 }
 
 beforeAll(setup,45_000);
@@ -116,7 +125,7 @@ afterAll(async()=>{
 describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
   it("reads only its own registered class/attendance rows and exact status",async()=>{
     const data=await getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2025-03",deliveryId:ids.delivery,status:"ALL",
+      month:"2026-08",deliveryId:ids.delivery,status:"ALL",
     });
     expect(data.courses).toEqual(expect.arrayContaining([
       expect.objectContaining({deliveryId:ids.delivery}),
@@ -135,17 +144,17 @@ describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
   });
   it("distinguishes future scheduled, missing months and a status filter",async()=>{
     const future=await getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2035-03",deliveryId:ids.delivery,status:"ALL",
+      month:"2026-11",deliveryId:ids.delivery,status:"ALL",
     });
     expect(future.rows.map(row=>row.id)).toEqual([ids.futureEvent]);
     expect(future.rows[0]?.status).toBe("SCHEDULED");
     expect(future.summary.percentage).toBeNull();
     const unmarked=await getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2025-03",deliveryId:ids.delivery,status:"NOT_MARKED",
+      month:"2026-08",deliveryId:ids.delivery,status:"NOT_MARKED",
     });
     expect(unmarked.rows.map(row=>row.id)).toEqual([ids.unmarkedEvent]);
     const empty=await getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2028-03",deliveryId:ids.delivery,
+      month:"2026-10",deliveryId:ids.delivery,
     });
     expect(empty.rows).toEqual([]);
     expect(empty.hasAnyRecords).toBe(true);
@@ -161,16 +170,16 @@ describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
     ];
     for(const invalid of denied) {
       await expect(getOwnLearnerAttendanceCalendar(invalid,{
-        month:"2025-03",deliveryId:ids.delivery,
+        month:"2026-08",deliveryId:ids.delivery,
       })).rejects.toBeInstanceOf(AuthorizationError);
     }
   });
   it("rejects an unauthorized delivery and caller-supplied tenant selector",async()=>{
     await expect(getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2025-03",deliveryId:SEED_IDS.collegeB,
+      month:"2026-08",deliveryId:SEED_IDS.collegeB,
     })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getOwnLearnerAttendanceCalendar(fixture.context,{
-      month:"2025-03",collegeId:SEED_IDS.collegeB,
+      month:"2026-08",collegeId:SEED_IDS.collegeB,
     })).rejects.toBeDefined();
   });
 });
