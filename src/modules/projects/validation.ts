@@ -477,6 +477,8 @@ export const reviewProjectTaskSubmissionInputSchema =
         .min(1)
         .max(4000)
         .optional(),
+      expectedUpdatedAt:z.string().datetime({offset:true}).optional(),
+      confirmed:z.literal(true).optional(),
     })
     .strict()
     .refine(

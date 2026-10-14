@@ -449,3 +449,13 @@ Audit now includes before/after markedAt, without private learner identifiers.
 New pure unit and self-created Faculty/Learner PG test includes SQL now default,
 success/foreign/role/stale/audit. Remaining: execute tests and browser/mobile,
 legacy correction modal parity and correction-request storage decision.
+
+## 2026-10-14 Mentor task-review optimistic feedback (PARTIAL)
+Existing same-origin review POST now requires Mentor decisions to include a confirmed
+submission update token. The stored row lock and SQL millisecond predicate fence
+a stale review without bypassing existing immutable task-review audit; Admin
+direct calls remain compatible. The responsive review dialog supplies the token.
+Added pure model/unit tests and an own-project disposable PostgreSQL test for
+default SQL now(), Mentor success, stale replay, wrong-role, non-leaking foreign
+scope and single review audit event. Still PARTIAL: CI/PG/browser/mobile and
+legacy review-history verification; do not fabricate task-comments storage.

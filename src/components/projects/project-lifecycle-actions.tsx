@@ -223,11 +223,12 @@ export function ReleaseLifecycleActions({
 export function TaskReviewActions({
   projectId,
   taskId,
-  submissionId,
+  submissionId,mode,expectedUpdatedAt,
 }: {
   projectId: string;
   taskId: string;
   submissionId: string;
+  mode:"MENTOR"|"ADMIN"|"LEARNER";expectedUpdatedAt:string;
 }) {
   const { pending, run } = useProjectAction();
   const [open, setOpen] = useState(false);
@@ -251,8 +252,8 @@ export function TaskReviewActions({
           "POST",
           {
             decision,
-            feedback:
-              feedback.trim() || undefined,
+            ...(mode==="MENTOR"?{expectedUpdatedAt,confirmed:true}:{}),
+            feedback:feedback.trim()||undefined,
           },
         ),
       decision === "APPROVED"
