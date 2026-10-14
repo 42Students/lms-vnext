@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
+  from "@/modules/placements/learner-round-search-query-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -55,19 +57,39 @@ export function LearnerCareerRoundsWorkspace({
   snapshotNowIso,
   membershipId = null,
   initialSelectedKey = null,
+  initialSearch = "",
 }: {
   kind: Kind;
   rounds: readonly LearnerCareerRound[];
   snapshotNowIso: string;
   membershipId?: string | null;
   initialSelectedKey?: string | null;
+  initialSearch?: string;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
-  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(defaults);
+  const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch}));
   const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
+
+  useEffect(()=>{
+    if(kind!=="ASSESSMENT")return;
+    const onPop=()=>{
+      const incoming=learnerRoundSearchQuerySchema.safeParse({
+        q:new URLSearchParams(window.location.search).get("q")??"",
+      });
+      if(incoming.success)setFilters(current=>({...current,search:incoming.data.q}));
+    };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  function saveSearchInUrl(){
+    const parsed=learnerRoundSearchQuerySchema.safeParse({q:filters.search});
+    if(!parsed.success)return;
+    window.history.pushState(null,"",learnerRoundSearchHref(window.location.href,parsed.data.q));
+  }
 
   useEffect(() => {
     if (kind !== "ASSESSMENT" || !membershipId) return;
@@ -226,6 +248,7 @@ export function LearnerCareerRoundsWorkspace({
             Search employers or rounds
             <input
               type="search" value={filters.search}
+              maxLength={100}
               onChange={(event) => setFilter("search", event.target.value)}
               placeholder="Search rounds…"
               className={selectClass}
@@ -252,6 +275,17 @@ export function LearnerCareerRoundsWorkspace({
             </select>
           </label>
         </div>
+        {kind==="ASSESSMENT" ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" onClick={saveSearchInUrl}
+              className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Save assessment search link
+            </button>
+            <p className="text-xs text-muted-foreground">
+              Search filters the current list as you type; save it to the URL to share or revisit.
+            </p>
+          </div>
+        ) : null}
       </section>
 
       {visibleRows.length === 0 && relevant.length > 0 ? (
