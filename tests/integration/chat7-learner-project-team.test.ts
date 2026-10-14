@@ -9,6 +9,7 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
+import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -291,6 +292,24 @@ describe("L25-014 responsive Board filters use own task data",()=>{
     const workspace=await getProjectInstanceWorkspace(context,ids.project);
     expect(workspace.project.id).toBe(ids.project);
     expect(learnerBoardActiveFilterCount({search:"",priority:"",sprintId:"",releaseId:""})).toBe(0);
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L25-008 exact task-detail selection from learner own persisted workspace",()=>{
+  it("opens own task details and denies forged task selectors",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'drawer-release','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'drawer-sprint','Sprint',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,description,acceptance_criteria,sequence) values($1,$2,$3,'drawer-task','Own task','Owned scope','Must pass',0)",[ids.taskA,ids.project,ids.sprint]);
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    expect(findOwnLearnerBoardTask(workspace.tasks,ids.taskA)).toMatchObject({
+      id:ids.taskA,title:"Own task",acceptanceCriteria:"Must pass",
+    });
+    expect(findOwnLearnerBoardTask(workspace.tasks,randomUUID())).toBeNull();
     for(const actor of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
