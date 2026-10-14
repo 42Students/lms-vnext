@@ -13,6 +13,8 @@ Every page below also requires:
 
 # Operations
 
+**Personal-notification unread counts PARTIAL (2026-10-15):** College Admin announcements displays a separate exact unread own-recipient count from registered notifications, independently of the 50-row inbox cap and regardless of unread-only filter. Count reads enforce the signed-in college and recipient; no college-wide send or delivery is inferred. Model, isolated PG tenant/role fixture updates authored; runtime/browser acceptance outstanding.
+
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
 
 ## Page: Dashboard
