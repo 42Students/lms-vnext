@@ -15,6 +15,14 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
       ?{href:"/learn/my-placements/applications?applicationId="+encodeURIComponent(ids[0]!),label:"View your application"}
       :{href:"/learn/my-placements/applications",label:"View applications"};
   }
+  const applicationDetail=url.pathname.match(/^\/learn\/my-placements\/applications\/([^/]+)(\/history)?$/);
+  if(applicationDetail){
+    const applicationId=applicationDetail[1]!;
+    if(!uuid.safeParse(applicationId).success)return null;
+    const suffix=applicationDetail[2]??"";
+    return {href:"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+suffix,
+      label:suffix?"View application history":"View your application"};
+  }
   if(url.pathname==="/learn/my-placements/offers"){
     const values=url.searchParams.getAll("status");
     if(values.length>1||values.length===1&&!offerView.safeParse(values[0]).success)return null;
