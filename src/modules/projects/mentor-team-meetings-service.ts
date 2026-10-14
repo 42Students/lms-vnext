@@ -41,7 +41,12 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     "%"+escapeMentorMeetingSearch(query.search)+"%"):undefined;
   const meetingFilters=and(eq(projectMeetings.projectId,scope.project.id),
     query.status==="ALL"?undefined:eq(projectMeetings.status,query.status),
-    query.type==="ALL"?undefined:eq(projectMeetings.meetingType,query.type),search);
+    query.type==="ALL"?undefined:eq(projectMeetings.meetingType,query.type),
+    query.outcome==="ALL"?undefined:
+      query.outcome==="RECORDED"
+        ? sql`nullif(btrim(${projectMeetings.outcome}), '') is not null`
+        : sql`nullif(btrim(${projectMeetings.outcome}), '') is null`,
+    search);
   const [teamRows,summary]=await Promise.all([
     db.select({role:projectMembers.role,isPrimary:projectMembers.isPrimary})
       .from(projectMembers)
