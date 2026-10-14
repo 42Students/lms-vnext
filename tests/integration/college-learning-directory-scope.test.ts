@@ -153,6 +153,13 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(programMiss.items).toEqual([]);
     const programCsv=await exportCollegeCourseProgress(own,{programCode:name});
     expect(programCsv.csv).toContain(name);
+    const [matchingPeriod,absentPeriod]=await Promise.all([
+      listCollegeCourseProgress(own,{periodCode:name}),
+      listCollegeCourseProgress(own,{periodCode:"OTHER-PERIOD"}),
+    ]);
+    expect(matchingPeriod.items.some(row=>row.offeringId===ids.offering)).toBe(true);
+    expect(absentPeriod.items).toEqual([]);
+    expect((await exportCollegeCourseProgress(own,{periodCode:name})).csv).toContain(name);
     const progress = progressPage.items.find(row => row.offeringId === ids.offering);
     expect(lesson).toMatchObject({ contentCount: 1, publishedContentCount: 1 });
     const [active, archived] = await Promise.all([
