@@ -21,11 +21,11 @@ Legacy route resolves slug/numeric identifiers, validates active Faculty assignm
 - [ ] Revoked/remapped assignment invalidates stale page state.
 - [ ] Access error and retry states match.
 
-### Overview
-- [ ] Course/class/faculty summary matches.
-- [ ] Teaching progress/quick actions match.
-- [ ] Relevant learner/content counts match.
-- [ ] Loading/empty/error states match.
+### Overview — DONE (2026-10-14, scoped live acceptance)
+- [x] Course/class/faculty summary shows persisted current teaching assignment and exact Section, never another class's draft content.
+- [x] Teaching progress/quick actions include pending grading, at-risk learners, grade/performance signals, direct Section reports hub and Student roster actions.
+- [x] Learner/content counts use persisted roster and workspace lessons/contents/assessments, published and marked/unmarked distinctions, unknown scores/attendance where missing.
+- [x] Loading/empty/error states exist for workspace and reports; desktop/mobile browser exercised correct linked transitions and no page errors/overflow.
 
 ### Blueprint
 - [ ] Lesson create/edit/delete.
@@ -1193,3 +1193,28 @@ Existing `faculty-courses.spec.ts` source assertion was corrected from an
 outdated email/phone CSV expectation to the approved privacy-safe format.
 This DONE is scoped to Course Students, not full Faculty, institution-wide
 learner PII access, private-file/photo features or all LMS CI tests.
+
+## Faculty Course Overview — DONE (2026-10-14)
+
+**Scoped acceptance:** the Faculty Course `home` summary and its linked
+read-only Section Reports hub. Current persisted Faculty teaching assignment,
+course/Section/period, active learning-path summary, learner attendance,
+assignment grading/risks and performance, and status distinctions are the
+only sources for metric cards; unrecorded attendance or grades are unknown,
+not invented zeros. The Overview now links directly to the authenticated
+Section Reports hub and current Section Students roster. This closure does
+not include the separate Faculty Blueprint, Attendance, Course reports or
+any private file/video storage claims.
+
+**Executed on `1f5d64398f1cd9830aacaa5926b801422433f076`:**
+[Faculty Course Overview acceptance workflow 38615289795](https://github.com/42Students/lms-vnext/actions/runs/38615289795)
+finished green with **5/5 PostgreSQL tests** in
+`tests/integration/faculty-c4-reports-audit-contact.test.ts`, including
+the new positive zero-lesson/zero-mark real teaching Section Overview,
+not-in-course/foreign-college/disabled/wrong-role denial and existing report
+scope; **2/2 Chromium desktop and mobile** in
+`tests/e2e/faculty-course-overview.spec.ts` including the actual persisted
+assigned Course, active Faculty role, correct metric labels/quick action,
+no foreign Section content, reports filter/clear, back to workspace, no
+uncaught browser page errors and no mobile horizontal overflow. Both
+independent CI jobs were SUCCESS; global CI is not claimed here.
