@@ -29,6 +29,10 @@ describe.skipIf(!enabled)("HR applicant drawer PG guard",()=>{
   });
   const own=await getHrJobRead(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),job.id,{tab:"applicants"});
   expect(own.applicants.rows).toEqual([]);
+  expect(own.applicants.counts.all).toBe(0);
+  const nextPage = await getHrJobRead(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),job.id,{tab:"applicants",page:"2"});
+  expect(nextPage.applicantsPage.page).toBe(2);
+  expect(nextPage.applicants.rows).toEqual([]);
   expect(buildHrApplicantDrawer(own.applicants.rows,randomUUID())).toBeNull();
   await expect(getHrJobRead(hr(b.company.id,b.relationship.id,SEED_IDS.collegeA),job.id,{tab:"applicants"}))
     .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});

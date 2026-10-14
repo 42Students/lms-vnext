@@ -30,6 +30,7 @@ import {
 import {
   listRecruiterCalendarEvents,
 } from "@/modules/placements/recruiter-calendar-service";
+import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } from "@/modules/placements/hr-calendar-day-model";
 
 export const dynamic = "force-dynamic";
 
@@ -273,12 +274,11 @@ export default async function HrCalendarPage({
     1,
   );
 
-  const byDay = new Map(
-    calendar.days.map((day) => [
-      day.day,
-      day.events,
-    ]),
-  );
+  const allDays = combineHrCalendarDays(calendar.days, calendar.resultsDue);
+  const byDay = new Map(allDays.map((day) => [day.day, day]));
+  const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
+  const eventCount = calendar.events.length + calendar.resultsDue.length;
+  const nextResult = calendar.resultsDue.find((item) => item.dueAt.getTime() >= now.getTime());
 
   const heading =
     view === "week"
@@ -337,7 +337,7 @@ export default async function HrCalendarPage({
               ],
               [
                 "All events",
-                calendar.summary.total,
+                eventCount,
               ],
               [
                 "Accessible drives",
@@ -489,28 +489,28 @@ export default async function HrCalendarPage({
             </form>
           </section>
 
-          {calendar.summary.next ? (
+          {calendar.summary.next || nextResult ? (
             <section className="rounded-xl border border-border bg-surface-secondary p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
 
               <p className="mt-2 text-sm font-semibold text-foreground">
-                {calendar.summary.next.companyName}
+                {context.recruiter?.companyName ?? "Employer"}
                 {" · "}
-                {calendar.summary.next.title}
+                {calendar.summary.next?.title ?? "Results due: " + nextResult?.roundName}
               </p>
 
               <p className="mt-1 text-sm text-body">
                 {eventDateTime(
-                  calendar.summary.next.startsAt,
+                  calendar.summary.next?.startsAt ?? nextResult!.dueAt,
                 )}{" "}
                 IST
               </p>
             </section>
           ) : null}
 
-          {calendar.events.length === 0 ? (
+          {eventCount === 0 ? (
             <section
               role="status"
               className="rounded-xl border border-border bg-surface p-8 text-center"
@@ -531,9 +531,33 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
+              className="rounded-xl border border-border bg-surface p-3 md:overflow-x-auto"
             >
-              <div className="grid min-w-[56rem] grid-cols-7 gap-2">
+              <div className="space-y-4 md:hidden">
+                {mobileDays.map((day) => (
+                  <article key={day.day} className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
+                    <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
+                    <div className="grid gap-3">
+                      {day.events.map((event) => (
+                        <RecruiterCalendarEventCard key={event.id} event={event} />
+                      ))}
+                      {day.resultsDue.map((item) => (
+                        <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId)}
+                          className="rounded-md border border-border bg-surface p-4 text-sm text-primary-text">
+                          <strong className="block">Results due · {item.roundName}</strong>
+                          <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+                {mobileDays.length === 0 ? (
+                  <p role="status" className="p-4 text-sm text-muted-foreground">
+                    No rounds, deadlines or results due in this calendar period.
+                  </p>
+                ) : null}
+              </div>
+              <div className="hidden min-w-[56rem] grid-cols-7 gap-2 md:grid">
                 {[
                   "Mon",
                   "Tue",
@@ -552,8 +576,9 @@ export default async function HrCalendarPage({
                 ))}
 
                 {window.days.map((day) => {
-                  const events =
-                    byDay.get(day) ?? [];
+                  const daily = byDay.get(day);
+                  const events = daily?.events ?? [];
+                  const resultsDue = daily?.resultsDue ?? [];
 
                   const isToday =
                     day === today;
@@ -566,7 +591,7 @@ export default async function HrCalendarPage({
                   return (
                     <div
                       key={day}
-                      aria-label={`${dateLabel(day)}: ${events.length} events`}
+                      aria-label={`${dateLabel(day)}: ${events.length + resultsDue.length} events`}
                       className={
                         "min-h-32 rounded-lg border border-border p-2 " +
                         (outsideMonth
@@ -614,7 +639,15 @@ export default async function HrCalendarPage({
                           );
                         })}
 
-                        {events.length === 0 ? (
+                        {resultsDue.map((item) => (
+                          <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId)}
+                            title={"Results due at " + eventTime(item.dueAt) + " IST"}
+                            className="block rounded-md border border-warning/40 bg-surface px-2 py-2 text-xs text-foreground hover:underline">
+                            <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
+                            <span className="mt-1 block break-words">{item.roundName}</span>
+                          </Link>
+                        ))}
+                        {events.length === 0 && resultsDue.length === 0 ? (
                           <span className="text-xs text-muted-foreground">
                             —
                           </span>
@@ -638,9 +671,9 @@ export default async function HrCalendarPage({
                 </h2>
 
                 <p className="mt-1 text-sm text-body">
-                  {calendar.events.length} matching
+                  {eventCount} matching
                   {" "}
-                  {calendar.events.length === 1
+                  {eventCount === 1
                     ? "event"
                     : "events"}
                   {" · "}
@@ -650,7 +683,7 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              {calendar.days.map((day) => (
+              {allDays.map((day) => (
                 <div
                   key={day.day}
                   className="space-y-3"
@@ -664,10 +697,17 @@ export default async function HrCalendarPage({
 
                   <div className="grid gap-3 lg:grid-cols-2">
                     {day.events.map((event) => (
-                      <RecruiterCalendarEventCard
-                        key={event.id}
-                        event={event}
-                      />
+                      <RecruiterCalendarEventCard key={event.id} event={event} />
+                    ))}
+                    {day.resultsDue.map((item) => (
+                      <article key={"due:" + item.id} className="rounded-xl border border-border bg-surface p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
+                        <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
+                        <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
+                        <Link href={hrResultsDueHref(item.jobId)} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                          Open hiring rounds →
+                        </Link>
+                      </article>
                     ))}
                   </div>
                 </div>
