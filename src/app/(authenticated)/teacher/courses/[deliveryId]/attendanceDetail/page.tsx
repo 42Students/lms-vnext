@@ -66,6 +66,11 @@ export default async function FacultyCourseAttendancePage({
       >
         ← Course workspace
       </Link>
+
+      <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
+        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+        Review session coverage →
+      </Link>
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
         sessions={data.sessions.flatMap(session=>
