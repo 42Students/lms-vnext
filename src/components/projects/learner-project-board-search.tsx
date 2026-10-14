@@ -2,9 +2,10 @@ import Link from "next/link";
 import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type LearnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
 import { LEARNER_BOARD_PRIORITY_LABELS, learnerBoardPriorityFilterHref, type LearnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
+import type { LearnerBoardSort } from "@/modules/projects/learner-board-sort-model";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, status, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
-}: {projectId:string;search:string;priority:string;status:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
+  projectId, search, priority, status, taskSort, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
+}: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
   const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId});
@@ -38,6 +39,12 @@ export function LearnerProjectBoardSearch({
             <option value="BLOCKED">Blocked</option>
             <option value="IN_REVIEW">In review</option>
             <option value="DONE">Done</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-foreground">Task order
+          <select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
+            <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </select>
         </label>
         <label className="text-sm font-semibold text-foreground">
@@ -76,7 +83,7 @@ export function LearnerProjectBoardSearch({
         {LEARNER_BOARD_STATUS_LABELS.map(item => (
           <Link key={item.value}
             aria-current={status===item.value ? "true" : undefined}
-            href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId}, item.value)}
+            href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId,taskSort}, item.value)}
             className={status===item.value
               ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
               : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
