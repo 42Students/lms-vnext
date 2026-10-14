@@ -1245,3 +1245,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-011 PARTIAL (round 6):** Eligible-only Drives filtering now requires both the learner's persisted canApply signal and a non-closed deadline state, preventing stale-positive role eligibility from displaying genuinely expired drives as actionable. This is a defensive client browse guard; the server remains authoritative for application actions. Pure regression authored; executed CI/PG and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L12-015 PARTIAL (round 6):** Learner Drives pagination now uses a single bounded page-state model for slice indices, result labels and Previous/Next. Stale URL pages after filters clamp to the final valid page with an explicit recovery action, never displaying a false empty list while authorized matching records exist. Pure boundary/zero tests authored; mobile/browser/history and PG acceptance pending.
