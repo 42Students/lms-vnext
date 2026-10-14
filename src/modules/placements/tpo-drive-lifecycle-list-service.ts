@@ -8,6 +8,7 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive-lifecycle-list-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
+import { requireTpoJobActor } from "./tpo-job-write-base";
 
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
@@ -22,6 +23,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const filters = tpoDriveLifecycleQuerySchema.parse(raw);
   await requirePlacementManageScope(context, collegeId);
   const db = getDb();
+  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
   const seasons = await db.select({ id: placementSeasons.id, name: placementSeasons.name,
     status: placementSeasons.status, startDate: placementSeasons.startDate })
     .from(placementSeasons).where(eq(placementSeasons.collegeId, collegeId))

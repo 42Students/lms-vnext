@@ -5,7 +5,7 @@ import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
-import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {tpoApplicantSubmittedSince} from "./tpo-applicant-pipeline-model";
 import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
@@ -14,6 +14,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
  const {jobId,stage,search,channel,eligibility,sort,submittedWithin}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const since=tpoApplicantSubmittedSince(submittedWithin,new Date());
  const db=getDb();
+ await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);
