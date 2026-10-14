@@ -11,6 +11,7 @@ import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
+import { canonicalLearnerProjectTab } from "@/modules/projects/learner-project-tab-alias-model";
 import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -351,5 +352,17 @@ describe("L22-002 authored project Overview from own immutable template version"
       {...context,membership:{...context.membership!,roles:["FACULTY"]}},
     ] as RequestContext[]) await expect(getLearnerProjectGoals(actor,ids.project)).rejects.toBeDefined();
     await expect(getLearnerProjectGoals(context,randomUUID())).rejects.toBeDefined();
+  });
+});
+
+describe("L21-008 compatibility tab for authorized Project",()=>{
+  it("resolves legacy tasks to the same own Board without affecting authorization",async()=>{
+    expect(canonicalLearnerProjectTab("tasks")).toBe("board");
+    expect((await getProjectInstanceWorkspace(context,ids.project)).project.id).toBe(ids.project);
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
