@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
 import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
+import { tpoCompanyOfferDetailHref } from "@/modules/placements/tpo-company-action-model";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -404,6 +405,12 @@ export default async function TpoCompanyDetailPage({
                       >
                         {offer.status}
                       </StatusBadge>
+                      <Link
+                        href={tpoCompanyOfferDetailHref(offer.jobId, offer.id)}
+                        className="mt-2 block text-xs font-semibold text-primary-text hover:underline"
+                      >
+                        Open offer record →
+                      </Link>
                     </td>
                     <td className="px-4 py-3">
                       {offer.joiningStatus ?? "Not recorded"}
