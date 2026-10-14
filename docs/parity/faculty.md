@@ -62,11 +62,12 @@ remain open.
 - [ ] Loading/no-session/error states.
 - [ ] Audit metadata for corrections is preserved.
 
-### Discussions
-- [ ] Feed/read behavior matches.
-- [ ] Faculty post/reply/moderation actions match.
-- [ ] Empty/loading/error states.
-- [x] Course/class isolation.
+### Discussions — DONE (evidence accepted 2026-10-14)
+- [x] Feed/read behavior matches the registered Section chat contract: exact teaching Section, paged history, current highlights and bounded polling.
+- [x] Faculty post/reply/pin/unpin/delete behavior matches the live legacy classroom chat contract; stale-token and cross-Section requests are denied, audit retained. Pinned-strip unpin works for an out-of-page highlight.
+- [x] Empty/loading/error and retry states exist; empty Faculty discussions offer welcome/focus draft starters, and the browser suite exercised empty starter controls.
+- [x] Course/class isolation is enforced.
+Evidence: `1f374255579a3e2e09cc65a69c14c11276abb3be` CI [38595677626](https://github.com/42Students/lms-vnext/actions/runs/38595677626) had 25 passing browser cases including all Discussions cases, plus `faculty-c4-reports-audit-contact.test.ts` 3/3, `learner-course-discussion-actions.test.ts` 3/3 and `learner-discussion-mobile.test.ts` 2/2 on real disposable PostgreSQL. Unit, typecheck and build jobs passed. Full CI is red due to other surfaces, **not** evidence of failed Discussion acceptance. DB10 Section notices are a separate blocked product surface, not silently claimed as completed by this chat acceptance.
 
 ## Page: Contacts
 **Legacy:** `/teacher/contacts/[contactsTab]`  
@@ -863,3 +864,21 @@ activity_events or the user/membership/role records referenced by their audit
 history. This is a regression-safety correction, not a passed database run.
 Authenticated keyboard/Playwright, real PostgreSQL and exact legacy overlay
 acceptance remain OPEN; no detailed or master parity row is marked DONE.
+
+## Executed CI Faculty-browser blocker repairs (2026-10-14)
+
+An earlier main CI browser run (38590894448) exposed four Faculty
+regressions. The Faculty Discussion E2E had not accepted the new intentional
+pin/unpin confirmation dialogs, so no PATCH was sent while it waited for a
+response; both dialogs are now explicitly accepted in the test. Faculty
+Contacts E2E assertions still expected the retired private-email/table UI
+after the directory's public-only card policy; the tests now assert active
+role-labeled public cards by seeded membership ID, confirm that searching
+private login email finds no directory member, and check responsive cards.
+Faculty Notifications E2E reused SQL parameter $1 as UUID and text, causing
+PostgreSQL type inference failure; the insert now uses explicit UUID casts
+and a separate $6::text subject field. Its teardown no longer deletes
+append-only activity_events or their referenced actor/membership rows.
+These are source changes targeting proven failing CI cases, **not yet a
+successful rerun at this revision**. Run targeted authenticated Chromium,
+then full CI, before marking Discussions/Contacts/Notifications DONE.
