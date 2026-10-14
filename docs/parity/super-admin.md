@@ -725,3 +725,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 6 / Students CSV — PARTIAL:** Added `/api/admin/students/export` and in-page filtered CSV download, using the existing authorized selected-college directory service and search/status rules. Role-restricted LEARNER records only; no email or phone. Strict URL rejects organization/college/page override and repeated keys; 250 records maximum, truncation notice, formula-safe UTF-8 CSV, no-store response, error/pending UI. Pure query unit tests authored, execution/browser and full legacy operations parity open.
+
+
+**2026-10-15 chat-6 round 6 / Batches CSV — PARTIAL:** Added `/api/admin/batches/export` and in-page filtered CSV download, using the existing authorized selected-college directory service and search/status. Persisted batch, program, start period and lifecycle; no cross-college cohorts. Strict URL rejects organization/college/page override and repeated keys; 250 records maximum, truncation notice, formula-safe UTF-8 CSV, no-store response, error/pending UI. Pure query unit tests authored, execution/browser and full legacy operations parity open.

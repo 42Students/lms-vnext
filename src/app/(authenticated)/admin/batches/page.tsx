@@ -7,6 +7,7 @@ export default async function SuperAdminBatchesPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Batches" path="/admin/batches" statuses={statuses}
+  exportPath="/api/admin/batches/export" exportFilename="super-admin-batches-ist.csv"
   description="Read-only persisted batches and their program/start period. Promotion and student moves remain separate workflows."
   searchParams={searchParams} loader={query=>listAdminBatches(context,query)}/>;
 }
