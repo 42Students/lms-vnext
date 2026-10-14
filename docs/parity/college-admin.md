@@ -411,6 +411,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Video-type filtering PARTIAL (2026-10-15):** The read-only catalogue supports persisted VIDEO versus YOUTUBE subtype filtering, strict URL parsing, deep-link pagination and a compact responsive select. Existing isolated PG fixture asserts both subtype partitions and same-college privacy. Playback/storage access, executed PG/browser proof and remaining legacy actions are open.
+
 **Content aggregate column collision repair PARTIAL (2026-10-15):** The combined VIDEO/RESOURCE register now aliases joined content, learning-path, offering and college ancestry projection columns uniquely (PostgreSQL 42702), with in-college PG fixture asserting labels/links and non-disclosure of private URLs/keys. Executed PG/browser and media/file workflow acceptance remain outstanding.
 
 **Legacy:** `/college-admin/lesson-content?type=video`

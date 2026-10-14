@@ -16,13 +16,14 @@ describe("College Admin content aggregate model", () => {
 
   it("rejects unscoped college overrides and invalid filters", () => {
     expect(collegeContentQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", page: 1,
     });
     expect(collegeContentQuerySchema.parse({ q: "  safety  ", status: "PUBLISHED", page: "2" }))
-      .toEqual({ q: "safety", status: "PUBLISHED", page: 2 });
+      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", page: 2 });
     for (const invalid of [
       { collegeId: "another-college" },
       { status: "CLOSED" },
+      { format: "EXTERNAL_URL" },
       { page: 0 },
       { page: 1001 },
       { q: "a".repeat(101) },
@@ -36,13 +37,14 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentQuerySchema.safeParse(
       collegeContentSearchParams({ status: ["DRAFT"] }),
     ).success).toBe(false);
-    const href = collegeContentHref("VIDEO", { q: "a & b", status: "ARCHIVED", page: 2 });
+    const href = collegeContentHref("VIDEO", { q: "a & b", status: "ARCHIVED", format: "YOUTUBE", page: 2 });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/videos");
     expect(url.searchParams.get("q")).toBe("a & b");
+    expect(url.searchParams.get("format")).toBe("YOUTUBE");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(collegeContentHref("RESOURCE", {
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", page: 1,
     })).toBe("/college/resources");
   });
 

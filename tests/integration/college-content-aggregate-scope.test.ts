@@ -154,6 +154,14 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       expect.arrayContaining([ids.video, ids.youtube]),
     );
     expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    const [storedOnly, youtubeOnly] = await Promise.all([
+      listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "VIDEO" }),
+      listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "YOUTUBE" }),
+    ]);
+    expect(storedOnly.items.map((item) => item.id)).toContain(ids.video);
+    expect(storedOnly.items.map((item) => item.id)).not.toContain(ids.youtube);
+    expect(youtubeOnly.items.map((item) => item.id)).toContain(ids.youtube);
+    expect(youtubeOnly.items.map((item) => item.id)).not.toContain(ids.video);
     expect(videos.items.find((item) => item.id === ids.video)).toMatchObject({
       title: label, lessonName: label, learningPathTitle: label,
       courseName: label, cohortName: label, periodName: label, offeringId: ids.offering,
