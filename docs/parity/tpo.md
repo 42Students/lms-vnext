@@ -326,6 +326,8 @@ Legacy table:
 **Legacy:** `/tpo/drives/[jobId]`
 
 ### Header / mission control
+
+**Work Mode lifecycle follow-up — PARTIAL:** Deadline extension and consequence-preview closure canonicalize equivalent offset ISO tokens before timestamp checks; closure consequence rows are defined outside JSX. Existing preview keeps applications, rounds and offers intact and rejects changed counts. Unit offset regressions executed before push; corresponding PostgreSQL success/stale/foreign/wrong-role fixtures updated, runtime blocked by sandbox non-root account setup. Exact cancellation semantics, full legacy fields and desktop/mobile browser parity remain open.
 Legacy:
 - job title/company/status;
 - needs-attention cards;

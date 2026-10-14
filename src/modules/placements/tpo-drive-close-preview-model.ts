@@ -7,7 +7,8 @@ export const tpoDriveImpactCountsSchema=z.object({
 export type TpoDriveImpactCounts=z.infer<typeof tpoDriveImpactCountsSchema>;
 export const tpoDriveCloseSchema=z.object({
  action:z.literal("CLOSE"),confirmed:z.literal(true),
- expectedUpdatedAt:z.string().datetime({offset:true}),
+ expectedUpdatedAt:z.iso.datetime({offset:true})
+  .transform(value=>new Date(value).toISOString()),
  expectedCounts:tpoDriveImpactCountsSchema,
  reason:z.string().trim().min(10).max(1000),
 }).strict();
