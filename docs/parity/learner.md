@@ -1005,3 +1005,5 @@ OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.
 - **L21-008 PARTIAL (chat-7):** legacy learner Project URL `?tab=tasks` now renders canonical Board and sets correct active tab without changing project access rules; canonical links remain `?tab=board`. Pure-model unit and self-fixtured PG read/denial tests authored. **Remaining:** typecheck/lint/Vitest/isolated-PG, Back/Forward and mobile/browser parity.
 
 - **L21-009 PARTIAL:** legacy `?tab=meetings` opens the People & Meetings learner workspace. Unit and own-learner PG denial tests authored. Remaining: executed checks, legacy/browser/mobile acceptance.
+
+- **L25-007 PARTIAL:** learner Board task index shows persisted title, status, priority and sprint. Type and story points are not persisted, not fabricated. Unit and own-learner PG positive/scope/role denial tests authored. Remaining: executed tests/browser parity and migrated type/points producer if required.

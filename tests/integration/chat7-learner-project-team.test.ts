@@ -11,6 +11,7 @@ import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
+import { learnerBoardCardMetadata } from "@/modules/projects/learner-board-card-model";
 import { canonicalLearnerProjectTab } from "@/modules/projects/learner-project-tab-alias-model";
 import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
@@ -373,6 +374,21 @@ describe("L21-009 protected meeting alias",()=>{
     expect((await getProjectInstanceWorkspace(context,ids.project)).project.id).toBe(ids.project);
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L25-007 learner Board persisted task context",()=>{
+  it("reads correct task/status/priority/sprint from an authorized project",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'card-release','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'card-sprint','Own Sprint',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,status,priority) values($1,$2,$3,'card-task','Own Task',0,'IN_PROGRESS','HIGH')",[ids.taskA,ids.project,ids.sprint]);
+    const own=await getProjectInstanceWorkspace(context,ids.project);
+    const task=own.tasks.find(row=>row.id===ids.taskA);
+    if(!task)throw new Error("Expected own fixture task");
+    expect(learnerBoardCardMetadata(task,own.sprints)).toMatchObject({title:"Own Task",status:"IN PROGRESS",priority:"HIGH",sprintTitle:"Own Sprint"});
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
   });
 });

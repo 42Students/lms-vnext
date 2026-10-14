@@ -20,3 +20,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L21-008: legacy tasks→Board alias with active tab, unit/PG authored; gates unexecuted.
 
 - L21-009: legacy meetings-to-team compatibility implemented, tests authored but not executed.
+- L25-007: task metadata (status, priority, sprint) on index from authorized workspace; unit/PG written; unexecuted.
