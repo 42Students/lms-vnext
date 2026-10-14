@@ -116,10 +116,12 @@ export function placementCalendarWindow(
   anchor: string,
   view: PlacementCalendarView,
 ) {
+  // The learner calendar agenda is a rolling 30 days from the anchor, but the
+  // placement/recruiter agenda spans the selected calendar month.
   const period = careerCalendarPeriod(
     [],
     anchor,
-    view,
+    view === "agenda" ? "month" : view,
   );
 
   if (view === "agenda") {
