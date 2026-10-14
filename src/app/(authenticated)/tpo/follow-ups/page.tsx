@@ -5,10 +5,11 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoDueFollowupWorkspace } from "@/components/tpo/tpo-due-followup-workspace";
 import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-service";
+import { tpoFollowupQueueHref } from "@/modules/placements/tpo-followup-queue-model";
 
 export const dynamic = "force-dynamic";
 
-export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[]}>}) {
+export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[];q?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
@@ -16,8 +17,9 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   const raw=await searchParams;
   const scope=(Array.isArray(raw.scope)?raw.scope[0]:raw.scope)==="MINE"?"MINE":"TEAM";
   const window=(Array.isArray(raw.window)?raw.window[0]:raw.window)==="NEXT_7_DAYS"?"NEXT_7_DAYS":"DUE";
+  const q=(Array.isArray(raw.q)?raw.q[0]:raw.q)?.trim().slice(0,100)??"";
   const ready = process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
-  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window}) : null;
+  const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q}) : null;
   return (
     <div className="space-y-6">
       <Link href="/tpo/recruiters"
@@ -27,19 +29,27 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data." />
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
-        {(["MINE","TEAM"] as const).map(view=><Link key={view} href={"/tpo/follow-ups?scope="+view+"&window="+window}
+        {(["MINE","TEAM"] as const).map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
-        {(["DUE","NEXT_7_DAYS"] as const).map(view=><Link key={view} href={"/tpo/follow-ups?scope="+scope+"&window="+view}
+        {(["DUE","NEXT_7_DAYS"] as const).map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
+      <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
+        <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
+          <input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear</Link>:null}
+      </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <TpoDueFollowupWorkspace data={data} /> : (
         <section role="status" className="rounded-xl border border-border bg-surface p-6">
