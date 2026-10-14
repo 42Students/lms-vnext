@@ -48,12 +48,14 @@ async function fixture(collegeId: string = SEED_IDS.collegeA) {
       "VALUES ($1, $2) RETURNING id",
     ["DB09 contact " + token, SEED_IDS.facultyUser],
   )).rows[0];
+  if (!company) throw new Error("Company fixture insert failed");
   createdCompanies.add(company.id);
   const rel = (await pool.query<{ id: string }>(
     "INSERT INTO placement_company_relationships " +
       "(college_id, company_id, created_by_user_id) VALUES ($1, $2, $3) RETURNING id",
     [collegeId, company.id, SEED_IDS.facultyUser],
   )).rows[0];
+  if (!rel) throw new Error("Company relationship fixture insert failed");
   createdRelationships.add(rel.id);
   const lead = (await pool.query<{ id: string; updated_at: Date }>(
     "INSERT INTO placement_tpo_leads " +
@@ -61,6 +63,7 @@ async function fixture(collegeId: string = SEED_IDS.collegeA) {
       "VALUES ($1, $2, $3, $4) RETURNING id, updated_at",
     [collegeId, rel.id, "Contact " + token, "contact-" + token + "@example.org"],
   )).rows[0];
+  if (!lead) throw new Error("Lead fixture insert failed");
   createdLeads.add(lead.id);
   return {
     companyId: company.id,
@@ -136,6 +139,7 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
         "to_regclass('public.placement_tpo_lead_activities') AS activities, " +
         "to_regclass('public.placement_company_relationships') AS relationships",
     )).rows[0];
+    if (!row) throw new Error("DB09 migration readiness query failed");
     expect(row.leads).toBeTruthy();
     expect(row.activities).toBeTruthy();
     expect(row.relationships).toBeTruthy();
@@ -186,6 +190,7 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
       "SELECT manual_stage, updated_at FROM placement_tpo_leads WHERE id=$1",
       [data.leadId],
     )).rows[0];
+    if (!lead) throw new Error("Contact fixture disappeared");
     expect(lead.manual_stage).toBe("NEW");
     expect((lead.updated_at as Date).getTime())
       .toBeGreaterThan(new Date(data.expectedLeadUpdatedAt).getTime());
@@ -196,7 +201,7 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
       "SELECT count(*)::integer AS total FROM placement_tpo_lead_activities WHERE lead_id=$1",
       [data.leadId],
     )).rows[0];
-    expect(unchangedAudits.total).toBe(1);
+    expect(unchangedAudits?.total).toBe(1);
 
     await expect(pool.query(
       "UPDATE placement_tpo_lead_activities SET note='tampered' WHERE id=$1",
@@ -229,7 +234,7 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
         "WHERE lead_id = ANY($1::uuid[])",
       [[local.leadId, foreign.leadId]],
     )).rows[0];
-    expect(count.total).toBe(0);
+    expect(count?.total).toBe(0);
   });
 
   it("denies stale selection and unconfirmed writes, leaving no activity", async () => {
@@ -251,6 +256,6 @@ describe.skipIf(!enabled)("DB09 TPO company contact interaction PostgreSQL", () 
       "SELECT count(*)::integer AS total FROM placement_tpo_lead_activities WHERE lead_id=$1",
       [data.leadId],
     )).rows[0];
-    expect(count.total).toBe(0);
+    expect(count?.total).toBe(0);
   });
 });
