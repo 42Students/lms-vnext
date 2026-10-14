@@ -120,3 +120,20 @@ export function describeStoredOverride(input: {
     ...(input.locked ? ["Locked"] : []),
   ].join(" · ");
 }
+
+/** Summarizes only the fetched college row, never extrapolates to learner access. */
+export function collegeModuleCardSummary(
+ modules: readonly Pick<AdminModuleDecision,"enabled"|"source"|"locked">[],
+) {
+ return {
+  enabled: modules.filter(x=>x.enabled).length,
+  disabled: modules.filter(x=>!x.enabled).length,
+  locked: modules.filter(x=>x.locked).length,
+  persisted: modules.filter(x=>x.source==="PERSISTED").length,
+ };
+}
+
+/** Describes stored lower-level overrides without claiming effective learner access. */
+export function summarizeStoredModuleOverrides(items:readonly {enabled:boolean;locked:boolean}[]) {
+ return {rules:items.length,enabled:items.filter(x=>x.enabled).length,locked:items.filter(x=>x.locked).length};
+}

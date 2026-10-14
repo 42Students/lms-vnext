@@ -12,6 +12,11 @@ export type S3Config = {
   accessKeyId: string;
   secretAccessKey: string;
   region?: string; // R2 uses "auto"
+  /**
+   * Optional key prefix (for example "vnext-dev/") applied to every object key
+   * at the transport boundary. Callers keep using logical, unprefixed keys.
+   */
+  keyPrefix?: string;
 };
 
 const SERVICE = "s3";
@@ -62,12 +67,17 @@ type SignInput = {
   query?: Record<string, string>;
 };
 
+function prefixedKey(config: S3Config, key: string) {
+  return `${config.keyPrefix ?? ""}${key}`;
+}
+
 function objectLocation(config: S3Config, key: string) {
   const url = new URL(config.endpoint);
+  const fullKey = prefixedKey(config, key);
   return {
     host: url.host,
     origin: url.origin,
-    path: config.bucket ? `/${config.bucket}/${key}` : `/${key}`,
+    path: config.bucket ? `/${config.bucket}/${fullKey}` : `/${fullKey}`,
   };
 }
 
@@ -277,9 +287,9 @@ export async function replaceObjectMetadata(
 ) {
   const response = await signedFetch(config, {
     method: "PUT",
-    path: `/${config.bucket}/${key}`,
+    path: `/${config.bucket}/${prefixedKey(config, key)}`,
     headers: {
-      "x-amz-copy-source": `/${config.bucket}/${encodePath(key)}`,
+      "x-amz-copy-source": `/${config.bucket}/${encodePath(prefixedKey(config, key))}`,
       "x-amz-metadata-directive": "REPLACE",
       "content-type": contentType,
       ...Object.fromEntries(

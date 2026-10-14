@@ -20,11 +20,16 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
    router.push("/tpo/placements/jobs/"+preview.id);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Close failed");}finally{setPending(false);}
  }
+ const consequences=[
+  ["Applications",preview.counts.applications],
+  ["Round records",preview.counts.rounds],
+  ["Offer versions",preview.counts.offers],
+ ] as const;
  return <form onSubmit={e=>void submit(e)} className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
   <p className="text-sm text-body">Closing stops new applications. Existing applications, rounds and offers are retained, not deleted or silently cancelled.</p>
   <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-   {([["Applications",preview.counts.applications],["Round records",preview.counts.rounds],["Offer versions",preview.counts.offers]] as const)
+   {consequences
     .map(([label,n])=><div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
      <dt className="text-xs text-body">{label}</dt><dd className="text-2xl font-semibold tabular-nums">{n}</dd>
     </div>)}

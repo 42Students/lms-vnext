@@ -83,9 +83,9 @@ export async function getSuperAdminTemplateSubview(
               projectTemplateCollegeAssignments.templateId,
               detail.template.id,
             ),
-            isNull(
-              projectTemplateCollegeAssignments.revokedAt,
-            ),
+            isNull(projectTemplateCollegeAssignments.revokedAt),
+            context.adminScope?.collegeId ? eq(colleges.id, context.adminScope.collegeId) : undefined,
+            context.adminScope?.organizationId ? eq(colleges.organizationId, context.adminScope.organizationId) : undefined,
           ),
         )
         .orderBy(

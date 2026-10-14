@@ -1,3 +1,5 @@
+import { commandFacultyQuiz } from "./faculty-quiz-authoring-service";
+import { facultyQuizLegacyEdit } from "./faculty-quiz-authoring-model";
 import {
   and,
   asc,
@@ -9,6 +11,9 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {legacyQuizResultsWriteAllowed} from "./faculty-quiz-results-legacy-model";
 import {
   courseQuizzes,
   quizAttempts,
@@ -80,17 +85,17 @@ async function authorizeQuizMutation(
   >,
 ) {
   if (quiz.deliveryId) {
-    await requireDeliveryContentMutation(
+    return requireDeliveryContentMutation(
       context,
       quiz.deliveryId,
     );
-    return;
   }
 
   requirePermission(context, "courses.manage", {
     organizationId: quiz.organizationId,
     collegeId: quiz.collegeId,
   });
+  return "ADMIN" as const;
 }
 
 async function insertQuestions(
@@ -448,10 +453,14 @@ export async function updateCourseQuiz(
   const current =
     await loadCourseQuizScope(quizId);
 
-  await authorizeQuizMutation(
+  const actor = await authorizeQuizMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyQuiz(context,{deliveryId:current.deliveryId},facultyQuizLegacyEdit(current,input));
+  }
 
   const [attemptStats] = await getDb()
     .select({
@@ -611,10 +620,17 @@ export async function transitionCourseQuiz(
   const current =
     await loadCourseQuizScope(quizId);
 
-  await authorizeQuizMutation(
+  const actor = await authorizeQuizMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyQuiz(context,{deliveryId:current.deliveryId},{
+      action:input.action,quizId:current.id,
+      expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
+    });
+  }
 
   if (
     input.action === "PUBLISH" &&
@@ -675,48 +691,37 @@ export async function transitionCourseQuiz(
 }
 
 export async function setCourseQuizResults(
-  context: RequestContext,
-  quizIdInput: string,
-  rawInput: unknown,
+  context:RequestContext,quizIdInput:string,rawInput:unknown,
 ) {
-  const quizId =
-    courseQuizIdSchema.parse(quizIdInput);
-  const input =
-    setQuizResultsInputSchema.parse(rawInput);
-  const current =
-    await loadCourseQuizScope(
-      quizId,
-      true,
-    );
-
-  await authorizeQuizMutation(
-    context,
-    current,
-  );
-
-  if (
-    input.published &&
-    current.status !== "CLOSED"
-  ) {
-    throw new CoursesServiceError(
-      "INVALID_QUIZ_TRANSITION",
-    );
-  }
-
-  const [updated] = await getDb()
-    .update(courseQuizzes)
-    .set({
-      resultsPublished: input.published,
-      updatedAt: new Date(),
-    })
-    .where(eq(courseQuizzes.id, quizId))
-    .returning();
-
-  if (!updated) {
-    throw new CoursesServiceError(
-      "QUIZ_NOT_FOUND",
-    );
-  }
-
-  return updated;
+  const quizId=courseQuizIdSchema.parse(quizIdInput);
+  const input=setQuizResultsInputSchema.parse(rawInput);
+  const current=await loadCourseQuizScope(quizId,true);
+  await authorizeQuizMutation(context,current);
+  const manage=can(context,"courses.manage",{
+    collegeId:current.collegeId,organizationId:current.organizationId,
+  });
+  if(!manage)throw new CoursesServiceError("QUIZ_RESULTS_ADMIN_ONLY");
+  return getDb().transaction(async tx=>{
+    const [locked]=await tx.select().from(courseQuizzes)
+      .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
+    if(!locked)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+    if(!legacyQuizResultsWriteAllowed(manage,locked.status,
+      locked.resultsPublished,input.published))
+      throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    const now=new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1));
+    const [updated]=await tx.update(courseQuizzes).set({
+      resultsPublished:input.published,updatedAt:now,
+    }).where(and(eq(courseQuizzes.id,quizId),eq(courseQuizzes.status,"CLOSED"),
+      eq(courseQuizzes.resultsPublished,!input.published))).returning();
+    if(!updated)throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.COURSES_QUIZ_RESULTS_CHANGED,
+      collegeId:current.collegeId,organizationId:current.organizationId,
+      subjectType:"course_quiz",subjectId:quizId,subjectLabel:locked.title,
+      summary:input.published?"Admin Quiz results published":"Admin Quiz results hidden",
+      groupKey:"course-quiz:"+quizId+":results",
+      metadata:{quizId,deliveryId:locked.deliveryId,resultsPublished:input.published},
+    });
+    return updated;
+  });
 }

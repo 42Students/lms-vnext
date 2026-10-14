@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { updateCourseAssignmentInputSchema } from "./assignment-validation";
 
 export const facultyAssignmentParamsSchema=z.object({
   deliveryId:z.string().uuid(),
@@ -44,4 +45,28 @@ export function assignmentFieldsChanged(
   if((current.dueAt?.getTime()??null)!==(next.dueAt?new Date(next.dueAt).getTime():null))changed.push("dueAt");
   if(current.maxPoints!==next.maxPoints)changed.push("maxPoints");
   return changed;
+}
+
+/** SQL now() is microsecond-precise, but JS Date snapshots use milliseconds. */
+export function facultyAssignmentVersionMatches(current:Date,expected:string){
+ const given=new Date(expected);
+ return Number.isFinite(given.getTime())&&current.getTime()===given.getTime();
+}
+
+/** The legacy partial editor must use the same confirmed Faculty command. */
+export function facultyAssignmentLegacyEdit(current: {
+  id: string; title: string; description: string | null; dueAt: Date | null;
+  maxPoints: number; sequence: number;
+}, raw: unknown) {
+  const input = updateCourseAssignmentInputSchema.parse(raw);
+  // Sequence belongs to the separate lesson-order workflow, not this editor.
+  if (input.sequence !== undefined) z.literal(current.sequence).parse(input.sequence);
+  return facultyAssignmentCommandSchema.parse({
+    action: "EDIT", assignmentId: current.id,
+    title: input.title ?? current.title,
+    description: input.description === undefined ? current.description : input.description,
+    dueAt: input.dueAt === undefined ? current.dueAt?.toISOString() ?? null : input.dueAt,
+    maxPoints: input.maxPoints ?? current.maxPoints,
+    expectedUpdatedAt: input.expectedUpdatedAt, confirmed: input.confirmed,
+  });
 }

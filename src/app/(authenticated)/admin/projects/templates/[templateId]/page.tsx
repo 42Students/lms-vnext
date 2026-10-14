@@ -62,6 +62,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
               selectedCollegeId={
                 context.adminScope?.collegeId ?? null
               }
+              allowGlobalActions={can(context, "project-template.manage")}
               assignedToSelectedCollege={
                 Boolean(
                   context.adminScope?.collegeId &&
@@ -119,7 +120,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           ))}
         </div>
         <p className="mb-0 mt-4 text-xs text-muted-foreground">
-          Active college assignments: {detail.assignments.length}
+          Active college assignments in {context.adminScope?.collegeId ? "selected college" : context.adminScope?.organizationId ? "selected organization" : "global"} scope: {detail.assignments.length}
         </p>
       </section>
     </div>

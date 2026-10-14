@@ -32,6 +32,7 @@ export type HallScheduledRow = {
   title: string;
   startsAt: Date;
   endsAt: Date;
+  updatedAt?: Date;
   sectionCapacity: number | null;
 };
 
@@ -64,6 +65,7 @@ export function collegeHallAvailabilityProjection(
       title: row.title,
       startsAt: row.startsAt.toISOString(),
       endsAt: row.endsAt.toISOString(),
+      updatedAt: row.updatedAt?.toISOString() ?? null,
       sectionCapacity: row.sectionCapacity,
       overlapsAnother,
       overConfiguredCapacity,

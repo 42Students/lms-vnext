@@ -1,7 +1,7 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions,courseAssignments,courseSectionDeliveries} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -11,7 +11,8 @@ import {can} from "@/modules/permissions/policy";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {requireDeliveryContentMutation} from "./learning-access";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
-import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignmentParamsSchema} from "./faculty-assignment-authoring-model";
+import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignmentParamsSchema,
+ facultyAssignmentVersionMatches} from "./faculty-assignment-authoring-model";
 
 /** Own-Section, confirmed text-only commands. Uses row locks + millisecond tokens,
  * which match JS Date precision even when PostgreSQL stores microseconds. */
@@ -60,8 +61,10 @@ export async function commandFacultyAssignment(
             eq(courseAssignments.deliveryId,deliveryId)))
           .for("update").limit(1);
         if(!current)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
-        if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()||
-           current.status==="ARCHIVED")throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+        if(!facultyAssignmentVersionMatches(current.updatedAt,input.expectedUpdatedAt))
+          throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
+        if(current.status==="ARCHIVED")
+          throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
         const [submission]=await tx.select({id:assignmentSubmissions.id}).from(assignmentSubmissions)
           .where(eq(assignmentSubmissions.assignmentId,current.id)).limit(1);
         if(input.action==="EDIT"){
@@ -86,8 +89,12 @@ export async function commandFacultyAssignment(
             maxPoints:input.maxPoints,updatedAt:now,
           }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
         ).where(and(eq(courseAssignments.id,current.id),
-          eq(courseAssignments.deliveryId,deliveryId))).returning();
-        if(!updated)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          eq(courseAssignments.deliveryId,deliveryId),
+          eq(courseAssignments.status,current.status),
+          sql`date_trunc('milliseconds', ${courseAssignments.updatedAt}) =
+            ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
+        )).returning();
+        if(!updated)throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         result=updated;
       }
       await recordActivityEventInTransaction(tx,context,{

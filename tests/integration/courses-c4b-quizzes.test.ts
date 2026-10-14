@@ -1,3 +1,4 @@
+import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import {
   afterAll,
   beforeEach,
@@ -543,7 +544,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       exact.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",exact.id),  action: "PUBLISH" },
     );
 
     const quizzes = await listCourseQuizzes(
@@ -603,7 +604,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       quiz.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" },
     );
 
     const key = await answerKey(
@@ -660,18 +661,18 @@ describe("courses C4B quizzes against PostgreSQL", () => {
 
     await expect(
       updateCourseQuiz(faculty, quiz.id, {
-        questions: quizQuestions(),
+        questions: quizQuestions(), confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString()
       }),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
 
     await expect(
       updateCourseQuiz(faculty, quiz.id, {
-        maxAttempts: 3,
+        maxAttempts: 3, confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString()
       }),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
 
     await submitCourseQuiz(
@@ -716,7 +717,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       quiz.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" },
     );
 
     const key = await answerKey(
@@ -759,7 +760,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       quiz.id,
-      { action: "CLOSE" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "CLOSE" },
     );
     await setCourseQuizResults(
       faculty,
@@ -848,7 +849,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       quiz.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" },
     );
     const key = await answerKey(
       quiz.id,
@@ -929,7 +930,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       sequence: 0,
       questions: quizQuestions(),
     });
-    await transitionCourseQuiz(faculty, quiz.id, { action: "PUBLISH" });
+    await transitionCourseQuiz(faculty, quiz.id, {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" });
     const holder = await pool.connect();
     let began = false;
     try {
@@ -998,7 +999,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await updateCourseQuiz(
       faculty,
       quiz.id,
-      { questions: replacement },
+      { questions: replacement, confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString() },
     );
 
     const draft = await getCourseQuiz(
@@ -1021,17 +1022,17 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await transitionCourseQuiz(
       faculty,
       quiz.id,
-      { action: "PUBLISH" },
+      {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" },
     );
 
     await expect(
       updateCourseQuiz(
         faculty,
         quiz.id,
-        { questions: quizQuestions() },
+        { questions: quizQuestions(), confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString() },
       ),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
   });
 

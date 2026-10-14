@@ -89,6 +89,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_QUIZ_CREATED:"courses.quiz.created",
   COURSES_QUIZ_UPDATED:"courses.quiz.updated",
   COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
+  COURSES_QUIZ_RESULTS_CHANGED:"courses.quiz.results_changed",
   COURSES_QUIZ_ARCHIVED:"courses.quiz.archived",
   COURSES_QUIZ_CLOSED:"courses.quiz.closed",
   COURSES_ASSIGNMENT_SUBMITTED:
@@ -105,6 +106,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.class.scheduled",
   COURSES_DISCUSSION_POSTED:
     "courses.discussion.posted",
+  COURSES_DISCUSSION_REPLIED:"courses.discussion.replied",
   COURSES_DISCUSSION_PIN_CHANGED:
     "courses.discussion.pin_changed",
   COURSES_DISCUSSION_DELETED:

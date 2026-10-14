@@ -24,3 +24,7 @@ Creating the bucket needs an R2 token with bucket-create permission (the legacy 
 
 - The private bucket itself (needs a bucket-create token).
 - The scanner worker that calls `recordPrivateObjectScanVerdict`. Until it exists uploads stay PENDING and are never served, which is the safe default.
+
+## Temporary dev-only use of the legacy bucket
+
+Until a dedicated private bucket exists, development (`APP_ENV=development`, namespace `lms-dev-2026`) may share the legacy bucket: set `R2_PRIVATE_BUCKET` equal to `R2_BUCKET_NAME` and `R2_PRIVATE_PREFIX=vnext-dev/`. The `PRIVATE_STORAGE_BUCKET_UNSAFE` guard only relaxes when `APP_ENV === "development"` and the prefix is non-empty and ends with `/`; production always throws. The prefix is applied in the S3 client (`S3Config.keyPrefix`), so logical keys stored in the database stay unprefixed. Objects are served only via short-lived presigned URLs. See `storage-key-layout.md`.

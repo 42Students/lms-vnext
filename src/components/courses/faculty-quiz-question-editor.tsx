@@ -63,6 +63,7 @@ export function FacultyQuizQuestionEditor({
   const [open, setOpen] = useState(false);
   const [questions, setQuestions] =
     useState<QuestionDraft[]>([]);
+  const [expectedUpdatedAt,setExpectedUpdatedAt] = useState<string|null>(null);
   const [loading, setLoading] =
     useState(false);
   const [saving, setSaving] =
@@ -72,6 +73,7 @@ export function FacultyQuizQuestionEditor({
 
   async function load() {
     setOpen(true);
+    setExpectedUpdatedAt(null);
     setLoading(true);
     setError(null);
     try {
@@ -90,8 +92,13 @@ export function FacultyQuizQuestionEditor({
         return;
       }
       const body = await response.json();
-      const rows =
-        body?.quiz?.questions ?? [];
+      const stored = body?.quiz?.quiz;
+      if (stored?.status !== "DRAFT" || typeof stored.updatedAt !== "string") {
+        setError("This quiz changed or is no longer a draft. Refresh the Section.");
+        return;
+      }
+      setExpectedUpdatedAt(stored.updatedAt);
+      const rows = body?.quiz?.questions ?? [];
       setQuestions(
         rows.map(
           (question: {
@@ -320,12 +327,14 @@ export function FacultyQuizQuestionEditor({
   }
 
   async function save() {
-    if (saving) return;
+    if (saving || loading) return;
+    if (!expectedUpdatedAt) {setError("Load the current draft before saving.");return;}
     const validation = validate();
     if (validation) {
       setError(validation);
       return;
     }
+    if (!window.confirm("Confirm replacement of this draft quiz question bank?")) return;
     setError(null);
     setSaving(true);
     try {
@@ -340,6 +349,7 @@ export function FacultyQuizQuestionEditor({
               "application/json",
           },
           body: JSON.stringify({
+            expectedUpdatedAt, confirmed:true,
             questions:
               questions.map(
                 (

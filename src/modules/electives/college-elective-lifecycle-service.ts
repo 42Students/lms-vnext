@@ -1,0 +1,82 @@
+import "server-only";
+import {and,eq,isNull,inArray,sql} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {academicPeriods,departments,electiveOfferings,electiveSlots,lmsGroupMembers,programs} from "@/db/schema";
+import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedGroupActor} from "@/modules/groups/actor-access";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {electiveLifecycleSchema} from "./college-elective-lifecycle-model";
+
+export class ElectiveLifecycleError extends Error {
+  constructor(public readonly code:"ELECTIVE_SLOT_NOT_FOUND"|"ELECTIVE_SLOT_STALE"|
+    "ELECTIVE_ACTIVE_OFFERINGS"|"ELECTIVE_SELECTION_LOCKED"|"ELECTIVE_PARENT_UNAVAILABLE") {
+    super(code);this.name="ElectiveLifecycleError";
+  }
+}
+type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+type TxRunner=<T>(cb:(tx:Tx)=>Promise<T>)=>Promise<T>;
+
+export async function changeCollegeElectiveLifecycle(context:RequestContext,rawId:unknown,raw:unknown,
+  transaction:TxRunner=(fn)=>getDb().transaction(fn)) {
+  const id=z.string().uuid().parse(rawId),input=electiveLifecycleSchema.parse(raw);
+  const actor=context.membership;
+  if(!actor||actor.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+    !can(context,"academics.manage",{collegeId:actor.collegeId,organizationId:actor.organizationId}))
+    throw new AuthorizationError("academics.manage");
+  requirePermission(context,"academics.manage",{collegeId:actor.collegeId,organizationId:actor.organizationId});
+  return transaction(async tx=>{
+    const [slot]=await tx.select().from(electiveSlots)
+      .where(and(eq(electiveSlots.id,id),eq(electiveSlots.collegeId,actor.collegeId),
+        isNull(electiveSlots.deletedAt)))
+      .for("update").limit(1);
+    if(!slot)throw new ElectiveLifecycleError("ELECTIVE_SLOT_NOT_FOUND");
+    const before=input.action==="ARCHIVE"?"ACTIVE":"ARCHIVED";
+    if(slot.status!==before||slot.version!==input.expectedVersion)
+      throw new ElectiveLifecycleError("ELECTIVE_SLOT_STALE");
+    await assertPersistedGroupActor(tx,context,{collegeId:actor.collegeId,mode:"MANUAL"});
+    if(input.action==="ARCHIVE"){
+      const [active]=await tx.select({id:electiveOfferings.id}).from(electiveOfferings)
+        .where(and(eq(electiveOfferings.slotId,id),eq(electiveOfferings.status,"ACTIVE"),
+          isNull(electiveOfferings.deletedAt))).limit(1);
+      if(active)throw new ElectiveLifecycleError("ELECTIVE_ACTIVE_OFFERINGS");
+      const [selected]=await tx.select({id:lmsGroupMembers.id}).from(lmsGroupMembers)
+        .innerJoin(electiveOfferings,eq(electiveOfferings.groupId,lmsGroupMembers.groupId))
+        .where(and(eq(electiveOfferings.slotId,id),
+          inArray(lmsGroupMembers.state,["REQUESTED","ACTIVE","WAITLISTED"]))).limit(1);
+      if(selected)throw new ElectiveLifecycleError("ELECTIVE_SELECTION_LOCKED");
+    }else {
+      const [program]=await tx.select({id:programs.id}).from(programs)
+        .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+          eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt)))
+        .where(and(eq(programs.id,slot.programId),eq(programs.status,"ACTIVE")))
+        .for("share",{of:programs}).limit(1);
+      if(!program)throw new ElectiveLifecycleError("ELECTIVE_PARENT_UNAVAILABLE");
+      if(slot.academicPeriodId){
+        const [period]=await tx.select({id:academicPeriods.id}).from(academicPeriods)
+          .where(and(eq(academicPeriods.id,slot.academicPeriodId),
+            eq(academicPeriods.collegeId,actor.collegeId),
+            inArray(academicPeriods.status,["PLANNED","ACTIVE"])))
+          .for("share").limit(1);
+        if(!period)throw new ElectiveLifecycleError("ELECTIVE_PARENT_UNAVAILABLE");
+      }
+    }
+    const [changed]=await tx.update(electiveSlots).set({
+      status:input.action==="ARCHIVE"?"ARCHIVED":"ACTIVE",
+      version:sql`${electiveSlots.version}+1`,updatedAt:new Date(),
+    }).where(and(eq(electiveSlots.id,id),eq(electiveSlots.collegeId,actor.collegeId),
+      eq(electiveSlots.version,input.expectedVersion),eq(electiveSlots.status,before)))
+      .returning({id:electiveSlots.id,status:electiveSlots.status,version:electiveSlots.version});
+    if(!changed)throw new ElectiveLifecycleError("ELECTIVE_SLOT_STALE");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_ELECTIVE_SLOT_UPDATED,
+      collegeId:actor.collegeId,organizationId:actor.organizationId,
+      subjectType:"elective_slot",subjectId:id,
+      summary:input.action==="ARCHIVE"?"College Admin archived elective slot":"College Admin restored elective slot",
+      metadata:{before,after:changed.status,version:changed.version},
+    });
+    return changed;
+  });
+}
