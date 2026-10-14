@@ -30,3 +30,11 @@ export function discussionHistoryLabel(eventType:string,pinned:unknown) {
   if(eventType==="courses.discussion.replied") return "Faculty reply recorded";
   return "Unknown discussion activity";
 }
+
+export function parseFacultyDiscussionHistoryLocation(deliveryId:string,raw:unknown){
+ const query=z.object({action:z.enum(["ALL","PIN","DELETE","REPLY"]).optional(),
+  page:z.string().regex(/^[1-9]\d{0,3}$/).optional(),
+ }).strict().safeParse(raw);
+ if(!query.success)return facultyDiscussionHistorySchema.safeParse({deliveryId,invalid:true});
+ return facultyDiscussionHistorySchema.safeParse({deliveryId,...query.data});
+}

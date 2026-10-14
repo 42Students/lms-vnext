@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {CoursesServiceError} from "./errors";
 import { COURSE_TEACHING_ROLES } from "./constants";
 
 export const facultyCourseListQuerySchema = z.object({
@@ -36,4 +37,12 @@ export function facultyCourseListHref(raw: unknown) {
   if (query.role) params.set("role", query.role);
   if (query.page > 1) params.set("page", String(query.page));
   return "/teacher/courses" + (params.size ? "?" + params.toString() : "");
+}
+
+/** Only vanished/revoked teaching scopes may be omitted after a concurrent update. */
+export function facultyCourseWorkspaceRevokedError(error:unknown){
+ return error instanceof CoursesServiceError && [
+  "FACULTY_TEACHING_SCOPE_REQUIRED","SECTION_DELIVERY_NOT_FOUND",
+  "OFFERING_NOT_FOUND","LEARNING_ACCESS_DENIED",
+ ].includes(error.code);
 }
