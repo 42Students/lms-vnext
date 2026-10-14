@@ -9,7 +9,7 @@ describe("Super Admin quiz directory", () => {
       .toBe("/admin/quizzes?q=term&status=CLOSED&page=3");
   });
   it("does not invent percentage results from attempt counts", () => {
-    expect(adminAssessmentStats([{ status: "PUBLISHED", activityCount: 8 }] as Parameters<typeof adminAssessmentStats>[0]))
+    expect(adminAssessmentStats([{ status: "PUBLISHED", activityCount: 8 }]))
       .toEqual({ displayed: 1, published: 1, activity: 8 });
   });
 });

@@ -9,7 +9,7 @@ describe("Super Admin assessments read model", () => {
   });
   it("summarizes only the authorized page's submitted records", () => {
     expect(adminAssessmentStats([{ status: "PUBLISHED", activityCount: 4 },
-      { status: "DRAFT", activityCount: 0 }] as Parameters<typeof adminAssessmentStats>[0]))
+      { status: "DRAFT", activityCount: 0 }]))
       .toEqual({ displayed: 2, published: 1, activity: 4 });
   });
 });
