@@ -19,6 +19,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applications-export"}
+   className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+   Preview capped applications CSV
+  </Link>
   <section className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
     <div className="rounded-xl border border-border bg-surface p-3" key={label}>
