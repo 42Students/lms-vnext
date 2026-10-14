@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { CollegeGroupActions } from "@/components/groups/college-group-actions";
 import {
   GROUP_STATUSES,
   listCollegeGroups,
@@ -76,6 +77,7 @@ export default async function CollegeGroupsPage({
         eyebrow="College Admin"
         title="Student groups"
         description={`Study groups, project teams and elective groups in ${result.collegeName}.`}
+        actions={<CollegeGroupActions />}
       />
 
       <form
@@ -169,6 +171,13 @@ export default async function CollegeGroupsPage({
                   row.waitlistedCount + row.requestedCount === 0
                     ? "—"
                     : `${row.waitlistedCount} waitlisted · ${row.requestedCount} requested`,
+              },
+              {
+                key: "manage",
+                header: "Manage",
+                cell: (row) => row.kind === "STUDY_GROUP" ? (
+                  <CollegeGroupActions group={row} />
+                ) : <span className="text-xs text-muted-foreground">Managed elsewhere</span>,
               },
               {
                 key: "term",
