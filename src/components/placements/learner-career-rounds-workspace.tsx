@@ -269,6 +269,7 @@ export function LearnerCareerRoundsWorkspace({
           kind={kind}
           rounds={visibleRows}
           onSelect={(round) => setSelectedKey(round.applicationId + ":" + round.roundId)}
+          snapshotNowIso={snapshotNowIso}
         />
       )}
 
