@@ -4,6 +4,7 @@ import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-
 import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/modules/placements/learner-assessment-link-state-model";
 import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-assessment-external-launch-model";
+import {learnerAssessmentDueHref,readLearnerAssessmentDueFromUrl} from "@/modules/placements/learner-assessment-bucket-url-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -71,6 +72,7 @@ export function LearnerCareerRoundsWorkspace({
   initialSelectedKey = null,
   initialSearch = "",
   initialTimeView = "all",
+  initialDueBucket = "all",
   withdrawalTargets = [],
 }: {
   kind: Kind;
@@ -81,10 +83,11 @@ export function LearnerCareerRoundsWorkspace({
   initialSelectedKey?: string | null;
   initialSearch?: string;
   initialTimeView?: LearnerInterviewScheduleView;
+  initialDueBucket?:LearnerAssessmentDueBucket;
 }) {
   const nowMs = Date.parse(snapshotNowIso);
   const [filters, setFilters] = useState<LearnerRoundBrowseFilters>(()=>({...defaults,search:initialSearch,time:initialTimeView}));
-  const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>("all");
+  const [dueBucket, setDueBucket] = useState<LearnerAssessmentDueBucket>(initialDueBucket);
   const [missingLinkOnly,setMissingLinkOnly]=useState(false);
   const [confirmExternalTest,setConfirmExternalTest]=useState<string|null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
@@ -112,6 +115,13 @@ export function LearnerCareerRoundsWorkspace({
       );
       if(view.success)setFilters(current=>({...current,time:view.data}));
     };
+    window.addEventListener("popstate",onPop);
+    return ()=>window.removeEventListener("popstate",onPop);
+  },[kind]);
+
+  useEffect(()=>{
+    if(kind!=="ASSESSMENT")return;
+    const onPop=()=>setDueBucket(readLearnerAssessmentDueFromUrl(window.location.search));
     window.addEventListener("popstate",onPop);
     return ()=>window.removeEventListener("popstate",onPop);
   },[kind]);
@@ -168,6 +178,7 @@ export function LearnerCareerRoundsWorkspace({
     key: K, value: LearnerRoundBrowseFilters[K],
   ) => {
     setDueBucket("all");
+    if(kind==="ASSESSMENT")window.history.replaceState(null,"",learnerAssessmentDueHref(window.location.href,"all"));
     setMissingLinkOnly(false);
     setFilters((current) => ({ ...current, [key]: value }));
   };
@@ -197,6 +208,9 @@ export function LearnerCareerRoundsWorkspace({
     const parsed = learnerAssessmentDueBucketSchema.safeParse(rawBucket);
     if (!parsed.success) return;
     setDueBucket(parsed.data);
+    if(kind==="ASSESSMENT"){
+      window.history.pushState(null,"",learnerAssessmentDueHref(window.location.href,parsed.data));
+    }
     setMissingLinkOnly(false);
     // A quick bucket must not accidentally combine with a conflicting
     // schedule or urgency filter and silently show an empty result.
