@@ -4,8 +4,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeLearningQuerySchema } from "@/modules/courses/college-learning-directory-model";
+import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
+import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -15,9 +16,10 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const params = await searchParams;
-  const parsed = collegeLearningQuerySchema.safeParse(
+  const parsed = collegeProgressQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
-      q: first(params.q), status: first(params.status), page: first(params.page),
+      q: first(params.q), status: first(params.status),courseCode:first(params.courseCode)||undefined,
+      page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
@@ -28,5 +30,11 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
         action={<Link href="/college/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
-  return <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />;
+  return <div className="space-y-4">
+    <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Export recorded course activity CSV
+    </Link>
+    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />
+  </div>;
 }

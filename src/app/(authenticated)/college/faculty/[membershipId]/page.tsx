@@ -5,14 +5,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 
-export default async function CollegeFacultyDetailPage({ params }: {
+export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
+  searchParams: Promise<{status?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
+  const query=await searchParams;
   let data: Awaited<ReturnType<typeof getCollegeFacultyDetail>>;
   try {
-    data = await getCollegeFacultyDetail(context, membershipId);
+    data = await getCollegeFacultyDetail(context, membershipId, {status:query.status ?? "ALL"});
   } catch (error) {
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
@@ -36,6 +38,19 @@ export default async function CollegeFacultyDetailPage({ params }: {
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Persisted teaching assignments</h2>
+      <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
+        action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
+        <label className="grid gap-2 text-sm font-semibold text-body">
+          Assignment history
+          <select name="status" defaultValue={data.filter.status}
+            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="ALL">All assignments</option>
+            <option value="ACTIVE">Active only</option>
+            <option value="ENDED">Ended only</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+      </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
         {" "}{data.counts.distinctOfferings} distinct course offerings
@@ -60,7 +75,7 @@ export default async function CollegeFacultyDetailPage({ params }: {
           </tr>)}</tbody>
         </table></div>}
       {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
-        Showing the first 100 assignment rows; totals include all matching records.
+        Showing the first 100 matching assignment rows; summary totals include all assignment states.
       </p> : null}
       <p className="mt-3 text-xs text-muted-foreground">
         Assignment history includes ended deliveries. Hours, session duration and schedule conflicts are not inferred.

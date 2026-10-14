@@ -39,6 +39,6 @@ export async function listSuperAdminJoining(context:RequestContext,raw:unknown):
   status:r.status,details:["Joining date: "+(r.joiningDate??"Not recorded"),
    "Outcome recorded: "+(r.recordedAt?fmt.format(r.recordedAt)+" IST":"Not recorded"),
    "Only persisted joining outcomes are shown; missing records are not counted as pending."],
-  href:`/admin/placements/jobs/${encodeURIComponent(r.jobId)}`,
+  href:`/admin/placements/joining/${encodeURIComponent(r.id)}`,
  }))};
 }

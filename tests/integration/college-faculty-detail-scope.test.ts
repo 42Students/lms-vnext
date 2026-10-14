@@ -75,6 +75,18 @@ describe.skipIf(!enabled)("College Faculty Detail DB ownership", () => {
     expect("identityUid" in data.person).toBe(false);
     expect("email" in data.person).toBe(false);
   });
+  it("limits assignment history at SQL level without changing total summary",async()=>{
+    const active=await getCollegeFacultyDetail(admin,ids.membership,{status:"ACTIVE"});
+    const ended=await getCollegeFacultyDetail(admin,ids.membership,{status:"ENDED"});
+    expect(active.assignments.map(row=>row.id)).toContain(ids.assignment);
+    expect(ended.assignments).toHaveLength(0);
+    expect(ended.counts.totalAssignments).toBe(active.counts.totalAssignments);
+    expect(ended.counts.activeAssignments).toBe(1);
+    await expect(getCollegeFacultyDetail(foreign,ids.membership,{status:"ENDED"}))
+      .rejects.toBeInstanceOf(CollegePersonNotFoundError);
+    await expect(getCollegeFacultyDetail(learner,ids.membership,{status:"ACTIVE"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("returns NOT_FOUND for foreign-college and nonexistent faculties", async () => {
     await expect(getCollegeFacultyDetail(foreign, ids.membership))
       .rejects.toBeInstanceOf(CollegePersonNotFoundError);
