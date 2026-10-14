@@ -202,20 +202,26 @@ export function LearnerClassSchedule({
   sections,
   events,
   courseBasePath = "/learn/courses",
+  initialView = "week",
+  initialAnchor,
+  initialSelectedDeliveryIds,
 }: {
   courses: readonly CourseChoice[];
   sections: readonly SectionChoice[];
   events: readonly LearnerScheduleEvent[];
   courseBasePath?: string;
+  initialView?: LearnerScheduleView;
+  initialAnchor?: Date;
+  initialSelectedDeliveryIds?: readonly string[];
 }) {
   const [view, setView] =
-    useState<LearnerScheduleView>("week");
+    useState<LearnerScheduleView>(initialView);
   const [anchor, setAnchor] = useState(
-    () => new Date(),
+    () => initialAnchor ?? new Date(),
   );
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
-      courses.map((course) => course.deliveryId),
+      initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
     );
 
   const filteredEvents = useMemo(

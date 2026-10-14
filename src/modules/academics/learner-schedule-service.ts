@@ -14,6 +14,7 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods,
   collegeMemberships,
+  membershipRoles,
   courseOfferings,
   courseSectionDeliveries,
   courses,
@@ -26,6 +27,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { AcademicsServiceError } from "./errors";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 
 function requireLearnerMembership(
@@ -50,7 +52,30 @@ export async function getLearnerClassSchedule(
 ) {
   const membership =
     requireLearnerMembership(context);
+  requirePermission(context, "academics.read", {
+    organizationId: membership.organizationId,
+    collegeId: membership.collegeId,
+  });
   const db = getDb();
+  // Never trust stale/forged context claims in read-only schedule delivery.
+  const [actor] = await db.select({
+    userId: collegeMemberships.userId,
+    collegeId: collegeMemberships.collegeId,
+    status: collegeMemberships.status,
+    userStatus: users.platformStatus,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(eq(collegeMemberships.id, membership.id))
+    .limit(1);
+  if (!actor || actor.userId !== context.user.id ||
+      actor.collegeId !== membership.collegeId || actor.status !== "ACTIVE" ||
+      actor.userStatus !== "ACTIVE") {
+    throw new AuthorizationError("academics.read");
+  }
 
   const placements = await db
     .select({
