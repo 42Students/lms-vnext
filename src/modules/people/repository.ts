@@ -463,12 +463,7 @@ export const drizzlePeopleRepository:
 
   async listCollegePeople(input): Promise<CollegePeoplePage> {
     const db = getDb();
-    const pattern = "%" + input.q.replace(/[\\%_]/g, "\\async listCollegePeople(input): Promise<CollegePeoplePage> {
-    const db = getDb();
-    const [totalRow] = await db
-      .select({ total: count() })
-      .from(collegeMemberships)
-      .where(eq(collegeMemberships.collegeId, input.collegeId));") + "%";
+    const pattern = "%" + input.q.replace(/[\\%_]/g, "\\$&") + "%";
     const filters = and(
       eq(collegeMemberships.collegeId, input.collegeId),
       input.status === "ALL" ? undefined : eq(collegeMemberships.status, input.status),
