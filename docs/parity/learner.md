@@ -918,3 +918,24 @@ Closure checklist:
 ## Placement-only notification preferences — chat-4 (2026-10-14)
 
 PARTIAL — New mobile-friendly `/learn/my-placements/notification-preferences` lets the signed-in Learner explicitly confirm updates to the two registered P2 candidate-preferences notification flags. A narrow same-origin PUT uses strict Zod booleans and confirmation, central placements.read, live own-college LEARNER role/paid participation checks, and a single transactional actor audit on real changes. The update preserves role/location/CTC preferences. No-op retries do not generate fake audits. Unique-fixture PostgreSQL tests cover success, suspension, forged college, revoked role and wrong-role denials; they are authored but not executed. This is not a global course/security notification opt-out; producer delivery, browser validation and full legacy parity remain OPEN.
+
+## Learner read-only monthly attendance calendar — chat-4 (2026-10-14)
+
+PARTIAL — Added `/learn/attendance/calendar` alongside the existing
+course/month Attendance workspace and Class Schedule day/week/month views.
+The new mobile-first seven-day monthly grid shows *registered* attended,
+absent, medically/excused/late, unmarked and future scheduled sessions from
+the canonical Learner attendance reader, with a filterable per-day list and
+links back to Course Attendance. Academic records are restricted to the
+signed-in persisted active Learner college membership, role grant and
+current authorized course deliveries (central `academics.read`). Zod
+restricts month, status and delivery filters; unknown or foreign delivery
+identifiers fail closed. India-local day grouping and no-mark denominator
+handling are pure and testable. No attendance is changed by this page.
+
+Model unit tests and a fresh-fixture PostgreSQL integration suite are
+authored covering present/absent/unmarked/future sessions, pagination-free
+month grouping, empty months, forged college, suspended and wrong-role
+denials, and test-owned cleanup. Execution, exact legacy browser/mobile
+proof and complete canonical attendance evidence remain **OPEN**; neither
+Course Attendance nor Attendance summary is marked DONE by this addition.

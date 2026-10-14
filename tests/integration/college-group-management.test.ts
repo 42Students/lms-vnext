@@ -55,6 +55,7 @@ const learner: RequestContext = {
 };
 const prefix = "MG-" + randomUUID().slice(0, 10);
 const foreignAdminIds = { user: randomUUID(), membership: randomUUID() };
+const secondLearnerIds = { user: randomUUID(), membership: randomUUID() };
 const realForeignAdmin: RequestContext = {
   user: { id: foreignAdminIds.user, identityUid: "group-admin-" + foreignAdminIds.user, platformStatus: "ACTIVE", systemRoles: [] },
   membership: {
@@ -79,6 +80,18 @@ describe.skipIf(!enabled)("College study groups — PG create/edit/status/tenant
       "INSERT INTO membership_roles(membership_id,role) VALUES($1,'COLLEGE_ADMIN')",
       [foreignAdminIds.membership],
     );
+    await pool.query(
+      "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
+      [secondLearnerIds.user, "group-learner-" + secondLearnerIds.user, prefix + "-learner"],
+    );
+    await pool.query(
+      "INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+      [secondLearnerIds.membership, secondLearnerIds.user, SEED_IDS.collegeA],
+    );
+    await pool.query(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",
+      [secondLearnerIds.membership],
+    );
   });
 
   afterAll(async () => {
@@ -92,6 +105,9 @@ describe.skipIf(!enabled)("College study groups — PG create/edit/status/tenant
         await pool.query("DELETE FROM membership_roles WHERE membership_id=$1", [foreignAdminIds.membership]);
         await pool.query("DELETE FROM college_memberships WHERE id=$1", [foreignAdminIds.membership]);
         await pool.query("DELETE FROM users WHERE id=$1", [foreignAdminIds.user]);
+        await pool.query("DELETE FROM membership_roles WHERE membership_id=$1", [secondLearnerIds.membership]);
+        await pool.query("DELETE FROM college_memberships WHERE id=$1", [secondLearnerIds.membership]);
+        await pool.query("DELETE FROM users WHERE id=$1", [secondLearnerIds.user]);
       }
     } finally {
       await pool?.end();
@@ -172,19 +188,36 @@ describe.skipIf(!enabled)("College study groups — PG create/edit/status/tenant
     })).rejects.toMatchObject({ code: "GROUP_NAME_TAKEN" });
     await pool.query(
       "INSERT INTO lms_group_members(group_id, membership_id, member_type, state, source, joined_at) " +
-      "VALUES($1,$2,'LEARNER','ACTIVE','MANUAL',now())",
-      [created.id, SEED_IDS.learnerCollegeAMembership],
+      "VALUES($1,$2,'LEARNER','ACTIVE','MANUAL',now()), " +
+      "($1,$3,'LEARNER','ACTIVE','MANUAL',now())",
+      [created.id, SEED_IDS.learnerCollegeAMembership, secondLearnerIds.membership],
     );
-    await pool.query("UPDATE lms_groups SET active_count = 1 WHERE id=$1", [created.id]);
-    const live = await pool.query("SELECT active_count, version FROM lms_groups WHERE id=$1", [created.id]);
+    await pool.query("UPDATE lms_groups SET active_count = 2 WHERE id=$1", [created.id]);
+    const live = await pool.query(
+      "SELECT active_count, capacity, version FROM lms_groups WHERE id=$1",
+      [created.id],
+    );
     const count = Number(live.rows[0].active_count);
-    expect(count).toBeGreaterThanOrEqual(1);
+    const currentVersion = Number(live.rows[0].version);
+    const members = await pool.query(
+      "SELECT count(*)::int AS total FROM lms_group_members WHERE group_id=$1 AND state='ACTIVE'",
+      [created.id],
+    );
+    expect(members.rows[0].total).toBe(2);
+    expect(count).toBe(2);
+    const lowerCapacity = count - 1;
+    expect(lowerCapacity).toBeGreaterThanOrEqual(1); // Valid Zod input; exercises the DB-backed guard.
     await expect(changeCollegeStudyGroup(admin, created.id, {
-      action: "EDIT", expectedVersion: Number(live.rows[0].version),
-      name: created.name, description: "", capacity: count - 1,
+      action: "EDIT", expectedVersion: currentVersion,
+      name: created.name, description: "", capacity: lowerCapacity,
     })).rejects.toMatchObject({ code: "GROUP_HAS_MEMBERS" });
+    const afterRejectedEdit = await pool.query(
+      "SELECT active_count, capacity, version FROM lms_groups WHERE id=$1",
+      [created.id],
+    );
+    expect(afterRejectedEdit.rows[0]).toEqual(live.rows[0]);
     await expect(changeCollegeStudyGroup(admin, created.id, {
-      action: "STATUS", expectedVersion: Number(live.rows[0].version), transition: "ARCHIVE",
+      action: "STATUS", expectedVersion: currentVersion, transition: "ARCHIVE",
     })).rejects.toMatchObject({ code: "GROUP_TRANSITION_INVALID" });
   });
 });
