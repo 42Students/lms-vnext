@@ -1164,3 +1164,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-010 PARTIAL (round 5):** Published-drives snapshot distinguishes unique non-expired drives from actionable role options and counts currently not-open-to-apply drives without double-counting multi-role jobs. A nonexpired drive is not falsely labeled eligible for every learner; the published row reader remains own-membership scoped. Fixed-unit duplicate/deadline cases authored. CI/browser gate outstanding.
+
+
+**2026-10-15 chat-5 L11-012 PARTIAL (round 5):** Interview snapshot distinguishes all future authorized scheduled interview/GD rounds from those in the next seven Asia/Kolkata calendar dates. It respects approved reschedules and never calls schedules confirmed attendance. Fixed-clock unit regression authored; executable PG, lint and browser checks pending.

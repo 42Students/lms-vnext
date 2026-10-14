@@ -73,7 +73,16 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(result.nextScheduledEvent?.roundId).toBe("earlier");
     expect(result.nextScheduledEvent?.href).toContain("/interviews?");
   });
-  it("respects an approved reschedule and ignores past or unscheduled events", () => {
+  it("separates all future interviews from the next seven IST calendar dates",()=>{
+    const result=learnerPlacementDashboard({...empty,rounds:[
+      round("today","INTERVIEW","2026-10-13T09:00:00Z"),
+      round("beyond-week","GD","2026-10-20T09:00:00Z"),
+      round("assessment","TEST","2026-10-15T09:00:00Z"),
+    ]},now);
+    expect(result.upcomingInterviewCount).toBe(2);
+    expect(result.thisWeekInterviewCount).toBe(1);
+  });
+    it("respects an approved reschedule and ignores past or unscheduled events", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
         round("past", "TEST", "2026-10-12T10:00:00Z"),
