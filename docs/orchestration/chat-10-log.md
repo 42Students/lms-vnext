@@ -60,3 +60,5 @@
 - 2026-10-15 — HR notification mark read PARTIAL: same-origin, exact employer allowlist, createdAt CAS, new stale error and persisted readAt. Unit/PG authored; not run.
 
 - 2026-10-15 — HR offers CSV PARTIAL: 200 cap, formula neutralization and always-masked contact via existing exact-company read; pure/unit+PG authored, unexecuted.
+
+- 2026-10-15 — Today unread notification CTA PARTIAL: grant-scoped unread 100-cap card plus links to Messages/Activity. Unit and PG fixture added, tests not executed.

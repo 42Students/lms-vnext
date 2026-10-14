@@ -463,3 +463,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / recruiter offers CSV — PARTIAL:** Authorized own-company Offers tab now exports filtered, SQL-paginated, 200-row capped and formula-neutralized CSV (including persisted reply deadline and joining outcome). Recruiter CSV never includes contact regardless of shortlist. Endpoint rechecks company+college job before each page and sets no-store/omitted header. Pure unit and isolated PG own/foreign/wrong-role tests authored, unexecuted. Remaining LOI/selection writes and complete browser/export acceptance.
+
+
+**2026-10-15 chat-10 / Today unread recruiter notifications — PARTIAL:** Today now shows company-and-selected-college-scoped count of unread eligible in-app job notifications, deep links to filtered /hr/messages and to the separate hiring activity history. Count explicitly states if truncated to 100; no private recipient/body content or implicit college fallback. Pure unit and in-test PostgreSQL own/wrong-scope notification fixture extended, unexecuted. Remaining legacy task lifecycle, full inbox pagination, browser/mobile acceptance.
