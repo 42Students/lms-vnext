@@ -12,9 +12,7 @@ export async function POST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    let body: unknown;
-    try { body = await request.json(); }
-    catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
+    const body: unknown = await request.json();
     const result = await createCollegeElectiveSlot(context, body);
     return NextResponse.json({ slot: result }, { status: 201 });
   } catch (error) {

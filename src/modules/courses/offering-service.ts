@@ -6,6 +6,8 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   academicPeriods,
   cohorts,
@@ -365,6 +367,19 @@ export async function createCourseOffering(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_OFFERING_CREATED,
+        collegeId: course.collegeId,
+        organizationId: course.organizationId,
+        subjectType: "course_offering",
+        subjectId: created.id,
+        summary: "Course offering created",
+        metadata: {
+          courseId: input.courseId, cohortId: input.cohortId,
+          academicPeriodId: input.academicPeriodId,
+          type: input.type, credits: input.credits ?? null,
+        },
+      });
       return created;
     });
   } catch (error) {
@@ -512,6 +527,15 @@ export async function updateCourseOffering(
     if (!updated) {
       throw new CoursesServiceError("OFFERING_NOT_FOUND");
     }
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_OFFERING_UPDATED,
+      collegeId: current.collegeId,
+      organizationId: current.organizationId,
+      subjectType: "course_offering",
+      subjectId: updated.id,
+      summary: "Course offering details updated",
+      metadata: { type: updated.type, credits: updated.credits, displayOrder: updated.displayOrder },
+    });
     return updated;
   });
 }
@@ -583,7 +607,15 @@ export async function archiveCourseOffering(
     if (!archived) {
       throw new CoursesServiceError("OFFERING_NOT_FOUND");
     }
-
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_OFFERING_ARCHIVED,
+      collegeId: current.collegeId,
+      organizationId: current.organizationId,
+      subjectType: "course_offering",
+      subjectId: archived.id,
+      summary: "Course offering archived",
+      metadata: { courseId: current.courseId, cohortId: current.cohortId },
+    });
     return archived;
   });
 }
