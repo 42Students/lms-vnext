@@ -235,6 +235,7 @@ export default async function FacultyQuizReportPage({
           status={quiz.status}
           resultsPublished={quiz.resultsPublished}
           deliveryOwned={quiz.facultyOwned}
+          updatedAt={quiz.updatedAt.toISOString()}
         />
       </section>
     </div>

@@ -459,3 +459,15 @@ Added pure model/unit tests and an own-project disposable PostgreSQL test for
 default SQL now(), Mentor success, stale replay, wrong-role, non-leaking foreign
 scope and single review audit event. Still PARTIAL: CI/PG/browser/mobile and
 legacy review-history verification; do not fabricate task-comments storage.
+
+## 2026-10-14 Faculty Quiz result publication command — PARTIAL
+The Faculty-owned CLOSED quiz report's Publish/Hide controls now send a
+confirmation and persisted millisecond timestamp to a same-origin scoped
+command. The service rechecks active Faculty teaching delivery, locks the
+exact quiz, forbids draft/open or unchanged transitions, and writes the
+visibility change with immutable activity audit in one transaction.
+No manual score override or unpublished score disclosure was added.
+Pure model/unit and fresh Faculty/Learner Section PG case covers
+SQL default now(), publish/hide, forged delivery, wrong role, stale token
+and two audit events. Still PARTIAL: executed PG/TS/lint, responsive
+browser, legacy result-publication and learner masking acceptance.

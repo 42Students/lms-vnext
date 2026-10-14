@@ -89,6 +89,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_QUIZ_CREATED:"courses.quiz.created",
   COURSES_QUIZ_UPDATED:"courses.quiz.updated",
   COURSES_QUIZ_PUBLISHED:"courses.quiz.published",
+  COURSES_QUIZ_RESULTS_CHANGED:"courses.quiz.results_changed",
   COURSES_QUIZ_ARCHIVED:"courses.quiz.archived",
   COURSES_QUIZ_CLOSED:"courses.quiz.closed",
   COURSES_ASSIGNMENT_SUBMITTED:
