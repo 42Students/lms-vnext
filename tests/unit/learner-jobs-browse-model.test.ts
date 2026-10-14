@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   availableLearnerJobFacets,
+  learnerJobEmploymentTypeCounts,
   learnerDriveAvailability,
   learnerDriveAvailabilityCounts,
   learnerDriveCtcSortKey,
@@ -93,6 +94,12 @@ describe("Learner job browsing filters", () => {
       ...defaults,availability:"not-open",
     }).map(x=>x.job.id)).toEqual(["b"]);
     expect(learnerDriveAvailabilitySchema.safeParse("other").success).toBe(false);
+  });
+  it("counts employment type using only authorized role options",()=>{
+    const counts=learnerJobEmploymentTypeCounts([jobs[0]!,jobs[1]!,jobs[2]!]);
+    expect(counts.get("FULL_TIME")).toBe(2);
+    expect(counts.get("INTERNSHIP")).toBe(1);
+    expect(counts.size).toBe(2);
   });
   it("derives facets from real job rows", () => {
     expect(availableLearnerJobFacets(jobs)).toEqual({

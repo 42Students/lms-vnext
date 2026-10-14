@@ -72,6 +72,17 @@ export function availableLearnerJobFacets<T extends BrowseJobShape>(items: reado
   };
 }
 
+/** Role-option counts for filter facets; no unauthorized global catalog lookup. */
+export function learnerJobEmploymentTypeCounts(items:readonly BrowseJobShape[]){
+ const counts=new Map<string,number>();
+ for(const row of items){
+  const type=row.roleOption.employmentType;
+  if(!type)continue;
+  counts.set(type,(counts.get(type)??0)+1);
+ }
+ return counts;
+}
+
 export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   items: readonly T[], filters: LearnerJobBrowseFilters,
   snapshotNowMs: number = Number.NaN,
