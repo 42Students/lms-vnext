@@ -208,6 +208,16 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{classPresence:"NONE"}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("filters registered live teaching by exact role within the college", async () => {
+    const any=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{teaching:"ASSIGNED"});
+    const role=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{teachingRole:"PRIMARY"});
+    expect(role.total).toBeLessThanOrEqual(any.total);
+    expect(role.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{teachingRole:"PRIMARY"}))
+      .rejects.toThrow("LEARNER_TEACHING_ROLE_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{teachingRole:"TA"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {

@@ -58,6 +58,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "FACULTY" && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
+  if (kind === "LEARNER" && filter.teachingRole !== "ALL") {
+    throw new RangeError("LEARNER_TEACHING_ROLE_UNSUPPORTED");
+  }
   if (kind === "LEARNER" && filter.teaching !== "ALL") {
     throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
   }
@@ -133,7 +136,9 @@ export async function listCollegeRoleDirectory(
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, and(eq(departments.id, courses.departmentId), eq(departments.collegeId, collegeId)))
     .where(and(eq(courseTeachingAssignments.membershipId, collegeMemberships.id),
-      isNull(courseTeachingAssignments.endedAt))));
+      isNull(courseTeachingAssignments.endedAt),
+      filter.teachingRole === "ALL" ? undefined : eq(courseTeachingAssignments.role,filter.teachingRole),
+    )));
   const query = db.select({
     membershipId: collegeMemberships.id,
     name: users.displayName,
@@ -158,6 +163,7 @@ export async function listCollegeRoleDirectory(
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
+      kind === "FACULTY" && filter.teachingRole !== "ALL" ? activeTeaching : undefined,
       kind !== "FACULTY" || filter.teaching === "ALL" ? undefined :
         filter.teaching === "ASSIGNED" ? activeTeaching : not(activeTeaching),
       filter.q ? or(

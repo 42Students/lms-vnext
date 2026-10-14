@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { MembershipStatus } from "@/modules/identity/constants";
+import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 
 export const COLLEGE_ROLE_DIRECTORY_PAGE_SIZE = 25;
 export const collegeDirectoryKindSchema = z.enum(["FACULTY", "LEARNER"]);
@@ -12,6 +13,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
   classPresence: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
+  teachingRole: z.union([z.literal("ALL"), z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
   facultyDepartmentId: z.string().uuid().optional(),
   sort: z.enum(["NAME", "NEWEST", "OLDEST"]).default("NAME"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
@@ -66,6 +68,7 @@ export function collegeRoleDirectoryHref(
   if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
   if (kind === "LEARNER" && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
   if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
+  if (kind === "FACULTY" && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
   if (kind === "FACULTY" && filter.facultyDepartmentId) params.set("facultyDepartmentId", filter.facultyDepartmentId);
   if (filter.sort !== "NAME") params.set("sort", filter.sort);
   if (filter.page > 1) params.set("page", String(filter.page));
