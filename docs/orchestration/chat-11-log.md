@@ -18,3 +18,11 @@
   not executed; no owner decision required.
 - PARTIAL: browser/download, test execution, legacy column parity and
   large-export strategy remain.
+
+## C — Completed meeting notes (2026-10-14)
+- Dedicated scoped Mentor completed-meeting outcome detail/edit page.
+- Confirmed CAS PATCH with same-origin, current Mentor membership grant,
+  strict Zod, transactional before/after-presence audit without raw note text.
+- Team meeting log deep links; loading/error, mobile forms and isolated
+  positive/foreign/wrong-role/stale PostgreSQL tests authored, not executed.
+- PARTIAL: browser, lint/typecheck, PostgreSQL and history/privacy signoff.

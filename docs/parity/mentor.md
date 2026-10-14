@@ -540,3 +540,19 @@ workload, velocity or readiness. Unit tests and a new isolated positive/foreign/
 wrong-role PostgreSQL board-export fixture are authored. **PARTIAL:** real
 typecheck, ESLint, unit, PostgreSQL, download/browser and legacy filters
 verification remain open; full-scale streaming is not implemented.
+
+
+## 2026-10-14 chat-11 C — Completed team meeting notes (PARTIAL)
+
+The registered `project_meetings.outcome` field now has a dedicated current
+assigned-Mentor detail/edit surface for COMPLETED meetings only. The scoped read
+allows the Mentor to see existing post-meeting outcome text, while the confirmed
+same-origin PATCH validates nonempty up-to-4000-character notes, locks project
+and meeting, rejects archived projects and stale tokens, and uses PostgreSQL
+millisecond CAS. An immutable actor/college audit is inserted in the same
+transaction, recording only before/after note presence and never private text.
+The team-meeting log links to the exact authorized meeting detail. New mobile
+dialog and loading/error states, pure unit and isolated PostgreSQL role/foreign/
+stale/audit tests are authored. **PARTIAL:** runtime/typecheck/lint, desktop and
+mobile verification, product privacy review and historic versioned meeting
+minutes remain open; no separate notes/version table is invented.
