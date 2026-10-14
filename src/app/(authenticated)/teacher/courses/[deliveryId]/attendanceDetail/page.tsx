@@ -48,6 +48,14 @@ export default async function FacultyCourseAttendancePage({
     })),
   };
 
+  // Query-param navigation can reuse the same App Router component tree.
+  // Remount only when the authorized deep-linked session changes, so a
+  // report page already in memory cannot mask Calendar -> Mark mode.
+  const initialSessionId = resolveFacultyAttendanceDeepLink(
+    workspace.sessions,
+    query.sessionId,
+  );
+
   return (
     <div className="space-y-5">
       <Link
@@ -57,11 +65,9 @@ export default async function FacultyCourseAttendancePage({
         ← Course workspace
       </Link>
       <FacultyAttendanceWorkspace
+        key={`${deliveryId}:${initialSessionId ?? "report"}`}
         workspace={workspace}
-        initialSessionId={resolveFacultyAttendanceDeepLink(
-          workspace.sessions,
-          query.sessionId,
-        )}
+        initialSessionId={initialSessionId}
       />
     </div>
   );
