@@ -1,0 +1,57 @@
+import { z } from "zod";
+
+/** GET-only filters; the college is always resolved from the signed-in membership. */
+export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 25;
+
+export const collegeLectureHallFiltersSchema = z.object({
+  q: z.string().trim().max(100).default(""),
+  status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
+  roomType: z.enum([
+    "ALL",
+    "CLASSROOM",
+    "LECTURE_HALL",
+    "LAB",
+    "SEMINAR_HALL",
+    "AUDITORIUM",
+    "CONFERENCE_ROOM",
+  ]).default("ALL"),
+  departmentId: z.string().uuid().optional(),
+  page: z.coerce.number().int().min(1).max(1000).default(1),
+}).strict();
+
+export type CollegeLectureHallFilters = z.infer<typeof collegeLectureHallFiltersSchema>;
+
+/** Invalid/duplicate selectors fail closed rather than silently selecting the first value. */
+export function parseCollegeLectureHallSearchParams(
+  params: Record<string, string | string[] | undefined>,
+) {
+  const input: Record<string, string> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (Array.isArray(value)) return null;
+    if (value !== undefined && !(key === "departmentId" && value === "")) {
+      input[key] = value;
+    }
+  }
+  const result = collegeLectureHallFiltersSchema.safeParse(input);
+  return result.success ? result.data : null;
+}
+
+export function collegeLectureHallHref(query: CollegeLectureHallFilters) {
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.status !== "ALL") params.set("status", query.status);
+  if (query.roomType !== "ALL") params.set("roomType", query.roomType);
+  if (query.departmentId) params.set("departmentId", query.departmentId);
+  if (query.page !== 1) params.set("page", String(query.page));
+  const suffix = params.toString();
+  return "/college/lecture-halls" + (suffix ? "?" + suffix : "");
+}
+
+export function collegeLectureHallTotalPages(total: number) {
+  return Math.max(1, Math.ceil(total / COLLEGE_LECTURE_HALL_PAGE_SIZE));
+}
+
+export function hasCollegeLectureHallFilters(query: CollegeLectureHallFilters) {
+  return Boolean(query.q || query.status !== "ALL" ||
+    query.roomType !== "ALL" || query.departmentId);
+}
