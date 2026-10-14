@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   projectTpoCompanyContactRows,
   tpoRoundAttendanceCsv,
+  tpoCompanyContactLogQuerySchema,
 } from "@/modules/placements/tpo-operations-export-model";
-import { tpoCompanyContactLogQuerySchema } from "@/modules/placements/tpo-company-contact-log-service";
 
 describe("TPO Drive Day attendance export", () => {
   it("neutralizes spreadsheet formula cells and escapes quotes", () => {

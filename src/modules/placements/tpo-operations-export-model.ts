@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { placementReportCsv } from "./report-model";
 import type { TpoRoundRosterRow } from "./tpo-round-drive-day-model";
 
@@ -52,3 +53,11 @@ export function projectTpoCompanyContactRows(
     occurredAtIso: fact.createdAt.toISOString(),
   }));
 }
+
+export const tpoCompanyContactLogQuerySchema = z.object({
+  companyId: z.string().uuid(),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  type: z.enum([
+    "ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM",
+  ]).default("ALL"),
+}).strict();
