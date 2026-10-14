@@ -447,7 +447,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-015 | Withdrawal request modal + reason | ApplicationsContent | confirmed direct self-withdrawal/reason built in drawer; separate legacy approval-request semantics require owner decision | GAP |
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
-| L14-018 | Assessment deep link | ApplicationsContent | placement assessment | UNCHECKED |
+| L14-018 | Assessment deep link | ApplicationsContent | drawer now links to exact own-application shortlisted persisted assessment via scoped request-workspace rounds (approved reschedule respected), generic fallback only when none; PARTIAL pending executed unit/fresh-PG, lint/tsc, browser drawer navigation and cross-tenant validation | PARTIAL |
 | L14-019 | Interview deep link | ApplicationsContent | drawer resolves exact active own application+interview round from membership-scoped persisted scheduled rounds, nearest upcoming first; fallback general interview list where no round exists. No invented outcome. PARTIAL pending fresh PostgreSQL, unit, tsc/lint and browser deep-link checks | PARTIAL |
 | L14-020 | Job/similar roles deep link | ApplicationsContent | own persisted application now carries exact job ID to published drive detail and its role options from cards and drawer; unauthorized/unpublished jobs still enforce server scope. PARTIAL: similar-role recommendation ranking not registered; pending PG/unit/tsc/lint/mobile/browser acceptance | PARTIAL |
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
