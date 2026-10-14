@@ -52,3 +52,13 @@ export function tpoCalendarRoundsCsv(
   }
   return placementReportCsv(header, data);
 }
+
+
+export function todayIstDate(now: Date): string {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: "Asia/Kolkata",
+  }).formatToParts(now);
+  const part = (type: string) => parts.find((value) => value.type === type)?.value ?? "";
+  return part("year") + "-" + part("month") + "-" + part("day");
+}
