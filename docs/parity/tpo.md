@@ -471,6 +471,8 @@ Legacy event types include rounds, talks, deadlines and recruiter follow-ups.
 - [ ] event deep links to drive/lead match.
 - [ ] create Follow-up modal matches.
 - [ ] move Follow-up modal matches.
+
+**W38 PARTIAL:** The TPO calendar now offers a small create form for existing CRM leads and an IST reschedule form on each open follow-up event card, gated by the DB09 CRM write readiness flag. Same-origin POST/PATCH routes derive the college exclusively from the active TPO membership, validate payloads, and reuse the existing centralized placements scope and CRM follow-up mutations. Completion remains terminal. The legacy create/move modal UX, optimistic concurrency (no persisted follow-up version/update timestamp), browser acceptance, and executed disposable PostgreSQL tests are still open.
 - [ ] empty/loading/partial-failure states match.
 - [ ] timezone handling is verified.
 
