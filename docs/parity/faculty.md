@@ -790,3 +790,18 @@ read path was added. Focused unit regressions are authored but NOT claimed
 as executed PostgreSQL, browser, ESLint or whole-repository TypeScript proof.
 Legacy gradebook weighting, full exported/download acceptance and responsive
 browser review remain OPEN; no parity status is promoted to DONE.
+
+## Faculty Section Quiz archive workflow (2026-10-14)
+
+PARTIAL: The Section choice-quiz builder now offers a confirm-first Archive
+action for current DRAFT, PUBLISHED or CLOSED quizzes. Server authorization
+requires a live Faculty teaching delivery and centrally granted course access,
+strict Zod confirmation, a locked optimistic token, and a transactional audit
+event `courses.quiz.archived`. Persisted learner attempts block archival.
+The action changes quiz status to ARCHIVED without deleting questions or
+attempt history. Added pure schema tests for malformed/forged inputs, and
+extended isolated PostgreSQL tests with published archive, wrong-role, foreign
+Section and stale-token denial, retained row and audit assertions.
+These tests are authored, not independently executed; browser parity, an
+attempt-populated runtime denial and legacy close actions remain OPEN.
+No Faculty parity row is promoted to DONE.
