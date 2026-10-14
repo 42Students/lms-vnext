@@ -2,6 +2,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
+import {MentorMeetingReschedule} from "@/components/projects/mentor-meeting-reschedule";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {
   mentorTeamMeetingsHref,mentorTeamMeetingsQuerySchema,
@@ -87,6 +88,15 @@ export default async function MentorTeamMeetingsPage({
               Source timezone: {meeting.timeZone} · Outcome:{" "}
               {meeting.hasOutcome?"Recorded":"Not recorded"}
             </p>
+            {meeting.status==="SCHEDULED"&&
+             data.projectStatus!=="ARCHIVED"&&data.projectStatus!=="COMPLETED"?
+              <div className="mt-3">
+                <MentorMeetingReschedule projectId={projectId}
+                  meetingId={meeting.id}
+                  startsAt={meeting.startsAt.toISOString()}
+                  endsAt={meeting.endsAt.toISOString()}
+                  updatedAt={meeting.updatedAt.toISOString()}/>
+              </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
               className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">

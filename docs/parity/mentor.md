@@ -618,3 +618,23 @@ wrong-role/disabled denial and cross-college nonleakage. **PARTIAL:**
 Test execution, browser verification, high-volume pagination, full legacy
 meeting calendar, and schedule/reschedule writes remain open. No direct
 status updates are introduced, so optimistic stale write tokens do not apply.
+
+
+## 2026-10-14 chat-11 G — Mentor meeting reschedule CAS/audit (PARTIAL)
+
+For current assigned Mentors, the registered project Team & Meetings list now
+offers a confirmed reschedule of an existing SCHEDULED meeting, converting
+IST wall-clock inputs to UTC instants explicitly without browser-local drift.
+The exact-project same-origin PATCH uses strict Zod, current persisted Mentor
+membership and central projects.read/module scope, locks Project and Meeting,
+rejects completed/archived workspaces and stale timestamp tokens with SQL
+millisecond compare-and-swap, and prevents overlapping SCHEDULED meetings
+within that same Project. The meeting link and agenda are unchanged; no
+external message is sent. A single actor/college reschedule activity event
+is inserted atomically without private URL or notes. New error code is
+declared in ProjectsServiceErrorCode; no new permission is required.
+Pure-model and unique-fixture PostgreSQL tests cover success, audit, SQL
+microseconds, stale replay, collision, wrong-role, foreign and disabled
+denials. **PARTIAL:** TypeScript/ESLint/PG/browser verification, optional
+cross-project Mentor conflict policy, and full legacy meeting lifecycle
+remain unverified.
