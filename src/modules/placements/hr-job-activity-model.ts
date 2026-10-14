@@ -4,6 +4,7 @@ export const hrActivityQuerySchema=z.strictObject({
   limit:z.coerce.number().int().min(1).max(100).default(40),
   kind:z.enum(["ALL","PUBLISHED","CLOSED"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
+  q:z.string().trim().max(120).default(""),
 });
 export const HR_JOB_EVENT_TYPES=["placements.job.published","placements.job.closed"] as const;
 export type HrJobEvent={id:string;subjectId:string;eventType:string;occurredAt:Date};
@@ -24,3 +25,8 @@ export function hrActivityEventFilter(kind:"ALL"|"PUBLISHED"|"CLOSED") {
 }
 
 export function hrActivityHasNext(fetched:number,limit:number){return fetched>limit;}
+
+export function searchHrActivityJobs<T extends {title:string}>(jobs:readonly T[],q:string):T[]{
+ const needle=q.trim().toLocaleLowerCase();
+ return needle?jobs.filter(job=>job.title.toLocaleLowerCase().includes(needle)):[...jobs];
+}
