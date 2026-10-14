@@ -234,6 +234,10 @@ export function LearnerApplicationsBrowse({
           {selected ? (
             <>
               <Link
+                href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+              >Application detail</Link>
+              <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
               >
