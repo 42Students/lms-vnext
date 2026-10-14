@@ -1155,3 +1155,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-008 PARTIAL (round 4):** Placement dashboard now retains an independent chronological Next Scheduled Event card and exact learner-scoped destination. Hero urgency can legitimately prefer an expiring offer or later assessment without hiding the actual next scheduled round. UTC effective reschedule sorting remains authoritative, with explicit unavailable/empty distinction. Pure regression authored; PG/browser verification pending.
+
+
+**2026-10-15 chat-5 L30-027 PARTIAL (round 4):** Profile social-account deep links now scroll to the exact Social Profiles card, which provides a direct Connect or edit accounts action. The existing confirmed profile editor opens from that card, focuses its LinkedIn entry for this validated deep-link section, and reuses document stale-write/version handling; no OAuth or verification is inferred. Pure-model test for allowed focus targets authored; device focus/browser and PG update acceptance pending.
