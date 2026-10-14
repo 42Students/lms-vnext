@@ -60,6 +60,8 @@ export const createCourseAssignmentInputSchema =
 export const updateCourseAssignmentInputSchema =
   z
     .object({
+      expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
+      confirmed: z.literal(true).optional(),
       title:
         assignmentTitleSchema.optional(),
       description:
@@ -84,14 +86,16 @@ export const updateCourseAssignmentInputSchema =
     })
     .refine(
       (value) =>
-        Object.values(value).some(
-          (item) => item !== undefined,
+        Object.entries(value).some(
+          ([key,item]) => key !== "expectedUpdatedAt" && key !== "confirmed" && item !== undefined,
         ),
       "At least one assignment field is required",
     );
 
 export const assignmentTransitionSchema =
   z.object({
+    expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
+    confirmed: z.literal(true).optional(),
     action: z.enum([
       "PUBLISH",
       "ARCHIVE",

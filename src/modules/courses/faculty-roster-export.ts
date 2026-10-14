@@ -1,3 +1,5 @@
+import { capFacultyReportCsvRows, facultyCsvLearnerLabel, neutralizeFacultyCsvCell } from "./faculty-report-csv";
+
 /** Rows are already authorized by the exact Faculty teaching-delivery reader.
  * This pure serializer never fetches broader college or learner records. */
 export type FacultyRosterCsvLearner = {
@@ -9,22 +11,19 @@ export type FacultyRosterCsvLearner = {
 };
 
 function csvField(raw: string | null) {
-  const input = raw ?? "";
-  // Excel/Sheets can execute data beginning with formula operators, even
-  // after whitespace. Quoting a CSV field alone does NOT neutralize formulas.
-  const guarded = /^[\s\uFEFF]*[=+@-]/u.test(input) ? "'" + input : input;
-  return '"' + guarded.replaceAll('"', '""') + '"';
+  return '"' + neutralizeFacultyCsvCell(raw).replaceAll('"', '""') + '"';
 }
 
 export function facultyRosterCsv(rows: readonly FacultyRosterCsvLearner[]) {
-  const headers = "Student,Roll number,Email,Phone";
-  const lines = rows.map((row) =>
-    [
-      row.displayName?.trim() || row.email?.trim() ||
-        "Learner " + row.membershipId.slice(0, 8),
-      row.rollNumber, row.email, row.phoneE164,
-    ].map(csvField).join(","),
+  const bounded = capFacultyReportCsvRows(rows);
+  const headers = "Student,Roll number";
+  const lines = bounded.rows.map((row) =>
+    [facultyCsvLearnerLabel(row.displayName), row.rollNumber].map(csvField).join(","),
   );
+  if (bounded.omittedRows > 0) {
+    lines.push(["NOTICE: " + bounded.omittedRows +
+      " learner rows omitted by the 500-row export cap.", ""].map(csvField).join(","));
+  }
   return [headers, ...lines].join("\r\n") + "\r\n";
 }
 

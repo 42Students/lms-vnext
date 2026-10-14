@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
@@ -20,32 +21,10 @@ type EditableAssessment = {
   description: string | null;
   dueAt: Date | string | null;
   status: string;
+  updatedAt: Date | string;
   maxPoints?: number;
   maxAttempts?: number;
 };
-
-function toLocalDateTime(
-  value: Date | string | null,
-) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset();
-  return new Date(
-    date.getTime() - offset * 60_000,
-  )
-    .toISOString()
-    .slice(0, 16);
-}
-
-function toIso(value: string) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    throw new Error("Choose a valid due date.");
-  }
-  return date.toISOString();
-}
 
 export function FacultyAssessmentEditor({
   assessment,
@@ -60,7 +39,7 @@ export function FacultyAssessmentEditor({
   const [description, setDescription] =
     useState(assessment.description ?? "");
   const [dueAt, setDueAt] = useState(
-    toLocalDateTime(assessment.dueAt),
+    authoringLocalDateTime(assessment.dueAt),
   );
   const [points, setPoints] = useState(
     assessment.kind === "ASSIGNMENT"
@@ -111,6 +90,7 @@ export function FacultyAssessmentEditor({
       return;
     }
 
+    if (!window.confirm("Confirm these draft assessment edits?")) return;
     setError(null);
     setSaving(true);
     try {
@@ -120,10 +100,12 @@ export function FacultyAssessmentEditor({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          expectedUpdatedAt: new Date(assessment.updatedAt).toISOString(),
+          confirmed: true,
           title: cleanTitle,
           description:
             description.trim() || null,
-          dueAt: toIso(dueAt),
+          dueAt: authoringDueInstant(dueAt),
           ...(assessment.kind ===
           "ASSIGNMENT"
             ? { maxPoints: number }
@@ -172,6 +154,8 @@ export function FacultyAssessmentEditor({
           },
           body: JSON.stringify({
             action: "ARCHIVE",
+            expectedUpdatedAt: new Date(assessment.updatedAt).toISOString(),
+            confirmed: true,
           }),
         },
       );
@@ -202,7 +186,7 @@ export function FacultyAssessmentEditor({
           // stale local state must not overwrite subsequently refreshed rows.
           setTitle(assessment.title);
           setDescription(assessment.description ?? "");
-          setDueAt(toLocalDateTime(assessment.dueAt));
+          setDueAt(authoringLocalDateTime(assessment.dueAt));
           setPoints(assessment.kind === "ASSIGNMENT"
             ? String(assessment.maxPoints ?? 10)
             : String(assessment.maxAttempts ?? 1));
@@ -279,7 +263,7 @@ export function FacultyAssessmentEditor({
           </label>
 
           <label className="block text-sm font-semibold text-body">
-            Due date
+            Due date (IST)
             <Input
               className="mt-1.5"
               type="datetime-local"

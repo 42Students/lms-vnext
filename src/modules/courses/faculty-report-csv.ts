@@ -32,10 +32,10 @@ function cell(value: string | number | null) {
 /** Serialize only rows provided by the server-authorized Section report. */
 export function facultyReportCsv(input: FacultyReportCsvInput) {
   const checked = facultyReportCsvSchema.parse(input);
-  const headings = ["Learner", "Email", "Response", "Score", "Percent", "Submitted at (UTC)", "Details"];
+  const headings = ["Learner", "Response", "Score", "Percent", "Submitted at (IST)", "Details"];
   const records = checked.rows.map(row => [
-    row.name, row.email, row.status, row.score, row.percent,
-    row.submittedAt, row.note,
+    row.name, row.status, row.score, row.percent,
+    row.submittedAt ? facultyCsvIstTimestamp(row.submittedAt) : null, row.note,
   ].map(cell).join(","));
   return [headings.map(cell).join(","), ...records].join("\r\n") + "\r\n";
 }
@@ -44,4 +44,27 @@ export function facultyReportCsvFilename(kind: "assignment" | "quiz", title: str
   const slug = (title + "-" + section).normalize("NFKD").toLowerCase()
     .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 65) || "report";
   return "faculty-" + kind + "-report-" + slug + ".csv";
+}
+
+/** Convert absolute database instants to IST calendar/display convention. */
+export function facultyCsvIstTimestamp(iso:string){
+ const value=new Date(iso);
+ if(!Number.isFinite(value.getTime()))throw new Error("INVALID_CSV_TIMESTAMP");
+ const parts=new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
+ }).formatToParts(value);
+ const field=(part:string)=>parts.find(row=>row.type===part)?.value??"";
+ return field("year")+"-"+field("month")+"-"+field("day")+" "+
+  field("hour")+":"+field("minute")+":"+field("second")+" IST";
+}
+export const FACULTY_REPORT_CSV_MAX_ROWS=500;
+export function capFacultyReportCsvRows<T>(rows:readonly T[]){
+ return {rows:rows.slice(0,FACULTY_REPORT_CSV_MAX_ROWS),
+  omittedRows:Math.max(0,rows.length-FACULTY_REPORT_CSV_MAX_ROWS)};
+}
+
+/** Contact fields must never become a fallback name in Faculty CSV exports. */
+export function facultyCsvLearnerLabel(displayName: string | null | undefined) {
+  return displayName?.trim() || "Learner (name unavailable)";
 }

@@ -907,3 +907,230 @@ also passed at that source SHA. Overall CI still has failures in other
 modules and a pre-existing repository lint violation; this DONE designation
 is scoped exclusively to **Faculty Contacts — Teachers**, not All Contacts,
 Contacts — Students, whole Faculty or database/release certification.
+## 2026-10-14 Faculty All Assignments published-grade guards (PARTIAL)
+Existing audited grade/regrade/publish writers now fail closed when the linked
+assignment is DRAFT/ARCHIVED and hold a shared assignment row lock while a
+published-only grade or grade publication is committed. Existing integer
+optimistic submission version and immutable audit remain authoritative.
+The mobile submission grading card displays write status. Pure-model and a
+fresh Learner+Faculty Section PostgreSQL test cover successful grade/publish,
+stale version, wrong role, forged college and archived assignment denial.
+Still PARTIAL: execute tsc/eslint/PG/unit tests, browser and legacy grading
+modal/regrade review, old server consumers.
+## 2026-10-14 Faculty Attendance correction optimistic token — PARTIAL
+Existing mark/update path already enforces exact Section roster, correction
+hours and same-origin PATCH. Corrections to an already MARKED session now require
+the prior persisted markedAt ISO token, compare millisecond precision under the
+session row lock, and advance timestamp monotonically. Audit metadata preserves
+old/new mark timestamps plus existing aggregate counts without learner IDs.
+Existing browser editor supplies the token and surfaces explicit stale reload
+instruction. Pure-model and test-created Faculty+Learner Section PG fixtures
+cover default SQL now microseconds, successful correction, stale replay,
+foreign-scoped and wrong-role denial, audit. PARTIAL until tsc/lint/PG/unit,
+mobile browser and actual legacy correction history are independently verified.
+## 2026-10-14 Faculty Quiz result publication command — PARTIAL
+The Faculty-owned CLOSED quiz report's Publish/Hide controls now send a
+confirmation and persisted millisecond timestamp to a same-origin scoped
+command. The service rechecks active Faculty teaching delivery, locks the
+exact quiz, forbids draft/open or unchanged transitions, and writes the
+visibility change with immutable activity audit in one transaction.
+No manual score override or unpublished score disclosure was added.
+Pure model/unit and fresh Faculty/Learner Section PG case covers
+SQL default now(), publish/hide, forged delivery, wrong role, stale token
+and two audit events. Still PARTIAL: executed PG/TS/lint, responsive
+browser, legacy result-publication and learner masking acceptance.
+## 2026-10-14 Faculty correction explanation and no-op guard — PARTIAL
+The existing same-origin, optimistic, correction-window checked Faculty mark
+transaction now requires a short explanation when an already-MARKED session
+actually changes. It derives a persisted absence delta before mutating,
+rejects no-op corrections, and writes only counts plus a reason to its existing
+immutable activity audit (no learner IDs or names in metadata). First marks are
+unchanged. A mobile-friendly textarea and explicit error messages were added.
+Pure-model unit and fresh Section PG fixtures cover real correction, no-op,
+missing reason, wrong role, foreign Section, stale token and audit.
+Still PARTIAL: executed tests, mobile/keyboard/browser, correction-request
+workflow and legacy report acceptance.
+## 2026-10-14 Faculty version-checked moderation replies — PARTIAL
+A distinct, same-origin Faculty-only reply POST uses existing discussion
+storage and an authorized teaching-Section scope. The parent message is
+re-read with a shared row lock in the insert transaction, rejecting deleted,
+foreign-Section or stale parent versions before a reply can be created.
+A new immutable `courses.discussion.replied` event records only parent ID,
+Section and role (not private message text). Learner replies retain their
+existing route. Shared mobile composer displays a clear stale-parent error.
+Pure model/unit and own-Faculty PostgreSQL tests authored for success,
+wrong-role, non-leaking foreign parent, stale, delete race and single audit.
+Still PARTIAL: execution/browser, genuine threaded-reply storage absent,
+and a locked-thread flag is not migrated; no fictitious lock implemented.
+## 2026-10-14 Faculty Section CSV contact privacy, cap and IST — PARTIAL
+Applies orchestrator decisions: exported Assignment/Quiz rows never include
+learner email or phone columns; timestamps display in Asia/Kolkata, with
+correct IST calendar rollover. Both report kinds are capped at 500 response
+rows, with omitted-row notices and formula-injection neutralization retained.
+A pure-model unit regression tests dangerous cells, IST, cap and contact
+non-disclosure. Disposable Section PG fixture tests persisted export, wrong
+role, foreign-scope denials and absence of the learner's private email.
+GET-only reports have no stale write token; other writes remain unchanged.
+PARTIAL until orchestrator gate, mobile download and legacy comparison.
+## 2026-10-14 Faculty Assignment editor optimistic SQL CAS — PARTIAL
+Exact Faculty Section CREATE/EDIT/PUBLISH/ARCHIVE remains on the existing
+same-origin route. After locking the parent assignment, EDIT and transitions
+now recheck its version and status in SQL using Postgres millisecond truncation,
+and expose a distinct declared STALE_VERSION error instead of confusing it
+with illegal lifecycle changes. Existing no-edit-after-publish and no-archive-
+with-submission guards, plus immutable transaction audit, are unchanged.
+Model/unit plus disposable lesson/Section PG tests cover SQL now() precision,
+authorized edit, wrong-role/foreign delivery, stale replay and audit.
+Remains PARTIAL: orchestrator execution gate, keyboard/mobile authoring drawer
+and legacy assignment lifecycle proof.
+## 2026-10-14 Faculty Quiz authoring SQL optimistic CAS — PARTIAL
+The registered exact-Section Faculty question builder now emits the declared
+FACULTY_QUIZ_STALE_VERSION error independently of invalid publish/close/archive
+transitions and checks the millisecond-normalized updatedAt version in both
+EDIT and lifecycle SQL UPDATE statements, under the existing locks. Immutable
+questions/answers for published attempts remain protected; no new assessment
+score overrides are introduced. The existing audited transaction continues
+to encompass question replacements and state transitions.
+Pure model unit and own-Section PG fixtures cover now() microseconds,
+successful edit, stale replay, foreign selector, wrong-role and event count.
+Remains PARTIAL: orchestrator gates, responsive builder/browser and legacy
+publish/release acceptance.
+## 2026-10-14 Faculty regrade of published Assignment requires feedback — PARTIAL
+The existing exact-Section, same-origin grade/regrade PATCH still uses an
+integer submission version, published parent-Assignment lock and immutable
+audit. When Faculty revise an already learner-visible grade, meaningful
+learner-facing feedback is now required; the update hides the old published
+grade until republished. The shared activity metadata records only the
+previous visibility and feedback-presence flags, never private score or
+freeform feedback. Mobile grading drawer explains the required rationale.
+Pure policy/unit and self-created Section/Learner PG grading sequence now
+covers initial grade, publication, denied unexplained regrade, valid feedback,
+stale replay, wrong-role, foreign college and duplicate audit protection.
+Remains PARTIAL: orchestrator tests, mobile drawer and legacy review.
+## 2026-10-14 Faculty Quiz result release bypass sealed — PARTIAL
+The legacy generic Quiz results endpoint can no longer be used by Faculty to
+circumvent their confirmed, millisecond-versioned publish/hide route. It now
+permits only course-managing Admin actors and CLOSED quizzes; its own
+transaction locks the quiz, writes a conditional visibility transition, and
+records an immutable results-changed audit event. Duplicate writes and
+published/draft/archived states fail closed. Faculty's own exact Section route
+remains unchanged. Pure policy unit and disposable Section PG tests cover
+Faculty/wrong-role/foreign-denied, Admin publish/hide, no-op denial, and audit.
+PARTIAL: orchestrator gates, browser and legacy role continuity.
+## 2026-10-14 Faculty Quiz CSV attempted-state filters — PARTIAL
+Existing exact-Section server-verified Quiz report CSV now supports mutually
+exclusive ALL, ATTEMPTED and NOT_ATTEMPTED query selectors. The GET schema
+rejects Assignment-only grading filters on Quiz and Quiz-only filters on
+Assignment; it rejects duplicate and forged selectors. Filter first, then
+enforce the combined 500-row cap, neutralize formulas and omit learner contact.
+Faculty Quiz report offers mobile-friendly direct links for both subsets.
+Pure unit and disposable PG read fixtures cover empty attempted vs persisted
+unattempted, invalid filter, foreign Section and learner denied. GET-only;
+no stale write token. PARTIAL until tests/browser/legacy.
+## 2026-10-14 Faculty grading idempotence — PARTIAL
+The existing exact-Section Faculty grade/regrade PATCH now rejects a no-op
+score+feedback pair before it can increment the submission version, hide
+a learner-visible published score or create a redundant audit event. Changes
+to either score or learner feedback still go through the existing published
+assignment lock, integer optimistic version and transaction-coupled audit.
+The mobile grading drawer disables Save when no revision exists. Pure model
+unit and the disposable Faculty/Learner grading PG fixture verify rejection
+alongside valid regrading, stale version, role/scope denial and audit event
+counts. Remains PARTIAL: CI and mobile/keyboard/legacy UI acceptance.
+## 2026-10-14 Faculty discussion reply moderation history — PARTIAL
+The exact-Section Faculty moderation audit now includes the registered
+`courses.discussion.replied` event and a strict REPLY filter, alongside pin
+changes and deletions. Pagination remains capped, and history only renders
+sanitized action labels, event time and actor-presence indicators: never reply
+body, archived deleted text, or learner contact. The mobile read page exposes
+a Faculty replies filter, with no new file or external-send features.
+Pure model/unit and own-Section disposable PG test cover real audited reply,
+wrong-role and foreign-scope/forged selector denial. As a GET read, no stale
+write token applies; the underlying Faculty POST retains its parent token.
+PARTIAL until test gates and authenticated responsive/legacy validation.
+## 2026-10-14 Work Mode merge verification — PARTIAL
+Merged current main without conflicts, preserving existing DONE rows. Repaired
+both Course and aggregate Quiz review call sites to pass the persisted quiz
+updatedAt token required by the publication command; removed an out-of-scope
+grading status setter from the submissions loader. npm ci, TypeScript and
+changed-file ESLint executed successfully; the complete unit suite passed (505 files, 2,002 tests). Browser/mobile and PostgreSQL acceptance remain
+open. Disposable PostgreSQL binaries are available, but this sandbox maps only
+UID 0: chown to a non-root user fails and unshare UID mapping is denied;
+PostgreSQL refuses root. No database test is claimed as executed.
+## 2026-10-14 Faculty assessment deadline authoring in IST — PARTIAL
+Assignment and Quiz draft controls now read and save explicit IST wall times,
+including the aggregate edit drawer and Blueprint authoring form. Assignment
+EDIT uses the same strict conversion as CREATE; impossible calendar dates
+are rejected rather than normalized or silently clearing the deadline.
+Pure tests exercise leap days, midnight rollover and device-independent
+conversion. The own-Section PostgreSQL assignment fixture now checks persisted
+CREATE/EDIT deadlines alongside existing stale, foreign-scope and role denial.
+Existing publication guards, version checks and immutable audit are unchanged.
+Remaining: PostgreSQL execution (sandbox UID restriction), browser/mobile and
+legacy-oracle deadline acceptance; no DONE promotion.
+## 2026-10-14 Faculty CSV contact fallback and roster cap — PARTIAL
+Assignment/Quiz report CSV no longer uses email as a missing-name fallback.
+Roster CSV now exports names and roll numbers only, omits phone/email and
+membership identifiers, caps at 500 learners with an explicit omission notice,
+and neutralizes invisible-prefix formulas using the shared serializer.
+The download control labels its exported fields. Pure regression tests cover
+missing names, privacy, UTF-8, quoting, formulas and cap notice. The own-Section
+PostgreSQL CSV fixture now tests actual persisted learners with no display name
+alongside existing role/foreign-selector denials. GET-only; no stale token.
+Remaining: database execution, browser downloads and legacy acceptance.
+## 2026-10-14 Faculty publish only the saved grade — PARTIAL
+The grading drawer blocks publication while its score or feedback differs
+from the persisted grade, explains the required Save step, and rejects empty
+scores instead of interpreting them as zero. Grade cards rebase on the returned
+version so explicit refresh/updates show the actual persisted score/feedback.
+A pure Zod-backed model covers deliberate zero, invalid scores, unsaved feedback,
+ungraded and published states. The existing fresh-Section grading PostgreSQL
+fixture checks the editor against actual persisted grades while retaining
+success, foreign/role/stale and audit assertions. Existing writers unchanged.
+Remaining: database execution and browser/mobile/legacy grading acceptance.
+## 2026-10-14 Faculty attendance correction preview — PARTIAL
+The attendance editor now confirms first marks with present/absent counts and
+corrections with the actual counts moving to absent/present. The preview never
+contains learner identifiers. Unchanged corrections are disabled and rejected
+before requesting a mutation; the existing bounded correction-reason policy
+is reused in the UI. Same-origin, window, current roster, markedAt token and
+transactional immutable audit remain in the existing server writer.
+Pure tests cover count deltas, duplicate/reordered sets, no-op and invalid
+rosters. The fresh-Section PostgreSQL correction fixture derives the preview
+from its persisted absence while retaining stale, foreign/role and audit tests.
+Remaining: PostgreSQL execution and mobile/keyboard/legacy correction acceptance.
+## 2026-10-14 Faculty generic Assignment edit bypass closed — PARTIAL
+The existing partial Assignment PATCH now forwards authorized Faculty edits
+to the same published-state guarded, confirmed, versioned and audited command
+as the dedicated editor. Admin behavior is preserved. Omitted fields retain
+persisted values; explicit deadline clearing remains supported; sequence
+changes use the separate lesson-order workflow. Both Faculty drawer call sites
+carry the actual persisted updatedAt token and require edit confirmation.
+Pure adapter tests and the fresh Faculty Section PostgreSQL fixture cover
+successful generic edit, missing/stale tokens, wrong/foreign-role denials and
+the additional immutable update audit. Remaining: database/browser acceptance
+and generic Quiz/assessment lifecycle bypass review; no DONE promotion.
+## 2026-10-14 Faculty generic Quiz edit bypass closed — PARTIAL
+Faculty metadata/question PATCH now forwards to the confirmed, versioned,
+publication/attempt guarded command and immutable audit. Metadata-only edits
+preserve persisted question IDs, choices and total points; only explicitly
+provided valid questions replace the bank. CREATE still requires questions.
+The question drawer captures the loaded draft token, refuses missing/currently
+published drafts and confirms replacement before PATCH. The metadata drawer
+already sends its persisted token. Admin behavior stays on its prior writer.
+Pure adapter tests and own-Section PostgreSQL assertions cover missing/stale
+version, publication, role/foreign denial, preserved question IDs and update
+audit; affected prior Quiz PG tests now supply the client token.
+Remaining: PostgreSQL execution, responsive browser/legacy builder acceptance,
+and generic lifecycle writer review. No DONE promotion.
+## 2026-10-14 Faculty generic assessment lifecycle bypass closed — PARTIAL
+Faculty calls to the older Assignment/Quiz transition endpoints now forward
+to the same confirmed, version-checked and audited lifecycle commands. Missing
+client versions cannot publish, close or archive. Admin transitions retain
+prior behavior. Blueprint controls use the existing guarded lifecycle UI;
+the Edit drawer's Delete action carries the persisted version and confirmation.
+Pure boundary tests cover required tokens/confirmation. Fresh Section PG
+fixtures test successful legacy-route publication, stale/missing-version and
+scope/role denial with audit; older Faculty PG fixtures now read actual
+persisted assessment versions using a test-only helper. No cleanup changes.
+Remaining: PostgreSQL execution and browser/legacy lifecycle acceptance.
