@@ -154,6 +154,8 @@ export function FacultyAssessmentEditor({
           },
           body: JSON.stringify({
             action: "ARCHIVE",
+            expectedUpdatedAt: new Date(assessment.updatedAt).toISOString(),
+            confirmed: true,
           }),
         },
       );

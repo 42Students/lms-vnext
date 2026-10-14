@@ -68,3 +68,20 @@ describe("Faculty/Mentor authoring and registered read boundaries",()=>{
   expect(taskFeedbackStatusLabel("APPROVED")).toBe("Approved");
  });
 });
+
+describe("Faculty legacy assessment lifecycle forwarding boundaries", () => {
+ it("rejects unconfirmed or unversioned publish/archive/close commands", () => {
+  for (const action of ["PUBLISH","ARCHIVE"] as const) {
+   const command={action,assignmentId:id,expectedUpdatedAt:"2026-10-14T10:00:00Z",confirmed:true};
+   expect(facultyAssignmentCommandSchema.safeParse(command).success).toBe(true);
+   expect(facultyAssignmentCommandSchema.safeParse({...command,expectedUpdatedAt:undefined}).success).toBe(false);
+   expect(facultyAssignmentCommandSchema.safeParse({...command,confirmed:undefined}).success).toBe(false);
+  }
+  for (const action of ["PUBLISH","CLOSE","ARCHIVE"] as const) {
+   const command={action,quizId:id,expectedUpdatedAt:"2026-10-14T10:00:00Z",confirmed:true};
+   expect(facultyQuizCommandSchema.safeParse(command).success).toBe(true);
+   expect(facultyQuizCommandSchema.safeParse({...command,expectedUpdatedAt:undefined}).success).toBe(false);
+   expect(facultyQuizCommandSchema.safeParse({...command,confirmed:false}).success).toBe(false);
+  }
+ });
+});

@@ -1,3 +1,4 @@
+import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
@@ -216,8 +217,8 @@ async function fixture() {
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}],
     }],
   });
-  await transitionCourseAssignment(faculty,assignment.id,{action:"PUBLISH"});
-  await transitionCourseQuiz(faculty,quiz.id,{action:"PUBLISH"});
+  await transitionCourseAssignment(faculty,assignment.id,{...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id), action:"PUBLISH"});
+  await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"PUBLISH"});
   return {delivery,section,assignment,quiz};
 }
 async function seedFacultyOnly() {
@@ -306,10 +307,11 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     })).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
     await expect(updateCourseQuiz(learner,draft.id,{title:"Wrong role",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
     await expect(updateCourseQuiz({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},draft.id,{title:"Foreign",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
-    const published=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
-      action:"PUBLISH",quizId:draft.id,
-      expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
+    await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"PUBLISH"})).rejects.toBeDefined();
+    const published=await transitionCourseQuiz(facultyOnly,draft.id,{
+      action:"PUBLISH",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
     });
+    await expect(transitionCourseQuiz(facultyOnly,draft.id,{action:"CLOSE",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
     await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     expect(published.status).toBe("PUBLISHED");
     const events=await pool.query<{event_type:string}>(`
@@ -366,6 +368,15 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await expect(updateCourseAssignment({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},created.id,{
       title:"Foreign drawer",expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true,
     })).rejects.toBeDefined();
+    await expect(transitionCourseAssignment(facultyOnly,created.id,{action:"PUBLISH"})).rejects.toBeDefined();
+    const lifecycleToken={expectedUpdatedAt:throughDrawer.updatedAt.toISOString(),confirmed:true as const};
+    await expect(transitionCourseAssignment(learner,created.id,{action:"PUBLISH",...lifecycleToken})).rejects.toBeDefined();
+    await expect(transitionCourseAssignment({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},created.id,{action:"PUBLISH",...lifecycleToken})).rejects.toBeDefined();
+    const released=await transitionCourseAssignment(facultyOnly,created.id,{action:"PUBLISH",...lifecycleToken});
+    expect(released.status).toBe("PUBLISHED");
+    await expect(transitionCourseAssignment(facultyOnly,created.id,{action:"ARCHIVE",...lifecycleToken})).rejects.toMatchObject({code:"FACULTY_ASSIGNMENT_STALE_VERSION"});
+    const lifecycleAudit=await pool.query<{count:number}>("select count(*)::int as count from activity_events where subject_id=$1::text and event_type='courses.assignment.published'",[created.id]);
+    expect(lifecycleAudit.rows[0]?.count).toBe(1);
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type in ('courses.assignment.created','courses.assignment.updated')`,[created.id]);
@@ -504,7 +515,7 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     // A published assignment with submissions must NOT archive through the
     // command. Force the restricted state only in this disposable fixture
     // to verify the grading writer's fail-closed parent-status fence.
-    await expect(transitionCourseAssignment(faculty,assignment.id,{action:"ARCHIVE"}))
+    await expect(transitionCourseAssignment(faculty,assignment.id,{...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id), action:"ARCHIVE"}))
       .rejects.toBeDefined();
     await pool.query("update course_assignments set status='ARCHIVED' where id=$1",
       [assignment.id]);
@@ -567,7 +578,7 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("fences Faculty from old Quiz results endpoint and audits the Admin path",async()=>{
     const {delivery,quiz}=await fixture();
-    await transitionCourseQuiz(faculty,quiz.id,{action:"CLOSE"});
+    await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
     await expect(setCourseQuizResults(facultyOnly,quiz.id,{published:true}))
       .rejects.toMatchObject({code:"QUIZ_RESULTS_ADMIN_ONLY"});
     await expect(setCourseQuizResults(learner,quiz.id,{published:true}))
@@ -592,7 +603,7 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("toggles CLOSED Quiz result visibility with an audited SQL-default token",async()=>{
    const {delivery,quiz}=await fixture();
-   const closed=await transitionCourseQuiz(faculty,quiz.id,{action:"CLOSE"});
+   const closed=await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
    const row=await pool.query<{updated_at:Date}>(
     "update course_quizzes set updated_at=now() where id=$1 returning updated_at",[closed.id]);
    const token={deliveryId:delivery.id,action:"PUBLISH" as const,

@@ -1118,3 +1118,15 @@ version, publication, role/foreign denial, preserved question IDs and update
 audit; affected prior Quiz PG tests now supply the client token.
 Remaining: PostgreSQL execution, responsive browser/legacy builder acceptance,
 and generic lifecycle writer review. No DONE promotion.
+
+## 2026-10-14 Faculty generic assessment lifecycle bypass closed — PARTIAL
+Faculty calls to the older Assignment/Quiz transition endpoints now forward
+to the same confirmed, version-checked and audited lifecycle commands. Missing
+client versions cannot publish, close or archive. Admin transitions retain
+prior behavior. Blueprint controls use the existing guarded lifecycle UI;
+the Edit drawer's Delete action carries the persisted version and confirmation.
+Pure boundary tests cover required tokens/confirmation. Fresh Section PG
+fixtures test successful legacy-route publication, stale/missing-version and
+scope/role denial with audit; older Faculty PG fixtures now read actual
+persisted assessment versions using a test-only helper. No cleanup changes.
+Remaining: PostgreSQL execution and browser/legacy lifecycle acceptance.

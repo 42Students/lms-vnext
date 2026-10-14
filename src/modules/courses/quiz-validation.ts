@@ -206,6 +206,8 @@ export const updateCourseQuizInputSchema =
     );
 
 export const quizTransitionSchema = z.object({
+  expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
+  confirmed: z.literal(true).optional(),
   action: z.enum([
     "PUBLISH",
     "CLOSE",
