@@ -9,7 +9,7 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
-import { filterLearnerBoardTasks } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -260,6 +260,24 @@ describe("L25-005 authorized learner Board release filter",()=>{
       sprintReleaseById:links}).map(task=>task.id)).toEqual([ids.taskA]);
     expect(filterLearnerBoardTasks(workspace.tasks,"",{releaseId:randomUUID(),
       sprintReleaseById:links})).toEqual([]);
+    for(const denied of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(denied,ids.project)).rejects.toBeDefined();
+  });
+});
+
+describe("L25-013 source-backed empty Board on own learner project",()=>{
+  it("distinguishes no tasks and successful empty filter on authorized workspace read",async()=>{
+    const empty=await getProjectInstanceWorkspace(context,ids.project);
+    expect(learnerBoardEmptyState(empty.tasks.length,empty.tasks.length)).toBe("NO_TASKS");
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'empty-release','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'empty-sprint','Sprint',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence) values($1,$2,$3,'empty-task','Persisted Task',0)",[ids.taskA,ids.project,ids.sprint]);
+    const populated=await getProjectInstanceWorkspace(context,ids.project);
+    expect(learnerBoardEmptyState(populated.tasks.length,
+      filterLearnerBoardTasks(populated.tasks,"nonexistent").length)).toBe("FILTERED_EMPTY");
     for(const denied of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},

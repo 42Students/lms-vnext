@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
 export function LearnerProjectBoardSearch({
   projectId, search, priority, sprintId, sprints, releaseId, releases, shown, total,
 }: {projectId:string;search:string;priority:string;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
+  const emptyState=learnerBoardEmptyState(total,shown);
   return (
     <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
@@ -48,7 +50,13 @@ export function LearnerProjectBoardSearch({
       <p className="mt-3 text-sm text-muted-foreground" role="status">
         {shown} of {total} authorized tasks match
       </p>
-      {total > 0 && shown === 0 ? <p className="mt-2 text-sm text-body">No tasks match this search. Clear to see every task.</p> : null}
+      {emptyState === "NO_TASKS" ? (
+        <p className="mt-2 text-sm text-body">No tasks have been assigned to this Project yet.</p>
+      ) : emptyState === "FILTERED_EMPTY" ? (
+        <p className="mt-2 text-sm text-body">
+          No tasks match these filters. Clear them to return to the full Board.
+        </p>
+      ) : null}
     </section>
   );
 }
