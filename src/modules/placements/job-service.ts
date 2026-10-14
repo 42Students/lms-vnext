@@ -1,5 +1,6 @@
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -138,6 +139,10 @@ export async function createPlacementJob(
   rawInput: CreatePlacementJobInput,
 ) {
   const input = createPlacementJobInputSchema.parse(rawInput);
+  if (!can(context, "placements.manage", { collegeId: input.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
   await loadActiveRelationship(
     input.collegeId,
@@ -226,6 +231,21 @@ export async function createPlacementJob(
           job.maximumAnnualCtcInr,
         isPrimary: true,
       });
+
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_CREATED,
+      collegeId: input.collegeId,
+      subjectType: "placement_job",
+      subjectId: job.id,
+      subjectLabel: job.title,
+      summary: "Placement drive draft created",
+      metadata: {
+        seasonId: season.id,
+        companyRelationshipId: input.companyRelationshipId,
+        draftStatus: job.status,
+      },
+      groupKey: "placement-jobs:" + input.collegeId,
+    });
 
     return job;
   });
