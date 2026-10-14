@@ -36,18 +36,23 @@ export const learnerProjectActivityFilterSchema = z.object({
   category: learnerProjectActivityCategorySchema.default("ALL"),
   from: z.iso.date().optional(),
   to: z.iso.date().optional(),
-}).strict().refine(value => !value.from || !value.to || value.from <= value.to, {
+  beforeTime: z.iso.datetime().optional(),
+  beforeId: z.string().uuid().optional(),
+}).strict().refine(value => Boolean(value.beforeTime) === Boolean(value.beforeId), {
+  message: "Activity cursor requires both timestamp and event ID", path: ["beforeId"],
+}).refine(value => !value.from || !value.to || value.from <= value.to, {
   message: "Start date must be on or before end date", path: ["to"],
 });
 export type LearnerProjectActivityFilters = z.infer<typeof learnerProjectActivityFilterSchema>;
 
 export function parseLearnerProjectActivityFilters(input: {
-  category?: unknown; from?: unknown; to?: unknown;
+  category?: unknown; from?: unknown; to?: unknown; beforeTime?: unknown; beforeId?: unknown;
 }) {
   return learnerProjectActivityFilterSchema.safeParse({
     category: input.category === "" ? undefined : input.category,
     from: input.from === "" ? undefined : input.from,
     to: input.to === "" ? undefined : input.to,
+    beforeTime: input.beforeTime, beforeId: input.beforeId,
   });
 }
 
@@ -69,4 +74,19 @@ export function learnerProjectActivityPrefixes(category: LearnerProjectActivityC
     case "PROJECT": return ["projects.project.", "projects.readiness."];
     default: return [];
   }
+}
+
+export function learnerProjectActivityPageHref(
+  projectId: string, filters: LearnerProjectActivityFilters,
+  cursor?: { time: string; id: string },
+) {
+  const next = learnerProjectActivityFilterSchema.parse({ ...filters,
+    beforeTime: cursor?.time, beforeId: cursor?.id });
+  const params = new URLSearchParams({ tab: "activity" });
+  if (next.category !== "ALL") params.set("activityCategory", next.category);
+  if (next.from) params.set("activityFrom", next.from);
+  if (next.to) params.set("activityTo", next.to);
+  if (next.beforeTime) params.set("activityBeforeTime", next.beforeTime);
+  if (next.beforeId) params.set("activityBeforeId", next.beforeId);
+  return "/learn/projects/" + encodeURIComponent(projectId) + "?" + params.toString();
 }

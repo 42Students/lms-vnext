@@ -7,7 +7,7 @@ describe("HR Today inbox action",()=>{
    .toEqual({label:"Unread notifications",value:3,
     url:"/hr/messages?collegeId="+collegeId+"&unreadOnly=true"});
   expect(hrTodayUnreadAction({status:"READY",unread:100,truncated:true,collegeId})?.label)
-   .toBe("Unread notifications (first 100)");
+   .toBe("Unread notifications");
   expect(hrTodayUnreadAction({status:"NO_ACCESS",unread:100,truncated:false,collegeId})).toBeNull();
  });
 });

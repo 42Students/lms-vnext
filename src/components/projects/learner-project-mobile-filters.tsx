@@ -50,6 +50,14 @@ export function LearnerProjectMobileFilters({
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Work attention
+            <select name="work" defaultValue={query.work ?? ""}
+              className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground">
+              <option value="">All work</option>
+              <option value="BLOCKED">Has blocked tasks</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
             Results per page
             <select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
               className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground">
