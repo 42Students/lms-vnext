@@ -4,9 +4,11 @@ import {Pool} from "pg";
 import type {RequestContext} from "@/modules/identity/context";
 import {closeDatabaseConnection} from "@/db/client";
 import {listOwnNotifications} from "@/modules/activity/notification-service";
+import {getOwnLearnerApplicationHistory} from "@/modules/placements/learner-application-detail-service";
 import {requirePersistedLearnerNotificationMembership}
   from "@/modules/activity/learner-notification-membership-service";
 import {learnerNotificationPlacementAction} from "@/modules/activity/learner-notification-placement-action-model";
+import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {newLearnerAssessmentBrowseFixture,seedLearnerAssessmentBrowseFixture,
   cleanupLearnerAssessmentBrowseFixture,type LearnerAssessmentBrowseFixture}
@@ -47,6 +49,24 @@ describe("own learner persisted placement notification destination",()=>{
     expect(learnerNotificationPlacementAction(item?.notification.actionHref))
       .toEqual({href:"/learn/my-placements/applications?applicationId="+f.applicationId,
         label:"View your application"});
+  },30000);
+  it("resolves exact application history through the persisted own learner scope",async()=>{
+    const f=owned!,ctx=f.drive.learner.context;
+    const app=await getOwnLearnerApplicationHistory(ctx,f.applicationId);
+    expect(app?.applicationId).toBe(f.applicationId);
+    const link=learnerNotificationPlacementAction(
+      "/learn/my-placements/applications/"+f.applicationId+"/history?collegeId=forged");
+    expect(link?.href).toBe("/learn/my-placements/applications/"+f.applicationId+"/history");
+    const foreign:RequestContext={...ctx,membership:{...ctx.membership!,collegeId:SEED_IDS.collegeB}};
+    await expect(getOwnLearnerApplicationHistory(foreign,f.applicationId)).rejects.toBeDefined();
+  },30000);
+  it("summarizes actual owned mobile inbox filters without counting announcements as private unread",async()=>{
+    const ctx=owned!.drive.learner.context;
+    const membership=await requirePersistedLearnerNotificationMembership(ctx);
+    const rows=await listOwnNotifications(ctx,{collegeId:membership.collegeId});
+    const ownedNotices=rows.filter(x=>x.notification.id===notificationId);
+    expect(learnerNotificationMobileFilterSummary({category:"job",unread:"unread",q:"application"},ownedNotices.length))
+      .toContain("1 matching notification");
   },30000);
   it("denies forged college, suspended and wrong-role notification reads",async()=>{
     const ctx=owned!.drive.learner.context;

@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
 import { facultyAttendanceConfirmation, facultyCorrectionReasonValid } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
 import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary, facultyAttendanceThresholdBreakdown } from "@/modules/attendance/faculty-learner-attendance-detail";
@@ -97,16 +98,16 @@ function learnerName(learner: Learner) {
 
 function dateTime(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "Asia/Kolkata",
   }).format(new Date(value));
 }
 
 function sessionTime(value: Session) {
   return `${dateTime(value.startsAt)} – ${new Intl.DateTimeFormat(
     "en-IN",
-    { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" },
+    { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" },
   ).format(new Date(value.endsAt))}`;
 }
 
@@ -389,17 +390,8 @@ export function FacultyAttendanceWorkspace({
     setScheduleError(null);
     setScheduling(true);
     try {
-      const startDate = new Date(startsAt);
-      const endDate = new Date(endsAt);
-      if (
-        !Number.isFinite(startDate.getTime()) ||
-        !Number.isFinite(endDate.getTime())
-      ) {
-        setScheduleError(
-          "Choose valid start and end times.",
-        );
-        return;
-      }
+      const timing = facultyScheduleInstants(startsAt, endsAt);
+      if (!window.confirm("Confirm attendance session from " + startsAt.replace("T", " ") + " to " + endsAt.replace("T", " ") + " IST?")) return;
       const response = await fetch(
         "/api/attendance/faculty",
         {
@@ -410,8 +402,7 @@ export function FacultyAttendanceWorkspace({
           body: JSON.stringify({
             deliveryId: workspace.course.deliveryId,
             title: scheduleTitle,
-            startsAt: startDate.toISOString(),
-            endsAt: endDate.toISOString(),
+            ...timing,
             location: location || null,
           }),
         },
@@ -431,10 +422,9 @@ export function FacultyAttendanceWorkspace({
       setEndsAt("");
       setLocation("");
       router.refresh();
-    } catch {
-      setScheduleError(
-        "Could not schedule this class. Check your connection and try again.",
-      );
+    } catch (caught) {
+      setScheduleError(caught instanceof Error ? caught.message :
+        "Could not schedule this class. Check your connection and try again.");
     } finally {
       setScheduling(false);
     }
@@ -1154,7 +1144,7 @@ export function FacultyAttendanceWorkspace({
             />
           </label>
           <label className="block text-sm font-semibold text-body">
-            Starts at
+            Starts at (IST)
             <Input
               className="mt-1.5"
               type="datetime-local"
@@ -1166,7 +1156,7 @@ export function FacultyAttendanceWorkspace({
             />
           </label>
           <label className="block text-sm font-semibold text-body">
-            Ends at
+            Ends at (IST)
             <Input
               className="mt-1.5"
               type="datetime-local"

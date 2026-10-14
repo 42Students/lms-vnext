@@ -111,6 +111,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.discussion.pin_changed",
   COURSES_DISCUSSION_DELETED:
     "courses.discussion.deleted",
+  PROJECTS_TEMPLATE_METADATA_UPDATED: "projects.template.metadata_updated",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
