@@ -232,3 +232,19 @@ describe("L25-002 learner priority filter from own persisted task rows",()=>{
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(denied,ids.project)).rejects.toBeDefined();
   });
 });
+
+describe("L25-003 Board sprint filter from persisted assigned project",()=>{
+  it("uses learner-owned sprint ids only with task state and does not leak another sprint",async()=>{
+    await pool.query("insert into project_releases(id,project_id,template_key,title,sequence) values($1,$2,'sprint-release','Release',0)",[ids.release,ids.project]);
+    await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'sprint-a','Sprint A',0)",[ids.sprint,ids.project,ids.release]);
+    await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,status) values($1,$2,$3,'sprint-task','Task',0,'TODO')",[ids.taskA,ids.project,ids.sprint]);
+    const workspace=await getProjectInstanceWorkspace(context,ids.project);
+    expect(filterLearnerBoardTasks(workspace.tasks,"",{sprintId:ids.sprint}).map(task=>task.id)).toEqual([ids.taskA]);
+    expect(filterLearnerBoardTasks(workspace.tasks,"",{sprintId:randomUUID()})).toEqual([]);
+    for(const actor of [
+      {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
+      {...context,membership:{...context.membership!,status:"SUSPENDED"}},
+      {...context,membership:{...context.membership!,roles:["FACULTY"]}},
+    ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
+  });
+});

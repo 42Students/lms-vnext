@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
-import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardSprintSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 
@@ -12,11 +12,11 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; sprintId?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
-  const { tab, taskSearch, priority: priorityInput } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, sprintId: sprintInput } = await searchParams;
   const activeSection =
     tab === "board"
       ? "tasks"
@@ -46,8 +46,9 @@ export default async function LearnerProjectPage({
 
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";
+  const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
   const boardTasks = activeSection === "tasks"
-    ? filterLearnerBoardTasks(workspace.tasks, search, {priority})
+    ? filterLearnerBoardTasks(workspace.tasks, search, {priority,sprintId})
     : workspace.tasks;
   const shownWorkspace = activeSection === "tasks"
     ? { ...workspace, tasks: boardTasks }
@@ -57,7 +58,7 @@ export default async function LearnerProjectPage({
     <div className="space-y-6">
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "tasks" ? (
-        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority}
+        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} sprintId={sprintId} sprints={workspace.sprints}
           shown={boardTasks.length} total={workspace.tasks.length} />
       ) : null}
       <ProjectWorkspace
