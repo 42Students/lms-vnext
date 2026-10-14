@@ -73,7 +73,8 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               <select name="pathStatus" defaultValue={data.query.pathStatus}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All paths</option>
-                <option value="ACTIVE">Active paths</option><option value="ARCHIVED">Archived paths</option>
+                <option value="DRAFT">Draft paths</option><option value="PUBLISHED">Published paths</option>
+                <option value="ARCHIVED">Archived paths</option>
               </select>
             </label>
           ) : null}

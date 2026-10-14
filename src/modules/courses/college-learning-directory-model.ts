@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {LEARNING_PATH_STATUSES} from "@/modules/courses/constants";
 
 export const COLLEGE_LEARNING_PAGE_SIZE = 25;
 export const collegeLearningKindSchema = z.enum(["LESSONS", "PROGRESS"]);
@@ -15,7 +16,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   courseCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
-  pathStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  pathStatus: z.enum(["ALL",...LEARNING_PATH_STATUSES]).default("ALL"),
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({

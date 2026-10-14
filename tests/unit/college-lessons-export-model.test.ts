@@ -11,6 +11,7 @@ describe("college lessons CSV",()=>{
   expect(lessonsCsvHref({...lessonsCsvSchema.parse({programCode:"PROG-1"})})).toContain("programCode=PROG-1");
   expect(lessonsCsvSchema.safeParse({offeringStatus:"CLOSED"}).success).toBe(false);
   expect(lessonsCsvSchema.safeParse({pathStatus:"CLOSED"}).success).toBe(false);
+  expect(lessonsCsvSchema.parse({pathStatus:"DRAFT"}).pathStatus).toBe("DRAFT");
   expect(lessonsCsvHref({...lessonsCsvSchema.parse({pathStatus:"ARCHIVED"})})).toContain("pathStatus=ARCHIVED");
   expect(exportParams(new URLSearchParams("q=a&q=b"))).toBeNull();
   expect(lessonsCsvHref({q:"A & B",status:"ACTIVE",offeringStatus:"ARCHIVED"}))
