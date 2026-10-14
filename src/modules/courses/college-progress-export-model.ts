@@ -1,11 +1,12 @@
-import {collegeLearningQuerySchema} from "./college-learning-directory-model";
+import {collegeProgressQuerySchema} from "./college-learning-directory-model";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const PROGRESS_EXPORT_CAP=1000;
-export const collegeProgressCsvSchema=collegeLearningQuerySchema.omit({page:true});
+export const collegeProgressCsvSchema=collegeProgressQuerySchema.omit({page:true});
 export {exportParams};
-export function collegeProgressCsvHref(query:{q:string;status:"ALL"|"ACTIVE"|"ARCHIVED"}){
+export function collegeProgressCsvHref(query:{q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string}){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
+ if(query.courseCode)p.set("courseCode",query.courseCode);
  if(query.status!=="ACTIVE")p.set("status",query.status);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
