@@ -30,7 +30,7 @@ describe.skipIf(!enabled)("College notices: registered own-recipient PostgreSQL"
     if (!pool) throw Error("Disposable PostgreSQL required");
     for (const [eventId, collegeId] of [[ids.eventA, SEED_IDS.collegeA], [ids.eventB, SEED_IDS.collegeB]]) {
       await pool.query("INSERT INTO activity_events(id,organization_id,college_id,actor_user_id,module,event_type,importance,subject_type,subject_id,summary) " +
-        "VALUES($1,$2,$3,$4,'ACADEMICS','academics.program.updated','NORMAL','college_notice_witness',$1::text,'Isolated notification')",
+        "VALUES($1::uuid,$2,$3,$4,'ACADEMICS','academics.program.updated','NORMAL','college_notice_witness',$1::text,'Isolated notification')",
         [eventId, SEED_IDS.organization, collegeId, SEED_IDS.collegeAdminUser]);
     }
     // A foreign event tied to the same recipient is deliberate negative test data.
