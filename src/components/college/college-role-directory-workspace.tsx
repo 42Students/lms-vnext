@@ -49,6 +49,7 @@ export async function CollegeRoleDirectoryWorkspace({
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
     teaching: first(params.teaching),
+    sort: first(params.sort),
     page: first(params.page),
   };
   const parsed = collegeRoleDirectoryQuerySchema.safeParse(
@@ -161,6 +162,15 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="NONE">No active teaching</option>
             </select>
           </label> : null}
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Order
+            <select name="sort" defaultValue={result.filter.sort}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="NAME">Name A–Z</option>
+              <option value="NEWEST">Newest membership</option>
+              <option value="OLDEST">Oldest membership</option>
+            </select>
+          </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Apply
           </button>

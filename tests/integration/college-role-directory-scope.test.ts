@@ -153,6 +153,19 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(collegeAdmin, "LEARNER", {teaching:"ASSIGNED"}))
       .rejects.toThrow("LEARNER_TEACHING_FILTER_UNSUPPORTED");
   });
+  it("sorts both role directories at SQL level before pagination with stable membership ID tie breaks",async()=>{
+    for(const kind of ["LEARNER","FACULTY"] as const){
+      const newest=await listCollegeRoleDirectory(collegeAdmin,kind,{sort:"NEWEST"});
+      const oldest=await listCollegeRoleDirectory(collegeAdmin,kind,{sort:"OLDEST"});
+      for(const [rows,reverse] of [[newest.items,true],[oldest.items,false]] as const)
+        for(let i=1;i<rows.length;i++)
+          expect(reverse ? rows[i-1].joinedAt.getTime() >= rows[i].joinedAt.getTime() :
+            rows[i-1].joinedAt.getTime() <= rows[i].joinedAt.getTime()).toBe(true);
+      expect(newest.items.every(x=>x.membershipId!==SEED_IDS.facultyCollegeBMembership || kind==="FACULTY")).toBe(true);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB,kind,{sort:"NEWEST"}))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {
