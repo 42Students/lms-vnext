@@ -1395,3 +1395,6 @@ Removing a correct option from a single-choice quiz draft now transfers correctn
 
 ## 2026-10-15 Faculty Quiz metadata no-op audit fence — PARTIAL
 A locked, version-checked Faculty Quiz metadata-only EDIT now returns a typed 409 for semantically unchanged values instead of bumping the version or writing a misleading immutable activity event. Comparing due dates uses the same instant across IST/UTC inputs; the client shows a helpful no-change error. Typed pure tests authored; real PG stale-token/audit count and mobile/browser validation remain open.
+
+## 2026-10-15 R4 published Quiz question-bank denial fixture — PARTIAL
+The integration fixture now asserts that replacing the question bank after publication is forbidden, while metadata-only edits remain legal. Existing stale-token, learner-role and wrong-Section expectations remain. Awaiting executed PostgreSQL verification.
