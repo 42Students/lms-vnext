@@ -24,6 +24,7 @@ export default async function CollegeSemesterCoursesPage({
         q: first(raw.q),
         programId: first(raw.programId),
         periodId: first(raw.periodId),
+        type: first(raw.type),
         page: first(raw.page),
       }).filter(([, value]) => value !== undefined && value !== ""),
     ),
@@ -74,6 +75,15 @@ export default async function CollegeSemesterCoursesPage({
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All academic periods</option>
               {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Offering type
+            <select name="type" defaultValue={query.type}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All types</option>
+              <option value="CORE">Core</option>
+              <option value="ELECTIVE">Elective</option>
             </select>
           </label>
           <div className="flex items-end gap-2">

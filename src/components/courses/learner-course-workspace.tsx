@@ -1,6 +1,8 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AssignmentFileOpenControl } from "./assignment-file-open-control";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
@@ -413,6 +415,9 @@ function AssignmentCard({
         ) : null}
       </div>
 
+      {assignment.submissionId && assignment.submissionType === "FILE" ?
+        <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
+          enabled={assignmentFilesRuntimeEnabled()} /> : null}
       {assignment.gradePublished ? (
         <div className="mt-4 rounded-lg bg-primary-subtle px-3 py-2 text-sm text-body">
           Published grade:{" "}
@@ -438,6 +443,7 @@ function AssignmentCard({
 
       {!readOnly && interaction.canSubmit ? (
         <AssignmentSubmissionControl
+          fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}
           deliveryId={deliveryId}
         />

@@ -3,6 +3,7 @@ import {
   collegeContentDuration,
   collegeContentHref,
   collegeContentPageCount,
+  collegeContentScopeLabel,
   collegeContentQuerySchema,
   collegeContentSearchParams,
   collegeContentTypes,
@@ -16,16 +17,18 @@ describe("College Admin content aggregate model", () => {
 
   it("rejects unscoped college overrides and invalid filters", () => {
     expect(collegeContentQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", page: 1,
     });
     expect(collegeContentQuerySchema.parse({ q: "  safety  ", status: "PUBLISHED", page: "2" }))
-      .toEqual({ q: "safety", status: "PUBLISHED", page: 2 });
+      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", page: 2 });
     for (const invalid of [
       { collegeId: "another-college" },
       { status: "CLOSED" },
+      { format: "EXTERNAL_URL" },
       { page: 0 },
       { page: 1001 },
       { q: "a".repeat(101) },
+      { courseCode: "x".repeat(65) },
     ]) {
       expect(collegeContentQuerySchema.safeParse(invalid).success).toBe(false);
     }
@@ -36,17 +39,21 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentQuerySchema.safeParse(
       collegeContentSearchParams({ status: ["DRAFT"] }),
     ).success).toBe(false);
-    const href = collegeContentHref("VIDEO", { q: "a & b", status: "ARCHIVED", page: 2 });
+    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", page: 2 });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/videos");
     expect(url.searchParams.get("q")).toBe("a & b");
+    expect(url.searchParams.get("format")).toBe("YOUTUBE");
+    expect(url.searchParams.get("courseCode")).toBe("CS-101");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(collegeContentHref("RESOURCE", {
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", page: 1,
     })).toBe("/college/resources");
   });
 
   it("renders only observed duration and paginated record counts", () => {
+    expect(collegeContentScopeLabel(null)).toBe("Shared offering");
+    expect(collegeContentScopeLabel("delivery-id")).toBe("Section-specific");
     expect(collegeContentDuration(null)).toBe("Not recorded");
     expect(collegeContentDuration(90)).toBe("1:30");
     expect(collegeContentDuration(3600)).toBe("60:00");

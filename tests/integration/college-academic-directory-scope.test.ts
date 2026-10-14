@@ -147,12 +147,27 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     ]);
     expect(semestersA.items.find((row) => row.id === ids.term)).toMatchObject({
       mappedCourses: 1, totalCredits: 18, termNumber: 1,
+      name: label, programId: ids.program, programName: label,
     });
     expect(batchesA.items.find((row) => row.id === ids.cohort)).toMatchObject({
       currentTermNumber: 1, currentAcademicYearStart: 2026, activeSections: 1,
       activeEnrolledLearners: 0,
+      name: label, code: label, programId: ids.program,
+      programName: label, programCode: label, startPeriodId: ids.period,
     });
+    const [matchedTerm, otherTerm] = await Promise.all([
+      listCollegeSemesters(adminA, { q: label, termNumber: 1 }),
+      listCollegeSemesters(adminA, { q: label, termNumber: 2 }),
+    ]);
+    expect(matchedTerm.items.map((row) => row.id)).toContain(ids.term);
+    expect(otherTerm.items).toEqual([]);
     expect(semestersB.items).toEqual([]);
+    const [year2026, year2027] = await Promise.all([
+      listCollegeBatches(adminA, { q: label, yearStart: 2026 }),
+      listCollegeBatches(adminA, { q: label, yearStart: 2027 }),
+    ]);
+    expect(year2026.items.map((row) => row.id)).toContain(ids.cohort);
+    expect(year2027.items).toEqual([]);
     expect(batchesB.items).toEqual([]);
   });
 
