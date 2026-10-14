@@ -4,7 +4,7 @@ type Row={project:{id:string;title:string;status:string;updatedAt:Date}};
 /** Sort already membership-scoped project rows without changing the visibility set. */
 export function sortLearnerProjectRows<T extends Row>(
   rows:readonly T[],modeInput:unknown,
-  progress:ReadonlyMap<string,{percentage:number}>,
+  progress:ReadonlyMap<string,{percentage:number|null}>,
 ):T[] {
  const mode=sortSchema.parse(modeInput);
  return [...rows].sort((a,b)=>{
