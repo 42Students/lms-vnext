@@ -49,7 +49,7 @@ export async function getMentorRiskReadiness(context:RequestContext,raw:unknown)
       priority:row.priority,
     })),
     meetings:meetings.map(row=>({
-      id:row.id,title:row.title,status:row.status,
+      id:row.id,title:row.title,status:row.status,startsAt:row.startsAt,
     })),
     latestSubmissionStatus:readiness.finalSubmission.latest?.status??null,
     finalApproved:readiness.finalSubmission.approved,

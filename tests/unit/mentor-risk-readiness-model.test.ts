@@ -11,15 +11,19 @@ describe("Mentor recorded risk and readiness",()=>{
       sprints:[{id:"s",title:"Sprint",status:"ACTIVE"}],
       tasks:[{id:"t1",title:"Blocked",status:"BLOCKED",priority:"HIGH",sprintId:"s"},
         {id:"t2",title:"Review",status:"IN_REVIEW",priority:"LOW",sprintId:"s"}],
-      meetings:[{id:"m",title:"Standup",status:"REQUESTED"}],
+      meetings:[{id:"m",title:"Standup",status:"REQUESTED",
+        startsAt:new Date("2026-10-01T08:00:00Z")},
+        {id:"m2",title:"Unclosed review",status:"SCHEDULED",
+        startsAt:new Date("2026-10-01T08:00:00Z")}],
       latestSubmissionStatus:"SUBMITTED",finalApproved:false,evaluationRecorded:false,
-    },query);
-    expect(data).toMatchObject({riskCount:4,counts:{
-      blockedTasks:1,reviewTasks:1,pendingMeetings:1,incompleteTasks:2,
+    },query,new Date("2026-10-14T10:00:00Z"));
+    expect(data).toMatchObject({riskCount:5,counts:{
+      blockedTasks:1,reviewTasks:1,pendingMeetings:1,scheduledPastDay:1,incompleteTasks:2,
     }});
     expect(data.items).toEqual(expect.arrayContaining([
       expect.objectContaining({key:"blocked:t1",href:expect.stringContaining("mentor-task-t1")}),
       expect.objectContaining({key:"final-review",category:"RISK"}),
+      expect.objectContaining({key:"scheduled-past:m2",category:"RISK"}),
       expect.objectContaining({key:"release:r",category:"READINESS"}),
     ]));
     expect(mentorRiskReadinessHref({...query,focus:"RISK",page:2})).toContain("focus=RISK");

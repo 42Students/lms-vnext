@@ -704,3 +704,17 @@ suite and in-test-project PostgreSQL fixture cover positive review, forged IDs,
 wrong role, disabled user and foreign college. Read-only: no new review mutation
 or optimistic write token. **PARTIAL:** independent PG, TypeScript, lint, browser
 and legacy author/feedback parity verification remain open.
+
+## 2026-10-14 chat-11 L — IST past scheduled meeting readiness evidence (PARTIAL)
+
+Extended the existing exact-project Mentor at-risk/readiness drill-in with
+SCHEDULED meetings whose start was on an earlier IST calendar day and which
+lack a recorded completed/cancelled transition. These are labeled as
+past scheduled/unclosed, **not** proof that the meeting was missed. Existing
+REQUESTED meetings remain separately actionable regardless of their date;
+ARCHIVED/COMPLETED projects do not invent new active risks. Pure-model tests
+cover IST boundaries; the isolated PostgreSQL fixture now creates a valid
+SCHEDULED row with scheduled_by IDs and meeting_url satisfying
+project_meetings_schedule_shape_ck, plus existing wrong-role/foreign-scope
+denials. Read-only, so stale write token is inapplicable. **PARTIAL:** actual
+PostgreSQL, TypeScript, lint, browser and legacy risk semantics remain open.
