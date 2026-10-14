@@ -32,3 +32,12 @@ export function resolveFacultyAttendanceSession(
   }
   return sessions[0]?.id ?? "";
 }
+
+/** An absent or invalid Calendar deep link must NOT activate Mark mode.
+ * Normal Attendance navigation must open the monthly Report. */
+export function resolveFacultyAttendanceDeepLink(
+  sessions: readonly { id: string }[], requested: unknown,
+): string | null {
+  if (typeof requested !== "string") return null;
+  return sessions.some((session) => session.id === requested) ? requested : null;
+}
