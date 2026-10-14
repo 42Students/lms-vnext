@@ -173,6 +173,9 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+
+**Guarded batch removal PARTIAL (2026-10-14):** The Batches directory now offers an explicitly confirmed Remove action only for PLANNED cohorts. It archives the cohort instead of hard-deleting registered progression/state history; the transaction locks the college-owned cohort, applies millisecond-normalized optimistic updatedAt token, blocks any section, learner enrollment, course offering, progression event or advanced progression state, and appends immutable activity audit. Strict same-origin DELETE, unit model and gated disposable-PostgreSQL success/foreign/wrong-role/stale/dependency fixtures are authored. Remediation for retired batch codes (unique codes remain reserved), full legacy hard-delete policy and browser/real PG acceptance remain open; not DONE.
+
 **Legacy:** `/college-admin/batches`
 
 **Write-side PARTIAL (2026-10-14):** `/college/batches` adds a validated create form and confirmed edit dialog (name, code, expected end period) for PLANNED cohorts via dedicated `/api/college/batches` endpoints. Registered program, period, cohort and dependency rows are enforced under College Admin college scope; parent/subject locks, case-insensitive duplicate-name/code checks, same-college period date windows, child and progression-history guards, transactional audit and explicit cross-college denial are implemented. Create/edit do **not** allow start-period/program changes, bypass archived parents, mutate an existing progression state, or imply promotion. Legacy delete, student/class modal and move, academic-year recalculate, exact status/edit parity, browser/PG execution and full acceptance remain open.
