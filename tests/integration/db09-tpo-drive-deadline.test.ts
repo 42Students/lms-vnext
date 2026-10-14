@@ -50,7 +50,9 @@ describe.skipIf(!enabled)("TPO deadline extension isolated PostgreSQL",()=>{
   const jobId=await fixture(),state=await getTpoDriveDeadlineState(tpo,jobId);
   if(!state.applicationDeadline)throw Error("Fixture missing deadline");
   const later=new Date(new Date(state.applicationDeadline).getTime()+2*86400000).toISOString();
-  const result=await extendTpoDriveDeadline(tpo,jobId,payload(state.updatedAt,later));
+  const offsetToken=new Date(new Date(state.updatedAt).getTime()+19800000)
+   .toISOString().replace("Z","+05:30");
+  const result=await extendTpoDriveDeadline(tpo,jobId,payload(offsetToken,later));
   expect(result.applicationDeadline).toBe(later);
   await expect(extendTpoDriveDeadline(tpo,jobId,payload(state.updatedAt,later)))
    .rejects.toMatchObject({code:"PLACEMENT_JOB_STALE"});

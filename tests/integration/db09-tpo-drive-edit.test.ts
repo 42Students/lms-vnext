@@ -57,7 +57,10 @@ describe.skipIf(!enabled)("TPO draft edit isolated PostgreSQL",()=>{
  it("edits a SQL-default-microsecond job and audits; rejects stale, foreign and wrong-role",async()=>{
   if(!pool)throw Error("PG required");
   const id=await fixture(),state=await getTpoDriveEditState(tpo,id);
-  const saved=await editTpoDrive(tpo,id,payload(state.updatedAt));
+  // The public boundary accepts offset ISO tokens; equivalent instants must pass CAS.
+  const offsetToken=new Date(new Date(state.updatedAt).getTime()+19800000)
+   .toISOString().replace("Z","+05:30");
+  const saved=await editTpoDrive(tpo,id,payload(offsetToken));
   expect(saved.updatedAt).not.toBe(state.updatedAt);
   const primary=await pool.query<{openings:number}>("SELECT openings FROM placement_job_role_options WHERE id=$1",[ids.role]);
   expect(primary.rows[0]?.openings).toBe(3);

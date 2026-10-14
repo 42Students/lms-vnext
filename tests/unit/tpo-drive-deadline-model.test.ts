@@ -14,6 +14,8 @@ describe("TPO deadline extension policy",()=>{
   const raw={confirmed:true,expectedUpdatedAt:"2026-10-14T14:00:00.000Z",
    reason:"Employer requested extra time",newDeadlineIso:"2026-10-20T08:00:00.000Z"};
   expect(tpoDriveDeadlineSchema.safeParse(raw).success).toBe(true);
+  expect(tpoDriveDeadlineSchema.parse({...raw,expectedUpdatedAt:"2026-10-14T19:30:00+05:30"})
+   .expectedUpdatedAt).toBe(raw.expectedUpdatedAt);
   expect(tpoDriveDeadlineSchema.safeParse({...raw,confirmed:false}).success).toBe(false);
   expect(tpoDriveDeadlineSchema.safeParse({...raw,collegeId:"foreign"}).success).toBe(false);
  });

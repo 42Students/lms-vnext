@@ -32,7 +32,7 @@ export async function confirmTpoRoundResult(
   const roundId = placementRoundIdSchema.parse(rawRoundId);
   const body = confirmedTpoRoundResultSchema.parse(rawBody);
   const [scope] = await getDb()
-    .select({ roundId: placementJobRounds.id, collegeId: placementJobs.collegeId })
+    .select({ roundId: placementJobRounds.id, collegeId: placementJobs.collegeId, jobStatus: placementJobs.status })
     .from(placementJobRounds)
     .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
     .where(and(
@@ -42,6 +42,7 @@ export async function confirmTpoRoundResult(
     .limit(1);
   if (!scope) throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
   await requirePlacementManageScope(context, scope.collegeId);
+  if (scope.jobStatus !== "PUBLISHED") throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   return stagePlacementRoundResult(
     context, roundId, body.result, body.expectedCurrentResultId,
   );

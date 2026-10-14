@@ -515,7 +515,14 @@ function mergeOne(branch, opts) {
   const merge = git("merge", "--no-commit", "--no-ff", ref);
   if (!merge.ok) {
     const conflicts = gitOut("diff", "--name-only", "--diff-filter=U").split("\n").filter(Boolean);
-    const unresolvable = conflicts.filter((f) => !RESOLVABLE_DOC(f));
+    // Protected paths are never taken from a chat branch: keep main's version.
+    for (const f of conflicts.filter(isProtected)) {
+      git("checkout", "--ours", "--", f);
+      git("add", "--", f);
+      entry.fixes.push(`kept main's version of protected file (${f})`);
+    }
+    const stillConflicted = gitOut("diff", "--name-only", "--diff-filter=U").split("\n").filter(Boolean);
+    const unresolvable = stillConflicted.filter((f) => !RESOLVABLE_DOC(f));
     if (conflicts.length === 0 || unresolvable.length > 0) {
       entry.reason = `merge conflicts: ${(unresolvable.length ? unresolvable : [firstLines(merge.out, 3)]).slice(0, 5).join("\n")}`;
       cleanUp();
