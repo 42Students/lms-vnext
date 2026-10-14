@@ -118,3 +118,28 @@ export function facultyAttendanceMonthSummary(
     learners,
   };
 }
+
+
+/** Advisory attendance risk uses exact mark counts, not rounded display values.
+ * Unknown learners do not become "safe" or "below threshold" by default. */
+export function facultyAttendanceThresholdBreakdown(
+  learners: readonly {
+    membershipId: string;
+    present: number;
+    absent: number;
+  }[],
+  rawThreshold: number,
+) {
+  const threshold = Number.isFinite(rawThreshold) && rawThreshold >= 1 && rawThreshold <= 100
+    ? rawThreshold : 75;
+  const below: string[] = [];
+  const unknown: string[] = [];
+  let meets = 0;
+  for (const row of learners) {
+    const marked = row.present + row.absent;
+    if (marked === 0) unknown.push(row.membershipId);
+    else if (row.present * 100 < threshold * marked) below.push(row.membershipId);
+    else meets += 1;
+  }
+  return { threshold, below, unknown, meets };
+}

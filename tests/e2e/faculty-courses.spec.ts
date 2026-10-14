@@ -134,6 +134,8 @@ test("Faculty Attendance student detail shows a real future session without fabr
   await expect(health).toBeVisible();
   await expect(health).toContainText("Upcoming");
   await expect(health).toContainText("Unmarked and upcoming sessions are excluded");
+  await expect(page.getByRole("region", { name: "Attendance threshold guidance" }))
+    .toContainText("without recorded attendance");
   await expect(health.getByRole("button", { name: "Download PDF" })).toBeVisible();
   await expect(page.getByText("Attendance report")).toBeVisible();
   const learner = page.getByRole("button", { name: /^View attendance details for / });
