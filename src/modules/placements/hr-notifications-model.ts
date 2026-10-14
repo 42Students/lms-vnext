@@ -1,6 +1,7 @@
 import {z} from "zod";
 export const hrNotificationsQuerySchema=z.strictObject({
   collegeId:z.string().uuid().optional(),unreadOnly:z.enum(["true","false"]).default("false"),
+  page:z.coerce.number().int().min(1).max(10000).default(1),
 });
 export const HR_NOTIFICATION_EVENTS=["placements.job.published","placements.job.closed"] as const;
 export type HrNotificationRecord={id:string;subjectId:string;eventType:string;
@@ -13,4 +14,11 @@ export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs
   label:row.eventType===HR_NOTIFICATION_EVENTS[0]?"Drive published":"Drive closed",
   createdAt:row.createdAt,unread:row.readAt===null,
  }));
+}
+
+export const HR_INBOX_PAGE_SIZE=25;
+export function hrInboxPageBounds(page:number,total:number){
+ return {page,total,pageSize:HR_INBOX_PAGE_SIZE,pages:Math.ceil(total/HR_INBOX_PAGE_SIZE),
+  first:total===0||(page-1)*HR_INBOX_PAGE_SIZE>=total?0:(page-1)*HR_INBOX_PAGE_SIZE+1,
+  last:Math.min(total,page*HR_INBOX_PAGE_SIZE)};
 }
