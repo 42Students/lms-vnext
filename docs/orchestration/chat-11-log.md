@@ -166,3 +166,6 @@
 
 ## Y — Team history role filter
 - Same-project SQL role filter and current/ended navigation, tests authored.
+
+## Z — Positive team coverage filters
+- Has active learners / has primary Mentor, pure and own-project PG checks authored.

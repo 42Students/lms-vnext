@@ -18,6 +18,12 @@ describe("Mentor registered active team coverage",()=>{
     filter:"NO_LEARNERS",search:"",page:99,
   });
   expect(result).toMatchObject({total:0,items:[],page:1,totalPages:1});
+  expect(selectMentorTeamCoverage(rows,{
+    filter:"HAS_LEARNERS",search:"",page:1,
+  }).total).toBe(1);
+  expect(selectMentorTeamCoverage(rows,{
+    filter:"HAS_PRIMARY_MENTOR",search:"",page:1,
+  }).total).toBe(1);
   expect(mentorTeamCoverageQuerySchema.safeParse({collegeId:"forged"}).success).toBe(false);
   expect(mentorTeamCoverageQuerySchema.safeParse({filter:"UNTRUSTED"}).success).toBe(false);
  });

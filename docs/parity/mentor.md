@@ -857,3 +857,11 @@ role selection alongside current/open/ended membership filters; role is
 applied to both SQL count and paginated rows and preserved in page links.
 No Mentor membership writes or private identities are added. Unit and
 own-project PG assertions authored; **PARTIAL:** executed tests/browser remain.
+
+## chat-11 backlog Z — positive Mentor coverage filters (PARTIAL)
+
+Existing current-assignment Team coverage can filter projects with actual
+active learner memberships and projects with recorded active primary Mentors,
+complementing missing-coverage signals. No members, inferred staffing scores
+or private learner contacts are introduced. Unit and existing in-test PG
+staffing scope checks authored; **PARTIAL:** CLI/browser verification open.

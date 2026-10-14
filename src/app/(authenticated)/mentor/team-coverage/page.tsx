@@ -61,6 +61,8 @@ export default async function MentorTeamCoveragePage({
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
+              <option value="HAS_LEARNERS">Has active learners</option>
+              <option value="HAS_PRIMARY_MENTOR">Has active primary Mentor</option>
             </select>
           </label>
           <button type="submit"

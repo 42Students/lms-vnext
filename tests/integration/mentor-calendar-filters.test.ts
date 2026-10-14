@@ -12,6 +12,7 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {getMentorTeamHistory} from "@/modules/projects/mentor-team-history-service";
+import {getMentorTeamCoverage} from "@/modules/projects/mentor-team-coverage-service";
 import {filterMentorCalendar,mentorCalendarFiltersSchema}
   from "@/modules/projects/mentor-calendar-filter-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -92,6 +93,17 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
         meetingId,project.id,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser,secondId,
         SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
       ]);
+    const staffed=await getMentorTeamCoverage(mentor,{
+      filter:"HAS_LEARNERS",search:project.title,page:1,
+    });
+    expect(staffed.items).toEqual([expect.objectContaining({projectId:project.id})]);
+    const primary=await getMentorTeamCoverage(mentor,{
+      filter:"HAS_PRIMARY_MENTOR",search:project.title,page:1,
+    });
+    expect(primary.items).toHaveLength(1);
+    await expect(getMentorTeamCoverage(learner,{
+      filter:"HAS_LEARNERS",search:"",page:1,
+    })).rejects.toBeDefined();
     const learners=await getMentorTeamHistory(mentor,{
       projectId:project.id,view:"ALL",role:"LEARNER",page:1,
     });

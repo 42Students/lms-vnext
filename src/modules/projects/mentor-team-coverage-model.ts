@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
-  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR"]).default("ALL"),
+  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -37,7 +37,9 @@ export function selectMentorTeamCoverage(
     (!term || row.title.toLowerCase().includes(term)) &&
     (query.filter === "ALL" ||
       (query.filter === "NO_LEARNERS" && row.learners === 0) ||
-      (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor)),
+      (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor) ||
+      (query.filter === "HAS_LEARNERS" && row.learners > 0) ||
+      (query.filter === "HAS_PRIMARY_MENTOR" && row.hasPrimaryMentor)),
   ).sort((a,b) => a.title.localeCompare(b.title) ||
     a.projectId.localeCompare(b.projectId));
   const total = matches.length;
