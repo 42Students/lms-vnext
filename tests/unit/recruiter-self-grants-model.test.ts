@@ -114,4 +114,12 @@ describe("Recruiter self college grants", () => {
       expect(grant).not.toHaveProperty("recruiterUserId");
     }
   });
+
+  it("retains college code only when the authorized fact supplies it",()=>{
+    const row=buildRecruiterSelfGrantRows([{
+      id:"grant",collegeName:"College A",collegeCode:"COL-A",grantStatus:"ACTIVE",
+      relationshipStatus:"ACTIVE",grantedAt:new Date("2026-10-15T00:00:00Z"),
+    }]);
+    expect(row[0]?.collegeCode).toBe("COL-A");
+  });
 });

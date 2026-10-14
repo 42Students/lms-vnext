@@ -472,3 +472,75 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / Notifications exact counts and pagination — PARTIAL:** DB-scoped exact total/unread aggregate replaces loaded-set estimate, and unread/all lists now serve 25-row pages with previous/next. Today displays actual authorized unread count. Company/college/recipient filters precede totals and rows; no private bodies. Pure model tests authored, PG existing fixtures applicable but unexecuted. Remaining thread parity and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR notification title search — PARTIAL:** Search authorized job titles in Messages, applied to the exact company-and-college allowlist before notification queries, with GET search retained across pages. No private message body, candidate contact or other-company jobs. Unit and in-test PG fixtures extended, unexecuted.
+
+
+**2026-10-15 chat-10 / recruiter activity lifecycle filters — PARTIAL:** /hr/activity adds explicit Published/Closed/All URL filters at SQL query level after exact company+college job allowlist; counts remain bounded, raw audit metadata hidden. Unit and in-test PostgreSQL filters extended, not executed. Remaining full audit pagination and legacy Messages threading.
+
+
+**2026-10-15 chat-10 / Company Team search — PARTIAL:** Company & Team now has college-preserving GET name/designation/email search applied solely to exact company+relationship authorized active team returned by existing service, with explicit matching count and pure model/unit test. No new disclosure, company mutation or external messaging. Remaining DB paging at scale and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR Calendar event-category filters — PARTIAL:** Week/month/agenda calendar now filters presentation across authorized Rounds, Application deadlines, Results due or All, preserving category in prior/today/next and view URLs; no fabricated interview slots and no new candidate disclosure. Pure model/unit tests authored; PG auth continues through existing listRecruiterCalendarEvents and remains to be executed. Browser viewport validation open.
+
+
+**2026-10-15 chat-10 / Request Drive round presets — PARTIAL:** Added three local hiring-round presets (interview-only, test+interview, full TALK/TEST/GD/INTERVIEW); replacing round lists never saves, submits, or mutates source Hire Again jobs. Pure model/Zod unit tests authored. Also corrected calendar category filter typing to preserve typed result-due records. Remaining persisted approval and browser parity.
+
+
+**2026-10-15 chat-10 / Hiring activity server pagination — PARTIAL:** Read-only /hr/activity now pages allowlisted employer/college audit events using stable occurredAt/id sort, capped limit+1 lookahead, bounded numeric page and filter-preserving previous/next links. No private metadata. Pure-model and in-test PG page bounds extended, unexecuted. Remaining keyset paging at large offsets and browser acceptance.
+
+
+**2026-10-15 chat-10 / HR Drives sorting — PARTIAL:** Authorized published/closed drives list supports URL-persisted newest, deadline-first (missing deadlines last), and title sorting before 20-row client pages. Sorting operates after exact recruiter college/company filtering and does not mutate source. Unit test for validation, deterministic tie and sort authored, unexecuted. Remaining server keyset sorting at scale and browser acceptance.
+
+
+**2026-10-15 chat-10 / Request Drive scoped saved-draft restore — PARTIAL:** Recruiter can explicitly save a *validated* unsent draft in sessionStorage (browser tab, 24-hour expiry) and restore it. Key includes recruiter user, selected college and authorized Hire Again source; JSON is Zod validated, length and TTL checked, Start Over clears it. No server persistence, external send or file storage. Pure model and own-company PG source fixture extended, unexecuted. Remaining restoration of incomplete drafts, approval workflow and browser acceptance.
+
+
+**2026-10-15 chat-10 / employer hiring activity CSV — PARTIAL:** Company/college-scoped history export caps at 200, formula-neutralizes titles, uses fixed event labels and IST timestamps without raw audit metadata or contacts. Rechecks scope before its second bounded page. Pure-model unit and in-test PG scope assertions added, unexecuted. Remaining browser acceptance and full-history export.
+
+
+**2026-10-15 chat-10 / Request Drive round ordering — PARTIAL:** Accessible Up/Down controls reorder unsent rounds with boundary guards and immutable draft projection; no network writes or approval state is fabricated. Unit tests authored, not run. Browser acceptance remains.
+
+
+**2026-10-15 chat-10 / Request Drive student preview sequence — PARTIAL:** Local-only validated preview now enumerates round sequence/kind/name and compensation/eligibility (not just count), using top-level const for display fields. Pure model/unit ensures round order; no misleading approval or storage. Remaining real student-facing schema integration and browser acceptance.
+
+
+**2026-10-15 chat-10 / Company Team roster export — PARTIAL:** Adds scoped recruiter-team CSV (200 cap, formula-neutralized, no-store) from getRecruiterCompanyTeam's exact company+college active grant read. Shows existing authorized recruiter name/designation/email only; no learner contacts. Pure model/unit authored, PG scope remains covered by existing team reads but not re-executed. Remaining browser acceptance and large-team paging.
+
+
+**2026-10-15 chat-10 / Today deadline urgency — PARTIAL:** Adds Passed/Within 24h/Upcoming labels to persisted company+college-scoped results-due cards. Labels only describe clock distance, not unsent/stale result state. Pure boundary unit authored; existing scope fixture applicable but not executed. Remaining stale/live browser refresh proof.
+
+
+**2026-10-15 chat-10 / Results-due round deep links — PARTIAL:** Calendar (desktop/mobile/cards) and Today due cards now link directly to the persisted authorized `roundId` in the drive Rounds tab, instead of falling back to its first round. Existing job resolver re-authorizes exact company/college and rejects foreign/missing rounds. Unit URL encoding and existing scoped PG results-due fixture cover the contract but were not executed. Browser acceptance remains.
+
+
+**2026-10-15 chat-10 / HR Home authorized college-card metadata — PARTIAL:** College-less chooser now displays verified active grant's college code and access-granted IST date, using self-only company+college authorization checked against persisted relationships, and filters stale grants rather than rendering them. Does not invent logo or expiry fields. Pure unit extended; runtime/PG/browser proof pending.
+
+
+**2026-10-15 chat-10 / Profile college access quick navigation — PARTIAL:** Each exact active self-grant exposes scoped Today, Drives and Company & Team links, validated by a pure UUID route model. Explicitly distinguishes page selection from unavailable persistent membership switching. No new write, user data or company disclosure. Unit test authored, execution and full legacy scope-switch persistence remain.
+
+
+**2026-10-15 chat-10 round 4 / draft annual CTC consistency — PARTIAL:** Request a Drive now validates a fully specified fixed-plus-variable amount against both the advertised minimum and maximum annual CTC; incomplete breakdowns are not misrepresented as totals. Cross-field errors attach to the relevant field. Pure unit coverage authored, execution pending; no submission, storage, or external notification.
+
+
+**2026-10-15 chat-10 round 4 / duplicate hiring-round validation — PARTIAL:** Request a Drive rejects ambiguous duplicate stage names even across kinds after case/whitespace normalization, identifying the offending round row while preserving legitimate multiple rounds. Pure Zod unit cases authored, unexecuted. No placement decision or actual round write.
+
+
+**2026-10-15 chat-10 round 4 / recruiter notification CSV — PARTIAL:** New read-only export traverses up to eight exact recipient/company/college-scoped notification pages, capped at 200, with formula-neutralized job titles, fixed lifecycle labels, IST receive times, and unread flag. Raw notification titles/bodies, applicant contacts and other employers' notifications are never exported. Unit tests authored but unexecuted; PG/browser proof pending.
+
+
+**2026-10-15 chat-10 round 4 / recruiter team paging — PARTIAL:** Company & Team Team tab now paginates the *already authorized and search-filtered* company roster in 25-row slices with URL-stable search and prev/next controls. No cross-company user enumeration, no new data selected. Pure unit tests authored but unexecuted. DB keyset paging and browser acceptance remain.
+
+
+**2026-10-15 chat-10 round 4 / named round schedule conflict detail — PARTIAL:** Rounds tab now lists exact other authorized round names and sequence numbers for known-duration overlaps, rather than an unexplained count. Pure projection rejects unresolved/foreign IDs, never claims venue/panel reservation conflicts, and has unit coverage authored but not executed. Actual interview slot workflow remains.
+
+
+**2026-10-15 chat-10 round 4 / recruiter calendar CSV — PARTIAL:** Export the selected persisted calendar week/month/agenda view as a category-filtered, IST-timestamped CSV, capped at 200 and formula-neutralized. It calls the existing recruiter-scoped job/round calendar service; no student contacts, placement-cell private notes or fictional interview slots. Pure unit cases authored, not executed; browser download and PG acceptance remain.
+
+
+**2026-10-15 chat-10 round 4 / Today live hiring-drive operational cards — PARTIAL:** Today now shows up to three company+college-filtered, non-archived published drives with the earliest recorded application deadlines, safe deep links, and an honest no-live-drive state. No fictitious recruiter attribution or offers are inferred. Pure model/unit covers wrong company/college, archived, closed, sorting and limits; execution and browser proof pending.
+
+
+**2026-10-15 chat-10 round 4 / Drives IST-day and past-deadline filters — PARTIAL:** Drives adds Today (Asia/Kolkata calendar day) and recorded deadline-passed filters atop authorized published/closed jobs. Past deadline is a timestamp fact, never claimed to indicate a live application or auto-closed drive. Filters preserve URL/search and cap. Pure date-boundary and query tests authored but unexecuted; browser review pending.
