@@ -5,6 +5,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   assignmentSubmissions,
   courseAssignments,
@@ -658,42 +660,47 @@ export async function gradeAssignmentSubmission(
   }
 
   const now = new Date();
-  const [updated] = await getDb()
-    .update(assignmentSubmissions)
-    .set({
-      pointsAwarded:
-        input.pointsAwarded,
-      feedback: input.feedback ?? null,
-      gradingStatus: "GRADED",
-      gradePublished: false,
-      gradedByUserId: context.user.id,
-      gradedAt: now,
-      version: sql<number>`
-        ${assignmentSubmissions.version} + 1
-      `,
-      updatedAt: now,
-    })
-    .where(
-      and(
-        eq(
-          assignmentSubmissions.id,
-          submissionId,
-        ),
-        eq(
-          assignmentSubmissions.version,
-          input.expectedVersion,
-        ),
-      ),
-    )
-    .returning();
-
-  if (!updated) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_SUBMISSION_CONFLICT",
-    );
-  }
-
-  return updated;
+  return getDb().transaction(async (tx) => {
+    const [updated] = await tx
+      .update(assignmentSubmissions)
+      .set({
+        pointsAwarded: input.pointsAwarded,
+        feedback: input.feedback ?? null,
+        gradingStatus: "GRADED",
+        gradePublished: false,
+        gradedByUserId: context.user.id,
+        gradedAt: now,
+        version: sql<number>`${assignmentSubmissions.version} + 1`,
+        updatedAt: now,
+      })
+      .where(and(
+        eq(assignmentSubmissions.id, submissionId),
+        eq(assignmentSubmissions.version, input.expectedVersion),
+      ))
+      .returning();
+    if (!updated) {
+      throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
+    }
+    // Keep grade history and the persisted update atomic. Never place
+    // scores, student names or private feedback into the shared activity feed.
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADED,
+      collegeId: current.collegeId,
+      organizationId: current.organizationId,
+      subjectType: "assignment_submission",
+      subjectId: updated.id,
+      summary: "Assignment submission graded",
+      metadata: {
+        assignmentId: updated.assignmentId,
+        deliveryId: updated.deliveryId,
+        version: updated.version,
+        gradePublished: false,
+      },
+      groupKey: `course-assignment:${updated.assignmentId}:grading`,
+      dedupeKey: `assignment-submission:${updated.id}:graded:${updated.version}`,
+    });
+    return updated;
+  });
 }
 
 export async function publishAssignmentGrade(
@@ -729,38 +736,39 @@ export async function publishAssignmentGrade(
     return current;
   }
 
-  const [updated] = await getDb()
-    .update(assignmentSubmissions)
-    .set({
-      gradePublished: true,
-      version: sql<number>`
-        ${assignmentSubmissions.version} + 1
-      `,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(
-          assignmentSubmissions.id,
-          submissionId,
-        ),
-        eq(
-          assignmentSubmissions.version,
-          input.expectedVersion,
-        ),
-        eq(
-          assignmentSubmissions.gradePublished,
-          false,
-        ),
-      ),
-    )
-    .returning();
-
-  if (!updated) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_SUBMISSION_CONFLICT",
-    );
-  }
-
-  return updated;
+  return getDb().transaction(async (tx) => {
+    const [updated] = await tx
+      .update(assignmentSubmissions)
+      .set({
+        gradePublished: true,
+        version: sql<number>`${assignmentSubmissions.version} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(assignmentSubmissions.id, submissionId),
+        eq(assignmentSubmissions.version, input.expectedVersion),
+        eq(assignmentSubmissions.gradePublished, false),
+      ))
+      .returning();
+    if (!updated) {
+      throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
+    }
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
+      collegeId: current.collegeId,
+      organizationId: current.organizationId,
+      subjectType: "assignment_submission",
+      subjectId: updated.id,
+      summary: "Assignment grade published",
+      metadata: {
+        assignmentId: updated.assignmentId,
+        deliveryId: updated.deliveryId,
+        version: updated.version,
+        gradePublished: true,
+      },
+      groupKey: `course-assignment:${updated.assignmentId}:grading`,
+      dedupeKey: `assignment-submission:${updated.id}:grade-published:${updated.version}`,
+    });
+    return updated;
+  });
 }
