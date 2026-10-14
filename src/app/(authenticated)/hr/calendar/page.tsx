@@ -306,6 +306,12 @@ export default async function HrCalendarPage({
         }
       />
 
+      {!noCollegeAccess?<div className="flex justify-end">
+        <Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+          Export calendar CSV
+        </Link>
+      </div>:null}
       {noCollegeAccess ? (
         <section className="rounded-xl border border-border bg-surface p-6">
           <h2 className="text-lg font-semibold text-foreground">

@@ -535,3 +535,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / named round schedule conflict detail — PARTIAL:** Rounds tab now lists exact other authorized round names and sequence numbers for known-duration overlaps, rather than an unexplained count. Pure projection rejects unresolved/foreign IDs, never claims venue/panel reservation conflicts, and has unit coverage authored but not executed. Actual interview slot workflow remains.
+
+
+**2026-10-15 chat-10 round 4 / recruiter calendar CSV — PARTIAL:** Export the selected persisted calendar week/month/agenda view as a category-filtered, IST-timestamped CSV, capped at 200 and formula-neutralized. It calls the existing recruiter-scoped job/round calendar service; no student contacts, placement-cell private notes or fictional interview slots. Pure unit cases authored, not executed; browser download and PG acceptance remain.
