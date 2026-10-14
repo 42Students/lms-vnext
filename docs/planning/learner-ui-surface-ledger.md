@@ -463,8 +463,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L15-002 | Pending / Completed views | AssessmentsContent | scheduled assessment view + separate applied-results route; provider completion remains unregistered/unverified | GAP |
 | L15-003 | Search | AssessmentsContent | assessments page | GAP |
 | L15-004 | Urgency filter | AssessmentsContent | assessments page | GAP |
-| L15-005 | Due today bucket | AssessmentsContent | assessments page | GAP |
-| L15-006 | Due this week bucket | AssessmentsContent | assessments page | GAP |
+| L15-005 | Due today bucket | AssessmentsContent | IST-calendar upcoming due-today count and quick filter | FIXED |
+| L15-006 | Due this week bucket | AssessmentsContent | IST Monday-Sunday upcoming assessment count and quick filter | FIXED |
 | L15-007 | Later bucket | AssessmentsContent | assessments page | GAP |
 | L15-008 | Waiting on employer link bucket | AssessmentsContent | assessments page | GAP |
 | L15-009 | No deadline bucket | AssessmentsContent | assessments page | GAP |
