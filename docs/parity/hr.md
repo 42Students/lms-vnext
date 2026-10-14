@@ -427,3 +427,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / Shared applicant pagination — PARTIAL:** Recruiter job Applicants tab uses exact-grant scoped DB aggregation for all SUBMITTED/WITHDRAWN shortlisted application counts and DB limit/offset pages of 25 (rather than silent 200-row truncation). Mobile previous/next controls retain stage and drawer page; status/college/active-user filters remain enforced before count and list. Pure-model and in-test PG foreign-company/wrong-role tests updated, not executed. Remaining deep private share marker parity, cursor pagination at scale and browser acceptance.
+
+
+**2026-10-14 chat-10 / Request a Drive read-first draft — PARTIAL:** New `/hr/drives/new` page with authorized college chooser, local form for role/work/CTC/CGPA/rounds, validation, student-visible preview, Start Over and clipboard copy. `?from=` copies only an exact company/college-authorized published/closed drive for Hire Again preview; `?fix=` explicitly blocked until request-change persistence exists. No draft persisted, external sending, fake approval or file feature. Pure model/unit + in-test PG success/foreign-company/college/wrong-role tests authored, not executed. Remaining full legacy agreement/JD/eligibility and request submission lifecycle, restored draft, fix/send, browser acceptance.

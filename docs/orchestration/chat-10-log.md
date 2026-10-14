@@ -34,3 +34,5 @@
 - 2026-10-14 — HR selection readiness PARTIAL: all-round applied PASS intersection and conservative JOINED count; unit + PG fixture updated, unexecuted.
 
 - 2026-10-14 — HR applicant DB pagination PARTIAL: 25-row scoped pages and full company-safe stage totals; tests authored/extended, execution pending.
+
+- 2026-10-14 — Request Drive local draft PARTIAL: owned-college chooser, Hire Again authorized job preview and Zod validated local-only form; no persistence or sending; tests authored not executed.
