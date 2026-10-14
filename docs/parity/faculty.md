@@ -1374,3 +1374,6 @@ The Quiz builder now exposes confirmed, optimistic EDIT of title/instructions/IS
 
 ## 2026-10-15 Faculty Section Reports strict URL selectors — PARTIAL
 The Section reports hub rejects duplicate or unknown query parameters instead of selecting the first value and silently widening a filter. Typed Zod query parsing preserves legitimate assessment-type and bounded page selectors; existing per-Section scope remains authoritative. Unit tests authored; PG and mobile browser acceptance not executed.
+
+## 2026-10-15 Faculty Discussion history strict URL selectors — PARTIAL
+The same-Section moderation history viewer now rejects duplicate actions/pages, forged scope IDs and invalid page strings rather than selecting one value. Existing audited event, pagination and role-scope readers are unchanged; pure parsing tests authored. Browser/PG acceptance remains open.
