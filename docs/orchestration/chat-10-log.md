@@ -78,3 +78,5 @@
 - 2026-10-15 — HR Drive round presets PARTIAL: three unsent draft templates plus calendar category typing correction, tests authored unexecuted.
 
 - 2026-10-15 — HR activity pagination PARTIAL: bounded server pages and deterministic next/previous history links; tests unexecuted.
+
+- 2026-10-15 — HR drives sort PARTIAL: newest/deadline/title after recruiter-grant filtering and before 20-row pages; tests pending.

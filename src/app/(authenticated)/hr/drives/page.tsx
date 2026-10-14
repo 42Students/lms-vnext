@@ -6,12 +6,12 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
+import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
- employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[] };
+ employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 export default async function HrDrivesPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -23,6 +23,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     view: first(raw.view) || undefined, q: first(raw.q) || undefined,
     employment:first(raw.employment)||undefined,mode:first(raw.mode)||undefined,
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
+    sort:first(raw.sort)||undefined,
   });
   if (!query.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
@@ -45,7 +46,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   // eslint-disable-next-line react-hooks/purity -- recruiter deadline urgency needs request-time current instant.
   const now = new Date();
   const filtered = filterRecruiterDrives(jobs, {...query.data, collegeId: selectedCollege},now);
-  const pageResult = paginateRecruiterDrives(filtered,query.data.page);
+  const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
   return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only."
@@ -79,8 +80,15 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         <select name="deadline" defaultValue={query.data.deadline} className="min-h-11 rounded-md border border-border bg-surface px-3">
           <option value="ALL">Any</option><option value="SOON">Within 7 days</option><option value="UNKNOWN">Not recorded</option>
         </select></label>
+      <label className="grid min-w-36 gap-1 text-sm text-body">Sort
+        <select name="sort" defaultValue={query.data.sort} className="min-h-11 rounded-md border border-border bg-surface px-3">
+          <option value="RECENT">Newest first</option>
+          <option value="DEADLINE">Deadline first</option>
+          <option value="TITLE">Title A–Z</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-      <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1})} className="py-3 text-sm text-primary-text">Reset</Link>
+      <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text">Reset</Link>
     </form>
     {query.data.view === "WAITING" ? <EmptyState title="Requests not available here" description="Waiting requests and sent-back approvals are not yet backed by a recruiter-visible request-state read. Published jobs are never mislabeled as pending requests." /> :
      pageResult.rows.length ? <RecruiterPlacementPortfolio jobs={pageResult.rows} /> :
