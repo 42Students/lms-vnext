@@ -19,7 +19,7 @@ export function hrScheduledRoundRows(rows:readonly RoundScheduleRow[]){
 }
 
 export function hrRoundConflictLabels(
-  rows:readonly ReturnType<typeof hrScheduledRoundRows>,
+  rows:ReturnType<typeof hrScheduledRoundRows>,
   ids:readonly string[],
 ):string[]{
   const byId=new Map(rows.map(row=>[row.id,row]));
