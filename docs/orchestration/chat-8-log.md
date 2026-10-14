@@ -7,3 +7,6 @@ Offer detail with recorded status and joining transitions, deterministic orderin
 
 ## 2026-10-14 · Item 3 / L195 PARTIAL
 Company hiring pulse adds active published drive, recorded season, unique accepted and explicitly joined learner counts plus event recency. Scoped via canonical college relationship, no fuzzy company name joins. Pure unit and existing fixture PG tests authored, not executed.
+
+## 2026-10-14 · Item 4 / L552 + L556 PARTIAL
+Added actionable report-to-record navigation for offers and joining reports. Links sourced only from scoped persisted report rows; UUID-filtered and capped to 100 with honest warning. Existing CSV/export semantics preserved. Pure unit and isolated PG tests authored, not executed. Legacy filter/export and browser acceptance remain.
