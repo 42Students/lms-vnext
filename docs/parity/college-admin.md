@@ -29,6 +29,8 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**CSV export PARTIAL (2026-10-14):** College Admin Activity Log adds a download matching actor/subject/IST date filters and the broader Activity Center adds module/importance/event filters. Both use the same read service, scoped to the current college, with a 1,000-event cap, spreadsheet-formula neutralization, and explicit truncation footer and HTTP headers. No data is mutated. Exact legacy export column parity and high-volume browser/PG acceptance remain open.
+
 **Read-first PARTIAL (2026-10-14):** `/college/activity` provides explicit actor/entity/date filters, newest-first cursor pagination and `/college/activity/[eventId]` for sanitized audit metadata. Both reads are denied outside the active College Admin membership college. Records are never edited or deleted. Exact legacy event grouping, export, browser and independently executed PostgreSQL acceptance remain open.
 
 **Legacy:** `/college-admin/audit`
@@ -202,6 +204,8 @@ Legacy contract audited:
 
 ## Page: Classes / Sections
 **Legacy:** `/college-admin/classes`
+
+**Recurring preview PARTIAL (2026-10-14):** `/college/classes/recurring-preview` accepts a selected class, weekday pattern, date range (maximum 93 days), IST-local start/end and optional in-college Faculty/lecture hall; it expands timestamps without server timezone dependence and reads migrated `section_schedule_events` to identify overlapping class, Faculty and hall sessions. It never writes sessions and is not an execution success forecast; the write must revalidate conflicts atomically. Confirmation, session materialization, linked course, historical series report and browser acceptance remain open.
 
 **Write-side PARTIAL (2026-10-14):** `/college/classes` adds a confirmed College Admin create/edit flow through strict Zod, college-scoped, same-origin POST/PATCH routes. Transactions serialize with the cohort and period ancestry, enforce unique active class name/code, valid cohort-period range, capacity not below active enrolled learners and dependency guards on identity change, and append one actor audit event per success. Cancel/discard confirmation and empty/loading/error states retained. Legacy recurring scheduling, archival, detailed min/max students, browser/database acceptance and full parity remain open.
 
@@ -501,6 +505,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: Student Groups List
 **Legacy:** `/college-admin/student-groups`
+
+**CSV validation PARTIAL (2026-10-14):** For STUDY_GROUP only, `/college/groups/[groupId]/import-preview` reads a bounded email CSV (500 rows, 128 KiB) and reports in-college active learner matches, repeated rows, already-present members, capacity blockers and formula-neutralized validation CSV. This route performs no writes and does not claim confirmed imports or enrollment acceptance. All page checks remain open.
 
 **Write-side PARTIAL:** `/college/groups` now provides Study Group create/edit/activate/close/archive on migrated `lms_groups`, with same-college duplicate-name, version and member/capacity guards. All changes use persisted actor rechecks and transactional `activity_events` audits. Group types with additional semantics (PROJECT_TEAM/ELECTIVE) remain read-only here. Complete legacy dynamic rules, CSV, member moderation and browser acceptance remain open.
 
