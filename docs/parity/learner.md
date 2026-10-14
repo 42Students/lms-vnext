@@ -642,6 +642,26 @@ Legacy contract audited from `PlacementCellContent`:
 
 ## Page: Placement Rules
 
+**2026-10-14 learner rules-preparation parity (PARTIAL):** The existing
+`/learn/my-placements/rules` now shows a context-aware Back link, accepting
+only the Zod-validated `from=dashboard|cell|drives` values and falling
+back to My Placements. Placement Cell and Drives link into this page
+with their return context. A read-only personal "Where you stand" panel
+shows only real membership-scoped academic evidence (CGPA, backlog count,
+gap years) and recorded job preferences. A numeric zero is recorded,
+not missing. This is explicitly **not** a global eligibility verdict,
+verified academic certification, college-approved placement clearance or
+an invented readiness score. The backend validates the current persisted
+active LEARNER membership, program/section inheritance, paid placement
+participation and central `placements.read` before reading registered
+source tables. Missing evidence is an honest unknown state; scoped per-drive
+eligibility remains accessible via Drives. Mobile cards, dedicated loading
+and error/retry boundaries, pure-model unit and PostgreSQL role/tenant denial
+tests are authored. No writes were introduced; actual CI/browser evidence
+remains open. College-authored policy and applicability-version wording
+remain blocked/partial because there is no registered policy source.
+
+
 **Learner navigation correction (2026-10-14):** academic evidence and job
 preferences links now lead to anchored, working editors on the Learner
 Placements workspace, rather than removed Learner Profile panels. The
@@ -649,11 +669,11 @@ college-authored policy remains database/product dependent.
 
 **Legacy:** `/learn/my-placements/rules`
 
-- [ ] Back action works.
-- [ ] Personal "Where you stand" note is supported.
+- [x] Back action uses validated origin or a safe dashboard fallback; browser verification pending.
+- [x] Personal "Where you stand" note uses recorded own-member data only, not invented policy.
 - [ ] College placement rules summary uses authoritative current policy.
 - [ ] Rule-change applicability wording is preserved.
-- [ ] Loading/error/retry states are implemented.
+- [x] Loading/error/retry states are implemented with explicit route boundaries; executed browser proof pending.
 
 # Projects
 

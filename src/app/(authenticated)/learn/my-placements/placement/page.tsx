@@ -21,7 +21,7 @@ export default async function LearnerPlacementCellPage() {
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling or offer-extension requests. Your placement team owns the final decision.</p>
-        <Link href="/learn/my-placements/rules" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
+        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
       <LearnerPlacementAlerts alerts={alerts} />
       <LearnerPlacementOffers offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(), joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />
