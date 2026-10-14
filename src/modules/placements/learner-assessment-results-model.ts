@@ -99,3 +99,28 @@ export function filterLearnerAssessmentResults(
     items: rows.filter((row) => view === "all" || status(row.outcome) === view),
   };
 }
+
+export const learnerAssessmentResultsQuerySchema = z.object({
+  view: learnerAssessmentResultsViewSchema.optional().default("all"),
+  q: z.string().trim().max(100).optional().default(""),
+  page: z.coerce.number().int().min(1).max(10_000).optional().default(1),
+}).strict();
+
+export function pageLearnerAssessmentResults(
+  rows: readonly LearnerAssessmentResultRow[],
+  raw: unknown,
+  pageSize = 20,
+) {
+  const filters=learnerAssessmentResultsQuerySchema.parse(raw);
+  const term=filters.q.toLocaleLowerCase();
+  const matching=rows.filter(row=>!term || [
+    row.companyName,row.roleTitle,row.roundName,row.outcome,
+  ].some(text=>text.toLocaleLowerCase().includes(term)));
+  const total=matching.length;
+  const pages=Math.max(1,Math.ceil(total/pageSize));
+  const page=Math.min(filters.page,pages);
+  return {
+    filters, page, pages, total,
+    items:matching.slice((page-1)*pageSize,page*pageSize),
+  };
+}
