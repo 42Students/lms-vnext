@@ -1,7 +1,7 @@
 import {describe,it,expect} from "vitest";
 import {collegeContentTypes,collegeContentHref,collegeContentQuerySchema}
  from "@/modules/courses/college-content-aggregate-model";
-import {collegeLiveClassQuerySchema,liveClassSearchParams,liveClassIstSchedule}
+import {collegeLiveClassQuerySchema,liveClassSearchParams,liveClassIstSchedule,collegeLiveClassHref}
  from "@/modules/courses/college-live-classes-model";
 describe("college live class read model",()=>{
  it("uses only migrated LIVE_CLASS type and strict college-independent parameters",()=>{
@@ -10,6 +10,9 @@ describe("college live class read model",()=>{
   expect(collegeLiveClassQuerySchema.safeParse({format:"VIDEO"}).success).toBe(false);
   expect(liveClassSearchParams({q:["a","b"]})).toBeNull();
   expect(collegeLiveClassQuerySchema.safeParse({page:1001}).success).toBe(false);
+  expect(collegeLiveClassQuerySchema.parse({view:"UPCOMING"}).view).toBe("UPCOMING");
+  expect(collegeLiveClassQuerySchema.safeParse({view:"COMING"}).success).toBe(false);
+  expect(collegeLiveClassHref({...collegeLiveClassQuerySchema.parse({view:"PAST"}),page:2})).toContain("view=PAST");
   const q=collegeContentQuerySchema.parse({q:"a & b",page:2});
   const href=collegeContentHref("LIVE_CLASS",q);
   expect(new URL(href,"https://example.test").pathname).toBe("/college/live-classes");

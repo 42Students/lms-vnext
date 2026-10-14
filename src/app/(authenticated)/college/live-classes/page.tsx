@@ -17,6 +17,6 @@ export default async function CollegeLiveClassesPage({searchParams}:{
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
     action={<Link href="/college/live-classes" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
- const data=await listCollegeContentAggregate(context,"LIVE_CLASS",{...parsed.data,format:"ALL"});
+ const data=await listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data);
  return <CollegeLiveClassesDirectory data={data}/>;
 }
