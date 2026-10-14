@@ -750,3 +750,19 @@ states, pure model/unit and independently created PostgreSQL positive, forged,
 wrong-role, disabled and foreign-college non-leaking fixtures are authored.
 No mutation or external sending; stale token is not applicable. **PARTIAL:**
 execute PG, tsc, lint, unit, mobile/desktop and verify the legacy report UX.
+
+## 2026-10-14 chat-11 O — Mentor resource-link directory (PARTIAL)
+
+New exact-project read-only Resource Directory filters active registered
+resource metadata by required/optional and literal title/description text;
+shows only credential-free HTTPS links (rejecting javascript/http and embedded
+credentials). The capped, formula-neutralized 200-row CSV explicitly reports
+truncation and excludes all raw URLs, private notes, learner contact and file
+metadata. The service rechecks active current Mentor assignment, same-college
+scope, central projects.read and Projects enablement. Mobile cards, loading,
+error and empty states are provided. Model/unit tests and a disposable own-
+project PostgreSQL fixture cover safe link handling, CSV formula escaping,
+positive persisted reads, foreign-scope, disabled/wrong-role and forged input
+denials. No file-backed functionality, member mutation or external sending
+was added; no mutation stale token applies. **PARTIAL:** independent PG,
+TypeScript, lint, browser, and legacy Resources interaction parity remain.

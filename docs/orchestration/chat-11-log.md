@@ -122,3 +122,9 @@
 - Pure model and in-test-project PostgreSQL success/role/foreign/disabled tests
   authored, not executed. Read-only, no stale-token mutation.
 - PARTIAL pending independent CLI/PG and browser verification.
+
+## O — Mentor Resource link metadata directory (2026-10-14)
+- Added scoped active-resource metadata filter/search/page and safe HTTPS-only links.
+- Added capped CSV of metadata but deliberately no raw URL or file data.
+- Own-project PG and pure unit tests authored, not executed.
+- PARTIAL pending CI/runtime/browser and legacy resource-write decision.
