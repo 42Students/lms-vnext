@@ -1422,3 +1422,6 @@ Faculty Quiz authoring now forbids changing a published, closed or archived Quiz
 
 ## 2026-10-15 Round 5 Faculty Contacts strict selectors — PARTIAL
 Faculty Contacts now refuses duplicate, malformed, unknown or forged directory query selectors rather than silently truncating search terms or resetting page and size. A recoverable in-tab filter error preserves role/tab scope; tests cover valid defaults and rejected selectors. Executed browser/PG acceptance pending.
+
+## 2026-10-15 Round 5 private Faculty Contact drill-in — PARTIAL
+Faculty directory details now validate their route IDs and produce the same non-leaking 404 for missing, foreign or tab-incompatible memberships. Unrelated database failures still reach the error boundary; pure classifier tests authored. Registered service scoping is unchanged. PG and browser acceptance pending.
