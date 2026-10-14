@@ -597,3 +597,24 @@ was introduced. Pure-model/unit coverage and an addition to the existing
 unique-fixture Faculty PostgreSQL test are authored but not executed in this
 chat. The request-history requirement is BLOCKED by missing migration/policy;
 legacy correction parity stays PARTIAL.
+
+## Faculty assessment authoring and published live-class views (2026-10-14)
+
+**PARTIAL only.** Section assignment command authoring uses the registered
+`course_assignments` columns for confirmed draft create/edit, guarded publish
+and archive (soft delete). The dedicated route requires active current
+Faculty teaching scope and same origin, strict Zod, locked optimistic timestamp
+and a single transaction-coupled safe actor audit for each accepted change.
+Text instructions only, no attachments; submission-bearing assignments are not
+silently deleted. Section quiz authoring uses the registered choice-question
+tables for validated draft create/edit and guarded publish, including distinct
+correct-answer rules, total-point limits and rejection after publication or
+registered attempts. It uses the same narrow permission and audit pattern.
+Both pages have loading/retry, no-lesson blockers and confirmation controls.
+
+The read-only `/teacher/live-classes` page uses authorized current Section
+course workspaces and only published `LIVE_CLASS` records, with upcoming/past,
+per-Section filters and bounded pagination. Exposed meeting links must be valid
+HTTPS without credentials; unsafe and missing URLs are shown as unavailable
+and never logged. SQL/DB tests are authored but not yet demonstrated green at
+the final commit; no DONE status is claimed.
