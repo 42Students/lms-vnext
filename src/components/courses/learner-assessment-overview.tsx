@@ -326,6 +326,14 @@ export function LearnerAssessmentOverview({
                         {state.action}
                       </Link>
                     )}
+                    {item.kind === "QUIZ" ? (
+                      <Link
+                        href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
+                        className="text-xs font-semibold text-primary-text underline"
+                      >
+                        Attempt history
+                      </Link>
+                    ) : null}
                   </div>
                 </div>
               </article>
@@ -349,12 +357,18 @@ export function LearnerAssessmentOverview({
         }
         footer={
           selectedAssignment ? (
+            <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text"
             >
               Open in Learning Path
             </Link>
+            <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
+              className="ml-2 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:underline">
+              Full assignment details
+            </Link>
+            </>
           ) : undefined
         }
       >

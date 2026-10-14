@@ -28,6 +28,7 @@ export const ACTIVITY_EVENT_TYPES = {
   IDENTITY_ROLES_CHANGED:
     "identity.membership.roles_changed",
   IDENTITY_LEARNER_CONTACT_UPDATED: "identity.learner_contact.updated",
+  IDENTITY_MENTOR_NOTIFICATION_ACKNOWLEDGED: "identity.mentor_notification.acknowledged",
   IDENTITY_MEMBERSHIP_SUSPENDED:
     "identity.membership.suspended",
   IDENTITY_MEMBERSHIP_REACTIVATED:
@@ -58,6 +59,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.teaching_assignment.assigned",
   COURSES_TEACHING_ENDED:
     "courses.teaching_assignment.ended",
+  COURSES_ASSIGNMENT_SUBMITTED:
+    "courses.assignment.submitted",
   COURSES_ASSIGNMENT_PUBLISHED:
     "courses.assignment.published",
   COURSES_ASSIGNMENT_GRADED:
@@ -66,6 +69,14 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.assignment.grade_published",
   COURSES_ATTENDANCE_MARKED:
     "courses.attendance.marked",
+  COURSES_CLASS_SCHEDULED:
+    "courses.class.scheduled",
+  COURSES_DISCUSSION_POSTED:
+    "courses.discussion.posted",
+  COURSES_DISCUSSION_PIN_CHANGED:
+    "courses.discussion.pin_changed",
+  COURSES_DISCUSSION_DELETED:
+    "courses.discussion.deleted",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   // Lifecycle events are emitted only after W03's persisted mutation succeeds.

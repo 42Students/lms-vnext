@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
+import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import {
   ReleaseLifecycleActions,
@@ -495,6 +496,10 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
+                  {mode === "MENTOR" && !readOnly && release.status !== "SHIPPED" ? (
+                    <MentorSprintCreate projectId={workspace.project.id}
+                      releaseId={release.id} />
+                  ) : null}
                   {mode !== "LEARNER" && !readOnly ? (
                     <ReleaseLifecycleActions
                       projectId={workspace.project.id}
@@ -541,12 +546,22 @@ export function ProjectWorkspace({
                                 updatedAt={sprint.updatedAt.toISOString()}
                               />
                             ) : null}
-                          <SprintLifecycleActions
-                            projectId={workspace.project.id}
-                            sprintId={sprint.id}
-                            status={sprint.status}
-                            releaseStatus={release.status}
-                          />
+                          {mode === "MENTOR" ? (
+                            <MentorSprintTransition
+                              projectId={workspace.project.id}
+                              sprintId={sprint.id}
+                              status={sprint.status}
+                              releaseStatus={release.status}
+                              updatedAt={sprint.updatedAt.toISOString()}
+                            />
+                          ) : (
+                            <SprintLifecycleActions
+                              projectId={workspace.project.id}
+                              sprintId={sprint.id}
+                              status={sprint.status}
+                              releaseStatus={release.status}
+                            />
+                          )}
                         </> : null}
                       </div>
                     </div>

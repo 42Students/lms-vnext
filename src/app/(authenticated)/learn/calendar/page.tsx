@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { resolveOwnLearnerCalendarFilters } from "@/modules/academics/learner-calendar-filter-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerClassSchedule,
@@ -7,11 +9,16 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-service";
 
-export default async function LearnerCalendarPage() {
+export default async function LearnerCalendarPage({searchParams}:{
+  searchParams:Promise<{view?:string|string[];month?:string|string[];deliveryId?:string|string[]}>;
+}) {
   const context =
     await getCurrentRequestContext();
   const schedule =
     await getLearnerClassSchedule(context);
+  const rawQuery = await searchParams;
+  const filters = resolveOwnLearnerCalendarFilters(rawQuery, schedule.courses, new Date());
+  if (!filters) notFound();
 
   const events: LearnerScheduleEvent[] =
     schedule.events.map((event) => ({
@@ -55,6 +62,9 @@ export default async function LearnerCalendarPage() {
         )}
         courses={schedule.courses}
         events={events}
+        initialView={filters.view}
+        initialAnchor={filters.anchor}
+        initialSelectedDeliveryIds={filters.selectedDeliveryIds}
       />
     </div>
   );

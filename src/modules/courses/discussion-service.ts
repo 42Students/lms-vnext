@@ -2,13 +2,15 @@ import "server-only";
 
 import {
   and,
-  asc,
+  desc,
   eq,
   not,
   sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   courseDiscussionMessages,
@@ -23,6 +25,16 @@ const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
   messageText: z.string().trim().min(1).max(4000),
+}).strict();
+
+const historySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(60),
+  beforeCreatedAt: z.string().datetime({ offset: true }).optional(),
+  beforeId: z.string().uuid().optional(),
+}).strict().superRefine((v, ctx) => {
+  if (Boolean(v.beforeCreatedAt) !== Boolean(v.beforeId)) {
+    ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Complete cursor required" });
+  }
 });
 
 async function discussionAccess(
@@ -80,76 +92,80 @@ async function loadDiscussionMessage(
 export async function listCourseDiscussionMessages(
   context: RequestContext,
   deliveryIdInput: string,
+  rawPage: unknown = {},
 ) {
-  const { deliveryId, mode } =
-    await discussionAccess(
-      context,
-      deliveryIdInput,
-      true,
-    );
-
+  const page = historySchema.parse(rawPage);
+  const { deliveryId, mode } = await discussionAccess(context, deliveryIdInput, true);
   let canPost = true;
   try {
-    await discussionAccess(
-      context,
-      deliveryIdInput,
-      false,
-    );
+    await discussionAccess(context, deliveryIdInput, false);
   } catch {
     canPost = false;
   }
-
-  const rows = await getDb()
+  // PostgreSQL timestamps have microsecond precision. A JS Date cursor
+  // would truncate them to milliseconds and skip messages at page boundaries.
+  // Compare the persisted timestamp plus UUID directly, with a microsecond
+  // ISO cursor returned by PostgreSQL.
+  const before = page.beforeCreatedAt && page.beforeId
+    ? sql`(${courseDiscussionMessages.createdAt}, ${courseDiscussionMessages.id})
+        < (${page.beforeCreatedAt}::timestamptz, ${page.beforeId}::uuid)`
+    : undefined;
+  const fetched = await getDb()
     .select({
       id: courseDiscussionMessages.id,
-      deliveryId:
-        courseDiscussionMessages.deliveryId,
-      senderMembershipId:
-        courseDiscussionMessages.senderMembershipId,
-      senderRole:
-        courseDiscussionMessages.senderRole,
+      deliveryId: courseDiscussionMessages.deliveryId,
+      senderMembershipId: courseDiscussionMessages.senderMembershipId,
+      senderRole: courseDiscussionMessages.senderRole,
       senderName: users.displayName,
-      messageText:
-        courseDiscussionMessages.messageText,
-      pinned:
-        courseDiscussionMessages.pinned,
-      createdAt:
-        courseDiscussionMessages.createdAt,
-      updatedAt:
-        courseDiscussionMessages.updatedAt,
+      messageText: courseDiscussionMessages.messageText,
+      pinned: courseDiscussionMessages.pinned,
+      createdAt: courseDiscussionMessages.createdAt,
+      cursorCreatedAt: sql<string>`to_char(${courseDiscussionMessages.createdAt}
+        AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
+      updatedAt: courseDiscussionMessages.updatedAt,
     })
     .from(courseDiscussionMessages)
-    .innerJoin(
-      collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        courseDiscussionMessages.senderMembershipId,
-      ),
-    )
-    .innerJoin(
-      users,
-      eq(users.id, collegeMemberships.userId),
-    )
-    .where(
-      eq(
-        courseDiscussionMessages.deliveryId,
-        deliveryId,
-      ),
-    )
-    .orderBy(
-      asc(courseDiscussionMessages.createdAt),
-      asc(courseDiscussionMessages.id),
-    );
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(eq(courseDiscussionMessages.deliveryId, deliveryId), before))
+    .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
+    .limit(page.limit + 1);
+  // Pinning remains visible even after its message is outside the newest page.
+  // This uses the same already-authorized Section, and does not load the feed.
+  const [highlightedPinned] = await getDb()
+    .select({
+      id: courseDiscussionMessages.id,
+      messageText: courseDiscussionMessages.messageText,
+      senderName: users.displayName,
+      createdAt: courseDiscussionMessages.createdAt,
+    })
+    .from(courseDiscussionMessages)
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(courseDiscussionMessages.deliveryId, deliveryId),
+      eq(courseDiscussionMessages.pinned, true),
+    ))
+    .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
+    .limit(1);
 
+  const hasOlder = fetched.length > page.limit;
+  const messages = (hasOlder ? fetched.slice(0, page.limit) : fetched).reverse();
+  const oldest = messages[0];
   return {
     accessMode: mode,
     canPost,
-    messages: rows.map((row) => ({
+    messages: messages.map(({ cursorCreatedAt, ...row }) => ({
       ...row,
-      isMine:
-        context.membership?.id ===
-        row.senderMembershipId,
+      createdAtExact: cursorCreatedAt,
+      isMine: context.membership?.id === row.senderMembershipId,
     })),
+    highlightedPinned: highlightedPinned ?? null,
+    nextCursor: hasOlder && oldest
+      ? { beforeCreatedAt: oldest.cursorCreatedAt, beforeId: oldest.id }
+      : null,
   };
 }
 
@@ -185,18 +201,26 @@ export async function createCourseDiscussionMessage(
         ? "FACULTY"
         : "ADMIN";
 
-  const [created] = await getDb()
-    .insert(courseDiscussionMessages)
-    .values({
+  return getDb().transaction(async (tx) => {
+    const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
-      senderMembershipId:
-        membership.id,
+      senderMembershipId: membership.id,
       senderRole,
       messageText: input.messageText,
-    })
-    .returning();
-
-  return created!;
+    }).returning();
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
+      collegeId: membership.collegeId,
+      organizationId: membership.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: created!.id,
+      summary: "Course discussion message posted",
+      metadata: { deliveryId, senderRole },
+      groupKey: "course-discussion:" + deliveryId,
+      dedupeKey: "course-discussion:" + created!.id + ":post",
+    });
+    return created!;
+  });
 }
 
 export async function toggleCourseDiscussionPin(
@@ -226,25 +250,29 @@ export async function toggleCourseDiscussionPin(
 
   // Evaluate both columns against the current persisted value in one
   // UPDATE; two simultaneous moderators must toggle twice, not lose a write.
-  const [updated] = await getDb()
-    .update(courseDiscussionMessages)
-    .set({
+  return getDb().transaction(async (tx) => {
+    const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
       pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
         then null else ${context.user.id}::uuid end`,
       updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(courseDiscussionMessages.id, message.id),
-        eq(courseDiscussionMessages.deliveryId, message.deliveryId),
-      ),
-    )
-    .returning();
-  if (!updated) {
-    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-  }
-  return updated;
+    }).where(and(
+      eq(courseDiscussionMessages.id, message.id),
+      eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+    )).returning();
+    if (!updated) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_PIN_CHANGED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: updated.id,
+      summary: updated.pinned ? "Course discussion pinned" : "Course discussion unpinned",
+      metadata: { deliveryId: message.deliveryId, pinned: updated.pinned },
+      groupKey: "course-discussion:" + message.deliveryId,
+    });
+    return updated;
+  });
 }
 
 export async function deleteCourseDiscussionMessage(
@@ -275,16 +303,22 @@ export async function deleteCourseDiscussionMessage(
     );
   }
 
-  const [deleted] = await getDb()
-    .delete(courseDiscussionMessages)
-    .where(and(
+  return getDb().transaction(async (tx) => {
+    const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
-    ))
-    .returning({ id: courseDiscussionMessages.id });
-
-  if (!deleted) {
-    throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-  }
-  return deleted;
+    )).returning({ id: courseDiscussionMessages.id });
+    if (!deleted) throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_DELETED,
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+      subjectType: "course_discussion_message",
+      subjectId: deleted.id,
+      summary: "Course discussion message deleted",
+      metadata: { deliveryId: message.deliveryId },
+      groupKey: "course-discussion:" + message.deliveryId,
+    });
+    return deleted;
+  });
 }

@@ -1,0 +1,25 @@
+import { z } from "zod";
+
+/** No date columns exist in registered project_sprints. Reject date inputs. */
+export const mentorSprintCreateParamsSchema = z.object({
+  projectId:z.string().uuid(),
+}).strict();
+export const mentorSprintCreateSchema = z.object({
+  releaseId:z.string().uuid(),
+  title:z.string().trim().min(1).max(200),
+  description:z.string().trim().max(4000).nullable(),
+}).strict();
+
+export const mentorSprintTransitionParamsSchema = z.object({
+  projectId:z.string().uuid(),sprintId:z.string().uuid(),
+}).strict();
+export const mentorSprintTransitionSchema = z.object({
+  action:z.enum(["START","COMPLETE","REOPEN"]),
+  expectedUpdatedAt:z.iso.datetime({offset:true}),
+}).strict();
+
+export function isValidMentorSprintTransition(before:string,action:string) {
+  return (before==="PLANNED"&&action==="START") ||
+    (before==="ACTIVE"&&action==="COMPLETE") ||
+    (before==="COMPLETED"&&action==="REOPEN");
+}

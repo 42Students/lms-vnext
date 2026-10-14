@@ -329,3 +329,39 @@ with unique template/project names and full event/fixture cleanup.
 These tests are authored **but not executed here**; do not mark Board
 or task reviews DONE without fresh-DB, lint, typecheck and mobile/browser
 proof. No unmigrated assignee/workload data has been invented.
+
+## Mentor Sprint creation and optimistic lifecycle control (2026-10-14)
+
+Added Mentor-only create in the Release workspace, and Start/Complete/Reopen
+confirmation-gated actions using current persisted sprint timestamp tokens.
+Strict Zod rejects caller-supplied dates, tenant IDs and unregistered fields.
+This is intentional: `project_sprints` has no registered start/end date
+columns. A release-linked planned Sprint is inserted transactionally under a
+project row lock with a unique template key and next persisted sequence.
+Transitions check active Mentor project membership, central projects.read,
+module enablement, release state, other active sprints, and open-task status
+before updating. Every committed create/status change records a sanitized
+actor-and-college activity row in the same transaction. The UI explains that
+dates cannot yet be saved; only ISO offset timestamps are accepted as
+optimistic tokens and no IST-local date string is silently coerced.
+Pure-model and isolated PostgreSQL positive/stale/foreign/forged tests are
+authored; executed current-SHA lint, typecheck, browser and DB acceptance
+are still OPEN and Project Sprints remains PARTIAL.
+
+## Mentor notification acknowledgment scope and transaction (2026-10-14)
+
+The existing `/mentor/notifications` page and owner-only inbox reader now
+reconfirm the persisted active Mentor role and current college. The notification
+list and confirmed bulk read control use Mentor-only same-origin POST routes,
+not generic recipient-only endpoints. Mutation bodies accept only empty JSON
+(Zod strict); recipient identity and college come from the signed-in membership.
+Single and bulk acknowledgments update only notifications whose event belongs
+to that college, inside a transaction that records one sanitized actor/college
+identity audit for real changes. Repeated reads and an empty bulk action are
+idempotent without extra audits. Cross-college notifications are excluded from
+inbox paging, unread counts and writes; project alerts/announcements remain
+separately handled. A unique-actor disposable PostgreSQL test exercises
+single/bulk success, forged role, suspended membership, foreign-college
+denial, idempotency, audit and full fixture cleanup. Unit tests cover invalid
+mutation bodies. Authenticated browser and current-SHA PostgreSQL/CI
+execution remain open; Mentor Notifications is PARTIAL.
