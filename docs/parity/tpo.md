@@ -309,6 +309,9 @@ Legacy table:
 - [ ] past-season/permission restrictions are enforced.
 
 ## Page: Edit Drive
+
+**W66-1 PARTIAL — Edit Drive:** New `/tpo/placements/jobs/[jobId]/edit` edits title, description, locations, openings and INR CTC on active-season DRAFT jobs only. TPO college-actor scope, confirmed PATCH, row lock, millisecond-safe timestamp CAS, synchronized active primary role and immutable activity audit. Unit and disposable PG tests authored, unrun. Remaining: full legacy fields, navigation dirty-state checks, browser validation and independent PG certification.
+
 **Legacy:** `/tpo/drives/[jobId]/edit`
 
 - [ ] Editable fields match lifecycle restrictions.
