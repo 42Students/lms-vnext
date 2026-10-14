@@ -1380,3 +1380,6 @@ The same-Section moderation history viewer now rejects duplicate actions/pages, 
 
 ## 2026-10-15 Faculty individual Gradebook private 404 — PARTIAL
 Learner gradebook drill-ins validate both UUID path IDs and map unassigned Section or absent learner membership to `notFound()` without leaking learner presence. Unexpected service errors still reach the boundary; pure classifier tests authored. PostgreSQL foreign/role and browser verification remain pending.
+
+## 2026-10-15 Faculty Assignment report private route boundary — PARTIAL
+The Assignment report now rejects malformed, duplicate or forged exact-Section parameters, validates the assessment path UUID, and maps unavailable/foreign-Section records to a non-leaking 404. Database faults still propagate; pure tests cover both parsed and denied selectors. Existing DONE report workflow untouched, new guard remains PARTIAL pending executed PG/browser acceptance.
