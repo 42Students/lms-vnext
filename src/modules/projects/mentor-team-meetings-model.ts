@@ -14,7 +14,10 @@ export function mentorTeamMeetingsPage(total:number,requested:number){
   const pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
   return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};
 }
-export function mentorTeamMeetingsHref(query:MentorTeamMeetingsQuery){
+export function mentorTeamMeetingsHref(query:
+  Pick<MentorTeamMeetingsQuery,"projectId"|"status"|"page"> &
+  {search?:MentorTeamMeetingsQuery["search"]}){
+
   const params=new URLSearchParams();
   if(query.status!=="ALL")params.set("status",query.status);
   if(query.search)params.set("search",query.search);
