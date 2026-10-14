@@ -45,6 +45,17 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               <option value="ARCHIVED">Archived</option>
             </select>
           </label>
+          {videos ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Video format
+              <select name="format" defaultValue={data.query.format}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All video formats</option>
+                <option value="VIDEO">Stored video</option>
+                <option value="YOUTUBE">YouTube</option>
+              </select>
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Filter
