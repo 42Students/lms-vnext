@@ -22,6 +22,7 @@ const ids={period:randomUUID(),program:randomUUID(),cohort:randomUUID(),
   section:randomUUID(),course:randomUUID(),offering:randomUUID(),delivery:randomUUID(),
   oldAssignment:randomUUID(),firstUser:randomUUID(),firstMember:randomUUID(),firstRole:randomUUID(),
   nextUser:randomUUID(),nextMember:randomUUID(),nextRole:randomUUID()};
+const scheduleIds={target:randomUUID(),busy:randomUUID(),otherSection:randomUUID()};
 const key="w-reassign-"+ids.offering.slice(0,8);
 let expectedUpdatedAt="";
 const payload=()=>({expectedMembershipId:ids.firstMember,replacementMembershipId:ids.nextMember,
@@ -65,6 +66,9 @@ describe.skipIf(!enabled)("College Faculty reassign PostgreSQL fixtures",()=>{
     expectedUpdatedAt=created.rows[0]!.updated_at.toISOString();
   });
   afterAll(async()=>{try{if(pool){
+    await pool.query("DELETE FROM section_schedule_event_courses WHERE schedule_event_id=$1",[scheduleIds.target]);
+    await pool.query("DELETE FROM section_schedule_events WHERE id IN ($1,$2)",[scheduleIds.target,scheduleIds.busy]);
+    await pool.query("DELETE FROM sections WHERE id=$1",[scheduleIds.otherSection]);
     await pool.query("DELETE FROM course_teaching_assignments WHERE delivery_id=$1",[ids.delivery]);
     for(const [table,id] of [
       ["course_section_deliveries",ids.delivery],["course_offerings",ids.offering],["courses",ids.course],
@@ -101,6 +105,26 @@ describe.skipIf(!enabled)("College Faculty reassign PostgreSQL fixtures",()=>{
     const untouched=await pool!.query("SELECT membership_id,ended_at FROM course_teaching_assignments WHERE delivery_id=$1",
       [ids.delivery]);
     expect(untouched.rows).toEqual([{membership_id:ids.firstMember,ended_at:null}]);
+    const start=new Date(Date.now()+72*3600000),end=new Date(start.getTime()+3600000);
+    await pool!.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4::text,$4::text)",
+      [scheduleIds.otherSection,ids.cohort,ids.period,key+"-other"]);
+    await pool!.query("INSERT INTO section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at) VALUES($1,$2,$3,$4::text,$5,$6)",
+      [scheduleIds.target,ids.section,ids.firstMember,key,start,end]);
+    await pool!.query("INSERT INTO section_schedule_event_courses(schedule_event_id,delivery_id) VALUES($1,$2)",
+      [scheduleIds.target,ids.delivery]);
+    await pool!.query("INSERT INTO section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at) VALUES($1,$2,$3,$4::text,$5,$6)",
+      [scheduleIds.busy,scheduleIds.otherSection,ids.nextMember,key,start,end]);
+    await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))
+      .rejects.toMatchObject({code:"FACULTY_SCHEDULE_CONFLICT"});
+    const stillLive=await pool!.query("SELECT membership_id FROM course_teaching_assignments WHERE delivery_id=$1 AND ended_at IS NULL",
+      [ids.delivery]);
+    expect(stillLive.rows).toEqual([{membership_id:ids.firstMember}]);
+    const noAudit=await pool!.query("SELECT id FROM activity_events WHERE subject_type='course_teaching_assignment' AND metadata->>'previousAssignmentId'=$1::text",
+      [ids.oldAssignment]);
+    expect(noAudit.rowCount).toBe(0);
+    // Back-to-back Faculty commitments must not prevent reassignment.
+    await pool!.query("UPDATE section_schedule_events SET starts_at=$2,ends_at=$3 WHERE id=$1",
+      [scheduleIds.busy,end,new Date(end.getTime()+3600000)]);
     await pool!.query("UPDATE course_teaching_assignments SET updated_at=updated_at + interval '1 millisecond' WHERE id=$1",
       [ids.oldAssignment]);
     await expect(reassignCollegeTeaching(own,ids.oldAssignment,payload()))

@@ -21,3 +21,6 @@ export function hallBookingWindow(input:{date:string;from:string;to:string}) {
 export function hallCanFitClass(hallCapacity:number,sectionCapacity:number|null){
   return sectionCapacity===null||sectionCapacity<=hallCapacity;
 }
+export function hallFacultyIsEligible(accountStatus:string,membershipStatus:string){
+  return accountStatus==="ACTIVE"&&membershipStatus==="ACTIVE";
+}

@@ -1,10 +1,15 @@
 import {describe,expect,it} from "vitest";
-import {collegeHallBookingSchema,hallBookingWindow,hallCanFitClass}
+import {collegeHallBookingSchema,hallBookingWindow,hallCanFitClass,hallFacultyIsEligible}
   from "@/modules/academics/college-hall-booking-model";
 const base={sectionId:"40000000-0000-4000-8000-000000000001",
   facultyMembershipId:null,date:"2026-10-15",from:"09:00",to:"10:00",
   title:"Math",expectedSectionUpdatedAt:"2026-10-14T11:00:00.123Z",confirm:true};
 describe("College IST hall booking",()=>{
+  it("requires an active Faculty account and membership",()=>{
+    expect(hallFacultyIsEligible("ACTIVE","ACTIVE")).toBe(true);
+    expect(hallFacultyIsEligible("DISABLED","ACTIVE")).toBe(false);
+    expect(hallFacultyIsEligible("ACTIVE","SUSPENDED")).toBe(false);
+  });
   it("normalizes dates to UTC without losing IST calendar boundaries",()=>{
     const window=hallBookingWindow(base);
     expect(window.startsAt.toISOString()).toBe("2026-10-15T03:30:00.000Z");
