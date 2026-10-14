@@ -112,6 +112,22 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
       await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
     }
   });
+  it("searches registered own-college active program/batch names without returning foreign learners",async()=>{
+    if(!profilePool)throw Error("Disposable PG required");
+    const rows=await profilePool.query<{name:string}>(
+      "SELECT p.name AS name FROM learner_program_enrollments e "+
+      "JOIN programs p ON p.id=e.program_id JOIN departments d ON d.id=p.department_id "+
+      "WHERE e.membership_id=$1::uuid AND e.status='ACTIVE' AND d.college_id=$2::uuid LIMIT 1",
+      [SEED_IDS.learnerCollegeAMembership,SEED_IDS.collegeA]);
+    if(rows.rows[0]){
+      const results=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:rows.rows[0].name});
+      expect(results.items.map(row=>row.membershipId)).toContain(SEED_IDS.learnerCollegeAMembership);
+    }
+    const absent=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:"never-program-"-concat(SEED_IDS.collegeB)});
+    expect(absent.items).toHaveLength(0);
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:"program"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("denies a non-admin in another college before any directory read", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {}))

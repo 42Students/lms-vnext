@@ -19,7 +19,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
 export type CollegeRoleDirectoryQuery = z.infer<typeof collegeRoleDirectoryQuerySchema>;
 
 export function collegeDirectorySearchHint(kind: CollegeDirectoryKind) {
-  return kind === "LEARNER" ? "Name, email, roll or registration number" : "Name, email, title, employment type or department";
+  return kind === "LEARNER" ? "Name, email, roll, registration, program or batch" : "Name, email, title, employment type or department";
 }
 
 export type CollegeRoleDirectoryRow = {
