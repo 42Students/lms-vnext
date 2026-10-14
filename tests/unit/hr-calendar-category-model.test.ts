@@ -12,6 +12,14 @@ describe("HR calendar kind filters",()=>{
   expect(filterHrCalendarDays(days as unknown as import("@/modules/placements/hr-calendar-category-model").HrCalendarFilterDay[],"RESULTS_DUE")[0]?.resultsDue).toHaveLength(1);
   expect(filterHrCalendarDays(days as unknown as import("@/modules/placements/hr-calendar-category-model").HrCalendarFilterDay[],"ALL")[0]?.events).toHaveLength(2);
  });
+ it("does not misclassify future SLOT and unrelated events as interview rounds",()=>{
+  const rows=[{day:"2026-10-15",events:[
+   {kind:"ROUND"},{kind:"SLOT"},{kind:"GENERAL"},{kind:"APPLICATION_DEADLINE"}],
+   resultsDue:[]}];
+  const typed=rows as unknown as import("@/modules/placements/hr-calendar-category-model").HrCalendarFilterDay[];
+  expect(filterHrCalendarDays(typed,"ROUNDS")[0]?.events.map(event=>event.kind)).toEqual(["ROUND"]);
+  expect(filterHrCalendarDays(typed,"ALL")[0]?.events).toHaveLength(4);
+ });
  it("does not accept fake calendar event types",()=>{
   expect(HR_CALENDAR_CATEGORIES).toHaveLength(4);
   expect(hrCalendarCategorySchema.safeParse("SLOT").success).toBe(false);

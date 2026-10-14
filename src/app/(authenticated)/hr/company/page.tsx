@@ -198,7 +198,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
-            <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)}
+            <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
               className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">
               Export authorized team CSV
             </Link>
