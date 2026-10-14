@@ -1,20 +1,22 @@
 import "server-only";
-import {and,eq,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,courseTeachingAssignments,courseSectionDeliveries,
-  courseOfferings,courses,departments,membershipRoles,users} from "@/db/schema";
+  courseOfferings,courses,departments,membershipRoles,users,
+  sectionScheduleEvents,sectionScheduleEventCourses} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {teachingAssignmentConflict} from "./teaching-assignment-guard";
 import {postgresConstraintName} from "./errors";
-import {collegeTeachingReassignIdSchema,collegeTeachingReassignSchema,teachingMembershipIsActive}
+import {collegeTeachingReassignIdSchema,collegeTeachingReassignSchema,teachingMembershipIsActive,teachingScheduleConflict}
   from "./college-teaching-reassign-model";
 
 export class CollegeTeachingReassignError extends Error {
   constructor(public readonly code:"ASSIGNMENT_NOT_FOUND"|"ASSIGNMENT_STALE"|
-    "TARGET_NOT_FOUND"|"FACULTY_CONFLICT"|"PRIMARY_CONFLICT"){
+    "TARGET_NOT_FOUND"|"FACULTY_CONFLICT"|"PRIMARY_CONFLICT"|
+    "FACULTY_SCHEDULE_CONFLICT"|"FACULTY_SCHEDULE_TOO_LARGE"){
     super(code);this.name="CollegeTeachingReassignError";
   }
 }
@@ -91,6 +93,30 @@ export async function reassignCollegeTeaching(context:RequestContext,rawId:unkno
         .for("share").limit(1);
       if(!replacement||!teachingMembershipIsActive(replacement))
         throw new CollegeTeachingReassignError("TARGET_NOT_FOUND");
+      // Only registered linked-delivery sessions and explicitly assigned
+      // Faculty sessions have a reliable persisted timetable interpretation.
+      // A cap must deny, never silently omit later conflicting sessions.
+      const nowForSchedule=new Date();
+      const targetSchedule=await tx.select({id:sectionScheduleEvents.id,
+        startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
+        .from(sectionScheduleEvents)
+        .innerJoin(sectionScheduleEventCourses,eq(sectionScheduleEventCourses.scheduleEventId,sectionScheduleEvents.id))
+        .where(and(eq(sectionScheduleEventCourses.deliveryId,delivery.id),
+          eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.endsAt,nowForSchedule)))
+        .limit(2001);
+      if(targetSchedule.length>2000)
+        throw new CollegeTeachingReassignError("FACULTY_SCHEDULE_TOO_LARGE");
+      if(targetSchedule.length){
+        const busy=await tx.select({id:sectionScheduleEvents.id,
+          startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
+          .from(sectionScheduleEvents)
+          .where(and(eq(sectionScheduleEvents.facultyMembershipId,replacement.id),
+            eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.endsAt,nowForSchedule)))
+          .limit(2001);
+        if(busy.length>2000)throw new CollegeTeachingReassignError("FACULTY_SCHEDULE_TOO_LARGE");
+        if(teachingScheduleConflict(targetSchedule,busy))
+          throw new CollegeTeachingReassignError("FACULTY_SCHEDULE_CONFLICT");
+      }
       const live=await tx.select({membershipId:courseTeachingAssignments.membershipId,
         role:courseTeachingAssignments.role})
         .from(courseTeachingAssignments)
