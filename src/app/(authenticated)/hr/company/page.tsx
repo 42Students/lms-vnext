@@ -8,11 +8,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
+import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 
 type PageProps = {
   searchParams: Promise<{
     collegeId?: string | string[];
     tab?: string | string[];
+    q?: string | string[];
   }>;
 };
 
@@ -31,6 +33,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       action={<Link href="/hr/company" className="text-primary-text underline">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
   const requestedTab = one(query.tab);
+  const teamQuery = hrTeamSearchSchema.safeParse(one(query.q));
 
   if (requestedTab === "reports") {
     redirect(
@@ -42,6 +45,9 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   }
 
   const tab = requestedTab === "team" ? "team" : "company";
+  if (!teamQuery.success) return <div className="space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+    <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
+      action={<Link href="/hr/company?tab=team" className="text-primary-text">Clear search</Link>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
 
   if (result.status !== "READY") {
@@ -81,6 +87,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const jobs = await listOwnRecruiterPlacementJobs(context);
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
+  const matchingTeam = searchHrTeam(result.team,teamQuery.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
     <div className="space-y-6">
@@ -186,11 +193,21 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       ) : (
         <section className="rounded-xl border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
-          {result.team.length === 0 ? (
+          <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
+            <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
+            <input type="hidden" name="tab" value="team"/>
+            <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
+            <input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
+              placeholder="Search name, designation or email"
+              className="min-h-11 min-w-48 flex-1 rounded-md border border-border bg-surface px-3 text-sm"/>
+            <button type="submit" className="rounded-md border border-border px-4 text-sm text-primary-text">Search</button>
+          </form>
+          <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates</p>
+          {matchingTeam.length === 0 ? (
             <p className="mt-3 text-sm text-muted-foreground">Only you so far.</p>
           ) : (
             <div className="mt-4 divide-y divide-border">
-              {result.team.map((member) => (
+              {matchingTeam.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
                   <div>
                     <div className="font-medium text-foreground">
