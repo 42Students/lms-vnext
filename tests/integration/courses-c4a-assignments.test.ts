@@ -782,6 +782,34 @@ describe("courses C4A assignments against PostgreSQL", () => {
       );
 
     expect(hiddenAgain?.pointsAwarded).toBeNull();
+
+    // Only successful versioned transitions create an activity event.
+    // The stale-version failure above must not leave a phantom grade audit.
+    const audit = await pool.query<{
+      event_type: string;
+      actor_user_id: string;
+      metadata: Record<string, unknown>;
+      summary: string;
+    }>(
+      `select event_type, actor_user_id, metadata, summary
+         from activity_events
+        where subject_type = 'assignment_submission' and subject_id = $1
+        order by occurred_at, id`,
+      [submitted.id],
+    );
+    expect(audit.rows.map((row) => row.event_type).sort()).toEqual([
+      "courses.assignment.grade_published",
+      "courses.assignment.graded",
+      "courses.assignment.graded",
+    ].sort());
+    expect(audit.rows.every((row) => row.actor_user_id === faculty.user.id))
+      .toBe(true);
+    expect(audit.rows.map((row) => (row.metadata as { version: number }).version).sort())
+      .toEqual([1, 2, 3]);
+    expect(JSON.stringify(audit.rows)).not.toContain("Good work");
+    expect(JSON.stringify(audit.rows)).not.toContain("Regraded");
+    expect(audit.rows.every((row) => !("pointsAwarded" in row.metadata)))
+      .toBe(true);
   });
 
   it("enforces grade bounds and database payload constraints", async () => {

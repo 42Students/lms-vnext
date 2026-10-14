@@ -943,12 +943,41 @@ describe("courses UI2A faculty read model", () => {
         "DISCUSSION_MODERATION_ACCESS_DENIED",
     });
 
+    await expect(
+      toggleCourseDiscussionPin(
+        faculty,
+        facultyMessage.id,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "DISCUSSION_MESSAGE_NOT_FOUND",
+    });
+    await expect(
+      deleteCourseDiscussionMessage(
+        faculty,
+        learnerMessage.id,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "DISCUSSION_MESSAGE_NOT_FOUND",
+    });
+
     const pinned =
       await toggleCourseDiscussionPin(
         faculty,
         facultyMessage.id,
+        structure.deliveryA.id,
       );
     expect(pinned.pinned).toBe(true);
+
+    // Concurrent toggles must apply independently against the persisted row,
+    // not both write the same stale boolean read before either update.
+    const concurrent = await Promise.all([
+      toggleCourseDiscussionPin(faculty, facultyMessage.id, structure.deliveryA.id),
+      toggleCourseDiscussionPin(faculty, facultyMessage.id, structure.deliveryA.id),
+    ]);
+    expect(concurrent.map((row) => row.pinned).sort())
+      .toEqual([false, true]);
 
     const feed =
       await listCourseDiscussionMessages(
@@ -969,6 +998,7 @@ describe("courses UI2A faculty read model", () => {
     await deleteCourseDiscussionMessage(
       faculty,
       learnerMessage.id,
+      structure.deliveryA.id,
     );
     const afterDelete =
       await listCourseDiscussionMessages(
