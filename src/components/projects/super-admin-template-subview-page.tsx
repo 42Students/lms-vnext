@@ -20,7 +20,9 @@ import {
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 
 function formatDate(value: Date) {
-  return value.toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata", dateStyle: "medium",
+  }).format(value) + " IST";
 }
 
 function DetailField({

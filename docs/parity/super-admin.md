@@ -568,3 +568,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Project Templates catalogue — PARTIAL:** Added global template title/status filters, 20-row server pagination, responsive cards and active college-assignment counts scoped to current Super Admin global/org/college safety selection. Global mutation/create remains unscoped-only; selected scope keeps read-only template metadata. Pure model + isolated PostgreSQL in-test template/assignment/foreign-count/wrong-role tests authored, unexecuted. Remaining: legacy editor sections, assignment workflows, versions/revision UX, large-volume browser and DB gates.
+
+
+**2026-10-14 Chat 6 / Template assignment scoped detail — PARTIAL:** Fixed global-template detail and Colleges subview to restrict active assignment IDs/counts/names by selected college AND organization at the SQL level. Global reads retain global counts. Assignment and version timestamps display IST. Added pure scope-model tests and isolated PG in-test template assignment/foreign-college/wrong-role tests (not run). Remains: legacy assignment UX and browser/database acceptance.
