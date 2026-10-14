@@ -241,6 +241,8 @@ Legacy contract:
 ## Page: Lecture Halls
 **Legacy:** `/college-admin/lecture-halls`
 
+**Read/manage PARTIAL (2026-10-14):** `/college/lecture-halls` uses registered `lecture_halls` with the existing add/edit/archive/restore dialogs and college-scope API writes. Added server-side hall-name, status, room-type and department filtering with 25-row pagination, separate filtered/unfiltered empty messages, loading/error boundaries and dashboard setup navigation. Archived and active halls are included by default. No new write route was introduced; the existing create/PATCH routes enforce `isSameOriginRequest`. The legacy delete semantics (vNext uses archive), detailed room location, complete scheduling-conflict UI, executed new tests and browser parity remain open.
+
 - [ ] Hall list/table fields match.
 - [ ] Create Hall form fields/validation match.
 - [ ] Edit Hall modal matches.
