@@ -78,6 +78,7 @@ export async function listTpoRecruiterAccess(
     .select({
       grantId:
         placementRecruiterCollegeGrants.id,
+      updatedAt: placementRecruiterCollegeGrants.updatedAt,
       displayName:
         users.displayName,
       companyName:
@@ -152,6 +153,8 @@ export async function listTpoRecruiterAccess(
 
       db
         .select({
+          grantId: scopedGrants.grantId,
+          updatedAt: scopedGrants.updatedAt,
           displayName:
             scopedGrants.displayName,
           companyName:

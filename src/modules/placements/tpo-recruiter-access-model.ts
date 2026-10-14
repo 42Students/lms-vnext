@@ -27,6 +27,8 @@ export type TpoRecruiterAccessQuery =
   z.infer<typeof tpoRecruiterAccessQuerySchema>;
 
 export type TpoRecruiterGrantSourceRow = {
+  grantId?: string;
+  updatedAt?: Date;
   displayName: string | null;
   companyName: string;
   status: string;
@@ -35,6 +37,8 @@ export type TpoRecruiterGrantSourceRow = {
 };
 
 export type TpoRecruiterGrantView = {
+  grantId?: string;
+  expectedUpdatedAt?: string;
   displayName: string;
   companyName: string;
   status: TpoRecruiterGrantStatus;
@@ -77,6 +81,9 @@ export function toTpoRecruiterGrantView(
     .parse(row.status);
 
   return {
+    ...(row.grantId && row.updatedAt
+      ? { grantId: row.grantId, expectedUpdatedAt: row.updatedAt.toISOString() }
+      : {}),
     displayName:
       row.displayName?.trim() ||
       "Unnamed recruiter",
