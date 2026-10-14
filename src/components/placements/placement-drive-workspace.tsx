@@ -219,6 +219,12 @@ export async function PlacementDriveWorkspace({
                 Applicant stages
               </Link>
             ) : null}
+            {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
+              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
+                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                Extend deadline
+              </Link>
+            ) : null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
