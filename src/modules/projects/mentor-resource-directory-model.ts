@@ -4,6 +4,7 @@ export const mentorResourceDirectoryQuerySchema=z.object({
  projectId:z.string().uuid(),
  required:z.enum(["ALL","REQUIRED","OPTIONAL"]).default("ALL"),
  link:z.enum(["ALL","HTTPS","UNAVAILABLE"]).default("ALL"),
+ order:z.enum(["SEQUENCE","TITLE"]).default("SEQUENCE"),
  search:z.string().trim().max(100).default(""),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -30,7 +31,9 @@ export function mentorResourceDirectory(rows:readonly MentorResourceFact[],
     (query.link==="HTTPS")===(safeHttpsResourceUrl(row.url)!==null))&&
   (!term||[row.title,row.description??""].some(x=>
    x.toLocaleLowerCase("en-IN").includes(term))))
-  .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+  .sort((a,b)=>query.order==="TITLE"
+   ? a.title.localeCompare(b.title)||a.sequence-b.sequence||a.id.localeCompare(b.id)
+   : a.sequence-b.sequence||a.id.localeCompare(b.id));
  const total=selected.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.min(query.page,totalPages);
  const project=(row:MentorResourceFact)=>({
@@ -50,6 +53,7 @@ export function mentorResourceDirectoryHref(query:MentorResourceDirectoryQuery){
  const params=new URLSearchParams();
  if(query.required!=="ALL")params.set("required",query.required);
  if(query.link!=="ALL")params.set("link",query.link);
+ if(query.order!=="SEQUENCE")params.set("order",query.order);
  if(query.search)params.set("search",query.search);
  if(query.page>1)params.set("page",String(query.page));
  return "/mentor/projects/"+encodeURIComponent(query.projectId)+"/resources-directory"+

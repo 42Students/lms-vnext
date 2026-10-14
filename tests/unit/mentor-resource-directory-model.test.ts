@@ -26,6 +26,14 @@ describe("Mentor link-resource directory",()=>{
   }));
   const result=mentorResourceDirectory(rows,q);
   expect(result.exportItems).toHaveLength(200);
+  const ordered=mentorResourceDirectory([
+   {id:"a",title:"Zulu",description:null,url:null,required:false,sequence:0},
+   {id:"b",title:"Alpha",description:null,url:null,required:false,sequence:1},
+  ],{...q,order:"TITLE"});
+  expect(ordered.items.map(row=>row.id)).toEqual(["b","a"]);
+  expect(ordered.exportItems.map(row=>row.id)).toEqual(["b","a"]);
+  expect(mentorResourceDirectoryQuerySchema.safeParse({projectId,order:"UNTRUSTED"}).success)
+   .toBe(false);
   expect(result.exportOmitted).toBe(2);
   expect(mentorResourceDirectoryCsv(result.exportItems,2))
    .toContain("2 additional matching resources");
