@@ -29,6 +29,12 @@ export default async function FacultyProfilePage() {
           Current teaching assignments →
         </Link>
       </div>
+      <div className="flex justify-end">
+        <Link href="/teacher/profile/contacts"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Contact details and editing availability
+        </Link>
+      </div>
       <section aria-label="Faculty profile details" className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-base font-semibold text-foreground">About</h2>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
