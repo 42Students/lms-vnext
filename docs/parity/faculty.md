@@ -398,22 +398,6 @@ The exact scoped Students list can now export its currently filtered/sorted rows
 
 The aggregate Assessment Results route now filters by the exact active teaching Section in addition to assessment type/status/search, retaining the Section selector in pagination links and never fetching another college's Section. It displays a recorded response rate computed from eligible/responded membership counts; missing or inconsistent denominators show Unknown, while a valid Section with zero responses shows 0%. Pure model tests and authenticated Section selector/browser checks have been authored; final exact-SHA browser and PostgreSQL proof is required before closing Results parity.
 
-## Faculty Section assessment-health drill-down (2026-10-14)
+### Faculty Attendance navigation-mode correctness (2026-10-14)
 
-A read-only `/teacher/courses/[deliveryId]/assessment-health` route is now
-linked from the exact Faculty Section Students page. It requires current
-Faculty role, central `courses.read` same-college permission, and a
-persisted active teaching assignment for the requested delivery. It reuses
-registered Section-specific Assignment/Quiz report readers and considers only
-PUBLISHED assessments. The view provides eligible, responded, missing and
-graded counts with a denominator-safe response percentage, plus a Faculty-only
-average where recorded grades exist. Five assessments per page bound report
-expansion; each has an authorized detailed report link. Pure-model tests and a
-disposable-PostgreSQL denial suite are authored, not claimed executed. It
-does not certify private grade publication, elective/Section roster visual
-parity, full historic reporting or authenticated browser acceptance. Existing
-Course Overview and reports stay PARTIAL.
-
-The previous chat-4 Faculty and Mentor additions were checked against the
-current GitHub tree: their dedicated pages each have both loading.tsx and
-error.tsx. Empty states remain per-page, not silently replaced by zero counts.
+Fixed a verified browser-root-cause bug: the server previously converted a missing Calendar session parameter into a fallback first-session ID, inadvertently opening Mark mode for plain Attendance navigation and hiding the monthly report/selector. It now passes a deep-link ID only when the URL requested an exact persisted authorized session; no/invalid link starts in Report mode. The editor can still choose the first authorized session as an internal fallback. New pure unit tests distinguish these cases. This is a functional repair, not only a Playwright selector change, and full browser proof remains required.
