@@ -18,7 +18,7 @@ import {getFacultyDiscussionHistory} from "@/modules/courses/faculty-discussion-
 import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-service";
 import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
-import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
+import {getFacultyDeliveryRoster,createFacultyAttendanceSession,markFacultyAttendance,getFacultyAttendanceWorkspace} from "@/modules/attendance/faculty-service";
 import {getFacultyStudentDetail} from "@/modules/courses/faculty-student-detail-service";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -50,6 +50,12 @@ async function cleanup(){
  if(!f)return;
  // Only mutable fixture entities are removed. NEVER delete append-only activity_events.
  await pool.query("delete from course_discussion_messages where delivery_id=$1",[f.deliveryId]);
+ // Dispose only mutable Section attendance rows. Keep activity_events forever:
+ // their subject references are text identifiers, their actors are retained.
+ await pool.query("delete from attendance_records where schedule_event_id in (select schedule_event_id from section_schedule_event_courses where delivery_id=$1)",[f.deliveryId]);
+ await pool.query("delete from attendance_sessions where schedule_event_id in (select schedule_event_id from section_schedule_event_courses where delivery_id=$1)",[f.deliveryId]);
+ await pool.query("delete from section_schedule_event_courses where delivery_id=$1",[f.deliveryId]);
+ await pool.query("delete from section_schedule_events where section_id=$1",[f.sectionId]);
  await pool.query("delete from course_teaching_assignments where delivery_id=$1",[f.deliveryId]);
  await pool.query("delete from course_section_deliveries where id=$1",[f.deliveryId]);
  await pool.query("delete from course_offerings where id=$1",[f.offeringId]);
@@ -201,6 +207,61 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    deliveryId:f.deliveryId,membershipId:f.learnerMembershipId,
    collegeId:SEED_IDS.collegeB,
   })).rejects.toBeDefined();
+ });
+
+ it("marks attendance, requires a reason for corrections, rejects stale tokens and retains audit history",async()=>{
+  const f=await fixture();
+  const now=Date.now();
+  const event=await createFacultyAttendanceSession(faculty,{
+   deliveryId:f.deliveryId,title:"Faculty C4 Attendance acceptance",
+   description:"Real Section roll call",location:"Lab C4",
+   startsAt:new Date(now-20*60_000).toISOString(),
+   endsAt:new Date(now+20*60_000).toISOString(),
+  });
+  const initial=await getFacultyAttendanceWorkspace(faculty,f.deliveryId);
+  expect(initial.roster.map(row=>row.membershipId)).toContain(f.learnerMembershipId);
+  expect(initial.sessions.find(row=>row.id===event.id)?.attendanceStatus).toBeNull();
+  const first=await markFacultyAttendance(faculty,event.id,{
+   deliveryId:f.deliveryId,absentMembershipIds:[],
+   presentMembershipIds:[f.learnerMembershipId],
+  });
+  expect(first.markedPresent).toBe(1);
+  expect(first.markedAbsent).toBe(0);
+  expect((await getFacultyAttendanceWorkspace(faculty,f.deliveryId)).sessions
+    .find(row=>row.id===event.id)?.attendanceStatus).toBe("MARKED");
+  const correction={
+   deliveryId:f.deliveryId,absentMembershipIds:[f.learnerMembershipId],
+   presentMembershipIds:[],expectedMarkedAt:first.markedAt.toISOString(),
+   correctionReason:"Learner was absent at roll call",
+  };
+  await expect(markFacultyAttendance(faculty,event.id,{
+   ...correction,correctionReason:"short",
+  })).rejects.toBeDefined();
+  const second=await markFacultyAttendance(faculty,event.id,correction);
+  expect(second.markedAbsent).toBe(1);
+  expect(second.markedAt.getTime()).toBeGreaterThan(first.markedAt.getTime());
+  const persisted=await getFacultyAttendanceWorkspace(faculty,f.deliveryId);
+  expect(persisted.records.filter(row=>row.scheduleEventId===event.id))
+   .toEqual([expect.objectContaining({
+    membershipId:f.learnerMembershipId,status:"ABSENT",
+   })]);
+  await expect(markFacultyAttendance(faculty,event.id,correction)).rejects.toBeDefined();
+  await expect(markFacultyAttendance(faculty,event.id,{
+   ...correction,expectedMarkedAt:second.markedAt.toISOString(),
+  })).rejects.toBeDefined();
+  await expect(markFacultyAttendance(learner,event.id,correction)).rejects.toBeDefined();
+  await expect(markFacultyAttendance(faculty,SEED_IDS.collegeB,correction)).rejects.toBeDefined();
+  await expect(markFacultyAttendance(faculty,event.id,{
+   ...correction,expectedMarkedAt:second.markedAt.toISOString(),
+   collegeId:SEED_IDS.collegeB,
+  })).rejects.toBeDefined();
+  const audit=await pool.query<{summary:string}>(
+   "select summary from activity_events where subject_id=$1 and summary like 'Class attendance%' order by occurred_at",
+   [event.id],
+  );
+  expect(audit.rows.map(row=>row.summary).sort()).toEqual([
+   "Class attendance corrected","Class attendance marked",
+  ]);
  });
  it("keeps Faculty alternate contacts blocked even for a real authorized Faculty-only profile",async()=>{
   // Seeded College A Faculty ALSO has MENTOR: the self-profile permission
