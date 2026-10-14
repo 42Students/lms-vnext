@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {
   capFacultyQuizCsvRows,facultyQuizCsvNotice,FACULTY_QUIZ_CSV_MAX_ROWS,
+  selectFacultyQuizCsvRows,
 } from "@/modules/courses/faculty-quiz-csv-cap";
 import {facultyReportCsv} from "@/modules/courses/faculty-report-csv";
 
@@ -15,6 +16,18 @@ describe("Faculty quiz export row cap",()=>{
   expect(c.complete).toBe(false);
   expect(FACULTY_QUIZ_CSV_MAX_ROWS).toBe(500);
   expect(facultyQuizCsvNotice(c.omittedRows)).toContain("70 additional");
+ });
+ it("filters only persisted attempted or eligible missing rows before capping",()=>{
+   const latest=Array.from({length:450},(_,i)=>({id:i}));
+   const missing=Array.from({length:300},(_,i)=>({id:i+450}));
+   const attempted=selectFacultyQuizCsvRows(latest,missing,"ATTEMPTED");
+   const result=capFacultyQuizCsvRows(attempted.attempted,attempted.missing);
+   expect(result.selectedAttempts).toHaveLength(450);
+   expect(result.selectedMissing).toHaveLength(0);
+   expect(result.omittedRows).toBe(0);
+   const notAttempted=selectFacultyQuizCsvRows(latest,missing,"NOT_ATTEMPTED");
+   expect(capFacultyQuizCsvRows(notAttempted.attempted,notAttempted.missing).selectedMissing)
+    .toHaveLength(300);
  });
  it("preserves actual empty, nontruncated results",()=>{
   expect(capFacultyQuizCsvRows([],[])).toEqual({

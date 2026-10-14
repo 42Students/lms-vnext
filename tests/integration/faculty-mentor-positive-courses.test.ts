@@ -565,6 +565,27 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       ...body,correctionReason:"Checked register; no learner state changed",
     })).rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_NO_CHANGE"});
   });
+  it("filters Quiz CSV by actual attempted state without leaking another Section",async()=>{
+    const {delivery,quiz}=await fixture();
+    const none=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"ATTEMPTED",
+    });
+    expect(none.csv).not.toContain('"NOT_ATTEMPTED"');
+    const unattempted=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"NOT_ATTEMPTED",
+    });
+    expect(unattempted.csv).toContain("NOT_ATTEMPTED");
+    expect(unattempted.csv).not.toContain('"Email"');
+    await expect(getFacultyReportCsvForDownload(learner,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"ATTEMPTED",
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:SEED_IDS.collegeB,filter:"ATTEMPTED",
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id,filter:"LATE",
+    })).rejects.toBeDefined();
+  });
   it("exports only scoped Faculty Section rows without learner contact fields",async()=>{
     const {delivery,assignment,quiz}=await fixture();
     const row=await pool.query<{id:string}>(`insert into assignment_submissions

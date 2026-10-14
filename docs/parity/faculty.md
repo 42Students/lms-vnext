@@ -1001,3 +1001,14 @@ published/draft/archived states fail closed. Faculty's own exact Section route
 remains unchanged. Pure policy unit and disposable Section PG tests cover
 Faculty/wrong-role/foreign-denied, Admin publish/hide, no-op denial, and audit.
 PARTIAL: orchestrator gates, browser and legacy role continuity.
+
+## 2026-10-14 Faculty Quiz CSV attempted-state filters — PARTIAL
+Existing exact-Section server-verified Quiz report CSV now supports mutually
+exclusive ALL, ATTEMPTED and NOT_ATTEMPTED query selectors. The GET schema
+rejects Assignment-only grading filters on Quiz and Quiz-only filters on
+Assignment; it rejects duplicate and forged selectors. Filter first, then
+enforce the combined 500-row cap, neutralize formulas and omit learner contact.
+Faculty Quiz report offers mobile-friendly direct links for both subsets.
+Pure unit and disposable PG read fixtures cover empty attempted vs persisted
+unattempted, invalid filter, foreign Section and learner denied. GET-only;
+no stale write token. PARTIAL until tests/browser/legacy.

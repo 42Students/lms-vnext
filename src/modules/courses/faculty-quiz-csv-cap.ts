@@ -17,3 +17,13 @@ export function facultyQuizCsvNotice(omitted:number) {
     "NOTICE: "+omitted+" additional learner result rows were omitted by the 500-row safety cap. Open the authorized Section report for full details.":
     null;
 }
+
+/** Filter authorized latest-attempt and eligible no-attempt lists before
+ * applying the same total 500-row export cap. */
+export type FacultyQuizCsvFilter="ALL"|"ATTEMPTED"|"NOT_ATTEMPTED";
+export function selectFacultyQuizCsvRows<T,U>(
+ attempted:readonly T[],notAttempted:readonly U[],filter:FacultyQuizCsvFilter,
+){
+ return {attempted:filter==="NOT_ATTEMPTED"?[]:attempted,
+  missing:filter==="ATTEMPTED"?[]:notAttempted};
+}
