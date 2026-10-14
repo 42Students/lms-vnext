@@ -420,7 +420,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L13-009 | Existing application state | VerifiedJobDetailContent | learner jobs control | FIXED |
 | L13-010 | External application mode | VerifiedJobDetailContent | learner jobs control | UNCHECKED |
 | L13-011 | Registration requirements | VerifiedJobDetailContent | learner jobs control | UNCHECKED |
-| L13-012 | Closed/not-open state | VerifiedJobDetailContent | job detail | UNCHECKED |
+| L13-012 | Closed/not-open state | VerifiedJobDetailContent | learner-scoped drive detail now explains genuinely closed, submitted, withdrawn, missing-evidence, not-open and open-role states without changing server application guards; PARTIAL pending fresh-PG/unit, responsive screen-reader and expiry/eligibility browser acceptance | PARTIAL |
 | L13-013 | Not-eligible state | DriveEligibilityPanel | job detail | FIXED |
 | L13-014 | Not-found/access handling | job route | job detail | FIXED |
 | L13-015 | Back to Drives/navigation | job detail | job links preserve validated bounded Drives filter/page state in a `back` query and the job detail breadcrumb returns to it; arbitrary tenant/user selectors removed; exact published job still server-scoped. PARTIAL pending PG/unit/tsc/lint, Next app-router and browser Back/Forward acceptance | PARTIAL |

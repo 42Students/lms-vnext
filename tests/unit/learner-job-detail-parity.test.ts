@@ -19,6 +19,8 @@ describe("Learner published placement Job Detail", () => {
     expect(source).toContain("check.actual");
     expect(source).toContain("check.required");
     expect(source).toContain("LearnerPlacementJobs items={items}");
+    expect(source).toContain("learnerJobAvailabilityBanner(items)");
+    expect(source).toContain("Application availability");
     const cards = read("src/components/placements/learner-placement-jobs.tsx");
     const hrefs = read("src/modules/placements/learner-drives-return-model.ts");
     expect(hrefs).toContain("/learn/my-placements/jobs/");

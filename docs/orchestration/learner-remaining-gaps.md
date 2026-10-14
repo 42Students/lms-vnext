@@ -976,3 +976,5 @@ Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt
 2026-10-14 L11-005: own issued offers expiring in the next 24 hours now take hero priority; missing/expired offers are not fabricated. Added fresh-learner offer read and denial PG coverage, pure model tests. Skip L13-016 per-drive resumes (private storage/consent not registered); L30-034..043 verification (document review tables not migrated).
 
 2026-10-14 L12-021: own published Drives distinguish zero published opportunities from filter-excluded opportunities. No fabricated jobs or saved-job state. Skip L12-003/013/014/020 saved favorites: registered private saved-job table not verified; L13-016 per-drive upload: private storage/consent approval missing. Pure and own-fixture PG authored; execution pending.
+
+2026-10-14 L13-012: authorized published job detail displays an honest no-new-application reason from scoped role and deadline state; never treats a withdrawn or rejected application as a new entitlement. Fresh-learner PG and pure-model coverage authored, not yet executed.
