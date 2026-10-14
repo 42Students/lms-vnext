@@ -22,6 +22,7 @@ export default async function TenantDirectory({searchParams}:{
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant directory"
    description="Read-only active colleges and their organizations. The selected Super Admin safety scope always applies." />
+  <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Tenant Setup · Create / Set up →</Link>
   <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">College
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
