@@ -47,7 +47,7 @@ export async function confirmTpoDriveDayCheckIn(
       .where(and(eq(placementJobRounds.id, roundId), eq(placementJobs.collegeId, collegeId)))
       .for("share").limit(1);
     if (!round || round.status === "CANCELLED" || round.status === "COMPLETED") {
-      throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_READY");
+      throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
     }
     const [candidate] = await tx.select({ id: placementApplications.id })
       .from(placementApplications)

@@ -2,7 +2,7 @@ import { z } from "zod";
 export const tpoDriveDayCheckInSchema = z.object({
   confirmed: z.literal(true),
   applicationId: z.string().uuid(),
-  expectedAttendance: z.enum(["WAITING", "PRESENT", "IN_INTERVIEW", "DONE", "ABSENT"]),
+  expectedAttendance: z.enum(["WAITING", "PRESENT", "ABSENT"]),
   status: z.enum(["PRESENT", "ABSENT"]),
 }).strict();
 
