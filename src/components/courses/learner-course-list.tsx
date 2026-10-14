@@ -10,6 +10,7 @@ import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-cour
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
 import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next-action-model";
 import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "@/modules/courses/learner-course-progress-filter-model";
+import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 
 const PAGE_SIZE = 48;
@@ -99,6 +100,7 @@ export function LearnerCourseList({
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
   const [progressFilter,setProgressFilter]=useState<LearnerCourseProgressFilter>("ALL");
+  const [termState,setTermState]=useState<LearnerCourseTermState>("ALL");
   const [sortMode,setSortMode] = useState<LearnerCourseSortMode>("NAME");
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
 
@@ -120,6 +122,7 @@ export function LearnerCourseList({
     return sortLearnerCourseCards(periodRows
       .filter(row => !continueOnly || learnerCourseHasContinueAction(row))
       .filter(row => learnerCourseMatchesProgress(row,progressFilter))
+      .filter(row => learnerCourseMatchesTermState(row,termState))
       .filter((row) => {
         const elective =
           String(row.course.offeringType).toUpperCase() === "ELECTIVE";
@@ -128,7 +131,7 @@ export function LearnerCourseList({
         return learnerCourseMatchesSearch(row, needle);
       })
       ,sortMode);
-  }, [periodRows, query, typeFilter, continueOnly,sortMode,progressFilter]);
+  }, [periodRows, query, typeFilter, continueOnly,sortMode,progressFilter,termState]);
 
   if (rows.length === 0) {
     return (
@@ -162,6 +165,7 @@ export function LearnerCourseList({
                   setTypeFilter(reset.type);
                   setContinueOnly(false);
                   setProgressFilter("ALL");
+                  setTermState("ALL");
                   setSortMode("NAME");
                   setVisibleLimit(reset.visibleLimit);
                 }}
@@ -222,6 +226,15 @@ export function LearnerCourseList({
         </div>
 
         <div className="mt-3 flex flex-wrap items-end gap-3">
+          <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
+            Term access
+            <select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
+              className="min-h-11 rounded-lg border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="ALL">All term courses</option>
+              <option value="CURRENT">Currently active</option>
+              <option value="HISTORY">Past semester (read-only)</option>
+            </select>
+          </label>
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Learning progress
             <select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
