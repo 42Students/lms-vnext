@@ -353,8 +353,23 @@ export default async function RecruiterCompanyReportsPage({
             description="There are no recruiter-visible published or closed hiring drives matching these filters for this company and college."
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[64rem] text-left text-sm">
+          <>
+          <div className="grid gap-3 md:hidden">
+            {jobs.map(job=><article key={job.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
+              <Link href={"/hr/placements/jobs/"+job.id} className="break-words font-semibold text-primary-text">{job.title}</Link>
+              <p className="mt-1 text-xs text-muted-foreground">{job.status}</p>
+              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                {[
+                  ["Applied",job.applications],["Offered (issued)",job.outstandingOffers],
+                  ["Accepted",job.acceptedOffers],["Declined",job.declinedOffers],
+                  ["Joined",job.joinedOffers],["Withdrawn",job.withdrawnApplications],
+                ].map(([label,value])=><div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className="font-semibold tabular-nums text-foreground">{value}</dd></div>)}
+              </dl>
+            </article>)}
+          </div>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+            <table className="w-full min-w-[72rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">
@@ -381,6 +396,8 @@ export default async function RecruiterCompanyReportsPage({
                   <th scope="col" className="px-4 py-3 text-right">
                     Accepted offers
                   </th>
+                  <th scope="col" className="px-4 py-3 text-right">Declined</th>
+                  <th scope="col" className="px-4 py-3 text-right">Joined</th>
                 </tr>
               </thead>
 
@@ -443,11 +460,14 @@ export default async function RecruiterCompanyReportsPage({
                     <td className="px-4 py-4 text-right tabular-nums text-body">
                       {job.acceptedOffers}
                     </td>
+                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.declinedOffers}</td>
+                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.joinedOffers}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <nav
@@ -495,8 +515,7 @@ export default async function RecruiterCompanyReportsPage({
         distinct candidates. Submitted and withdrawn are current
         application statuses. Outstanding and accepted offers
         count offer records with current ISSUED and ACCEPTED
-        statuses, respectively; they do not represent lifetime
-        offer history or confirmed joining. Only PUBLISHED and
+        statuses, respectively; joined counts only explicit JOINED evidence on ACCEPTED offers. These counts do not represent lifetime offer history. Only PUBLISHED and
         CLOSED drives authorized for this exact employer-college
         relationship are included. No candidate contact details,
         report exports, external offers or confidential TPO data

@@ -41,11 +41,14 @@ export type RecruiterReportCounts = {
   withdrawnApplications: number;
   outstandingOffers: number;
   acceptedOffers: number;
+  declinedOffers?: number;
+  joinedOffers?: number;
 };
 
-export type RecruiterReportRow =
-  RecruiterReportJob &
-  Omit<RecruiterReportCounts, "jobId">;
+export type RecruiterReportRow = RecruiterReportJob &
+  Omit<RecruiterReportCounts,"jobId"|"declinedOffers"|"joinedOffers"> & {
+    declinedOffers:number; joinedOffers:number;
+  };
 
 const EMPTY_COUNTS = {
   applications: 0,
@@ -53,6 +56,8 @@ const EMPTY_COUNTS = {
   withdrawnApplications: 0,
   outstandingOffers: 0,
   acceptedOffers: 0,
+  declinedOffers: 0,
+  joinedOffers: 0,
 } as const;
 
 /**
@@ -76,7 +81,10 @@ export function buildRecruiterCompanyReportRows(
 
   return jobs.map((job) => ({
     ...job,
-    ...(byJobId.get(job.id) ?? EMPTY_COUNTS),
+    ...EMPTY_COUNTS,
+    ...(byJobId.get(job.id) ?? {}),
+    declinedOffers: byJobId.get(job.id)?.declinedOffers ?? 0,
+    joinedOffers: byJobId.get(job.id)?.joinedOffers ?? 0,
   }));
 }
 

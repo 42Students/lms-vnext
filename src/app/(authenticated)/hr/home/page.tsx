@@ -1,69 +1,86 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
+import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
+import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 
-export default async function HrHomePage() {
+const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
+function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
+function when(value: Date) {return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
+
+export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
-
+  const parsed = querySchema.safeParse({collegeId:first((await searchParams).collegeId)});
+  if (!parsed.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
+    <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
+      action={<Link href="/hr/home" className="text-primary-text underline">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Employer Recruiter"
-        title="Today"
-        description={"Your work with colleges as " + recruiter.companyName + "."}
-      />
-
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-base font-semibold text-foreground">College access</h2>
-        {recruiter.grants.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-border bg-surface-secondary p-4">
-            <div className="font-medium text-foreground">No active college access</div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Ask the placement cell that invited you to restore or approve access.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {recruiter.grants.map((grant) => (
-              <div key={grant.id} className="rounded-lg border border-border bg-surface-secondary p-4">
-                <div className="font-medium text-foreground">{grant.collegeName}</div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Link
-                    href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId)}
-                    className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-on-primary hover:bg-primary-hover"
-                  >
-                    Company & Team
-                  </Link>
-                  <Link
-                    href="/hr/placements"
-                    className="rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
-                  >
-                    Hiring Workspace
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-base font-semibold text-foreground">Recruiter account</h2>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
-            <dd className="mt-1 text-sm text-foreground">{recruiter.companyName}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</dt>
-            <dd className="mt-1 text-sm text-foreground">{recruiter.title ?? "Not provided"}</dd>
-          </div>
-        </dl>
-      </section>
-    </div>
-  );
+  const grants = recruiter.grants;
+  const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
+  if (selectedId && !grants.some(grant => grant.collegeId === selectedId)) notFound();
+  if (!selectedId) return <div className="space-y-6">
+    <PageHeader eyebrow="Employer Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
+    {grants.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
+    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant =>
+      <Link key={grant.id} href={"/hr/home?collegeId=" + encodeURIComponent(grant.collegeId)}
+        className="rounded-lg border border-border bg-surface p-5 hover:border-primary"><span className="font-semibold">{grant.collegeName}</span>
+        <span className="mt-1 block text-sm text-muted-foreground">Open recruiter Today</span></Link>)}</section>}
+    <Link href="/hr/profile" className="text-sm text-primary-text">Your profile</Link>
+  </div>;
+  const grant = grants.find(item => item.collegeId === selectedId)!;
+  // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
+  const now = new Date();
+  const week = recruiterTodayWeek(now);
+  const [jobs, calendar] = await Promise.all([
+    listOwnRecruiterPlacementJobs(context),
+    listRecruiterCalendarEvents(context, week),
+  ]);
+  const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
+  const actions = [
+    {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
+    {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
+    {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
+  ];
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Employer Recruiter" title="Today"
+      description={recruiter.companyName + " · " + grant.collegeName + ". Your live employer hiring activity."} />
+    {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
+      <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
+        aria-current={item.collegeId === selectedId ? "page" : undefined}
+        className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
+    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-3">{actions.map(action=>
+      <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
+        <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
+      </Link>)}</section>
+    <section className="rounded-xl border border-border bg-surface p-5">
+      <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
+      {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
+        <Link key={item.job.id} href={"/hr/placements/jobs/" + item.job.id}
+          className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{item.job.title}</span>
+          <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
+        <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
+    </section>
+    <section className="rounded-xl border border-border bg-surface p-5">
+      <h2 className="font-semibold text-foreground">This week · upcoming rounds</h2>
+      {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.upcomingRounds.map(event =>
+        <Link key={event.id} href={"/hr/placements/jobs/" + event.jobId + "?tab=rounds"}
+          className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{event.title}</span>
+          <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
+        <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
+    </section>
+    <section className="rounded-xl border border-border bg-surface p-5">
+      <h2 className="font-semibold text-foreground">Waiting</h2>
+      <p className="mt-2 text-sm text-body">Drive request approvals, messages and placement-cell responses are not connected to a recruiter-visible persisted workflow yet. No waiting counts are inferred from published jobs.</p>
+    </section>
+    <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
+      <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
+      <Link className="text-primary-text" href="/hr/profile">Your profile</Link></div>
+  </div>;
 }
