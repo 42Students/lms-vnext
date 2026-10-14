@@ -406,3 +406,17 @@ An in-test project/template fixture and PostgreSQL success/denial tests are
 authored. The registered enum has no REVIEWED or CLOSED values, so distinct
 review-state closeout and sign-off remain BLOCKED pending schema/product
 disposition. Positive PG/browser evidence is pending; parity remains PARTIAL.
+
+## Mentor project Release/Sprint timeline read (2026-10-14)
+
+Read-only `/mentor/projects/[projectId]/timeline` displays registered
+release order, lifecycle status, contained sprint order/status and Done-task
+progress for each Sprint. It scopes to the active Mentor's persisted
+same-college project membership, central projects.read and module policy.
+Strict Zod filters/paging, mobile milestone cards and loading/error/empty
+states are present. A zero-task sprint shows Unknown progress, not 100%.
+Registered releases/sprints have no planned start/end dates; dates, velocity
+and forecasts are not fabricated. Pure-model tests and a new positive
+registered Release/Sprint assertion with forged/foreign-scope denials
+in the existing passing fixture suite are authored, not executed here.
+Full legacy planning and browser parity remain PARTIAL.
