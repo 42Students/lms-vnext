@@ -660,18 +660,18 @@ describe("courses C4B quizzes against PostgreSQL", () => {
 
     await expect(
       updateCourseQuiz(faculty, quiz.id, {
-        questions: quizQuestions(),
+        questions: quizQuestions(), confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString()
       }),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
 
     await expect(
       updateCourseQuiz(faculty, quiz.id, {
-        maxAttempts: 3,
+        maxAttempts: 3, confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString()
       }),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
 
     await submitCourseQuiz(
@@ -998,7 +998,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     await updateCourseQuiz(
       faculty,
       quiz.id,
-      { questions: replacement },
+      { questions: replacement, confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString() },
     );
 
     const draft = await getCourseQuiz(
@@ -1028,10 +1028,10 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       updateCourseQuiz(
         faculty,
         quiz.id,
-        { questions: quizQuestions() },
+        { questions: quizQuestions(), confirmed:true, expectedUpdatedAt:(await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id)).quiz.updatedAt.toISOString() },
       ),
     ).rejects.toMatchObject({
-      code: "QUIZ_HAS_ATTEMPTS",
+      code: "INVALID_QUIZ_TRANSITION",
     });
   });
 

@@ -173,6 +173,8 @@ export const createCourseQuizInputSchema =
 export const updateCourseQuizInputSchema =
   z
     .object({
+      expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
+      confirmed: z.literal(true).optional(),
       title: titleSchema.optional(),
       description:
         descriptionSchema
@@ -197,8 +199,8 @@ export const updateCourseQuizInputSchema =
     })
     .refine(
       (value) =>
-        Object.values(value).some(
-          (item) => item !== undefined,
+        Object.entries(value).some(
+          ([key,item]) => key !== "expectedUpdatedAt" && key !== "confirmed" && item !== undefined,
         ),
       "At least one quiz field is required",
     );

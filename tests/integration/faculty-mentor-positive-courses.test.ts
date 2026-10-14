@@ -23,7 +23,7 @@ import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/course
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
-import { createCourseQuiz, transitionCourseQuiz,setCourseQuizResults } from "@/modules/courses/quiz-service";
+import { createCourseQuiz, transitionCourseQuiz,setCourseQuizResults,updateCourseQuiz } from "@/modules/courses/quiz-service";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import {getFacultyCorrectionAvailability} from "@/modules/attendance/faculty-correction-service";
 import {markFacultyAttendance} from "@/modules/attendance/faculty-service";
@@ -293,16 +293,30 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       action:"PUBLISH",quizId:draft.id,
       expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
     })).rejects.toBeDefined();
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Missing token"})).rejects.toBeDefined();
+    const questionIdsBefore=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    const metadata=await updateCourseQuiz(facultyOnly,draft.id,{
+      title:"Quiz metadata drawer "+runId,expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    });
+    expect(metadata.totalPoints).toBe(5);
+    const questionIdsAfter=await pool.query<{id:string}>("select id from quiz_questions where quiz_id=$1 order by id",[draft.id]);
+    expect(questionIdsAfter.rows).toEqual(questionIdsBefore.rows);
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{
+      title:"Stale metadata",expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+    })).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
+    await expect(updateCourseQuiz(learner,draft.id,{title:"Wrong role",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
+    await expect(updateCourseQuiz({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},draft.id,{title:"Foreign",expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true})).rejects.toBeDefined();
     const published=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
       action:"PUBLISH",quizId:draft.id,
-      expectedUpdatedAt:revised.updatedAt.toISOString(),confirmed:true,
+      expectedUpdatedAt:metadata.updatedAt.toISOString(),confirmed:true,
     });
+    await expect(updateCourseQuiz(facultyOnly,draft.id,{title:"Published bypass",expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true})).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
     expect(published.status).toBe("PUBLISHED");
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1::text
       and event_type like 'courses.quiz.%'`,[draft.id]);
     expect(events.rows.map(row=>row.event_type).sort()).toEqual([
-      "courses.quiz.created","courses.quiz.published","courses.quiz.updated",
+      "courses.quiz.created","courses.quiz.published","courses.quiz.updated","courses.quiz.updated",
     ]);
   });
   it("writes a confirmed own-Section assignment draft with row-locked stale and wrong-role denial",async()=>{

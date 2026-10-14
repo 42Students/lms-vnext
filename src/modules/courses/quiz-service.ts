@@ -1,3 +1,5 @@
+import { commandFacultyQuiz } from "./faculty-quiz-authoring-service";
+import { facultyQuizLegacyEdit } from "./faculty-quiz-authoring-model";
 import {
   and,
   asc,
@@ -83,17 +85,17 @@ async function authorizeQuizMutation(
   >,
 ) {
   if (quiz.deliveryId) {
-    await requireDeliveryContentMutation(
+    return requireDeliveryContentMutation(
       context,
       quiz.deliveryId,
     );
-    return;
   }
 
   requirePermission(context, "courses.manage", {
     organizationId: quiz.organizationId,
     collegeId: quiz.collegeId,
   });
+  return "ADMIN" as const;
 }
 
 async function insertQuestions(
@@ -451,10 +453,14 @@ export async function updateCourseQuiz(
   const current =
     await loadCourseQuizScope(quizId);
 
-  await authorizeQuizMutation(
+  const actor = await authorizeQuizMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyQuiz(context,{deliveryId:current.deliveryId},facultyQuizLegacyEdit(current,input));
+  }
 
   const [attemptStats] = await getDb()
     .select({
