@@ -11,7 +11,7 @@ export function projectTpoCompanyHiringPulse(input:{
  const activeDrives=input.drives.filter(d=>d.status==="PUBLISHED"&&!d.archivedAt).length;
  const accepted=input.offers.filter(o=>o.status==="ACCEPTED");
  const confirmedJoined=accepted.filter(o=>o.joiningStatus==="JOINED");
- const latest=input.timeline.reduce<Date|null>((best,event)=>!best||event.at>best?event.at:best,null);
+ const latest=input.timeline.reduce<Date|null>((best,event)=>!best||event.at.getTime()>best.getTime()?event.at:best,null);
  return {
   activeDrives,
   seasonsWithDrives:new Set(input.seasonIds.filter((v):v is string=>Boolean(v))).size,
