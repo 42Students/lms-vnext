@@ -63,6 +63,14 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               </select>
             </label>
           ) : null}
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Audience scope
+            <select name="scope" defaultValue={data.query.scope}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
+              <option value="SECTION">Section-specific</option>
+            </select>
+          </label>
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Filter

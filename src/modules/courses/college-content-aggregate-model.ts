@@ -9,6 +9,7 @@ export const collegeContentQuerySchema = z.object({
   courseCode: z.string().trim().max(64).optional(),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"]).default("ALL"),
   format: z.enum(["ALL", "VIDEO", "YOUTUBE"]).default("ALL"),
+  scope: z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type CollegeContentQuery = z.infer<typeof collegeContentQuerySchema>;
@@ -26,6 +27,7 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   if (query.courseCode) params.set("courseCode", query.courseCode);
   if (query.status !== "ALL") params.set("status", query.status);
   if (kind === "VIDEO" && query.format !== "ALL") params.set("format", query.format);
+  if (kind !== "LIVE_CLASS" && query.scope !== "ALL") params.set("scope",query.scope);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -49,7 +51,7 @@ export function collegeContentSearchParams(
   params: Record<string, string | string[] | undefined>,
 ) {
   const raw: Record<string, string> = {};
-  for (const key of ["q", "courseCode", "status", "format", "page"] as const) {
+  for (const key of ["q", "courseCode", "status", "format", "scope", "page"] as const) {
     const value = params[key];
     if (typeof value === "string") raw[key] = value;
     else if (value !== undefined) return null;

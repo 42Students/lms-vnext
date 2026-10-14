@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, inArray, lt, or } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
@@ -98,6 +98,8 @@ export async function listCollegeContentAggregate(
         kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      kind !== "LIVE_CLASS" && query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
+      kind !== "LIVE_CLASS" && query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
       live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
       live?.view === "PAST" ? lt(lessonContents.endsAt,new Date()) : undefined,
       query.q ? or(
