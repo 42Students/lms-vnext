@@ -12,7 +12,7 @@ export const collegeStudyMemberSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("REMOVE_AND_LOCK"),
     membershipId: z.string().uuid(),
-    expectedVersion: z.number().int().min(1),
+    expectedVersion: z.number().int().min(0),
     confirm: z.literal(true),
   }).strict(),
   z.object({
