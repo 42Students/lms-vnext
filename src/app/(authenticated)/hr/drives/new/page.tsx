@@ -15,6 +15,7 @@ import {
   hrDraftFromAuthorizedJob,
 } from "@/modules/placements/hr-drive-draft-model";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
+import { hrDriveSessionStorageKey } from "@/modules/placements/hr-unsent-draft-storage-model";
 
 export default async function RecruiterRequestDrivePage({
   searchParams,
@@ -95,6 +96,7 @@ export default async function RecruiterRequestDrivePage({
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
       ← Back to drives
     </Link>
-    <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null} />
+    <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
+      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)} />
   </div>;
 }

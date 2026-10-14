@@ -493,3 +493,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR Drives sorting — PARTIAL:** Authorized published/closed drives list supports URL-persisted newest, deadline-first (missing deadlines last), and title sorting before 20-row client pages. Sorting operates after exact recruiter college/company filtering and does not mutate source. Unit test for validation, deterministic tie and sort authored, unexecuted. Remaining server keyset sorting at scale and browser acceptance.
+
+
+**2026-10-15 chat-10 / Request Drive scoped saved-draft restore — PARTIAL:** Recruiter can explicitly save a *validated* unsent draft in sessionStorage (browser tab, 24-hour expiry) and restore it. Key includes recruiter user, selected college and authorized Hire Again source; JSON is Zod validated, length and TTL checked, Start Over clears it. No server persistence, external send or file storage. Pure model and own-company PG source fixture extended, unexecuted. Remaining restoration of incomplete drafts, approval workflow and browser acceptance.
