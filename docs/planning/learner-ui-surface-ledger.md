@@ -561,12 +561,12 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L19-001 | Route is materialized, not placeholder | PlacementRulesPage | rules page | FIXED |
-| L19-002 | Back action | PlacementRulesPage | rules page | GAP |
-| L19-003 | Personal "Where you stand" note | PlacementRulesPage | rules page | GAP |
+| L19-002 | Back action | PlacementRulesPage | safe Zod-validated dashboard/cell/drives back destination, linked from source pages | FIXED |
+| L19-003 | Personal "Where you stand" note | PlacementRulesPage | registered learner-scoped evidence/preferences with explicit unknown values and no eligibility invention | FIXED |
 | L19-004 | Authoritative college rules summary | PlacementRulesPage/API | no canonical policy model | BLOCKED |
 | L19-005 | Rule-change applicability wording | PlacementRulesPage | rules page | GAP |
-| L19-006 | Loading skeleton | PlacementRulesPage | rules page | GAP |
-| L19-007 | Load error + Retry | PlacementRulesPage | rules page | GAP |
+| L19-006 | Loading skeleton | PlacementRulesPage | dedicated loading.tsx with LoadingState | FIXED |
+| L19-007 | Load error + Retry | PlacementRulesPage | dedicated error.tsx retry and safe return | FIXED |
 | L19-008 | Drive-level eligibility explanation | DriveEligibilityPanel | rules page | FIXED |
 
 ## L20 — Projects list: `/learn/projects`
