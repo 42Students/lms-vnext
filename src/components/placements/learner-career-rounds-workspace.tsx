@@ -79,7 +79,7 @@ export function LearnerCareerRoundsWorkspace({
   const [reminderError, setReminderError] = useState<string | null>(null);
 
   useEffect(()=>{
-    if(kind!=="ASSESSMENT")return;
+    if(kind!=="ASSESSMENT"&&kind!=="INTERVIEW")return;
     const onPop=()=>{
       const incoming=learnerRoundSearchQuerySchema.safeParse({
         q:new URLSearchParams(window.location.search).get("q")??"",
@@ -326,17 +326,16 @@ export function LearnerCareerRoundsWorkspace({
             </select>
           </label>
         </div>
-        {kind==="ASSESSMENT" ? (
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={saveSearchInUrl}
-              className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-              Save assessment search link
-            </button>
-            <p className="text-xs text-muted-foreground">
-              Search filters the current list as you type; save it to the URL to share or revisit.
-            </p>
-          </div>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="button" onClick={saveSearchInUrl}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Save {kind==="INTERVIEW"?"interview":"assessment"} search link
+          </button>
+          <p className="text-xs text-muted-foreground">
+            Search filters your own shortlisted rounds as you type. Save the query in the URL
+            to revisit it without sharing another learner&apos;s records.
+          </p>
+        </div>
       </section>
 
       {visibleRows.length === 0 && relevant.length > 0 ? (

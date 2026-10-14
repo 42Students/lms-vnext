@@ -4,6 +4,7 @@ import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-ca
 import { PageHeader } from "@/components/ui/page-header";
 import { resolveOwnInterviewDeepLink } from "@/modules/placements/learner-interview-deeplink-model";
 import { learnerInterviewScheduleViewSchema } from "@/modules/placements/learner-interview-view-model";
+import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
 export default async function LearnerPlacementInterviewsPage({ searchParams }: {
@@ -11,6 +12,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
     applicationId?: string | string[];
     roundId?: string | string[];
     view?: string | string[];
+    q?: string | string[];
   }>;
 }) {
   const context = await getCurrentRequestContext();
@@ -18,6 +20,8 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   const workspace = await getLearnerPlacementRequestWorkspace(context);
   const query = await searchParams;
   const view=learnerInterviewScheduleViewSchema.safeParse(query.view??"all");
+  const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
+  if(!search.success)notFound();
   if(!view.success)notFound();
   const link = resolveOwnInterviewDeepLink(workspace.rounds, {
     applicationId:query.applicationId,roundId:query.roundId,
@@ -33,6 +37,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
         kind="INTERVIEW"
         initialSelectedKey={link.key}
         initialTimeView={view.data}
+        initialSearch={search.data.q}
         snapshotNowIso={new Date().toISOString()}
         rounds={workspace.rounds.map(row => ({
           ...row,
