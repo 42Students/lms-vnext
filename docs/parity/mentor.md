@@ -913,3 +913,6 @@ Exact-project meeting history now selects meetings with/without nonblank persist
 
 ## 2026-10-15 chat-11 AN — exact-project recent activity windows (PARTIAL)
 Registered safe Project activity can filter events recorded within rolling 7×24h or 30×24h windows, shared by SQL count/page and the capped sanitized CSV. Only stored occurred_at instants, assigned Mentor authorization and existing fixed safe event labels are used. Pure cutoff/selector tests authored; time moves between export page requests, so cross-page snapshot isolation and browser/CI remain outstanding. Legacy activity history remains PARTIAL.
+
+## 2026-10-15 chat-11 AO — global Mentor project activity event categories (PARTIAL)
+Across currently assigned Mentor projects, the safe activity feed now filters persisted registered Project lifecycle, review, meeting and task event-type allowlists before SQL count and pagination. The exact-project activity allowlist is reused; only fixed labels/time/project links, no raw metadata or contacts. Strict Zod and pure tests authored. PG/browser/legacy event producer completeness remain open.
