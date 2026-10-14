@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings,
@@ -42,7 +42,7 @@ export async function listCollegeDriveApplications(
     rollNumber: learnerProfiles.rollNumber,
     roleTitle: placementJobRoleOptions.title,
     status: placementApplications.status,
-    screening: placementApplicationScreenings.status,
+    screening: sql<string | null>`${placementApplicationScreenings.status}`.as("screening_status"),
     submittedAt: placementApplications.submittedAt,
   }).from(placementApplications)
     .innerJoin(collegeMemberships, and(
