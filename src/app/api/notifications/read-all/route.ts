@@ -4,7 +4,6 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { markAllOwnNotificationsRead } from "@/modules/activity/notification-service";
 import { markAllOwnLearnerNotificationsRead } from "@/modules/activity/learner-notification-read-service";
-import { hasMembershipRole } from "@/modules/identity/context";
 
 export const runtime = "nodejs";
 
@@ -16,7 +15,7 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const markedRead = hasMembershipRole(context, "LEARNER")
+    const markedRead = context.membership?.roles.includes("LEARNER")
       ? await markAllOwnLearnerNotificationsRead(context)
       : await markAllOwnNotificationsRead(context);
     return NextResponse.json({ markedRead });
