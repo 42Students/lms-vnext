@@ -241,7 +241,7 @@ export function LearnerPlacementJourney({
               View published job and role options →
             </Link> : null}
             <Link
-              href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}}
+              href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
             >
               View application details →

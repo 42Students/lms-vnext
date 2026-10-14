@@ -20,7 +20,8 @@ describe("Learner published placement Job Detail", () => {
     expect(source).toContain("check.required");
     expect(source).toContain("LearnerPlacementJobs items={items}");
     const cards = read("src/components/placements/learner-placement-jobs.tsx");
-    expect(cards).toContain("/learn/my-placements/jobs/");
+    const hrefs = read("src/modules/placements/learner-drives-return-model.ts");
+    expect(hrefs).toContain("/learn/my-placements/jobs/");
     expect(cards).toContain("learnerJobDetailFromDrivesHref(item.job.id,returnQuery)");
   });
   it("preserves existing application API actions but guards employer URLs", () => {
