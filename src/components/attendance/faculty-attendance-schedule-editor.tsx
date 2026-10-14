@@ -2,7 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {localDateTimeInput,validateFacultyScheduleWindow} from
+import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants} from
   "@/modules/attendance/faculty-schedule-editor-model";
 
 type Session={
@@ -56,7 +56,7 @@ export function FacultyAttendanceScheduleEditor({
     try{
       const payload={
         action,title,description:description||null,location:location||null,
-        startsAt:new Date(startsAt).toISOString(),endsAt:new Date(endsAt).toISOString(),
+        ...facultyScheduleInstants(startsAt,endsAt),
         ...(action==="RESCHEDULE"?{
           sessionId:selected?.id,expectedUpdatedAt:selected?.updatedAt,
         }:{}),confirm:true,
@@ -76,7 +76,7 @@ export function FacultyAttendanceScheduleEditor({
     className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
-      Times are entered in your device time zone and saved as offset-aware instants.
+      Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
@@ -102,11 +102,11 @@ export function FacultyAttendanceScheduleEditor({
         <input value={location} onChange={e=>setLocation(e.target.value)}
           maxLength={240} className="min-h-10 rounded border border-border bg-background p-2" />
       </label>
-      <label className="grid gap-1 text-sm">Start
+      <label className="grid gap-1 text-sm">Start (IST)
         <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
           className="min-h-10 rounded border border-border bg-background p-2" />
       </label>
-      <label className="grid gap-1 text-sm">End
+      <label className="grid gap-1 text-sm">End (IST)
         <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
           className="min-h-10 rounded border border-border bg-background p-2" />
       </label>

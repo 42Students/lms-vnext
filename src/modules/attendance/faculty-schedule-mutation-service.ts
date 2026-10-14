@@ -91,6 +91,7 @@ export async function commandFacultyAttendanceSchedule(
         eq(sectionScheduleEvents.id,current!.id),
         eq(sectionScheduleEvents.sectionId,owned.sectionId),
         eq(sectionScheduleEvents.status,"SCHEDULED"),
+        sql`date_trunc('milliseconds', ${sectionScheduleEvents.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
       )).returning();
     }
     if(!saved)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");

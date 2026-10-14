@@ -1243,3 +1243,17 @@ rows remain separate.
 ## Faculty closure evidence reconciliation (2026-10-14)
 
 Course Overview is restored to DONE in the master matrix, matching the already completed detailed Overview checklist and the two green independent CI jobs in [run 38615289795](https://github.com/42Students/lms-vnext/actions/runs/38615289795) (5 registered PostgreSQL and 2 browser). Quiz Report is closed on [run 38618101294](https://github.com/42Students/lms-vnext/actions/runs/38618101294) (7 PostgreSQL, 14 unit, 2 browser). Neither row claims global CI release readiness.
+
+## 2026-10-15 Faculty attendance and live-class IST scheduling — PARTIAL
+Attendance create/reschedule and Blueprint live-class editors now read and
+write IST wall times independently of the device timezone. Labels and session
+summaries explicitly use IST. Invalid calendar dates and reversed windows fail
+before confirmation; the original attendance create dialog confirms its IST
+window. Rescheduling adds a SQL millisecond CAS beside its locked-version check.
+Pure tests cover midnight rollover and impossible dates. A fresh Faculty
+Section PG fixture covers UTC persistence, wrong/foreign-role denial, SQL now()
+microsecond tokens, reschedule, stale replay and two immutable audit events.
+Remaining: real PostgreSQL execution, mobile/browser scheduling and legacy
+calendar acceptance. The non-root PostgreSQL attempt is blocked: useradd -m
+pguser fails with "Cannot open audit interface - aborting" in the root-only UID
+namespace; no PostgreSQL run is claimed. Existing DONE rows remain unchanged.
