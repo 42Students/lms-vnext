@@ -1346,3 +1346,6 @@ The legacy `/teach` subtree now uses the exact `/teacher` active Faculty and cen
 
 ## 2026-10-15 /teach Course detail hidden-Section 404 — PARTIAL
 The alternate Faculty Course detail validates UUID before lookup and maps missing/foreign/unassigned learning deliveries to `notFound()` through a typed, tested service-error classifier. Genuine database errors still reach the error boundary. This is a source-authored privacy/route safeguard; exact PostgreSQL and desktop/mobile browser acceptance remain open.
+
+## 2026-10-15 Faculty Quiz choice-type transitions — PARTIAL
+The quiz builder now normalizes changing an authored multiple-choice question to single choice: exactly one prior selected answer (or the first incomplete option) remains correct, without mutating stored state. A pure model and unit regression tests cover normalization and schema-valid output. Browser keyboard/mobile and PG command acceptance remain open; All Quizzes stays PARTIAL.

@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -137,7 +137,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <div className="flex flex-wrap gap-3">
     <label className="grid gap-1 text-sm">Type
      <select value={q.type}
-      onChange={e=>updateQuestion(i,old=>({...old,type:e.target.value as Question["type"]}))}
+      onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
       className="min-h-10 rounded border border-border p-2">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
