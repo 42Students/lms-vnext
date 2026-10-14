@@ -13,7 +13,7 @@ describe("College activity model", () => {
       { actorName: "x".repeat(101) }, { q: "x".repeat(101) }, { collegeId: uuid }, { module: "FOREIGN" }, { importance: "IMPORTANT" },
       { eventType: "x".repeat(121) }, { from: "2026-02-30" }, { from: "2026-10-15", to: "2026-10-14" },
       { beforeId: uuid }, { beforeOccurredAt: "2026-10-14T12:00:00Z" },
-      { actorUserId: "not-a-uuid" }, { subjectId: "x".repeat(501) },
+      { pageSize:"100" }, {pageSize:"0"}, { actorUserId: "not-a-uuid" }, { subjectId: "x".repeat(501) },
     ]) expect(collegeActivityQuerySchema.safeParse(query).success).toBe(false);
     expect(collegeActivityQuerySchema.parse({subjectId:"  legacy-case:42  "}).subjectId).toBe("legacy-case:42");
     expect(collegeActivityQuerySchema.safeParse(
@@ -37,6 +37,16 @@ describe("College activity model", () => {
     const yearBoundary=new URL(collegeActivityRecentHref({},7,new Date("2027-01-01T00:00:00Z")),"https://example.test");
     expect(yearBoundary.searchParams.get("from")).toBe("2026-12-26");
     expect(() => collegeActivityRecentHref({},7,new Date("invalid"))).toThrow("INVALID_DATE");
+  });
+  it("persists bounded per-page size in cursor URLs without accepting oversized reads",()=>{
+    expect(collegeActivityQuerySchema.parse({pageSize:"10"}).pageSize).toBe("10");
+    expect(collegeActivityQuerySchema.parse({pageSize:"50"}).pageSize).toBe("50");
+    const url=new URL(collegeActivityHref({pageSize:"50"},{
+      beforeOccurredAt:new Date("2026-10-14T12:00:00Z"),beforeId:uuid,
+    }),"https://example.test");
+    expect(url.searchParams.get("pageSize")).toBe("50");
+    expect(url.searchParams.get("beforeId")).toBe(uuid);
+    expect(new URL(collegeActivityHref({pageSize:"25"}),"https://example.test").searchParams.has("pageSize")).toBe(false);
   });
   it("preserves filters when navigating to the next cursor", () => {
     const href = collegeActivityHref({ actorName:"Ana", q:"room updated", module: "ACADEMICS", importance: "HIGH",
