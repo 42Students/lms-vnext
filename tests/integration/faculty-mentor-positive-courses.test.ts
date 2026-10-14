@@ -23,6 +23,7 @@ import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-
 import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report-csv-service";
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
+import { getFacultySectionNotices } from "@/modules/courses/faculty-notices-service";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -267,6 +268,15 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     // separately persisted, active FACULTY-only user in the SAME college.
     await expect(getOwnFacultyTeachingSection(faculty,{}))
       .rejects.toThrow(/profile\.self\.manage/);
+    const notices=await getFacultySectionNotices(facultyOnly,{deliveryId:delivery.id});
+    expect(notices.available).toBe(false);
+    expect(notices.items).toEqual([]);
+    expect(notices.blocker).toContain("not yet promoted");
+    await expect(getFacultySectionNotices(learner,{deliveryId:delivery.id})).rejects.toBeDefined();
+    await expect(getFacultySectionNotices(facultyOnly,{deliveryId:SEED_IDS.collegeB})).rejects.toBeDefined();
+    await expect(getFacultySectionNotices(facultyOnly,{
+      deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
     const teaching=await getOwnFacultyTeachingSection(facultyOnly,{});
     expect(teaching.items).toEqual(expect.arrayContaining([
       expect.objectContaining({deliveryId:delivery.id,courseCode:codePrefix+"-ALG"}),

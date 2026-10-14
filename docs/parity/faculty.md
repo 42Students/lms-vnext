@@ -534,3 +534,18 @@ Faculty delivery authorization; no new audit rows or writes occur.
 Pure-model and query regression tests and the existing unique-fixture
 PostgreSQL positive-path assertion are authored. Complete grading editing,
 runtime/browser export and exact legacy modal parity remain PARTIAL.
+
+## Faculty Section notices — DB10 registration blocker (2026-10-14)
+
+The migrated schema barrel does not promote `db10Announcements`;
+`src/db/schema/db10-announcements.draft.ts` explicitly states draft-only.
+`/teacher/courses/[deliveryId]/notices` is an authorized read-only blocker
+page, not an invented zero-notices report. It requires an active Faculty
+Section grant and central courses.read through the existing Faculty workspace
+reader, rejects forged delivery/college selectors, and links to live Course
+Discussions. No post actions, DB writes, audits or phantom stored notices
+were added. Loading/error and mobile-facing availability panels are present.
+The existing unique-fixture Faculty PostgreSQL test is extended with success
+(unavailable state) and wrong-role/foreign-scope checks but not executed here.
+Posting waits for a promoted DB10 migration and Faculty authoring/audit policy.
+The course notices capability remains PARTIAL and blocked.
