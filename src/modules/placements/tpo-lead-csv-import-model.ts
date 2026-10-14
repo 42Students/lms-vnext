@@ -139,8 +139,8 @@ export function previewTpoLeadCsv(csv: string) {
     }
     const value = {
       name: cells[0],
-      email: cells[1],
-      phone: cells[2],
+      email: cells[1]?.trim(),
+      phone: cells[2]?.trim(),
       companyName: cells[3],
       designation: cells[4],
       source: cells[5],
