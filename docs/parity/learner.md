@@ -1044,3 +1044,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-003 PARTIAL:** Month view now shows the precise scoped round totals by kind for its IST month alongside the day grid; no missing job-deadline or college events are fabricated. Unit and own-fixture PostgreSQL cases authored, runtime/browser acceptance outstanding.
+
+
+**2026-10-15 chat-5 L17-004 PARTIAL:** Mobile Week view now preserves seven daily slots (including explicitly empty dates) instead of skipping unscheduled days. Scheduled items still come from the learner-scoped read. Browser/device and executed test acceptance outstanding.

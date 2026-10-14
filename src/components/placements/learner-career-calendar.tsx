@@ -12,6 +12,7 @@ import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date
 import { learnerMobileCareerAgenda } from "@/modules/placements/learner-mobile-career-agenda-model";
 import { learnerCareerDayChips } from "@/modules/placements/learner-career-day-chips-model";
 import { learnerCareerKindCounts } from "@/modules/placements/learner-career-kind-count-model";
+import { learnerCareerWeekDays } from "@/modules/placements/learner-career-week-days-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
@@ -100,7 +101,9 @@ export function LearnerCareerCalendar({
   const selected=findOwnCareerCalendarEvent(filtered,selectedKey);
   function showEventDetail(event:CareerCalendarEvent){setSelectedKey(event.key);}
 
-  const mobileDays=learnerMobileCareerAgenda(period.events);
+  const mobileDays=view==="week"
+    ? learnerCareerWeekDays(period.start,period.events)
+    : learnerMobileCareerAgenda(period.events);
 
   function downloadCalendar() {
     const file = learnerCareerIcal(filtered, new Date());
@@ -253,6 +256,7 @@ export function LearnerCareerCalendar({
           ) : mobileDays.map(day=>(
             <div key={day.dayKey} className="rounded-xl border border-border bg-surface p-4">
               <h4 className="text-sm font-semibold text-foreground">{prettyDay(day.dayKey)}</h4>
+              {day.events.length===0?<p className="mt-2 text-sm text-body">No scheduled rounds on this day.</p>:null}
               <ul className="mt-3 divide-y divide-border">
                 {day.events.map(event=>(
                   <li key={event.key} className="py-3 first:pt-0 last:pb-0">
