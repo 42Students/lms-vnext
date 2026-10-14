@@ -26,7 +26,7 @@ export const superAdminAuditRouteQuerySchema = z.strictObject({
   if (Boolean(value.beforeId) !== Boolean(value.beforeOccurredAt))
     ctx.addIssue({ code: "custom", path: ["beforeId"], message: "Cursor fields must be supplied together" });
   if (value.from && value.to &&
-    parseActivityDateBoundary(value.from, "from") > parseActivityDateBoundary(value.to, "to"))
+    parseActivityDateBoundary(value.from, "from").getTime() > parseActivityDateBoundary(value.to, "to").getTime())
     ctx.addIssue({ code: "custom", path: ["to"], message: "From must be before To" });
 });
 
