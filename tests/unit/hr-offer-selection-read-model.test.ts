@@ -7,6 +7,7 @@ describe("HR selection and offer read-only status",()=>{
   const result=buildHrOfferOverview([o("a","ISSUED",new Date("2026-10-10T00:00:00Z"),null),
     o("b","ISSUED",null,null),o("c","ACCEPTED",null,"JOINED"),o("d","DECLINED",null,null)],now);
   expect(result).toEqual({recorded:4,issued:2,accepted:1,declined:1,joined:1,awaitingReply:1,overdue:1});
+  expect(buildHrOfferOverview([o("e","ISSUED",null,"JOINED")],now).joined).toBe(0);
  });
  it("requires completed APPLIED PASS final results before selection",()=>{
   const rounds=[{kind:"TEST",status:"COMPLETED",participants:[{applicationId:"a",result:{status:"APPLIED",outcome:"PASS"}},
@@ -14,5 +15,19 @@ describe("HR selection and offer read-only status",()=>{
   expect(hrSelectionReadyApplicationIds(rounds)).toEqual(["a"]);
   expect(hrSelectionReadyApplicationIds([{...rounds[0],status:"SCHEDULED"}])).toEqual([]);
   expect(hrSelectionReadyApplicationIds([{...rounds[0],kind:"TALK"}])).toEqual([]);
+  const secondRound = {kind:"INTERVIEW",status:"COMPLETED",participants:[
+    {applicationId:"a",result:{status:"APPLIED",outcome:"PASS"}},
+    {applicationId:"b",result:{status:"APPLIED",outcome:"PASS"}},
+  ]};
+  expect(hrSelectionReadyApplicationIds([...rounds,secondRound])).toEqual(["a"]);
+  expect(hrSelectionReadyApplicationIds([rounds[0]!,{
+    ...secondRound,participants:[{applicationId:"a",result:{status:"STAGED",outcome:"PASS"}}],
+  }])).toEqual([]);
+  expect(hrSelectionReadyApplicationIds([rounds[0]!,{
+    ...secondRound,participants:[{applicationId:"a",result:{status:"APPLIED",outcome:"FAIL"}}],
+  }])).toEqual([]);
+  expect(hrSelectionReadyApplicationIds([rounds[0]!,{
+    ...secondRound,status:"SCHEDULED",
+  }])).toEqual([]);
  });
 });

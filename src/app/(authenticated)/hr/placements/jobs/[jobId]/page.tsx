@@ -8,11 +8,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
-import { buildHrOfferOverview, hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
+import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
+import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 function formatCtc(
   value: number | null,
@@ -30,7 +32,8 @@ export default async function HrPlacementJobPage({
   searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string;
+  searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
+    offerPage?:string; offerState?:string;
     roundId?:string; outcome?:string }>;
 }) {
   const context =
@@ -51,11 +54,11 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsTruncated, offers, offersTruncated } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
-  const offerSummary = buildHrOfferOverview(offers, now);
+
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
@@ -160,7 +163,7 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
-              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant and offer counts cover the newest 200 shared rows at most, not the full drive.</p></div>
+              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant counts use all authorized shared records; offer counts reflect all authorized shared offer versions.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
                 {driveOverview.deadlineState.replaceAll("_"," ")}
@@ -186,6 +189,16 @@ export default async function HrPlacementJobPage({
           </div>
         </section>
       ) : null}
+      <div className="flex flex-wrap gap-3">
+        <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Hire Again · draft preview
+        </Link>
+        <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          New drive preview
+        </Link>
+      </div>
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
         {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
           <Link key={tab} href={`/hr/placements/jobs/${workspace.job.id}?tab=${tab}`}
@@ -198,7 +211,7 @@ export default async function HrPlacementJobPage({
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
-          <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded.</p>
+          <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
             {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
               ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
@@ -216,7 +229,7 @@ export default async function HrPlacementJobPage({
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
-                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&applicant="+applicant.id}
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id}
                   className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
@@ -227,7 +240,7 @@ export default async function HrPlacementJobPage({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">Applicant review</h3>
-                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage}
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
               <dl className="mt-5 grid gap-4 text-sm">
@@ -243,13 +256,30 @@ export default async function HrPlacementJobPage({
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
           ) : null}
-          {applicantsTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 shared applications only.</p> : null}
+          <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            <span className="text-xs text-muted-foreground">
+              {applicantsPage.first === 0 ? "No rows on this page" :
+                "Showing " + applicantsPage.first + "–" + applicantsPage.last}
+              {" of " + (filters.stage === "SHORTLISTED" ? applicants.counts.shortlisted :
+                filters.stage === "WITHDRAWN" ? applicants.counts.withdrawn : applicants.counts.all)}
+            </span>
+            <div className="flex gap-2">
+              {filters.page > 1 ? (
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)}
+                  className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Previous</Link>
+              ) : null}
+              {filters.page < applicantsPage.pages ? (
+                <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)}
+                  className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Next</Link>
+              ) : null}
+            </div>
+          </nav>
         </section>
       ) : null}
       {filters.tab === "offers" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
-          <p className="text-sm text-body">Only offers associated with candidates already shared with your company appear here. Offer records represent persisted versions; LOI is not stored in the registered schema and is not represented as an offer.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. LOI is not stored in the registered schema.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -264,11 +294,22 @@ export default async function HrPlacementJobPage({
             </div>)}
           </div>
           <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
-            <h3 className="font-semibold text-foreground">Selection readiness · read only</h3>
-            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results through the final completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
+            <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
+          <nav aria-label="Offer status" className="flex flex-wrap gap-2">
+            {HR_OFFER_STATES.map((status) => (
+              <Link key={status} href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+status}
+                aria-current={status===filters.offerState ? "page" : undefined}
+                className={status===filters.offerState ?
+                  "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
+                  "rounded-full border border-border px-3 py-2 text-xs text-body"}>
+                {status==="ALL" ? "All statuses" : status}
+              </Link>
+            ))}
+          </nav>
           {offers.length ? <div className="grid gap-3 md:grid-cols-2">{offers.map(offer => (
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
@@ -280,7 +321,24 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xs text-muted-foreground">Reply by {offer.expiresAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt) : "Not set"} · Joining outcome {offer.joiningStatus ?? "Not recorded"}</p>
             </article>
           ))}</div> : <p className="text-sm text-muted-foreground">No offers recorded for shared applicants.</p>}
-          {offersTruncated ? <p className="text-xs text-muted-foreground">Showing the newest 200 offers only.</p> : null}
+          <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            <span className="text-xs text-muted-foreground">
+              {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
+              {" of " + offersPage.total}
+            </span>
+            <div className="flex gap-2">
+              {filters.offerPage > 1 ? <Link
+                href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
+                Previous
+              </Link> : null}
+              {filters.offerPage < offersPage.pages ? <Link
+                href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
+                Next
+              </Link> : null}
+            </div>
+          </nav>
         </section>
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>

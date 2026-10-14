@@ -28,3 +28,19 @@
 - 2026-10-14 — Today results due PARTIAL: company/college-authorized upcoming result deadlines on Today, no external notifications; pure/unit + isolated PG tests authored, unexecuted.
 
 - 2026-10-14 — HR round contact privacy PARTIAL: user ACTIVE + same-college membership + submission/shortlist + company identity; defense-in-depth model and PG guard tests authored, gates pending.
+
+- 2026-10-14 — HR Calendar RESULTS_DUE day grouping PARTIAL: due-only IST days and agenda/calendar badges; unit and PG fixture updated, execution pending.
+
+- 2026-10-14 — HR selection readiness PARTIAL: all-round applied PASS intersection and conservative JOINED count; unit + PG fixture updated, unexecuted.
+
+- 2026-10-14 — HR applicant DB pagination PARTIAL: 25-row scoped pages and full company-safe stage totals; tests authored/extended, execution pending.
+
+- 2026-10-14 — Request Drive local draft PARTIAL: owned-college chooser, Hire Again authorized job preview and Zod validated local-only form; no persistence or sending; tests authored not executed.
+
+- 2026-10-14 — Request Drive links PARTIAL: Today/Drives CTA and exact-job Hire Again preview navigation; test extensions unexecuted.
+
+- 2026-10-14 — Request Drive compensation/eligibility PARTIAL: local-only CTC breakdown, bond, backlogs and preview; tests authored, execution pending.
+
+- 2026-10-14 — HR Offers DB pages PARTIAL: 25-row filtered status pages and all-shared aggregate totals, no LOI; tests authored/extended, execution pending.
+
+- 2026-10-14 — HR Calendar mobile cards PARTIAL: narrow-screen day group layout for rounds/deadlines/results, unit/PG tests extended. Offers paging total label fixed. Execution pending.
