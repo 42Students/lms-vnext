@@ -14,8 +14,8 @@ export default function ErrorPage({
         Couldn&apos;t load drive shortlist
       </h1>
       <p className="mt-2 text-sm text-body">
-        Data could not be retrieved; no zero count or conflict-free conclusion
-        can be inferred from this failure.
+        The persisted screening shortlist could not be retrieved. This is not
+        evidence of zero shortlisted applicants. Use Retry to load the current view.
       </p>
       <Button className="mt-4" onClick={reset}>Retry</Button>
     </section>

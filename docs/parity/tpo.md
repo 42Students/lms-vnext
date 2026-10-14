@@ -783,3 +783,11 @@ tests; W04 owns Drive linkage and applicant/offer-derived recruiter stages;
 W06 owns outbound invite email/SMS notification delivery contract. W05 owns
 the invite token lifecycle and CRM UI, but must coordinate W01 identity and
 W06 transport to activate invite acceptance safely.
+
+## W47 — Drive schedule warnings and shortlist snapshot (PARTIAL)
+
+- The TPO job workspace now shows the current persisted shortlisted-application count (or explicitly "unavailable") alongside direct links to the existing scoped shortlist page and formula-neutralized CSV. Only SUBMITTED applications with current SHORTLISTED screening and eligible same-college membership/role ownership contribute.
+- The same job workspace now projects the registered venue collision service into each round scheduling control for upcoming published drives. Existing same-venue overlaps and missing scheduling data are warnings, not blockers. Truncated scans and unexpected read errors are explicitly labelled incomplete/unavailable, never "clear".
+- The check covers persisted on-campus venue/duration/start facts within the next 90 days. Unsaved scheduling form edits, candidate conflicts, past/completed rounds, historical snapshots, and conflict-free certification remain unsupported.
+- Both pages already have loading.tsx/error.tsx and explicit empty states. The new read-only affordances use existing Zod-validated, TPO-role/college-scoped services; no mutation route was added and existing writes retain same-origin protection.
+- **Open:** exact legacy schedule-editor collision taxonomy, save-time authoritative locking, current-versus-historical shortlist semantics, browser/mobile checks and executed disposable-DB/TypeScript/ESLint acceptance.
