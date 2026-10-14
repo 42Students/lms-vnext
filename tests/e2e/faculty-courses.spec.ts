@@ -60,7 +60,7 @@ test("Faculty posts, pins, unpins and deletes a Section discussion in the browse
   const text = "Faculty moderation browser proof " + Date.now();
   await page.getByLabel("Write a message").fill(text);
   const create = page.waitForResponse(res =>
-    res.request().method() === "POST" && /\\/discussions$/.test(new URL(res.url()).pathname));
+    res.request().method() === "POST" && new URL(res.url()).pathname.endsWith("/discussions"));
   await page.getByRole("button", { name: "Post", exact: true }).click();
   const posted = await create;
   expect(posted.status()).toBe(201);
