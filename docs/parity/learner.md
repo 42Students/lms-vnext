@@ -319,6 +319,32 @@ Legacy contract includes:
 
 ## Page: Applications
 
+**2026-10-14 confirmed self-withdrawal (PARTIAL, related to L14-015):**
+The existing Applications detail drawer now offers **Withdraw application**
+only for a submitted own-member application. A responsive confirmation
+dialog displays employer and role, describes the immediate status change,
+requires a trimmed reason of 5–500 characters, and supports safe cancel,
+pending, validation error, server failure and confirmed-success feedback.
+The existing `POST /api/placements/applications/[applicationId]/actions`
+now uses a strict Zod action/confirmed/reason payload and same-origin
+protection; the existing transactional write rechecks central
+`can(..., "placements.read")`, active persisted Learner membership, user
+and role, and own application ID in the conditional update. It stores
+the reason in private application-status history and the existing
+withdrawn activity audit event only records whether a reason was given,
+not its text. Duplicate POSTs are idempotent. Page-specific loading
+and retryable error boundaries distinguish read failure from no data.
+
+**Parity limitation:** the legacy **withdrawal request** (approval-driven)
+is not the same as immediate `WITHDRAWN` status mutation. The Job Detail
+request-for-review workflow is separate. The legacy modal/request semantics
+and whether to consolidate or keep both actions still need explicit
+product-owner disposition before L14-015 can be CLOSED. The Applications
+parent remains PARTIAL. Authored unit and disposable PostgreSQL tests
+cover real success/history/audit, idempotence, forged-college, suspended,
+wrong-role and bad-input denial; executable/browser acceptance remains open.
+
+
 **2026-10-14 offers-browse addition (PARTIAL):** a dedicated
 `/learn/my-placements/offers` page lists all persisted offers belonging
 to the authenticated learner and provides All/Awaiting/Accepted/Closed
