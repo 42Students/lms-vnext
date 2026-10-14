@@ -1,3 +1,6 @@
+import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
+import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
+import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-academic-retry";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { learnerProfileSectionSchema } from "@/modules/people/learner-profile-checklist";
 import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-workspace";
@@ -15,10 +18,12 @@ export default async function LearnerProfilePage({
   const initialSection = parsedSection.success ? parsedSection.data : null;
   const context = await getCurrentRequestContext();
 
-  const [{ person, profile }, academic] = await Promise.all([
+  await requireOwnLearnerProfileAccess(context);
+  const [{ person, profile }, academicOutcome] = await Promise.all([
     getOwnLearnerProfileWithRuntime(context),
-    getOwnLearnerAcademicSummary(context),
+    Promise.allSettled([getOwnLearnerAcademicSummary(context)]).then(([result])=>learnerProfileAcademicRecovery(result)),
   ]);
+  const academic=academicOutcome.summary;
 
   return (
     <div className="space-y-6">
@@ -29,8 +34,11 @@ export default async function LearnerProfilePage({
       />
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
-        <p className="mt-1 text-lg font-semibold text-foreground">{academic.title}</p>
-        {academic.enrollment ? (
+        <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
+        {!academicOutcome.available ? <div role="status" className="mt-3 text-sm text-body">
+          <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
+          <LearnerProfileAcademicRetry />
+        </div> : academic?.enrollment ? (
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <dt className="font-semibold text-muted-foreground">Program</dt>
