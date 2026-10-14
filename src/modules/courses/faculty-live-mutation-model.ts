@@ -16,9 +16,7 @@ const fields=z.object({
   title:z.string().trim().min(3).max(160),
   meetingUrl:httpsMeeting,
   startsAt:time,endsAt:time,
-}).strict().refine(x=>new Date(x.endsAt)>new Date(x.startsAt),{
-  message:"End must follow start",path:["endsAt"],
-});
+}).strict();
 export const facultyLiveMutationSchema=z.discriminatedUnion("action",[
   fields.extend({
     action:z.literal("CREATE"),lessonId:z.string().uuid(),
@@ -32,7 +30,10 @@ export const facultyLiveMutationSchema=z.discriminatedUnion("action",[
     action:z.literal("CANCEL"),contentId:z.string().uuid(),
     expectedUpdatedAt:time,confirm:z.literal(true),
   }).strict(),
-]);
+]).superRefine((data,ctx)=>{
+  if(data.action!=="CANCEL" && new Date(data.endsAt)<=new Date(data.startsAt))
+    ctx.addIssue({code:"custom",path:["endsAt"],message:"End must follow start"});
+});
 export function facultyLiveWindow(when:{startsAt:string;endsAt:string},
   period:{startDate:string;endDate:string}) {
   const start=new Date(when.startsAt),end=new Date(when.endsAt);

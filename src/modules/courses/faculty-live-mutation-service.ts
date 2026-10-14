@@ -30,7 +30,7 @@ export async function commandFacultyLiveClass(
   if(!owned || owned.academicPeriodStatus==="CLOSED")
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const dateFields=input.action==="CANCEL"?null:input;
-  if(dateFields && !facultyLiveWindow(dateFields,owned))
+  if(dateFields && !facultyLiveWindow(dateFields,{startDate:owned.periodStartDate,endDate:owned.periodEndDate}))
     throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
 
   const db=getDb();
@@ -74,13 +74,13 @@ export async function commandFacultyLiveClass(
     let updated:typeof lessonContents.$inferSelect|undefined;
     const now=new Date(Math.max(Date.now(),(current?.updatedAt.getTime()??0)+1));
     if(input.action==="CREATE"){
-      const [{next}]=await tx.select({next:sql<number>`coalesce(max(${lessonContents.sequence}),-1)+1`})
+      const [sequenceRow]=await tx.select({next:sql<number>`coalesce(max(${lessonContents.sequence}),-1)+1`})
         .from(lessonContents).where(eq(lessonContents.lessonId,input.lessonId));
       [updated]=await tx.insert(lessonContents).values({
         lessonId:input.lessonId,deliveryId:params.deliveryId,
         contentType:"LIVE_CLASS",title:input.title,externalUrl:input.meetingUrl,
         startsAt:new Date(input.startsAt),endsAt:new Date(input.endsAt),
-        sequence:Number(next),status:"PUBLISHED",createdByUserId:context.user.id,
+        sequence:Number(sequenceRow?.next??0),status:"PUBLISHED",createdByUserId:context.user.id,
       }).returning();
     }else{
       const currentId=current!.id;
