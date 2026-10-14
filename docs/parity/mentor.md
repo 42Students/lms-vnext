@@ -922,3 +922,6 @@ Mentor assigned-project reporting can now isolate projects with no current revie
 
 ## 2026-10-15 chat-11 AQ — Resource Directory recorded sequence vs title order (PARTIAL)
 Scoped Resource Directory now supports deterministic recorded-sequence and title A–Z sorting, consistently before pagination and the existing capped formula-neutralized metadata CSV. Registered resource fields only; safe HTTPS filtering, required flags, access checks and no raw URL export remain unchanged. Strict Zod and unit regression cases authored; independently executed tests/browser and full legacy Resource parity open.
+
+## 2026-10-15 chat-11 round 6 AR — global meeting type triage (PARTIAL)
+The current-Mentor global Meetings calendar now carries registered meeting_type through its already tenant/active-grant-scoped reader and filters GENERAL/PLANNING/STANDUP/REVIEW/RETRO consistently for UI and capped safe CSV. Strict selector and pure tests authored; full DB/browser parity and executed checks remain open.
