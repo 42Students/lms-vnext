@@ -1461,3 +1461,6 @@ The confirmed Quiz editor now uses the typed, non-leaking denial-message model a
 
 ## 2026-10-15 R6 Faculty Quiz failed-load retry — PARTIAL
 When a selected Quiz's question-bank fetch fails, the Faculty editor now exposes an explicit retry that reloads only that Quiz within its original delivery-scoped API, and disables retry while loading. Failed drafts remain non-editable/non-publishable until their bank is retrieved. Pure retry-state tests authored; real browser/network failure acceptance remains pending.
+
+## 2026-10-15 R6 Faculty Quiz unsaved-draft publish fence — PARTIAL
+The editor now marks metadata and question edits as unsaved and refuses PUBLISH until the current draft has been saved. This prevents a confirm/publish request from silently publishing an older stored question bank while unsaved changes remain on screen. A clean loaded DRAFT is still publishable; pure tests cover dirty/failed/immutable states. PostgreSQL and browser acceptance pending.
