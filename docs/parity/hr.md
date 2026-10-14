@@ -517,3 +517,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / HR Home authorized college-card metadata — PARTIAL:** College-less chooser now displays verified active grant's college code and access-granted IST date, using self-only company+college authorization checked against persisted relationships, and filters stale grants rather than rendering them. Does not invent logo or expiry fields. Pure unit extended; runtime/PG/browser proof pending.
+
+
+**2026-10-15 chat-10 / Profile college access quick navigation — PARTIAL:** Each exact active self-grant exposes scoped Today, Drives and Company & Team links, validated by a pure UUID route model. Explicitly distinguishes page selection from unavailable persistent membership switching. No new write, user data or company disclosure. Unit test authored, execution and full legacy scope-switch persistence remain.
