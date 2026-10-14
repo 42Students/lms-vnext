@@ -111,7 +111,22 @@ async function fixture() {
 
 describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial",()=>{
   it("writes registered fields, audits exactly once and denies forged/foreign/stale updates",async()=>{
-    const {project,sprint}=await fixture();
+    const {project,sprint:createdSprint}=await fixture();
+    // The database preserves sub-millisecond precision, but Drizzle/JS Date
+    // reads only milliseconds. Force this precision mismatch on every fresh
+    // database run instead of relying on timing luck.
+    await pool.query(`update project_sprints
+      set updated_at = date_trunc('milliseconds', updated_at) + interval '321 microseconds'
+      where id = $1`,[createdSprint.id]);
+    const precise=await pool.query<{fraction:string}>(`select
+      to_char(updated_at at time zone 'UTC','US') as fraction
+      from project_sprints where id = $1`,[createdSprint.id]);
+    expect(precise.rows[0]?.fraction).toMatch(/321$/);
+    const beforeEdit=await getProjectInstanceWorkspace(mentor,project.id);
+    const sprint=beforeEdit.sprints.find(row=>row.id===createdSprint.id);
+    expect(sprint).toBeDefined();
+    if(!sprint) throw new Error("Fixture sprint is missing after timestamp normalization");
+    expect(sprint.updatedAt.getTime()).toBe(createdSprint.updatedAt.getTime());
     const original=sprint.updatedAt.toISOString();
     const params={projectId:project.id,sprintId:sprint.id};
     const edited=await updateMentorSprintDetails(mentor,params,{
