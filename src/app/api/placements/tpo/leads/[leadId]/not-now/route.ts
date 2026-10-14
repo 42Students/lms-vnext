@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
+import { confirmedMarkTpoNotNowSchema } from "@/modules/placements/tpo-crm-validation";
 import { markTpoLeadNotNow } from "@/modules/placements/tpo-crm-service";
 
 export const runtime = "nodejs";
@@ -16,8 +17,9 @@ export async function POST(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
+    const payload = confirmedMarkTpoNotNowSchema.parse(await request.json());
     const lead = await markTpoLeadNotNow(
-      context, leadId, await request.json(),
+      context, leadId, payload.decision,
     );
     return NextResponse.json({ lead });
   } catch (error) {

@@ -14,6 +14,12 @@ import {
   placementTpoLeads,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
+import {
+  isSameNotNowDecision,
+  leadCreatedAuditNote,
+  leadNotNowAuditNote,
+} from "./tpo-crm-confirmed-write-model";
 import { requirePlacementManageScope } from "./scope";
 import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
 import {
@@ -112,23 +118,41 @@ export async function createTpoLead(
   raw: CreateTpoLeadInput,
 ) {
   const input = createTpoLeadSchema.parse(raw);
+  if (!can(context, "placements.manage", { collegeId: input.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
-  const [lead] = await getDb()
-    .insert(placementTpoLeads)
-    .values({
-      collegeId: input.collegeId,
-      name: input.name,
-      emailNorm: input.email ?? null,
-      phoneNorm: normalizePhone(input.phone),
-      designation: input.designation ?? null,
-      companyName: input.companyName ?? inferLegacyRecruiterCompanyName(input.email),
-      source: input.source ?? "MANUAL",
-      ownerMembershipId: ownerMembership(context, input.collegeId),
-    })
-    .onConflictDoNothing()
-    .returning();
 
-  if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+  // Insert and durable staff-attributed audit either both commit, or
+  // both roll back. DB unique constraints remain the race-safe duplicate
+  // authority (not the optional preflight duplicate check in the UI).
+  const lead = await getDb().transaction(async (tx) => {
+    const [created] = await tx
+      .insert(placementTpoLeads)
+      .values({
+        collegeId: input.collegeId,
+        name: input.name,
+        emailNorm: input.email ?? null,
+        phoneNorm: normalizePhone(input.phone),
+        designation: input.designation ?? null,
+        companyName: input.companyName ?? inferLegacyRecruiterCompanyName(input.email),
+        source: input.source ?? "MANUAL",
+        ownerMembershipId: ownerMembership(context, input.collegeId),
+      })
+      .onConflictDoNothing()
+      .returning();
+    if (!created) throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId: input.collegeId,
+      leadId: created.id,
+      type: "NOTE",
+      isSystem: false,
+      note: leadCreatedAuditNote(),
+      createdByUserId: context.user.id,
+    });
+    return created;
+  });
   return tpoLeadView(lead);
 }
 
@@ -332,22 +356,48 @@ export async function markTpoLeadNotNow(
 ) {
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
   const input = markTpoNotNowSchema.parse(raw);
+  if (!can(context, "placements.manage", { collegeId: input.collegeId })) {
+    throw new AuthorizationError("placements.manage");
+  }
+  requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
-  const [lead] = await getDb()
-    .update(placementTpoLeads)
-    .set({
-      manualStage: "NOT_NOW",
-      notNowReason: input.reason ?? null,
-      notNowUntil: input.revisitDate ?? null,
-      updatedAt: new Date(),
-    })
-    .where(and(
-      eq(placementTpoLeads.id, leadId),
-      eq(placementTpoLeads.collegeId, input.collegeId),
-    ))
-    .returning();
-  if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
-  return tpoLeadView(lead);
+
+  return getDb().transaction(async (tx) => {
+    const [current] = await tx.select()
+      .from(placementTpoLeads)
+      .where(and(
+        eq(placementTpoLeads.id, leadId),
+        eq(placementTpoLeads.collegeId, input.collegeId),
+      ))
+      .for("update")
+      .limit(1);
+    if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    if (isSameNotNowDecision(current, input)) return tpoLeadView(current);
+
+    const [updated] = await tx.update(placementTpoLeads)
+      .set({
+        manualStage: "NOT_NOW",
+        notNowReason: input.reason ?? null,
+        notNowUntil: input.revisitDate ?? null,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(placementTpoLeads.id, leadId),
+        eq(placementTpoLeads.collegeId, input.collegeId),
+      ))
+      .returning();
+    if (!updated) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId: input.collegeId,
+      leadId,
+      type: "NOTE",
+      isSystem: false,
+      note: leadNotNowAuditNote(current.manualStage),
+      createdByUserId: context.user.id,
+    });
+    return tpoLeadView(updated);
+  });
 }
 
 /**
