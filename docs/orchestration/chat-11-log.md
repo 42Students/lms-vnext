@@ -59,3 +59,12 @@
 - Added central projects.read guard and isolated PG role/foreign/disabled
   fixture plus pure model unit coverage; tests not run here.
 - PARTIAL: authenticated browser/download parity, paging and CLI/DB evidence.
+
+
+## G — Mentor scheduled meeting reschedule (2026-10-14)
+- Confirmed IST wall-clock modal with exact-project PATCH and same-origin guard.
+- Active assigned Mentor, central projects.read, locked project/meeting,
+  SQL millisecond CAS and same-project overlapping meeting denial.
+- Transactional sanitized activity; declared conflict code, source-authored
+  model/unit and isolated PostgreSQL success/stale/foreign/role tests.
+- PARTIAL: tests/browser unexecuted and cross-project collision policy unresolved.
