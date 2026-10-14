@@ -7,6 +7,7 @@ import { CollegeTermMappingManager } from "@/components/academics/college-term-m
 import { listCollegeTermMappings } from "@/modules/academics/college-term-mapping-service";
 import { semesterCourseQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeSemesterCourseMappings } from "@/modules/academics/college-mapping-service";
+import { offeringMappingCsvHref } from "@/modules/academics/college-mapping-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -53,6 +54,10 @@ export default async function CollegeSemesterCoursesPage({
           Course offerings
         </Link>}
       />
+      <Link prefetch={false} href={offeringMappingCsvHref(query)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Export filtered offering mappings CSV
+      </Link>
       <CollegeTermMappingManager data={curriculumData} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/semester-courses" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
