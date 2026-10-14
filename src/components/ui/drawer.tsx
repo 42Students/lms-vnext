@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   type ReactNode,
 } from "react";
@@ -23,6 +24,8 @@ export function Drawer({
   footer?: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useEffect(() => {
     const panel = ref.current;
@@ -38,9 +41,9 @@ export function Drawer({
   return (
     <dialog
       ref={ref}
-      aria-labelledby="drawer-title"
+      aria-labelledby={titleId}
       aria-describedby={
-        description ? "drawer-description" : undefined
+        description ? descriptionId : undefined
       }
       onCancel={(event) => {
         event.preventDefault();
@@ -58,14 +61,14 @@ export function Drawer({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <h2
-                id="drawer-title"
+                id={titleId}
                 className="m-0 text-lg font-semibold text-foreground"
               >
                 {title}
               </h2>
               {description ? (
                 <p
-                  id="drawer-description"
+                  id={descriptionId}
                   className="mt-1 text-sm leading-6 text-body"
                 >
                   {description}
