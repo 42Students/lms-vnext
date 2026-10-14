@@ -3,6 +3,7 @@ import {
   collegeLearningHref,
   collegeLearningPageCount,
   collegeLearningQuerySchema,
+  collegeLessonQuerySchema,
   collegeProgressDescription,
 } from "@/modules/courses/college-learning-directory-model";
 
@@ -18,6 +19,7 @@ describe("College Admin lessons and course progress pure models", () => {
       { page: -1 },
       { page: 1001 },
       { status: "PUBLISHED" },
+      { offeringStatus: "SUSPENDED" },
       { q: "x".repeat(101) },
     ]) {
       expect(collegeLearningQuerySchema.safeParse(invalid).success).toBe(false);
@@ -33,6 +35,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessons.pathname).toBe("/college/lessons");
     expect(progress.pathname).toBe("/college/course-progress");
     expect(progress.searchParams.get("q")).toBe("a & b");
+    const lifecycle = collegeLessonQuerySchema.parse({ offeringStatus: "ARCHIVED" });
+    expect(collegeLearningHref("LESSONS", lifecycle)).toContain("offeringStatus=ARCHIVED");
+    expect(collegeLessonQuerySchema.safeParse({ offeringStatus: "SUSPENDED" }).success).toBe(false);
     expect(progress.searchParams.has("collegeId")).toBe(false);
     expect(collegeLearningHref("LESSONS", {
       q: "", status: "ACTIVE", page: 1,
