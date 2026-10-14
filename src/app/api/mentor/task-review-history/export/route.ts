@@ -12,6 +12,7 @@ export async function GET(request:Request){
     const query=mentorTaskHistoryQuerySchema.parse({
       decision:url.searchParams.get("decision")??undefined,
       priority:url.searchParams.get("priority")??undefined,
+      order:url.searchParams.get("order")??undefined,
       search:url.searchParams.get("search")??undefined,page:1,
     });
     const context=await getCurrentRequestContext();

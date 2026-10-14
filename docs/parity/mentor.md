@@ -928,3 +928,6 @@ The current-Mentor global Meetings calendar now carries registered meeting_type 
 
 ## 2026-10-15 chat-11 round 6 AS — meeting chronological order (PARTIAL)
 Exact-project team meeting history supports persisted start-time oldest/newest ordering, deterministic UUID tie-breaks and URL-preserved paging, alongside current-Mentor authorization and recorded status/type/outcome/title filters. Query and href regression cases source-authored. Real PostgreSQL, TypeScript, browser and legacy verification remain open.
+
+## 2026-10-15 chat-11 round 6 AT — reviewed task decision chronology (PARTIAL)
+Currently assigned Mentor task-review history now supports oldest/newest recorded review ordering with deterministic ID tie-break; paginated UI and capped safe CSV retain the selector. Decision/priority/literal title and current college/role scope still apply in SQL. Pure strict-selector tests authored; executed gates/browser and historical parity remain open.
