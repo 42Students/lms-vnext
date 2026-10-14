@@ -279,6 +279,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Faculty Assignment", href: "/college/faculty-assignment", shortLabel: "F" },
   { label: "Lecture Halls", href: "/college/lecture-halls", shortLabel: "L" },
   { label: "Attendance", href: "/college/attendance", shortLabel: "T" },
+  { label: "Attendance by Department", href: "/college/attendance/departments", shortLabel: "A" },
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
   { label: "Lessons", href: "/college/lessons", shortLabel: "L" },
   { label: "Course Progress", href: "/college/course-progress", shortLabel: "P" },
@@ -286,6 +287,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Quizzes", href: "/college/quizzes", shortLabel: "Q" },
   { label: "Projects", href: "/college/projects", shortLabel: "P" },
   { label: "Placements", href: "/college/placements", shortLabel: "P" },
+  { label: "Placement Evidence", href: "/college/placements/readiness-by-department", shortLabel: "R" },
   {
     label: "Placement Calendar",
     href: "/college/placements/calendar",
