@@ -11,7 +11,7 @@ import {requireDeliveryContentMutation} from "./learning-access";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints,
- facultyQuizVersionMatches} from "./faculty-quiz-authoring-model";
+ facultyQuizVersionMatches,facultyQuizMetadataUnchanged} from "./faculty-quiz-authoring-model";
 
 /** Choice-question authoring with transaction, locked token, audit and no edits
  * after the quiz publishes or any registered attempt exists. */
@@ -75,6 +75,10 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
         (input.questions!==undefined || input.maxAttempts!==current.maxAttempts))))
       throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT"){
+     // Stale token is checked before no-op detection. Only metadata-only
+     // writes can be compared without loading the immutable question bank.
+     if(input.questions===undefined && facultyQuizMetadataUnchanged(current,input))
+      throw new CoursesServiceError("FACULTY_QUIZ_NO_CHANGE");
      if(input.questions){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
       .where(eq(quizQuestions.quizId,current.id));

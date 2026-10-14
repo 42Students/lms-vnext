@@ -93,7 +93,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    const res=await fetch("/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
-   if(!res.ok)throw new Error("Quiz write was rejected. Check your choices or refresh a stale draft.");
+   if(!res.ok){
+     const failure:unknown=await res.json().catch(()=>null);
+     if(failure && typeof failure==="object" && "error" in failure &&
+        failure.error==="FACULTY_QUIZ_NO_CHANGE")
+       throw new Error("No Quiz metadata changed. Update a field before saving.");
+     throw new Error("Quiz write was rejected. Check your choices or refresh a stale draft.");
+   }
    setConfirmed(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");
    if(action==="ARCHIVE"){
      ++choiceRequest.current;
