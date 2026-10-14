@@ -1248,3 +1248,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L12-015 PARTIAL (round 6):** Learner Drives pagination now uses a single bounded page-state model for slice indices, result labels and Previous/Next. Stale URL pages after filters clamp to the final valid page with an explicit recovery action, never displaying a false empty list while authorized matching records exist. Pure boundary/zero tests authored; mobile/browser/history and PG acceptance pending.
+
+
+**2026-10-15 chat-5 L14-004 PARTIAL (round 6):** All/In Progress/Final Recorded Status learner application views now show counts from the same own-authorized application history and explain exactly that rejected/withdrawn are final saved statuses. Shortlists, applied round results, and interview scheduling are not mislabeled hired/offer-completed. Read-side unit cases added, URL state/role scope retained; browser/PG gate pending.
