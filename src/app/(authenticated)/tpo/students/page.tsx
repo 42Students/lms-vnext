@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
+import { listPlacementJobs } from "@/modules/placements/job-service";
+import { can, requirePermission } from "@/modules/permissions/policy";
+import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getTpoStudentsIntelligence,
@@ -152,7 +156,25 @@ export default async function TpoStudentsPage({
   }
 
   const query = parsed.data;
-  const data = await getTpoStudentsIntelligence(context, query);
+  const collegeId = context.membership.collegeId;
+  const manageAllowed = can(context, "placements.manage", { collegeId });
+  if (manageAllowed) {
+    requirePermission(context, "placements.manage", { collegeId });
+    await requirePlacementManageScope(context, collegeId);
+  }
+  const [data, managedJobs] = await Promise.all([
+    getTpoStudentsIntelligence(context, query),
+    manageAllowed ? listPlacementJobs(context, collegeId) : Promise.resolve([]),
+  ]);
+  const bulkDriveChoices = managedJobs.filter((item) =>
+    item.job.status === "PUBLISHED" &&
+    item.season.status === "ACTIVE" &&
+    item.job.applicationMode !== "EXTERNAL_ONLY"
+  ).map((item) => ({
+    id: item.job.id,
+    title: item.job.title,
+    companyName: item.company.name,
+  }));
   const summary = data.summary;
   const roster = data.roster;
 
@@ -672,6 +694,18 @@ export default async function TpoStudentsPage({
             </table>
           </div>
         )}
+
+        {manageAllowed ? (
+          <TpoStudentsBulkAdd
+            learners={roster.items.map((student) => ({
+              membershipId: student.membershipId,
+              displayName: student.displayName,
+              branchName: student.branchName,
+              readinessSignal: student.readinessSignal,
+            }))}
+            drives={bulkDriveChoices}
+          />
+        ) : null}
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-body">
