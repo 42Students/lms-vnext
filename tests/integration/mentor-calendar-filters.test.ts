@@ -9,6 +9,7 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {filterMentorCalendar,mentorCalendarFiltersSchema}
   from "@/modules/projects/mentor-calendar-filter-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -98,6 +99,18 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     const inNovember=filterMentorCalendar(owned,{...query,period:"NEXT_7_DAYS"},
       new Date("2026-11-01T00:00:00Z"));
     expect(inNovember.map(row=>row.id)).toEqual([meetingId]);
+    const selected=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,status:"REQUESTED",search:"checkpoint",page:1,
+    });
+    expect(selected.total).toBe(1);
+    expect(selected.items.map(row=>row.id)).toEqual([meetingId]);
+    const literal=await getMentorTeamMeetings(mentor,{
+      projectId:project.id,search:"%",page:1,
+    });
+    expect(literal.total).toBe(0);
+    await expect(getMentorTeamMeetings(learner,{
+      projectId:project.id,search:"",page:1,
+    })).rejects.toBeDefined();
     await expect(listMyMentorCalendarMeetings(learner)).rejects.toBeDefined();
     const disabled:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
     await expect(listMyMentorCalendarMeetings(disabled)).rejects.toBeDefined();

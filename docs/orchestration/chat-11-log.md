@@ -151,3 +151,6 @@
 ## S — Global Mentor Meetings IST period filters
 - Added strict 4-way daypart period query, IST day boundaries and URL controls.
 - Authenticated scope reused; pure and PG fixture cases authored, not executed.
+
+## T — Mentor project meeting log title search
+- Escaped literal search and shared count/page filters, tests authored not run.

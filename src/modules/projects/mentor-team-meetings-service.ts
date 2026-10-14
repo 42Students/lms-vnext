@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,count,desc,eq,isNull,sql} from "drizzle-orm";
+import {and,count,desc,eq,ilike,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,membershipRoles,projectMeetings,projectMembers,users,
@@ -10,7 +10,7 @@ import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {mentorTeamMeetingsPage,mentorTeamMeetingsQuerySchema} from "./mentor-team-meetings-model";
+import {escapeMentorMeetingSearch,mentorTeamMeetingsPage,mentorTeamMeetingsQuerySchema} from "./mentor-team-meetings-model";
 
 /** Exact-project current team counts and historical registered meeting log. */
 export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
@@ -37,6 +37,10 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
   });
   if(!projectsEnabled)return empty();
   const db=getDb();
+  const search=query.search?ilike(projectMeetings.title,
+    "%"+escapeMentorMeetingSearch(query.search)+"%"):undefined;
+  const meetingFilters=and(eq(projectMeetings.projectId,scope.project.id),
+    query.status==="ALL"?undefined:eq(projectMeetings.status,query.status),search);
   const [teamRows,summary]=await Promise.all([
     db.select({role:projectMembers.role,isPrimary:projectMembers.isPrimary})
       .from(projectMembers)
@@ -54,8 +58,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
         eq(users.platformStatus,"ACTIVE"),
       )),
     db.select({total:count()}).from(projectMeetings)
-      .where(and(eq(projectMeetings.projectId,scope.project.id),
-        query.status==="ALL"?undefined:eq(projectMeetings.status,query.status))),
+      .where(meetingFilters),
   ]);
   const page=mentorTeamMeetingsPage(Number(summary[0]?.total??0),query.page);
   const meetings=await db.select({
@@ -65,8 +68,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     timeZone:projectMeetings.timeZone,outcome:projectMeetings.outcome,
     updatedAt:projectMeetings.updatedAt,
   }).from(projectMeetings)
-    .where(and(eq(projectMeetings.projectId,scope.project.id),
-      query.status==="ALL"?undefined:eq(projectMeetings.status,query.status)))
+    .where(meetingFilters)
     .orderBy(desc(projectMeetings.startsAt),desc(projectMeetings.id))
     .limit(page.pageSize).offset((page.page-1)*page.pageSize);
   return {
