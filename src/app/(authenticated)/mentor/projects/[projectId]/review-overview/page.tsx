@@ -4,13 +4,15 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {mentorReviewOverviewSchema,mentorReviewOverviewHref} from "@/modules/projects/mentor-review-overview-model";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
-type Search={page?:string|string[]};
+type Search={status?:string|string[];feedback?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Search>}){
  const [{projectId},query]=await Promise.all([params,searchParams]);
  const parsed=mentorReviewOverviewSchema.safeParse({
   projectId,page:Array.isArray(query.page)?query.page[0]:query.page,
+  status:Array.isArray(query.status)?query.status[0]:query.status,
+  feedback:Array.isArray(query.feedback)?query.feedback[0]:query.feedback,
  });
  if(!parsed.success)return <section role="alert">
  <h1 className="text-xl font-semibold">Invalid project review filters</h1>
@@ -23,6 +25,37 @@ export default async function MentorReviewOverviewPage({
  actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
   className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
   Delivery workspace</Link>}/>
+ <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+ className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+  <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
+   <select name="status" defaultValue={data.query.status}
+    className="min-h-10 rounded-md border border-border bg-background px-3">
+    {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
+     <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
+   </select>
+  </label>
+  <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
+   <select name="feedback" defaultValue={data.query.feedback}
+    className="min-h-10 rounded-md border border-border bg-background px-3">
+    <option value="ALL">Any</option>
+    <option value="WITH">Recorded</option>
+    <option value="WITHOUT">Not recorded</option>
+   </select>
+  </label>
+  <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+   Filter
+  </button>
+  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+   className="text-sm font-semibold text-primary-text underline">Clear</Link>
+ </form>
+ <div className="flex flex-wrap items-center gap-3 text-sm">
+  <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
+   new URLSearchParams({status:data.query.status,feedback:data.query.feedback}).toString()}
+   download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+   Export filtered delivery review CSV (max 200)
+  </Link>
+  {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
+ </div>
  <section className="rounded-xl border border-border bg-surface p-5">
  <h2 className="font-semibold">Recorded review coverage on this page</h2>
  <p className="mt-2 text-sm text-body">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
