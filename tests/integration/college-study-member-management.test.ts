@@ -25,26 +25,40 @@ const other: RequestContext = {
 const learner: RequestContext = { ...admin,
   membership: { ...admin.membership!, roles: ["LEARNER"] } };
 const group = randomUUID();
-const otherGroup = randomUUID();
+const extra = { user: randomUUID(), membership: randomUUID(), role: randomUUID() };
 
 describe.skipIf(!enabled)("College Admin STUDY_GROUP membership writes, isolated PG", () => {
   beforeAll(async () => {
     if (!pool) throw Error("isolated DB required");
     const label = "w-study-members-" + group.slice(0, 8);
     await pool.query(
+      "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
+      [extra.user, "member-" + extra.user, "Waitlist " + label],
+    );
+    await pool.query(
+      "INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+      [extra.membership, extra.user, SEED_IDS.collegeA],
+    );
+    await pool.query(
+      "INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER')",
+      [extra.role, extra.membership],
+    );
+    await pool.query(
       "INSERT INTO lms_groups(id,kind,college_id,name,status,capacity,created_by_user_id,created_by_type,config_json) " +
-      "VALUES($1,'STUDY_GROUP',$2,$3,'ACTIVE',1,$4,'COLLEGE_ADMIN','{}'::jsonb)," +
-      "($5,'STUDY_GROUP',$6,$3,'ACTIVE',1,$4,'COLLEGE_ADMIN','{}'::jsonb)",
-      [group, SEED_IDS.collegeA, label, SEED_IDS.collegeAdminUser, otherGroup, SEED_IDS.collegeB],
+      "VALUES($1,'STUDY_GROUP',$2,$3,'ACTIVE',1,$4,'COLLEGE_ADMIN','{}'::jsonb)",
+      [group, SEED_IDS.collegeA, label, SEED_IDS.collegeAdminUser],
     );
   });
   afterAll(async () => {
     try {
       if (pool) {
         await pool.query("DELETE FROM activity_events WHERE subject_type='lms_group_member' AND metadata->>'groupId' = $1", [group]);
-        await pool.query("DELETE FROM lms_group_member_events WHERE group_id IN ($1,$2)", [group, otherGroup]);
-        await pool.query("DELETE FROM lms_group_members WHERE group_id IN ($1,$2)", [group, otherGroup]);
-        await pool.query("DELETE FROM lms_groups WHERE id IN ($1,$2)", [group, otherGroup]);
+        await pool.query("DELETE FROM lms_group_member_events WHERE group_id=$1", [group]);
+        await pool.query("DELETE FROM lms_group_members WHERE group_id=$1", [group]);
+        await pool.query("DELETE FROM lms_groups WHERE id=$1", [group]);
+        await pool.query("DELETE FROM membership_roles WHERE id=$1", [extra.role]);
+        await pool.query("DELETE FROM college_memberships WHERE id=$1", [extra.membership]);
+        await pool.query("DELETE FROM users WHERE id=$1", [extra.user]);
       }
     } finally { await pool?.end(); await closeDatabaseConnection(); }
   });
@@ -56,13 +70,34 @@ describe.skipIf(!enabled)("College Admin STUDY_GROUP membership writes, isolated
     expect(locked.isLocked).toBe(true);
     const unlocked = await manageCollegeStudyMember(admin, group, { action: "LOCK", membershipId: id, locked: false });
     expect(unlocked.isLocked).toBe(false);
+    // Verify the capacity guard against the locked, persisted group row.
+    await pool!.query(
+      "UPDATE lms_groups SET config_json='{\"allowWaitlist\":false}'::jsonb WHERE id=$1",
+      [group],
+    );
+    await expect(manageCollegeStudyMember(admin, group, {
+      action: "ADD", membershipId: extra.membership,
+    })).rejects.toMatchObject({ code: "GROUP_CAPACITY_REACHED" });
+    await pool!.query("UPDATE lms_groups SET config_json='{}'::jsonb WHERE id=$1", [group]);
+    const waitlisted = await manageCollegeStudyMember(admin, group, {
+      action: "ADD", membershipId: extra.membership,
+    });
+    expect(waitlisted.state).toBe("WAITLISTED");
     const removed = await manageCollegeStudyMember(admin, group, { action: "REMOVE", membershipId: id });
     expect(removed.state).toBe("REMOVED");
+    const [promoted] = (await pool!.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group, extra.membership],
+    )).rows;
+    expect(promoted.state).toBe("ACTIVE");
+    await manageCollegeStudyMember(admin, group, {
+      action: "REMOVE", membershipId: extra.membership,
+    });
     const events = await pool!.query(
       "SELECT to_state,reason FROM lms_group_member_events WHERE group_id=$1 ORDER BY created_at,id",
       [group],
     );
-    expect(events.rows.length).toBeGreaterThanOrEqual(4);
+    expect(events.rows.length).toBeGreaterThanOrEqual(7);
     const count = await pool!.query("SELECT active_count FROM lms_groups WHERE id=$1", [group]);
     expect(count.rows[0].active_count).toBe(0);
   });
@@ -72,11 +107,11 @@ describe.skipIf(!enabled)("College Admin STUDY_GROUP membership writes, isolated
         action: "ADD", membershipId: SEED_IDS.learnerCollegeAMembership,
       })).rejects.toBeDefined();
     }
-    await expect(manageCollegeStudyMember(admin, otherGroup, {
-      action: "ADD", membershipId: SEED_IDS.learnerCollegeAMembership,
-    })).rejects.toBeDefined();
     await expect(manageCollegeStudyMember(admin, group, {
       action: "ADD", membershipId: SEED_IDS.learnerCollegeAMembership, collegeId: SEED_IDS.collegeB,
     })).rejects.toBeDefined();
+    await expect(manageCollegeStudyMember(learner, group, {
+      action: "ADD", membershipId: SEED_IDS.learnerCollegeAMembership,
+    })).rejects.toBeInstanceOf(AuthorizationError);
   });
 });
