@@ -322,3 +322,7 @@ future sessions from recorded attendance. The existing monthly attendance report
 is unchanged. Loading/error and pure-model/denial tests are authored only;
 full private profile, positive database/browser tests and exact legacy drill-in
 parity remain OPEN. No checklist item is closed solely from source work.
+
+### Faculty aggregate Assessment search and editor draft recovery (2026-10-14)
+
+All Assignments and All Quizzes now search by title, course, Section, lesson and description in already-authorized teaching data, combining with persisted status/delivery filters and resetting pagination when the search changes. The Edit drawer restores current server-provided values on every open; closing an unsaved edit can no longer inadvertently persist stale draft fields on subsequent re-open. Pure filter unit tests and complete authenticated Assignment create/edit/archive browser coverage are added; no aggregate surface is marked DONE without executed evidence.
