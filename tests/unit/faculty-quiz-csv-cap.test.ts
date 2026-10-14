@@ -29,7 +29,7 @@ describe("Faculty quiz export row cap",()=>{
   const c=capFacultyQuizCsvRows(rows,[]);
   const csv=facultyReportCsv({kind:"quiz",title:"x",sectionName:"A",rows:c.selectedAttempts});
   expect(csv).toContain('"\'=HYPERLINK(1)"');
-  expect(csv).toContain('"\'+919999999999"');
+  expect(csv).not.toContain("+919999999999");
   expect(csv).toContain('"\'@IMPORTXML(1,2)"');
  });
 });

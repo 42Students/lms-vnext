@@ -520,6 +520,34 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       ...body,correctionReason:"Checked register; no learner state changed",
     })).rejects.toMatchObject({code:"ATTENDANCE_CORRECTION_NO_CHANGE"});
   });
+  it("exports only scoped Faculty Section rows without learner contact fields",async()=>{
+    const {delivery,assignment,quiz}=await fixture();
+    const row=await pool.query<{id:string}>(`insert into assignment_submissions
+      (assignment_id,delivery_id,membership_id,submission_type,text_content)
+      values($1,$2,$3,'TEXT','Learner response') returning id`,
+      [assignment.id,delivery.id,testLearnerMembershipId]);
+    expect(row.rows[0]?.id).toBeTruthy();
+    const exported=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id});
+    expect(exported.csv).toContain("Submitted at (IST)");
+    expect(exported.csv).not.toContain('"Email"');
+    const identity=await pool.query<{email:string}>("select email from users where id=$1",
+      [testLearnerUserId]);
+    expect(exported.csv).not.toContain(identity.rows[0]!.email);
+    const quizCsv=await getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"quiz",assessmentId:quiz.id,deliveryId:delivery.id});
+    expect(quizCsv.csv).not.toContain(identity.rows[0]!.email);
+    await expect(getFacultyReportCsvForDownload(learner,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id,
+    })).rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload({
+      ...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB},
+    },{kind:"assignment",assessmentId:assignment.id,deliveryId:delivery.id}))
+      .rejects.toBeDefined();
+    await expect(getFacultyReportCsvForDownload(facultyOnly,{
+      kind:"assignment",assessmentId:assignment.id,deliveryId:SEED_IDS.collegeB,
+    })).rejects.toBeDefined();
+  });
   it("reads registered Section discussion participation without cross-Section disclosure",async()=>{
     const {delivery}=await fixture();
     await pool.query(`insert into course_discussion_messages(delivery_id,sender_membership_id,
