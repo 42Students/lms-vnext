@@ -1069,3 +1069,14 @@ missing names, privacy, UTF-8, quoting, formulas and cap notice. The own-Section
 PostgreSQL CSV fixture now tests actual persisted learners with no display name
 alongside existing role/foreign-selector denials. GET-only; no stale token.
 Remaining: database execution, browser downloads and legacy acceptance.
+
+## 2026-10-14 Faculty publish only the saved grade — PARTIAL
+The grading drawer blocks publication while its score or feedback differs
+from the persisted grade, explains the required Save step, and rejects empty
+scores instead of interpreting them as zero. Grade cards rebase on the returned
+version so explicit refresh/updates show the actual persisted score/feedback.
+A pure Zod-backed model covers deliberate zero, invalid scores, unsaved feedback,
+ungraded and published states. The existing fresh-Section grading PostgreSQL
+fixture checks the editor against actual persisted grades while retaining
+success, foreign/role/stale and audit assertions. Existing writers unchanged.
+Remaining: database execution and browser/mobile/legacy grading acceptance.

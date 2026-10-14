@@ -10,6 +10,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
@@ -77,9 +78,8 @@ function SubmissionGradeCard({
   const [feedback, setFeedback] = useState(
     submission.feedback ?? "",
   );
-  const unchanged=submission.gradingStatus==="GRADED"&&
-    submission.pointsAwarded===Number(points)&&
-    (submission.feedback??"")===feedback.trim();
+  const draftState = facultyGradeEditorState(submission, points, feedback, maxPoints);
+  const unchanged = !draftState.hasChanges;
   const [saving, setSaving] =
     useState(false);
   const [publishing, setPublishing] =
@@ -95,12 +95,8 @@ function SubmissionGradeCard({
     setError(null);
     setSuccess(null);
 
-    const parsed = Number(points);
-    if (
-      !Number.isInteger(parsed) ||
-      parsed < 0 ||
-      parsed > maxPoints
-    ) {
+    const parsed = draftState.points;
+    if (parsed === null) {
       setError(
         `Enter whole-number points between 0 and ${maxPoints}.`,
       );
@@ -172,6 +168,10 @@ function SubmissionGradeCard({
   async function publishGrade() {
     setError(null);
     setSuccess(null);
+    if (!draftState.canPublish) {
+      setError("Save the score and feedback before publishing the grade.");
+      return;
+    }
     if (!window.confirm(
       "Publish this grade and feedback to the learner? Verify both before continuing.",
     )) {
@@ -344,7 +344,7 @@ function SubmissionGradeCard({
               type="button"
               variant="secondary"
               disabled={
-                saving || publishing
+                saving || publishing || !draftState.canPublish
               }
               onClick={publishGrade}
             >
@@ -354,6 +354,11 @@ function SubmissionGradeCard({
             </Button>
           ) : null}
 
+          {actions.canPublish && draftState.hasChanges ? (
+            <p role="status" className="text-xs text-muted-foreground">
+              Save your score and feedback changes before publishing.
+            </p>
+          ) : null}
           {submission.gradePublished ? (
             <span className="text-xs font-semibold text-success">
               Learner can see{" "}
@@ -511,7 +516,7 @@ export function FacultyAssignmentReview({
           {submissions.map(
             (submission) => (
               <SubmissionGradeCard
-                key={submission.id}
+                key={`${submission.id}:${submission.version}`}
                 submission={submission}
                 maxPoints={maxPoints}
                 onUpdated={(updated) => {

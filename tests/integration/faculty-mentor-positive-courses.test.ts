@@ -1,3 +1,4 @@
+import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
@@ -443,6 +444,11 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       pointsAwarded:7,expectedVersion:0,feedback:"Good",
     });
     expect(graded.gradePublished).toBe(false);
+    // The editor cannot publish a saved grade while its displayed draft differs.
+    expect(facultyGradeEditorState(graded,"7","Good",10).canPublish).toBe(true);
+    expect(facultyGradeEditorState(graded,"8","Good",10).canPublish).toBe(false);
+    expect(facultyGradeEditorState(graded,"7","Revised feedback",10).canPublish).toBe(false);
+    expect(facultyGradeEditorState(graded,"","Good",10).points).toBeNull();
     await expect(gradeAssignmentSubmission(facultyOnly,id,{
       pointsAwarded:7,feedback:"Good",expectedVersion:graded.version,
     })).rejects.toMatchObject({code:"ASSIGNMENT_GRADE_NO_CHANGE"});
