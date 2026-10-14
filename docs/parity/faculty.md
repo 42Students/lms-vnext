@@ -450,3 +450,15 @@ document, social/identity secrets, degree, skills or file records are invented.
 Pure-model and disposable PostgreSQL denial tests are authored. This improves
 the Self Profile PARTIAL row, but does not close rich legacy About/profile
 storage parity or authenticated browser/DB acceptance.
+
+## Faculty positive PostgreSQL fixture coverage — authored, not executed (2026-10-14)
+
+Added isolated `C4POS-*` academic fixture tests for successful Faculty own
+teaching-profile discovery, active same-college contact detail, published
+Section assessment-health and results metrics, and CSV regeneration through
+the existing server-side Faculty export service (with actual enrolled
+Learner missing-response rows). A non-due assessment stays out of the
+overdue queue. These are positive-path tests in `tests/integration`, not
+merely role-denial cases. Still pending: actual disposable PostgreSQL run,
+CI lint/typecheck, mobile/browser evidence and exact legacy acceptance.
+All Faculty parity rows remain PARTIAL.
