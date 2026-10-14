@@ -1,8 +1,8 @@
 import "server-only";
 
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships, projectMembers, users } from "@/db/schema";
+import { collegeMemberships, membershipRoles, projectMembers, users } from "@/db/schema";
 import {
   hasActiveMembership, hasMembershipRole, type RequestContext,
 } from "@/modules/identity/context";
@@ -20,7 +20,8 @@ import {
 /**
  * Only currently assigned Mentor projects are eligible. The active team
  * counts are real registered project_members joined to active same-college
- * memberships/users; no old end-dated membership contributes to coverage.
+ * memberships/users and a currently registered matching role grant.
+ * End-dated memberships or revoked role grants do not contribute.
  */
 export async function getMentorTeamCoverage(
   context: RequestContext, rawQuery: unknown,
@@ -54,6 +55,10 @@ export async function getMentorTeamCoverage(
     .innerJoin(collegeMemberships,
       eq(collegeMemberships.id,projectMembers.membershipId))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+    ))
     .where(and(
       inArray(projectMembers.projectId,projectIds),
       isNull(projectMembers.endedAt),
