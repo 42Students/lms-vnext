@@ -39,10 +39,16 @@ export default async function MentorTaskReviewsPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Task reviews"
       description="Submitted project tasks waiting for review across your assigned projects."
-      actions={<Link href="/mentor/projects"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
-        Projects
-      </Link>}
+      actions={<div className="flex flex-wrap items-center gap-3">
+        <Link href="/mentor/task-review-history"
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          Reviewed task history
+        </Link>
+        <Link href="/mentor/projects"
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          Projects
+        </Link>
+      </div>}
     />
     {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5">
       Projects access is disabled for this membership. No task data was loaded.
