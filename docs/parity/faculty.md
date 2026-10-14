@@ -477,3 +477,16 @@ has additional stale/repeat, forged learner and extra-college-key assertions.
 Section-scoped positive/negative DB and browser execution against this exact
 SHA are not independently verified here; the parent Assignment report and
 All Assignments rows remain PARTIAL.
+
+## Faculty Quiz/Assignment CSV GET request hardening (2026-10-14)
+
+The existing authorized report pages and server-owned CSV endpoint remain the
+canonical Faculty report surfaces. This batch rejects ambiguous or injected
+GET query fields, including duplicate deliveryId selectors, rather than
+silently accepting the last value. It also enforces deterministic safe
+attachment filenames, private no-store/nosniff headers and keeps the strict
+existing Section-scoped report reader and formula-neutralized UTF-8 serializer.
+Unit tests cover GET URL, malformed query, headers and filename; the existing
+isolated PostgreSQL positive and tenant-denial tests continue to cover
+the underlying export service. No new write or UI table was invented.
+Independent execution and full legacy report/browser parity remain PARTIAL.
