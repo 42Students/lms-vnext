@@ -529,3 +529,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 round 4 / recruiter notification CSV — PARTIAL:** New read-only export traverses up to eight exact recipient/company/college-scoped notification pages, capped at 200, with formula-neutralized job titles, fixed lifecycle labels, IST receive times, and unread flag. Raw notification titles/bodies, applicant contacts and other employers' notifications are never exported. Unit tests authored but unexecuted; PG/browser proof pending.
+
+
+**2026-10-15 chat-10 round 4 / recruiter team paging — PARTIAL:** Company & Team Team tab now paginates the *already authorized and search-filtered* company roster in 25-row slices with URL-stable search and prev/next controls. No cross-company user enumeration, no new data selected. Pure unit tests authored but unexecuted. DB keyset paging and browser acceptance remain.
