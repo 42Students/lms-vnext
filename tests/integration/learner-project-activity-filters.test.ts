@@ -112,3 +112,31 @@ describe("learner Project Activity categories over persisted own events", () => 
     await expect(listProjectActivity(context, randomUUID())).rejects.toBeDefined();
   });
 });
+
+describe("Project Activity date filters precede the PostgreSQL row cap", () => {
+  it("finds an older own event even beyond the default latest-100 page", async () => {
+    const older = randomUUID();
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,subject_type,subject_id,summary,occurred_at)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.resource.created','project',$5,'Older matching event','2026-10-13T18:30:00Z')`,
+      [older,SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project]);
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,subject_type,subject_id,summary,occurred_at)
+      SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,'PROJECTS','projects.task.created','project',$4::text,
+        'Newer unrelated event','2026-10-14T18:30:00Z'::timestamptz FROM generate_series(1,101)`,
+      [SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project]);
+    const filtered = await listProjectActivity(context, ids.project, {
+      category: "RESOURCE", from: "2026-10-14", to: "2026-10-14",
+    });
+    expect(filtered.map(event => event.id)).toEqual([older]);
+    expect(await listProjectActivity(context, ids.project, {
+      category: "RESOURCE", from: "2026-10-15", to: "2026-10-15",
+    })).toEqual([]);
+    await expect(listProjectActivity(context, ids.project, { from: "2026-10-15", to: "2026-10-14" })).rejects.toBeDefined();
+    for (const actor of [
+      { ...context, membership: { ...context.membership!, collegeId: SEED_IDS.collegeB } },
+      { ...context, membership: { ...context.membership!, status: "SUSPENDED" } },
+      { ...context, membership: { ...context.membership!, roles: ["FACULTY"] } },
+    ] as RequestContext[]) await expect(listProjectActivity(actor, ids.project, { from: "2026-10-14" })).rejects.toBeDefined();
+  });
+});

@@ -3,12 +3,12 @@ import {and,eq,gt,lt,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {academicPeriods,cohorts,collegeMemberships,departments,lectureHalls,membershipRoles,
-  programs,sectionScheduleEvents,sections} from "@/db/schema";
+  programs,sectionScheduleEvents,sections,users} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {collegeHallBookingSchema,hallBookingWindow,hallCanFitClass} from "./college-hall-booking-model";
+import {collegeHallBookingSchema,hallBookingWindow,hallCanFitClass,hallFacultyIsEligible} from "./college-hall-booking-model";
 export class CollegeHallBookingError extends Error{
   constructor(public readonly code:"HALL_NOT_FOUND"|"SECTION_NOT_FOUND"|"SECTION_STALE"|
     "SECTION_PERIOD_INVALID"|"HALL_CAPACITY_CONFLICT"|"FACULTY_NOT_FOUND"|"SCHEDULE_CONFLICT"){
@@ -54,13 +54,18 @@ export async function createCollegeHallBooking(context:RequestContext,rawHallId:
     if(!hallCanFitClass(hall.capacity,section.capacity))
       throw new CollegeHallBookingError("HALL_CAPACITY_CONFLICT");
     if(input.facultyMembershipId){
-      const [teacher]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
+      // Different halls/Sections share no scheduling lock. Serialize this
+      // writer on the Faculty identity before its fresh overlap query.
+      const [teacher]=await tx.select({id:collegeMemberships.id,
+        accountStatus:users.platformStatus,membershipStatus:collegeMemberships.status}).from(collegeMemberships)
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
         .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"FACULTY")))
         .where(and(eq(collegeMemberships.id,input.facultyMembershipId),
           eq(collegeMemberships.collegeId,member.collegeId),eq(collegeMemberships.status,"ACTIVE")))
-        .for("share",{of:collegeMemberships}).limit(1);
-      if(!teacher)throw new CollegeHallBookingError("FACULTY_NOT_FOUND");
+        .for("update").limit(1);
+      if(!teacher||!hallFacultyIsEligible(teacher.accountStatus,teacher.membershipStatus))
+        throw new CollegeHallBookingError("FACULTY_NOT_FOUND");
     }
     const [collision]=await tx.select({id:sectionScheduleEvents.id}).from(sectionScheduleEvents)
       .where(and(eq(sectionScheduleEvents.status,"SCHEDULED"),
