@@ -1,0 +1,68 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { hasMembershipRole } from "@/modules/identity/context";
+import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
+import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
+
+type Params = { page?: string | string[]; pageSize?: string | string[] };
+function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
+
+export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
+  const context = await getCurrentRequestContext();
+  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  const raw = await searchParams;
+  const parsed = mentorActivityQuerySchema.safeParse({
+    page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid activity filters</h1>
+    <Link href="/mentor/activity" className="text-primary-text underline">Clear filters</Link>
+  </section>;
+  const data = await getMentorPortfolioActivity(context, parsed.data);
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Projects" title="Project activity"
+      description="Recorded activity in your currently assigned projects, newest first. Raw summaries and metadata are omitted."
+      actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
+    {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      Projects access is disabled. No activity was loaded.
+    </div> : <>
+      <form action="/mentor/activity" method="get" className="flex items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Page size
+          <select name="pageSize" defaultValue={String(data.pageSize)} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="20">20</option><option value="50">50</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+      </form>
+      <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+      {data.items.length === 0 ? <EmptyState title="No recorded activity"
+        description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
+        : <ol className="grid gap-3">{data.items.map(event =>
+          <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
+            <p className="text-sm font-semibold text-foreground">{event.label}</p>
+            <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
+              className="mt-1 block text-sm font-semibold text-primary-text hover:underline">
+              {event.projectTitle} →
+            </Link>
+            <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
+              {new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
+            </time>
+          </li>)}</ol>}
+      <nav aria-label="Project activity pagination" className="flex items-center justify-between gap-3">
+        <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
+        <div className="flex gap-3">
+          {data.page > 1 && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page-1})}
+            className="text-sm font-semibold text-primary-text">Previous</Link>}
+          {data.page < data.totalPages && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page+1})}
+            className="text-sm font-semibold text-primary-text">Next</Link>}
+        </div>
+      </nav>
+    </>}
+    <p className="text-xs text-muted-foreground">
+      Only registered project activity events tied to active Mentor assignments are counted. Full legacy history is not yet certified.
+    </p>
+  </div>;
+}
