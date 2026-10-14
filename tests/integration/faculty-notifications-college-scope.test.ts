@@ -100,12 +100,13 @@ async function createNotification(actor: RequestContext, suffix: string) {
 afterAll(async () => {
   try {
     if (eventIds.length) {
+      // Notifications are mutable fixture rows. Activity events are an
+      // append-only history ledger and must NEVER be deleted by a test.
       await pool.query("delete from in_app_notifications where event_id = any($1::uuid[])", [eventIds]);
-      await pool.query("delete from activity_events where id = any($1::uuid[])", [eventIds]);
     }
-    await pool.query("delete from membership_roles where membership_id in ($1,$2)", [testMembershipA, testMembershipB]);
-    await pool.query("delete from college_memberships where id in ($1,$2)", [testMembershipA, testMembershipB]);
-    await pool.query("delete from users where id = $1", [testUserId]);
+    // This dedicated test actor and its roles/memberships are referenced
+    // by retained activity_events; deleting them would violate history/FKs.
+    // The entire database is disposable TEST_DATABASE_URL, not production.
   } finally {
     await pool.end();
     await closeDatabaseConnection();

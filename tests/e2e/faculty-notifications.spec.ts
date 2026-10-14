@@ -56,8 +56,8 @@ test("Faculty notifications stay within the selected college, including read act
       [eventB, membershipB, SEED_IDS.collegeB],
     ]) {
       await pool.query(
-        "insert into activity_events (id, organization_id, college_id, actor_user_id, actor_membership_id, module, event_type, subject_type, subject_id, summary) values ($1,$2,$3,$4,$5,'COURSES','courses.discussion.posted','faculty_notification_e2e',$1::text,'Faculty notification test')",
-        [eventId, SEED_IDS.organization, collegeId, userId, membershipId],
+        "insert into activity_events (id, organization_id, college_id, actor_user_id, actor_membership_id, module, event_type, subject_type, subject_id, summary) values ($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::uuid,'COURSES','courses.discussion.posted','faculty_notification_e2e',$6::text,'Faculty notification test')",
+        [eventId, SEED_IDS.organization, collegeId, userId, membershipId, eventId],
       );
     }
     for (const [id, eventId, title] of [
@@ -121,10 +121,9 @@ test("Faculty notifications stay within the selected college, including read act
     expect(deniedStatus).toBeGreaterThanOrEqual(400);
   } finally {
     await pool.query("delete from in_app_notifications where id = any($1::uuid[])", [[notificationA1, notificationA2, notificationB]]);
-    await pool.query("delete from activity_events where id = any($1::uuid[])", [[eventA1, eventA2, eventB]]);
-    await pool.query("delete from membership_roles where membership_id in ($1,$2)", [membershipA, membershipB]);
-    await pool.query("delete from college_memberships where id in ($1,$2)", [membershipA, membershipB]);
-    await pool.query("delete from users where id = $1", [userId]);
+    // activity_events is immutable. Preserve its audit actor and membership
+    // references in this disposable E2E database; never purge the history.
+    // Dedicated UUIDs guarantee fixture isolation from other tests.
     await pool.end();
   }
 });
