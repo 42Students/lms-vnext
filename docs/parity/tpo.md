@@ -374,6 +374,8 @@ Legacy:
 **W61 D PARTIAL:** The operational shortlist now links to /tpo/placements/jobs/[jobId]/share-preview, a TPO-only read-only report and formula-neutralized capped CSV using exclusively the same application ID, display name and email candidate fields already returned by the authorized recruiter round workspace. Current submitted/shortlisted applications and active same-college memberships only; only published/closed drives. No send, share grant, token, file, score, phone, roll number or private comments are exposed. The CSV notes truncation above 500 rows. Actual secure sharing, user consent/disclosure snapshots, live PostgreSQL/browser acceptance and legacy sharing UI remain open.
 
 ### Tab: Rounds
+
+**Work Mode results follow-up — PARTIAL:** Result entry now validates form data through the canonical confirmed-result Zod contract, requires HOLD rank only when selected, separates internal PASS notes from candidate-visible feedback, and disables repeated submission after save. Closed/draft/archived drives show read-only entries. Result staging locks the parent drive before round/application locks to serialize against closure. Unit tests and PG fixtures cover boundaries, optimistic identity, wrong-role denial and closed-drive state; PG execution remains blocked by sandbox account setup. Full bulk/apply UX, cross-writer concurrency certification, pagination and desktop/mobile browser verification remain open.
 - [ ] round list/order/status matches.
 - [ ] add/edit/schedule round actions match.
 

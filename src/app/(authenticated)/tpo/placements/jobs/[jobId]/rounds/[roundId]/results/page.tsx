@@ -32,7 +32,7 @@ export default async function TpoRoundResultTablePage({params}:Props){
       <h2 className="font-semibold text-foreground">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
      </div>
-     {row.editable?<TpoRoundResultEntryForm roundId={roundId} applicationId={row.applicationId}
+     {row.editable?<TpoRoundResultEntryForm key={row.resultId??"unrecorded"} roundId={roundId} applicationId={row.applicationId}
       currentResultId={row.resultId}/>:
       <p className="text-sm text-body">Result entry is unavailable for this round or an already applied result.</p>}
     </article>)}

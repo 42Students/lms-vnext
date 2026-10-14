@@ -14,7 +14,7 @@ export async function getTpoRoundResultTable(context:RequestContext,raw:unknown)
  const db=getDb();
  const [scope]=await db.select({id:placementJobRounds.id,name:placementJobRounds.name,
   kind:placementJobRounds.kind,status:placementJobRounds.status,
-  jobId:placementJobs.id,jobTitle:placementJobs.title})
+  jobId:placementJobs.id,jobTitle:placementJobs.title,jobStatus:placementJobs.status})
   .from(placementJobRounds).innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
   .where(and(eq(placementJobRounds.id,input.roundId),eq(placementJobs.id,input.jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);
