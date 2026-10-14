@@ -10,6 +10,7 @@ export function DepartmentCreateForm({
 }: {
   collegeId: string;
 }) {
+  void collegeId; // College identity comes from the request context on every mutation.
   const router = useRouter();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,10 +21,10 @@ export function DepartmentCreateForm({
     setError(null);
 
     startTransition(async () => {
-      const response = await fetch("/api/departments", {
+      const response = await fetch("/api/college/departments", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ collegeId, name }),
+        body: JSON.stringify({ name }),
       });
 
       if (!response.ok) {

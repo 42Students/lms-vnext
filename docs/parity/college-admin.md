@@ -68,6 +68,8 @@ Uses the shared Faculty-profile schema.
 ## Page: Departments
 **Legacy:** `/college-admin/departments` using shared `Departments` component.
 
+**College Admin hardening PARTIAL:** Create, rename and archive now use dedicated same-origin-guarded, context-derived College Admin routes with strict Zod, row locks, same-transaction immutable audit and actual historic program/course/faculty-profile dependency guards before archive. A new confirmed restore action is available for archived Programs with active-department/name/code-conflict checks. Legacy UI/browser and independent PG acceptance remain open.
+
 Legacy contract:
 - Create New Department card;
 - Department Name;
