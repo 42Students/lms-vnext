@@ -248,7 +248,7 @@ export function LearnerProfileWorkspace(props: {
   async function saveContacts() {
     if (contactPending) return;
     const parsed = learnerContactEditSchema.safeParse({
-      confirmed: true, contacts: contactDraft,
+      confirmed: true, contacts: contactDraft, expectedContacts: document.contacts,
     });
     if (!parsed.success) {
       setContactError(parsed.error.issues[0]?.message ?? "Check your contact details.");
@@ -263,6 +263,10 @@ export function LearnerProfileWorkspace(props: {
         body: JSON.stringify(parsed.data),
       });
       const payload = await response.json().catch(() => null);
+      if(!response.ok && payload?.error==="LEARNER_CONTACT_STALE"){
+        router.refresh();
+        throw new Error("These contact details were updated in another tab. Review the latest saved values before retrying.");
+      }
       if (!response.ok || !payload?.contacts) {
         throw new Error("Contact details could not be saved. Your existing details are unchanged.");
       }
