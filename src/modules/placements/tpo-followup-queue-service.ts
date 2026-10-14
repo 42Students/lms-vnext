@@ -65,7 +65,7 @@ export async function getTpoDueFollowupQueue(
       isNull(placementTpoFollowups.doneAt),
       ...timeConditions,
       ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
-      ...(query.q ? [sql<boolean>\`position(lower(\${query.q}::text) in lower(coalesce(\${placementTpoLeads.name}, '') || ' ' || coalesce(\${placementTpoLeads.companyName}, ''))) > 0\`] : []),
+      ...(query.q ? [sql<boolean>`position(lower(${query.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`] : []),
     ))
     .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id))
     .limit(201);
