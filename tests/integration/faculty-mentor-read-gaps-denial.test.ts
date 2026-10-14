@@ -37,6 +37,43 @@ describe("Faculty/Mentor read-only denial paths on PostgreSQL", () => {
     })).rejects.toBeDefined();
     await expect(getMentorTaskReviews(disabled, {})).rejects.toBeDefined();
   });
+  it("denies nonexistent Faculty deliveries after live teaching-assignment lookup", async () => {
+    const faculty: RequestContext = {
+      ...learner,
+      user: {
+        ...learner.user,
+        id: SEED_IDS.facultyUser,
+        identityUid: "seed-active-faculty",
+      },
+      membership: {
+        ...learner.membership!,
+        id: SEED_IDS.facultyCollegeAMembership,
+        roles: ["FACULTY", "MENTOR"],
+      },
+    };
+    // The seeded college UUID cannot be an authorized Course delivery.
+    // This denial exercises the registered teaching assignments query.
+    await expect(getFacultyStudentDetail(faculty, {
+      deliveryId: SEED_IDS.collegeA,
+      membershipId: SEED_IDS.learnerCollegeAMembership,
+    })).rejects.toBeDefined();
+  });
+
+  it("never treats a forged Mentor context as a persisted project grant", async () => {
+    const forged: RequestContext = {
+      ...learner,
+      membership: {
+        ...learner.membership!,
+        roles: ["MENTOR"],
+      },
+    };
+    // Real project_members/membership_roles join must not grant the
+    // seed Learner membership Mentor access merely from context roles.
+    const result = await getMentorTaskReviews(forged, {});
+    expect(result.items).toEqual([]);
+    expect(result.total).toBe(0);
+  });
+
   it("rejects untrusted extra college selectors at the Zod boundary", async () => {
     await expect(getFacultyStudentDetail(learner, {
       deliveryId: SEED_IDS.collegeA,
