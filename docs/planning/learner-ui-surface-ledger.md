@@ -521,7 +521,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-011 | Event action/deep links | CareerCalendarContent | career rounds | FIXED |
 | L17-012 | Partial-source failure + retry | CareerCalendarContent | dedicated loading + hard-failure retry preserves calendar URL; PARTIAL pending PG/browser error injection and legacy partial-source acceptance | PARTIAL |
 | L17-013 | Empty calendar state | CareerCalendarContent | career calendar | FIXED |
-| L17-014 | Timezone handling | CareerCalendarContent | career rounds | UNCHECKED |
+| L17-014 | Timezone handling | career calendar | .ics export now uses exactly the visible IST day/week/month/30-day event period and active kind filter, with unmodified real UTC instants; no calendar provider URL/meeting credentials. Pure model + own persisted PG checks authored. PARTIAL pending native calendar import, leap/IST boundary, browser and executed tests | PARTIAL |
 | L17-015 | Mobile agenda fallback | learner career calendar | month/week show accessible mobile IST day-grouped agenda rather than 38rem horizontal grid; same persisted filtered own events, details and exact deep links; pure and fresh-learner PG tests authored. PARTIAL pending executed tests, responsive screen-reader and browser acceptance | PARTIAL |
 
 ## L18 — Placement Cell
