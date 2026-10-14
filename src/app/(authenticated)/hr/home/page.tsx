@@ -8,11 +8,15 @@ import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
+import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
+import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
+import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
+import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -29,15 +33,28 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
   if (selectedId && !grants.some(grant => grant.collegeId === selectedId)) notFound();
-  if (!selectedId) return <div className="space-y-6">
+  if (!selectedId) {
+    const access=await getRecruiterSelfGrantOverview(context);
+    const byId=new Map(access.grants.map(item=>[item.id,item]));
+    const visible=grants.filter(item=>byId.has(item.id));
+    return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
-    {grants.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
-    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant =>
-      <Link key={grant.id} href={"/hr/home?collegeId=" + encodeURIComponent(grant.collegeId)}
-        className="rounded-lg border border-border bg-surface p-5 hover:border-primary"><span className="font-semibold">{grant.collegeName}</span>
-        <span className="mt-1 block text-sm text-muted-foreground">Open recruiter Today</span></Link>)}</section>}
+    {visible.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
+    <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
+      const detail=byId.get(grant.id)!;
+      return <article key={grant.id} className="space-y-3 rounded-lg border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
+        {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
+        <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
+        <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
+          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Open recruiter Today
+        </Link>
+      </article>;
+    })}</section>}
     <Link href="/hr/profile" className="text-sm text-primary-text">Your profile</Link>
   </div>;
+  }
   const grant = grants.find(item => item.collegeId === selectedId)!;
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
@@ -50,6 +67,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
+  const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -73,6 +91,24 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
+    <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-semibold text-foreground">Live hiring drives</h2>
+        <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
+          className="text-sm text-primary-text">See all live drives</Link>
+      </div>
+      {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {liveDrives.map(row=><Link key={row.job.id}
+          href={"/hr/placements/jobs/"+encodeURIComponent(row.job.id)}
+          className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
+          <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
+          </span>
+          <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
+        </Link>)}
+      </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
+    </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
@@ -91,12 +127,15 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Results due this week</h2>
-      <p className="mt-1 text-sm text-body">Only recorded result deadlines on this college&apos;s authorized employer rounds; no outside messages or invitations are sent.</p>
+      <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
-        <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
+        <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
           className="min-w-0 rounded-md border border-border p-3 hover:border-primary">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
           <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
+          <span className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-foreground">
+            {HR_DEADLINE_URGENCY_LABELS[hrResultDeadlineUrgency(item.dueAt,now)]}
+          </span>
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">

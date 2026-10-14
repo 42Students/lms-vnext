@@ -1,6 +1,7 @@
 export type RecruiterSelfGrantFact = {
   id: string;
   collegeName: string;
+  collegeCode?: string;
   grantStatus: string;
   relationshipStatus: string;
   grantedAt: Date;
@@ -9,6 +10,7 @@ export type RecruiterSelfGrantFact = {
 export type RecruiterSelfGrantRow = {
   id: string;
   collegeName: string;
+  collegeCode?: string;
   grantStatus: "ACTIVE";
   relationshipStatus: "ACTIVE";
   grantedAtIso: string;
@@ -47,6 +49,7 @@ export function buildRecruiterSelfGrantRows(
     .map((fact) => ({
       id: fact.id,
       collegeName: fact.collegeName,
+      ...(fact.collegeCode ? {collegeCode:fact.collegeCode} : {}),
       grantStatus: "ACTIVE" as const,
       relationshipStatus: "ACTIVE" as const,
       grantedAtIso:

@@ -5,7 +5,7 @@ import {inAppNotifications,activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrNotificationsQuerySchema,HR_NOTIFICATION_EVENTS,HR_INBOX_PAGE_SIZE,hrInboxPageBounds,projectHrNotifications} from "./hr-notifications-model";
+import {hrNotificationsQuerySchema,HR_NOTIFICATION_EVENTS,HR_INBOX_PAGE_SIZE,hrInboxPageBounds,filterHrNotificationJobs,projectHrNotifications} from "./hr-notifications-model";
 export async function listHrNotifications(context:RequestContext,raw:unknown={}) {
  const query=hrNotificationsQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)
@@ -18,8 +18,8 @@ export async function listHrNotifications(context:RequestContext,raw:unknown={})
  if(!collegeId)return {status:grants.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
   choices:grants,rows:[],unread:0,truncated:false,page:query.page,pages:0,total:0,first:0,last:0};
  const allJobs=await listOwnRecruiterPlacementJobs(context);
- const jobs=allJobs.filter(row=>row.collegeId===collegeId&&row.companyId===context.recruiter!.companyId)
-  .map(row=>({id:row.job.id,title:row.job.title}));
+ const jobs=filterHrNotificationJobs(allJobs.filter(row=>row.collegeId===collegeId&&row.companyId===context.recruiter!.companyId)
+  .map(row=>({id:row.job.id,title:row.job.title})),query.q);
  const jobIds=jobs.map(j=>j.id);
  const db=getDb();
  const scope=and(eq(inAppNotifications.userId,context.user.id),eq(activityEvents.collegeId,collegeId),

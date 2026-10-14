@@ -102,6 +102,7 @@ export async function getRecruiterSelfGrantOverview(
       id: placementRecruiterCollegeGrants.id,
       collegeId: colleges.id,
       collegeName: colleges.name,
+      collegeCode: colleges.code,
       relationshipId:
         placementCompanyRelationships.id,
       grantStatus:
