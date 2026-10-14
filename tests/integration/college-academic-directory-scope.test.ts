@@ -96,7 +96,7 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     );
     await pool.query(
       "INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id) " +
-      "VALUES($1,1,2026,$2)",
+      "VALUES($1,1,2026,$2) ON CONFLICT (cohort_id) DO NOTHING",
       [ids.cohort, ids.period],
     );
     await pool.query(

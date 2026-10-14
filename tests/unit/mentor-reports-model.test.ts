@@ -43,5 +43,9 @@ describe("Mentor assigned-project report summary",()=>{
       .toContain("attention=REQUESTED");
     expect(mentorReportsQuerySchema.safeParse({...q,collegeId:"fake"}).success).toBe(false);
     expect(mentorReportsQuerySchema.safeParse({...q,status:"WAITING"}).success).toBe(false);
+    expect(mentorReportsQuerySchema.safeParse({...q,assignment:"OWNER"}).success).toBe(false);
+    expect(mentorReportsOverview(projects,attention,{...q,assignment:"PRIMARY"}).items.map(p=>p.id)).toEqual(["a"]);
+    expect(mentorReportsOverview(projects,attention,{...q,assignment:"SUPPORTING"}).total).toBe(2);
+    expect(mentorReportsHref({...q,assignment:"PRIMARY"})).toContain("assignment=PRIMARY");
   });
 });
