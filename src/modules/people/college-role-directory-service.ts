@@ -58,6 +58,9 @@ export async function listCollegeRoleDirectory(
   if (kind === "LEARNER" && filter.teaching !== "ALL") {
     throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
   }
+  if (kind === "LEARNER" && filter.facultyDepartmentId) {
+    throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
+  }
   const db = getDb();
   const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
     .from(learnerProgramEnrollments)
@@ -83,6 +86,10 @@ export async function listCollegeRoleDirectory(
       ilike(facultyProfiles.employmentType,search),
       ilike(departments.name,search),
     ))));
+  const facultyInDepartment = filter.facultyDepartmentId ? exists(db.select({member:facultyProfiles.membershipId})
+    .from(facultyProfiles)
+    .innerJoin(departments,and(eq(departments.id,facultyProfiles.primaryDepartmentId),eq(departments.collegeId,collegeId)))
+    .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),eq(departments.id,filter.facultyDepartmentId)))) : undefined;
   const activeTeaching = exists(db.select({ assignmentId: courseTeachingAssignments.id })
     .from(courseTeachingAssignments)
     .innerJoin(courseSectionDeliveries, and(
@@ -113,6 +120,7 @@ export async function listCollegeRoleDirectory(
         ? undefined
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
+      kind === "FACULTY" ? facultyInDepartment : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
       kind !== "FACULTY" || filter.teaching === "ALL" ? undefined :
@@ -227,8 +235,13 @@ export async function listCollegeRoleDirectory(
     };
   });
   const total = counts[0]?.total ?? 0;
+  const departmentRows = kind === "FACULTY" ? await db.select({id:departments.id,name:departments.name})
+    .from(departments).where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
+    .orderBy(asc(departments.name),asc(departments.id)).limit(201) : [];
   return {
     kind, filter, items, total,
+    departmentOptions:departmentRows.slice(0,200),
+    departmentOptionsTruncated:departmentRows.length>200,
     pageSize: COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
     totalPages: Math.max(1, Math.ceil(total / COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)),
   };
