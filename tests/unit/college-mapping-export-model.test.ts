@@ -7,9 +7,10 @@ describe("college offering mapping export",()=>{
   expect(offeringMappingCsvSchema.safeParse({page:99}).success).toBe(false);
   expect(offeringMappingCsvSchema.safeParse({type:"WRONG"}).success).toBe(false);
   expect(exportParams(new URLSearchParams("q=x&q=y"))).toBeNull();
-  const url=new URL(offeringMappingCsvHref({q:"Hi & Bye",type:"CORE"}),"https://example.test");
+  const url=new URL(offeringMappingCsvHref({q:"Hi & Bye",type:"CORE",status:"ACTIVE"}),"https://example.test");
   expect(url.searchParams.get("q")).toBe("Hi & Bye");
   expect(url.searchParams.get("type")).toBe("CORE");
+  expect(url.searchParams.get("status")).toBe("ACTIVE");
  });
  it("neutralizes formulas and reports cap",()=>{
   const csv=renderOfferingMappingCsv([{

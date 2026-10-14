@@ -26,6 +26,7 @@ export default async function CollegeSemesterCoursesPage({
         programId: first(raw.programId),
         periodId: first(raw.periodId),
         type: first(raw.type),
+        status: first(raw.status),
         page: first(raw.page),
       }).filter(([, value]) => value !== undefined && value !== ""),
     ),
@@ -89,6 +90,14 @@ export default async function CollegeSemesterCoursesPage({
               <option value="ALL">All types</option>
               <option value="CORE">Core</option>
               <option value="ELECTIVE">Elective</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Offering lifecycle
+            <select name="status" defaultValue={query.status}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All states</option><option value="ACTIVE">Active</option>
+              <option value="ARCHIVED">Archived</option>
             </select>
           </label>
           <div className="flex items-end gap-2">
