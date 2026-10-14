@@ -11,6 +11,7 @@ import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
 import {learnerInterviewCountdown} from "@/modules/placements/learner-interview-countdown-model";
 import {learnerInterviewFocusState} from "@/modules/placements/learner-interview-focus-model";
+import {learnerInterviewRescheduleSummary} from "@/modules/placements/learner-interview-reschedule-summary-model";
 import {learnerInterviewMobileSummary} from "@/modules/placements/learner-interview-mobile-model";
 import { Drawer } from "@/components/ui/drawer";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -80,6 +81,7 @@ export function LearnerCareerRoundsWorkspace({
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSelectedKey);
   const [reminders, setReminders] = useState<LearnerAssessmentReminders>({});
   const [reminderError, setReminderError] = useState<string | null>(null);
+  const [copyStatus,setCopyStatus]=useState<string|null>(null);
 
   useEffect(()=>{
     if(kind!=="ASSESSMENT"&&kind!=="INTERVIEW")return;
@@ -224,6 +226,24 @@ export function LearnerCareerRoundsWorkspace({
             ? "VIRTUAL" : null,
       },new Date(snapshotNowIso))
     : null;
+  const rescheduleSummary=kind==="INTERVIEW"&&selected?.exception
+    ? learnerInterviewRescheduleSummary({
+        companyName:selected.companyName,roleTitle:selected.roleTitle,
+        roundName:selected.roundName,originalScheduledAt:selected.scheduledAt,
+        approvedScheduledAt:selected.exception.scheduledAt,
+        mode:selected.exception.mode==="ON_CAMPUS"?"ON_CAMPUS":selected.exception.mode==="VIRTUAL"?"VIRTUAL":null,
+        venue:selected.exception.venue??null,
+      }) : null;
+
+  async function copyRescheduleSummary(){
+    if(!rescheduleSummary)return;
+    try{
+      await navigator.clipboard.writeText(rescheduleSummary.copyText);
+      setCopyStatus("Approved schedule copied. No message was sent to the employer.");
+    }catch{
+      setCopyStatus("Clipboard unavailable. Select and copy the displayed schedule instead.");
+    }
+  }
   const employerTest = kind === "ASSESSMENT"
     ? externalLink(selected?.testUrl ?? null) : null;
   const selectedReminderId = selected && kind === "ASSESSMENT"
@@ -384,7 +404,7 @@ export function LearnerCareerRoundsWorkspace({
 
       <Drawer
         open={selected !== null}
-        onOpenChange={(open) => { if (!open) setSelectedKey(null); }}
+        onOpenChange={(open) => { if (!open) {setSelectedKey(null);setCopyStatus(null);} }}
         title={selected?.roundName ?? "Placement round"}
         description={selected ? selected.companyName + " · " + selected.roleTitle : undefined}
         footer={<>
@@ -450,10 +470,28 @@ export function LearnerCareerRoundsWorkspace({
                 <dd className="mt-1 text-foreground">#{selected.sequence} · {selected.roundName}</dd>
               </div>
             </dl>
-            {selected.exception ? (
-              <p role="status" className="rounded-lg border border-border bg-primary-subtle p-3 text-sm text-body">
-                Your approved reschedule is reflected in the time above.
-              </p>
+            {rescheduleSummary ? (
+              <section className="space-y-3 rounded-lg border border-primary bg-primary-subtle p-4"
+                aria-label="Approved reschedule summary">
+                <h3 className="text-sm font-semibold text-foreground">Approved schedule change</h3>
+                <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                  <div><dt className="font-semibold text-body">Previous (IST)</dt>
+                    <dd className="mt-1 text-foreground">{rescheduleSummary.previous}</dd></div>
+                  <div><dt className="font-semibold text-body">Approved (IST)</dt>
+                    <dd className="mt-1 text-foreground">{rescheduleSummary.approved}</dd></div>
+                  <div><dt className="font-semibold text-body">Location</dt>
+                    <dd className="mt-1 text-foreground">{rescheduleSummary.location}</dd></div>
+                </dl>
+                <button type="button" onClick={()=>void copyRescheduleSummary()}
+                  className="min-h-11 w-full rounded-md border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto">
+                  Copy schedule summary
+                </button>
+                {copyStatus?<p role="status" className="text-xs text-body">{copyStatus}</p>:null}
+                <p className="text-xs text-body">
+                  This approved time replaces the original schedule. Copying does not notify
+                  the employer or confirm attendance.
+                </p>
+              </section>
             ) : null}
             <div className="flex flex-wrap gap-3">
               {employerTest ? (

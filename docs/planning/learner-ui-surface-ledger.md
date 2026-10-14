@@ -497,7 +497,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-012 | Reschedule reason | InterviewsContent | learner requests | GAP |
 | L16-013 | Preferred date/daypart/details | InterviewsContent | learner requests | GAP |
 | L16-014 | Cancel reschedule request | InterviewsContent | learner requests | GAP |
-| L16-015 | Reschedule summary + copy | InterviewsContent | interviews page | GAP |
+| L16-015 | Reschedule summary + copy | InterviewsContent | approved own application-round exception displayed with original and new IST date plus venue; copyable sanitized personal schedule excludes meeting credentials and does not send employer messages. PARTIAL pending actual PG/tsc/eslint, clipboard permission and browser/mobile acceptance | PARTIAL |
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
 | L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
