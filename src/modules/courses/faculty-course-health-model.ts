@@ -1,0 +1,51 @@
+import { z } from "zod";
+
+export const facultyCourseHealthParamsSchema = z.object({
+  deliveryId: z.string().uuid(),
+  kind: z.enum(["ALL","QUIZ","ASSIGNMENT"]).default("ALL"),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+}).strict();
+export type FacultyCourseHealthParams = z.infer<typeof facultyCourseHealthParamsSchema>;
+export type FacultyCourseHealthCandidate = {
+  id: string;
+  deliveryId: string;
+  title: string;
+  kind: "QUIZ" | "ASSIGNMENT";
+  status: string;
+  dueAt: Date | null;
+};
+
+export function selectFacultyCourseHealthCandidates<T extends FacultyCourseHealthCandidate>(
+  rows: readonly T[], query: FacultyCourseHealthParams,
+) {
+  const matches = rows.filter(row =>
+    row.deliveryId === query.deliveryId &&
+    row.status === "PUBLISHED" &&
+    (query.kind === "ALL" || row.kind === query.kind),
+  ).sort((a,b) =>
+    (b.dueAt?.getTime() ?? 0) - (a.dueAt?.getTime() ?? 0) ||
+    a.kind.localeCompare(b.kind) ||
+    a.id.localeCompare(b.id));
+  const total = matches.length;
+  const pageSize = 5;
+  const totalPages = Math.max(1,Math.ceil(total/pageSize));
+  const page = Math.min(query.page,totalPages);
+  return {
+    total,page,pageSize,totalPages,
+    items: matches.slice((page - 1) * pageSize,page * pageSize),
+  };
+}
+
+export function facultyCourseHealthHref(query: FacultyCourseHealthParams) {
+  const params = new URLSearchParams();
+  if (query.kind !== "ALL") params.set("kind",query.kind);
+  if (query.page > 1) params.set("page",String(query.page));
+  const suffix = params.toString();
+  return "/teacher/courses/" + encodeURIComponent(query.deliveryId) +
+    "/assessment-health" + (suffix ? "?" + suffix : "");
+}
+
+export function responseCoverage(eligible: number, responded: number) {
+  return eligible <= 0 ? null :
+    Math.round((Math.max(0,Math.min(eligible,responded)) / eligible) * 100);
+}
