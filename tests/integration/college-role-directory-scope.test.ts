@@ -1,4 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
+import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -11,6 +13,7 @@ const enabled =
   process.env.DB09_ISOLATED_TEST_DATABASE === "1";
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 
+const profilePool = enabled ? new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}) : null;
 const collegeAdmin: RequestContext = {
   user: {
     id: SEED_IDS.collegeAdminUser,
@@ -45,6 +48,7 @@ const facultyInCollegeB: RequestContext = {
 
 describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial checks", () => {
   afterAll(async () => {
+    await profilePool?.end();
     await closeDatabaseConnection();
   });
 
@@ -61,6 +65,28 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
       .not.toContain(SEED_IDS.facultyCollegeBMembership);
   });
 
+  it("finds roll and registration numbers only inside this college", async () => {
+    if (!profilePool) throw Error("Disposable PG required");
+    const userId=randomUUID(),memberId=randomUUID(),roleId=randomUUID();
+    const uid="directory-roll-"+userId;
+    const roll="ROLL"+userId.slice(0,10).toUpperCase();
+    try {
+      await profilePool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",[userId,uid,"Roll Fixture"]);
+      await profilePool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1::uuid,$2::uuid,$3::uuid)",[memberId,userId,SEED_IDS.collegeA]);
+      await profilePool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1::uuid,$2::uuid,'LEARNER')",[roleId,memberId]);
+      await profilePool.query("INSERT INTO learner_profiles(membership_id,roll_number,registration_number) VALUES($1::uuid,$2::text,$3::text)",[memberId,roll,"REG"+roll]);
+      const own=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{q:roll});
+      expect(own.items.map(r=>r.membershipId)).toContain(memberId);
+      const faculty=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{q:roll});
+      expect(faculty.items.map(r=>r.membershipId)).not.toContain(memberId);
+      await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:roll})).rejects.toBeInstanceOf(AuthorizationError);
+    } finally {
+      await profilePool.query("DELETE FROM learner_profiles WHERE membership_id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM membership_roles WHERE id=$1::uuid",[roleId]);
+      await profilePool.query("DELETE FROM college_memberships WHERE id=$1::uuid",[memberId]);
+      await profilePool.query("DELETE FROM users WHERE id=$1::uuid",[userId]);
+    }
+  });
   it("denies a non-admin in another college before any directory read", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {}))
