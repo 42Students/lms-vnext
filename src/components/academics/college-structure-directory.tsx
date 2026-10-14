@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   classCapacityLabel,
@@ -95,6 +96,7 @@ export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
                   <th scope="col" className="px-4 py-3">Capacity</th>
                   <th scope="col" className="px-4 py-3">Active enrollments</th>
                   <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Manage</th>
                 </tr></thead>
                 <tbody>{data.items.map(item => (
                   <tr key={item.id} className="border-t border-border align-top">
@@ -108,6 +110,7 @@ export function CollegeStructureDirectory({ data }: { data: DirectoryData }) {
                     <td className="px-4 py-4 text-body">{classCapacityLabel(item.capacity)}</td>
                     <td className="px-4 py-4 text-body">{item.activeLearners}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
+                    <td className="px-4 py-4"><CollegeClassRowActions row={item} /></td>
                   </tr>
                 ))}</tbody>
               </>
