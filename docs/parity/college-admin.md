@@ -278,6 +278,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Hall booking PARTIAL (2026-10-14):** The per-hall IST availability page adds a confirmed single-session write with a validated IST-local date/time/title, same-college Section and optional Faculty, millisecond-normalized Section optimistic token, configured class capacity vs hall capacity guard, and fresh persisted SCHEDULED overlap checks for hall, Section or Faculty. It locks Section then Hall through the audit/insert transaction and advances the Section token; appends a college-scoped immutable event. Dedicated same-origin POST, pure time/capacity model tests and disposable PostgreSQL success, cross-college denial, wrong role, stale and overlap tests authored. Other scheduling writers without shared Hall locks or exclusion constraints can still race; exact legacy workflow and real DB/browser proof remain open; this is not guaranteed booking availability.
+
 
 **IST hall availability PARTIAL (2026-10-14):** Each hall links to `/college/lecture-halls/[hallId]` for a strict 1–31-day IST date-range read of registered SCHEDULED section sessions. Own-college hall and academic lineage checks, not-found tenant concealment, persisted hall capacity, nullable configured class capacity, overlapping booking flags and configured capacity conflict badges are included. Overlap is a diagnostic of current persisted records, not guaranteed bookability or actual student occupancy. Rows are capped at 500 with truncation warning; pure tests and gated disposable-PostgreSQL read/denial fixtures authored. Runtime and browser acceptance remain open.
 **Legacy:** `/college-admin/lecture-halls`
