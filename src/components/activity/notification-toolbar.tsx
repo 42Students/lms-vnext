@@ -9,9 +9,11 @@ import { useToast } from "@/components/ui/toast";
 export function NotificationToolbar({
   view,
   unreadCount,
+  baseHref = "/notifications",
 }: {
   view: "all" | "unread";
   unreadCount: number;
+  baseHref?: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -42,14 +44,14 @@ export function NotificationToolbar({
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap gap-2" role="group" aria-label="Notification filter">
         <Link
-          href="/notifications?view=all"
+          href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
           All
         </Link>
         <Link
-          href="/notifications?view=unread"
+          href={baseHref + "?view=unread"}
           aria-current={view === "unread" ? "page" : undefined}
           className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "unread" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
