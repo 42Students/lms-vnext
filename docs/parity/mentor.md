@@ -209,3 +209,18 @@ are omitted. Linked from the existing pending delivery-review queue; writes
 remain exclusively inside the authorized workspace. Unit and disposable DB
 denial tests are authored but not executed; former assignments, pre-migration
 history and full legacy/browsers parity remain OPEN and PARTIAL.
+
+## Mentor sprint/release progress portfolio (2026-10-14)
+
+New read-only `/mentor/sprint-progress` shows persisted sprint statuses,
+release status, and counts of registered Done, In Review and Blocked tasks
+over the Mentor's current same-college assigned non-archived projects.
+It derives the allowlist from the existing live Mentor membership join, checks
+central projects.read, supports strict Zod search/state/page filters and
+uses SQL counts for accurate pagination; task status groups are read only for
+the twenty current-page sprints. Zero-task completion is Unknown rather than
+100%. The new page links to existing authorized Sprint controls and does not
+represent elapsed hours, velocity, historical assignments or release readiness.
+Pure tests and disposable PostgreSQL denial tests are authored but not
+executed. Full legacy Sprint parity and browser acceptance remain OPEN; the
+parent Sprint row stays PARTIAL.
