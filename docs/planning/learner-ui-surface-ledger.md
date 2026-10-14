@@ -423,7 +423,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L13-012 | Closed/not-open state | VerifiedJobDetailContent | job detail | UNCHECKED |
 | L13-013 | Not-eligible state | DriveEligibilityPanel | job detail | FIXED |
 | L13-014 | Not-found/access handling | job route | job detail | FIXED |
-| L13-015 | Back to Drives/navigation | job detail | job detail | UNCHECKED |
+| L13-015 | Back to Drives/navigation | job detail | job links preserve validated bounded Drives filter/page state in a `back` query and the job detail breadcrumb returns to it; arbitrary tenant/user selectors removed; exact published job still server-scoped. PARTIAL pending PG/unit/tsc/lint, Next app-router and browser Back/Forward acceptance | PARTIAL |
 | L13-016 | Application uses the Profile resume; no per-drive resume upload | jobDetailProfileResumeOnly.test.jsx | learner job detail/application | GAP |
 
 ## L14 — Applications
@@ -448,8 +448,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-018 | Assessment deep link | ApplicationsContent | placement assessment | UNCHECKED |
-| L14-019 | Interview deep link | ApplicationsContent | interviews | UNCHECKED |
-| L14-020 | Job/similar roles deep link | ApplicationsContent | jobs | UNCHECKED |
+| L14-019 | Interview deep link | ApplicationsContent | drawer resolves exact active own application+interview round from membership-scoped persisted scheduled rounds, nearest upcoming first; fallback general interview list where no round exists. No invented outcome. PARTIAL pending fresh PostgreSQL, unit, tsc/lint and browser deep-link checks | PARTIAL |
+| L14-020 | Job/similar roles deep link | ApplicationsContent | own persisted application now carries exact job ID to published drive detail and its role options from cards and drawer; unauthorized/unpublished jobs still enforce server scope. PARTIAL: similar-role recommendation ranking not registered; pending PG/unit/tsc/lint/mobile/browser acceptance | PARTIAL |
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
 | L14-022 | Hard/inline error state | ApplicationsContent | applications page | UNCHECKED |
 | L14-023 | First-run/filtered-empty | ApplicationsContent | applications page | UNCHECKED |
@@ -501,7 +501,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-016 | Decline interview confirmation | InterviewsContent | interviews page | GAP |
 | L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
-| L16-019 | Mobile interview actions/modals | InterviewsContent responsive | interviews page | UNCHECKED |
+| L16-019 | Mobile interview actions/modals | InterviewsContent responsive | mobile-safe interview filter scroller, 44px full-width drawer links/close, wrapping titles and IST effective scheduled/rescheduled summary drawn only from authorized round; PARTIAL pending device keyboard/screen-reader acceptance plus PG/unit/tsc/lint/browser verification | PARTIAL |
 | L16-020 | Deterministic assessment vs interview round-kind classification | Rounds are typed TEST/VENDOR_TEST/GD/INTERVIEW; names editable | learner-career-rounds typed policy | FIXED |
 
 ## L17 — Career Calendar
@@ -564,7 +564,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L19-002 | Back action | PlacementRulesPage | safe Zod-validated dashboard/cell/drives back destination, linked from source pages | FIXED |
 | L19-003 | Personal "Where you stand" note | PlacementRulesPage | registered learner-scoped evidence/preferences with explicit unknown values and no eligibility invention | FIXED |
 | L19-004 | Authoritative college rules summary | PlacementRulesPage/API | no canonical policy model | BLOCKED |
-| L19-005 | Rule-change applicability wording | PlacementRulesPage | rules page | GAP |
+| L19-005 | Rule-change applicability wording | PlacementRulesPage | own saved submitted-app count and candid future-vs-submitted eligibility applicability wording; no invented College policy version, effective date or retroactive decision; link to own applications. PARTIAL pending executed PG/unit/tsc/lint and College-owner policy approval/browser copy acceptance | PARTIAL |
 | L19-006 | Loading skeleton | PlacementRulesPage | dedicated loading.tsx with LoadingState | FIXED |
 | L19-007 | Load error + Retry | PlacementRulesPage | dedicated error.tsx retry and safe return | FIXED |
 | L19-008 | Drive-level eligibility explanation | DriveEligibilityPanel | rules page | FIXED |

@@ -51,12 +51,6 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/placement-summary",
         },
         {
-          title: "Season pipeline",
-          description:
-            "Season-scoped applied, shortlisted, offered, accepted and joined evidence, with selected explicitly unavailable and capped CSV.",
-          path: "/tpo/reports/season-pipeline",
-        },
-        {
           title: "Company funnel & compensation intelligence",
           description: "Persisted applicant denominators and offer-versus-learner CTC measures, with CSV.",
           path: "/tpo/reports/intelligence",

@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail-model";
 import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
+import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -451,10 +452,11 @@ function JobActions({
 }
 
 export function LearnerPlacementJobs({
-  items,snapshotNowIso=null,
+  items,snapshotNowIso=null,returnQuery="",
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso?:string|null;
+  returnQuery?:string;
 }) {
   if (items.length === 0) {
     return (
@@ -489,7 +491,7 @@ export function LearnerPlacementJobs({
                 </p>
                 <h2 className="mt-1 text-xl font-semibold text-foreground">
                   <Link
-                    href={`/learn/my-placements/jobs/${encodeURIComponent(item.job.id)}`}
+                    href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
                     className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                     aria-label={`View ${item.roleOption.title} drive details at ${item.company.name}`}
                   >

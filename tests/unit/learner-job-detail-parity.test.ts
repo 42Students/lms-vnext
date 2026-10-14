@@ -10,7 +10,7 @@ describe("Learner published placement Job Detail", () => {
     expect(page).toContain("listLearnerPlacementJobs(context)");
     expect(page).toContain("row.job.id === jobId");
     expect(page).toContain("notFound()");
-    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)} />");
+    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back} />");
   });
   it("uses a dedicated detail instead of generic uncontextualized cards", () => {
     const source = read("src/components/placements/learner-placement-job-detail.tsx");
@@ -20,8 +20,9 @@ describe("Learner published placement Job Detail", () => {
     expect(source).toContain("check.required");
     expect(source).toContain("LearnerPlacementJobs items={items}");
     const cards = read("src/components/placements/learner-placement-jobs.tsx");
-    expect(cards).toContain("/learn/my-placements/jobs/");
-    expect(cards).toContain("encodeURIComponent(item.job.id)");
+    const hrefs = read("src/modules/placements/learner-drives-return-model.ts");
+    expect(hrefs).toContain("/learn/my-placements/jobs/");
+    expect(cards).toContain("learnerJobDetailFromDrivesHref(item.job.id,returnQuery)");
   });
   it("preserves existing application API actions but guards employer URLs", () => {
     const source = read("src/components/placements/learner-placement-jobs.tsx");

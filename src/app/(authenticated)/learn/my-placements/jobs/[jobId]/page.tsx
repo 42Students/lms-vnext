@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import {learnerJobReturnToDrivesHref} from "@/modules/placements/learner-drives-return-model";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -46,9 +47,10 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
 }
 
 export default async function LearnerPlacementJobDetailPage({
-  params,
+  params,searchParams,
 }: {
   params: Promise<{ jobId: string }>;
+  searchParams: Promise<{back?:string|string[]}>;
 }) {
   const { jobId } = await params;
   const context = await getCurrentRequestContext();
@@ -58,5 +60,7 @@ export default async function LearnerPlacementJobDetailPage({
     notFound();
   }
 
-  return <LearnerPlacementJobDetail items={rows.map(toItem)} />;
+  const query=await searchParams;
+  const back=learnerJobReturnToDrivesHref(query.back);
+  return <LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back} />;
 }
