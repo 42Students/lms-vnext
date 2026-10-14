@@ -59,13 +59,20 @@ export async function updateMentorSprintDetails(
     if (!sprintDetailsChanged(sprint,input)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
+    // PostgreSQL timestamptz retains microseconds while a JavaScript Date
+    // only retains milliseconds. An exact timestamp equality in UPDATE WHERE
+    // would reject the very row we just locked and checked above when the
+    // persisted timestamp has nonzero fractional microseconds.
+    //
+    // SELECT FOR UPDATE serializes competing writers; the millisecond
+    // expectedUpdatedAt check above is performed against the locked current
+    // version. Incrementing by at least 1ms preserves stale-write detection.
     const now = new Date(Math.max(Date.now(), sprint.updatedAt.getTime()+1));
     const [updated] = await tx.update(projectSprints).set({
       title:input.title,description:input.description,updatedAt:now,
     }).where(and(
       eq(projectSprints.id,sprint.id),
       eq(projectSprints.projectId,scope.project.id),
-      eq(projectSprints.updatedAt,sprint.updatedAt),
     )).returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
