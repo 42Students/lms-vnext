@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoParticipationDecisionForm } from "@/components/tpo/tpo-participation-decision-form";
+import { TpoDebarControl } from "@/components/tpo/tpo-debar-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -67,10 +68,16 @@ export default async function TpoLearnerParticipationPage({
         ) : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Learner decisions override class decisions, which override
-          batch decisions. This is separate from placement registration,
-          job-specific screening and any debarment policy.
+          batch decisions. The Debar action below uses this same
+          learner-level decision, not the separate timed/drive-based
+          DB08 debarment lifecycle.
         </p>
       </section>
+
+      <TpoDebarControl
+        membershipId={learner.membershipId}
+        initial={learner.direct}
+      />
 
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">

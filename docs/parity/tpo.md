@@ -423,6 +423,8 @@ Legacy columns:
 - [ ] Higher Studies confirmation/consequence matches.
 - [ ] Debar modal/reason/consequence matches.
 
+**W42 — PARTIAL (membership-level restriction, not legacy debarment lifecycle):** The learner's TPO participation page offers confirmed Debar with mandatory reason and confirmed Remove-debar for only Debar-tagged direct INELIGIBLE decisions, using the existing same-origin-guarded participation API, central college permissions, optimistic snapshot and transactional activity event. Learner placement access and the application writer enforce the learner override; clearing it restores inherited class/batch eligibility and may leave the learner unable to apply. There are no timed or drive-count debarments, restore-previous-override history, roster bulk action or legacy modal parity. Requires disposable PostgreSQL and browser verification.
+
 ### Academic import
 - Import Academic Details;
 - preview groups matched/unmatched;
