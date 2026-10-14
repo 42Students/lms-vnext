@@ -5,6 +5,9 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { lessonMoveSchema, planLessonMove } from "./college-lesson-order-model";
 import { courseLessons } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -146,6 +149,14 @@ export async function createCourseLesson(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_CREATED,
+        collegeId: path.collegeId,
+        organizationId: path.organizationId,
+        subjectType: "course_lesson", subjectId: created.id,
+        subjectLabel: created.name, summary: "Created lesson",
+        metadata: { learningPathId: path.id, sequence: created.sequence },
+      });
       return created;
     });
   } catch (error) {
@@ -203,6 +214,14 @@ export async function updateCourseLesson(
       );
     }
 
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED,
+        collegeId: path.collegeId,
+        organizationId: path.organizationId,
+        subjectType: "course_lesson", subjectId: updated.id,
+        subjectLabel: updated.name, summary: "Updated lesson",
+        metadata: { learningPathId: path.id, previousSequence: current.sequence, sequence: updated.sequence },
+      });
       return updated;
     });
   } catch (error) {
@@ -270,5 +289,45 @@ export async function archiveCourseLesson(
     }
 
     return updated;
+  });
+}
+
+/** Move one active lesson one position in its own path with a stale-order fence.
+ * Uses a temporary unoccupied sequence to respect the immediate unique index.
+ */
+export async function moveCollegeCourseLesson(context: RequestContext, raw: unknown) {
+  const input = lessonMoveSchema.parse(raw);
+  const path = await loadLearningPathScope(input.learningPathId);
+  requirePermission(context, "courses.manage", {
+    collegeId: path.collegeId, organizationId: path.organizationId,
+  });
+  return getDb().transaction(async tx => {
+    await lockLiveLessonWriteAncestry(tx, path);
+    const live = await tx.select({
+      id: courseLessons.id, sequence: courseLessons.sequence,
+    }).from(courseLessons)
+      .where(and(eq(courseLessons.learningPathId, path.id), eq(courseLessons.status, "ACTIVE")))
+      .orderBy(asc(courseLessons.sequence), asc(courseLessons.id))
+      .for("update");
+    const plan = planLessonMove(live, input);
+    if (!plan) throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
+    const [first, second] = plan;
+    // Preserve the unordered gap while temporarily parking the source row.
+    for (const step of [first, second, { id: first.id, sequence: second.previousSequence }]) {
+      const [changed] = await tx.update(courseLessons)
+        .set({ sequence: step.sequence, updatedAt: new Date() })
+        .where(and(eq(courseLessons.id, step.id), eq(courseLessons.learningPathId, path.id), eq(courseLessons.status, "ACTIVE")))
+        .returning({ id: courseLessons.id });
+      if (!changed) throw new CoursesServiceError("LESSON_NOT_FOUND");
+    }
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_REORDERED,
+      collegeId: path.collegeId, organizationId: path.organizationId,
+      subjectType: "course_lesson", subjectId: input.lessonId,
+      summary: "Reordered lesson", metadata: {
+        learningPathId: path.id, from: first.previousSequence, to: second.previousSequence,
+      },
+    });
+    return { lessonId: input.lessonId, sequence: second.previousSequence };
   });
 }
