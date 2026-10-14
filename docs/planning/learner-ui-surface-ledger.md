@@ -437,7 +437,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-005 | Sort recent activity | ApplicationsContent | applications page | UNCHECKED |
 | L14-006 | Sort stage | ApplicationsContent | explicit persisted screening-stage A–Z sort; stable latest-activity then ID tie breaks, URL validation and selection preserved. PARTIAL: fresh PostgreSQL, tsc, lint, unit and browser/back-forward acceptance remain | PARTIAL |
 | L14-007 | Sort company | ApplicationsContent | applications page | UNCHECKED |
-| L14-008 | Attention banner | ApplicationsContent | applications page | UNCHECKED |
+| L14-008 | Attention banner | ApplicationsContent | own persisted shortlisted/under-review stages presented as informational screening updates with scoped application deep links and overflow; no invented deadline, placement action or employer completion. PARTIAL pending isolated PostgreSQL, lint/tsc, mobile and browser acceptance | PARTIAL |
 | L14-009 | Review offers opens full offered list | applications route | own-offers page with status filters | FIXED |
 | L14-010 | Application cards | ApplicationsContent | applications page | UNCHECKED |
 | L14-011 | Journey/status visualization | ApplicationsContent | learner journey | FIXED |

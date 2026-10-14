@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
+import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -133,6 +134,7 @@ export function LearnerApplicationsBrowse({
     ? Math.min(requested,totalPages) : 1;
   const paged = rows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
   const stages = learnerApplicationStageOptions(items);
+  const attention=learnerApplicationAttention(items);
   const selected = items.find((item) =>
     item.applicationId === url.applicationId) ?? null;
   const viewOptions = [
@@ -147,6 +149,34 @@ export function LearnerApplicationsBrowse({
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
           {withdrawNotice}
         </p>
+      ) : null}
+      {attention.rows.length>0 ? (
+        <section aria-label="Application screening updates" role="status"
+          className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="text-base font-semibold text-foreground">Application screening updates</h2>
+          <p className="mt-1 text-sm text-body">
+            {attention.shortlistedCount} shortlisted · {attention.underReviewCount} under review.
+            These are saved placement-team stages, not application deadlines.
+          </p>
+          <ul className="mt-3 space-y-2">
+            {attention.rows.map(row=>(
+              <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border p-3">
+                <span className="min-w-0 text-sm text-body">
+                  <strong className="break-words text-foreground">{row.title}</strong>
+                  <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
+                </span>
+                <Link href={row.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                  View application →
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {attention.overflow>0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {attention.overflow} more applications in these stages. Use filters below.
+            </p>
+          ) : null}
+        </section>
       ) : null}
       <section aria-label="Application list filters" className="rounded-xl border border-border bg-surface p-3 sm:p-5">
         <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
