@@ -20,6 +20,7 @@ const deliveredRoutes = [
   "classes",
   "electives",
   "attendance/departments",
+  "attendance/corrections",
   "placements/readiness-by-department",
 ] as const;
 

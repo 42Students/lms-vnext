@@ -111,12 +111,19 @@ export default async function CollegeAttendancePage({
         title="Attendance"
         description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
         actions={
+          <div className="flex flex-wrap gap-3">
+          <Link
+            href="/college/attendance/corrections"
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Correction windows
+          </Link>
           <Link
             href="/college/attendance/settings"
             className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             Attendance policy
           </Link>
+          </div>
         }
       />
       <AdminAttendanceWorkspace
