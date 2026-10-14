@@ -1059,3 +1059,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L11-002 PARTIAL:** First-run Learner Placements now offers explicit mobile-friendly next steps to review placement rules, browse published drives and open the existing job-preferences editor. It appears only with confirmed empty own application history, never when journey availability is unknown; completion state is not invented. Unit and fresh-learner PG authorization coverage authored; execution/browser/source comparison outstanding.
+
+
+**2026-10-15 chat-5 L29-010 PARTIAL:** Learner inbox interview actions now require either the generic interview route or a strict UUID application+round pair. Cross-college/user query selectors are stripped; malformed/duplicate selectors fail closed. The interview destination still verifies persisted owned round scope. Pure-model and self-seeded learner PostgreSQL tests authored. Executed static/PG and browser navigation remain outstanding.
