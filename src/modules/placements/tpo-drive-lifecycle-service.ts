@@ -43,7 +43,7 @@ function requireTpo(context: RequestContext): string {
 }
 
 async function loadFacts(
-  tx: Tx | Db,
+  tx: Tx,
   job: typeof placementJobs.$inferSelect,
   now: Date,
 ): Promise<TpoDriveReadinessFacts> {
@@ -117,7 +117,7 @@ export async function getTpoDriveLifecycleReadiness(
   )).limit(1);
   if (!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   await requirePlacementManageScope(context, job.collegeId);
-  const facts = await loadFacts(getDb(), job, new Date());
+  const facts = await getDb().transaction((tx) => loadFacts(tx, job, new Date()));
   return {
     jobId,
     status: job.status,

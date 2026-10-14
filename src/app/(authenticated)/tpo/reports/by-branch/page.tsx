@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -53,6 +54,12 @@ export default async function TpoByBranchReportPage({
         }
       />
 
+      <Link
+        href="/tpo/reports/branch-season"
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+      >
+        View applicant and accepted-offer evidence by season →
+      </Link>
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}

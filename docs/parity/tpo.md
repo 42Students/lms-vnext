@@ -370,6 +370,8 @@ Legacy includes:
 - [ ] Extend Deadline modal validation matches.
 - [ ] Cancel Drive modal reason validation and downstream consequence preview match.
 - [ ] Close/complete flow is accounted for.
+
+**W49 B — PARTIAL:** The TPO drive workspace now has a separate confirmed publish/close/reopen control using only registered season, company-relationship, active role-option, evaluative-round, eligibility-policy, applied result and accepted-offer records. Publish/reopen refuse unready or expired-deadline drives; reopen also refuses any applied round result or accepted offer. CLOSE remains a distinct step from completing rounds. Status and blockers are rechecked under a job row lock with an optimistic expected status, and every successful change appends a college-scoped actor audit. The existing generic non-TPO lifecycle endpoint is preserved; uniform legacy behavior, browser/positive PostgreSQL execution and immutable historical snapshots remain open.
 - [ ] Messages drawer matches recruiter conversation workflow.
 
 ## Page: Global Drive Day
@@ -552,6 +554,8 @@ Headline metrics:
 - [ ] branch metrics/table/chart match.
 - [ ] drill-in/filter behavior matches.
 - [ ] export matches.
+
+**W49 C — PARTIAL:** A dedicated /tpo/reports/branch-season drill-in now reports unique application-holding learners, distinct members with currently ACCEPTED offers, accepted offer versions, and a clearly labeled accepted-applicants/applicants rate for one registered season. The placement-pool denominator uses only persisted, active-cohort PLACEMENTS choices if that relation is actually migrated; otherwise it and its official placement rate remain null. Ambiguous/missing current branch attribution is explicit rather than silently assigned. The same authorized model drives a formula-neutralized CSV. Original placement-time cohort/branch history, registration snapshot semantics, external offers, UI acceptance and executed PostgreSQL evidence remain open.
 
 ## Report: By Company
 - [ ] company hires/average/highest package metrics match.
