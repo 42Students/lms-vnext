@@ -326,6 +326,14 @@ export function LearnerAssessmentOverview({
                         {state.action}
                       </Link>
                     )}
+                    {item.kind === "QUIZ" ? (
+                      <Link
+                        href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
+                        className="text-xs font-semibold text-primary-text underline"
+                      >
+                        Attempt history
+                      </Link>
+                    ) : null}
                   </div>
                 </div>
               </article>
