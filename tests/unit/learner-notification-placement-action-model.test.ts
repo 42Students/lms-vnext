@@ -27,6 +27,15 @@ describe("learner placement notification action links",()=>{
       expect(learnerNotificationPlacementAction("/learn/my-placements/interviews"+query)).toBeNull();
     }
   });
+  it("opens exact own application detail and history without caller-supplied selectors",()=>{
+    const root="/learn/my-placements/applications/"+id;
+    expect(learnerNotificationPlacementAction(root+"?collegeId=forged"))
+      .toEqual({href:root,label:"View your application"});
+    expect(learnerNotificationPlacementAction(root+"/history?userId=forged"))
+      .toEqual({href:root+"/history",label:"View application history"});
+    expect(learnerNotificationPlacementAction("/learn/my-placements/applications/not-a-uuid")).toBeNull();
+    expect(learnerNotificationPlacementAction(root+"/secret")).toBeNull();
+  });
   it("rejects malformed, duplicate, cross-role and external actions",()=>{
     for(const value of [
       "/learn/my-placements/applications?applicationId=bad",

@@ -1062,3 +1062,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L29-010 PARTIAL:** Learner inbox interview actions now require either the generic interview route or a strict UUID application+round pair. Cross-college/user query selectors are stripped; malformed/duplicate selectors fail closed. The interview destination still verifies persisted owned round scope. Pure-model and self-seeded learner PostgreSQL tests authored. Executed static/PG and browser navigation remain outstanding.
+
+
+**2026-10-15 chat-5 L29-011 PARTIAL:** Personal notification actions now support strict direct links to the persisted application detail and its status-history page, not only the generic Applications drawer. Only UUID IDs survive; user/college selectors and unregistered path suffixes are rejected. Destination rechecks own learner scope. Existing owned-application PG tests expanded; static, PostgreSQL and browser acceptance pending.
