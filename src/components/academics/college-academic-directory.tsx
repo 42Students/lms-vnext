@@ -88,6 +88,14 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Minimum configured credits
+              <input type="number" name="minimumCredits" min={0} max={500} step={1}
+                defaultValue={data.query.minimumCredits??""} placeholder="All credit totals"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Semester number
               <input type="number" name="termNumber" min={1} max={24} step={1}
                 defaultValue={data.query.termNumber ?? ""} placeholder="All semesters"

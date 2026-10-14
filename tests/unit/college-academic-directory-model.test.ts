@@ -25,6 +25,8 @@ describe("College Admin semester and batch read models", () => {
       { programId: "invalid-id" },
       { termNumber: 0 },
       { termNumber: 25 },
+      { minimumCredits: -1 },
+      { minimumCredits: 501 },
     ]) {
       expect(collegeSemesterDirectorySchema.safeParse(invalid).success).toBe(false);
     }
@@ -65,6 +67,9 @@ describe("College Admin semester and batch read models", () => {
       q: "", status: "ALL", page: 1, termNumber: 6,
     }), "https://example.test");
     expect(term.searchParams.get("termNumber")).toBe("6");
+    expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,minimumCredits:18}))
+      .toContain("minimumCredits=18");
+    expect(academicDirectorySearchParams({minimumCredits:""})).toEqual({});
     expect(semesters.searchParams.has("collegeId")).toBe(false);
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,

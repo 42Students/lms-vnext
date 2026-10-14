@@ -143,6 +143,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Persisted minimum-credit filter PARTIAL (2026-10-15):** Semester directory and CSV now filter actual configured totalCredits inclusively before pagination, excluding unconfigured/null totals rather than inferring credits. Blank inputs are not coerced to zero. Unit and triggered-progression-safe PG fixture authored; execution/browser evidence open.
+
 **Capped semester CSV PARTIAL (2026-10-15):** Filtered, college-authorized program terms export through a GET-only endpoint with 1,000-row limit, spreadsheet formula neutralization and explicit truncation headers/footer. Uses existing tenant-scoped pagination and a disposable-PostgreSQL tenant/role fixture; executed PG/browser and exact legacy column acceptance remain outstanding.
 
 **Exact semester-number filter PARTIAL (2026-10-15):** Semesters now have bounded 1–24 term-number filtering in the college-scoped directory, URL pagination, accessible form and positive/negative isolated-Postgres fixture checks. Real PG/browser execution and legacy management parity still require acceptance.

@@ -5,13 +5,14 @@ export const semesterCsvSchema=collegeSemesterDirectorySchema.omit({page:true});
 export const batchCsvSchema=collegeBatchDirectorySchema.omit({page:true});
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
- q:string;programId?:string;status:string;termNumber?:number;yearStart?:number;
+ q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;yearStart?:number;
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.programId)p.set("programId",query.programId);
  if(query.status!=="ALL")p.set("status",query.status);
  if(kind==="SEMESTERS"&&query.termNumber!==undefined)p.set("termNumber",String(query.termNumber));
+ if(kind==="SEMESTERS"&&query.minimumCredits!==undefined)p.set("minimumCredits",String(query.minimumCredits));
  if(kind==="BATCHES"&&query.yearStart!==undefined)p.set("yearStart",String(query.yearStart));
  return "/api/academics/college-academic-export/"+(kind==="SEMESTERS"?"semesters":"batches")+
   (p.size?"?"+p.toString():"");
