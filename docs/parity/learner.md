@@ -1053,3 +1053,6 @@ Activity now supports From/Through calendar dates in IST, inclusive of the whole
 
 
 **2026-10-15 chat-5 L17-006 PARTIAL:** Previous/Next respect view-specific increments and disable when the resulting date is outside the validated 2000–2100 calendar range, avoiding an invalid URL reset to Today. The Today control remains explicit. Tests authored, browser/runtime acceptance pending.
+
+
+**2026-10-15 chat-5 L17-014 PARTIAL:** Calendar export now respects the visible validated IST date window and event-kind selector, preserving UTC schedule instants in the .ics payload rather than exporting unrelated months. Sensitive round meeting URLs remain excluded. Unit and own-fixture PG coverage authored; execution and real calendar import remain open.

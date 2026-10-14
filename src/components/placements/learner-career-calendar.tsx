@@ -15,12 +15,12 @@ import { learnerCareerKindCounts } from "@/modules/placements/learner-career-kin
 import { learnerCareerWeekDays } from "@/modules/placements/learner-career-week-days-model";
 import { learnerCareerDayTimeline } from "@/modules/placements/learner-career-day-timeline-model";
 import { learnerCareerNavigationDate } from "@/modules/placements/learner-career-navigation-model";
+import { learnerCareerSelectedPeriodIcal } from "@/modules/placements/learner-career-period-export-model";
 import {
   initialCareerCalendarDay,
   careerCalendarEvents,
   careerCalendarPeriod,
-  learnerCareerIcal,
-  shiftCareerCalendarDay,
+   shiftCareerCalendarDay,
   type CareerCalendarEvent,
   type CareerCalendarSourceRound,
   type CareerCalendarView,
@@ -111,7 +111,7 @@ export function LearnerCareerCalendar({
     : learnerMobileCareerAgenda(period.events);
 
   function downloadCalendar() {
-    const file = learnerCareerIcal(filtered, new Date());
+    const file = learnerCareerSelectedPeriodIcal(filtered,anchor,view,new Date()).ical;
     const url = URL.createObjectURL(new Blob([file], { type: "text/calendar;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
@@ -136,10 +136,10 @@ export function LearnerCareerCalendar({
           <button
             type="button"
             onClick={downloadCalendar}
-            disabled={filtered.length === 0}
+            disabled={period.events.length === 0}
             className="min-h-11 rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
-            Export .ics
+            Export selected period .ics
           </button>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Calendar view">
