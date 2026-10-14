@@ -202,6 +202,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Recorded term progression filter PARTIAL (2026-10-15):** Batch view and capped CSV can isolate the exact migrated currentTermNumber from cohort_progression_state with 1–24 validation, same-college count/pagination and no inferred progression for missing rows. PostgreSQL fixture uses main\u0027s ON CONFLICT trigger-safe pattern; real execution/browser proof remains outstanding.
+
 **Capped batch CSV PARTIAL (2026-10-15):** Batch catalogue now exports current-college, filter-matched persisted program/progression and active counts in a spreadsheet-neutralized CSV (1,000 max, explicit truncation headers/footer). The in-test-fixture PostgreSQL suite includes own/foreign/wrong-role export assertions; executed CI, mobile and legacy export column parity remain outstanding.
 
 **Academic-year progression filter PARTIAL (2026-10-15):** Batch list can select the exact persisted progression academic-year start, rather than deriving a year from names or start periods; strict bounds, URL paging, absent-progression exclusion and positive/negative isolated PostgreSQL checks are authored. Browser and integration execution remain open.

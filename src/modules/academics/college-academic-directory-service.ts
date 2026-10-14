@@ -165,6 +165,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.yearStart !== undefined ? eq(cohortProgressionState.currentAcademicYearStart, query.yearStart) : undefined,
+      query.currentTerm !== undefined ? eq(cohortProgressionState.currentTermNumber, query.currentTerm) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
       query.q ? or(
         ilike(cohorts.name, likePattern(query.q)),
