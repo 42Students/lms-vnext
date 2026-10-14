@@ -1,7 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {
   mentorReviewCompletenessQuerySchema,mentorReviewCompletenessHref,
-  projectReviewCompleteness,reviewCompletenessPage,
+  projectReviewCompleteness,reviewCompletenessPage,reviewCoverageOnPage,
 } from "@/modules/projects/mentor-review-completeness-model";
 
 const projectId="00000000-0000-4000-8000-000000000001";
@@ -19,6 +19,7 @@ describe("Mentor final-delivery review completeness evidence",()=>{
         decision:"APPROVED",reviewedAt:new Date("2026-10-14T06:00:00Z"),
         feedback:"  "},
     ]);
+    expect(reviewCoverageOnPage(data)).toEqual({reviewed:2,withFeedback:1});
     expect(data.map(row=>[row.reviewLabel,row.reviewRecorded,row.writtenFeedbackRecorded]))
       .toEqual([
         ["Not submitted",false,false],
