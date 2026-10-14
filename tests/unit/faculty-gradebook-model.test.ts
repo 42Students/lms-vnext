@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {facultyGradebookCsv,facultyGradebookParamsSchema,facultyPublishedGradeRows}
+import {facultyGradebookCsv,facultyGradebookParamsSchema,facultyPublishedGradeRows,
+  facultyPublishedLearnerBreakdown}
   from "@/modules/courses/faculty-gradebook-model";
 const roster=[
   {membershipId:"a",displayName:" =NOW()",email:"+unsafe@x.y",rollNumber:"@SUM(1,2)"},
@@ -33,5 +34,23 @@ describe("Faculty published Section gradebook",()=>{
     const id="00000000-0000-4000-8000-000000000001";
     expect(facultyGradebookParamsSchema.safeParse({deliveryId:id}).success).toBe(true);
     expect(facultyGradebookParamsSchema.safeParse({deliveryId:id,collegeId:id}).success).toBe(false);
+  });
+  it("drills down only to actually published learner evidence",()=>{
+    const details=facultyPublishedLearnerBreakdown("a",[
+      {assessmentId:"q1",kind:"ASSIGNMENT",title:"Written task"},
+      {assessmentId:"q2",kind:"QUIZ",title:"Knowledge check"},
+      {assessmentId:"q3",kind:"ASSIGNMENT",title:"Not graded"},
+    ],[
+      {membershipId:"a",assessmentId:"q1",kind:"ASSIGNMENT",earned:0,possible:10},
+      {membershipId:"other",assessmentId:"q2",kind:"QUIZ",earned:8,possible:10},
+    ]);
+    expect(details).toEqual([
+      {assessmentId:"q1",kind:"ASSIGNMENT",title:"Written task",
+        earned:0,possible:10,percent:0,status:"PUBLISHED_SCORE"},
+      {assessmentId:"q2",kind:"QUIZ",title:"Knowledge check",
+        earned:null,possible:null,percent:null,status:"UNKNOWN"},
+      {assessmentId:"q3",kind:"ASSIGNMENT",title:"Not graded",
+        earned:null,possible:null,percent:null,status:"UNKNOWN"},
+    ]);
   });
 });
