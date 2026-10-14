@@ -133,6 +133,7 @@ export default async function LearnerPlacementsPage({
   const journey: LearnerPlacementJourneyItem[] =
     journeyRows.map((row) => ({
       applicationId: row.applicationId,
+      jobId: row.job.id,
       jobTitle: row.job.title,
       companyName: row.company.name,
       applicationStatus:

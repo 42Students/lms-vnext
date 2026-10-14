@@ -3,10 +3,12 @@ import "server-only";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { getCandidatePreferences } from "./candidate-preferences-service";
+import {getLearnerPlacementJourney} from "./learner-journey-service";
 import { getOwnAcademicEvidence } from "./eligibility-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   learnerPlacementPreparation,
+  learnerRuleChangeApplicability,
   placementRulesBackLink,
 } from "./learner-placement-rules-model";
 
@@ -24,14 +26,16 @@ export async function getOwnLearnerPlacementRulesView(
     collegeId: membership.collegeId,
     organizationId: membership.organizationId,
   });
-  const [evidence, preferences] = await Promise.all([
+  const [evidence, preferences, applications] = await Promise.all([
     getOwnAcademicEvidence(context),
     getCandidatePreferences(context),
+    getLearnerPlacementJourney(context),
   ]);
   return {
     back,
     evidence,
     preferences,
+    ruleApplicability:learnerRuleChangeApplicability(applications),
     preparation: learnerPlacementPreparation({
       evidence: evidence
         ? {
