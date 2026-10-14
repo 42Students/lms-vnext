@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementAcademicEvidence } from "@/components/placements/learner-placement-academic-evidence";
@@ -174,6 +175,17 @@ export default async function LearnerPlacementsPage({
         title="My Placements"
         description="Your placement dashboard, applications, assessments, interviews and career activity."
       />
+
+      <div className="flex flex-wrap gap-3">
+        <Link href="/learn/my-placements/preparation"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          Placement preparation checklist →
+        </Link>
+        <Link href="/learn/my-placements/notification-preferences"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          Placement notification choices →
+        </Link>
+      </div>
 
       <LearnerPlacementsDashboard snapshot={dashboard} />
 

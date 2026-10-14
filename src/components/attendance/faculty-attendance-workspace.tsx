@@ -3,6 +3,7 @@
 import {
   type FormEvent,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -129,6 +130,7 @@ export function FacultyAttendanceWorkspace({
   initialSessionId?: string | null;
 }) {
   const selection = resolveFacultyAttendanceSession(workspace.sessions, initialSessionId);
+  const sessionSelectId = useId();
   const router = useRouter();
   const [mode, setMode] = useState<
     "REPORT" | "MARK"
@@ -749,9 +751,12 @@ export function FacultyAttendanceWorkspace({
           ) : (
             <section className="rounded-xl border border-border bg-surface p-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
-                <label className="text-xs font-semibold text-body">
-                  Class session
+                <div>
+                  <label htmlFor={sessionSelectId} className="block text-xs font-semibold text-body">
+                    Class session
+                  </label>
                   <Select
+                    id={sessionSelectId}
                     className="mt-1.5"
                     value={selectedSessionId}
                     onChange={(event) =>
@@ -772,7 +777,7 @@ export function FacultyAttendanceWorkspace({
                       ),
                     )}
                   </Select>
-                </label>
+                </div>
                 {selectedSession ? (
                   <div className="rounded-lg bg-surface-subtle p-3 text-sm text-body">
                     <p className="m-0 font-semibold text-foreground">

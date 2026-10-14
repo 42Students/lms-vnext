@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { TpoCompanyInteractionForm } from "@/components/placements/tpo-company-interaction-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getTpoCompanyContactLog,
@@ -65,6 +66,23 @@ export default async function TpoCompanyContactLogPage({
         </section>
       ) : (
         <>
+          {log.writeEnabled && log.contacts.length > 0 ? (
+            <TpoCompanyInteractionForm
+              key={log.contacts.map((item) => item.id + item.updatedAtIso).join(":")}
+              companyId={companyId}
+              contacts={log.contacts}
+            />
+          ) : log.contacts.length === 0 ? (
+            <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+              No active, explicitly linked recruiter contacts are available
+              for a new activity. Link a contact before recording one.
+            </p>
+          ) : (
+            <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+              The CRM write gate is unavailable for this company. Existing
+              activity remains read-only.
+            </p>
+          )}
           <form method="get" action={path} className="flex flex-wrap items-end gap-3">
             <label className="text-sm font-semibold text-foreground">
               Interaction type
@@ -141,8 +159,9 @@ export default async function TpoCompanyContactLogPage({
       )}
       <p className="text-xs leading-5 text-muted-foreground">
         This log includes persisted, explicitly linked CRM activity only.
-        Unlinked contacts, message content, notes, phone numbers, email
-        addresses and external conversations are not included.
+        Unlinked contacts, private notes, phone numbers, email addresses and
+        external conversations are not displayed. Entries are internal
+        records, not evidence of actual message delivery.
       </p>
     </div>
   );

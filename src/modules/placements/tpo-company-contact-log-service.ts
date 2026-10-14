@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,
@@ -44,6 +44,7 @@ export async function getTpoCompanyContactLog(
     .select({
       name: placementCompanies.name,
       relationshipId: placementCompanyRelationships.id,
+      relationshipStatus: placementCompanyRelationships.status,
     })
     .from(placementCompanyRelationships)
     .innerJoin(
@@ -68,12 +69,24 @@ export async function getTpoCompanyContactLog(
       companyId: query.companyId,
       available: false as const,
       rows: [],
+      contacts: [] as { id: string; name: string; updatedAtIso: string }[],
+      writeEnabled: false,
       page: query.page,
       total: null,
       pages: null,
       type: query.type,
     };
   }
+
+  const contactRows = await db.select({
+    id: placementTpoLeads.id,
+    name: placementTpoLeads.name,
+    updatedAt: placementTpoLeads.updatedAt,
+  }).from(placementTpoLeads).where(and(
+    eq(placementTpoLeads.collegeId, collegeId),
+    eq(placementTpoLeads.companyRelationshipId, company.relationshipId),
+    isNull(placementTpoLeads.unsubscribedAt),
+  )).orderBy(placementTpoLeads.name, placementTpoLeads.id);
 
   const scope = and(
     eq(placementTpoLeadActivities.collegeId, collegeId),
@@ -125,6 +138,13 @@ export async function getTpoCompanyContactLog(
     companyId: query.companyId,
     available: true as const,
     rows: projectTpoCompanyContactRows(facts),
+    contacts: contactRows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      updatedAtIso: row.updatedAt.toISOString(),
+    })),
+    writeEnabled: process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
+      company.relationshipStatus === "ACTIVE",
     page: query.page,
     total,
     pages: Math.max(1, Math.ceil(total / 25)),

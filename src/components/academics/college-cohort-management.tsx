@@ -1,0 +1,213 @@
+"use client";
+
+import { useState, useTransition, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createCollegeCohortSchema,
+  hasUnsavedCollegeCohortEdit,
+  updateCollegeCohortSchema,
+} from "@/modules/academics/college-cohort-mutation-model";
+
+type Option = { id: string; name: string; code: string };
+type Batch = {
+  id: string;
+  name: string;
+  code: string;
+  status: "PLANNED" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
+  expectedEndPeriodId: string | null;
+  activeSections: number;
+  activeEnrolledLearners: number;
+};
+
+async function send(method: "POST" | "PATCH", url: string, body: unknown) {
+  const response = await fetch(url, {
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data: unknown = await response.json().catch(() => null);
+  if (!response.ok) {
+    const error = data && typeof data === "object" && "error" in data
+      ? String(data.error) : "BATCH_REQUEST_FAILED";
+    throw new Error(error);
+  }
+}
+
+export function CollegeCohortCreateForm({ programs, periods }: {
+  programs: Option[]; periods: Option[];
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [programId, setProgramId] = useState("");
+  const [startPeriodId, setStartPeriodId] = useState("");
+  const [expectedEndPeriodId, setExpectedEndPeriodId] = useState("");
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [notice, setNotice] = useState("");
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    const parsed = createCollegeCohortSchema.safeParse({
+      programId, startPeriodId, expectedEndPeriodId: expectedEndPeriodId || null,
+      name, code,
+    });
+    if (!parsed.success) {
+      setNotice(parsed.error.issues[0]?.message ?? "Enter valid batch details.");
+      return;
+    }
+    if (!window.confirm("Create this batch in the selected program and academic period?")) return;
+    startTransition(async () => {
+      try {
+        await send("POST", "/api/college/batches", parsed.data);
+        setName("");
+        setCode("");
+        setExpectedEndPeriodId("");
+        setNotice("Batch created.");
+        router.refresh();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Batch creation failed.");
+      }
+    });
+  }
+
+  return <section aria-label="Create batch" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>
+    {programs.length === 0 || periods.length === 0
+      ? <p role="status" className="mt-2 text-sm text-muted-foreground">
+        {programs.length === 0 ? "Create a program before adding batches." : "Create a usable academic period before adding batches."}
+      </p>
+      : <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <label className="grid gap-1 text-sm font-medium text-body">Program
+          <select required value={programId} onChange={e => setProgramId(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">Choose program</option>
+            {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Start academic period
+          <select required value={startPeriodId} onChange={e => setStartPeriodId(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">Choose period</option>
+            {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Batch name
+          <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Batch code
+          <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
+          <select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">Not specified</option>
+            {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+          </select>
+        </label>
+        <div className="sm:col-span-2 lg:col-span-5">
+          <button disabled={pending} type="submit"
+            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
+            {pending ? "Creating…" : "Create batch"}
+          </button>
+        </div>
+      </form>}
+    {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+  </section>;
+}
+
+export function CollegeCohortRowActions({ row, periods }: {
+  row: Batch; periods: Option[];
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(row.name);
+  const [code, setCode] = useState(row.code);
+  const [expectedEndPeriodId, setExpectedEndPeriodId] = useState(row.expectedEndPeriodId ?? "");
+  const [notice, setNotice] = useState("");
+  const original = {
+    name: row.name, code: row.code,
+    expectedEndPeriodId: row.expectedEndPeriodId,
+  };
+  const draft = { name, code, expectedEndPeriodId: expectedEndPeriodId || null };
+  const blocked = row.status !== "PLANNED" || row.activeSections > 0 ||
+    row.activeEnrolledLearners > 0;
+
+  function close() {
+    if (hasUnsavedCollegeCohortEdit(original, draft) &&
+      !window.confirm("Discard unsaved batch changes?")) return;
+    setEditing(false);
+    setNotice("");
+  }
+
+  function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    const parsed = updateCollegeCohortSchema.safeParse({ ...draft, confirm: true });
+    if (!parsed.success) {
+      setNotice(parsed.error.issues[0]?.message ?? "Invalid batch changes.");
+      return;
+    }
+    if (!window.confirm("Save batch changes? The server will reject edits when dependent records exist.")) return;
+    startTransition(async () => {
+      try {
+        await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
+        setEditing(false);
+        setNotice("Batch updated.");
+        router.refresh();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Batch update failed.");
+      }
+    });
+  }
+
+  return <div className="min-w-28">
+    <button type="button" disabled={pending || blocked}
+      onClick={() => { setEditing(true); setNotice(""); }}
+      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      Edit
+    </button>
+    {blocked ? <p className="mt-1 text-xs text-muted-foreground">
+      {row.status !== "PLANNED" ? "Only planned batches can be edited." : "Batch has active dependents."}
+    </p> : null}
+    {editing ? <div role="dialog" aria-modal="true" aria-label={"Edit batch " + row.name}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <form onSubmit={save} className="w-full max-w-lg space-y-3 rounded-xl border border-border bg-surface p-5 shadow-lg">
+        <h2 className="text-lg font-semibold text-foreground">Edit batch</h2>
+        <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
+        <label className="grid gap-1 text-sm font-medium text-body">Batch name
+          <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Batch code
+          <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Expected end period
+          <select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">Not specified</option>
+            {row.expectedEndPeriodId && !periods.some(p => p.id === row.expectedEndPeriodId) ?
+              <option value={row.expectedEndPeriodId}>Previously recorded period (unavailable)</option> : null}
+            {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+          </select>
+        </label>
+        {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
+        <div className="flex flex-wrap justify-end gap-3">
+          <button disabled={pending} type="button" onClick={close}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Cancel
+          </button>
+          <button disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
+            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            {pending ? "Saving…" : "Save changes"}
+          </button>
+        </div>
+      </form>
+    </div> : null}
+    {!editing && notice ? <p role="status" className="mt-1 text-xs text-body">{notice}</p> : null}
+  </div>;
+}

@@ -230,7 +230,9 @@ export async function archiveCollegeProgram(
   try {
     return await getDb().transaction(async tx => {
       const current = await lockedProgram(tx, programId, member.collegeId);
-      const [cohort, enrollment, semester] = await Promise.all([
+      // Each SELECT returns a row ARRAY; [] is truthy. Destructure the first
+      // matching row from each result, so an empty result permits archive.
+      const [[cohort], [enrollment], [semester]] = await Promise.all([
         tx.select({ id: cohorts.id }).from(cohorts)
           .where(eq(cohorts.programId, current.id)).limit(1),
         tx.select({ id: learnerProgramEnrollments.id }).from(learnerProgramEnrollments)

@@ -108,3 +108,18 @@ executed Vitest/TypeScript/ESLint, GitHub CI or browser proof was available
 in this chat. Run the new integration files with a migrated and seeded
 disposable PostgreSQL database, reconcile any runtime failures, and verify
 that all prior suites remain green. Faculty/Mentor parity remains PARTIAL.
+
+### Mentor Task Board write — chat-4 (2026-10-14)
+
+The `Project Tasks / Board` row gains a source-authored, confirmation-gated
+task metadata edit for title/description/acceptance criteria/priority using
+only registered P6 columns. `PATCH /api/projects/[projectId]/tasks/[taskId]/details`
+requires strict Zod, central permission and persisted current Mentor assignment,
+the enabled Projects module, a same-origin request, an optimistic update token,
+transaction locks and a single safe actor/college audit per real change.
+`tests/integration/mentor-task-details-update.test.ts` creates unique
+template/project fixtures and includes PostgreSQL success, actor audit,
+foreign/forged/stale/no-op denial and full cleanup. Unit/route tests are
+authored. A **missing migrated assignee/workload field** still blocks complete
+legacy Board parity; fresh PostgreSQL, ESLint, TypeScript and browser execution
+are not claimed. PARTIAL only.

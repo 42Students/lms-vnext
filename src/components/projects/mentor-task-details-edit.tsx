@@ -1,0 +1,118 @@
+"use client";
+
+import { type FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/toast";
+import { projectMutation } from "./project-api";
+
+type Props={
+  projectId:string;taskId:string;title:string;description:string|null;
+  acceptanceCriteria:string|null;priority:string;updatedAt:string;
+};
+export function MentorTaskDetailsEdit(props:Props) {
+  const router=useRouter();
+  const {showToast}=useToast();
+  const [open,setOpen]=useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
+  const [title,setTitle]=useState(props.title);
+  const [description,setDescription]=useState(props.description??"");
+  const [criteria,setCriteria]=useState(props.acceptanceCriteria??"");
+  const [priority,setPriority]=useState(props.priority);
+  const [pending,setPending]=useState(false);
+  const [error,setError]=useState<string|null>(null);
+  const changed=title.trim()!==props.title ||
+    (description.trim()||null)!==(props.description??null) ||
+    (criteria.trim()||null)!==(props.acceptanceCriteria??null) ||
+    priority!==props.priority;
+  function begin() {
+    setTitle(props.title);
+    setDescription(props.description??"");
+    setCriteria(props.acceptanceCriteria??"");
+    setPriority(props.priority);
+    setError(null);setOpen(true);
+  }
+  function review(event:FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if(!title.trim()||title.trim().length>200||
+      description.trim().length>4000||criteria.trim().length>4000||!changed) {
+      setError("Change a task field within its allowed length.");
+      return;
+    }
+    setOpen(false);setConfirmOpen(true);setError(null);
+  }
+  async function save() {
+    setPending(true);setError(null);
+    try {
+      await projectMutation(
+        "/api/projects/"+encodeURIComponent(props.projectId)+
+          "/tasks/"+encodeURIComponent(props.taskId)+"/details",
+        "PATCH",{
+          title:title.trim(),description:description.trim()||null,
+          acceptanceCriteria:criteria.trim()||null,
+          priority,expectedUpdatedAt:props.updatedAt,
+        },
+      );
+      setConfirmOpen(false);
+      showToast({tone:"success",title:"Task details updated"});
+      router.refresh();
+    } catch(caught) {
+      const message=caught instanceof Error?caught.message:"Task update failed";
+      setError(message);
+      showToast({tone:"error",title:"Task update failed",description:message});
+    } finally {setPending(false);}
+  }
+  return <>
+    <Button size="sm" variant="secondary" onClick={begin}>Edit task</Button>
+    <Dialog open={open} onOpenChange={setOpen} title="Edit task details"
+      description="Change registered task details. Status, assignee and sprint remain unchanged.">
+      <form onSubmit={review} className="grid gap-4">
+        <label className="grid gap-1 text-xs font-semibold text-body">Task title
+          <Input required maxLength={200} value={title}
+            onChange={event=>setTitle(event.target.value)} />
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Description (optional)
+          <Textarea maxLength={4000} value={description}
+            onChange={event=>setDescription(event.target.value)} />
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Acceptance criteria (optional)
+          <Textarea maxLength={4000} value={criteria}
+            onChange={event=>setCriteria(event.target.value)} />
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Priority
+          <select value={priority} onChange={event=>setPriority(event.target.value)}
+            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
+          <Button type="submit" disabled={!changed||!title.trim()}>Review changes</Button>
+        </div>
+      </form>
+    </Dialog>
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title="Confirm task changes?"
+      description="Updated details will be visible to the assigned project team."
+      confirmLabel="Save task details" confirmVariant="primary"
+      pending={pending} onConfirm={save}>
+      <dl className="grid gap-2 text-sm text-body">
+        <dt className="font-semibold text-foreground">Title</dt>
+        <dd className="break-words">{title.trim()}</dd>
+        <dt className="font-semibold text-foreground">Priority</dt>
+        <dd>{priority}</dd>
+        <dt className="font-semibold text-foreground">Description</dt>
+        <dd className="break-words">{description.trim()||"Not provided"}</dd>
+        <dt className="font-semibold text-foreground">Acceptance criteria</dt>
+        <dd className="break-words">{criteria.trim()||"Not provided"}</dd>
+      </dl>
+      {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
+    </ConfirmDialog>
+  </>;
+}

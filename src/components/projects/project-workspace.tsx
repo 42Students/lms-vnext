@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
+import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import {
   ReleaseLifecycleActions,
   SprintLifecycleActions,
@@ -609,6 +610,20 @@ export function ProjectWorkspace({
                             ) : null}
                             {mode !== "LEARNER" && !readOnly ? (
                               <div className="mt-3 flex flex-wrap items-end gap-2">
+                                {["PLANNED","ACTIVE"].includes(sprint.status) &&
+                                  release.status !== "SHIPPED" &&
+                                  task.status !== "DONE" &&
+                                  task.status !== "IN_REVIEW" ? (
+                                    <MentorTaskDetailsEdit
+                                      projectId={workspace.project.id}
+                                      taskId={task.id}
+                                      title={task.title}
+                                      description={task.description}
+                                      acceptanceCriteria={task.acceptanceCriteria}
+                                      priority={task.priority}
+                                      updatedAt={task.updatedAt.toISOString()}
+                                    />
+                                  ) : null}
                                 <TaskLifecycleActions
                                   projectId={workspace.project.id}
                                   taskId={task.id}

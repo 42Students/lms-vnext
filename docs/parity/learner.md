@@ -914,3 +914,52 @@ Closure checklist:
 - [ ] Loading skeleton, hard-error retry and visibility-refresh behavior are verified.
 - [x] Role redirect/fence behavior is server-safe.
 - [x] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.
+
+## Placement-only notification preferences — chat-4 (2026-10-14)
+
+PARTIAL — New mobile-friendly `/learn/my-placements/notification-preferences` lets the signed-in Learner explicitly confirm updates to the two registered P2 candidate-preferences notification flags. A narrow same-origin PUT uses strict Zod booleans and confirmation, central placements.read, live own-college LEARNER role/paid participation checks, and a single transactional actor audit on real changes. The update preserves role/location/CTC preferences. No-op retries do not generate fake audits. Unique-fixture PostgreSQL tests cover success, suspension, forged college, revoked role and wrong-role denials; they are authored but not executed. This is not a global course/security notification opt-out; producer delivery, browser validation and full legacy parity remain OPEN.
+
+## Learner read-only monthly attendance calendar — chat-4 (2026-10-14)
+
+PARTIAL — Added `/learn/attendance/calendar` alongside the existing
+course/month Attendance workspace and Class Schedule day/week/month views.
+The new mobile-first seven-day monthly grid shows *registered* attended,
+absent, medically/excused/late, unmarked and future scheduled sessions from
+the canonical Learner attendance reader, with a filterable per-day list and
+links back to Course Attendance. Academic records are restricted to the
+signed-in persisted active Learner college membership, role grant and
+current authorized course deliveries (central `academics.read`). Zod
+restricts month, status and delivery filters; unknown or foreign delivery
+identifiers fail closed. India-local day grouping and no-mark denominator
+handling are pure and testable. No attendance is changed by this page.
+
+Model unit tests and a fresh-fixture PostgreSQL integration suite are
+authored covering present/absent/unmarked/future sessions, pagination-free
+month grouping, empty months, forged college, suspended and wrong-role
+denials, and test-owned cleanup. Execution, exact legacy browser/mobile
+proof and complete canonical attendance evidence remain **OPEN**; neither
+Course Attendance nor Attendance summary is marked DONE by this addition.
+
+## Learner placement preparation evidence checklist — chat-4 (2026-10-14)
+
+PARTIAL — A new read-only, mobile-first `/learn/my-placements/preparation`
+page links from My Placements and reports **four factual persisted signals**:
+active academic program enrollment, at least one profile contact method,
+at least one Learner profile skill, and historical placement application
+activity (including withdrawn applications). Links return only to existing
+authorized Learner profile or application pages. `ALL` / `RECORDED` /
+`MISSING` filters use strict Zod and return honest no-match states.
+The server requires the canonical persisted active Learner college membership,
+role and paid Placements/eligibility scope; it checks central placements.read
+and reads only the authorized current user profile/enrollment and own
+placement_application rows. It does not expose private identity values,
+claim eligibility, invent college requirements, or calculate a subjective
+hiring-readiness score. No write route or notification is introduced.
+
+A pure-model unit suite and an isolated fresh-PostgreSQL success/denial
+integration test using the same passing Learner fixture as Attendance calendar
+were authored for an actual enrolled Learner with a persisted application,
+forged college, suspended/disabled account, wrong role, forged actor and
+caller-injected membership scopes. Full browser/positive-PG execution
+evidence, historic content completeness, and exact legacy acceptance remain
+OPEN. The parent Placements dashboard and Self Profile rows remain PARTIAL.

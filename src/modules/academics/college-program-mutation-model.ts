@@ -24,6 +24,16 @@ export const archiveCollegeProgramSchema = z.object({
 
 export const collegeProgramIdSchema = z.string().uuid();
 
+/** Detect unsaved edits, even invalid input, before dismissing an edit dialog. */
+export function hasUnsavedCollegeProgramEdit(
+  saved: { name: string; code: string; durationTerms: number },
+  draft: { name: string; code: string; durationTerms: string },
+): boolean {
+  return draft.name !== saved.name ||
+    draft.code !== saved.code ||
+    draft.durationTerms !== String(saved.durationTerms);
+}
+
 export function canReduceProgramDuration(
   nextDurationTerms: number,
   highestReferencedTerm: number,
