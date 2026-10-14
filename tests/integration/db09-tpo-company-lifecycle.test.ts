@@ -21,7 +21,7 @@ const tpo: RequestContext = {
     organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["TPO"] },
 };
 const fixtures: string[] = [];
-let tpoRoleId: string | null = null;
+const tpoRoleIds: string[] = [];
 async function fixture(collegeId: string = SEED_IDS.collegeA) {
   if (!pool) throw new Error("Disposable DB required");
   const token = randomUUID();
@@ -54,7 +54,12 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
       "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
       [SEED_IDS.facultyCollegeAMembership],
     );
-    tpoRoleId = inserted.rows[0]?.id ?? null;
+    if (inserted.rows[0]?.id) tpoRoleIds.push(inserted.rows[0].id);
+    const foreignInserted = await pool.query<{ id: string }>(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeBMembership],
+    );
+    if (foreignInserted.rows[0]?.id) tpoRoleIds.push(foreignInserted.rows[0].id);
   });
   afterAll(async () => {
     if (pool) {
@@ -64,8 +69,8 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
         await pool.query("DELETE FROM placement_company_relationships WHERE company_id=$1", [id]);
         await pool.query("DELETE FROM placement_companies WHERE id=$1", [id]);
       }
-      if (tpoRoleId) {
-        await pool.query("DELETE FROM membership_roles WHERE id=$1", [tpoRoleId]);
+      for (const id of tpoRoleIds) {
+        await pool.query("DELETE FROM membership_roles WHERE id=$1", [id]);
       }
       await pool.end();
     }
@@ -77,9 +82,10 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
     const initial = await getTpoCompanyLifecycle(tpo, companyId);
     if (!initial) throw new Error("fixture not visible");
     const edited = await saveTpoCompanyLifecycle(tpo, change(
-      companyId, initial.updatedAt, "EDIT_TRUST", true,
+      companyId, initial.updatedAt, "EDIT_TRUST", !initial.isTrusted,
     ));
-    expect(edited.isTrusted).toBe(true);
+    expect(edited.isTrusted).toBe(!initial.isTrusted);
+    expect(edited.updatedAt).not.toBe(initial.updatedAt);
     await expect(saveTpoCompanyLifecycle(tpo, change(
       companyId, initial.updatedAt, "ARCHIVE",
     ))).rejects.toBeInstanceOf(TpoCompanyLifecycleError);
@@ -87,10 +93,12 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
       companyId, edited.updatedAt, "ARCHIVE",
     ));
     expect(archived.status).toBe("ARCHIVED");
+    expect(archived.updatedAt).not.toBe(edited.updatedAt);
     const restored = await saveTpoCompanyLifecycle(tpo, change(
       companyId, archived.updatedAt, "RESTORE",
     ));
     expect(restored.status).toBe("ACTIVE");
+    expect(restored.updatedAt).not.toBe(archived.updatedAt);
     const audit = await pool.query<{ count: number }>(
       "SELECT count(*)::integer AS count FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_COMPANY_LIFECYCLE_CHANGED'",
       [initial.relationshipId],
@@ -101,13 +109,26 @@ describe.skipIf(!enabled)("TPO company relationship lifecycle on isolated Postgr
     const companyId = await fixture();
     const initial = await getTpoCompanyLifecycle(tpo, companyId);
     if (!initial) throw new Error("missing initial");
+    // The actor has a real, active seeded membership in college B with a
+    // temporary TPO role. Forging only collegeId on a college-A membership
+    // exercises the principal denial, not the non-leaking company lookup.
     const foreign: RequestContext = {
-      ...tpo, membership: { ...tpo.membership!, collegeId: SEED_IDS.collegeB },
+      ...tpo, membership: {
+        ...tpo.membership!,
+        id: SEED_IDS.facultyCollegeBMembership,
+        collegeId: SEED_IDS.collegeB,
+      },
     };
     await expect(getTpoCompanyLifecycle(foreign, companyId)).resolves.toBeNull();
     await expect(saveTpoCompanyLifecycle(foreign, change(
       companyId, initial.updatedAt, "ARCHIVE",
-    ))).rejects.toBeInstanceOf(TpoCompanyLifecycleError);
+    ))).rejects.toMatchObject({ code: "NOT_FOUND" });
+    const forged: RequestContext = {
+      ...tpo, membership: { ...tpo.membership!, collegeId: SEED_IDS.collegeB },
+    };
+    await expect(saveTpoCompanyLifecycle(forged, change(
+      companyId, initial.updatedAt, "ARCHIVE",
+    ))).rejects.toBeInstanceOf(AuthorizationError);
     const wrong: RequestContext = {
       ...tpo, membership: { ...tpo.membership!, roles: ["LEARNER"] },
     };
