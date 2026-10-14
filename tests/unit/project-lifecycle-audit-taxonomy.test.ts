@@ -45,6 +45,9 @@ describe("W06 project lifecycle event taxonomy", () => {
     expect(ACTIVITY_IMPORTANCE).toEqual(["LOW","NORMAL","HIGH","CRITICAL"]);
     expect(defaultActivityImportance(ACTIVITY_EVENT_TYPES.PROJECTS_TASK_SUBMITTED))
       .toBe("NORMAL");
+    expect(ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED).toBe("projects.sprint.updated");
+    expect(defaultActivityImportance(ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED))
+      .toBe("NORMAL");
     expect(ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED).toBe("projects.task.reviewed");
     expect(defaultActivityImportance(ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED))
       .toBe("NORMAL");

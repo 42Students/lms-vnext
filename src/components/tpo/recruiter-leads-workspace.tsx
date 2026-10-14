@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
+import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -16,6 +17,7 @@ type Lead = {
   notNowReason: string | null;
   inviteSentAt: string | null;
   recruiterUserId: string | null;
+  unsubscribedAt: string | null;
 };
 
 type CompanySummary = {
@@ -309,6 +311,9 @@ export function RecruiterLeadsWorkspace({
           <p className="text-sm text-muted-foreground" aria-live="polite">
             Showing {visible.length} of {rows.length} recruiter leads
           </p>
+          {view !== "companies" ? (
+            <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
+          ) : null}
           {visible.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
