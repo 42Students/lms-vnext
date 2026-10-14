@@ -63,9 +63,17 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   const missingCsv=await readFile((await missingDownload.path())!,"utf8");
   expect(missingCsv).toContain("NOT_ATTEMPTED");
   expect(missingCsv).not.toContain("@example.");
+  const questionExport=page.waitForEvent("download");
+  await page.getByRole("link",{name:"Download question accuracy CSV"}).click();
+  const questionDownload=await questionExport;
+  expect(questionDownload.suggestedFilename().includes("questions")).toBe(true);
+  const questionCsv=await readFile((await questionDownload.path())!,"utf8");
+  expect(questionCsv).toContain('"Question","Points","Answered","Correct","Accuracy (%)"');
+  expect(questionCsv).toContain("What is 1+1?");
+  expect(questionCsv).not.toContain("@example.");
   const denied=await page.evaluate(async args=>
    (await fetch("/api/courses/faculty/reports/quiz/"+args.id+
-    "/csv?deliveryId="+args.other)).status,
+    "/question-csv?deliveryId="+args.other)).status,
    {id,other:SEED_IDS.collegeB});
   expect(denied).toBeGreaterThanOrEqual(400);
   if(view.name==="mobile"){
