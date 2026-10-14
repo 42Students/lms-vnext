@@ -93,6 +93,8 @@ Legacy contract:
 ## Page: Programs
 **Legacy:** `/college-admin/programs`
 
+**Write-side PARTIAL (2026-10-14):** `/college/programs` now uses strict Zod College Admin mutation contracts for create/edit/archive, with current-college ownership, `can()`/`requirePermission()`, isSameOriginRequest on all mutation routes, program-row locks, same-transaction activity audit entries and case-insensitive name/code conflicts. Archive confirmation is required in UI and server body; current/historical cohort, enrollment and curriculum term dependencies all block archive. Edits preserve immutable department and deny lowering duration below authored semester or recorded batch progression. Loading/error/empty states and search/CSV remain. Isolated PostgreSQL success/cross-college/denial tests authored, pending execution here. Exact legacy duration-years/edit-discard UX, blocker detail view and browser acceptance remain open.
+
 Legacy contract:
 - Create Program;
 - Department selector;
