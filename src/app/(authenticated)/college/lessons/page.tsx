@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeLearningQuerySchema } from "@/modules/courses/college-learning-directory-model";
+import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 
 type Search = Record<string, string | string[] | undefined>;
@@ -15,9 +15,10 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const params = await searchParams;
-  const parsed = collegeLearningQuerySchema.safeParse(
+  const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
-      q: first(params.q), status: first(params.status), page: first(params.page),
+      q: first(params.q), status: first(params.status),
+      offeringStatus: first(params.offeringStatus), page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (

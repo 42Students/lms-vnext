@@ -89,6 +89,7 @@ export async function listCollegeSemesterCourseMappings(
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.periodId ? eq(academicPeriods.id, query.periodId) : undefined,
+      query.type !== "ALL" ? eq(courseOfferings.type, query.type) : undefined,
       query.q ? or(
         ilike(courses.name, pattern(query.q)),
         ilike(courses.code, pattern(query.q)),
@@ -180,6 +181,7 @@ export async function listCollegeFacultyAssignments(
       eq(sections.academicPeriodId, academicPeriods.id),
     ))
     .where(and(
+      query.role !== "ALL" ? eq(courseTeachingAssignments.role, query.role) : undefined,
       query.status === "ACTIVE" ? and(
         isNull(courseTeachingAssignments.endedAt),
         isNull(courseSectionDeliveries.endedAt),

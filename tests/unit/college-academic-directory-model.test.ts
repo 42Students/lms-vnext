@@ -23,6 +23,8 @@ describe("College Admin semester and batch read models", () => {
       { page: 1001 },
       { q: "x".repeat(101) },
       { programId: "invalid-id" },
+      { termNumber: 0 },
+      { termNumber: 25 },
     ]) {
       expect(collegeSemesterDirectorySchema.safeParse(invalid).success).toBe(false);
     }
@@ -37,6 +39,9 @@ describe("College Admin semester and batch read models", () => {
     })).toEqual({ q: "", status: "COMPLETED", page: 3 });
     expect(collegeBatchDirectorySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);
     expect(collegeBatchDirectorySchema.safeParse({ collegeId: "foreign" }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({ yearStart: 1899 }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({ yearStart: 9999 }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.parse({ yearStart: "2026" }).yearStart).toBe(2026);
   });
 
   it("converts query values safely and never accepts duplicate selectors", () => {
@@ -56,10 +61,17 @@ describe("College Admin semester and batch read models", () => {
     }), "https://example.test");
     expect(semesters.pathname).toBe("/college/semesters");
     expect(semesters.searchParams.get("q")).toBe("a & b");
+    const term = new URL(academicDirectoryHref("SEMESTERS", {
+      q: "", status: "ALL", page: 1, termNumber: 6,
+    }), "https://example.test");
+    expect(term.searchParams.get("termNumber")).toBe("6");
     expect(semesters.searchParams.has("collegeId")).toBe(false);
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,
     })).toBe("/college/batches");
+    expect(academicDirectoryHref("BATCHES", {
+      q: "", status: "ALL", page: 2, yearStart: 2026,
+    })).toContain("yearStart=2026");
     expect(academicDirectoryPageCount(0)).toBe(1);
     expect(academicDirectoryPageCount(26)).toBe(2);
   });

@@ -82,6 +82,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.q ? or(
@@ -162,6 +163,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.yearStart !== undefined ? eq(cohortProgressionState.currentAcademicYearStart, query.yearStart) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
       query.q ? or(
         ilike(cohorts.name, likePattern(query.q)),
