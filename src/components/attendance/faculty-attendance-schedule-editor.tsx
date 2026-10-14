@@ -1,8 +1,9 @@
 "use client";
+import { facultyScheduleFieldsChanged, facultyScheduleErrorMessage } from "@/modules/attendance/faculty-schedule-mutation-model";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {localDateTimeInput,validateFacultyScheduleWindow} from
+import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants} from
   "@/modules/attendance/faculty-schedule-editor-model";
 
 type Session={
@@ -25,6 +26,13 @@ export function FacultyAttendanceScheduleEditor({
   const [success,setSuccess]=useState<string|null>(null);
   const eligible=sessions.filter(s=>!s.marked);
   const selected=eligible.find(s=>s.id===id);
+  let unchanged = false;
+  if(action==="RESCHEDULE"&&selected){
+    try {
+      unchanged=!facultyScheduleFieldsChanged({...selected,startsAt:new Date(selected.startsAt),endsAt:new Date(selected.endsAt)},
+        {title,description:description||null,location:location||null,...facultyScheduleInstants(startsAt,endsAt,selected)});
+    } catch { /* Invalid fields are explained by save validation. */ }
+  }
   function applyExistingSession(session:Session){
     setId(session.id);
     setTitle(session.title);
@@ -49,14 +57,15 @@ export function FacultyAttendanceScheduleEditor({
     if(title.trim().length<3){
       setError("Enter a session title of at least three characters.");return;
     }
-    const timingError=validateFacultyScheduleWindow(startsAt,endsAt);
+    const timingError=validateFacultyScheduleWindow(startsAt,endsAt,action==="RESCHEDULE"?selected:undefined);
     if(timingError){setError(timingError);return;}
+    if(unchanged){setError("No schedule details changed; nothing was saved.");return;}
     if(!window.confirm("Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"))return;
     setBusy(true);setError(null);setSuccess(null);
     try{
       const payload={
         action,title,description:description||null,location:location||null,
-        startsAt:new Date(startsAt).toISOString(),endsAt:new Date(endsAt).toISOString(),
+        ...facultyScheduleInstants(startsAt,endsAt,action==="RESCHEDULE"?selected:undefined),
         ...(action==="RESCHEDULE"?{
           sessionId:selected?.id,expectedUpdatedAt:selected?.updatedAt,
         }:{}),confirm:true,
@@ -65,8 +74,7 @@ export function FacultyAttendanceScheduleEditor({
         "/api/courses/faculty/attendance/"+encodeURIComponent(deliveryId)+"/schedule",
         {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)},
       );
-      if(!response.ok)throw new Error(
-        "Session was not saved. Check the current schedule, Section ownership and version.");
+      if(!response.ok)throw new Error(facultyScheduleErrorMessage(await response.json().catch(()=>null)));
       setSuccess(action==="CREATE"?"Session scheduled.":"Session rescheduled.");
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Session update failed.");}
@@ -76,7 +84,7 @@ export function FacultyAttendanceScheduleEditor({
     className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
-      Times are entered in your device time zone and saved as offset-aware instants.
+      Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
@@ -102,11 +110,11 @@ export function FacultyAttendanceScheduleEditor({
         <input value={location} onChange={e=>setLocation(e.target.value)}
           maxLength={240} className="min-h-10 rounded border border-border bg-background p-2" />
       </label>
-      <label className="grid gap-1 text-sm">Start
+      <label className="grid gap-1 text-sm">Start (IST)
         <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
           className="min-h-10 rounded border border-border bg-background p-2" />
       </label>
-      <label className="grid gap-1 text-sm">End
+      <label className="grid gap-1 text-sm">End (IST)
         <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
           className="min-h-10 rounded border border-border bg-background p-2" />
       </label>
@@ -116,10 +124,11 @@ export function FacultyAttendanceScheduleEditor({
         maxLength={1000} className="min-h-20 rounded border border-border bg-background p-2" />
     </label>
     <button type="button" onClick={save}
-      disabled={busy||action==="RESCHEDULE"&&!selected}
+      disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}
       className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
     </button>
+    {unchanged?<p role="status" className="text-xs text-muted-foreground">No schedule details have changed.</p>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   </section>;

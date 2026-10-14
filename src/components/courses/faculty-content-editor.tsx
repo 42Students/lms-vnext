@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
 import { facultyContentPatch, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
@@ -21,14 +22,6 @@ type Item = {
   endsAt: Date | string | null;
 };
 
-function toLocalTime(value: Date | string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    .toISOString().slice(0, 16);
-}
-
 export function FacultyContentEditor({ item }: { item: Item }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -36,8 +29,8 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [notes, setNotes] = useState(item.notes ?? "");
   const [url, setUrl] = useState(item.externalUrl ?? "");
   const [duration, setDuration] = useState(String(item.durationSeconds ?? 300));
-  const [starts, setStarts] = useState(toLocalTime(item.startsAt));
-  const [ends, setEnds] = useState(toLocalTime(item.endsAt));
+  const [starts, setStarts] = useState(authoringLocalDateTime(item.startsAt));
+  const [ends, setEnds] = useState(authoringLocalDateTime(item.endsAt));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,8 +41,8 @@ export function FacultyContentEditor({ item }: { item: Item }) {
     setNotes(item.notes ?? "");
     setUrl(item.externalUrl ?? "");
     setDuration(String(item.durationSeconds ?? 300));
-    setStarts(toLocalTime(item.startsAt));
-    setEnds(toLocalTime(item.endsAt));
+    setStarts(authoringLocalDateTime(item.startsAt));
+    setEnds(authoringLocalDateTime(item.endsAt));
     setError(null);
     setOpen(true);
   }
@@ -126,12 +119,12 @@ export function FacultyContentEditor({ item }: { item: Item }) {
           {item.contentType === "LIVE_CLASS" ? (
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="text-sm font-semibold text-body">
-                Start
+                Start (IST)
                 <Input className="mt-1.5" type="datetime-local" value={starts}
                   onChange={(event) => setStarts(event.target.value)} required />
               </label>
               <label className="text-sm font-semibold text-body">
-                End
+                End (IST)
                 <Input className="mt-1.5" type="datetime-local" value={ends}
                   onChange={(event) => setEnds(event.target.value)} required />
               </label>

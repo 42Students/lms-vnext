@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { resolveSuperAdminSectionDetail } from "@/modules/admin-ui/super-admin-section-detail";
 import { AcademicsSectionPage } from "@/components/academics/academics-section-page";
 
 export default async function SuperAdminSectionOperationsPage({
@@ -14,6 +15,7 @@ export default async function SuperAdminSectionOperationsPage({
   }
 
   const { sectionId } = await params;
+  if (!(await resolveSuperAdminSectionDetail(context, sectionId))) notFound();
 
   return (
     <AcademicsSectionPage

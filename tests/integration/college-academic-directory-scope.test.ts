@@ -96,8 +96,8 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
       [ids.cohort, ids.program, label, label, ids.period],
     );
     await pool.query(
-      "INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id) " +
-      "VALUES($1,1,2026,$2)",
+      "UPDATE cohort_progression_state SET current_term_number=1,current_academic_year_start=2026, " +
+      "current_period_id=$2::uuid WHERE cohort_id=$1::uuid",
       [ids.cohort, ids.period],
     );
     await pool.query(

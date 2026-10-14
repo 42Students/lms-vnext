@@ -20,6 +20,9 @@ export default async function SuperAdminCoursesPage() {
           description="Course administration requires a college safety scope."
         />
         <Link href="/admin/lessons" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Live Classes directory →</Link>
         <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Course Progress directory →</Link>
         <Link href="/admin/assignments" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Assignments directory →</Link>
         <Link href="/admin/quizzes" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Quizzes directory →</Link>
@@ -45,6 +48,9 @@ export default async function SuperAdminCoursesPage() {
         description="Course structure inside the selected college safety scope."
       />
       <Link href="/admin/lessons" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Live Classes directory →</Link>
       <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Course Progress →</Link>
       <Link href="/admin/assignments" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Assignments →</Link>
       <Link href="/admin/quizzes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Quizzes →</Link>
