@@ -6,7 +6,7 @@ import { CollegeClassCreate } from "@/components/academics/college-section-manag
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  collegeStructureQuerySchema,
+  collegeClassQuerySchema,
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
@@ -19,7 +19,7 @@ export default async function CollegeClassesPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const raw = readCollegeStructureParams(await searchParams);
-  const parsed = collegeStructureQuerySchema.safeParse(raw);
+  const parsed = collegeClassQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Classes" />
     <ErrorState title="Invalid class filters"

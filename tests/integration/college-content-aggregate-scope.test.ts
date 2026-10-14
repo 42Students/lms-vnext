@@ -154,6 +154,28 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       expect.arrayContaining([ids.video, ids.youtube]),
     );
     expect(resources.items.map((item) => item.id)).toContain(ids.resource);
+    const [scopedResource, absentCourse] = await Promise.all([
+      listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: label }),
+      listCollegeContentAggregate(adminA, "RESOURCE", { q: label, courseCode: "UNKNOWN-COURSE" }),
+    ]);
+    expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
+    expect(absentCourse.items).toEqual([]);
+    const [storedOnly, youtubeOnly] = await Promise.all([
+      listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "VIDEO" }),
+      listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "YOUTUBE" }),
+    ]);
+    expect(storedOnly.items.map((item) => item.id)).toContain(ids.video);
+    expect(storedOnly.items.map((item) => item.id)).not.toContain(ids.youtube);
+    expect(youtubeOnly.items.map((item) => item.id)).toContain(ids.youtube);
+    expect(youtubeOnly.items.map((item) => item.id)).not.toContain(ids.video);
+    expect(videos.items.find((item) => item.id === ids.video)).toMatchObject({
+      title: label, lessonName: label, learningPathTitle: label,
+      deliveryId: null,
+      courseName: label, cohortName: label, periodName: label, offeringId: ids.offering,
+    });
+    expect(resources.items.find((item) => item.id === ids.resource)).toMatchObject({
+      title: label, courseName: label, offeringId: ids.offering,
+    });
     expect(videos.items.some((item) => item.id === ids.resource)).toBe(false);
     expect(resources.items.some((item) => item.id === ids.video)).toBe(false);
     const serialized = JSON.stringify({ videos, resources });
