@@ -3,6 +3,8 @@
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
+import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
+  from "@/modules/activity/learner-notification-read-all-model";
 import { useMemo, useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,9 @@ export function LearnerNotificationsInbox({
   const [unread,setUnread] = useState<"all"|"unread">(defaults.unread);
   const [search,setSearch] = useState(defaults.q);
   const [selected, setSelected] = useState<NotificationListItem | null>(null);
+  const [confirmReadAll,setConfirmReadAll]=useState(false);
+  const [markingAll,setMarkingAll]=useState(false);
+  const [markAllError,setMarkAllError]=useState<string|null>(null);
 
   const combined = useMemo(() => {
     const publicItems: NotificationListItem[] = announcementsEnabled
@@ -69,6 +74,17 @@ export function LearnerNotificationsInbox({
   );
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
+  const unreadPersonalCount=learnerNotificationPendingCount(personal);
+  async function markAllRead(){
+    if(markingAll || !learnerNotificationReadAllSchema.safeParse({confirmed:true}).success)return;
+    setMarkingAll(true);setMarkAllError(null);
+    try{
+      const response=await fetch("/api/notifications/read-all",{method:"POST"});
+      if(!response.ok)throw new Error("Unable to mark notifications read. Your inbox has not been changed.");
+      setConfirmReadAll(false);router.refresh();
+    }catch(error){setMarkAllError(error instanceof Error?error.message:"Unable to update inbox.");}
+    finally{setMarkingAll(false);}
+  }
   const filtered=active!=="all" || unread!=="all" || search.trim()!=="";
   function applySearch(){
     router.push(learnerNotificationInboxHref({category:active,unread,q:search}));
@@ -128,6 +144,14 @@ export function LearnerNotificationsInbox({
           Clear filters
         </button>
       </div>
+      {unreadPersonalCount>0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 sm:p-4">
+          <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
+          <Button variant="secondary" size="sm" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
+            Mark all personal as read
+          </Button>
+        </div>
+      ):null}
       <p role="status" className="text-xs text-muted-foreground">
         Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
       </p>
@@ -167,6 +191,17 @@ export function LearnerNotificationsInbox({
           }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
+      <Dialog open={confirmReadAll} onOpenChange={value=>{if(!markingAll)setConfirmReadAll(value);}}
+        title="Mark all personal notifications as read?"
+        description="This acknowledges all unread notifications in your current college, including older pages. College announcements have no personal read status."
+        footer={<>
+          <Button variant="secondary" disabled={markingAll} onClick={()=>setConfirmReadAll(false)}>Keep unread</Button>
+          <Button disabled={markingAll} onClick={()=>void markAllRead()}>
+            {markingAll?"Updating…":"Confirm mark all read"}
+          </Button>
+        </>}>
+        {markAllError?<p role="alert" className="text-sm text-error">{markAllError}</p>:null}
+      </Dialog>
       <Dialog
         open={selected !== null}
         onOpenChange={(open) => { if (!open) setSelected(null); }}
