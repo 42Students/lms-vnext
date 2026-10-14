@@ -559,3 +559,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Round calendar filter taxonomy — PARTIAL:** Fixed Rounds-only display to include exactly registered ROUND events rather than all non-deadline records. Unregistered or future SLOT/GENERAL items cannot be silently mislabeled as interviews. Pure regression test authored; existing employer-scoped calendar service remains the authorization boundary. Full legacy slot taxonomy still pending.
+
+
+**2026-10-15 chat-10 R5 / Request Drive compensation review — PARTIAL:** Validated local preview now flags potentially inconsistent fixed+variable total versus stated min/max CTC, and one-sided bond amounts/durations. Warnings are informational, never fabricated application rejections or server submissions. Pure boundary unit authored; review does not alter draft persistence. Browser acceptance pending.
