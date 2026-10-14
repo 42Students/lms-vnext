@@ -8,12 +8,16 @@ import { listPlacementCompanies } from "@/modules/placements/company-service";
 import { listPlacementSeasons } from "@/modules/placements/season-service";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { TpoDraftDriveStepOneForm } from "@/components/tpo/tpo-draft-drive-step-one-form";
-import { resolveTpoDraftCompanyRelationshipId, tpoDraftCompanyPrefillSchema } from "@/modules/placements/tpo-draft-company-prefill-model";
+import {
+  resolveTpoDraftCompanyRelationshipId,
+  resolveTpoDraftCompanyByName,
+  tpoDraftCompanyPrefillSchema,
+} from "@/modules/placements/tpo-draft-company-prefill-model";
 
 export default async function TpoQuickDraftStepOnePage({
   searchParams,
 }: {
-  searchParams: Promise<{ companyId?: string | string[] }>;
+  searchParams: Promise<{ companyId?: string | string[]; company?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
@@ -33,11 +37,15 @@ export default async function TpoQuickDraftStepOnePage({
   const raw = await searchParams;
   const query = tpoDraftCompanyPrefillSchema.safeParse({
     companyId: Array.isArray(raw.companyId) ? raw.companyId[0] : raw.companyId,
+    company: Array.isArray(raw.company) ? raw.company[0] : raw.company,
   });
   const requestedCompanyId = query.success ? query.data.companyId : undefined;
-  const preselectedRelationshipId = resolveTpoDraftCompanyRelationshipId(
-    requestedCompanyId, companies,
-  );
+  const preselectedRelationshipId = requestedCompanyId
+    ? resolveTpoDraftCompanyRelationshipId(requestedCompanyId, companies)
+    : resolveTpoDraftCompanyByName(
+      query.success ? query.data.company : undefined,
+      companies,
+    );
 
   return (
     <div className="space-y-6">
@@ -49,7 +57,7 @@ export default async function TpoQuickDraftStepOnePage({
         title="Draft drive · Step 1"
         description="Save the core employer, season and role details as a draft. No learner can apply until publication."
       />
-      {raw.companyId && (!query.success || !preselectedRelationshipId) ? (
+      {(raw.companyId || raw.company) && (!query.success || !preselectedRelationshipId) ? (
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
           The requested employer is not an active company relationship in this college.
           Choose an authorized company from the list instead.
