@@ -618,3 +618,17 @@ per-Section filters and bounded pagination. Exposed meeting links must be valid
 HTTPS without credentials; unsafe and missing URLs are shown as unavailable
 and never logged. SQL/DB tests are authored but not yet demonstrated green at
 the final commit; no DONE status is claimed.
+
+## Faculty discussion moderation event history (2026-10-14)
+
+PARTIAL: `/teacher/courses/[deliveryId]/discussion-history` reads only registered
+`activity_events` for exact `course-discussion:<deliveryId>` with pin-change
+and delete types, checked against current live Faculty teaching scope,
+`courses.read` and college/organization. There is strict Zod action/page
+validation, 20-event pagination, error/loading/empty states, and a direct
+Discussions link. The audit intentionally avoids deleted message text and
+untrusted metadata. A learner can delete their own unpinned post; existing
+delete events lack an actor-role snapshot and therefore show the neutral
+label **Discussion deletion recorded**, not an invented Faculty moderator.
+Historic actions before the event producer existed, full moderation analytics,
+browser and DB proof remain OPEN.
