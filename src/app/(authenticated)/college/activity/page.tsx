@@ -31,7 +31,7 @@ export default async function CollegeActivityPage({
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
-  for (const key of ["module", "importance", "eventType", "q", "actorUserId", "subjectType", "subjectId", "from", "to"] as const) {
+  for (const key of ["module", "importance", "eventType", "q", "actorUserId", "actorName", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
@@ -83,6 +83,12 @@ export default async function CollegeActivityPage({
           Actor user UUID
           <input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Actor display name
+          <input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
+            placeholder="Search recorded actor name"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
