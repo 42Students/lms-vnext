@@ -4,6 +4,7 @@ import {
   facultyResultsQuerySchema,
   filterFacultyResultCandidates,
   paginateFacultyResults,
+  facultyRecordedResponseRate,
   type FacultyResultCandidate,
 } from "@/modules/courses/faculty-results-model";
 
@@ -34,6 +35,14 @@ describe("Faculty assessment results model",() => {
     expect(paginateFacultyResults([],6)).toMatchObject({
       total:0,totalPages:1,page:1,items:[],
     });
+  });
+  it("separates zero recorded responses from no eligible learners or invalid totals",() => {
+    expect(facultyRecordedResponseRate(10,0)).toBe(0);
+    expect(facultyRecordedResponseRate(10,4)).toBe(40);
+    expect(facultyRecordedResponseRate(3,3)).toBe(100);
+    expect(facultyRecordedResponseRate(0,0)).toBeNull();
+    expect(facultyRecordedResponseRate(2,3)).toBeNull();
+    expect(facultyRecordedResponseRate(4,-1)).toBeNull();
   });
   it("strictly rejects tenant selectors and invalid query settings",() => {
     expect(facultyResultsQuerySchema.safeParse({collegeId:d}).success).toBe(false);

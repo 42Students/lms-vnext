@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { facultyResultsQuerySchema, facultyResultsHref } from "@/modules/courses/faculty-results-model";
+import { facultyResultsQuerySchema, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 
 type Search = {
@@ -105,11 +105,15 @@ export default async function FacultyAssessmentResultsPage({
               </div>
               <span className="text-xs font-semibold text-body">{item.status}</span>
             </div>
-            <dl className="mt-4 grid gap-3 sm:grid-cols-4">
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {([
                 ["Eligible", item.eligible],
                 ["Responded", item.responded],
                 ["No recorded response", item.pending],
+                ["Response rate", (() => {
+                  const rate = facultyRecordedResponseRate(item.eligible, item.responded);
+                  return rate === null ? "Unknown" : rate + "%";
+                })()],
                 ["Average graded score", item.averagePercent === null
                   ? "Unknown" : item.averagePercent + "%"],
               ] as const).map(([label,value]) =>
