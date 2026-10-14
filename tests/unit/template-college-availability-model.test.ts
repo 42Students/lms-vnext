@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { projectTemplateCollegeAvailability, templateAssignmentRevocationNotice, templateCollegeAvailabilityQuerySchema } from "@/modules/projects/template-college-availability-model";
+import { templateAvailabilityCollegesInScope, projectTemplateCollegeAvailability, templateAssignmentRevocationNotice, templateCollegeAvailabilityQuerySchema } from "@/modules/projects/template-college-availability-model";
 const colleges = Array.from({ length: 23 }, (_, i) => ({ id: String(i), name: `College ${String(i).padStart(2, "0")}`, code: `C${i}`, organizationId: "org" }));
 const assigned = [{ collegeId: "0", assignedVersion: 2, assignedAt: new Date("2026-10-14T00:00:00Z") }];
 describe("Template college availability", () => {
@@ -14,6 +14,11 @@ describe("Template college availability", () => {
     expect(projectTemplateCollegeAvailability(colleges, assigned, { page: 999 }).query.page).toBe(2);
     expect(projectTemplateCollegeAvailability(colleges, assigned, { q: "C0", status: "UNASSIGNED" }).total).toBe(0);
     expect(projectTemplateCollegeAvailability([], [], {}).totalPages).toBe(1);
+  });
+  it("requires both organization and college scope to match even for unassigned colleges", () => {
+    expect(templateAvailabilityCollegesInScope(colleges, { collegeId: "0", organizationId: "foreign" })).toEqual([]);
+    expect(templateAvailabilityCollegesInScope(colleges, { collegeId: "0", organizationId: "org" }).map(row => row.id)).toEqual(["0"]);
+    expect(templateAvailabilityCollegesInScope(colleges, null)).toHaveLength(23);
   });
   it("rejects scope injection and confirms the impact before removing availability", () => {
     expect(templateCollegeAvailabilityQuerySchema.safeParse({ collegeId: "override" }).success).toBe(false);

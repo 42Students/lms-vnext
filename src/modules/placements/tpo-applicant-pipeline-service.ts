@@ -31,6 +31,9 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     role:placementJobRoleOptions.title,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
+    screeningUpdatedAt:placementApplicationScreenings.updatedAt,
+    eligibilityStatus:placementApplications.eligibilityStatus,
+    channel:placementApplications.channel,
     submittedAt:placementApplications.submittedAt,
   }).from(placementApplications)
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -45,6 +48,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .limit(501);
   const out=projectTpoApplicantPipeline(records.slice(0,500).map(row=>({
     ...row,submittedAt:row.submittedAt.toISOString(),
+    screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
   })),input.stage,input.search);
   return {job,stage:input.stage,search:input.search,truncated:records.length>500,...out};
 }

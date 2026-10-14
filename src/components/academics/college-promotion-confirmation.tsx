@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 export function CollegePromotionConfirmation({
-  cohortId, programId, expectedVersion, yearStart, targetTerm, learnerCount,
+  cohortId, programId, expectedVersion, yearStart, targetTerm, learnerCount, academicYearStart,
 }: {
   cohortId: string;
   programId: string;
@@ -12,6 +12,7 @@ export function CollegePromotionConfirmation({
   yearStart?: number;
   targetTerm: number;
   learnerCount: number;
+  academicYearStart: number;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -27,6 +28,8 @@ export function CollegePromotionConfirmation({
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             cohortId, programId, expectedVersion, yearStart,
+            expectedCheckedLearners:learnerCount, expectedTargetTerm:targetTerm,
+            expectedAcademicYearStart:academicYearStart,
             action: "PROMOTE", confirm: true,
           }),
         });

@@ -12,6 +12,8 @@ describe("TPO drive close preview",()=>{
   const valid={action:"CLOSE",confirmed:true,expectedUpdatedAt:"2026-10-14T14:00:00.123Z",
    expectedCounts:before,reason:"Closing after hiring round"};
   expect(tpoDriveCloseSchema.safeParse(valid).success).toBe(true);
+  expect(tpoDriveCloseSchema.parse({...valid,expectedUpdatedAt:"2026-10-14T19:30:00.123+05:30"})
+   .expectedUpdatedAt).toBe(valid.expectedUpdatedAt);
   expect(tpoDriveCloseSchema.safeParse({...valid,action:"CANCEL"}).success).toBe(false);
   expect(tpoDriveCloseSchema.safeParse({...valid,confirmed:false}).success).toBe(false);
   expect(tpoDriveCloseSchema.safeParse({...valid,collegeId:"forged"}).success).toBe(false);
