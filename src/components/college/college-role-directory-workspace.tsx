@@ -156,7 +156,8 @@ export async function CollegeRoleDirectoryWorkspace({
               {result.items.map((item) => (
                 <tr key={item.membershipId} className="border-t border-border align-top">
                   <td className="px-4 py-4">
-                    <p className="font-semibold text-foreground">{item.name}</p>
+                    <Link href={kind === "LEARNER" ? `/college/students/${item.membershipId}` : `/college/faculty/${item.membershipId}`}
+                      className="font-semibold text-primary-text hover:underline">{item.name}</Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.email ?? "No email recorded"}</p>
                   </td>
                   <td className="px-4 py-4">
