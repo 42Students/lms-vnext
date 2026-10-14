@@ -507,13 +507,9 @@ function mergeOne(branch, opts) {
   entry.ahead = ahead;
 
   const base = gitOut("merge-base", "main", ref);
-  const changed = gitOut("diff", "--name-only", `${base}..${ref}`).split("\n").filter(Boolean);
-  entry.changedFiles = changed.length;
-  const blocked = changed.filter(isProtected);
-  if (blocked.length > 0) {
-    entry.reason = `protected paths touched: ${blocked.slice(0, 5).join(", ")}`;
-    return entry;
-  }
+  // Real changes come from the staged merge result below: a branch that merged main through a
+  // connector can show main's own protected-path commits in a three-dot diff.
+  let changed = [];
 
   const touched = new Set();
   const merge = git("merge", "--no-commit", "--no-ff", ref);
@@ -537,6 +533,15 @@ function mergeOne(branch, opts) {
       cleanUp();
       return entry;
     }
+  }
+
+  changed = gitOut("diff", "--cached", "--name-only").split("\n").filter(Boolean);
+  entry.changedFiles = changed.length;
+  const blocked = changed.filter(isProtected);
+  if (blocked.length > 0) {
+    entry.reason = `protected paths touched: ${blocked.slice(0, 5).join(", ")}`;
+    cleanUp();
+    return entry;
   }
 
   let result;
