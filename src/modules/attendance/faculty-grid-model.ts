@@ -39,6 +39,21 @@ export function indiaAttendanceDayKey(value: string | Date) {
   return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
+export function indiaAttendanceMonthKey(value: string | Date) {
+  return indiaAttendanceDayKey(value).slice(0, 7);
+}
+
+/** Move an India-local YYYY-MM month without using the viewer's timezone. */
+export function shiftIndiaAttendanceMonth(value: string, offset: number) {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value) || !Number.isInteger(offset)) {
+    return value;
+  }
+  const [year, month] = value.split("-").map(Number);
+  const shifted = new Date(Date.UTC(year!, month! - 1 + offset, 1));
+  return shifted.getUTCFullYear() + "-" +
+    String(shifted.getUTCMonth() + 1).padStart(2, "0");
+}
+
 export function groupFacultyAttendanceSessionsByIndiaDay<
   T extends FacultyAttendanceSessionLike,
 >(sessions: readonly T[]) {
