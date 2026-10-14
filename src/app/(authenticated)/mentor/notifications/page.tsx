@@ -1,63 +1,123 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { NotificationList, type NotificationListItem } from "@/components/activity/notification-list";
+import {
+  NotificationList, type NotificationListItem,
+} from "@/components/activity/notification-list";
+import { NotificationToolbar } from "@/components/activity/notification-toolbar";
+import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { listOwnNotifications } from "@/modules/activity/notification-service";
+import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
+import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
+import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
 
 export const dynamic = "force-dynamic";
+const MENTOR_INBOX = "/mentor/notifications";
+type Params = {
+  view?: string | string[];
+  beforeCreatedAt?: string | string[];
+  beforeId?: string | string[];
+};
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
-export default async function MentorNotificationsPage() {
-  const context=await getCurrentRequestContext();
-  // Shared notifications must remain readable even if the college disables
-  // the optional Projects module.
-  const [inbox, projectAccess] = await Promise.all([
-    listOwnNotifications(context,{limit:60}),
-    resolveOptionalModuleAccess(context).catch(()=>null),
+export default async function MentorNotificationsPage({
+  searchParams,
+}: { searchParams: Promise<Params> }) {
+  const raw = await searchParams;
+  const parsed = mentorInboxQuerySchema.safeParse({
+    view:first(raw.view) ?? undefined,
+    beforeCreatedAt:first(raw.beforeCreatedAt) ?? undefined,
+    beforeId:first(raw.beforeId) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid notification filters</h1>
+    <Link href={MENTOR_INBOX} className="text-primary-text underline">Return to newest notifications</Link>
+  </section>;
+
+  const context = await getCurrentRequestContext();
+  const inbox = await getMentorPersonalInbox(context,parsed.data);
+  // Personal messages remain accessible even when the optional Projects module
+  // is disabled. Never treat a missing project policy as a successful empty feed.
+  const announcementsEnabled = announcementsRuntimeEnabled();
+  const [projectAccess,announcements] = await Promise.all([
+    resolveOptionalModuleAccess(context),
+    announcementsEnabled
+      ? listVisibleAnnouncementsForMembership(context) : Promise.resolve([]),
   ]);
-  const alerts=projectAccess?.projects.enabled===true
+  const alerts = projectAccess.projects.enabled
     ? await listMyMentorProjectAttention(context) : [];
-  const items:NotificationListItem[]=inbox.map(({notification,event})=>({
+  const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
     readAt:notification.readAt?.toISOString()??null,
     createdAt:notification.createdAt.toISOString(),
     module:event.module,importance:event.importance,
   }));
+  const nextHref = inbox.page.nextCursor
+    ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
   return <div className="space-y-8">
     <PageHeader eyebrow="Mentor" title="Notifications"
-      description="Personal notifications, project reviews and meetings that need your attention." />
+      description="Personal notices, college announcements and registered project attention." />
+    <AnnouncementFeed enabled={announcementsEnabled}
+      items={announcements.map(item=>({
+        id:item.id,title:item.title,message:item.message,
+        senderType:item.senderType,receiverType:item.receiverType,
+        isPinned:item.isPinned,createdAt:item.createdAt,
+      }))} />
     <section aria-labelledby="mentor-attention" className="space-y-3">
       <h2 id="mentor-attention" className="text-lg font-semibold text-foreground">
         Project attention ({alerts.length})
       </h2>
-      {alerts.length
-        ? <div className="grid gap-3">{alerts.map(alert=>
-          <Link key={alert.key} href={alert.href}
-            className="block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="font-semibold text-foreground">{alert.title}</h3>
-              <StatusBadge tone={alert.kind==="STALLED"?"error":
-                alert.kind==="REVIEW"||alert.kind==="REQUESTED"?"warning":"info"}>
-                {alert.kind==="MEETING_SOON"?"Upcoming meeting":
-                  alert.kind==="REQUESTED"?"Requested":alert.kind}
-              </StatusBadge>
-            </div>
-            <p className="mt-2 text-sm text-body">{alert.description}</p>
-          </Link>)}</div>
-        : <div className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-            {projectAccess?.projects.enabled===true
-              ? "No project items need your attention right now."
-              : "Project alerts are unavailable while Projects access is disabled."}
-          </div>}
+      {!projectAccess.projects.enabled
+        ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+            Projects access is disabled; project attention is unavailable.
+          </p>
+        : alerts.length === 0
+          ? <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+              No current assigned project requires recorded attention.
+            </p>
+          : <div className="grid gap-3">{alerts.map(alert=>
+              <Link key={alert.key} href={alert.href}
+                className="block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="font-semibold text-foreground">{alert.title}</h3>
+                  <StatusBadge tone={alert.kind === "STALLED" ? "error" :
+                    alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
+                    {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :
+                      alert.kind === "REQUESTED" ? "Requested" : alert.kind}
+                  </StatusBadge>
+                </div>
+                <p className="mt-2 text-sm text-body">{alert.description}</p>
+              </Link>)}</div>}
     </section>
-    <section aria-labelledby="mentor-personal-notifications" className="space-y-3">
+    <section aria-labelledby="mentor-personal-notifications" className="space-y-4">
       <h2 id="mentor-personal-notifications" className="text-lg font-semibold text-foreground">
         Personal notifications
       </h2>
-      <NotificationList items={items} />
+      <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount} baseHref={MENTOR_INBOX} />
+      {inbox.cursor.invalid
+        ? <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
+            The notification page link is invalid.{" "}
+            <Link href={mentorInboxPageHref(inbox.query.view)}
+              className="font-semibold text-primary-text underline">
+              Return to newest notifications
+            </Link>
+          </div>
+        : <>
+            <NotificationList items={items}
+              emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
+            {nextHref ? <div className="flex justify-center">
+              <Link href={nextHref}
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+                Older notifications
+              </Link>
+            </div> : null}
+          </>}
     </section>
   </div>;
 }
