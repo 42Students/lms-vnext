@@ -409,3 +409,11 @@ flow still sends a token; Faculty pin/unpin requires confirmation. Error feedbac
 is visible without inventing deleted text. Test fixtures authored for create,
 pin, stale denial, wrong role, forged delivery and deletion audit. Full
 browser/database execution and legacy reply-tree parity remain open.
+
+## 2026-10-14 D2 — Mentor pending task reviews (PARTIAL)
+The queue now carries exact persisted task IDs to jump directly into the
+authorized project Board, bounds invalid pagination and treats search literally.
+Only current SUBMITTED / IN_REVIEW task versions count. Existing review command
+owns the transaction and immutable audit; no new writer. Dedicated tests for
+actual submit/review/stale replay and scope are authored, not executed.
+Remaining: execution, browser/mobile deep-link, legacy review correctness.

@@ -479,3 +479,11 @@ The page links back to existing task workspace, exposes no private learner
 submission and **does not invent task assignees, estimates or workloads**.
 A pure model and unique-fixture disposable PostgreSQL read/role/foreign-selector
 test are authored. Browser, eslint/TypeScript and PostgreSQL evidence remain open.
+
+## 2026-10-14 Mentor pending review exact-task focus — PARTIAL
+The registered pending queue now links to the exact task card, escapes literal
+search wildcard input and clamps out-of-range pages. A latest-submission guard
+excludes superseded versions. Existing permitted project review mutations,
+same-transaction audit and approval/revision guards are reused (no duplicate
+write endpoint). Still open: independent PostgreSQL, unit, lint, TypeScript and
+mobile browser verification; detailed legacy review history and feedback UX.

@@ -6,9 +6,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege}
   from "@/modules/projects/template-service";
-import {createProjectInstance} from "@/modules/projects/instance-service";
+import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
+import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
+import {startProjectSprint} from "@/modules/projects/lifecycle-service";
+import {submitProjectTask,reviewProjectTaskSubmission} from "@/modules/projects/task-submission-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires isolated disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -44,16 +47,30 @@ async function cleanup(){
     await pool.query("delete from project_templates where id=any($1::uuid[])",[created.templateIds]);
     created.templateIds=[];
   }
-  if(created.members.length){
-    await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",[created.members]);
-    await pool.query("delete from college_memberships where id=any($1::uuid[])",[created.members]);
-    created.members=[];
+  // Immutable audit events retain FK references to an actor membership/user.
+  // Remove disposable identities only when no audit or recipient history uses them.
+  const auditMembers=created.members.length?await pool.query<{id:string}>(`
+    select distinct actor_membership_id as id from activity_events
+    where actor_membership_id=any($1::uuid[])`,[created.members]):{rows:[]};
+  const protectedMembers=new Set(auditMembers.rows.map(row=>row.id));
+  const deletableMembers=created.members.filter(id=>!protectedMembers.has(id));
+  if(deletableMembers.length){
+    await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",[deletableMembers]);
+    await pool.query("delete from college_memberships where id=any($1::uuid[])",[deletableMembers]);
   }
-  if(created.users.length){
-    await pool.query("delete from users where id=any($1::uuid[])",[created.users]);
-    created.users=[];
-  }
-  // Never delete immutable activity_events or their published history.
+  created.members=[];
+  const actorUsers=created.users.length?await pool.query<{id:string}>(`
+    select distinct actor_user_id as id from activity_events
+    where actor_user_id=any($1::uuid[])`,[created.users]):{rows:[]};
+  const recipients=created.users.length?await pool.query<{id:string}>(`
+    select distinct user_id as id from in_app_notifications
+    where user_id=any($1::uuid[])`,[created.users]):{rows:[]};
+  const retainedUsers=new Set([...actorUsers.rows,...recipients.rows].map(row=>row.id));
+  const deletableUsers=created.users.filter(id=>!retainedUsers.has(id));
+  if(deletableUsers.length)await pool.query(
+    "delete from users where id=any($1::uuid[])",[deletableUsers]);
+  created.users=[];
+  // Do not delete or rewrite append-only audit/notification history.
 }
 afterEach(cleanup);
 afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
@@ -73,10 +90,17 @@ async function newMentor(collegeId:string,slug:string):Promise<RequestContext>{
     membership:{id:membershipId,collegeId,organizationId:SEED_IDS.organization,
       status:"ACTIVE",roles:["MENTOR"]}};
 }
+async function newLearner(collegeId:string,slug:string):Promise<RequestContext>{
+ const scoped=await newMentor(collegeId,slug);
+ await pool.query("update membership_roles set role='LEARNER' where membership_id=$1",
+  [scoped.membership!.id]);
+ return {...scoped,membership:{...scoped.membership!,roles:["LEARNER"]}};
+}
 async function fixture(){
   const suffix=randomUUID().replaceAll("-","").slice(0,14);
   const mentor=await newMentor(SEED_IDS.collegeA,suffix+"a");
   const foreign=await newMentor(SEED_IDS.collegeB,suffix+"b");
+  const learner=await newLearner(SEED_IDS.collegeA,suffix+"c");
   const templ=await createProjectTemplate(root,{
     slug:"chat4-board-t-"+suffix,title:"Board template "+suffix,
     blueprint:{overview:{goal:"Review actual board",deliverables:["Board"]},
@@ -96,8 +120,43 @@ async function fixture(){
   await addProjectMember(admin,project.id,{
     membershipId:mentor.membership!.id,role:"MENTOR",isPrimary:true,
   });
-  return {project,mentor,foreign};
+  await addProjectMember(admin,project.id,{
+    membershipId:learner.membership!.id,role:"LEARNER",
+  });
+  const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+  return {project,mentor,foreign,learner,
+    task:workspace.tasks[0]!,sprint:workspace.sprints[0]!};
 }
+
+describe("Mentor task review queue after a persisted decision",()=>{
+ it("shows a current submission and excludes its stale version after review",async()=>{
+  const {project,mentor,foreign,learner,task,sprint}=await fixture();
+  await startProjectSprint(mentor,project.id,sprint.id);
+  const submitted=await submitProjectTask(learner,project.id,task.id,{
+   submissionUrl:"https://example.invalid/mentor-review/"+project.id,
+  });
+  const pending=await getMentorTaskReviews(mentor,{search:project.title});
+  expect(pending.items).toEqual(expect.arrayContaining([
+   expect.objectContaining({id:submitted.id,taskId:task.id,projectId:project.id,version:1}),
+  ]));
+  expect((await getMentorTaskReviews(foreign,{search:project.title})).items).toEqual([]);
+  await expect(getMentorTaskReviews(learner,{search:project.title})).rejects.toBeDefined();
+  await expect(getMentorTaskReviews(mentor,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
+  const result=await reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,{
+   decision:"CHANGES_REQUESTED",feedback:"Clarify acceptance criteria",
+  });
+  expect(result.submission.status).toBe("CHANGES_REQUESTED");
+  const after=await getMentorTaskReviews(mentor,{search:project.title});
+  expect(after.items.some(item=>item.id===submitted.id)).toBe(false);
+  await expect(reviewProjectTaskSubmission(mentor,project.id,task.id,submitted.id,{
+   decision:"APPROVED",
+  })).rejects.toBeDefined();
+  const audit=await pool.query<{n:string}>(`
+   select count(*)::text as n from activity_events where dedupe_key=$1`,
+   ["project-task-submission:"+submitted.id+":reviewed"]);
+  expect(audit.rows[0]?.n).toBe("1");
+ });
+});
 
 describe("Mentor task board positive/scope PostgreSQL",()=>{
   it("reads only registered own-project task statuses; denies wrong-role, foreign, forged",async()=>{

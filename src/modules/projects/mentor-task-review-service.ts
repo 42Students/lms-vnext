@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -11,11 +11,11 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import {
-  mentorTaskReviewQuerySchema, mentorTaskReviewSummary,
+  mentorTaskReviewQuerySchema, mentorTaskReviewSummary, mentorTaskReviewLiteralSearch,
 } from "./mentor-task-review-model";
 
 type PendingTaskReview = {
-  id: string; projectId: string; projectTitle: string;
+  id: string; taskId: string; projectId: string; projectTitle: string;
   taskTitle: string; priority: string; version: number; submittedAt: Date;
 };
 
@@ -52,20 +52,25 @@ export async function getMentorTaskReviews(
     };
   }
 
+  const escaped=mentorTaskReviewLiteralSearch(query.search);
   const conditions = and(
     inArray(projectTaskSubmissions.projectId, ids),
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
+    sql`not exists (select 1 from project_task_submissions newer
+      where newer.task_id=${projectTaskSubmissions.taskId}
+        and newer.version>${projectTaskSubmissions.version})`,
     eq(projectInstances.collegeId, membership.collegeId),
     eq(projectInstances.status, "ACTIVE"),
-    query.search ? or(
-      ilike(projectInstances.title, "%" + query.search + "%"),
-      ilike(projectTasks.title, "%" + query.search + "%"),
+    escaped ? or(
+      ilike(projectInstances.title, "%" + escaped + "%"),
+      ilike(projectTasks.title, "%" + escaped + "%"),
     ) : undefined,
   );
   const db = getDb();
   const base = db.select({
     id: projectTaskSubmissions.id,
+    taskId: projectTaskSubmissions.taskId,
     projectId: projectInstances.id,
     projectTitle: projectInstances.title,
     taskTitle: projectTasks.title,
@@ -81,21 +86,17 @@ export async function getMentorTaskReviews(
       eq(projectInstances.id, projectTaskSubmissions.projectId))
     .where(conditions);
 
-  const [counts, items] = await Promise.all([
-    db.select({ total: count() }).from(projectTaskSubmissions)
-      .innerJoin(projectTasks, and(
-        eq(projectTasks.id, projectTaskSubmissions.taskId),
-        eq(projectTasks.projectId, projectTaskSubmissions.projectId),
-      ))
-      .innerJoin(projectInstances,
-        eq(projectInstances.id, projectTaskSubmissions.projectId))
-      .where(conditions),
-    base.orderBy(desc(projectTaskSubmissions.submittedAt), desc(projectTaskSubmissions.id))
-      .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
-  ]);
-  return {
-    enabled: true as const, query,
-    ...mentorTaskReviewSummary({ total: Number(counts[0]?.total ?? 0), ...query }),
-    items,
-  };
+  const [counts]=await db.select({total:count()}).from(projectTaskSubmissions)
+    .innerJoin(projectTasks,and(
+      eq(projectTasks.id,projectTaskSubmissions.taskId),
+      eq(projectTasks.projectId,projectTaskSubmissions.projectId),
+    )).innerJoin(projectInstances,eq(projectInstances.id,projectTaskSubmissions.projectId))
+    .where(conditions);
+  const page=mentorTaskReviewSummary({
+    total:Number(counts?.total??0),page:query.page,pageSize:query.pageSize,
+  });
+  const items=await base.orderBy(desc(projectTaskSubmissions.submittedAt),
+    desc(projectTaskSubmissions.id)).limit(page.pageSize)
+    .offset((page.page-1)*page.pageSize);
+  return {enabled:true as const,query:{...query,page:page.page},...page,items};
 }
