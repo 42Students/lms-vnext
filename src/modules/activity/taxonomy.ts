@@ -119,6 +119,10 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.season.started",
   PLACEMENTS_SEASON_CLOSED:
     "placements.season.closed",
+  PLACEMENTS_COMPANY_LINKED:
+    "placements.company.linked",
+  PLACEMENTS_JOB_DRAFT_CREATED:
+    "placements.job.draft_created",
   PLACEMENTS_JOB_PUBLISHED:
     "placements.job.published",
   PLACEMENTS_JOB_CLOSED:
