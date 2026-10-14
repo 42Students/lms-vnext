@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
+import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 
@@ -43,10 +44,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     listRecruiterCalendarEvents(context, week),
   ]);
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
+  const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
+  const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
+    {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
   ];
   return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Today"
@@ -55,7 +59,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
         className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
-    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-3">{actions.map(action=>
+    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{actions.map(action=>
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
@@ -74,6 +78,16 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{event.title}</span>
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
+    </section>
+    <section className="rounded-xl border border-border bg-surface p-5">
+      <h2 className="font-semibold text-foreground">Results due this week</h2>
+      <p className="mt-1 text-sm text-body">Only recorded result deadlines on this college&apos;s authorized employer rounds; no outside messages or invitations are sent.</p>
+      {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
+        <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
+          className="min-w-0 rounded-md border border-border p-3 hover:border-primary">
+          <span className="block break-words font-medium text-foreground">{item.roundName}</span>
+          <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
+        </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Waiting</h2>

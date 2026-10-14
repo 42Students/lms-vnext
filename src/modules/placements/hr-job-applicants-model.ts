@@ -4,6 +4,8 @@ export const hrApplicantFilterSchema = z.strictObject({
   tab: z.enum(["overview", "applicants", "offers", "rounds"]).default("overview"),
   stage: z.enum(["ALL", "SHORTLISTED", "WITHDRAWN"]).default("ALL"),
   applicant: z.string().uuid().optional(),
+  roundId: z.string().uuid().optional(),
+  outcome: z.enum(["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"]).default("ALL"),
 });
 export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
