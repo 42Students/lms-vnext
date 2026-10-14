@@ -23,6 +23,8 @@ describe("College Admin semester and batch read models", () => {
       { page: 1001 },
       { q: "x".repeat(101) },
       { programId: "invalid-id" },
+      { termNumber: 0 },
+      { termNumber: 25 },
     ]) {
       expect(collegeSemesterDirectorySchema.safeParse(invalid).success).toBe(false);
     }
@@ -56,6 +58,10 @@ describe("College Admin semester and batch read models", () => {
     }), "https://example.test");
     expect(semesters.pathname).toBe("/college/semesters");
     expect(semesters.searchParams.get("q")).toBe("a & b");
+    const term = new URL(academicDirectoryHref("SEMESTERS", {
+      q: "", status: "ALL", page: 1, termNumber: 6,
+    }), "https://example.test");
+    expect(term.searchParams.get("termNumber")).toBe("6");
     expect(semesters.searchParams.has("collegeId")).toBe(false);
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,

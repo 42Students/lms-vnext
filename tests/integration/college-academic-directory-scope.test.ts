@@ -155,6 +155,12 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
       name: label, code: label, programId: ids.program,
       programName: label, programCode: label, startPeriodId: ids.period,
     });
+    const [matchedTerm, otherTerm] = await Promise.all([
+      listCollegeSemesters(adminA, { q: label, termNumber: 1 }),
+      listCollegeSemesters(adminA, { q: label, termNumber: 2 }),
+    ]);
+    expect(matchedTerm.items.map((row) => row.id)).toContain(ids.term);
+    expect(otherTerm.items).toEqual([]);
     expect(semestersB.items).toEqual([]);
     expect(batchesB.items).toEqual([]);
   });
