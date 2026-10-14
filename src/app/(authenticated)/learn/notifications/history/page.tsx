@@ -72,7 +72,7 @@ export default async function LearnerNotificationHistoryPage({
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
-        <NotificationList items={items} />
+        <NotificationList items={items} readEndpoint="/api/learn/notifications" />
       )}
       <nav aria-label="Notification history pages" className="flex flex-wrap gap-4">
         {page.nextCursor ? (
