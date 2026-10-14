@@ -565,3 +565,20 @@ honest empty/error/loading states and a link from the main Quiz report.
 Pure model tests and seeded PostgreSQL success-empty + foreign/wrong-role
 denial assertions are authored. Actual attempt-populated PostgreSQL
 and authenticated browser acceptance remain PARTIAL.
+
+## Faculty Section published-grade gradebook (2026-10-14)
+
+Read-only `/teacher/courses/[deliveryId]/gradebook` and private no-store
+CSV GET compute per-current-Section-learner earned/possible totals ONLY from
+actually published assignment grades and quiz results. Canonical Section
+roster/assessment readers recheck current Faculty college + teaching scope.
+For each learner, incomplete or missing published grades are **unknown**, not
+zero. Each row distinguishes number of published-scored assessments and
+total publishable assessments; percentages are explicitly partial observed
+scores, not weighted final course grades. Quiz retakes use canonical latest
+attempt only. CSV cells are formula-neutralized, UTF-8 and quoted. Up to
+100 published assessments are supported; above that the page refuses to
+silently produce incomplete totals. Pure-model tests and an addition to the
+already passing unique-fixture Faculty positive PostgreSQL test are authored,
+not independently run here. The full legacy gradebook weighting, print
+format, and browser proof remain PARTIAL.
