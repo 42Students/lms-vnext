@@ -509,7 +509,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L17-001 | Route is materialized, not placeholder | CareerCalendarContent | calendar page | FIXED |
-| L17-002 | Agenda mode | CareerCalendarContent | career calendar | GAP |
+| L17-002 | Agenda mode | career calendar | distinct rolling 30-day agenda anchored to selected IST date, with 30-day navigation and actual chronologically ordered own rounds rather than mirroring month view; pure unit + owned PG test authored. PARTIAL pending execution, browser navigation and source-parity acceptance | PARTIAL |
 | L17-003 | Month mode | CareerCalendarContent | career calendar | GAP |
 | L17-004 | Week mode | CareerCalendarContent | career calendar | GAP |
 | L17-005 | Day mode | CareerCalendarContent | career calendar | GAP |
