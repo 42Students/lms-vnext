@@ -31,12 +31,14 @@ import {
   listRecruiterCalendarEvents,
 } from "@/modules/placements/recruiter-calendar-service";
 import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } from "@/modules/placements/hr-calendar-day-model";
+import {HR_CALENDAR_CATEGORIES,hrCalendarCategorySchema,filterHrCalendarDays,type HrCalendarCategory} from "@/modules/placements/hr-calendar-category-model";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = {
   date?: string | string[];
   view?: string | string[];
+  category?:string|string[];
 };
 
 const VIEWS: readonly PlacementCalendarView[] = [
@@ -72,10 +74,12 @@ function validDay(
 function calendarHref(
   date: string,
   view: PlacementCalendarView,
+  category:HrCalendarCategory="ALL",
 ) {
   const params = new URLSearchParams({
     date,
     view,
+    category,
   });
 
   return `/hr/calendar?${params.toString()}`;
@@ -239,6 +243,7 @@ export default async function HrCalendarPage({
   );
 
   const requestedView = first(query.view);
+  const category=hrCalendarCategorySchema.safeParse(first(query.category)).data??"ALL";
 
   const view =
     VIEWS.find(
@@ -274,7 +279,7 @@ export default async function HrCalendarPage({
     1,
   );
 
-  const allDays = combineHrCalendarDays(calendar.days, calendar.resultsDue);
+  const allDays = filterHrCalendarDays(combineHrCalendarDays(calendar.days, calendar.resultsDue),category);
   const byDay = new Map(allDays.map((day) => [day.day, day]));
   const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
   const eventCount = calendar.events.length + calendar.resultsDue.length;
@@ -365,7 +370,7 @@ export default async function HrCalendarPage({
           <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
-            {calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={"/hr/placements/jobs/"+item.jobId+"?tab=rounds"}
                   className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary">
@@ -389,6 +394,15 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
+              <nav aria-label="Calendar event types" className="flex flex-wrap gap-2">
+                {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
+                  href={calendarHref(anchor,view,option)}
+                  aria-current={category===option?"page":undefined}
+                  className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">
+                  {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
+                    option==="DEADLINES"?"Deadlines":"Rounds"}
+                </Link>)}
+              </nav>
               <nav
                 aria-label="Calendar views"
                 className="flex flex-wrap gap-2"
@@ -399,6 +413,7 @@ export default async function HrCalendarPage({
                     href={calendarHref(
                       anchor,
                       option,
+                      category,
                     )}
                     aria-current={
                       view === option
@@ -422,6 +437,7 @@ export default async function HrCalendarPage({
                 href={calendarHref(
                   previous,
                   view,
+                  category,
                 )}
                 aria-label={
                   view === "week"
@@ -434,14 +450,14 @@ export default async function HrCalendarPage({
               </Link>
 
               <Link
-                href={calendarHref(today, view)}
+                href={calendarHref(today, view, category)}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Today
               </Link>
 
               <Link
-                href={calendarHref(next, view)}
+                href={calendarHref(next, view, category)}
                 aria-label={
                   view === "week"
                     ? "Next week"
