@@ -1,0 +1,100 @@
+import Link from "next/link";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { getMentorTeamHistory } from "@/modules/projects/mentor-team-history-service";
+import {
+  mentorTeamHistoryHref,
+  mentorTeamHistoryQuerySchema,
+} from "@/modules/projects/mentor-team-history-model";
+
+type Raw = { view?: string | string[]; page?: string | string[] };
+const one = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
+const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
+  dateStyle: "medium", timeZone: "Asia/Kolkata",
+}).format(value);
+
+export default async function MentorTeamHistoryPage({
+  params, searchParams,
+}: {
+  params: Promise<{ projectId: string }>;
+  searchParams: Promise<Raw>;
+}) {
+  const [{ projectId }, raw] = await Promise.all([params, searchParams]);
+  const parsed = mentorTeamHistoryQuerySchema.safeParse({
+    projectId, view: one(raw.view) ?? undefined, page: one(raw.page) ?? undefined,
+  });
+  if (!parsed.success) return <section role="alert" className="space-y-3">
+    <h1 className="text-xl font-semibold">Invalid team history filters</h1>
+    <Link href="/mentor/projects" className="text-primary-text underline">Back to projects</Link>
+  </section>;
+
+  const context = await getCurrentRequestContext();
+  const data = await getMentorTeamHistory(context, parsed.data);
+  const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
+      description={data.title + " · Registered team join/end records"}
+      actions={<Link href={back}
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Team workspace
+      </Link>} />
+    {!data.enabled
+      ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          Projects access is disabled. Team history cannot be displayed.
+        </section>
+      : <>
+        <nav aria-label="Team membership history views" className="flex flex-wrap gap-2">
+          {([
+            ["ALL", "All records"],
+            ["OPEN", "Open membership records"],
+            ["ENDED", "Ended membership records"],
+          ] as const).map(([view, label]) =>
+            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,page:1})}
+              aria-current={data.query.view === view ? "page" : undefined}
+              className={data.query.view === view
+                ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+                : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
+              {label}
+            </Link>)}
+        </nav>
+        <p className="text-sm text-body">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
+        {data.items.length === 0
+          ? <EmptyState title="No team membership records"
+              description="No registered membership rows match this project and filter. History from before migration may not be available." />
+          : <div className="grid gap-3">{data.items.map(item =>
+              <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-semibold text-foreground">{item.displayName}</h2>
+                  <span className="text-xs font-semibold text-body">{item.state}</span>
+                </div>
+                <p className="mt-2 text-sm text-body">
+                  {item.roleLabel || item.role}
+                  {item.isPrimary ? " · Primary mentor" : ""}
+                </p>
+                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                  <div><dt className="text-muted-foreground">Joined</dt><dd>{formatDate(item.startedAt)} IST</dd></div>
+                  <div><dt className="text-muted-foreground">Ended</dt>
+                    <dd>{item.endedAt ? formatDate(item.endedAt) + " IST" : "No end date recorded"}</dd>
+                  </div>
+                </dl>
+              </article>)}</div>}
+        <nav aria-label="Team history pagination" className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+          <div className="flex gap-3">
+            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,page:data.page-1})}
+              className="text-sm font-semibold text-primary-text">Previous</Link> : null}
+            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,page:data.page+1})}
+              className="text-sm font-semibold text-primary-text">Next</Link> : null}
+          </div>
+        </nav>
+      </>}
+    <p className="text-xs leading-5 text-muted-foreground">
+      Open membership rows can contain deactivated accounts; those are labeled Inactive.
+      Former or inactive names are hidden. This view does not reconstruct missing historical audit events,
+      grant team-edit rights, or infer membership decisions.
+    </p>
+  </div>;
+}
