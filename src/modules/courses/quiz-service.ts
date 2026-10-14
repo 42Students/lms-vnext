@@ -620,10 +620,17 @@ export async function transitionCourseQuiz(
   const current =
     await loadCourseQuizScope(quizId);
 
-  await authorizeQuizMutation(
+  const actor = await authorizeQuizMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyQuiz(context,{deliveryId:current.deliveryId},{
+      action:input.action,quizId:current.id,
+      expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
+    });
+  }
 
   if (
     input.action === "PUBLISH" &&

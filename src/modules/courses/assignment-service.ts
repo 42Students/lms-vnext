@@ -372,10 +372,17 @@ export async function transitionCourseAssignment(
       assignmentId,
     );
 
-  await authorizeAssignmentMutation(
+  const actor = await authorizeAssignmentMutation(
     context,
     current,
   );
+
+  if (actor === "FACULTY" && current.deliveryId) {
+    return commandFacultyAssignment(context,{deliveryId:current.deliveryId},{
+      action:input.action,assignmentId:current.id,
+      expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
+    });
+  }
 
   if (
     input.action === "PUBLISH" &&
