@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -86,6 +87,7 @@ export function AdminCourseCreatePanel({
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
 
   const [courseDepartmentId, setCourseDepartmentId] = useState("");
   const [courseName, setCourseName] = useState("");
@@ -180,6 +182,11 @@ export function AdminCourseCreatePanel({
 
   function createOffering(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!offeringCourseId || !offeringCohortId || !offeringAcademicPeriodId) return;
+    setOfferingConfirmOpen(true);
+  }
+
+  function commitOffering() {
     run(
       () => postJson("/api/courses/offerings", {
         courseId: offeringCourseId,
@@ -191,6 +198,7 @@ export function AdminCourseCreatePanel({
       }),
       "Course Offering created",
       () => {
+        setOfferingConfirmOpen(false);
         setOfferingCourseId("");
         setOfferingCohortId("");
         setOfferingAcademicPeriodId("");
@@ -357,6 +365,15 @@ export function AdminCourseCreatePanel({
           <Button type="submit" disabled={pending || !teacherDeliveryId || !teacherMembershipId}>Assign Faculty</Button>
         </div>
       </form>
+      <ConfirmDialog
+        open={offeringConfirmOpen}
+        onOpenChange={setOfferingConfirmOpen}
+        title="Create this Course Offering?"
+        description="This binds the selected course, cohort and academic period. Duplicate active bindings and incompatible periods are rejected by the server."
+        confirmLabel="Create Offering"
+        pending={pending}
+        onConfirm={commitOffering}
+      />
     </section>
   );
 }
