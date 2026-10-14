@@ -1410,3 +1410,6 @@ The PostgreSQL acceptance fixture now removes a real persisted FACULTY membershi
 
 ## 2026-10-15 R4 transactional persisted Faculty Quiz actor fence — PARTIAL
 The Section Quiz authoring transaction now checks persisted ACTIVE user, ACTIVE exact-college membership, FACULTY role and live teaching assignment before any CREATE/EDIT/PUBLISH/ARCHIVE write or audit. It no longer relies exclusively on a cached active role plus assignment alone. A PostgreSQL fixture revokes the actual membership-role row and expects a teaching-scope denial. Execution pending.
+
+## 2026-10-15 R4 Quiz multiple-choice answer interaction fence — PARTIAL
+The Faculty Quiz question editor now refuses a toggle that would leave multi-choice with zero correct answers or with every option correct. Normal changes to multiple correct options remain allowed, and the existing strict save schema still validates the final question. Pure regression tests cover both two-option boundaries and a valid three-option transition. Browser/PG run pending.

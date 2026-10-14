@@ -11,9 +11,16 @@ describe("Faculty quiz answer option interaction",()=>{
   expect(facultyToggleQuizAnswer(single,0,false).map(x=>x.correct)).toEqual([true,false]);
   expect(facultyToggleQuizAnswer(single,1,true).map(x=>x.correct)).toEqual([false,true]);
  });
- it("allows deliberate multiple-choice selection and clearing",()=>{
-  expect(facultyToggleQuizAnswer(multiple,1,true).map(x=>x.correct)).toEqual([true,true]);
-  expect(facultyToggleQuizAnswer(multiple,0,false).map(x=>x.correct)).toEqual([false,false]);
+ it("enforces at least one correct and incorrect option for multiple-choice edits",()=>{
+  expect(facultyToggleQuizAnswer(multiple,1,true).map(x=>x.correct)).toEqual([true,false]);
+  expect(facultyToggleQuizAnswer(multiple,0,false).map(x=>x.correct)).toEqual([true,false]);
+  const three={type:"MULTIPLE_CHOICE" as const,options:[
+   {correct:true},{correct:false},{correct:false},
+  ]};
+  const twoCorrect=facultyToggleQuizAnswer(three,1,true);
+  expect(twoCorrect.map(x=>x.correct)).toEqual([true,true,false]);
+  expect(facultyToggleQuizAnswer({type:"MULTIPLE_CHOICE",options:twoCorrect},0,false)
+   .map(x=>x.correct)).toEqual([false,true,false]);
  });
  it("returns an unchanged copy for an out-of-bounds index",()=>{
   expect(facultyToggleQuizAnswer(single,6,true)).toEqual(single.options);
