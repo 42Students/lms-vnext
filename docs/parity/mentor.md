@@ -487,3 +487,14 @@ excludes superseded versions. Existing permitted project review mutations,
 same-transaction audit and approval/revision guards are reused (no duplicate
 write endpoint). Still open: independent PostgreSQL, unit, lint, TypeScript and
 mobile browser verification; detailed legacy review history and feedback UX.
+
+## 2026-10-14 Mentor meeting completion/cancellation concurrency (PARTIAL)
+Added a Mentor-only confirmed POST decision route for persisted project meetings,
+with same-origin enforcement, exact active project-member scope, row locks,
+millisecond-normalized version compare-and-swap, and immutable activity audit in
+the same transaction. Existing Learner/Admin meeting routes remain unchanged.
+The shared mobile meeting dialog now submits the existing meeting version for
+Mentor decisions. Pure-model unit and independently created Mentor/Learner
+PostgreSQL fixtures cover success, foreign-scope, wrong-role, stale replay
+and audit. Remains PARTIAL: run tsc/eslint/PG/unit, browser/legacy review,
+schedule-reschedule auditing and historical completeness.

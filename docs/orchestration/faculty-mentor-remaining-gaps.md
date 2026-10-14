@@ -417,3 +417,11 @@ Only current SUBMITTED / IN_REVIEW task versions count. Existing review command
 owns the transaction and immutable audit; no new writer. Dedicated tests for
 actual submit/review/stale replay and scope are authored, not executed.
 Remaining: execution, browser/mobile deep-link, legacy review correctness.
+
+## 2026-10-14 Mentor Project Meetings audit decision — PARTIAL
+New `mentor-decision` endpoint wires confirmation, optimistic millisecond
+version token and same-transaction `projects.meeting.decided` activity event
+for Mentor COMPLETE/CANCEL actions. Existing Admin/Learner API unchanged.
+PG suite uses test-created Mentor/learner IDs, audit-safe cleanup guards,
+and denial/replay assertions. Outstanding: independently execute all tests,
+mobile dialog and legacy meeting schedule/reschedule history parity.
