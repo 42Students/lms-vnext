@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -39,9 +40,11 @@ function initials(value: string) {
 export function FacultyCourseRoster({
   learners,
   sectionName,
+  deliveryId,
 }: {
   learners: readonly FacultyCourseRosterLearner[];
   sectionName: string;
+  deliveryId?: string;
 }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -199,6 +202,15 @@ export function FacultyCourseRoster({
                             <p className="m-0 font-semibold text-foreground">
                               {name}
                             </p>
+                            {deliveryId ? (
+                              <Link
+                                href={"/teacher/courses/" + encodeURIComponent(deliveryId) +
+                                  "/students/" + encodeURIComponent(learner.membershipId)}
+                                className="mt-1 inline-flex text-xs font-semibold text-primary-text hover:underline"
+                              >
+                                View student details →
+                              </Link>
+                            ) : null}
                             <p className="mt-1 text-xs text-muted-foreground">
                               {learner.rollNumber
                                 ? `Roll ${learner.rollNumber}`
@@ -277,6 +289,15 @@ export function FacultyCourseRoster({
                       </StatusBadge>
                     </div>
                   </div>
+                  {deliveryId ? (
+                    <Link
+                      href={"/teacher/courses/" + encodeURIComponent(deliveryId) +
+                        "/students/" + encodeURIComponent(learner.membershipId)}
+                      className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+                    >
+                      View student details →
+                    </Link>
+                  ) : null}
                   <div className="mt-4 grid gap-2 text-sm">
                     {learner.phoneE164 ? (
                       <a
