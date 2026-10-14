@@ -1,0 +1,44 @@
+import {z} from "zod";
+
+export const facultyLiveClassesQuerySchema=z.object({
+ view:z.enum(["UPCOMING","PAST","ALL"]).default("UPCOMING"),
+ deliveryId:z.string().uuid().optional(),
+ page:z.coerce.number().int().min(1).max(10000).default(1),
+}).strict();
+export type FacultyLiveClassesQuery=z.infer<typeof facultyLiveClassesQuerySchema>;
+
+export function safeHttpsMeetingLink(value:string|null|undefined):string|null {
+ if(!value)return null;
+ try{
+  const u=new URL(value.trim());
+  if(u.protocol!=="https:"||!u.hostname||u.username||u.password)return null;
+  if(u.hostname==="localhost"||u.hostname.endsWith(".localhost"))return null;
+  return u.href;
+ }catch{return null;}
+}
+export type FacultyLiveClass={
+ id:string;deliveryId:string;courseName:string;sectionName:string;
+ title:string;startsAt:Date;endsAt:Date;joinUrl:string|null;
+ status:string;
+};
+export function pageFacultyLiveClasses(
+ sessions:readonly FacultyLiveClass[],query:FacultyLiveClassesQuery,now:Date,
+){
+ const filtered=sessions.filter(s=>
+  (!query.deliveryId||s.deliveryId===query.deliveryId) &&
+  (query.view==="ALL"||
+   (query.view==="UPCOMING"&&s.endsAt.getTime()>=now.getTime())||
+   (query.view==="PAST"&&s.endsAt.getTime()<now.getTime()))
+ ).sort((a,b)=>query.view==="PAST"?
+   b.startsAt.getTime()-a.startsAt.getTime():a.startsAt.getTime()-b.startsAt.getTime());
+ const total=filtered.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
+ const page=Math.min(query.page,totalPages);
+ return {total,page,pageSize,totalPages,items:filtered.slice((page-1)*pageSize,page*pageSize)};
+}
+export function facultyLiveClassesHref(query:FacultyLiveClassesQuery){
+ const params=new URLSearchParams();
+ if(query.view!=="UPCOMING")params.set("view",query.view);
+ if(query.deliveryId)params.set("deliveryId",query.deliveryId);
+ if(query.page>1)params.set("page",String(query.page));
+ return "/teacher/live-classes"+(params.size?"?"+params.toString():"");
+}
