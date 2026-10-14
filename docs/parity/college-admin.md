@@ -282,6 +282,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Hall cancellation PARTIAL (2026-10-14):** A confirmed per-session Cancel action on the hall availability page now persists SCHEDULED→CANCELLED, takes a required reason and millisecond-safe updatedAt token, locks the owning college hall and session, and blocks sessions already started or linked to attendance/course-delivery evidence. One immutable section audit event is written transactionally. Same-origin PATCH, pure-model test and disposable-PostgreSQL cross-college, wrong-role, stale/evidence and positive fixtures authored. Rescheduling, cross-writer universal Hall locking and real browser/database execution remain open; PARTIAL only.
+
 **Hall booking PARTIAL (2026-10-14):** The per-hall IST availability page adds a confirmed single-session write with a validated IST-local date/time/title, same-college Section and optional Faculty, millisecond-normalized Section optimistic token, configured class capacity vs hall capacity guard, and fresh persisted SCHEDULED overlap checks for hall, Section or Faculty. It locks Section then Hall through the audit/insert transaction and advances the Section token; appends a college-scoped immutable event. Dedicated same-origin POST, pure time/capacity model tests and disposable PostgreSQL success, cross-college denial, wrong role, stale and overlap tests authored. Other scheduling writers without shared Hall locks or exclusion constraints can still race; exact legacy workflow and real DB/browser proof remain open; this is not guaranteed booking availability.
 
 

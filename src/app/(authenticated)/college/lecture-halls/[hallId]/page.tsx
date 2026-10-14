@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { CollegeHallBookingAction } from "@/components/academics/college-hall-booking-action";
+import { CollegeHallCancellationAction } from "@/components/academics/college-hall-cancellation-action";
 import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 import { collegeHallAvailabilitySchema } from "@/modules/academics/college-hall-availability-model";
 import { getCollegeHallAvailability, CollegeHallAvailabilityNotFoundError }
@@ -81,6 +82,8 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
               <p className="mt-1 text-xs text-muted-foreground">Class configured capacity: {item.sectionCapacity ?? "Unknown"}; hall capacity: {result.hall.capacity}</p>
               {item.overlapsAnother ? <p className="mt-2 text-sm text-error">Overlapping scheduled hall booking</p> : null}
               {item.overConfiguredCapacity ? <p className="mt-2 text-sm text-error">Configured class capacity exceeds the hall capacity</p> : null}
+              {item.updatedAt ? <CollegeHallCancellationAction hallId={result.hall.id}
+                sessionId={item.id} title={item.title} updatedAt={item.updatedAt} /> : null}
             </li>)}</ul>}
         </section>
       </>}
