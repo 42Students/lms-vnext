@@ -1,18 +1,16 @@
 import "server-only";
 
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods, cohortProgressionState, cohortProgressionEvents, cohorts, collegeMemberships,
+  academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
   departments, learnerProgramEnrollments, membershipRoles, programs,
   programTerms, sectionEnrollments, sections, users,
 } from "@/db/schema";
-import { recordActivityEventInTransaction } from "@/modules/activity/service";
-import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  batchPromotionPlan, collegePromotionQuerySchema, collegePromotionExecuteSchema, promotionReady, promotionLearnerBlockers,
+  batchPromotionPlan, collegePromotionQuerySchema, promotionLearnerBlockers,
   type PromotionBlocker,
 } from "./college-batch-promotion-model";
 

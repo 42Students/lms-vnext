@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { templateAssignmentMatchesScope, type TemplateAssignmentReadScope } from "./template-assignment-read-scope";
 export const templateCollegeAvailabilityQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ASSIGNED", "UNASSIGNED"]).default("ALL"),
@@ -31,4 +32,10 @@ export function templateCollegeAvailabilityHref(templateId: string, rawQuery: un
 }
 export function templateAssignmentRevocationNotice() {
   return "This college will no longer be able to create new workspaces from the template. Existing workspaces retain their pinned snapshots.";
+}
+
+export function templateAvailabilityCollegesInScope<T extends { id: string; organizationId: string }>(
+  colleges: readonly T[], scope: TemplateAssignmentReadScope,
+): T[] {
+  return colleges.filter(row => templateAssignmentMatchesScope({ collegeId: row.id, organizationId: row.organizationId }, scope));
 }

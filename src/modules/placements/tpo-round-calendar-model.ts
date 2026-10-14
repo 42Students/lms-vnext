@@ -2,12 +2,12 @@ import { z } from "zod";
 export const tpoRoundCalendarMutationSchema = z.object({
   confirmed: z.literal(true),
   roundId: z.string().uuid(),
-  expectedUpdatedAt: z.iso.datetime({ offset: true }),
+  expectedUpdatedAt: z.iso.datetime({ offset: true }).transform(value=>new Date(value).toISOString()),
   action: z.enum(["SCHEDULE", "CANCEL"]),
   localDateTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/).optional(),
   mode: z.enum(["ON_CAMPUS", "VIRTUAL"]).optional(),
   venue: z.string().trim().max(500).optional(),
-  meetingUrl: z.url().max(2000).optional(),
+  meetingUrl: z.url({protocol:/^https?$/}).max(2000).optional(),
   reason: z.string().trim().max(1000).optional(),
 }).strict().superRefine((data, ctx) => {
   if (data.action === "SCHEDULE" &&

@@ -83,10 +83,7 @@ describe.skipIf(!enabled)("College Admin semester transactional writes / denial 
   afterAll(async () => {
     try {
       if (pool) {
-        await pool.query(
-          "DELETE FROM activity_events WHERE subject_type = 'program_term' AND metadata->>'programId' IN ($1,$2)",
-          [ids.programA, ids.programB],
-        );
+        // activity_events is append-only; never DELETE its immutable audit rows.
         await pool.query(
           "DELETE FROM program_term_courses WHERE program_term_id IN (SELECT id FROM program_terms WHERE program_id IN ($1,$2))",
           [ids.programA, ids.programB],
@@ -113,11 +110,16 @@ describe.skipIf(!enabled)("College Admin semester transactional writes / denial 
     });
     const edited = await updateCollegeSemester(adminA, created.id, {
       name: "First revised", totalCredits: 20, isActive: false,
+      expectedUpdatedAt: created.updatedAt.toISOString(),confirm:true,
     });
     expect(edited).toMatchObject({
       id: created.id, programId: ids.programA, termNumber: 1,
       name: "First revised", totalCredits: 20, isActive: false,
     });
+    await expect(updateCollegeSemester(adminA, created.id, {
+      name:"Stale",totalCredits:20,isActive:false,
+      expectedUpdatedAt:created.updatedAt.toISOString(),confirm:true,
+    })).rejects.toMatchObject({code:"SEMESTER_STALE"});
     const removed = await deleteCollegeSemester(adminA, created.id, { confirm: true });
     expect(removed.id).toBe(created.id);
     const audit = await pool!.query(
@@ -148,6 +150,10 @@ describe.skipIf(!enabled)("College Admin semester transactional writes / denial 
     );
     await expect(deleteCollegeSemester(adminA, created.id, { confirm: true }))
       .rejects.toMatchObject({ code: "SEMESTER_HAS_COURSES" });
+    await expect(updateCollegeSemester(adminA, created.id, {
+      name:"Mapped",totalCredits:null,isActive:false,
+      expectedUpdatedAt:created.updatedAt.toISOString(),confirm:true,
+    })).rejects.toMatchObject({code:"SEMESTER_ACTIVE_CURRICULUM"});
     const stillThere = await pool!.query("SELECT id FROM program_terms WHERE id=$1", [created.id]);
     expect(stillThere.rows).toHaveLength(1);
     await pool!.query("DELETE FROM program_term_courses WHERE id=$1", [ids.termMap]);
@@ -167,11 +173,13 @@ describe.skipIf(!enabled)("College Admin semester transactional writes / denial 
     });
     await expect(updateCollegeSemester(adminB, created.id, {
       name: "Cross tenant", totalCredits: null, isActive: true,
+      expectedUpdatedAt:created.updatedAt.toISOString(),confirm:true,
     })).rejects.toMatchObject({ code: "SEMESTER_NOT_FOUND" });
     await expect(deleteCollegeSemester(adminB, created.id, { confirm: true }))
       .rejects.toMatchObject({ code: "SEMESTER_NOT_FOUND" });
     await expect(updateCollegeSemester(faculty, created.id, {
       name: "Role denied", totalCredits: null, isActive: true,
+      expectedUpdatedAt:created.updatedAt.toISOString(),confirm:true,
     })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(deleteCollegeSemester(faculty, created.id, { confirm: true }))
       .rejects.toBeInstanceOf(AuthorizationError);

@@ -34,6 +34,8 @@ describe.skipIf(!enabled)("Template college availability in PostgreSQL",()=>{
   expect((await listSuperAdminTemplateCollegeAvailability(foreign,made.template.id,{status:"ASSIGNED"})).items).toHaveLength(0);
   expect((await listSuperAdminTemplateCollegeAvailability(foreign,made.template.id,{})).items.every(row=>row.id===other.id)).toBe(true);
   expect((await getSuperAdminTemplateSubview(foreign,made.template.id,true)).assignedColleges).toHaveLength(0);
+  const mismatched={...admin,adminScope:{organizationId:randomUUID(),collegeId:own.id}};
+  expect((await listSuperAdminTemplateCollegeAvailability(mismatched,made.template.id,{})).items).toEqual([]);
   await expect(listSuperAdminTemplateCollegeAvailability({...admin,user:{...admin.user,systemRoles:[]}},made.template.id,{}))
    .rejects.toBeInstanceOf(AuthorizationError);
  });
