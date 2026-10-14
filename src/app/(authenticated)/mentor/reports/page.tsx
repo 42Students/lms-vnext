@@ -90,6 +90,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Requested meeting</option>
             <option value="MEETING_SOON">Meeting soon</option>
+            <option value="NONE">No currently recorded attention</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
