@@ -421,3 +421,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 HR Calendar RESULTS_DUE day placement — PARTIAL:** Persisted recruiter-scope results-due events now appear in the IST week/month day columns and agenda, including due-only calendar days and round deep links. No invented SLOT data. Unit and prior in-test PostgreSQL authorization fixture extended but not executed. Remaining slot table, mobile/browser acceptance, and stale-load distinctions.
+
+
+**2026-10-14 chat-10 Selection readiness across all evaluative rounds — PARTIAL:** Recruiter offers selection preview now requires APPLIED/PASS in every non-TALK round, with every round COMPLETED; final-round-only PASS no longer confers readiness. JOINED offer count requires ACCEPTED offer state and explicit JOINED outcome. Pure unit regression and existing in-test PG scope fixture updated; tests not executed. Remaining persisted recruiter selection/LOI workflow (no registered table), full offers pagination, desktop/mobile confirmation.

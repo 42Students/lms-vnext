@@ -264,8 +264,8 @@ export default async function HrPlacementJobPage({
             </div>)}
           </div>
           <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
-            <h3 className="font-semibold text-foreground">Selection readiness · read only</h3>
-            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results through the final completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
+            <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
