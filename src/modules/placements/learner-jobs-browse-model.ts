@@ -1,3 +1,7 @@
+import { z } from "zod";
+
+export const learnerClosingSoonQuerySchema = z.literal("1");
+
 /** Learner placement browse facets apply to the authorized published-job rows.
  * Filtering never re-evaluates eligibility or mutates application state.
  */
@@ -26,12 +30,13 @@ export type LearnerJobBrowseFilters = {
   employmentType: string;
   location: string;
   eligibleOnly: boolean;
+  closingSoon: boolean;
   sort: "deadline" | "ctc" | "title";
 };
 
 export const DEFAULT_LEARNER_JOB_FILTERS: LearnerJobBrowseFilters = {
   search: "", employmentType: "all", location: "all",
-  eligibleOnly: false, sort: "deadline",
+  eligibleOnly: false, closingSoon: false, sort: "deadline",
 };
 
 export function availableLearnerJobFacets<T extends BrowseJobShape>(items: readonly T[]) {
@@ -45,10 +50,20 @@ export function availableLearnerJobFacets<T extends BrowseJobShape>(items: reado
 
 export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   items: readonly T[], filters: LearnerJobBrowseFilters,
+  snapshotNowMs: number = Number.NaN,
 ): T[] {
   const search = filters.search.trim().toLocaleLowerCase();
   const rows = items.filter((row) => {
     if (filters.eligibleOnly && !row.canApply) return false;
+    if (filters.closingSoon) {
+      const deadline = row.job.applicationDeadline
+        ? Date.parse(row.job.applicationDeadline) : Number.NaN;
+      const weekEnd = snapshotNowMs + 7 * 24 * 60 * 60 * 1000;
+      if (!Number.isFinite(snapshotNowMs) || !Number.isFinite(deadline) ||
+          deadline < snapshotNowMs || deadline > weekEnd || row.deadlinePassed) {
+        return false;
+      }
+    }
     if (filters.employmentType !== "all" &&
         row.roleOption.employmentType !== filters.employmentType) return false;
     if (filters.location !== "all" &&

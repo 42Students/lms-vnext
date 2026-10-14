@@ -8,6 +8,7 @@ import {
   DEFAULT_LEARNER_JOB_FILTERS,
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
+  learnerClosingSoonQuerySchema,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 
@@ -19,8 +20,10 @@ function humanize(value: string) {
 
 export function LearnerJobsBrowse({
   items,
+  snapshotNowIso,
 }: {
   items: readonly LearnerPlacementJobItem[];
+  snapshotNowIso: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,11 +64,12 @@ export function LearnerJobsBrowse({
     employmentType: params.get("type") ?? "all",
     location: params.get("loc") ?? "all",
     eligibleOnly: params.get("eligible") === "1",
+    closingSoon: learnerClosingSoonQuerySchema.safeParse(params.get("soon")).success,
     sort: validSort.includes(rawSort as LearnerJobBrowseFilters["sort"])
       ? rawSort as LearnerJobBrowseFilters["sort"] : "deadline",
   };
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
-  const visible = filterLearnerPlacementJobs(items, filters);
+  const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
   const parsedPage = Number(params.get("page") ?? "1");
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
   const page = Number.isInteger(parsedPage) && parsedPage > 0
@@ -121,6 +125,17 @@ export function LearnerJobsBrowse({
               className="h-4 w-4 accent-[var(--lms-primary)]"
             />
             Eligible to apply only
+          </label>
+          <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
+            <input
+              type="checkbox"
+              checked={filters.closingSoon}
+              onChange={(event) => updateQuery({
+                soon: event.target.checked ? "1" : null,
+              })}
+              className="h-4 w-4 accent-[var(--lms-primary)]"
+            />
+            Closing within seven days
           </label>
           <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
             Sort by
