@@ -107,4 +107,33 @@ describe("Learner real PostgreSQL positive paths with fresh own-member records",
     );
     expect(stored.rows[0]?.read_at).toBeNull();
   });
+
+  it("rejects forged college, suspended membership, faculty context and malformed UUIDs", async () => {
+    const crossed: RequestContext = {
+      ...context,
+      membership: { ...context.membership!, collegeId: SEED_IDS.collegeB },
+    };
+    const suspended: RequestContext = {
+      ...context,
+      membership: { ...context.membership!, status: "SUSPENDED" },
+    };
+    const faculty: RequestContext = {
+      user: {
+        id: SEED_IDS.facultyUser, identityUid: "seed-faculty",
+        platformStatus: "ACTIVE", systemRoles: [],
+      },
+      membership: {
+        id: SEED_IDS.facultyCollegeAMembership, collegeId: SEED_IDS.collegeA,
+        organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["FACULTY"],
+      },
+    };
+    for (const invalidContext of [crossed, suspended, faculty]) {
+      await expect(markOwnLearnerNotificationRead(invalidContext, ids.notificationA))
+        .rejects.toBeInstanceOf(AuthorizationError);
+      await expect(markAllOwnLearnerNotificationsRead(invalidContext))
+        .rejects.toBeInstanceOf(AuthorizationError);
+    }
+    await expect(markOwnLearnerNotificationRead(context, "../foreign"))
+      .rejects.toBeDefined();
+  });
 });
