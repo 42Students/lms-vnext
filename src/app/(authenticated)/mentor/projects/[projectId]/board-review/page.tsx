@@ -78,12 +78,12 @@ export default async function MentorBoardReviewPage({
         <Link href={base+"/board-review"} className="px-3 py-2 text-primary-text underline">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <a href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
+        <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
           download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Download filtered CSV (max 500)
-        </a>
+        </Link>
         {data.exportOmitted>0?<span role="status">
           CSV omits {data.exportOmitted} matching tasks beyond the export cap.
         </span>:null}

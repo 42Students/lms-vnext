@@ -36,3 +36,8 @@
   authored but not run in this session.
 - PARTIAL: real test/browser/legacy verification; no predictive score, assignee,
   workload or unregistered staleness claims.
+
+### Post-item self-review cleanup
+- Converted CSV download anchors to Next Link on the two Mentor export pages.
+- Moved readiness metric descriptors outside JSX to match repository lint rules.
+- No behavior or scope changes; CI/tooling still unexecuted in this session.
