@@ -716,3 +716,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Shortlisted detail — PARTIAL:** Added `/admin/placements/shortlisted/[applicationId]` requiring actual persisted SHORTLISTED screening and exact job/role/applicant membership college/org match; wrong status, unknown UUID and foreign scope return same 404. Displays application status, channel, IST submission/decision dates and safe application link, no internal comments/contact. Directory deep-link, pure ID/date unit authored; actions, PG and browser parity open.
+
+
+**2026-10-15 chat-6 round 5 / Screening Queue detail — PARTIAL:** Added `/admin/placements/screenings/[applicationId]` with exact selected-college/org membership and job guard, PENDING/HOLD/REJECTED persisted screening statuses, application eligibility/channel/IST decision and submission dates. UUID malformed/foreign/missing or a now-shortlisted record returns non-leaking 404; internalReason and candidate contacts excluded. Directory deep-link and pure ID/date tests authored; decision writes/PG/browser parity still open.
