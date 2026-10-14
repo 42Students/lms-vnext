@@ -442,3 +442,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / HR Calendar narrow-screen views — PARTIAL:** Week and month now render date-grouped mobile cards without the desktop seven-column horizontal grid, preserving separate persisted rounds, deadlines and results due with exact recruiter job links. Desktop grid remains. Pure unit and PG fixture updated, unexecuted. Also corrected Offers pagination display to use exact selected-state total. Remaining browser viewport/scroll validation and legacy interview-slot surface.
+
+
+**2026-10-15 chat-10 / recruiter shared-applicant CSV — PARTIAL:** Added GET export from exact recruiter-owned job, capped at 200 rows through per-page shortlist-and-active-user-scoped existing reads, formula-neutralized quoted CSV, IST submission time, explicit omitted count, and all contact fields masked (never exported for recruiters). No new permission or mutation. Pure unit and in-test isolated PG own/foreign-company/wrong-role fixtures authored but not run. Remaining real shortlisted applicant positive fixture, concurrent revocation snapshot behavior, browser file acceptance.

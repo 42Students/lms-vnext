@@ -210,7 +210,13 @@ export default async function HrPlacementJobPage({
       </nav>
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
-          <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
+            <Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/applicants/export?stage="+filters.stage}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Export shared applicants CSV
+            </Link>
+          </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
             {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],

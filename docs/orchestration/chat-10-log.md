@@ -44,3 +44,5 @@
 - 2026-10-14 — HR Offers DB pages PARTIAL: 25-row filtered status pages and all-shared aggregate totals, no LOI; tests authored/extended, execution pending.
 
 - 2026-10-14 — HR Calendar mobile cards PARTIAL: narrow-screen day group layout for rounds/deadlines/results, unit/PG tests extended. Offers paging total label fixed. Execution pending.
+
+- 2026-10-15 — HR applicant CSV PARTIAL: existing grant-scoped applicant pages, formula-neutralized capped CSV, contact always masked; unit+PG authored, not executed.
