@@ -345,6 +345,9 @@ cover real success/history/audit, idempotence, forged-college, suspended,
 wrong-role and bad-input denial; executable/browser acceptance remains open.
 
 
+
+**2026-10-14 offer expiry visibility (PARTIAL):** `LearnerPlacementOffers` now prioritizes issued actionable offers by the recorded nearest expiry, warns for a response due within 48 hours, and hides Accept/Decline after a recorded expiry while showing why. The action endpoint still transactionally enforces eligibility/status/expiry. The clock is a server-authored ISO snapshot, not `Date.now()` in React render. Pure unit and independent learner PostgreSQL tests cover timing and own-member denials. Remaining: execution of typecheck/lint/unit/PG, responsive browser test of an expiry boundary, offer history/legacy modal comparison.
+
 **2026-10-14 offers-browse addition (PARTIAL):** a dedicated
 `/learn/my-placements/offers` page lists all persisted offers belonging
 to the authenticated learner and provides All/Awaiting/Accepted/Closed
