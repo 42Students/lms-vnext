@@ -20,3 +20,15 @@ export function adminLessonStats(rows: readonly CollegeLessonRecord[]) {
     published: rows.reduce((n, row) => n + row.publishedContentCount, 0),
   };
 }
+
+export function adminProgressStats(rows: readonly {
+  recordedRows: number; completedRows: number; learnersWithRecords: number;
+}[]) {
+  return {
+    offerings: rows.length,
+    contentRecords: rows.reduce((n, row) => n + row.recordedRows, 0),
+    completedContentRecords: rows.reduce((n, row) => n + row.completedRows, 0),
+    // These counts cannot be added across offerings: learners may appear in several.
+    perOfferingLearnerCounts: rows.map(row => row.learnersWithRecords),
+  };
+}
