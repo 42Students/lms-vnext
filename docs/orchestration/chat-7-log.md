@@ -17,3 +17,4 @@ Branch: `chatgpt/chat-7`. Never push main; no overlap with Learner placements, p
 - L25-008: accessible native task detail dialog and owned task selection; pure model/unit/PG authored, not executed.
 - L21-012: non-enumerating learner Project detail unavailable/loading/retry states; pure/unit/PG tests authored, unexecuted.
 - L22-002: authored immutable Project goals/deliverables in learner Overview, pure/unit/PG authored; unexecuted.
+- L21-008: legacy tasks→Board alias with active tab, unit/PG authored; gates unexecuted.
