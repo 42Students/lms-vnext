@@ -516,7 +516,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-006 | Previous / Today / Next | CareerCalendarContent | career calendar | GAP |
 | L17-007 | Date picker | learner career calendar | date input with strict valid YYYY-MM-DD IST day keys; existing owned persisted round filter remains; pure and fresh-learner PG tests authored. PARTIAL pending executed PostgreSQL, Vitest, TypeScript/ESLint, calendar browser/mobile and timezone acceptance | PARTIAL |
 | L17-008 | Event-type filters | CareerCalendarContent | strict learner URL event kind + date/view; refresh/history persistence and own persisted event filters; PARTIAL pending PG/browser acceptance | PARTIAL |
-| L17-009 | Event chips | CareerCalendarContent | career calendar | GAP |
+| L17-009 | Event chips | career calendar | month/week desktop grid shows up to two persisted authorized round labels/types per IST day, with overflow count and day navigation; pure model and own-fixture PG checks authored. PARTIAL pending executed tests, direct event-chip action, keyboard/screen reader and mobile/desktop browser parity | PARTIAL |
 | L17-010 | Selected-event detail drawer | learner career calendar | event cards now open own-scoped detail drawer with real IST time, employer, kind, approved-reschedule cue and exact assessment/interview deep link; never shows provider secrets. PARTIAL pending PG/TypeScript/ESLint and mobile/browser acceptance | PARTIAL |
 | L17-011 | Event action/deep links | CareerCalendarContent | career rounds | FIXED |
 | L17-012 | Partial-source failure + retry | CareerCalendarContent | dedicated loading + hard-failure retry preserves calendar URL; PARTIAL pending PG/browser error injection and legacy partial-source acceptance | PARTIAL |
