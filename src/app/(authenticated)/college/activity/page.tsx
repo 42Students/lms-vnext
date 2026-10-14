@@ -31,7 +31,7 @@ export default async function CollegeActivityPage({
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
-  for (const key of ["module", "importance", "eventType", "actorUserId", "subjectType", "subjectId", "from", "to"] as const) {
+  for (const key of ["module", "importance", "eventType", "q", "actorUserId", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
@@ -71,6 +71,12 @@ export default async function CollegeActivityPage({
           Event type
           <input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">
+          Search audit summary or entity
+          <input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
+            placeholder="Summary, entity or action text"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">

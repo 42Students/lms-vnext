@@ -11,6 +11,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   module: z.enum(ACTIVITY_MODULES).optional(),
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
+  q: z.string().trim().min(1).max(100).optional(),
   actorUserId: z.string().uuid().optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().uuid().optional(),
@@ -42,6 +43,7 @@ export function collegeActivityHref(
   if (filter.module) params.set("module", filter.module);
   if (filter.importance) params.set("importance", filter.importance);
   if (filter.eventType) params.set("eventType", filter.eventType);
+  if (filter.q) params.set("q", filter.q);
   if (filter.actorUserId) params.set("actorUserId", filter.actorUserId);
   if (filter.subjectType) params.set("subjectType", filter.subjectType);
   if (filter.subjectId) params.set("subjectId", filter.subjectId);
