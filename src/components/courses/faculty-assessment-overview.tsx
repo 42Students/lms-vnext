@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { filterFacultyAssessments } from "@/modules/courses/faculty-assessment-filter";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
@@ -26,18 +28,14 @@ export function FacultyAssessmentOverview({
 }) {
   const [courseId, setCourseId] = useState("");
   const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const items: Assessment[] =
     kind === "ASSIGNMENT" ? overview.assignments : overview.quizzes;
 
   const filtered = useMemo(
-    () =>
-      items.filter(
-        (item) =>
-          (!courseId || item.deliveryId === courseId) &&
-          (!status || item.status === status),
-      ),
-    [items, courseId, status],
+    () => filterFacultyAssessments(items, { deliveryId: courseId, status, search }),
+    [items, courseId, status, search],
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -84,7 +82,7 @@ export function FacultyAssessmentOverview({
         ))}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm font-semibold text-body">
           Course / Section
           <Select
@@ -120,7 +118,24 @@ export function FacultyAssessmentOverview({
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
+        <label className="text-sm font-semibold text-body">
+          Search assessments
+          <Input
+            className="mt-1.5"
+            aria-label="Search assessments"
+            placeholder="Title, lesson, Course or Section"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
+          />
+        </label>
       </div>
+
+      <p aria-live="polite" className="text-xs text-muted-foreground">
+        Showing {filtered.length} of {items.length} {kind === "QUIZ" ? "quizzes" : "assignments"}
+      </p>
 
       {filtered.length === 0 ? (
         <EmptyState

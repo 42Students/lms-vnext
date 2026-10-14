@@ -198,6 +198,14 @@ export function FacultyAssessmentEditor({
         size="sm"
         variant="secondary"
         onClick={() => {
+          // Reset from latest server props every time: cancelled edits and
+          // stale local state must not overwrite subsequently refreshed rows.
+          setTitle(assessment.title);
+          setDescription(assessment.description ?? "");
+          setDueAt(toLocalDateTime(assessment.dueAt));
+          setPoints(assessment.kind === "ASSIGNMENT"
+            ? String(assessment.maxPoints ?? 10)
+            : String(assessment.maxAttempts ?? 1));
           setError(null);
           setOpen(true);
         }}
