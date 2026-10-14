@@ -4,7 +4,7 @@ import type {MentorProjectAttention} from "./mentor-attention";
 
 export const mentorReportsQuerySchema=z.object({
   status:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
-  attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON"]).default("ALL"),
+  attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON","NONE"]).default("ALL"),
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   search:z.string().trim().max(120).default(""),
   page:z.coerce.number().int().min(1).max(10000).default(1),
@@ -39,7 +39,8 @@ export function mentorReportsOverview(
     (query.status==="ALL"||p.status===query.status)&&
     (query.assignment==="ALL"||
      (query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
-    (query.attention==="ALL"||kinds.get(p.id)?.has(query.attention))&&
+    (query.attention==="ALL"||
+      (query.attention==="NONE"?!kinds.get(p.id)?.size:kinds.get(p.id)?.has(query.attention)))&&
     (!term||p.title.toLocaleLowerCase("en-IN").includes(term)))
     .sort((a,b)=>b.updatedAt.getTime()-a.updatedAt.getTime()||
       a.title.localeCompare(b.title)||a.id.localeCompare(b.id));

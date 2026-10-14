@@ -39,6 +39,9 @@ describe("Mentor assigned-project report summary",()=>{
       ...q,status:"ACTIVE",attention:"REVIEW",search:"alp",
     });
     expect(select.items.map(p=>p.id)).toEqual(["a"]);
+    expect(mentorReportsOverview(projects,attention,{...q,attention:"NONE"}).items.map(p=>p.id))
+      .toEqual(["b","c"]);
+    expect(mentorReportsHref({...q,attention:"NONE"})).toContain("attention=NONE");
     expect(mentorReportsHref({...q,attention:"REQUESTED"}))
       .toContain("attention=REQUESTED");
     expect(mentorReportsQuerySchema.safeParse({...q,collegeId:"fake"}).success).toBe(false);

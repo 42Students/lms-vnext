@@ -916,3 +916,6 @@ Registered safe Project activity can filter events recorded within rolling 7×24
 
 ## 2026-10-15 chat-11 AO — global Mentor project activity event categories (PARTIAL)
 Across currently assigned Mentor projects, the safe activity feed now filters persisted registered Project lifecycle, review, meeting and task event-type allowlists before SQL count and pagination. The exact-project activity allowlist is reused; only fixed labels/time/project links, no raw metadata or contacts. Strict Zod and pure tests authored. PG/browser/legacy event producer completeness remain open.
+
+## 2026-10-15 chat-11 AP — report projects without recorded attention (PARTIAL)
+Mentor assigned-project reporting can now isolate projects with no current review/stalled/meeting-request/meeting-soon alert emitted by registered producers. The filter applies consistently to paginated UI and existing safe 100-row CSV, and does not equate missing alerts with verified health or reconstruct unmigrated activity. Tenant/assignment scope unchanged; model regression authored, execution/browser and legacy acceptance open.
