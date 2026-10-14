@@ -539,7 +539,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L18-009 | Offers list | PlacementCellContent | learner offers | FIXED |
 | L18-010 | Accept offer | PlacementCellContent | learner offers | FIXED |
 | L18-011 | Decline offer | PlacementCellContent | learner offers | FIXED |
-| L18-012 | Offer acceptance preview | PlacementCellContent | learner offers | GAP |
+| L18-012 | Offer acceptance preview | PlacementCellContent | existing own-offer cards now require read-only term preview and explicit confirmation before existing guarded ACCEPT POST | FIXED |
 | L18-013 | Your rounds | PlacementCellContent | career rounds | FIXED |
 | L18-014 | Confirm round | PlacementCellContent | placement page | GAP |
 | L18-015 | Ask to reschedule | PlacementCellContent | requests | FIXED |
@@ -761,7 +761,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-023 | Publications/awards legacy handling | profile subcomponents | profile workspace | UNCHECKED |
 | L30-024 | Job Preferences must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx / About | learner self-profile keeps placement preferences out | FIXED |
 | L30-025 | Placement Academic Record must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx | learner self-profile keeps placement academic evidence out | FIXED |
-| L30-026 | Contact deep-link scroll | profile query section | profile workspace | UNCHECKED |
+| L30-026 | Contact deep-link scroll | profile query section | strict Zod ?section=contacts route input, live target scroll, responsive completion checklist deep links | FIXED |
 | L30-027 | Connect-accounts deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-028 | Optional-section partial failure isolation | removed from current learner Profile composition | no separate optional placement-section fetches | RETIRED |
 | L30-029 | Loading skeleton | ProfileSkeleton | profile route | UNCHECKED |

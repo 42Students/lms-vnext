@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -71,6 +73,19 @@ export function LearnerPlacementOffers({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
+  const preview = confirmOffer
+    ? learnerOfferAcceptancePreview({
+        offerId: confirmOffer.offerId,
+        companyName: confirmOffer.companyName,
+        roleTitle: confirmOffer.roleTitle,
+        jobTitle: confirmOffer.jobTitle,
+        annualCtcInr: confirmOffer.annualCtcInr,
+        joiningDate: confirmOffer.joiningDate,
+        expiresAt: confirmOffer.expiresAt,
+        status: confirmOffer.status,
+      })
+    : null;
 
   async function respond(
     offerId: string,
@@ -127,6 +142,7 @@ export function LearnerPlacementOffers({
             ? "Your acceptance is recorded. Joining updates will appear here."
             : "Your response is recorded in the offer history.",
       });
+      setConfirmOffer(null);
       router.refresh();
     } catch (error) {
       showToast({
@@ -251,12 +267,7 @@ export function LearnerPlacementOffers({
                   disabled={
                     pendingId !== null
                   }
-                  onClick={() =>
-                    respond(
-                      item.offerId,
-                      "ACCEPT",
-                    )
-                  }
+                  onClick={() => setConfirmOffer(item)}
                 >
                   {pendingId ===
                   item.offerId
@@ -309,6 +320,40 @@ export function LearnerPlacementOffers({
           </article>
         ))}
       </div>
+
+      <Dialog
+        open={confirmOffer !== null}
+        onOpenChange={(open) => { if (!open && pendingId === null) setConfirmOffer(null); }}
+        title="Review offer before accepting"
+        description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
+        footer={
+          <>
+            <Button variant="secondary" disabled={pendingId !== null}
+              onClick={() => setConfirmOffer(null)}>Keep offer pending</Button>
+            <Button disabled={!preview?.canConfirm || pendingId !== null}
+              onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
+              {pendingId !== null ? "Saving…" : "Confirm acceptance"}
+            </Button>
+          </>
+        }
+      >
+        {preview ? (
+          <div className="space-y-3 text-sm text-body">
+            <p className="font-semibold text-foreground">{preview.companyName} · {preview.roleTitle}</p>
+            <p>Drive: {preview.jobTitle}</p>
+            <p>Annual CTC: {formatMoney(preview.annualCtcInr) ?? "Not specified"}</p>
+            <p>Planned joining: {preview.joiningDate ?? "Not specified"}</p>
+            <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
+            {preview.expired ? (
+              <p role="alert" className="font-semibold text-error">This offer has expired. Acceptance is disabled.</p>
+            ) : null}
+            <p className="text-xs text-muted-foreground">
+              Confirming records your acceptance; it does not prove that you joined.
+              The server checks offer status, eligibility and deadlines again.
+            </p>
+          </div>
+        ) : null}
+      </Dialog>
     </section>
   );
 }

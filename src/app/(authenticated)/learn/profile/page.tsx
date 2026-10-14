@@ -1,10 +1,18 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { learnerProfileSectionSchema } from "@/modules/people/learner-profile-checklist";
 import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-summary-service";
 
-export default async function LearnerProfilePage() {
+export default async function LearnerProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ section?: string | string[] }>;
+}) {
+  const query = await searchParams;
+  const parsedSection = learnerProfileSectionSchema.safeParse(query.section);
+  const initialSection = parsedSection.success ? parsedSection.data : null;
   const context = await getCurrentRequestContext();
 
   const [{ person, profile }, academic] = await Promise.all([
@@ -48,6 +56,7 @@ export default async function LearnerProfilePage() {
         )}
       </section>
       <LearnerProfileWorkspace
+        initialSection={initialSection}
         displayName={person.user.displayName}
         primaryEmail={person.user.email}
         primaryPhone={person.user.phoneE164}

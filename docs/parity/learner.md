@@ -590,6 +590,17 @@ Legacy contract:
 
 ## Page: Placement Cell
 
+**2026-10-14 offer-response preview (PARTIAL, L18-012):**
+Acceptance of an ISSUED, still-unexpired persisted offer now requires a
+confirmation dialog with the recorded company, role, CTC, joining date and
+deadline. The preview is informational; the same existing Zod-validated,
+same-origin guarded POST rechecks learner placement permission, persisted
+own-membership, status and expiry transactionally. Closed/expired offers
+cannot be confirmed in the preview. An empty offer list remains an honest
+first-run state on the dedicated Offers page. Decline flow and full legacy
+offer/letter parity remain open; do not claim complete workflow parity.
+
+
 **2026-10-14 personal placement alerts (PARTIAL):** a read-only section on
 `/learn/my-placements/placement` shows up to eight actual PLACEMENTS-module
 personal notifications for the authorized learner, sourced from registered
@@ -711,6 +722,19 @@ mobile/browser proof remain open.
 # Profile
 
 ## Page: Learner Profile
+
+**2026-10-14 contact deep-link and completion checklist (PARTIAL,
+L30-026):** Profile now accepts strictly validated `?section=contacts`
+(and other existing section IDs), scrolls to that actual card on navigation,
+and exposes a mobile-responsive 16-section checklist based on the same
+persisted `profileDocument` fields already used by the completion badge.
+No second score is fabricated, and the checklist updates after successful
+profile edits. Aadhaar/PAN details remain optional; checklist completion
+does not mean verification. Unsupported Connect Accounts, storage-backed
+profile image/resume and Profile Verification are not represented as ready.
+Existing Profile loading/retry states and server-owned profile read/update
+routes remain in place. Browser and runtime acceptance remain open.
+
 
 **2026-10-14 academic identity summary (PARTIAL, L30-001):** the Profile
 shows the current learner name and, when a single active enrollment is
