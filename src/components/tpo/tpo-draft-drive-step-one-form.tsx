@@ -9,13 +9,15 @@ type Season = { id: string; name: string; startDate: string; endDate: string };
 export function TpoDraftDriveStepOneForm({
   season,
   companies,
+  preselectedRelationshipId,
 }: {
   season: Season;
   companies: readonly Company[];
+  preselectedRelationshipId?: string | null;
 }) {
   const router = useRouter();
   const [companyRelationshipId, setCompanyRelationshipId] = useState(
-    companies[0]?.relationshipId ?? "",
+    preselectedRelationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
