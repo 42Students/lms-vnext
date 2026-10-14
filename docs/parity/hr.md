@@ -589,3 +589,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R6 / Hiring activity drive-title search — PARTIAL:** Activity history adds bounded role/drive-name URL search after the exact company+college authorized job allowlist, with stable published/closed filters, pagination, and matching CSV export. Unit and in-test PG company-scope assertions authored; tests/browser gates pending.
+
+
+**2026-10-15 chat-10 R6 / Company report current-page funnel totals — PARTIAL:** Adds clear page-only sums for authorized persisted application and outstanding/accepted/declined/joined offer counts, explicitly avoiding claims about full employer totals or distinct candidate identities. No new backend query/contact exposure. Pure aggregate model/unit authored; runtime/browser checks pending.

@@ -17,6 +17,7 @@ import {
 import {
   getRecruiterCompanyReports,
 } from "@/modules/placements/recruiter-company-reports-service";
+import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-signals-model";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -331,6 +332,22 @@ export default async function RecruiterCompanyReportsPage({
             Clear filters
           </Link>
         </form>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="font-semibold text-foreground">Current page hiring totals</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Totals cover only the visible authorized drive rows on this page, not every company drive.
+          Outstanding means currently issued offers; these counts may represent multiple offer versions.
+        </p>
+        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+          {Object.entries(hrCompanyReportPageSignals(jobs)).map(([label,value])=>(
+            <div key={label} className="rounded-md border border-border p-3">
+              <dt className="capitalize text-xs text-muted-foreground">{label}</dt>
+              <dd className="mt-1 text-xl font-bold tabular-nums text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="space-y-3">
