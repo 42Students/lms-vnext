@@ -1,0 +1,8 @@
+export default function CollegeQuizzesLoading() {
+  return <div aria-busy="true" aria-label="Loading college quizzes"
+    className="space-y-4">
+    <div className="h-14 animate-pulse rounded-xl bg-muted" />
+    <div className="h-32 animate-pulse rounded-xl bg-muted" />
+    <div className="h-72 animate-pulse rounded-xl bg-muted" />
+  </div>;
+}

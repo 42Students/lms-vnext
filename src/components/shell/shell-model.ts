@@ -274,6 +274,8 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Lecture Halls", href: "/college/lecture-halls", shortLabel: "L" },
   { label: "Attendance", href: "/college/attendance", shortLabel: "T" },
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
+  { label: "Assignments", href: "/college/assignments", shortLabel: "A" },
+  { label: "Quizzes", href: "/college/quizzes", shortLabel: "Q" },
   { label: "Projects", href: "/college/projects", shortLabel: "P" },
   { label: "Placements", href: "/college/placements", shortLabel: "P" },
   {
