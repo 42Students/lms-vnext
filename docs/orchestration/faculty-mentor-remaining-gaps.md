@@ -216,3 +216,15 @@ migrated project_submissions and project_submission_reviews, with no raw
 feedback or private learner data, 20-version pagination and explicit gaps.
 No invented history, no new write route. PARTIAL pending executed PostgreSQL,
 browser and full legacy project overview acceptance.
+
+## 2026-10-14 chat-4 A — live classes
+
+Source-authored live class CREATE, EDIT, CANCEL for exact current Faculty
+teaching delivery and registered lesson, using migrated lesson_contents,
+status ARCHIVED for cancellation and no unsupported recording fields. HTTPS
+meeting URL only, explicit confirmation, same-origin POST, strict Zod,
+IST period-window check, overlap detection per teaching actor,
+optimistic timestamp and transaction audit. Unit and isolated PostgreSQL
+fixture tests are authored, not run locally. Blocker: positive DB/CI/browser
+evidence, product conflict policy for co-teachers, full legacy live-room
+workflow. Course Blueprint and Class Schedule remain PARTIAL.
