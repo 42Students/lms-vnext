@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {shouldSendLearnerDiscussionOnEnter,learnerDiscussionMobileJumpVisible} from "./learner-discussion-mobile-model";
 import {
   buildDiscussionFeed,
   countNewDiscussionMessages,
@@ -324,7 +325,7 @@ export function LearnerCourseDiscussion({
               Pinned
             </p>
           </div>
-          <p className="mt-2 text-sm font-semibold text-foreground">
+          <p className="mt-2 break-words text-sm font-semibold text-foreground">
             {pinned.messageText}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -337,7 +338,7 @@ export function LearnerCourseDiscussion({
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="max-h-[34rem] min-h-80 overflow-y-auto p-4 sm:p-5"
+          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain p-3 sm:max-h-[34rem] sm:min-h-80 sm:p-5"
         >
           {loading ? (
             <div className="space-y-4" aria-busy="true">
@@ -396,8 +397,8 @@ export function LearnerCourseDiscussion({
                     key={row.key}
                     className={
                       row.item.isMine
-                        ? `ml-auto max-w-[88%] rounded-xl border border-primary bg-primary-subtle ${row.grouped ? "px-4 py-2" : "p-4"}`
-                        : `max-w-[88%] rounded-xl border border-border bg-surface-subtle ${row.grouped ? "px-4 py-2" : "p-4"}`
+                        ? `ml-auto max-w-[96%] break-words rounded-xl border border-primary bg-primary-subtle ${row.grouped ? "px-4 py-2" : "p-4"}`
+                        : `max-w-[96%] break-words rounded-xl border border-border bg-surface-subtle ${row.grouped ? "px-4 py-2" : "p-4"}`
                     }
                   >
                     {!row.grouped ? (
@@ -464,6 +465,12 @@ export function LearnerCourseDiscussion({
           )}
         </div>
 
+        {learnerDiscussionMobileJumpVisible(atBottom,unseenCount,messages.length) ? (
+          <button type="button" onClick={()=>scrollToBottom()}
+            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 rounded-full border border-border bg-surface px-4 text-xs font-semibold text-primary-text shadow-lg sm:hidden">
+            Jump to latest
+          </button>
+        ) : null}
         {unseenCount > 0 ? (
           <button
             type="button"
@@ -500,11 +507,11 @@ export function LearnerCourseDiscussion({
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
-              if (
-                event.key === "Enter" &&
-                !event.shiftKey &&
-                !event.nativeEvent.isComposing
-              ) {
+              if (shouldSendLearnerDiscussionOnEnter({
+                key:event.key,shiftKey:event.shiftKey,
+                isComposing:event.nativeEvent.isComposing,
+                coarsePointer:window.matchMedia("(pointer: coarse)").matches,
+              })) {
                 event.preventDefault();
                 void submit();
               }
@@ -514,11 +521,13 @@ export function LearnerCourseDiscussion({
             placeholder="Write a message..."
             className="mt-1.5 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
           />
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">
-              Enter to send · Shift+Enter for a new line · {draft.length}/4000
+              <span className="sm:hidden">Tap Post to send · Enter adds a new line</span>
+              <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
+              {" · "}{draft.length}/4000
             </span>
-            <Button type="submit" disabled={!draft.trim() || posting}>
+            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!draft.trim() || posting}>
               {posting ? "Posting…" : "Post"}
             </Button>
           </div>

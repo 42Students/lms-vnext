@@ -6,7 +6,7 @@ import {
 } from "./learner-rounds-browse-model";
 
 export const learnerAssessmentDueBucketSchema = z.enum([
-  "all", "today", "week",
+  "all", "today", "week", "later", "past", "unscheduled",
 ]);
 export type LearnerAssessmentDueBucket = z.infer<
   typeof learnerAssessmentDueBucketSchema
@@ -44,7 +44,10 @@ export function learnerAssessmentDueBuckets<T extends LearnerRoundBrowseSource>(
     const bucket = learnerAssessmentBucketForRound(round, nowMs);
     return bucket === "today" || bucket === "week";
   });
-  return { today, week };
+  const later=rounds.filter(round=>learnerAssessmentBucketForRound(round,nowMs)==="later");
+  const past=rounds.filter(round=>learnerAssessmentBucketForRound(round,nowMs)==="past");
+  const unscheduled=rounds.filter(round=>learnerAssessmentBucketForRound(round,nowMs)==="unscheduled");
+  return {today,week,later,past,unscheduled};
 }
 
 export function filterLearnerAssessmentDueBucket<T extends LearnerRoundBrowseSource>(
@@ -53,8 +56,8 @@ export function filterLearnerAssessmentDueBucket<T extends LearnerRoundBrowseSou
   if (bucket === "all") return [...rounds];
   return rounds.filter((round) => {
     const kind = learnerAssessmentBucketForRound(round, nowMs);
-    return bucket === "today"
-      ? kind === "today"
-      : kind === "today" || kind === "week";
+    if(bucket==="today")return kind==="today";
+    if(bucket==="week")return kind==="today"||kind==="week";
+    return kind===bucket;
   });
 }

@@ -11,6 +11,7 @@ import {
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
+import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
 
 const PAGE_SIZE = 20;
 
@@ -31,6 +32,7 @@ export function LearnerJobsBrowse({
   const urlState=readLearnerDriveUrl(params.toString());
   const urlSearch=urlState.filters.search;
   const [search,setSearch]=useState(urlSearch);
+  const [mobileOpen,setMobileOpen]=useState(false);
   const lastCommittedQuery=useRef(urlSearch);
 
   const updateQuery=useCallback((changes:Record<string,string|null>)=>{
@@ -77,7 +79,15 @@ export function LearnerJobsBrowse({
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
   return (
     <div className="space-y-5">
-      <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Find placement drives">
+      <section className="rounded-xl border border-border bg-surface p-3 sm:p-5" aria-label="Find placement drives">
+        <button type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
+          onClick={()=>setMobileOpen(value=>!value)}
+          className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
+          <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
+        </button>
+        <div id="learner-drive-filters"
+          className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="text-xs font-semibold text-body sm:col-span-2">
             Search drives, companies and roles
@@ -171,6 +181,7 @@ export function LearnerJobsBrowse({
             className="min-h-10 px-2 text-sm font-semibold text-primary-text hover:underline">
             Clear filters
           </button>
+        </div>
         </div>
       </section>
 
