@@ -179,6 +179,7 @@ export async function getCollegeGroupDetail(
     db
       .select({
         membershipId: lmsGroupMembers.membershipId,
+        version: lmsGroupMembers.version,
         displayName: users.displayName,
         memberType: lmsGroupMembers.memberType,
         state: lmsGroupMembers.state,
@@ -226,6 +227,7 @@ export async function getCollegeGroupDetail(
       .limit(25),
     db
       .select({
+        criteriaJson: lmsGroupRules.criteriaJson,
         autoRefresh: lmsGroupRules.autoRefresh,
         lastRunAt: lmsGroupRules.lastRunAt,
         lastRunMatched: lmsGroupRules.lastRunMatched,
@@ -243,6 +245,7 @@ export async function getCollegeGroupDetail(
     group: {
       id: group.id,
       name: group.name,
+      version: group.version,
       kind: group.kind,
       status: group.status,
       description: group.description,
