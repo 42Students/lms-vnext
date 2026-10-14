@@ -1425,3 +1425,6 @@ Faculty Contacts now refuses duplicate, malformed, unknown or forged directory q
 
 ## 2026-10-15 Round 5 private Faculty Contact drill-in — PARTIAL
 Faculty directory details now validate their route IDs and produce the same non-leaking 404 for missing, foreign or tab-incompatible memberships. Unrelated database failures still reach the error boundary; pure classifier tests authored. Registered service scoping is unchanged. PG and browser acceptance pending.
+
+## 2026-10-15 Round 5 Faculty Course default-route ID guard — PARTIAL
+The `/teacher/courses/[deliveryId]` landing route validates the Section UUID before canonicalizing to Overview, preventing malformed/legacy arbitrary segments from becoming misleading instructor links. Tests cover valid and invalid IDs. Persisted teaching-scope authorization remains enforced on the destination; browser acceptance pending.
