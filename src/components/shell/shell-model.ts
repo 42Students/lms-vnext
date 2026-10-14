@@ -269,6 +269,7 @@ const recruiterItems: ShellNavItem[] = [
 
 const collegeAdminItems: ShellNavItem[] = [
   { label: "My College", href: "/college", shortLabel: "C" },
+  { label: "College Contact", href: "/college/college-profile", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
   { label: "Academics", href: "/college/academics", shortLabel: "A" },
   { label: "Semesters", href: "/college/semesters", shortLabel: "S" },

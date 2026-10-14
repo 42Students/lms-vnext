@@ -15,6 +15,7 @@
 | 4.1 | Dashboard | PARTIAL | Buildable — reconcile legacy dashboard cards, completion states, count scopes, deep links and mobile/browser proof. |
 | 4.1 | Activity Log | PARTIAL | Buildable — actor/entity/date filters, high-volume noise controls, full drill-in and cross-college denial coverage. |
 | 4.1 | Self Profile | PARTIAL | Buildable — exact legacy profile sections, contact edits, resume/identity document safety and incomplete-section isolation. |
+| 4.1 | College Contact Profile | PARTIAL | Separate own-college display/contact editor built using registered colleges/college_branding, versioned confirmation and atomic activity audit; original self-profile fields, visual branding, owner/oracle confirmation and executed PG/browser acceptance remain open. |
 | 4.1 | Placement Interview Calendar | PARTIAL | Buildable — exact calendar filters, interview click-through and browser/DB acceptance. |
 | 4.2 | Programs | PARTIAL | Buildable — reconcile dedicated program CRUD/list with legacy form, active/archive lifecycle and browser acceptance. |
 | 4.2 | Semesters | PARTIAL | Buildable — add/edit/delete registered program terms, required name, immutable number and dependency guards. |
