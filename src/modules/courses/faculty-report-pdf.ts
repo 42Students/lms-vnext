@@ -2,7 +2,7 @@
  * The caller must scope every row to the authorized Section before passing it here.
  */
 export type FacultyReportPdfInput = {
-  kind: "assignment" | "quiz";
+  kind: "assignment" | "quiz" | "attendance";
   title: string;
   subtitle: string;
   summary: readonly string[];

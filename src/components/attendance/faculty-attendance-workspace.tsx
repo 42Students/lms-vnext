@@ -16,10 +16,14 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
+import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary } from "@/modules/attendance/faculty-learner-attendance-detail";
+import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
   indiaAttendanceDayKey,
+  indiaAttendanceMonthKey,
+  shiftIndiaAttendanceMonth,
 } from "@/modules/attendance/faculty-grid-model";
 
 type Course = {
@@ -76,17 +80,6 @@ export type FacultyAttendanceWorkspaceData = {
   records: RecordRow[];
 };
 
-function monthKey(value: Date) {
-  return `${value.getFullYear()}-${String(
-    value.getMonth() + 1,
-  ).padStart(2, "0")}`;
-}
-
-function shiftMonth(value: string, amount: number) {
-  const [year, month] = value.split("-").map(Number);
-  return monthKey(new Date(year!, month! - 1 + amount, 1));
-}
-
 function sameMonth(value: string, selected: string) {
   return indiaAttendanceDayKey(value).slice(0, 7) === selected;
 }
@@ -140,7 +133,7 @@ export function FacultyAttendanceWorkspace({
     return () => window.clearInterval(timer);
   }, []);
   const [month, setMonth] = useState(
-    () => monthKey(new Date()),
+    () => indiaAttendanceMonthKey(new Date()),
   );
   const [selectedSessionId, setSelectedSessionId] =
     useState(workspace.sessions[0]?.id ?? "");
@@ -157,6 +150,7 @@ export function FacultyAttendanceWorkspace({
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [selectedLearnerId, setSelectedLearnerId] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] =
     useState(false);
   const [scheduling, setScheduling] =
@@ -242,10 +236,25 @@ export function FacultyAttendanceWorkspace({
     [monthSessions],
   );
 
-  const markedCount = monthSessions.filter(
-    (session) =>
-      session.attendanceStatus === "MARKED",
-  ).length;
+  const selectedLearner = selectedLearnerId
+    ? allLearners.find((learner) => learner.membershipId === selectedLearnerId) ?? null
+    : null;
+  const learnerDetail = useMemo(
+    () => selectedLearnerId
+      ? facultyLearnerAttendanceDetail(selectedLearnerId, monthSessions, workspace.records, clock)
+      : null,
+    [selectedLearnerId, monthSessions, workspace.records, clock],
+  );
+  const canMarkSelectedLearner = selectedLearnerId !== null &&
+    workspace.roster.some((learner) => learner.membershipId === selectedLearnerId);
+
+  const monthSummary = useMemo(
+    () => facultyAttendanceMonthSummary(
+      workspace.roster.map((learner) => learner.membershipId),
+      monthSessions, workspace.records, clock,
+    ),
+    [workspace.roster, workspace.records, monthSessions, clock],
+  );
 
   function chooseSession(id: string) {
     setSelectedSessionId(id);
@@ -451,13 +460,13 @@ export function FacultyAttendanceWorkspace({
                 </StatusBadge>
                 <StatusBadge
                   tone={
-                    markedCount === monthSessions.length &&
+                    monthSummary.markedSessions === monthSessions.length &&
                     monthSessions.length > 0
                       ? "success"
                       : "warning"
                   }
                 >
-                  {markedCount} marked
+                  {monthSummary.markedSessions} marked
                 </StatusBadge>
               </div>
               <div className="flex items-end gap-2">
@@ -467,7 +476,7 @@ export function FacultyAttendanceWorkspace({
                   aria-label="Previous month"
                   onClick={() =>
                     setMonth((value) =>
-                      shiftMonth(value, -1),
+                      shiftIndiaAttendanceMonth(value, -1),
                     )
                   }
                 >
@@ -490,7 +499,7 @@ export function FacultyAttendanceWorkspace({
                   aria-label="Next month"
                   onClick={() =>
                     setMonth((value) =>
-                      shiftMonth(value, 1),
+                      shiftIndiaAttendanceMonth(value, 1),
                     )
                   }
                 >
@@ -498,6 +507,70 @@ export function FacultyAttendanceWorkspace({
                 </Button>
               </div>
             </div>
+          </section>
+
+          <section aria-label="Monthly class health" className="rounded-xl border border-border bg-surface p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
+                <p className="mt-2 text-3xl font-semibold text-foreground">
+                  {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}
+                </p>
+                <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
+                  {monthSummary.markedMarks} recorded learner-session marks for active Section learners.
+                  Unmarked and upcoming sessions are excluded, never assumed present.
+                </p>
+              </div>
+              {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
+                <FacultyReportDownload
+                  kind="attendance"
+                  title={workspace.course.courseName + " " + month}
+                  subtitle={workspace.course.courseCode + " · " + workspace.course.sectionName}
+                  summary={[
+                    "Month: " + month + " (Asia/Kolkata)",
+                    "Active students: " + monthSummary.learnerCount,
+                    "Sessions: " + monthSummary.sessionCount,
+                    "Marked sessions: " + monthSummary.markedSessions,
+                    "Unmarked sessions: " + monthSummary.unmarkedSessions,
+                    "Upcoming sessions: " + monthSummary.upcomingSessions,
+                    "Present marks: " + monthSummary.presentMarks,
+                    "Absent marks: " + monthSummary.absentMarks,
+                    "Unmarked learner-session cells: " + monthSummary.unmarkedMarks,
+                    "Attendance: " + (monthSummary.averagePercent === null ? "Unknown" : monthSummary.averagePercent + "%"),
+                  ]}
+                  sections={[{
+                    title: "Active Section learner attendance",
+                    rows: monthSummary.learners.map((row) => {
+                      const learner = workspace.roster.find((item) => item.membershipId === row.membershipId);
+                      return [
+                        learner?.displayName ?? learner?.email ?? row.membershipId,
+                        learner?.rollNumber ? "Roll " + learner.rollNumber : "",
+                        "P " + row.present,
+                        "A " + row.absent,
+                        "Not marked " + row.unmarked,
+                        "Upcoming " + row.upcoming,
+                        row.percentage === null ? "Not available" : row.percentage + "%",
+                      ].filter(Boolean).join(" | ");
+                    }),
+                  }]}
+                />
+              ) : null}
+            </div>
+            <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+              {[
+                ["Students", monthSummary.learnerCount],
+                ["Sessions", monthSummary.sessionCount],
+                ["Present", monthSummary.presentMarks],
+                ["Absent", monthSummary.absentMarks],
+                ["Unmarked", monthSummary.unmarkedMarks],
+                ["Upcoming", monthSummary.upcomingSessions],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg bg-surface-subtle p-3">
+                  <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+                  <dd className="mt-1 text-xl font-semibold text-foreground">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </section>
 
           {monthSessions.length === 0 ? (
@@ -544,9 +617,14 @@ export function FacultyAttendanceWorkspace({
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId}>
                       <td className="sticky left-0 z-10 bg-surface px-3 py-3">
-                        <p className="m-0 font-semibold text-foreground">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLearnerId(learner.membershipId)}
+                          aria-label={`View attendance details for ${learnerName(learner)}`}
+                          className="m-0 text-left font-semibold text-primary-text hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-primary"
+                        >
                           {learnerName(learner)}
-                        </p>
+                        </button>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[
                             learner.rollNumber
@@ -843,6 +921,90 @@ export function FacultyAttendanceWorkspace({
           )}
         </>
       )}
+
+      {selectedLearner ? (
+      <Drawer
+        open={true}
+        onOpenChange={(open) => { if (!open) setSelectedLearnerId(null); }}
+        title={selectedLearner ? learnerName(selectedLearner) + " attendance" : "Learner attendance"}
+        description={`Recorded class sessions for ${month}. Unmarked and upcoming sessions are not included in the attendance percentage.`}
+      >
+        {selectedLearner && learnerDetail ? (
+          <div className="space-y-5">
+            <p className="text-sm text-body">
+              {[selectedLearner.rollNumber ? "Roll " + selectedLearner.rollNumber : null,
+                selectedLearner.email, selectedLearner.phoneE164].filter(Boolean).join(" · ") ||
+                "Contact details unavailable"}
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {[
+                ["Present", learnerDetail.present],
+                ["Absent", learnerDetail.absent],
+                ["Not marked", learnerDetail.unmarked],
+                ["Upcoming", learnerDetail.upcoming],
+                ["Marked", learnerDetail.marked],
+                ["Attendance", learnerDetail.attendedPercent === null ? "—" : learnerDetail.attendedPercent + "%"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
+                  <p className="text-xs text-muted-foreground">{label}</p>
+                  <p className="mt-1 text-xl font-semibold text-foreground">{value}</p>
+                </div>
+              ))}
+            </div>
+            <h3 className="text-base font-semibold text-foreground">Session history</h3>
+            {learnerDetail.rows.length === 0 ? (
+              <p className="text-sm text-body">No class sessions are scheduled for this month.</p>
+            ) : (
+              <ol className="space-y-3">
+                {learnerDetail.rows.map((session) => {
+                  const canMark = canMarkSelectedLearner &&
+                    facultyAttendanceMarkingWindow({
+                      startsAt: new Date(session.startsAt),
+                      endsAt: new Date(session.endsAt),
+                      correctionWindowHours: workspace.policy.correctionWindowHours,
+                      now: clock,
+                    }) === "OPEN";
+                  return (
+                    <li key={session.id} className="rounded-lg border border-border p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <strong className="text-sm text-foreground">{session.title}</strong>
+                        <StatusBadge tone={session.code === "P" ? "success" : session.code === "A" ? "error" : session.code === "—" ? "warning" : "neutral"}>
+                          {session.label}
+                        </StatusBadge>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">{dateTime(session.startsAt)}</p>
+                      {session.note ? <p className="mt-2 whitespace-pre-wrap text-sm text-body">{session.note}</p> : null}
+                      {session.markedAt ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Last recorded {dateTime(session.markedAt)}
+                        </p>
+                      ) : null}
+                      {canMark ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            chooseSession(session.id);
+                            setMode("MARK");
+                            setSelectedLearnerId(null);
+                          }}
+                        >
+                          {session.code === "—" ? "Mark this session" : "Review / correct session"}
+                        </Button>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Corrections after the Faculty window closes require a College Admin.
+              Historical records are not editable from this detail panel.
+            </p>
+          </div>
+        ) : null}
+      </Drawer>
+      ) : null}
 
       <Drawer
         open={scheduleOpen}

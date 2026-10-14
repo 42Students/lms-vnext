@@ -3,11 +3,21 @@ import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
   indiaAttendanceDayKey,
+  indiaAttendanceMonthKey,
+  shiftIndiaAttendanceMonth,
 } from "@/modules/attendance/faculty-grid-model";
 
 const now = new Date("2026-10-10T12:00:00.000Z");
 
 describe("W02 Faculty attendance daily aggregation", () => {
+  it("uses India-local month around UTC midnight and shifts across year boundaries", () => {
+    expect(indiaAttendanceMonthKey("2026-09-30T18:00:00Z")).toBe("2026-09");
+    expect(indiaAttendanceMonthKey("2026-09-30T19:00:00Z")).toBe("2026-10");
+    expect(shiftIndiaAttendanceMonth("2026-12", 1)).toBe("2027-01");
+    expect(shiftIndiaAttendanceMonth("2027-01", -1)).toBe("2026-12");
+    expect(shiftIndiaAttendanceMonth("", 1)).toBe("");
+  });
+
   it("uses India-local day boundaries instead of UTC date boundaries", () => {
     expect(indiaAttendanceDayKey("2026-10-09T20:00:00.000Z"))
       .toBe("2026-10-10");

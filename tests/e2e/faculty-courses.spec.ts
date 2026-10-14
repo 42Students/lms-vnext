@@ -92,6 +92,59 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
+test("Faculty Attendance student detail shows a real future session without fabricating presence", async ({ page, context }) => {
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Attendance" }).click();
+  await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible();
+
+  // This test owns a real, authorized class session in the disposable browser DB.
+  // Reusing an arbitrary seeded month could quietly skip the student-detail path.
+  const start = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+  const startParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
+  }).formatToParts(start);
+  const month = startParts.find((part) => part.type === "year")!.value + "-" +
+    startParts.find((part) => part.type === "month")!.value;
+  const sessionTitle = "Faculty attendance detail browser proof";
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  const form = page.getByRole("dialog", { name: "Schedule Class" });
+  await expect(form).toBeVisible();
+  await form.getByLabel("Class title").fill(sessionTitle);
+  await form.getByLabel("Starts at").fill(start.toISOString().slice(0, 16));
+  await form.getByLabel("Ends at").fill(end.toISOString().slice(0, 16));
+  const response = page.waitForResponse((res) =>
+    res.request().method() === "POST" &&
+    new URL(res.url()).pathname === "/api/attendance/faculty");
+  await form.getByRole("button", { name: "Schedule Class" }).click();
+  expect((await response).ok()).toBe(true);
+
+  await page.reload();
+  await page.locator('input[type="month"]').fill(month);
+  const health = page.getByRole("region", { name: "Monthly class health" });
+  await expect(health).toBeVisible();
+  await expect(health).toContainText("Upcoming");
+  await expect(health).toContainText("Unmarked and upcoming sessions are excluded");
+  await expect(health.getByRole("button", { name: "Download PDF" })).toBeVisible();
+  await expect(page.getByText("Attendance report")).toBeVisible();
+  const learner = page.getByRole("button", { name: /^View attendance details for / });
+  await expect(learner.first()).toBeVisible();
+  await learner.first().click();
+  const detail = page.getByRole("dialog", { name: / attendance$/ });
+  await expect(detail).toBeVisible();
+  await expect(detail.getByText(sessionTitle, { exact: true })).toBeVisible();
+  await expect(detail.getByText("Upcoming", { exact: true })).toBeVisible();
+  await expect(detail.getByText("Scheduled", { exact: true })).toBeVisible();
+  await detail.getByRole("button", { name: "Close drawer" }).click();
+
+  // The other Drawer must retain its own accessible title.
+  await page.getByRole("button", { name: "Schedule Class" }).click();
+  await expect(page.getByRole("dialog", { name: "Schedule Class" })).toBeVisible();
+});
+
 test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pages", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");

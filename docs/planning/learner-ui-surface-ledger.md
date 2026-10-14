@@ -440,8 +440,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-010 | Application cards | ApplicationsContent | applications page | UNCHECKED |
 | L14-011 | Journey/status visualization | ApplicationsContent | learner journey | FIXED |
 | L14-012 | Application Detail modal | ApplicationsContent | applications page | UNCHECKED |
-| L14-013 | Application History modal | ApplicationsContent | applications page | UNCHECKED |
-| L14-014 | Company Preview modal + retry | ApplicationsContent | applications page | UNCHECKED |
+| L14-013 | Application History modal | ApplicationsContent | dedicated read-only history route from applications drawer | FIXED |
+| L14-014 | Company Preview modal + retry | ApplicationsContent | dedicated read-only company route with error boundary | FIXED |
 | L14-015 | Withdrawal request modal + reason | ApplicationsContent | learner requests | UNCHECKED |
 | L14-016 | Offer accept confirmation | ApplicationsContent | learner offers | FIXED |
 | L14-017 | Offer decline confirmation | ApplicationsContent | learner offers | FIXED |
