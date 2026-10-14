@@ -65,6 +65,14 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.assignment.grade_published",
   COURSES_ATTENDANCE_MARKED:
     "courses.attendance.marked",
+  COURSES_CLASS_SCHEDULED:
+    "courses.class.scheduled",
+  COURSES_DISCUSSION_POSTED:
+    "courses.discussion.posted",
+  COURSES_DISCUSSION_PIN_CHANGED:
+    "courses.discussion.pin_changed",
+  COURSES_DISCUSSION_DELETED:
+    "courses.discussion.deleted",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   // Lifecycle events are emitted only after W03's persisted mutation succeeds.

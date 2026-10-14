@@ -16,7 +16,7 @@ type RouteContext = {
 };
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: RouteContext,
 ) {
   try {
@@ -27,13 +27,15 @@ export async function GET(
       await listCourseDiscussionMessages(
         context,
         deliveryId,
+        Object.fromEntries(new URL(request.url).searchParams.entries()),
       );
 
     return NextResponse.json({
       accessMode: result.accessMode,
       canPost: result.canPost,
       messages: result.messages,
-    });
+      nextCursor: result.nextCursor,
+    }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
