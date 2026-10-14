@@ -1464,3 +1464,6 @@ When a selected Quiz's question-bank fetch fails, the Faculty editor now exposes
 
 ## 2026-10-15 R6 Faculty Quiz unsaved-draft publish fence — PARTIAL
 The editor now marks metadata and question edits as unsaved and refuses PUBLISH until the current draft has been saved. This prevents a confirm/publish request from silently publishing an older stored question bank while unsaved changes remain on screen. A clean loaded DRAFT is still publishable; pure tests cover dirty/failed/immutable states. PostgreSQL and browser acceptance pending.
+
+## 2026-10-15 R6 Faculty Quiz persisted version reconciliation — PARTIAL
+The Quiz editor now consumes the authoritative `{quiz}` response after successful CREATE/EDIT/PUBLISH/CLOSE/ARCHIVE, preserves the exact persisted `updatedAt`, status and generated ID, and overrides stale server-rendered dropdown records. It does not invent next versions or permit a second write using the pre-save optimistic token. Pure parsing/reconciliation tests authored; authenticated multi-action browser and PG acceptance pending.

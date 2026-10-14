@@ -178,3 +178,22 @@ export function facultyQuizCanPublishSavedDraft(
 ):boolean {
  return status==="DRAFT" && !unsaved && !loadFailed;
 }
+
+/** POST returns an authoritative persisted Quiz revision. No optimistic guess
+ * of the next version is safe because Postgres timestamps have precision. */
+const savedQuizSchema=z.object({quiz:z.object({
+ id:z.string().uuid(),lessonId:z.string().uuid(),
+ title:z.string(),description:z.string().nullable(),dueAt:z.string().nullable(),
+ maxAttempts:z.number().int(),sequence:z.number().int(),
+ status:z.enum(["DRAFT","PUBLISHED","CLOSED","ARCHIVED"]),
+ updatedAt:z.iso.datetime({offset:true}),
+})}).passthrough();
+export function facultyQuizSavedFromCommand(raw:unknown){
+ const result=savedQuizSchema.safeParse(raw);
+ return result.success?result.data.quiz:null;
+}
+export function facultyQuizReconcileRows<T extends {id:string}>(
+ existing:readonly T[],saved:T,
+):T[]{
+ return [saved,...existing.filter(row=>row.id!==saved.id)];
+}
