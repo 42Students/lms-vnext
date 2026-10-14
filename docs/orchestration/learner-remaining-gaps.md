@@ -877,3 +877,5 @@ PARTIAL — Implemented registered placement-only notification choice mutation a
 - L30-034 through L30-043 learner verification: no confirmed vNext verification state machine/private document schema or approved upload workflow. Do not invent verified badges or statuses.
 
 L17-007: date picker uses only persisted learner-scoped placement rounds, converted to ISO strings at the client boundary; acceptance remains PARTIAL until fresh disposable PostgreSQL, static checks and mobile/browser timezone review.
+
+L17-010: own-scoped calendar event details backed by migrated placement rounds; event IDs are checked against the returned membership-scoped events rather than accepted from caller input. New unit and disposable PostgreSQL tests authored, browser/DB acceptance pending.

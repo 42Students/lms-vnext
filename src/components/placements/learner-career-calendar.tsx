@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Drawer } from "@/components/ui/drawer";
+import { findOwnCareerCalendarEvent,learnerCareerCalendarEventTarget }
+  from "@/modules/placements/learner-career-event-detail-model";
 import { parseLearnerCareerDate } from "@/modules/placements/learner-career-date-model";
 import {
   careerCalendarEvents,
@@ -52,6 +55,7 @@ export function LearnerCareerCalendar({
   const [anchor, setAnchor] = useState(initialAnchor);
   const [view, setView] = useState<CareerCalendarView>("agenda");
   const [filter, setFilter] = useState<EventFilter>("ALL");
+  const [selectedKey,setSelectedKey]=useState<string|null>(null);
 
   const events = useMemo(() => careerCalendarEvents(rounds), [rounds]);
   const filtered = useMemo(() => filter === "ALL"
@@ -82,6 +86,9 @@ export function LearnerCareerCalendar({
     }
     return map;
   }, [filtered]);
+
+  const selected=findOwnCareerCalendarEvent(filtered,selectedKey);
+  function showEventDetail(event:CareerCalendarEvent){setSelectedKey(event.key);}
 
   function downloadCalendar() {
     const file = learnerCareerIcal(filtered, new Date());
@@ -243,13 +250,48 @@ export function LearnerCareerCalendar({
                 {event.rescheduled ? <StatusBadge>Rescheduled</StatusBadge> : null}
               </div>
             </div>
-            <Link
-              href={hrefForEvent(event)}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
-            >View application →</Link>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button type="button" onClick={()=>showEventDetail(event)}
+                className="min-h-10 text-sm font-semibold text-primary-text hover:underline">
+                Event details
+              </button>
+              <Link href={hrefForEvent(event)}
+                className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                View application →
+              </Link>
+            </div>
           </article>
         ))}
       </section>
+      <Drawer open={selected!==null} onOpenChange={(open)=>{if(!open)setSelectedKey(null);}}
+        title={selected?.title??"Career event"}
+        description={selected?selected.companyName+" · "+selected.roleTitle:undefined}
+        footer={
+          <>
+            {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Open exact round
+            </Link>:null}
+            <button type="button" onClick={()=>setSelectedKey(null)}
+              className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body">
+              Close
+            </button>
+          </>
+        }>
+        {selected?<dl className="grid gap-3 text-sm sm:grid-cols-2">
+          <div><dt className="font-semibold text-muted-foreground">Scheduled (IST)</dt>
+            <dd className="mt-1 text-foreground">{displayDate(selected.start)}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Round type</dt>
+            <dd className="mt-1 text-foreground">{selected.kind}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Employer</dt>
+            <dd className="mt-1 text-foreground">{selected.companyName}</dd></div>
+          <div><dt className="font-semibold text-muted-foreground">Role</dt>
+            <dd className="mt-1 text-foreground">{selected.roleTitle}</dd></div>
+          {selected.rescheduled?<p role="status" className="sm:col-span-2 text-body">
+            Approved reschedule applied to this event.
+          </p>:null}
+        </dl>:null}
+      </Drawer>
     </div>
   );
 }
