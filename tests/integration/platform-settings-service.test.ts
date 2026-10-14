@@ -30,6 +30,7 @@ describe("platform settings against PostgreSQL", () => {
       "course-progress",
       "attendance",
       "placements",
+      "sms",
       "operations",
     ]);
   });
