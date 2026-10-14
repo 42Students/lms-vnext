@@ -191,6 +191,8 @@ Legacy contract audited:
 ## Page: Classes / Sections
 **Legacy:** `/college-admin/classes`
 
+**Write-side PARTIAL (2026-10-14):** `/college/classes` adds a confirmed College Admin create/edit flow through strict Zod, college-scoped, same-origin POST/PATCH routes. Transactions serialize with the cohort and period ancestry, enforce unique active class name/code, valid cohort-period range, capacity not below active enrolled learners and dependency guards on identity change, and append one actor audit event per success. Cancel/discard confirmation and empty/loading/error states retained. Legacy recurring scheduling, archival, detailed min/max students, browser/database acceptance and full parity remain open.
+
 **Read-first PARTIAL (2026-10-14):** `/college/classes` now shows migrated class/section rows with program, cohort, academic period, configured capacity, active enrollments and lifecycle state. Includes program/status filters, search, 25-row pagination, college-scoped permissions, honest empty/loading/error states and a link to the existing section detail. Active enrollment counts use joined learner program/section enrollments with current in-college LEARNER memberships; no attendance, scheduled-session, or capacity-utilization metric is inferred. Legacy create/edit/delete, recurring-series scheduling, conflicts, moving learners, real-DB execution and browser parity remain open.
 
 Legacy contract audited:
