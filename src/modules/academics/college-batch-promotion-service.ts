@@ -1,16 +1,18 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
+  academicPeriods, cohortProgressionState, cohortProgressionEvents, cohorts, collegeMemberships,
   departments, learnerProgramEnrollments, membershipRoles, programs,
   programTerms, sectionEnrollments, sections, users,
 } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  batchPromotionPlan, collegePromotionQuerySchema, promotionLearnerBlockers,
+  batchPromotionPlan, collegePromotionQuerySchema, collegePromotionExecuteSchema, promotionReady, promotionLearnerBlockers,
   type PromotionBlocker,
 } from "./college-batch-promotion-model";
 
@@ -60,14 +62,25 @@ export async function listCollegePromotionOptions(context: RequestContext, raw: 
 /** No mutation, no enrollment changes, and no implied bulk promotion. */
 export async function previewCollegeBatchPromotion(context: RequestContext, raw: unknown) {
   const query = collegePromotionQuerySchema.parse(raw);
+  ownCollege(context);
   if (!query.cohortId) throw new CollegePromotionPreviewError("BATCH_NOT_FOUND");
+  return previewCollegeBatchPromotionInTransaction(context, query, getDb());
+}
+
+type Reader = Pick<ReturnType<typeof getDb>, "select">;
+export async function previewCollegeBatchPromotionInTransaction(
+  context: RequestContext,
+  query: ReturnType<typeof collegePromotionQuerySchema.parse>,
+  db: Reader,
+) {
   const member = ownCollege(context);
-  const db = getDb();
+  if (!query.cohortId) throw new CollegePromotionPreviewError("BATCH_NOT_FOUND");
   const [batch] = await db.select({
     id: cohorts.id, name: cohorts.name, status: cohorts.status,
     programId: programs.id, programName: programs.name,
     durationTerms: programs.durationTerms,
     currentTermNumber: cohortProgressionState.currentTermNumber,
+    version: cohortProgressionState.version,
     currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
     currentPeriodId: cohortProgressionState.currentPeriodId,
   }).from(cohorts)

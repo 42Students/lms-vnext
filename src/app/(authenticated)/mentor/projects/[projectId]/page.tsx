@@ -66,6 +66,12 @@ export default async function MentorProjectPage({
           Team membership history
         </Link>
         <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+        >
+          Project closeout checklist
+        </Link>
+        <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
         >
