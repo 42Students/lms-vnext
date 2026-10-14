@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { TpoRecruiterGrantForm, TpoRecruiterRevoke } from "@/components/placements/tpo-recruiter-grant-controls";
+import { getTpoTrustedCompanies } from "@/modules/placements/tpo-settings-people-service";
 import {
   getCurrentRequestContext,
 } from "@/auth/request-context";
@@ -96,11 +98,10 @@ export default async function TpoRecruiterAccessPage({
     );
   }
 
-  const data =
-    await listTpoRecruiterAccess(
-      context,
-      parsed.data,
-    );
+  const [data, linkedCompanies] = await Promise.all([
+    listTpoRecruiterAccess(context, parsed.data),
+    getTpoTrustedCompanies(context, context.membership.collegeId),
+  ]);
 
   const {
     query,
@@ -134,6 +135,11 @@ export default async function TpoRecruiterAccessPage({
         title="Recruiter access"
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
+
+      <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
+        relationshipId: company.relationshipId,
+        name: company.name,
+      }))} />
 
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">
@@ -285,6 +291,13 @@ export default async function TpoRecruiterAccessPage({
                           ? "Active"
                           : "Revoked"}
                       </StatusBadge>
+                      {item.status === "ACTIVE" && item.grantId && item.expectedUpdatedAt ? (
+                        <TpoRecruiterRevoke
+                          grantId={item.grantId}
+                          expectedUpdatedAt={item.expectedUpdatedAt}
+                          displayName={item.displayName}
+                        />
+                      ) : null}
                     </td>
 
                     <td className="px-4 py-4 text-body">
@@ -346,9 +359,9 @@ export default async function TpoRecruiterAccessPage({
         relationship may separately restrict access.
         This page does not expose recruiter emails,
         telephone numbers or internal identifiers,
-        and cannot grant or revoke access.
-        Legacy revoke confirmations, changes,
-        audit effects and browser parity remain open.
+        and can grant or revoke an existing user access through explicit
+        confirmation and immutable audit. Full legacy recruiter invites,
+        exact modal UX and browser parity remain open.
       </p>
     </div>
   );
