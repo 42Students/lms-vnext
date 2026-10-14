@@ -68,6 +68,13 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(foreign.items).toHaveLength(1);
     expect(foreign.items[0].event.collegeId).toBe(SEED_IDS.collegeB);
   });
+  it("filters by actor display name under persisted college scope",async()=>{
+    const actorNameRows=await listCollegeActivity(admin,{subjectType:subject,actorName:"never-an-actor-name"});
+    expect(actorNameRows.items).toHaveLength(0);
+    const actorIdRows=await listCollegeActivity(admin,{subjectType:subject,actorUserId:SEED_IDS.collegeAdminUser});
+    expect(actorIdRows.items.every(row=>row.event.collegeId===SEED_IDS.collegeA)).toBe(true);
+    await expect(listCollegeActivity(faculty,{actorName:"never"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("matches scoped summary text before cursor pagination",async()=>{
     const result=await listCollegeActivity(admin,{subjectType:subject,q:"w-audit-own-26"});
     expect(result.items).toHaveLength(1);
