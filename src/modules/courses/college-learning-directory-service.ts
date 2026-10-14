@@ -25,6 +25,7 @@ import {
   collegeLearningPageCount,
   collegeLearningQuerySchema,
   collegeLessonQuerySchema,
+  collegeProgressQuerySchema,
   type CollegeLessonRecord,
   type CollegeCourseProgressRecord,
 } from "./college-learning-directory-model";
@@ -138,7 +139,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
 /** Recorded *content events* per offering, never attendance/quiz completion,
  * enrollment readiness or a percentage of eligible learners. */
 export async function listCollegeCourseProgress(context: RequestContext, raw: unknown) {
-  const query = collegeLearningQuerySchema.parse(raw);
+  const query = collegeProgressQuerySchema.parse(raw);
   const collegeId = requireCollegeCoursesRead(context);
   const db = getDb();
   const scoped = db.select({
@@ -166,6 +167,7 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.q ? sql`(${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)} or
         ${cohorts.name} ilike ${searchLike(query.q)})` : undefined,
