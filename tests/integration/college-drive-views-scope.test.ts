@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
+import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -66,6 +67,16 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
     ]);
     expect(own.items).toContainEqual(expect.objectContaining({ id: ids.job, companyName: code, seasonName: code }));
     expect(foreign.items).toEqual([]);
+  });
+  it("resolves the drive, keeps selected null, and does not leak a foreign job", async () => {
+    const overview = await getCollegeDriveOverview(adminA, ids.job);
+    expect(overview.drive.companyName).toBe(code);
+    expect(overview.counts).toEqual({
+      applications: 0, shortlisted: 0, selected: null, offered: 0,
+    });
+    await expect(getCollegeDriveOverview(adminB, ids.job))
+      .rejects.toMatchObject({ code: "PLACEMENT_JOB_NOT_FOUND" });
+    await expect(getCollegeDriveOverview(learner, ids.job)).rejects.toBeInstanceOf(AuthorizationError);
   });
   it("rejects non-admin and caller-supplied college scope", async () => {
     await expect(listCollegeDrives(learner, {})).rejects.toBeInstanceOf(AuthorizationError);

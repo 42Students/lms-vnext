@@ -41,7 +41,7 @@
 | 4.4 | Student Groups list | PARTIAL | Buildable — group create/edit/status changes, CSV import and dynamic rule controls. |
 | 4.4 | Student Group detail | PARTIAL | Buildable — member add/remove/lock, waitlist actions, read-only bounded rule eligibility preview authored; rule writes, waitlist actions and executed denial acceptance remain. |
 | 4.5 | Drives landing | PARTIAL | Read-first `/college/placements/drives` built with scoped status/season/company/title filtering and paged results; legacy tabs, mutations, and executed browser/DB acceptance remain. |
-| 4.5 | Drive Overview | PARTIAL | Buildable — complete job detail sections, statuses, actions and browser parity. |
+| 4.5 | Drive Overview | PARTIAL | Read-first college-scoped overview with sourced application/current-shortlist/offer counts and unknown selected; complete job actions, source-owned selection semantics and browser acceptance remain. |
 | 4.5 | Applications | PARTIAL | Buildable — dedicated applicant list, screening actions, export and cross-college denial tests. |
 | 4.5 | Interviews | PARTIAL | Buildable — dedicated interview rounds, scheduling/results, guardrails and UI states. |
 | 4.5 | Shortlisted | PARTIAL | Buildable — persist shortlist decisions and display history/denial states in dedicated tab. |

@@ -200,7 +200,7 @@ Detailed page contract: `docs/parity/college-admin.md`.
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Drives landing | `/college-admin/jobs` + `/college-admin/jobs/all` | `/college/placements/drives` | PARTIAL — College Admin read-first drives directory over migrated jobs, company relationships and seasons. Exact college scope from current membership, Zod title/company/status/season filters, 25-row SQL pagination, empty/error/loading states and links to per-drive overview. Existing operations workspace preserved. Legacy all/own tabs, bulk/actions, browser and PostgreSQL acceptance remain open. | PARTIAL |
-| Drive Overview | job detail | vNext job workspace | Core exists; exact overview pending. | PARTIAL |
+| Drive Overview | job detail | `/college/placements/jobs/[jobId]/overview` | PARTIAL — College Admin scoped read-only job/company/season details and independent persisted application, current shortlist and distinct-offer counts. Selected is deliberately null/not available because APPLIED round results are PASS/FAIL/HOLD/ABSENT, not an authoritative selected flag. Foreign drive IDs return non-leaking NOT_FOUND; loading/error and links to existing operations and new read pages included. Exact legacy actions, selection business rule and browser acceptance remain. | PARTIAL |
 | Applications | `/college-admin/jobs/[jobId]/applications` | embedded job workspace | Dedicated workflow parity pending. | PARTIAL |
 | Interviews | `/college-admin/jobs/[jobId]/interviews` | rounds | Dedicated interview surface pending. | PARTIAL |
 | Shortlisted | `/college-admin/jobs/[jobId]/shortlisted` | screening state | Dedicated shortlist surface pending. | PARTIAL |
