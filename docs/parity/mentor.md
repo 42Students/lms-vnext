@@ -780,3 +780,19 @@ in-test-project PostgreSQL assertions verify real creation events, no fabricated
 review history, forged filters, wrong role and foreign-scope denial. Read-only,
 so optimistic mutation tokens are not applicable. **PARTIAL:** execute real PG,
 TypeScript, ESLint, responsive browser and legacy activity completeness checks.
+
+## 2026-10-14 chat-11 Q — final-delivery review filters/CSV (PARTIAL)
+
+The currently assigned Mentor Delivery review overview now filters persisted
+project_submissions by registered DRAFT/SUBMITTED/APPROVED/CHANGES_REQUESTED
+status and actual nonblank review-feedback presence/absence. SQL count, paging
+and rows use the identical same-project review join/filters; the responsive
+UI links each filtered version to the existing secure exact-version detail.
+A 200-row formula-neutralized CSV reports versions, recorded decision labels,
+IST timestamps and feedback presence but deliberately does not export raw
+feedback, submission URLs, learner contact or reviewer identities. Existing
+current-Mentor college and projects.read scope is reused. Pure model/unit
+and own-project PostgreSQL fixtures cover stored draft+review evidence,
+filter accuracy, forged selector, wrong-role, disabled and foreign denials.
+Read-only: no new mutation stale token applies. **PARTIAL:** independent
+PG/tsc/eslint/browser execution and legacy feedback-history parity remain.
