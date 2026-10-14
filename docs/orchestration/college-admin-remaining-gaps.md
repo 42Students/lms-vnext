@@ -23,7 +23,7 @@
 | 4.2 | Classes | PARTIAL | Buildable — section CRUD, capacity, recurring schedule setup and conflict/result reporting. |
 | 4.2 | Batch Promotion | PARTIAL | Buildable — read-first preview and confirmed PROMOTE mutation authored (version-CAS, blocker recheck, history/audit); GRADUATE and legacy/browser/PG acceptance remain open. |
 | 4.2 | Lecture Halls | PARTIAL | Buildable — migrated management exists; verify legacy field parity, conflicts, responsive behaviors and executed acceptance. |
-| 4.2 | Electives | PARTIAL | Buildable — existing slot catalogue; implement selection/enrollment rules, finalize actions, feature-disabled behavior and denial tests. |
+| 4.2 | Electives | PARTIAL | Buildable — existing slot catalogue plus slot create/edit with confirmation, version/selection guards; implement selection/enrollment rules, finalize actions, feature-disabled behavior and denial tests. |
 | 4.2 | Attendance | PARTIAL | Buildable — policy authority, exact grid/session corrections, department evidence, export and DB/browser acceptance. |
 | 4.2 | Section operations / schedules | PARTIAL | Buildable — reconcile section scheduling, repeated sessions, dependencies and error/prerequisite paths with legacy. |
 | 4.3 | Course detail | PARTIAL | Buildable — exact offering workspace sections, action/state parity, ownership and rollback/error behavior. |
