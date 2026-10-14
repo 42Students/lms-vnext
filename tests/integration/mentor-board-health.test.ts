@@ -11,6 +11,8 @@ import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
 import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
 import {startProjectSprint} from "@/modules/projects/lifecycle-service";
+import {scheduleProjectMeeting} from "@/modules/projects/meeting-service";
+import {decideMentorProjectMeeting} from "@/modules/projects/mentor-meeting-decision-service";
 import {submitProjectTask,reviewProjectTaskSubmission} from "@/modules/projects/task-submission-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires isolated disposable TEST_DATABASE_URL");
@@ -127,6 +129,33 @@ async function fixture(){
   return {project,mentor,foreign,learner,
     task:workspace.tasks[0]!,sprint:workspace.sprints[0]!};
 }
+
+describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",()=>{
+ it("completes a SQL-backed meeting and denies replay/foreign/wrong-role",async()=>{
+  const {project,mentor,foreign,learner}=await fixture();
+  const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
+   title:"Mentor session",startsAt:"2026-11-02T09:00:00.000Z",
+   endsAt:"2026-11-02T10:00:00.000Z",timeZone:"Asia/Kolkata",
+   meetingUrl:"https://example.invalid/mentor-session",
+  });
+  // Exercise database now() microseconds, not only JS-authored timestamps.
+  const versionRow=await pool.query<{updated_at:Date}>(
+   "update project_meetings set updated_at=now() where id=$1 returning updated_at",
+   [meeting.id],
+  );
+  const token={action:"COMPLETE" as const,expectedUpdatedAt:versionRow.rows[0]!.updated_at.toISOString(),
+   confirmed:true as const,outcome:"Finished"};
+  await expect(decideMentorProjectMeeting(learner,project.id,meeting.id,token)).rejects.toBeDefined();
+  await expect(decideMentorProjectMeeting(foreign,project.id,meeting.id,token)).rejects.toBeDefined();
+  await expect(decideMentorProjectMeeting(mentor,SEED_IDS.collegeB,meeting.id,token)).rejects.toBeDefined();
+  const done=await decideMentorProjectMeeting(mentor,project.id,meeting.id,token);
+  expect(done.status).toBe("COMPLETED");
+  await expect(decideMentorProjectMeeting(mentor,project.id,meeting.id,token)).rejects.toBeDefined();
+  const audit=await pool.query<{count:string}>(`select count(*)::text as count from activity_events
+    where subject_id=$1::text and event_type='projects.meeting.decided'`,[meeting.id]);
+  expect(audit.rows[0]?.count).toBe("1");
+ });
+});
 
 describe("Mentor task review queue after a persisted decision",()=>{
  it("shows a current submission and excludes its stale version after review",async()=>{
