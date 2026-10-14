@@ -34,9 +34,10 @@ export default async function LearnerProjectPage({
         : tab === "delivery"
           ? "delivery"
           : tab === "team" ||
+              tab === "meetings" ||
               tab === "sprints" ||
               tab === "resources"
-            ? tab
+            ? (tab === "meetings" ? "team" : tab)
             : "overview";
   const access = await requireProjectReadAccess(
     context,

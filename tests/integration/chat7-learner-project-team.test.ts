@@ -366,3 +366,13 @@ describe("L21-008 compatibility tab for authorized Project",()=>{
     ] as RequestContext[]) await expect(getProjectInstanceWorkspace(actor,ids.project)).rejects.toBeDefined();
   });
 });
+
+describe("L21-009 protected meeting alias",()=>{
+  it("resolves only the authorized Project",async()=>{
+    expect(canonicalLearnerProjectTab("meetings")).toBe("team");
+    expect((await getProjectInstanceWorkspace(context,ids.project)).project.id).toBe(ids.project);
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
+    await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();
+  });
+});
