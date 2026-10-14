@@ -337,6 +337,8 @@ Legacy:
 ### Tab: Offers
 - [ ] offer/selection list matches.
 - [ ] candidate offer state matches.
+
+**W49 A — PARTIAL:** TPO Offers & Joining now includes a confirmed, all-or-nothing administrative lifecycle recorder for up to 200 offer IDs. Registered offer statuses remain ISSUED/ACCEPTED/DECLINED/WITHDRAWN; EXTEND changes only expiry, and JOINED records an accepted offer's PENDING joining outcome. The pure action/transition model and row-locked transaction enforce expected status, expiry, terminal joining constraints, tenant scope, mandatory evidence/reason, and immutable actor-attributed offer/joining history and activity events. TPO-recorded ACCEPTED/DECLINED are evidence-backed administrative entries, not learner self-actions; exact permission/product consent policy, positive PostgreSQL/browser certification and parity remain open.
 - [ ] verify/selection actions match.
 - [ ] release/response/joining data matches.
 - [ ] candidate detail deep link/drawer matches.
