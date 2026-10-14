@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {csvSafeCell} from "./mentor-board-review-model";
 import type {MentorProjectAttention} from "./mentor-attention";
 
 export const mentorReportsQuerySchema=z.object({
@@ -41,12 +42,16 @@ export function mentorReportsOverview(
       a.title.localeCompare(b.title)||a.id.localeCompare(b.id));
   const total=filtered.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
   const page=Math.min(query.page,totalPages);
+  const projectRow=(p:MentorReportProject)=>({
+    id:p.id,title:p.title,status:p.status,isPrimaryMentor:p.isPrimaryMentor,
+    updatedAt:p.updatedAt,attention:[...(kinds.get(p.id)??[])].sort(),
+  });
   return {projectCount:projects.length,primaryMentorCount:projects.filter(p=>p.isPrimaryMentor).length,
     statusCounts,attentionCounts,total,page,pageSize,totalPages,
-    items:filtered.slice((page-1)*pageSize,page*pageSize).map(p=>({
-      id:p.id,title:p.title,status:p.status,isPrimaryMentor:p.isPrimaryMentor,
-      updatedAt:p.updatedAt,attention:[...(kinds.get(p.id)??[])].sort(),
-    }))};
+    items:filtered.slice((page-1)*pageSize,page*pageSize).map(projectRow),
+    exportItems:filtered.slice(0,100).map(projectRow),
+    exportOmitted:Math.max(0,total-100),
+  };
 }
 export function mentorReportsHref(query:MentorReportsQuery){
   const params=new URLSearchParams();
@@ -55,4 +60,23 @@ export function mentorReportsHref(query:MentorReportsQuery){
   if(query.search)params.set("search",query.search);
   if(query.page>1)params.set("page",String(query.page));
   return "/mentor/reports"+(params.size?"?"+params.toString():"");
+}
+
+/** Only current scoped status/attention metadata. No raw learners or contact exports. */
+export function mentorReportsCsv(rows:readonly {
+  id:string;title:string;status:string;isPrimaryMentor:boolean;
+  updatedAt:Date;attention:readonly string[];
+}[],omitted:number){
+  const format=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+  });
+  const lines=["Project ID,Project,Status,Primary Mentor,Recorded attention,Updated (IST)"];
+  for(const row of rows)lines.push([
+    row.id,row.title,row.status,row.isPrimaryMentor?"Yes":"No",
+    row.attention.join("; "),format.format(row.updatedAt)+" IST",
+  ].map(csvSafeCell).join(","));
+  if(omitted>0)lines.push(["","Truncated",omitted+" additional matching projects","","",""]
+    .map(csvSafeCell).join(","));
+  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }

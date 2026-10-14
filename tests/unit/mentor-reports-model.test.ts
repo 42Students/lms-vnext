@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {mentorReportsOverview,mentorReportsQuerySchema,mentorReportsHref}
+import {mentorReportsOverview,mentorReportsQuerySchema,mentorReportsHref,mentorReportsCsv}
   from "@/modules/projects/mentor-reports-model";
 const q=mentorReportsQuerySchema.parse({});
 const timestamp=new Date("2026-10-14T10:00:00.000Z");
@@ -19,6 +19,20 @@ describe("Mentor assigned-project report summary",()=>{
       attentionCounts:{REVIEW:1,STALLED:0,REQUESTED:1,MEETING_SOON:0},
       total:3});
     expect(result.items.find(p=>p.id==="b")?.attention).toEqual([]);
+  });
+  it("caps and neutralizes spreadsheet exports without learner metadata",()=>{
+    const projects=Array.from({length:103},(_,index)=>({
+      id:"p"+index,title:index===0?"=Command":"Project "+index,
+      status:"ACTIVE",updatedAt:timestamp,isPrimaryMentor:false,
+    }));
+    const result=mentorReportsOverview(projects,[],q);
+    expect(result.exportItems).toHaveLength(100);
+    expect(result.exportOmitted).toBe(3);
+    const csv=mentorReportsCsv(result.exportItems,result.exportOmitted);
+    expect(csv).toContain("'=Command");
+    expect(csv).toContain("3 additional matching projects");
+    expect(csv).not.toContain("learner_email");
+    expect(csv).not.toContain("phone");
   });
   it("filters exact registered status, attention, literal search, and page cap",()=>{
     const select=mentorReportsOverview(projects,attention,{
