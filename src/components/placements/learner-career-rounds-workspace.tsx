@@ -9,6 +9,7 @@ import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
   learnerInterviewViewHref,type LearnerInterviewScheduleView }
   from "@/modules/placements/learner-interview-view-model";
 import { learnerInterviewCalendarArtifacts } from "@/modules/placements/learner-interview-calendar-model";
+import {learnerInterviewCountdown} from "@/modules/placements/learner-interview-countdown-model";
 import {learnerInterviewFocusState} from "@/modules/placements/learner-interview-focus-model";
 import {learnerInterviewMobileSummary} from "@/modules/placements/learner-interview-mobile-model";
 import { Drawer } from "@/components/ui/drawer";
@@ -417,6 +418,14 @@ export function LearnerCareerRoundsWorkspace({
       >
         {selected ? (
           <div className="space-y-4">
+            {kind==="INTERVIEW" && selected && Number.isFinite(nowMs) ? (
+              <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-body">
+                {learnerInterviewCountdown({
+                  scheduledAt:selected.exception?.scheduledAt ?? selected.scheduledAt,
+                  durationMinutes:selected.durationMinutes,
+                },nowMs).label}
+              </p>
+            ) : null}
             {mobileInterviewSummary ? (
               <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-foreground sm:hidden">
                 {mobileInterviewSummary}

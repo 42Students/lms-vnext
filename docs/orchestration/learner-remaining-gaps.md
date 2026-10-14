@@ -964,3 +964,5 @@ Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence
 Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt-in policy/consent state not approved; L30-034..043 verification lacks reviewed documents and trusted state machine.
 
 2026-10-14 L16-004: selected owned interview from persisted scoped rounds is highlighted, and filtered-out deep links can be revealed without leaking foreign records. Fresh learner PG and pure-model tests authored. Browser/runtime acceptance pending. Skips: L1-021 has no trusted course image association; L13-016 requires private resume storage; L16-006 lacks audited learner attendance confirmation state; L30-034..043 lack migrated verification review/document contracts.
+
+2026-10-14 L16-005: refreshed minute-by-minute own interview countdown and honest time-window badge from persisted scheduled time and optional duration. No employer attendance/completion inferred. Pure model and self-owned learner PG authored; runtime/browser acceptance pending.
