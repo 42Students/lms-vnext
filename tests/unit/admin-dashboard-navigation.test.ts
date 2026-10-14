@@ -3,6 +3,7 @@ import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
   SUPER_ADMIN_GLOBAL_LINKS,
+  SUPER_ADMIN_COLLEGE_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
 
 type SetupStep = { key: string; label: string; href: string | null };
@@ -55,8 +56,12 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     expect(SUPER_ADMIN_GLOBAL_LINKS.map((item) => item.label)).toEqual([
       "Tenant Setup", "Feature Controls", "Activity Log",
     ]);
-    expect(SUPER_ADMIN_GLOBAL_LINKS[0]?.href).toBeNull();
-    expect(SUPER_ADMIN_GLOBAL_LINKS[1]?.href).toBeNull();
-    expect(SUPER_ADMIN_GLOBAL_LINKS[2]?.href).toBe("/activity");
+    expect(SUPER_ADMIN_GLOBAL_LINKS.map(item => item.href)).toEqual([
+      "/admin/tenants/setup", "/admin/features", "/admin/audit",
+    ]);
+    expect(SUPER_ADMIN_COLLEGE_LINKS.map(item => item.href)).toEqual([
+      "/admin/tenants/setup?tab=setup", "/admin/academics", "/admin/courses",
+      "/admin/people", "/admin/placements", "/admin/projects/templates",
+    ]);
   });
 });
