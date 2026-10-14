@@ -115,7 +115,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L2-004 | Students hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
 | L2-005 | Back to Courses | course shell | course detail header | CLOSED |
 | L2-006 | About this course | Home | Overview | GAP |
-| L2-007 | What you'll learn / learning-path summary | Home | Overview | GAP |
+| L2-007 | What you&apos;ll learn / learning-path summary | Home | published ordered lesson preview with own persisted item counts and null for no denominator; authored takeaways remain separate and are not fabricated. PARTIAL: fresh PostgreSQL test, tsc/lint, responsive browser and learning-path navigation acceptance not executed | PARTIAL |
 | L2-008 | Faculty/teacher context | Home | Overview | CLOSED |
 | L2-009 | Section + semester context | Home | Overview | CLOSED |
 | L2-010 | Credits/elective context | Home | Overview | CLOSED |

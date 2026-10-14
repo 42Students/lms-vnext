@@ -4,6 +4,7 @@ import { ExpandableCourseDescription } from "./expandable-course-description";
 import { ExpandableCourseUpdate } from "./expandable-course-update";
 import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overview-priority";
 import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
+import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
@@ -90,6 +91,7 @@ export function LearnerCourseOverview({
   }>;
 }) {
   const summary = workspace.summary;
+  const pathPreview = learnerCoursePathPreview(workspace.lessons);
   const progressAvailability = learnerProgressAvailability({
     hasPublishedLearningPath: workspace.learningPath !== null,
     publishedLessonCount: workspace.lessons.length,
@@ -301,6 +303,41 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
         </div>
+      </section>
+
+      <section aria-label="Learning path preview" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
+            <p className="mt-1 text-sm text-body">
+              {pathPreview.totalLessons} published {pathPreview.totalLessons===1?"lesson":"lessons"} in sequence.
+              Lesson names describe the curriculum, not promises of learning outcomes.
+            </p>
+          </div>
+          <Link href={`/learn/courses/${deliveryId}/roadmap`}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+            Full learning path →
+          </Link>
+        </div>
+        {pathPreview.lessons.length ? (
+          <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+            {pathPreview.lessons.map((lesson)=>(
+              <li key={lesson.id} className="rounded-lg border border-border p-3">
+                <Link href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
+                  className="block text-sm font-semibold text-primary-text">{lesson.name}</Link>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {lesson.progress===null?"No published trackable items"
+                    : `${lesson.completed} of ${lesson.total} items completed · ${lesson.progress}%`}
+                </p>
+              </li>
+            ))}
+          </ol>
+        ) : <p role="status" className="mt-4 text-sm text-body">
+          A published lesson outline is not available yet.
+        </p>}
+        {pathPreview.remaining>0?<p className="mt-3 text-xs text-muted-foreground">
+          And {pathPreview.remaining} more lessons in the learning path.
+        </p>:null}
       </section>
 
       <section
