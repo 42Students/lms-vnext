@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
+import { hidesFacultyCourseRouteError } from "@/modules/courses/faculty-course-route-errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-workspace";
 import {
@@ -21,11 +24,14 @@ export default async function FacultyCoursePage({
   const context =
     await getCurrentRequestContext();
   const { deliveryId } = await params;
-  const workspace =
-    await getFacultyCourseWorkspace(
-      context,
-      deliveryId,
-    );
+  if (!courseSectionDeliveryIdSchema.safeParse(deliveryId).success) notFound();
+  let workspace: Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
+  try {
+    workspace = await getFacultyCourseWorkspace(context, deliveryId);
+  } catch (error) {
+    if (hidesFacultyCourseRouteError(error)) notFound();
+    throw error;
+  }
   const [homeSignals, display] =
     await Promise.all([
       getFacultyCourseHomeSignals(
