@@ -883,3 +883,5 @@ L17-010: own-scoped calendar event details backed by migrated placement rounds; 
 L17-015: month/week mobile fallback now groups only real authorized events by IST calendar day and retains exact round and details links. No fabricated schedule entries; database and responsive acceptance pending.
 
 L11-003: partial-source placements dashboard now distinguishes read failures from empty data, prevents swallowed authorization errors with an upfront persisted learner gate, shows successful sections and a refresh control, and masks missing metric sources as unknown. Fresh-learner PostgreSQL tests and pure-model tests authored, independent error-injection/CI/browser acceptance pending.
+
+2026-10-14 L2-007: published learner learning-path preview and measured item completion now shown on Course Home; authored takeaways remain separate. All unit, PG, typecheck/lint and responsive acceptance still required.
