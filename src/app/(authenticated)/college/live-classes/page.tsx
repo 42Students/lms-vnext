@@ -20,7 +20,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  </div>;
  const data=await listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data);
  return <div className="space-y-4">
-  <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",data.query)}
+  <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view})}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
     Export live-class schedule CSV (UTC)
   </Link>

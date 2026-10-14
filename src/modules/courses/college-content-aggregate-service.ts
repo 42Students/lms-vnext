@@ -39,7 +39,9 @@ export async function listCollegeContentAggregate(
   rawQuery: unknown,
 ) {
   const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
-  const query = collegeContentQuerySchema.parse(live ? (({view: _view,...filters})=>filters)(live) : rawQuery);
+  const query = collegeContentQuerySchema.parse(live ? {
+    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,page:live.page,format:"ALL",
+  } : rawQuery);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "courses.read", {

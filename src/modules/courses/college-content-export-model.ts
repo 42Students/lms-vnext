@@ -1,10 +1,14 @@
+import {z} from "zod";
 import {collegeContentQuerySchema,type CollegeContentKind} from "./college-content-aggregate-model";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const CONTENT_METADATA_EXPORT_CAP=1000;
-export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true});
+export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true}).extend({
+ view:z.enum(["ALL","UPCOMING","PAST"]).default("ALL"),
+});
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  q:string;courseCode?:string;status:string;format:string;scope:string;
+ view?: "ALL"|"UPCOMING"|"PAST";
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -12,6 +16,7 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  if(q.status!=="ALL")p.set("status",q.status);
  if(q.scope!=="ALL"&&kind!=="LIVE_CLASS")p.set("scope",q.scope);
  if(q.format!=="ALL"&&kind==="VIDEO")p.set("format",q.format);
+ if(kind==="LIVE_CLASS"&&q.view&&q.view!=="ALL")p.set("view",q.view);
  const type=kind==="VIDEO"?"video":kind==="RESOURCE"?"resource":"live-class";
  return "/api/academics/college-content-export/"+type+(p.size?"?"+p.toString():"");
 }

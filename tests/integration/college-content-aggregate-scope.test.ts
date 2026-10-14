@@ -229,6 +229,10 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     expect(liveCsv.csv).toContain(label);
     expect(liveCsv.csv).toContain("Starts at (UTC)");
     expect(liveCsv.csv).not.toContain("meet.example.test");
+    const historicalCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"PAST"});
+    const futureCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,view:"UPCOMING"});
+    expect(historicalCsv.csv).toContain(label);
+    expect(futureCsv.csv).not.toContain(label);
     const foreignLiveCsv=await exportCollegeContentMetadata(adminB,"LIVE_CLASS",{q:label});
     expect(foreignLiveCsv.csv).not.toContain(label);
     await expect(exportCollegeContentMetadata(nonAdmin,"LIVE_CLASS",{})).rejects.toBeInstanceOf(AuthorizationError);
