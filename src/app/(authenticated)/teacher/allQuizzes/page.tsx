@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessment-overview";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,6 +9,12 @@ export default async function FacultyAllQuizzesPage() {
   const overview = await getFacultyAssessmentOverview(context);
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Link href="/teacher/results"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Assessment results overview →
+        </Link>
+      </div>
       <PageHeader
         eyebrow="Faculty"
         title="All Quizzes"
