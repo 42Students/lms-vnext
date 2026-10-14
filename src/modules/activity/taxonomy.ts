@@ -178,6 +178,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.candidate_preferences.updated",
   PLACEMENTS_NOTIFICATION_PREFERENCES_UPDATED:
     "placements.notification_preferences.updated",
+  PLACEMENTS_RECRUITER_PROFILE_UPDATED:
+    "placements.recruiter.profile_updated",
 } as const;
 
 export type ActivityEventType =
