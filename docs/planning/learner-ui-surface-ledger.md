@@ -432,7 +432,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | --- | --- | --- | --- | --- |
 | L14-001 | Search + URL state | ApplicationsContent | applications page | UNCHECKED |
 | L14-002 | Back/Forward hydration | applications route | strict URL state for search/stage/sort/view/pagination/own selected application; navigable history and popstate restoration, bounded search; no tenant selector. PARTIAL pending PostgreSQL/unit, lint/typecheck, mobile/back-forward browser acceptance | PARTIAL |
-| L14-003 | Stage filter chips | ApplicationsContent | applications page | UNCHECKED |
+| L14-003 | Stage filter chips | ApplicationsContent | own application screening-stage chips with persisted counts, active pressed states, URL navigation and 44px mobile hit targets; uses existing authorized learner journey. PARTIAL pending executed isolated PostgreSQL, unit, tsc/eslint and mobile/browser Back-Forward acceptance | PARTIAL |
 | L14-004 | All / In Progress / Completed views | ApplicationsContent | applications page | UNCHECKED |
 | L14-005 | Sort recent activity | ApplicationsContent | applications page | UNCHECKED |
 | L14-006 | Sort stage | ApplicationsContent | explicit persisted screening-stage A–Z sort; stable latest-activity then ID tie breaks, URL validation and selection preserved. PARTIAL: fresh PostgreSQL, tsc, lint, unit and browser/back-forward acceptance remain | PARTIAL |
