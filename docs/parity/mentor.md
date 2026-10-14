@@ -509,3 +509,19 @@ mobile review dialog sends the token. Unit and disposable PG fixtures cover
 default `now()`, approval, stale replay, foreign scope, wrong-role and audit.
 Still PARTIAL: execute tests and responsive browser acceptance, legacy review
 history and revised submission cycle.
+
+
+## 2026-10-14 chat-11 A — Mentor task status transitions (PARTIAL)
+
+The existing Mentor Board now offers confirmed TODO/IN_PROGRESS/BLOCKED state
+transitions using a dedicated same-origin PATCH endpoint, strict Zod validation,
+current live assigned-Mentor college scope and central projects.read.
+The service locks the Project, Task and Sprint, rejects shipped releases and
+non-active Sprints, compares PostgreSQL microsecond timestamps at millisecond
+precision in SQL, and records a same-transaction immutable actor/college
+before/after activity event. Direct DONE and IN_REVIEW transitions are reserved
+for versioned submission review, so Mentor cannot bypass the review record.
+Admin legacy controls remain unchanged. Source-authored pure and PostgreSQL
+tests cover valid writes, audit, forged inputs, stale replay and role/foreign
+denial. **PARTIAL:** checks are not executed in this session; mobile/browser,
+exact legacy Board controls, task assignees and workloads remain outstanding.
