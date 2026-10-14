@@ -25,9 +25,10 @@ function formatDeadline(value: string | null) {
 }
 
 export function LearnerPlacementJobDetail({
-  items,
+  items,returnHref="/learn/my-placements/jobs",
 }: {
   items: readonly LearnerPlacementJobItem[];
+  returnHref?:string;
 }) {
   const summary = learnerJobDetailSummary(items);
   if (!summary) return null; // route has already returned notFound()
@@ -42,7 +43,7 @@ export function LearnerPlacementJobDetail({
           My Placements
         </Link>
         <span aria-hidden="true">/</span>
-        <Link href="/learn/my-placements/jobs" className="text-primary-text hover:underline">
+        <Link href={returnHref} className="text-primary-text hover:underline">
           Drives
         </Link>
         <span aria-hidden="true">/</span>

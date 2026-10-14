@@ -24,6 +24,7 @@ export default async function LearnerPlacementApplicationsPage() {
 
   const items: LearnerPlacementJourneyItem[] = rows.map((row) => ({
     applicationId: row.applicationId,
+    jobId: row.job.id,
     jobTitle: row.job.title,
     companyName: row.company.name,
     applicationStatus: row.applicationStatus,

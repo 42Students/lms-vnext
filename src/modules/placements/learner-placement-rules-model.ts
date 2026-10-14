@@ -81,3 +81,24 @@ export function learnerPlacementPreparation(input: PlacementPreparationInput) {
     totalCount: criteria.length,
   };
 }
+
+/** Never imply versioned or retroactive College policy without a persisted policy source. */
+export function learnerRuleChangeApplicability(
+  ownedApplications:readonly {applicationStatus:string}[],
+){
+  const submittedCount=ownedApplications.filter(row=>row.applicationStatus==="SUBMITTED").length;
+  return {
+    submittedCount,
+    heading:submittedCount>0?"How rule changes could affect your applications":
+      "How eligibility changes affect future applications",
+    message:submittedCount>0
+      ? "You have "+submittedCount+" currently submitted "+
+        (submittedCount===1?"application":"applications")+
+        ". Future eligibility checks may use updated published drive criteria. "+
+        "This page cannot determine whether a policy change applies retroactively to a submitted application. "+
+        "Check each application and seek explicit placement-team clarification."
+      : "No currently submitted applications were found in your saved placement history. "+
+        "Future applications may be checked against updated published drive criteria. "+
+        "No versioned College-wide policy or retroactive change has been verified on this page.",
+  };
+}
