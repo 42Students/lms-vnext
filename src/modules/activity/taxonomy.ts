@@ -89,6 +89,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.discussion.deleted",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
+  PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
   // Lifecycle events are emitted only after W03's persisted mutation succeeds.
   // W06 owns the shared names; W03 owns actor authorization and the mutation.
   PROJECTS_PROJECT_ARCHIVED:
