@@ -1,4 +1,5 @@
 import "server-only";
+import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { localIdentityDirectory } from "./local-identity-directory";
@@ -181,9 +182,10 @@ export function getOwnFacultyProfileWithRuntime(context: RequestContext) {
   return getOwnFacultyProfile(context, drizzleProfileRepository);
 }
 
-export function getOwnLearnerProfileWithRuntime(
+export async function getOwnLearnerProfileWithRuntime(
   context: RequestContext,
 ) {
+  await requireOwnLearnerProfileAccess(context);
   return getOwnLearnerProfile(
     context,
     drizzleProfileRepository,

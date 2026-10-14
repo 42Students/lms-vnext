@@ -1097,3 +1097,51 @@ Remaining: registered receipt/file tables, runtime readiness and real scanner at
 ## 2026-10-15 Class Schedule day/week IST correction — PARTIAL
 
 Learner day/week desktop grids, mobile agendas, Today count/highlighting and initial calendar month now use the same IST event-day grouping as the month view and displayed times. The server supplies an explicit calendar-day anchor so a device east or west of India cannot shift it across a month/day boundary. Pure tests execute UTC, Tokyo and Los Angeles device timezone cases and midnight/year boundaries; an own-enrolled-learner persisted class/denial PG test was authored. The shared schedule component retains its existing default for other callers; no Faculty route or other lane file was edited. PG execution and browser/device verification remain open. No DONE claims.
+
+
+**2026-10-15 chat-5 L17-009 PARTIAL:** Month/week desktop calendar cells display up to two real scoped rounds as labelled chips plus an honest overflow count. The entire day opens its schedule; direct chip-to-drawer action and runtime/mobile/browser parity remain to verify. Pure-model and own-fixture PostgreSQL tests authored; not executed.
+
+
+**2026-10-15 chat-5 L17-002 PARTIAL:** Agenda now spans 30 days starting from the chosen IST day (not a disguised month mode) and Previous/Next move 30-day windows. Events remain scoped through the existing own-learner PostgreSQL read. Runtime and browser verification outstanding.
+
+
+**2026-10-15 chat-5 L17-003 PARTIAL:** Month view now shows the precise scoped round totals by kind for its IST month alongside the day grid; no missing job-deadline or college events are fabricated. Unit and own-fixture PostgreSQL cases authored, runtime/browser acceptance outstanding.
+
+
+**2026-10-15 chat-5 L17-004 PARTIAL:** Mobile Week view now preserves seven daily slots (including explicitly empty dates) instead of skipping unscheduled days. Scheduled items still come from the learner-scoped read. Browser/device and executed test acceptance outstanding.
+
+
+**2026-10-15 chat-5 L17-005 PARTIAL:** Day mode includes a scoped IST-day timeline summary with real first/last scheduled times, distinct from week/month. Tests authored; execute PG, static and browser acceptance before closing.
+
+
+**2026-10-15 chat-5 L17-006 PARTIAL:** Previous/Next respect view-specific increments and disable when the resulting date is outside the validated 2000–2100 calendar range, avoiding an invalid URL reset to Today. The Today control remains explicit. Tests authored, browser/runtime acceptance pending.
+
+
+**2026-10-15 chat-5 L17-014 PARTIAL:** Calendar export now respects the visible validated IST date window and event-kind selector, preserving UTC schedule instants in the .ics payload rather than exporting unrelated months. Sensitive round meeting URLs remain excluded. Unit and own-fixture PG coverage authored; execution and real calendar import remain open.
+
+
+**2026-10-15 chat-5 L11-002 PARTIAL:** First-run Learner Placements now offers explicit mobile-friendly next steps to review placement rules, browse published drives and open the existing job-preferences editor. It appears only with confirmed empty own application history, never when journey availability is unknown; completion state is not invented. Unit and fresh-learner PG authorization coverage authored; execution/browser/source comparison outstanding.
+
+
+**2026-10-15 chat-5 L29-010 PARTIAL:** Learner inbox interview actions now require either the generic interview route or a strict UUID application+round pair. Cross-college/user query selectors are stripped; malformed/duplicate selectors fail closed. The interview destination still verifies persisted owned round scope. Pure-model and self-seeded learner PostgreSQL tests authored. Executed static/PG and browser navigation remain outstanding.
+
+
+**2026-10-15 chat-5 L29-011 PARTIAL:** Personal notification actions now support strict direct links to the persisted application detail and its status-history page, not only the generic Applications drawer. Only UUID IDs survive; user/college selectors and unregistered path suffixes are rejected. Destination rechecks own learner scope. Existing owned-application PG tests expanded; static, PostgreSQL and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L29-012 PARTIAL:** Learner notifications now canonicalize the course list, persisted delivery detail and course home actions, rejecting malformed delivery IDs and unexpected course paths while removing caller-supplied scope parameters. Existing course delivery routes enforce enrollment and learner membership. New pure-model/own-course PostgreSQL tests authored; runtime and mobile navigation acceptance pending. Course feature files remain under chat-7 ownership.
+
+
+**2026-10-15 chat-5 L29-013 PARTIAL:** Notification project actions now recognize the own Projects directory and exact project instance UUID with a single permitted legacy tab (including Board and Delivery). Arbitrary tenant/actor selectors are stripped; forged/duplicate tabs and unexpected project URLs fail closed. The destination still enforces learner project-membership access. Unit and independent own-membership PostgreSQL denial evidence authored; project producer-to-inbox and browser verification outstanding. No chat-7 Projects files changed.
+
+
+**2026-10-15 chat-5 L14-005 PARTIAL:** Applications Recent Activity sorting now uses the saved withdrawn timestamp alongside submission, screening decision and round-result activity, so an actual later withdrawal is not incorrectly sorted by the older submission date. Stable tie breaks and tenant-scoped source remain unchanged. Pure model/own-learner DB denial coverage authored; executed tests and browser Back/Forward acceptance pending.
+
+
+**2026-10-15 chat-5 L29-018 PARTIAL:** Learner Notifications mobile filter tabs now wrap into a two-column layout rather than requiring horizontal scrolling, expose a concise active-filter/result summary, and constrain long notification text and action links at 375px. Only the learner inbox wrapper changes; other role lists are unaffected. Pure model and own-inbox PG tests authored; device/browser/keyboard execution pending.
+
+
+**2026-10-15 chat-5 L30-023 PARTIAL:** Learner Profile now makes legacy publications/awards discoverable without inventing a dedicated verified publication entity: it labels saved achievements as possible awards and only explicitly publication-labelled, learner-authored metadata as publications. Full section editors remain the canonical authorship workflow, with no promotion to verified status. Pure model and self-seeded own-profile PostgreSQL role/tenant/suspension tests authored. Exact legacy data entry, storage migration, runtime and mobile/browser parity remain open.
+
+
+**2026-10-15 chat-5 L30-033 PARTIAL:** Learner Profile on narrow screens now has direct quick links to up to four unfinished, non-sensitive career sections; verified/identity status is not inferred. Profile cards/long names wrap within their grid cells, and collection edit/delete actions use full-width minimum-44px mobile hit targets. Unit and own-profile PostgreSQL access/denial tests authored; 375px, keyboard, dialog resizing and browser/mobile verification pending.

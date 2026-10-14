@@ -1,3 +1,4 @@
+import { authoringDueInstant } from "./faculty-authoring-datetime-model";
 export type EditableContent = "RESOURCE" | "YOUTUBE" | "LIVE_CLASS";
 export function facultyContentPatch(input: {
   kind: EditableContent;
@@ -36,8 +37,10 @@ export function facultyContentPatch(input: {
       throw new Error("Duration must be 1-86400 seconds.");
     return { ...base, durationSeconds: seconds };
   }
-  const start = new Date(input.starts ?? "");
-  const end = new Date(input.ends ?? "");
+  const startIso = authoringDueInstant(input.starts ?? "");
+  const endIso = authoringDueInstant(input.ends ?? "");
+  const start = new Date(startIso ?? "");
+  const end = new Date(endIso ?? "");
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start)
     throw new Error("End time must be after a valid start time.");
   return { ...base, startsAt: start.toISOString(), endsAt: end.toISOString() };
