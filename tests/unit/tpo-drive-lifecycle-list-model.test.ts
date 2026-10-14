@@ -18,6 +18,8 @@ describe("TPO drive lifecycle listing", () => {
    expect(tpoDriveLifecycleQuerySchema.safeParse({deadline:"SELECTED"}).success).toBe(false);
    expect(tpoDriveLifecycleQuerySchema.parse({workMode:"REMOTE"}).workMode).toBe("REMOTE");
    expect(tpoDriveLifecycleQuerySchema.safeParse({workMode:"EXTERNAL"}).success).toBe(false);
+   expect(tpoDriveLifecycleQuerySchema.parse({employmentType:"CONTRACT"}).employmentType).toBe("CONTRACT");
+   expect(tpoDriveLifecycleQuerySchema.safeParse({employmentType:"PART_TIME"}).success).toBe(false);
    expect(tpoDriveLifecycleQuerySchema.safeParse({page:1.5}).success).toBe(false);
    expect(tpoDriveLifecycleQuerySchema.parse({search:" Acme ",page:"2"})).toMatchObject({search:"Acme",page:2});
   });
