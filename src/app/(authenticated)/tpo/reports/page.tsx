@@ -91,6 +91,11 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/unplaced",
         },
         {
+          title: "Offer expiry watchlist",
+          description: "Currently issued offers expiring in a validated IST day window, with safe capped CSV.",
+          path: "/tpo/reports/offers-expiry",
+        },
+        {
           title: "Offers & acceptance",
           description:
             "Current issued, accepted, declined, withdrawn and expiry-derived outstanding offers.",
