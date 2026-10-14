@@ -4,7 +4,8 @@ import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
 describe("TPO applicant CSV cap and injection safety",()=>{
  it("validates filters, escapes SQL wildcard characters and displays IST dates",()=>{
   const id="550e8400-e29b-41d4-a716-446655440000";
-  expect(tpoDriveApplicationsExportQuerySchema.parse({jobId:id})).toMatchObject({stage:"ALL",search:""});
+  expect(tpoDriveApplicationsExportQuerySchema.parse({jobId:id})).toMatchObject({stage:"ALL",search:"",channel:"ALL"});
+  expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,channel:"OTHER"}).success).toBe(false);
   expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,stage:"SELECTED"}).success).toBe(false);
   expect(tpoApplicantExportSearchPattern("50%_\\")).toBe("%50\\%\\_\\\\%");
   const csv=projectTpoDriveApplicationsExport([{applicationId:"a",studentName:"Candidate",roleTitle:"Role",

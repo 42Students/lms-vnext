@@ -59,6 +59,9 @@ it("reads persisted pending applicants and denies foreign college / wrong role",
 if(!pool)throw Error("PG required");
 const jobId=await fixture();
 const result=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING"});
+const ownChannel=await getTpoApplicantPipeline(tpo,{jobId,channel:"INTERNAL"});
+expect(ownChannel.rows.some(r=>r.id===ids.app)).toBe(true);
+expect((await getTpoApplicantPipeline(tpo,{jobId,channel:"EXTERNAL"})).rows.some(r=>r.id===ids.app)).toBe(false);
 expect(result.rows.some(r=>r.id===ids.app)).toBe(true);
 for(let i=0;i<25;i++){
  const user=(await pool.query<{id:string}>("INSERT INTO users(identity_uid,display_name) VALUES($1,$2) RETURNING id",

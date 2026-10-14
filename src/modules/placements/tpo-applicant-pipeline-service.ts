@@ -27,7 +27,9 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       isNull(placementJobs.archivedAt))).limit(1);
   if(!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const projection=await db.transaction(async tx=>{
-   const scope=and(eq(placementApplications.jobId,job.id),input.search?or(
+   const scope=and(eq(placementApplications.jobId,job.id),
+    input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
+    input.search?or(
     ilike(users.displayName,tpoApplicantExportSearchPattern(input.search)),
     ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(input.search))):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
@@ -81,5 +83,5 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,...projection};
 }

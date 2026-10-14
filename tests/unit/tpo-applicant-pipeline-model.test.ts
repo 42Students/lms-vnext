@@ -21,6 +21,11 @@ describe("TPO applicant stage projection",()=>{
     expect(projectTpoApplicantPipeline(facts,"SHORTLISTED","").rows).toHaveLength(1);
     expect(projectTpoApplicantPipeline(facts,"ALL","no-match").rows).toHaveLength(0);
   });
+  it("validates application channel independently of stage",()=>{
+    const jobId="550e8400-e29b-41d4-a716-446655440000";
+    expect(tpoApplicantPipelineParams.parse({jobId,channel:"EXTERNAL"}).channel).toBe("EXTERNAL");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,channel:"MESSAGE"}).success).toBe(false);
+  });
   it("rejects unsupported stage filters",()=>{
     expect(tpoApplicantPipelineParams.safeParse({jobId:"550e8400-e29b-41d4-a716-446655440000",stage:"SELECTED"}).success).toBe(false);
   });
