@@ -1,8 +1,8 @@
 import "server-only";
 
-import { and, eq, isNull, ne } from "drizzle-orm";
+import { and, eq, isNull, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, departments, programTermCourses, programTerms, programs } from "@/db/schema";
+import { cohortProgressionState, cohorts, departments, programTermCourses, programTerms, programs } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -19,7 +19,8 @@ import { postgresConstraintName } from "./errors";
 export type SemesterMutationErrorCode =
   | "SEMESTER_NOT_FOUND" | "PROGRAM_NOT_FOUND" | "SEMESTER_NUMBER_CONFLICT"
   | "SEMESTER_OUTSIDE_PROGRAM_DURATION" | "SEMESTER_HAS_COURSES"
-  | "SEMESTER_HAS_ACTIVE_COHORTS" | "SEMESTER_DEPENDENCY_CONFLICT";
+  | "SEMESTER_HAS_ACTIVE_COHORTS" | "SEMESTER_DEPENDENCY_CONFLICT"
+  | "SEMESTER_STALE" | "SEMESTER_ACTIVE_CURRICULUM";
 
 export class SemesterMutationError extends Error {
   constructor(public readonly code: SemesterMutationErrorCode) {
@@ -154,11 +155,29 @@ export async function updateCollegeSemester(
   try {
     return await getDb().transaction(async tx => {
       const current = await lockedTerm(tx, termId, member.collegeId);
+      const [version] = await tx.select({id:programTerms.id}).from(programTerms)
+        .where(and(eq(programTerms.id,current.id),
+          sql`date_trunc('milliseconds',${programTerms.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`))
+        .limit(1);
+      if(!version)throw new SemesterMutationError("SEMESTER_STALE");
+      if(current.isActive && !input.isActive){
+        const [[mapped],[live]] = await Promise.all([
+          tx.select({id:programTermCourses.id}).from(programTermCourses)
+            .where(eq(programTermCourses.programTermId,current.id)).limit(1),
+          tx.select({id:cohorts.id}).from(cohorts)
+            .innerJoin(cohortProgressionState,eq(cohortProgressionState.cohortId,cohorts.id))
+            .where(and(eq(cohorts.programId,current.programId),
+              ne(cohorts.status,"ARCHIVED"),
+              eq(cohortProgressionState.currentTermNumber,current.termNumber)))
+            .limit(1),
+        ]);
+        if(mapped||live)throw new SemesterMutationError("SEMESTER_ACTIVE_CURRICULUM");
+      }
       const [updated] = await tx.update(programTerms).set({
         name: input.name,
         totalCredits: input.totalCredits,
         isActive: input.isActive,
-        updatedAt: new Date(),
+        updatedAt: sql<Date>`greatest(${programTerms.updatedAt}+interval '1 millisecond',clock_timestamp())`,
       }).where(and(eq(programTerms.id, termId), eq(programTerms.programId, current.programId)))
         .returning();
       if (!updated) throw new SemesterMutationError("SEMESTER_NOT_FOUND");
