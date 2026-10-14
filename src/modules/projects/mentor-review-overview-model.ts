@@ -4,7 +4,8 @@ export const mentorReviewOverviewSchema=z.object({
  projectId:z.string().uuid(),
  status:z.enum(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"]).default("ALL"),
  feedback:z.enum(["ALL","WITH","WITHOUT"]).default("ALL"),
- version:z.coerce.number().int().min(1).max(1000000).optional(),
+ version:z.preprocess(value=>value===""?undefined:value,
+  z.coerce.number().int().min(1).max(1000000).optional()),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorReviewOverviewQuery=z.infer<typeof mentorReviewOverviewSchema>;

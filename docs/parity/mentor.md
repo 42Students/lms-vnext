@@ -946,3 +946,5 @@ Exact-project Resource Directory now filters records with/without nonblank regis
 
 ## 2026-10-15 chat-11 round 6 AY — Meetings assigned-project state (PARTIAL)
 Current-assignment global Mentor Meetings now filters actual registered PLANNED/ACTIVE/COMPLETED/ARCHIVED project lifecycle status alongside meeting status/type/IST period/search. The same scoped roster drives UI and capped metadata CSV; invalid states are rejected, archived data never gains new write rights. Pure tests authored. Execute typecheck, lint, unit/PG and browser to verify full legacy calendar parity.
+
+Round 6 AU follow-up: a blank optional delivery-version HTML input is normalized to absent before Zod numeric coercion, so the unfiltered view does not fail validation. The corresponding empty-input unit assertion is source-authored; execution pending.
