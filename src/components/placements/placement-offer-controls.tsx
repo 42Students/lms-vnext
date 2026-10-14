@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
 
 type OfferStatus =
   | "ISSUED"
@@ -82,11 +83,15 @@ const inputClass =
   "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 export function PlacementOfferControls({
+  jobId,
   jobTitle,
   candidates,
+  isTpo,
 }: {
+  jobId: string;
   jobTitle: string;
   candidates: readonly PlacementOfferCandidateItem[];
+  isTpo: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -332,6 +337,18 @@ export function PlacementOfferControls({
           Issue offers only after every evaluative round has a confirmed pass. Learners accept or decline; the placement team records joining outcomes.
         </p>
       </div>
+
+      {isTpo ? (
+        <PlacementBulkOfferWithdraw
+          jobId={jobId}
+          choices={candidates.flatMap((item) => item.offer ? [{
+            id: item.offer.id,
+            label: item.displayName ?? "Unnamed learner",
+            status: item.offer.status,
+            joiningStatus: item.joining?.status ?? null,
+          }] : [])}
+        />
+      ) : null}
 
       {candidates.length === 0 ? (
         <p className="m-0 px-5 py-6 text-sm text-muted-foreground">

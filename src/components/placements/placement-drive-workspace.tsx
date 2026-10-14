@@ -382,6 +382,8 @@ export async function PlacementDriveWorkspace({
         data={controlData}
       />
       <PlacementOfferControls
+        jobId={jobId}
+        isTpo={hasMembershipRole(context, "TPO")}
         jobTitle={job.title}
         candidates={offerCandidates.map(
           (item) => ({
