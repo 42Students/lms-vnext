@@ -1,4 +1,7 @@
 import "server-only";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { placementJobs } from "@/db/schema";
 import { z } from "zod";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -6,6 +9,7 @@ import { requirePlacementManageScope } from "./scope";
 import { getTpoCompanyDetailView } from "./tpo-companies-view-service";
 import { getTpoCompanyLifecycle } from "./tpo-company-lifecycle-service";
 import { projectTpoCompanyRelationshipSummary } from "./tpo-company-relationship-summary-model";
+import { projectTpoCompanyHiringPulse } from "./tpo-company-hiring-pulse-model";
 
 /** Strictly read-only canonical company view from persisted college relationship. */
 export async function getTpoCompanyDetailReadOnly(context: RequestContext, rawCompanyId: unknown) {
@@ -24,8 +28,18 @@ export async function getTpoCompanyDetailReadOnly(context: RequestContext, rawCo
     getTpoCompanyLifecycle(context, companyId),
   ]);
   if (!detail || !stored || detail.company.relationshipId !== stored.relationshipId) return null;
+  const seasons = await getDb().selectDistinct({ seasonId: placementJobs.seasonId })
+    .from(placementJobs).where(and(
+      eq(placementJobs.collegeId, collegeId),
+      eq(placementJobs.companyRelationshipId, stored.relationshipId),
+    ));
+  const hiringPulse = projectTpoCompanyHiringPulse({
+    drives: detail.drives, offers: detail.hiringHistory, timeline: detail.timeline,
+    seasonIds: seasons.map((item) => item.seasonId),
+  });
   return {
     ...detail,
     relationship: projectTpoCompanyRelationshipSummary(stored),
+    hiringPulse,
   };
 }
