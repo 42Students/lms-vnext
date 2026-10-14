@@ -420,3 +420,19 @@ endpoint is added. Unit tests and a PostgreSQL denial suite for the report
 readers are authored, not executed. Large-report browser acceptance, exact
 legacy export shape, offline download reliability and report semantic parity
 remain OPEN. The existing Assignment/Quiz report rows stay PARTIAL.
+
+## Faculty server-owned Section report CSV endpoint (2026-10-14)
+
+The existing Quiz and Assignment report pages now link to the authenticated
+`GET /api/courses/faculty/reports/[kind]/[assessmentId]/csv?deliveryId=...`.
+The endpoint Zod-validates assessment kind, UUIDs and absence of extra scope
+parameters; checks active Faculty membership and central courses.read; and
+re-executes the canonical persisted Section report reader before exporting.
+Rows include recorded attempts/submissions, missing eligible Learners, scores
+when actually graded, timing notes and private/published grade indicators.
+CSV uses quoted UTF-8 cells and formula neutralization for spreadsheet-safe
+imports, an attachment filename, private no-store and nosniff headers.
+The client-only CSV exporter is replaced with an authenticated same-origin
+GET link; no write method was introduced. Unit and PostgreSQL denial tests
+are authored but not executed; real browser download and full legacy output
+parity remain PARTIAL.
