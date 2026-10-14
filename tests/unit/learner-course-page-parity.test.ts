@@ -74,6 +74,16 @@ describe("learner Course page parity contract", () => {
     expect(player).toContain("readOnly");
   });
 
+  it("links both authorized course drill-down views without changing legacy tabs", () => {
+    const page = read(
+      "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
+    );
+    expect(page).toContain("Detailed progress");
+    expect(page).toContain("Attendance history");
+    expect(page).toContain("/progress");
+    expect(page).toContain("/attendance-summary");
+  });
+
   it("keeps Course Attendance learner-only and Discussions interactive", () => {
     const attendance = read(
       "src/components/courses/learner-course-attendance.tsx",
