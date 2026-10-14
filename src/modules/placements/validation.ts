@@ -1253,6 +1253,7 @@ export const createPlacementRequestInputSchema =
         .object({
           requestType: z.literal("APPLICATION_WITHDRAWAL"),
           applicationId: placementApplicationIdSchema,
+          expectedUpdatedAt: z.string().datetime({offset:true}).optional(),
           reason: placementRequestReasonSchema,
         })
         .strict(),
