@@ -76,6 +76,10 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      <StatusBadge tone={row.membershipStatus==="ACTIVE"?"success":"neutral"}>Membership {row.membershipStatus}</StatusBadge>
      {row.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
     </div>
+    <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
+     className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+     View membership →
+    </Link>
     <p className="mt-2 text-xs text-muted-foreground">Membership updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</p>
    </article>)}
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
