@@ -453,7 +453,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L14-021 | Loading state | ApplicationsContent | applications page | UNCHECKED |
 | L14-022 | Hard/inline error state | ApplicationsContent | applications page | UNCHECKED |
 | L14-023 | First-run/filtered-empty | ApplicationsContent | applications page | UNCHECKED |
-| L14-024 | Mobile cards/modals | ApplicationsContent responsive | applications page | UNCHECKED |
+| L14-024 | Mobile cards/modals | ApplicationsContent responsive | mobile-only collapsible filters with active-count/44px button; cards wrap long roles, full-width tap action, drawer links become full-width on mobile without changing own-membership data; PARTIAL pending mobile browser/keyboard screen-reader, tsc/lint and fresh-PG execution | PARTIAL |
 
 ## L15 — Placement Assessments
 

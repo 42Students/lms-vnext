@@ -8,6 +8,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
+import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -40,6 +41,7 @@ export function LearnerApplicationsBrowse({
   const params = useSearchParams();
   const url=readLearnerApplicationUrl(params.toString());
   const [search,setSearch]=useState(url.q);
+  const [mobileOpen,setMobileOpen]=useState(false);
   const lastCommitted=useRef(url.q);
   const [withdrawTarget, setWithdrawTarget] = useState<LearnerPlacementJourneyItem | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
@@ -135,7 +137,14 @@ export function LearnerApplicationsBrowse({
           {withdrawNotice}
         </p>
       ) : null}
-      <section aria-label="Application list filters" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Application list filters" className="rounded-xl border border-border bg-surface p-3 sm:p-5">
+        <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
+          onClick={()=>setMobileOpen(open=>!open)}
+          className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          <span>{mobileOpen?"Hide application filters":learnerApplicationMobileSummary(filters)}</span>
+          <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
+        </button>
+        <div id="learner-app-filters" className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Application stage views">
           {viewOptions.map((option) => (
             <button
@@ -180,6 +189,7 @@ export function LearnerApplicationsBrowse({
               <option value="oldest">Oldest application</option>
             </select>
           </label>
+        </div>
         </div>
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
@@ -230,17 +240,17 @@ export function LearnerApplicationsBrowse({
             <>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >Application detail</Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 Full history
               </Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 Company preview
               </Link>
@@ -260,10 +270,10 @@ export function LearnerApplicationsBrowse({
               Withdraw application
             </Button>
           ) : null}
-          <Link href="/learn/my-placements/assessments" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          <Link href="/learn/my-placements/assessments" className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             Assessments
           </Link>
-          <Link href="/learn/my-placements/interviews" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          <Link href="/learn/my-placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             Interviews
           </Link>
           <Button onClick={() => updateQuery({applicationId:null})}>Got it</Button>
