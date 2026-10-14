@@ -17,7 +17,10 @@ export function facultyPublishedGradeRows(
   const byMember=new Map<string,GradebookScore[]>();
   const eligible=new Set(roster.map(r=>r.membershipId));
   for(const score of scores){
-    if(!eligible.has(score.membershipId))continue;
+    // Malformed or private producer data must not produce plausible grade totals.
+    if(!eligible.has(score.membershipId) ||
+      !Number.isFinite(score.earned) || !Number.isFinite(score.possible) ||
+      score.possible<=0 || score.earned<0 || score.earned>score.possible)continue;
     const entries=byMember.get(score.membershipId)??[];
     if(!entries.some(e=>e.kind===score.kind&&e.assessmentId===score.assessmentId))
       entries.push(score);
@@ -73,4 +76,46 @@ export function facultyPublishedLearnerBreakdown(
       status:"PUBLISHED_SCORE" as const};
 
   });
+}
+
+/**
+ * A bounded view over the already authorized Section gradebook. This does not
+ * alter the server-owned full-Section CSV or grant access to other Sections.
+ */
+export const facultyGradebookViewQuerySchema = z.object({
+  search: z.string().trim().max(120).default(""),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+}).strict();
+export type FacultyGradebookViewQuery = z.infer<typeof facultyGradebookViewQuerySchema>;
+
+export function paginateFacultyGradebookRows<T extends GradebookLearner>(
+  rows: readonly T[], query: FacultyGradebookViewQuery,
+) {
+  const term = query.search.toLowerCase();
+  const matching = rows.filter(row =>
+    !term || [row.displayName, row.rollNumber, row.email].some(value =>
+      value?.toLowerCase().includes(term)),
+  ).sort((a,b) =>
+    (a.rollNumber ?? "").localeCompare(b.rollNumber ?? "", undefined, {numeric:true}) ||
+    (a.displayName ?? "").localeCompare(b.displayName ?? "") ||
+    a.membershipId.localeCompare(b.membershipId),
+  );
+  const pageSize=25;
+  const totalPages=Math.max(1, Math.ceil(matching.length/pageSize));
+  const page=Math.min(query.page,totalPages);
+  return {
+    total:rows.length, matching:matching.length, page, pageSize, totalPages,
+    items:matching.slice((page-1)*pageSize,page*pageSize),
+  };
+}
+
+export function facultyGradebookViewHref(
+  deliveryId:string, query:FacultyGradebookViewQuery,
+) {
+  const params=new URLSearchParams();
+  if(query.search)params.set("search",query.search);
+  if(query.page>1)params.set("page",String(query.page));
+  const suffix=params.toString();
+  return "/teacher/courses/"+encodeURIComponent(deliveryId)+"/gradebook"+
+    (suffix?"?"+suffix:"");
 }

@@ -774,3 +774,19 @@ post/delete activity audit and same-origin fences remain. Added pure model and
 in-test Faculty-only membership PostgreSQL create/pin/stale/foreign/wrong-role/
 delete/audit assertions. Outstanding: run unit/PG/lint/TypeScript and browser
 role/keyboard/mobile tests; exact legacy moderation workflows. PARTIAL.
+
+## Faculty published gradebook searchable roster (2026-10-14)
+
+PARTIAL: The exact teaching-Section published gradebook now renders 25
+current authorized learners per page, with bounded case-insensitive search
+by name, roll number and email, deterministic roll/name order, strict Zod
+query validation and links to existing own-Section score breakdown. The CSV
+still exports the full server-authorized Section, not filtered screen rows.
+Malformed nonfinite, negative or over-maximum score evidence is excluded
+rather than counted as a legitimate grade in the pure aggregate model.
+Existing server Faculty permission/tenant/Section/grade-publication gates
+are unchanged; no new mutation, audit event, schema or private grading
+read path was added. Focused unit regressions are authored but NOT claimed
+as executed PostgreSQL, browser, ESLint or whole-repository TypeScript proof.
+Legacy gradebook weighting, full exported/download acceptance and responsive
+browser review remain OPEN; no parity status is promoted to DONE.
