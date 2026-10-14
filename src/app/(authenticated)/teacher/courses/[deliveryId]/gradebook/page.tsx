@@ -40,6 +40,11 @@ export default async function FacultyGradebookPage({
           {row.rollNumber?"Roll "+row.rollNumber+" · ":""}
           {row.email??"No email on record"}
         </p>
+        <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
+          "/gradebook/"+encodeURIComponent(row.membershipId)}
+          className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          View published score breakdown →
+        </Link>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <p className="text-sm text-body">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
           <p className="text-sm text-body">Recorded points: {

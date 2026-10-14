@@ -705,3 +705,15 @@ This is a bound on exported rows, not a bound on underlying authorized report
 reads, and not a complete gradebook when truncated. Unit tests and an added
 assertion in the existing fresh-PG positive Section fixture are authored but
 not executed here. Full legacy analytics/download browser parity stays PARTIAL.
+
+## 2026-10-14 Faculty gradebook learner breakdown (PARTIAL)
+
+A per-learner read-only drill-down under the exact Faculty-owned delivery's
+published gradebook enumerates only registered published assignments and quizzes
+with results explicitly released. Published assignment scores require the
+individual gradePublished flag; Quiz scores require resultsPublished. A missing,
+private, unattempted, or invalid score is **Unknown**, not zero. The current
+Section roster is rechecked and arbitrary membership identifiers return a
+non-leaking NOT_FOUND error. The drill-down is not a weighted final grade.
+Pure model and positive/denial PostgreSQL tests are authored, not independently
+executed; mobile/browser and legacy gradebook acceptance remain open.
