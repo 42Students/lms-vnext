@@ -1,0 +1,59 @@
+import "server-only";
+import { and, eq, sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { collegeMemberships, learnerProfiles, membershipRoles, users } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, can } from "@/modules/permissions/policy";
+import { validateLearnerProfileSectionEdit } from "./learner-profile-section-model";
+
+export async function updateOwnLearnerProfileSection(context:RequestContext,rawInput:unknown) {
+  const input=validateLearnerProfileSectionEdit(rawInput);
+  const membership=context.membership;
+  if(!membership || !membership.roles.includes("LEARNER") ||
+      !can(context,"profile.self.manage",{collegeId:membership.collegeId,organizationId:membership.organizationId})) {
+    throw new AuthorizationError("profile.self.manage");
+  }
+  return getDb().transaction(async tx => {
+    const [owner]=await tx.select({
+      userId:collegeMemberships.userId,collegeId:collegeMemberships.collegeId,
+      status:collegeMemberships.status,
+    }).from(collegeMemberships).where(eq(collegeMemberships.id,membership.id)).for("share").limit(1);
+    const [account]=await tx.select({status:users.platformStatus})
+      .from(users).where(eq(users.id,context.user.id)).for("share").limit(1);
+    const [role]=await tx.select({id:membershipRoles.id}).from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId,membership.id),eq(membershipRoles.role,"LEARNER")))
+      .for("share").limit(1);
+    if(!owner || owner.userId!==context.user.id || owner.collegeId!==membership.collegeId ||
+       owner.status!=="ACTIVE" || !account || account.status!=="ACTIVE" || !role) {
+      throw new AuthorizationError("profile.self.manage");
+    }
+    const [saved]=await tx.insert(learnerProfiles).values({
+      membershipId:membership.id,
+      profileDocument:{[input.section]:input.items},
+    }).onConflictDoUpdate({
+      target:learnerProfiles.membershipId,
+      set:{
+        profileDocument:sql`jsonb_set(
+          ${learnerProfiles.profileDocument},
+          ARRAY[${input.section}]::text[],
+          ${JSON.stringify(input.items)}::jsonb,
+          true
+        )`,
+        updatedAt:new Date(),
+      },
+    }).returning({document:learnerProfiles.profileDocument});
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_PROFILE_SECTION_UPDATED,
+      collegeId:membership.collegeId,
+      organizationId:membership.organizationId,
+      subjectType:"learner_profile",
+      subjectId:membership.id,
+      summary:"Learner updated profile section",
+      metadata:{section:input.section,itemCount:input.items.length},
+    });
+    const document=saved?.document ?? {};
+    return {section:input.section,items:document[input.section] ?? input.items};
+  });
+}
