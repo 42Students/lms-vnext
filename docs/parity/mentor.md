@@ -329,3 +329,21 @@ with unique template/project names and full event/fixture cleanup.
 These tests are authored **but not executed here**; do not mark Board
 or task reviews DONE without fresh-DB, lint, typecheck and mobile/browser
 proof. No unmigrated assignee/workload data has been invented.
+
+## Mentor Sprint creation and optimistic lifecycle control (2026-10-14)
+
+Added Mentor-only create in the Release workspace, and Start/Complete/Reopen
+confirmation-gated actions using current persisted sprint timestamp tokens.
+Strict Zod rejects caller-supplied dates, tenant IDs and unregistered fields.
+This is intentional: `project_sprints` has no registered start/end date
+columns. A release-linked planned Sprint is inserted transactionally under a
+project row lock with a unique template key and next persisted sequence.
+Transitions check active Mentor project membership, central projects.read,
+module enablement, release state, other active sprints, and open-task status
+before updating. Every committed create/status change records a sanitized
+actor-and-college activity row in the same transaction. The UI explains that
+dates cannot yet be saved; only ISO offset timestamps are accepted as
+optimistic tokens and no IST-local date string is silently coerced.
+Pure-model and isolated PostgreSQL positive/stale/foreign/forged tests are
+authored; executed current-SHA lint, typecheck, browser and DB acceptance
+are still OPEN and Project Sprints remains PARTIAL.

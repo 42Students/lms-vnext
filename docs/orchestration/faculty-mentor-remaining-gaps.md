@@ -123,3 +123,14 @@ foreign/forged/stale/no-op denial and full cleanup. Unit/route tests are
 authored. A **missing migrated assignee/workload field** still blocks complete
 legacy Board parity; fresh PostgreSQL, ESLint, TypeScript and browser execution
 are not claimed. PARTIAL only.
+
+## 2026-10-14 Mentor Sprint CREATE and status lifecycle
+
+Built a migrated-field Sprint CREATE service and signed-in Mentor confirmation
+form, plus optimistic START/COMPLETE/REOPEN endpoints. Both use same-origin
+checks, Zod, exact active Mentor project scope, registered project/release/sprint
+rows, row locks, and transactional actor-college audit metadata. A new test case
+extends the isolated, uniquely named sprint PostgreSQL fixture with successful
+create/transition history and stale/foreign-role denials. Date values are
+explicitly rejected until promoted migration columns exist. This partial
+implementation does not claim complete legacy date semantics.
