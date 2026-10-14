@@ -7,7 +7,7 @@ const HEADER = [
 ] as const;
 
 function csvCell(raw: string) {
-  const text = /^[\\s]*[=+\\-@\\t\\r\\n]/u.test(raw) ? "'" + raw : raw;
+  const text = (/^\s*[=+\-@]/u.test(raw) || /^[\t\r\n]/u.test(raw)) ? "'" + raw : raw;
   return '"' + text.replaceAll('"', '""') + '"';
 }
 

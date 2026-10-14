@@ -14,6 +14,11 @@ describe("recruiter shared applicant CSV", () => {
     expect(result.csv).toContain("'=HYPERLINK");
     expect(result.csv).toContain("'+SUM(1,2)");
     expect(result.csv).toContain("Masked");
+    const padded = buildHrApplicantCsv([{
+      ...applicant, name: "  =HYPERLINK(1,2)", role: "\t@SUM(1,1)",
+    }],1);
+    expect(padded.csv).toContain("'  =HYPERLINK");
+    expect(padded.csv).toContain("'\t@SUM");
     expect(result.csv).not.toContain("private@example.test");
     expect(result.csv).toContain("15/10/2026");
     expect(result.exported).toBe(1);
