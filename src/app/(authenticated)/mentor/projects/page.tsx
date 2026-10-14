@@ -261,6 +261,14 @@ export default async function MentorProjectsPage({
         description="Projects where you are responsible for execution guidance, review and final evaluation."
         actions={
           <div className="flex flex-wrap gap-2">
+            <Link href="/mentor/reviews"
+              className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+              Review queue
+            </Link>
+            <Link href="/mentor/activity"
+              className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+              Activity
+            </Link>
             <Link
               href="/mentor/calendar"
               className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text"
