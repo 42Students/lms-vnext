@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sectionVisibleInAdminScope } from "@/modules/admin-ui/super-admin-section-detail";
+import { resourceVisibleInAdminScope } from "@/modules/admin-ui/super-admin-resource-scope-model";
 
 const actual = { collegeId: "college-a", organizationId: "org-a" };
 describe("Super Admin section URL safety scope", () => {
