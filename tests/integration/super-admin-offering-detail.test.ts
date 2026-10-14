@@ -18,10 +18,10 @@ const ids = { period: randomUUID(), program: randomUUID(), cohort: randomUUID(),
 const label = "admin-offering-" + ids.offering.slice(0, 8);
 describe.skipIf(!enabled)("Super Admin offering URL PostgreSQL safety", () => {
   beforeAll(async () => {
-    await pool!.query("insert into academic_periods (id,college_id,name,code,start_date,end_date) values ($1,$2,$3,$3,'2026-07-01','2026-12-31')", [ids.period, SEED_IDS.collegeA, label]);
-    await pool!.query("insert into programs (id,department_id,name,code,duration_terms) values ($1,$2,$3,$3,8)", [ids.program, SEED_IDS.departmentA, label]);
-    await pool!.query("insert into cohorts (id,program_id,name,code,start_period_id) values ($1,$2,$3,$3,$4)", [ids.cohort, ids.program, label, ids.period]);
-    await pool!.query("insert into courses (id,department_id,name,code) values ($1,$2,$3,$3)", [ids.course, SEED_IDS.departmentA, label]);
+    await pool!.query("insert into academic_periods (id,college_id,name,code,start_date,end_date) values ($1,$2,$3::text,$3::text,'2026-07-01','2026-12-31')", [ids.period, SEED_IDS.collegeA, label]);
+    await pool!.query("insert into programs (id,department_id,name,code,duration_terms) values ($1,$2,$3::text,$3::text,8)", [ids.program, SEED_IDS.departmentA, label]);
+    await pool!.query("insert into cohorts (id,program_id,name,code,start_period_id) values ($1,$2,$3::text,$3::text,$4)", [ids.cohort, ids.program, label, ids.period]);
+    await pool!.query("insert into courses (id,department_id,name,code) values ($1,$2,$3::text,$3::text)", [ids.course, SEED_IDS.departmentA, label]);
     await pool!.query("insert into course_offerings (id,course_id,cohort_id,academic_period_id) values ($1,$2,$3,$4)", [ids.offering, ids.course, ids.cohort, ids.period]);
   });
   afterAll(async () => {

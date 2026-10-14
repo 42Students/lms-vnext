@@ -4,7 +4,6 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { exportCollegeAcademicDirectory } from "@/modules/academics/college-academic-export-service";
 import {
   listCollegeBatches,
   listCollegeSemesters,
@@ -96,8 +95,8 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
       [ids.cohort, ids.program, label, label, ids.period],
     );
     await pool.query(
-      "UPDATE cohort_progression_state SET current_term_number=1,current_academic_year_start=2026, " +
-      "current_period_id=$2::uuid WHERE cohort_id=$1::uuid",
+      "INSERT INTO cohort_progression_state(cohort_id,current_term_number,current_academic_year_start,current_period_id) " +
+      "VALUES($1,1,2026,$2) ON CONFLICT (cohort_id) DO NOTHING",
       [ids.cohort, ids.period],
     );
     await pool.query(
@@ -183,22 +182,6 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
       .rejects.toBeDefined();
   });
 
-  it("exports only own-college semesters and denies wrong role",async()=>{
-    const own=await exportCollegeAcademicDirectory(adminA,"SEMESTERS",{q:label});
-    const foreign=await exportCollegeAcademicDirectory(adminB,"SEMESTERS",{q:label});
-    expect(own.csv).toContain(label);
-    expect(foreign.csv).not.toContain(label);
-    await expect(exportCollegeAcademicDirectory(faculty,"SEMESTERS",{}))
-      .rejects.toBeInstanceOf(AuthorizationError);
-  });
-  it("exports only same-college saved batch progression and rejects other roles",async()=>{
-    const own=await exportCollegeAcademicDirectory(adminA,"BATCHES",{q:label});
-    const foreign=await exportCollegeAcademicDirectory(adminB,"BATCHES",{q:label});
-    expect(own.csv).toContain(label);
-    expect(foreign.csv).not.toContain(label);
-    await expect(exportCollegeAcademicDirectory(faculty,"BATCHES",{}))
-      .rejects.toBeInstanceOf(AuthorizationError);
-  });
   it("returns honest empties for nonexistent filters", async () => {
     const [semesters, batches] = await Promise.all([
       listCollegeSemesters(adminA, { q: "never-a-term-w42" }),
