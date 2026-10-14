@@ -11,3 +11,8 @@ export function tpoCompanyOfferDetailHref(jobId: string, offerId: string) {
   return "/tpo/placements/jobs/" + encodeURIComponent(jobId)
     + "/offers/" + encodeURIComponent(offerId);
 }
+
+/** A linked company contact is still read under the signed-in college's CRM scope. */
+export function tpoCompanyLeadHref(leadId: string) {
+  return "/tpo/recruiters/" + encodeURIComponent(leadId);
+}

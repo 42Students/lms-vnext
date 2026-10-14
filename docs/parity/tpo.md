@@ -1,3 +1,5 @@
+**Chat-2 / Company contact-people drill-in — PARTIAL (2026-10-15):** The company People page links each persisted linked recruiter lead to its canonical TPO recruiter-detail workspace. The destination's existing college-scoped lead loader remains responsible for authorization; no unlinked contact identities or private applicant lists are exposed. Model test authored; desktop/mobile and PG acceptance remain open.
+
 **Chat-2 / Company offer/joining timeline links — PARTIAL (2026-10-15):** Offer-issued, response and recorded-joining events now deep-link to their exact persisted TPO offer record instead of the drive only. The destination retains college/role checks. Unit regression added; legacy parity and PG/mobile/browser proof remain open.
 
 **Chat-2 / Company hiring-history offer drill-in — PARTIAL (2026-10-15):** Each persisted company offer version can now open the canonical TPO offer detail page, preserving the exact job ID and offer ID instead of linking only to the parent drive. The destination independently authorizes its TPO college scope; no learner contact is exported. Pure-model regression authored; PG/browser acceptance remains open.
