@@ -454,6 +454,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 # People
 
 ## Page: Faculty
+
+**Lifecycle audit link PARTIAL (2026-10-14):** Faculty directory and detail now link to a scoped Activity Log filter using the target membership UUID; server-side subjectId filtering operates after the existing college permission scope, including stable pagination. Lifecycle PATCH remains confirmed and transactionally audited. CSV export deliberately does not inherit subjectId filtering and the UI labels that limitation; full legacy/browser proof remains open.
 **Legacy:** `/college-admin/teachers`
 
 **Detail PARTIAL (2026-10-14):** `/college/faculty/[membershipId]` now provides scoped Faculty name, academic title, employment type, department and persisted teaching assignment history with active/ended counts and distinct offerings. No hours or availability are inferred and no private identity fields are disclosed. Foreign-college/nonexistent memberships get indistinguishable not-found behavior. Browser/PG acceptance and full legacy workload parity remain open.

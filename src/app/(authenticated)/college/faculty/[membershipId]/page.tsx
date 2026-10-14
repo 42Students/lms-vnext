@@ -20,7 +20,11 @@ export default async function CollegeFacultyDetailPage({ params }: {
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Faculty" title={data.person.name}
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
-      actions={<Link href="/college/faculty" className="text-sm font-semibold text-primary-text">Back to faculty</Link>} />
+      actions={<div className="flex flex-wrap gap-3">
+        <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
+          className="text-sm font-semibold text-primary-text">Lifecycle audit</Link>
+        <Link href="/college/faculty" className="text-sm font-semibold text-primary-text">Back to faculty</Link>
+      </div>} />
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
       <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
