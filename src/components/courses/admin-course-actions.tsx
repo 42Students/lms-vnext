@@ -244,7 +244,9 @@ export function CourseActions({
 
 export function OfferingActions({
   offering,
+  hideArchive = false,
 }: {
+  hideArchive?: boolean;
   offering: {
     id: string;
     type: "CORE" | "ELECTIVE";
@@ -296,15 +298,13 @@ export function OfferingActions({
         >
           Edit
         </Button>
-        <Button
+        {!hideArchive ? <Button
           size="sm"
           variant="ghost"
-          onClick={() =>
-            setArchiveOpen(true)
-          }
+          onClick={() => setArchiveOpen(true)}
         >
           Archive
-        </Button>
+        </Button> : null}
       </div>
 
       <Dialog
@@ -414,7 +414,7 @@ export function OfferingActions({
         </div>
       </Dialog>
 
-      <ConfirmDialog
+      {!hideArchive ? <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
         title={
@@ -437,7 +437,7 @@ export function OfferingActions({
             () => setArchiveOpen(false),
           )
         }
-      />
+      /> : null}
     </>
   );
 }

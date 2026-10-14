@@ -17,6 +17,7 @@ export default async function CollegeCoursesPage() {
     await getAdminCourseWorkspace(
       context,
       membership.collegeId,
+      true,
     );
 
   return (
@@ -29,6 +30,7 @@ export default async function CollegeCoursesPage() {
       <AdminCourseOverview
         workspace={workspace}
         offeringBasePath="/college/courses/offerings"
+        allowOfferingLifecycle
       />
     </div>
   );
