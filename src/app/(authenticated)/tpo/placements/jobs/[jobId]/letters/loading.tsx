@@ -1,0 +1,1 @@
+export default function Loading(){return <div aria-busy="true" aria-label="Loading offer letter evidence" className="space-y-3"><div className="h-20 animate-pulse rounded bg-muted"/><div className="h-48 animate-pulse rounded bg-muted"/></div>;}

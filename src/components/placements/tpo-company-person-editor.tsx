@@ -1,0 +1,114 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Person = {
+  id: string;
+  name: string;
+  email: string | null;
+  designation: string | null;
+  updatedAt: string;
+};
+
+export function TpoCompanyPersonEditor({
+  companyId,
+  contacts,
+}: {
+  companyId: string;
+  contacts: readonly Person[];
+}) {
+  const router = useRouter();
+  const [selected, setSelected] = useState("NEW");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const current = contacts.find((item) => item.id === selected);
+
+  function select(value: string) {
+    setSelected(value);
+    const item = contacts.find((candidate) => candidate.id === value);
+    setName(item?.name ?? "");
+    setEmail(item?.email ?? "");
+    setDesignation(item?.designation ?? "");
+    setMessage(null);
+  }
+
+  async function save() {
+    if (busy || !name.trim() || !email.trim()) return;
+    const isEdit = Boolean(current);
+    if (!window.confirm(
+      isEdit
+        ? "Save edits to this linked company contact? An immutable audit note will be recorded."
+        : "Add this contact person to the selected company? An immutable audit note will be recorded.",
+    )) return;
+    setBusy(true); setMessage(null);
+    try {
+      const body = current
+        ? { action: "EDIT", confirmed: true, leadId: current.id,
+            expectedUpdatedAt: current.updatedAt, name: name.trim(),
+            email: email.trim(), designation: designation.trim() }
+        : { action: "CREATE", confirmed: true, name: name.trim(),
+            email: email.trim(), designation: designation.trim() };
+      const response = await fetch(
+        "/api/placements/tpo/companies/" + encodeURIComponent(companyId) + "/people",
+        { method: "POST", headers: { "Content-Type": "application/json" },
+          credentials: "same-origin", body: JSON.stringify(body) },
+      );
+      if (!response.ok) {
+        setMessage(response.status === 409
+          ? "Duplicate contact or stale changes. Reload before trying again."
+          : "Contact was not saved; verify access and details before retrying.");
+        return;
+      }
+      setMessage("Contact saved. Refreshing current records.");
+      select("NEW");
+      router.refresh();
+    } catch {
+      setMessage("Network error: refresh before retrying to avoid duplicate changes.");
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <h2 className="text-base font-semibold text-foreground">Add or edit contact person</h2>
+      <p className="text-sm text-body">
+        Only contacts explicitly linked to this company appear. Email is required and
+        must be unique in this college; existing phone-only contacts can still be edited
+        once an email is provided. No messages are sent.
+      </p>
+      <label className="block text-sm font-medium">Contact
+        <select value={selected} onChange={event => select(event.target.value)}
+          className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface p-2">
+          <option value="NEW">Add new person</option>
+          {contacts.map(item => (
+            <option key={item.id} value={item.id}>{item.name}</option>
+          ))}
+        </select>
+      </label>
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="text-sm font-medium">Name
+          <input value={name} maxLength={150} onChange={event => setName(event.target.value)}
+            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
+        </label>
+        <label className="text-sm font-medium">Email
+          <input type="email" value={email} maxLength={150}
+            onChange={event => setEmail(event.target.value)}
+            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
+        </label>
+        <label className="text-sm font-medium">Designation (optional)
+          <input value={designation} maxLength={100}
+            onChange={event => setDesignation(event.target.value)}
+            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
+        </label>
+      </div>
+      <button type="button" onClick={() => void save()}
+        disabled={busy || !name.trim() || !email.trim()}
+        className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+        {busy ? "Saving..." : current ? "Review and save changes" : "Review and add contact"}
+      </button>
+      {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
+    </section>
+  );
+}
