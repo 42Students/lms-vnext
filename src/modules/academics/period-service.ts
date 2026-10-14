@@ -8,6 +8,7 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods,
 } from "@/db/schema";
+import { changeCollegePeriodLifecycle } from "./college-period-lifecycle-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
@@ -219,6 +220,10 @@ export async function transitionAcademicPeriod(
 ) {
   const periodId =
     academicPeriodIdSchema.parse(periodIdInput);
+  if (rawInput && typeof rawInput === "object" && "action" in rawInput &&
+      (rawInput.action === "CLOSE" || rawInput.action === "REOPEN")) {
+    return changeCollegePeriodLifecycle(context, periodId, rawInput);
+  }
   const input =
     academicPeriodTransitionSchema.parse(rawInput);
   const current =

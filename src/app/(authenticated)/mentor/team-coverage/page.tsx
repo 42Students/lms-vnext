@@ -67,12 +67,27 @@ export default async function MentorTeamCoveragePage({
             className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
           <Link href="/mentor/team-coverage" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
         </form>
+        <section aria-label="Registered team coverage summary"
+          className="grid gap-3 sm:grid-cols-3">
+          {([
+            ["Current assigned projects",data.projectCount],
+            ["Projects with no active learners",data.summary.zeroLearnerProjects],
+            ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
+          ] as const).map(([label,value])=>
+            <div key={label} className="rounded-xl border border-border bg-surface p-4">
+              <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+              <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
+            </div>)}
+        </section>
         <p className="text-sm text-body">
           {data.total} matching project{data.total === 1 ? "" : "s"}
         </p>
         {data.items.length === 0
-          ? <EmptyState title="No matching active team records"
-              description="Your active assigned projects do not match this filter. No learner or primary-Mentor status has been inferred from incomplete histories." />
+          ? data.projectCount===0
+            ? <EmptyState title="No currently assigned active projects"
+                description="There are no current non-archived project assignments for this Mentor. No historical team or staffing status is inferred." />
+            : <EmptyState title="No projects match these filters"
+                description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
           : <div className="grid gap-3">{data.items.map(item =>
             <article key={item.projectId} className="rounded-xl border border-border bg-surface p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -103,6 +118,10 @@ export default async function MentorTeamCoveragePage({
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
                   className="text-sm font-semibold text-primary-text hover:underline">
                   Membership history →
+                </Link>
+                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
+                  className="text-sm font-semibold text-primary-text hover:underline">
+                  Team meeting log →
                 </Link>
               </div>
             </article>)}</div>}

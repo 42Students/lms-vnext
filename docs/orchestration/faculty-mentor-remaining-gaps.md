@@ -216,3 +216,40 @@ migrated project_submissions and project_submission_reviews, with no raw
 feedback or private learner data, 20-version pagination and explicit gaps.
 No invented history, no new write route. PARTIAL pending executed PostgreSQL,
 browser and full legacy project overview acceptance.
+
+## 2026-10-14 chat-4 A — live classes
+
+Source-authored live class CREATE, EDIT, CANCEL for exact current Faculty
+teaching delivery and registered lesson, using migrated lesson_contents,
+status ARCHIVED for cancellation and no unsupported recording fields. HTTPS
+meeting URL only, explicit confirmation, same-origin POST, strict Zod,
+IST period-window check, overlap detection per teaching actor,
+optimistic timestamp and transaction audit. Unit and isolated PostgreSQL
+fixture tests are authored, not run locally. Blocker: positive DB/CI/browser
+evidence, product conflict policy for co-teachers, full legacy live-room
+workflow. Course Blueprint and Class Schedule remain PARTIAL.
+
+## 2026-10-14 B — attendance schedule
+
+Buildable migrated Section schedule events support confirmed Faculty
+CREATE/RESCHEDULE with exact teaching Section, same-college permission,
+class/faculty conflict detection, IST period bounds, optimistic token,
+transaction audit and separate attendance marking lifecycle. No new table.
+Unit/PG success and denial tests are authored, not executed. Marked sessions
+cannot be rescheduled. Browser and classroom-policy acceptance still open.
+
+## 2026-10-14 C — bounded Quiz result export
+
+Buildable and source-authored: same GET Section report authorization plus
+a 500-learner-result CSV export cap, numeric omitted-row footer and HTTP
+notice headers; formula escaping preserved, UI warns of partial files.
+Remaining: execute PostgreSQL and browser export tests; verify product-approved
+large-export strategy and full question-level legacy output.
+
+## 2026-10-14 D — team coverage polish
+
+Existing migrated Project member and role grant tables support registered
+active team coverage; revoked-role rows are now excluded. The view separates
+no assigned projects from filter no-match, adds aggregate counts and links
+to the scoped registered meeting log. No new write, no audit. Pure/PG tests
+authored, not executed; owner approval of staffing rules remains blocked.
