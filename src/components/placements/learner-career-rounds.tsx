@@ -55,11 +55,13 @@ export function LearnerCareerRounds({
   kind,
   onSelect,
   snapshotNowIso,
+  highlightedKey = null,
 }: {
   rounds: readonly LearnerCareerRound[];
   kind: "ASSESSMENT" | "INTERVIEW" | "CALENDAR";
   onSelect?: (round: LearnerCareerRound) => void;
   snapshotNowIso?: string;
+  highlightedKey?: string | null;
 }) {
   const filtered = rounds.filter((round) =>
     isCareerRoundVisible(kind, round.roundKind),
@@ -86,7 +88,12 @@ export function LearnerCareerRounds({
               durationMinutes:round.durationMinutes},snapshot)
           : null;
         return (
-          <article key={round.applicationId + ":" + round.roundId} className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <article key={round.applicationId + ":" + round.roundId}
+            data-focused={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
+            aria-current={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
+            className={highlightedKey===round.applicationId+":"+round.roundId
+              ? "min-w-0 scroll-mt-24 rounded-xl border-2 border-primary bg-primary-subtle p-4 shadow-sm sm:p-5"
+              : "min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">{round.companyName}</p>
