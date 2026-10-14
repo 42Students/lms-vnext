@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -103,7 +103,7 @@ export async function saveTpoCompanyLifecycle(
     }).where(and(
       eq(placementCompanyRelationships.id, current.id),
       eq(placementCompanyRelationships.collegeId, scope.collegeId),
-      eq(placementCompanyRelationships.updatedAt, current.updatedAt),
+      sql`date_trunc('milliseconds', ${placementCompanyRelationships.updatedAt}) = ${current.updatedAt.toISOString()}::timestamptz`,
     )).returning({
       id: placementCompanyRelationships.id,
       status: placementCompanyRelationships.status,

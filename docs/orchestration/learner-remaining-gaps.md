@@ -952,3 +952,15 @@ The rows below were considered but intentionally not promoted to PARTIAL; they r
 - **L30-041:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
 - **L30-042:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
 - **L30-043:** Profile verification requires migrated private proof documents, reviewer workflow and authoritative verification disposition.
+
+2026-10-14 L14-020: exact own application to published drive and its role choices through scoped persisted `placement_applications.job_id` (not a guessed matching company). Similar-role recommendations remain BLOCKED until approved recommendation criteria and availability rules are registered. Skip L1-021 course image: no canonical migrated image association; L13-016 private resume: storage/consent authorization required; L30-034..043 profile verification: missing trusted document/review state machine.
+
+2026-10-14 L13-015: published Drive detail now preserves only schema-allowed filter/sort/page state when returning to Drives; no caller-college/actor selector. Authored own-learner PG and URL-model tests; app-router/browser and static acceptance pending.
+Skipped L12-013/L12-014 saved favorites: registered learner favorite persistence not verified; do not fake saved state. Skipped L13-016 private per-drive resume: storage/consent policy unresolved.
+
+2026-10-14 L16-019: mobile interview drawer prioritizes effective IST persisted schedule and full-width actions; date-only status never implies attendance/completion. Own-learner PG and model tests authored; mobile/CI acceptance remains. Skipped L16-006 confirm attendance: no migrated learner acknowledgement state or employer acceptance record.
+
+2026-10-14 L19-005: learner Placement Rules now distinguishes future eligibility checks from already-submitted applications using own `placement_applications` status via verified scoped journey service. Versioned College-wide rule change and retroactivity remain BLOCKED by missing canonical policy version/effective-date/approval source; explicit College owner decision required. Pure-model and own fresh-learner PostgreSQL tests authored, not executed in this session.
+Skipped L15-002 provider completion (external receipt not migrated); L18-007 opt-in policy/consent state not approved; L30-034..043 verification lacks reviewed documents and trusted state machine.
+
+2026-10-14 L16-004: selected owned interview from persisted scoped rounds is highlighted, and filtered-out deep links can be revealed without leaking foreign records. Fresh learner PG and pure-model tests authored. Browser/runtime acceptance pending. Skips: L1-021 has no trusted course image association; L13-016 requires private resume storage; L16-006 lacks audited learner attendance confirmation state; L30-034..043 lack migrated verification review/document contracts.
