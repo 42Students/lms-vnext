@@ -8,7 +8,7 @@ export const LEARNER_ASSESSMENT_STATE_OPTIONS=[
 ] as const;
 export type LearnerAssessmentStateFilter=(typeof LEARNER_ASSESSMENT_STATE_OPTIONS)[number]["value"];
 const filterSchema=z.enum(["ALL","PENDING","DUE_SOON","COMPLETED","RESULTS"]);
-type Assignment={kind:"ASSIGNMENT";submittedAt:string|null;gradePublished:boolean};
+type Assignment={kind:"ASSIGNMENT";submittedAt:string|null;gradePublished:boolean;dueAt?:string|null};
 type Quiz={kind:"QUIZ";attemptsUsed:number;attemptsRemaining:number;status:"PUBLISHED"|"CLOSED";dueAt:string|null;resultsPublished:boolean};
 export function learnerAssessmentMatchesState(
   item:Assignment|Quiz, rawFilter:unknown, snapshotNowMs:number,
