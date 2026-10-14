@@ -7,6 +7,7 @@ export const collegeActivityExportQuerySchema = z.object({
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   actorUserId: z.string().uuid().optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
+  q: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().trim().min(1).max(500).optional(),
   from: z.string().min(1).max(40).optional(),

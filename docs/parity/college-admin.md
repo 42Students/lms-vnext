@@ -34,6 +34,7 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] Loading and responsive card layout are verified.
 
 ## Page: Activity Log
+**Scoped audit text search PARTIAL (2026-10-15):** College Admin can search persisted summary, subject label/ID/type and event type before cursor pagination using escaped literal PostgreSQL matching. The capped CSV export carries the query through the existing shared audit read service. Zod/URL and scoped PG positive/no-match/wrong-role fixtures authored; legacy/browser/executed database acceptance remain open.
 **Entity-filtered CSV PARTIAL (2026-10-15):** The 1,000-row Activity Log CSV now carries the exact subject ID filter used by the web history. Subject IDs are bounded at 500 characters (audit subjects are not necessarily UUIDs); CSV service keeps server-derived college scope, no caller-supplied tenant selector, and isolated PG own/foreign fixtures. Historical CSV volume, legacy format and executed browser/PG acceptance remain open.
 
 **Triage filters PARTIAL (2026-10-15):** Added registered module, importance and exact event-type filters to college-scoped activity history. The cursor preserves every filter, and capped CSV export receives the same triage selectors. Strict Zod rejects invalid modules/severity; isolated PG coverage checks filtering and cross-college scope. Noise grouping, legacy filter semantics and executed browser/PG acceptance remain open.

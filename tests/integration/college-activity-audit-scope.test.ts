@@ -68,6 +68,14 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(foreign.items).toHaveLength(1);
     expect(foreign.items[0].event.collegeId).toBe(SEED_IDS.collegeB);
   });
+  it("matches scoped summary text before cursor pagination",async()=>{
+    const result=await listCollegeActivity(admin,{subjectType:subject,q:"w-audit-own-26"});
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].event.summary).toBe("w-audit-own-26");
+    const missing=await listCollegeActivity(admin,{subjectType:subject,q:"never-audit-needle"});
+    expect(missing.items).toHaveLength(0);
+    await expect(listCollegeActivity(faculty,{q:"w-audit-own"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
     const match=await listCollegeActivity(admin,{subjectType:subject,module:"ACADEMICS",
       importance:"NORMAL",eventType:"academics.program.updated"});
