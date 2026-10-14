@@ -16,6 +16,7 @@ import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-te
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
+import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -77,17 +78,11 @@ export default async function LearnerProjectsPage({
     "CHANGES_REQUESTED" | "DRAFT"
   >(attentionRows.map((item) => [item.projectId, item.kind]));
 
-  const normalizedSearch = query.search?.toLowerCase();
   const filtered = allRows
     .filter((row) => row.memberRole === "LEARNER")
-    .filter((row) => {
-      if (!normalizedSearch) return true;
-      return [
-        row.project.title,
-        row.project.slug,
-        row.project.summary ?? "",
-      ].some((value) => value.toLowerCase().includes(normalizedSearch));
-    })
+    .filter((row) => learnerProjectMatchesSearch(
+      row.project, teamsByProject.get(row.project.id)?.mentorName ?? null, query.search,
+    ))
     .filter((row) => {
       if (!query.status) return true;
       if (query.status === "CURRENT") {

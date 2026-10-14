@@ -1,3 +1,5 @@
+**2026-10-15 chat-7 Project list mentor search (PARTIAL):** Learner Project search includes the display name of the mentor from the same previously authorized project-team summary, without a global people directory or contact fields. Bounded pure matching model and unit test authored; persisted learner/foreign-team PG and browser proof remain open.
+
 **2026-10-15 chat-7 Semester-switch recovery (PARTIAL):** Switching the learner Course list semester now clears the prior search, resets the 48-card window, and crucially clears an elective-only filter. This avoids a hidden filter with no visible selector in a semester without electives. Pure-model regression authored; browser acceptance remains pending.
 
 **2026-10-15 chat-7 Course list instructor search (PARTIAL):** The learner Course list search now matches the already scoped course's instructor display names alongside code, name, section, programme and period. It does not retrieve or reveal contact information; the trimmed bounded pure model has authored unit checks. Scoped course PG and responsive browser acceptance remain open.
