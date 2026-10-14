@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { filterLearnerBoardTasks } from "@/modules/projects/learner-project-board-model";
+import { filterLearnerBoardTasks, learnerBoardEmptyState } from "@/modules/projects/learner-project-board-model";
 const tasks=[
   {id:"1",title:"Implement API",description:"Write authorized read"},
   {id:"2",title:"Mobile board",description:null},
   {id:"3",title:"Regression test",description:"API consistency"},
 ];
+describe("L25-013 truthful learner Board empty states",()=>{
+  it("distinguishes no persisted tasks from filtered-out tasks",()=>{
+    expect(learnerBoardEmptyState(0,0)).toBe("NO_TASKS");
+    expect(learnerBoardEmptyState(10,0)).toBe("FILTERED_EMPTY");
+    expect(learnerBoardEmptyState(10,2)).toBe("RESULTS");
+  });
+});
 describe("L25-005 learner Board release filter",()=>{
   it("filters by actual sprint-release ancestry and composes with priority",()=>{
     const releaseA="00000000-0000-4000-8000-000000000001";

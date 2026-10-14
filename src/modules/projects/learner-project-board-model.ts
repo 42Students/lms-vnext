@@ -24,3 +24,9 @@ export function filterLearnerBoardTasks<T extends LearnerBoardTask>(
       value.toLocaleLowerCase("en-IN").includes(search))),
   );
 }
+
+export type LearnerBoardEmptyState = "NO_TASKS" | "FILTERED_EMPTY" | "RESULTS";
+export function learnerBoardEmptyState(total: number, shown: number): LearnerBoardEmptyState {
+  if (total === 0) return "NO_TASKS";
+  return shown === 0 ? "FILTERED_EMPTY" : "RESULTS";
+}
