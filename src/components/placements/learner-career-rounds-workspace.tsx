@@ -6,6 +6,7 @@ import {learnerAssessmentLinkState,filterLearnerAssessmentsMissingLink} from "@/
 import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-assessment-external-launch-model";
 import {learnerAssessmentDueHref,readLearnerAssessmentDueFromUrl} from "@/modules/placements/learner-assessment-bucket-url-model";
 import {learnerAssessmentMissingSchedule} from "@/modules/placements/learner-assessment-missing-schedule-model";
+import {learnerAssessmentPastReview} from "@/modules/placements/learner-assessment-past-review-model";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -201,6 +202,7 @@ export function LearnerCareerRoundsWorkspace({
   );
   const missingSchedule=kind==="ASSESSMENT"
     ? learnerAssessmentMissingSchedule(dueCounts.unscheduled):null;
+  const pastReview=kind==="ASSESSMENT" ? learnerAssessmentPastReview(dueCounts.past,nowMs) : null;
   const visibleRows = useMemo(() => {
     const dueRows = kind === "ASSESSMENT"
       ? filterLearnerAssessmentDueBucket(rows, dueBucket, nowMs) : rows;
@@ -411,6 +413,19 @@ export function LearnerCareerRoundsWorkspace({
         </div>
       </section>
 
+      {kind==="ASSESSMENT"&&dueBucket==="past"&&pastReview&&pastReview.count>0 ? (
+        <aside role="status" aria-label="Past scheduled assessments"
+          className="rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground">
+            {pastReview.count} assessment schedule{pastReview.count===1?"":"s"} passed
+          </h3>
+          <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
+          <Link href="/learn/my-placements/assessments/results"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Check officially applied results →
+          </Link>
+        </aside>
+      ):null}
       {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
         <aside role="status" aria-label="Assessments without a recorded date"
           className="rounded-xl border border-border bg-surface p-4">
