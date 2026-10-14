@@ -54,6 +54,16 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.nextAction.href).toContain("applicationId=app-1&roundId=interview");
   });
 
+  it("exposes the earliest interview independently from the assessment hero",()=>{
+    const state=learnerPlacementDashboard({...empty,rounds:[
+      round("test","TEST","2026-10-14T08:00:00Z"),
+      round("late-interview","GD","2026-10-16T08:00:00Z"),
+      round("early-interview","INTERVIEW","2026-10-15T08:00:00Z"),
+    ]},now);
+    expect(state.nextAction.title).toBe("test");
+    expect(state.urgentInterview?.roundId).toBe("early-interview");
+    expect(state.urgentInterview?.href).toBe("/learn/my-placements/interviews?applicationId=app-1&roundId=early-interview");
+  });
   it("respects an approved reschedule and ignores past or unscheduled events", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
