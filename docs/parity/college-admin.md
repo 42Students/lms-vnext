@@ -345,6 +345,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Minimum configured-credit selector PARTIAL (2026-10-15):** Elective slot catalogue and capped CSV now filter by saved slot credits before pagination; bounded numeric input and blank-value handling distinguish unconfigured filters from invalid zero. Unit and isolated PG positive/negative thresholds authored; browser and runtime gates open.
+
 **Elective slot CSV PARTIAL (2026-10-15):** College Admin can export selected current-college slot search/program/status/semester matches with recorded pick limits and offerings, capped at 1,000 rows, formula-neutralized and explicit truncation. The isolated PostgreSQL own/foreign/wrong-role fixture is extended for this endpoint. This does not imply learner selections or finalized enrollment; executed acceptance remains open.
 
 **Semester-scoped elective filter PARTIAL (2026-10-15):** College elective slot catalogue now filters on the persisted semester number (1–24) with route-preserved pagination and strict class/elective filter separation. Isolated PG fixture checks included/excluded terms and still checks foreign-college and wrong-role denials. Executed and browser acceptance, selection finalization remain open.
