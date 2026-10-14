@@ -28,7 +28,7 @@ export default async function FacultyNotificationsPage({
   }>;
 }) {
   const context = await getCurrentRequestContext();
-  requireFacultyNotificationsAccess(context);
+  const membership = requireFacultyNotificationsAccess(context);
 
   const params = await searchParams;
   const view = params.view === "unread" ? "unread" : "all";
@@ -43,9 +43,10 @@ export default async function FacultyNotificationsPage({
       : listOwnNotificationPage(context, {
           limit: 50,
           unreadOnly: view === "unread",
+          collegeId: membership.collegeId,
           ...(cursor.cursor ?? {}),
         }),
-    countOwnUnreadNotifications(context),
+    countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
       : Promise.resolve([]),
@@ -93,7 +94,8 @@ export default async function FacultyNotificationsPage({
         <h2 id="faculty-personal-notifications" className="text-lg font-semibold text-foreground">
           Personal notifications
         </h2>
-        <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX} />
+        <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
+          markAllEndpoint="/api/notifications/faculty/read-all" />
         {cursor.invalid ? (
           <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
@@ -105,6 +107,7 @@ export default async function FacultyNotificationsPage({
         ) : (
           <>
             <NotificationList
+              readEndpoint="/api/notifications/faculty"
               items={items}
               emptyText={view === "unread" ? "No unread notifications." : "Nothing yet."}
             />
