@@ -515,11 +515,11 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L17-005 | Day mode | CareerCalendarContent | career calendar | GAP |
 | L17-006 | Previous / Today / Next | CareerCalendarContent | career calendar | GAP |
 | L17-007 | Date picker | learner career calendar | date input with strict valid YYYY-MM-DD IST day keys; existing owned persisted round filter remains; pure and fresh-learner PG tests authored. PARTIAL pending executed PostgreSQL, Vitest, TypeScript/ESLint, calendar browser/mobile and timezone acceptance | PARTIAL |
-| L17-008 | Event-type filters | CareerCalendarContent | career calendar | GAP |
+| L17-008 | Event-type filters | CareerCalendarContent | strict learner URL event kind + date/view; refresh/history persistence and own persisted event filters; PARTIAL pending PG/browser acceptance | PARTIAL |
 | L17-009 | Event chips | CareerCalendarContent | career calendar | GAP |
 | L17-010 | Selected-event detail drawer | learner career calendar | event cards now open own-scoped detail drawer with real IST time, employer, kind, approved-reschedule cue and exact assessment/interview deep link; never shows provider secrets. PARTIAL pending PG/TypeScript/ESLint and mobile/browser acceptance | PARTIAL |
 | L17-011 | Event action/deep links | CareerCalendarContent | career rounds | FIXED |
-| L17-012 | Partial-source failure + retry | CareerCalendarContent | career calendar | GAP |
+| L17-012 | Partial-source failure + retry | CareerCalendarContent | dedicated loading + hard-failure retry preserves calendar URL; PARTIAL pending PG/browser error injection and legacy partial-source acceptance | PARTIAL |
 | L17-013 | Empty calendar state | CareerCalendarContent | career calendar | FIXED |
 | L17-014 | Timezone handling | CareerCalendarContent | career rounds | UNCHECKED |
 | L17-015 | Mobile agenda fallback | learner career calendar | month/week show accessible mobile IST day-grouped agenda rather than 38rem horizontal grid; same persisted filtered own events, details and exact deep links; pure and fresh-learner PG tests authored. PARTIAL pending executed tests, responsive screen-reader and browser acceptance | PARTIAL |
