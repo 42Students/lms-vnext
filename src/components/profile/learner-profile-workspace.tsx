@@ -169,6 +169,7 @@ export function LearnerProfileWorkspace(props: {
   const [document, setDocument] = useState(props.initialDocument);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsDraft, setDetailsDraft] = useState<LearnerProfileDocument>(props.initialDocument);
+  const [detailsBaseline,setDetailsBaseline]=useState<LearnerProfileDocument>(props.initialDocument);
   const [contactOpen, setContactOpen] = useState(false);
   const [contactDraft, setContactDraft] = useState(props.initialDocument.contacts);
   const [contactPending, setContactPending] = useState(false);
@@ -221,21 +222,29 @@ export function LearnerProfileWorkspace(props: {
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [props.initialSection]);
 
-  function saveDocument(next: LearnerProfileDocument, onDone?: () => void) {
+  function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
     startTransition(async () => {
-      const response = await fetch("/api/profile/me", {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(next),
-      });
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        showToast({ tone: "error", title: "Profile update failed", description: payload?.error || "Please review the fields and try again." });
-        return;
+      try {
+        const response = await fetch("/api/profile/me", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({document:next,expectedDocument}),
+        });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) {
+          if(payload?.error==="LEARNER_PROFILE_DOCUMENT_STALE"){
+            router.refresh();
+            throw new Error("Your saved profile changed in another tab. Your draft was kept. Close this editor and reopen it to review the latest version before saving.");
+          }
+          throw new Error("Profile changes were not saved. Review your fields and try again.");
+        }
+        if(!payload?.profile?.profileDocument)throw new Error("Could not confirm the saved profile. Reload before trying again.");
+        setDocument(payload.profile.profileDocument);
+        onDone?.();
+        showToast({ tone: "success", title: "Profile updated" });
+      } catch(error) {
+        showToast({tone:"error",title:"Profile update failed",description:error instanceof Error?error.message:"Please try again."});
       }
-      setDocument(payload?.profile?.profileDocument || next);
-      onDone?.();
-      showToast({ tone: "success", title: "Profile updated" });
     });
   }
 
@@ -372,7 +381,7 @@ export function LearnerProfileWorkspace(props: {
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button variant="secondary" onClick={() => { setDetailsDraft(document); setDetailsOpen(true); }}>Edit profile</Button>
+          <Button variant="secondary" onClick={() => { setDetailsDraft(document); setDetailsBaseline(document); setDetailsOpen(true); }}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-border bg-surface-subtle p-4">
@@ -579,7 +588,7 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={setDetailsOpen}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false))}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">
