@@ -9,7 +9,7 @@ export type MentorRiskReadinessQuery=z.infer<typeof mentorRiskReadinessQuerySche
 
 type Fact={id:string;title:string;status:string};
 type Task=Fact & {sprintId:string;priority:string};
-type Meeting=Fact;
+type Meeting=Fact & {startsAt:Date};
 export type MentorRiskReadinessFacts={
   projectId:string;projectStatus:string;
   releases:readonly Fact[];sprints:readonly Fact[];
@@ -22,8 +22,14 @@ export type MentorDrillItem={
   title:string;detail:string;href:string;
 };
 
+function istCalendarKey(date:Date){
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+    year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);
+  const value=(name:string)=>parts.find(part=>part.type===name)?.value??"";
+  return value("year")+value("month")+value("day");
+}
 export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
-  query:MentorRiskReadinessQuery){
+  query:MentorRiskReadinessQuery,asOf:Date=new Date()){
   const base="/mentor/projects/"+encodeURIComponent(facts.projectId);
   const items:MentorDrillItem[]=[];
   const add=(category:MentorDrillItem["category"],key:string,title:string,
@@ -35,6 +41,10 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
   const blockedTasks=facts.tasks.filter(task=>task.status==="BLOCKED");
   const reviewTasks=facts.tasks.filter(task=>task.status==="IN_REVIEW");
   const pendingMeetings=facts.meetings.filter(row=>row.status==="REQUESTED");
+  const istToday=istCalendarKey(asOf);
+  const scheduledPastDay=facts.meetings.filter(row=>
+    row.status==="SCHEDULED"&&Number.isFinite(row.startsAt.getTime())&&
+    istCalendarKey(row.startsAt)<istToday);
   const sprintTitle=new Map(facts.sprints.map(sprint=>[sprint.id,sprint.title]));
   if(active){
     for(const task of blockedTasks)add("RISK","blocked:"+task.id,
@@ -44,6 +54,9 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
     for(const task of reviewTasks)add("RISK","review:"+task.id,
       task.title,"Task submission awaits recorded review",
       base+"?tab=board#mentor-task-"+encodeURIComponent(task.id));
+    for(const meeting of scheduledPastDay)add("RISK","scheduled-past:"+meeting.id,
+      meeting.title,"Scheduled start was on an earlier IST day, but completion is not recorded",
+      base+"?tab=team");
     for(const meeting of pendingMeetings)add("RISK","meeting:"+meeting.id,
       meeting.title,"Meeting request awaits a recorded scheduling decision",
       base+"?tab=team");
@@ -78,7 +91,8 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
   const page=Math.min(query.page,totalPages);
   return {
     counts:{blockedTasks:blockedTasks.length,reviewTasks:reviewTasks.length,
-      pendingMeetings:pendingMeetings.length,incompleteTasks:incompleteTasks.length,
+      pendingMeetings:pendingMeetings.length,scheduledPastDay:scheduledPastDay.length,
+      incompleteTasks:incompleteTasks.length,
       totalTasks:facts.tasks.length,unshippedReleases:facts.releases.filter(
         row=>row.status!=="SHIPPED").length,
       incompleteSprints:facts.sprints.filter(row=>row.status!=="COMPLETED").length},

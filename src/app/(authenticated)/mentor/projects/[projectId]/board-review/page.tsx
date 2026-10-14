@@ -88,6 +88,48 @@ export default async function MentorBoardReviewPage({
           CSV omits {data.exportOmitted} matching tasks beyond the export cap.
         </span>:null}
       </div>
+      <section aria-label="Sprint status summaries" className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-foreground">Sprint summaries</h2>
+          <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
+            (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
+              "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
+            download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Download filtered Sprint summary CSV (max 100)
+          </Link>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          These counts use the current Board filters. Completion is unknown when no tasks match.
+          Every Sprint also shows its total registered task count.
+        </p>
+        {data.sprintSummaries.length===0?
+          <p className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+            No registered Sprint matches the selected Sprint filter.
+          </p>:
+          <div className="grid gap-3 sm:grid-cols-2">
+            {data.sprintSummaries.slice(0,6).map(sprint=>
+              <article key={sprint.id} className="rounded-xl border border-border bg-surface p-4">
+                <h3 className="break-words font-semibold">{sprint.title}</h3>
+                <p className="mt-2 text-sm text-body">{sprint.matchingTasks} matching of
+                  {" "}{sprint.registeredTasks} registered tasks</p>
+                <p className="mt-1 text-sm text-body">
+                  Done {sprint.done} · Blocked {sprint.blocked} · Awaiting review {sprint.awaitingReview}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Matching completion: {sprint.matchingDonePercent===null?"Unknown":
+                    sprint.matchingDonePercent+"%"}
+                </p>
+              </article>)}
+          </div>}
+        {data.sprintSummaries.length>6?
+          <p className="text-xs text-muted-foreground">
+            Showing the first six of {data.sprintSummaries.length} Sprints.
+            Download the capped CSV for more recorded summaries.
+          </p>:null}
+        {data.sprintSummaryExportOmitted>0?<p role="status" className="text-xs text-body">
+          CSV omits {data.sprintSummaryExportOmitted} Sprints beyond the 100-row cap.
+        </p>:null}
+      </section>
       {data.items.length===0?<EmptyState
         title={data.count===0?"No registered project tasks":"No tasks match these filters"}
         description={data.count===0?

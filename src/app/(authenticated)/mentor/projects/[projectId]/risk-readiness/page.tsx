@@ -26,6 +26,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     ["Blocked tasks",data.counts.blockedTasks],
     ["Awaiting task review",data.counts.reviewTasks],
     ["Requested meetings",data.counts.pendingMeetings],
+    ["Past scheduled / unclosed",data.counts.scheduledPastDay],
     ["Tasks not Done",data.counts.incompleteTasks],
   ] as const;
   return <div className="space-y-6">

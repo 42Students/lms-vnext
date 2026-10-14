@@ -691,3 +691,46 @@ review visibility, forged input, wrong role, disabled user and foreign-college
 nonleakage. Read-only: no mutation or stale-token check is introduced.
 **PARTIAL:** typecheck/lint/unit/PostgreSQL tests and responsive browser CSV
 acceptance remain unexecuted, as does complete legacy review history parity.
+
+## 2026-10-14 chat-11 K — exact-version Mentor delivery review detail (PARTIAL)
+
+A currently assigned Mentor can follow each recorded delivery version to an exact
+project/submission detail displaying its persisted status, decision, timestamps
+and written review feedback. The scoped reader enforces active current Mentor
+membership, college scope, central projects.read and Projects enablement; no
+learner contact, private submission URL/notes or reviewer identities are returned.
+Responsive loading/error and no-feedback states are explicit. A pure model/unit
+suite and in-test-project PostgreSQL fixture cover positive review, forged IDs,
+wrong role, disabled user and foreign college. Read-only: no new review mutation
+or optimistic write token. **PARTIAL:** independent PG, TypeScript, lint, browser
+and legacy author/feedback parity verification remain open.
+
+## 2026-10-14 chat-11 L — IST past scheduled meeting readiness evidence (PARTIAL)
+
+Extended the existing exact-project Mentor at-risk/readiness drill-in with
+SCHEDULED meetings whose start was on an earlier IST calendar day and which
+lack a recorded completed/cancelled transition. These are labeled as
+past scheduled/unclosed, **not** proof that the meeting was missed. Existing
+REQUESTED meetings remain separately actionable regardless of their date;
+ARCHIVED/COMPLETED projects do not invent new active risks. Pure-model tests
+cover IST boundaries; the isolated PostgreSQL fixture now creates a valid
+SCHEDULED row with scheduled_by IDs and meeting_url satisfying
+project_meetings_schedule_shape_ck, plus existing wrong-role/foreign-scope
+denials. Read-only, so stale write token is inapplicable. **PARTIAL:** actual
+PostgreSQL, TypeScript, lint, browser and legacy risk semantics remain open.
+
+## 2026-10-14 chat-11 M — filtered per-Sprint Board summaries and safe CSV (PARTIAL)
+
+The scoped Mentor Task Board now aggregates each registered Sprint's total
+stored tasks and current filtered task matches, DONE, BLOCKED and IN_REVIEW
+counts, and a matching-task completion percentage only when work matches.
+The page shows the first six Sprints and provides a formula-neutralized UTF-8
+CSV of at most 100 filtered Sprint summaries, with explicit omitted count.
+This reuses existing exact current Mentor assignment, central projects.read,
+college/module gating and Zod query validation; no new permission or database
+write. It does not imply velocity, dates, task owners, effort or completion
+for an empty Sprint. Pure unit and isolated persisted PostgreSQL tests cover
+filter aggregation, zero-task semantics, CSV neutralization/capping, wrong-role,
+foreign-scope and forged selectors. This is read-only, so stale write tokens
+are not applicable. **PARTIAL:** execute typecheck, lint, PostgreSQL, unit and
+browser download checks, then compare the legacy Sprint/Board summary UX.
