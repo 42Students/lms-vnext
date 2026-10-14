@@ -5,7 +5,7 @@ export const recruiterDesignationPatchSchema = z.strictObject({
 });
 export type RecruiterDesignationPatch=z.infer<typeof recruiterDesignationPatchSchema>;
 export function normalizeRecruiterDesignation(value: string):string|null {
-  const clean=value.trim().replace(/\\s+/g," ");
+  const clean=value.trim().replace(/\s+/g," ");
   return clean || null;
 }
 export function sameRecruiterProfileVersion(actual:Date,expected:string) {

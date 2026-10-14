@@ -18,3 +18,5 @@
 - 2026-10-14 — Drive List structured filters PARTIAL: work mode/employment/urgency + 20-row paging, unit/PG authored; backend-wide source listing remains to paginate at DB.
 
 - 2026-10-14 — Recruiter designation write PARTIAL: same-origin self-only audited PATCH and stale token; PG fixtures success/foreign/wrong/stale and model tests authored, unexecuted.
+
+- 2026-10-14 — Recruiter company boundary PARTIAL: extra SQL exact employer ID and pure post-query guard; forged cross-company PG fixture authored. Designation follow-up fixes included. Gates not run.

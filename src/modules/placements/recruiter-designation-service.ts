@@ -28,8 +28,9 @@ export async function updateOwnRecruiterDesignation(context:RequestContext, raw:
     if(!sameRecruiterProfileVersion(profile.updatedAt,input.expectedUpdatedAt))
       throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
     if(profile.title===title) return {title,updatedAt:profile.updatedAt.toISOString(),changed:false};
+    const nextUpdatedAt=new Date(Math.max(Date.now(),profile.updatedAt.getTime()+1));
     const [updated]=await tx.update(placementRecruiterProfiles)
-      .set({title,updatedAt:new Date()})
+      .set({title,updatedAt:nextUpdatedAt})
       .where(and(eq(placementRecruiterProfiles.userId,context.user.id),
         eq(placementRecruiterProfiles.companyId,context.recruiter!.companyId),
         eq(placementRecruiterProfiles.status,"ACTIVE"),
