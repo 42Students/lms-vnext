@@ -107,18 +107,19 @@ Legacy contract:
 
 
 **Executed acceptance — [Faculty All Assignments workflow 38625377461](https://github.com/42Students/lms-vnext/actions/runs/38625377461)** at `12b1e1575d5f1d0fd5cad99677a1d09fdd6ecb37` passed **7/7 registered PostgreSQL** tests in `faculty-section-authoring.test.ts` and **2/2 authenticated desktop/mobile Playwright** tests in `faculty-all-assignments.spec.ts`. The browser creates, edits, publishes and archives persisted text assignments with confirmation and stale-token denial; navigates the Faculty aggregate list, exact Section/status/search filters, accessible submissions drawer, privacy-safe report link, and verifies absence from the active manager after Archive. Scope is consciously text-only: no file uploads, storage receipts, or external sending under the approved no-file-features decision. This DONE does not certify unsupported file-backed parity or full repository CI.\n
-## Page: All Quizzes
+## Page: All Quizzes — PARTIAL (registered choice lifecycle accepted)
 Legacy `QuizzesContent` runs in Faculty mode.
 
-- [x] Aggregate quiz list, Section scope, course filter and status filter source-implemented.
-- [x] Aggregate quiz list uses 20-row pagination; browser regression still pending.
-- [ ] Create quiz workflow matches.
-- [ ] Edit quiz workflow matches.
-- [ ] Delete/close lifecycle actions match.
-- [ ] View attempts and result publish use existing FacultyQuizReview panel; legacy overlay/report UI behavior not fully verified.
-- [ ] Quiz Report deep link works.
-- [ ] Schedule/attempt/result-publication controls match.
-- [ ] Loading/error/empty states are verified.
+- [x] Aggregate quiz list, exact active teaching Section, Course/status/title filters and source-owned 20-row pagination are implemented.
+- [x] Registered single/multiple-choice quiz CREATE (private draft), answer correctness, point validation and Section lesson selection; browser and PostgreSQL acceptance executed.
+- [x] DRAFT quiz question/options and metadata EDIT, plus metadata-only title/description/deadline EDIT after publication or closing, with optimistic version and immutable question history; attempts prohibit changing answer bank or allowed attempt count.
+- [x] Confirmed PUBLISH, CLOSE, no-attempt ARCHIVE, stale/foreign denial and transaction audit are exercised in PostgreSQL and the browser.
+- [x] Review attempts drawer, no-attempt state, closed-Quiz result publication, report deep link and persisted results view pass real browser tests.
+- [x] Due/attempt limits, result publication controls, and 390px mobile quiz builder layout are exercised on actual Chromium.
+- [ ] Legacy `shuffleQuestions`/`shuffleOptions` authoring, storage and learner shuffle semantics require a **registered DB06 migration**. Only the isolated SQL candidate `docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql` and staging test exist; never substitute an unregistered schema or claim completed legacy shuffle.
+- [ ] Remaining empty/error/retry and attempt-bearing learner-to-Faculty review browser coverage are not yet independently completed.
+
+**Executed evidence:** [Faculty All Quizzes CI 38634315601](https://github.com/42Students/lms-vnext/actions/runs/38634315601) at source SHA `91c66ac63e39e558ec4f9957f5fc374224f27818`: **8/8 PostgreSQL** and **2/2 desktop/mobile Chromium**, all focused jobs PASS. Earlier run `38633631624` passed PG but uncovered mobile overflow, repaired at this SHA. This is **not** full legacy parity, global CI certification or DATABASE promotion; the All Quizzes row correctly remains PARTIAL.
 
 ## Page: Class Schedule — DONE (2026-10-14)
 - [x] Faculty schedule is sourced from registered active Section teaching assignments and current Faculty grants; role/foreign-college denial is enforced.
@@ -1237,6 +1238,27 @@ rows remain separate.
 
 Course Overview is restored to DONE in the master matrix, matching the already completed detailed Overview checklist and the two green independent CI jobs in [run 38615289795](https://github.com/42Students/lms-vnext/actions/runs/38615289795) (5 registered PostgreSQL and 2 browser). Quiz Report is closed on [run 38618101294](https://github.com/42Students/lms-vnext/actions/runs/38618101294) (7 PostgreSQL, 14 unit, 2 browser). Neither row claims global CI release readiness.
 
+## Faculty Class Schedule closure evidence (2026-10-14)
+
+**DONE** for Faculty `/teacher/calendar` and live authenticated Section
+schedule navigation, not the separate Attendance marking/correction or
+LIVE_CLASS file/provider integrations. [CI run 38621557113](https://github.com/42Students/lms-vnext/actions/runs/38621557113)
+ran on commit `769bc395468002e9fa6098c44b85bf8aee58e06a` with **2/2 PostgreSQL**
+(schedule create/reschedule, collision, audit, exact IST midnight and
+cross-college/role denial) and **2/2 Chromium desktop/mobile** (persisted
+class displayed on exact IST day, month and Section filters, authorized link,
+day/week/month view selection, invalid request and stream-rendered foreign
+scope error, mobile no-overflow). Both jobs succeeded. React's streaming
+error boundary can return 200 while refusing foreign scope; the browser
+assertions check the error section and absence of leaked month records.
+No completion of Course Attendance or overall CI is claimed.
+
+## Faculty Course Attendance — DONE (2026-10-14)
+
+Registered Section attendance uses current Faculty teaching assignment and exact active roster, marking by Schedule Event under `/teacher/courses/[deliveryId]/attendanceDetail`. The server enforces a persisted attendance policy window, optimistic millisecond marking token, meaningful correction reason, changed status requirement, foreign/wrong-role denial, and audited counts. The UI restores saved absences on session selection, explicitly distinguishes unmarked/upcoming from absent, offers a monthly class-health summary and per-learner detail overlay, and uses Asia/Kolkata time labels.
+
+**Executed proof:** [Faculty Course Attendance acceptance run 38623132225](https://github.com/42Students/lms-vnext/actions/runs/38623132225) at source commit `51ae3b8ea492baed125f80b222374660c914cd02` passed **6/6 PostgreSQL tests** in `faculty-c4-reports-audit-contact.test.ts` (including positive first mark, reasoned correction, stale/unchanged version/foreign/role denial and persisted append-only activity history), **20/20 unit tests** across attendance edit-state/grid/learner detail, and **2/2 desktop/mobile Chromium tests** in `faculty-course-attendance.spec.ts` (persisted create → mark → correction, recorded monthly percentage, student detail drawer and foreign-scope denial). Both independent jobs were successful. The test fixture fixes use a genuinely short invalid correction reason and the registered `activity_events.occurred_at` field. This is an Attendance surface closure, not a claim of global CI green, off-policy admin override or file-backed functionality.
+
 ## 2026-10-15 Faculty attendance and live-class IST scheduling — PARTIAL
 Attendance create/reschedule and Blueprint live-class editors now read and
 write IST wall times independently of the device timezone. Labels and session
@@ -1278,21 +1300,6 @@ foreign-scope denial. Real FILE receipt/R2 read acceptance remains BLOCKED by
 DB06_ASSIGNMENT_FILES_READY/storage attestation and PostgreSQL execution; no
 file workflow or existing DONE report row is promoted by this UI wiring.
 
-## Faculty Class Schedule closure evidence (2026-10-14)
-
-**DONE** for Faculty `/teacher/calendar` and live authenticated Section
-schedule navigation, not the separate Attendance marking/correction or
-LIVE_CLASS file/provider integrations. [CI run 38621557113](https://github.com/42Students/lms-vnext/actions/runs/38621557113)
-ran on commit `769bc395468002e9fa6098c44b85bf8aee58e06a` with **2/2 PostgreSQL**
-(schedule create/reschedule, collision, audit, exact IST midnight and
-cross-college/role denial) and **2/2 Chromium desktop/mobile** (persisted
-class displayed on exact IST day, month and Section filters, authorized link,
-day/week/month view selection, invalid request and stream-rendered foreign
-scope error, mobile no-overflow). Both jobs succeeded. React's streaming
-error boundary can return 200 while refusing foreign scope; the browser
-assertions check the error section and absence of leaked month records.
-No completion of Course Attendance or overall CI is claimed.
-
 ## 2026-10-15 Faculty paged grading drawer — PARTIAL
 View Submissions now reads at most 20 serialized grade-review rows per response
 with All/Needs grading/Graded/Late filters, totals and previous/next controls.
@@ -1306,12 +1313,6 @@ Fresh Section PG fixtures cover real review/grading/filter transitions and
 wrong/foreign-role, forged selector and archived-parent denial. Writes remain
 on the existing same-origin versioned audited endpoints. Remaining: PostgreSQL
 execution and mobile/keyboard/legacy drawer acceptance; no DONE promotion.
-
-## Faculty Course Attendance — DONE (2026-10-14)
-
-Registered Section attendance uses current Faculty teaching assignment and exact active roster, marking by Schedule Event under `/teacher/courses/[deliveryId]/attendanceDetail`. The server enforces a persisted attendance policy window, optimistic millisecond marking token, meaningful correction reason, changed status requirement, foreign/wrong-role denial, and audited counts. The UI restores saved absences on session selection, explicitly distinguishes unmarked/upcoming from absent, offers a monthly class-health summary and per-learner detail overlay, and uses Asia/Kolkata time labels.
-
-**Executed proof:** [Faculty Course Attendance acceptance run 38623132225](https://github.com/42Students/lms-vnext/actions/runs/38623132225) at source commit `51ae3b8ea492baed125f80b222374660c914cd02` passed **6/6 PostgreSQL tests** in `faculty-c4-reports-audit-contact.test.ts` (including positive first mark, reasoned correction, stale/unchanged version/foreign/role denial and persisted append-only activity history), **20/20 unit tests** across attendance edit-state/grid/learner detail, and **2/2 desktop/mobile Chromium tests** in `faculty-course-attendance.spec.ts` (persisted create → mark → correction, recorded monthly percentage, student detail drawer and foreign-scope denial). Both independent jobs were successful. The test fixture fixes use a genuinely short invalid correction reason and the registered `activity_events.occurred_at` field. This is an Attendance surface closure, not a claim of global CI green, off-policy admin override or file-backed functionality.
 
 ## 2026-10-15 Faculty report drill-in strict selectors — PARTIAL
 Assignment submission and Quiz attempt drill-in pages now validate their full
