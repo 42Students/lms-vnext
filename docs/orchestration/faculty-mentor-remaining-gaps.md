@@ -187,3 +187,11 @@ requiring current Faculty teaching scope. Pin/unpin history is attributable to
 a moderator, but existing delete audit has no actor-role snapshot and may be
 learner self-deletion; the view labels it neutrally. No message content
 reconstruction and no write route. PARTIAL until successful PG/browser checks.
+
+## B — Faculty Reports hub (2026-10-14)
+
+Read-only per-delivery Reports hub linking registered Assignment, Quiz,
+Attendance and published Gradebook. Exact current Faculty teaching scope,
+bounded five-report pagination and clear unknown semantics. No inferred
+weighted final grades and no writes. PARTIAL until independent PostgreSQL,
+lint/TypeScript and responsive browser proof.
