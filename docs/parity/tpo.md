@@ -657,6 +657,8 @@ Legacy behavior includes unsaved-change warning when moving between sections or 
 - [ ] warning for earlier-season open drives.
 - [ ] Open Registration confirmation and consequence.
 
+**W56 PARTIAL:** TPO-only confirmed season creation reuses the established locked P9 season writer and immutable activity; editing an ACTIVE season now requires an unchanged updatedAt snapshot, validates ISO calendar dates/date order and unique college season code, and stores before/after actor audit in the same transaction. The Placement Rules page now offers confirmed, version-checked writes to registered DB09 college offer rules with immutable before/after audit. No registration-open state, learner registration deadline, historical closed-season editing, full modal/dirty-state behavior, browser or executed disposable-PostgreSQL acceptance is claimed.
+
 ## Settings: Placement Rules
 - [ ] placed-count trigger setting matches.
 - [ ] offer limits/uplift/response rules present in legacy match.
