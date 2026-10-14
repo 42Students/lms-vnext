@@ -1,0 +1,48 @@
+import { z } from "zod";
+
+export const COLLEGE_CONTENT_PAGE_SIZE = 25;
+export const collegeContentKindSchema = z.enum(["VIDEO", "RESOURCE"]);
+export type CollegeContentKind = z.infer<typeof collegeContentKindSchema>;
+
+export const collegeContentQuerySchema = z.object({
+  q: z.string().trim().max(100).default(""),
+  status: z.enum(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"]).default("ALL"),
+  page: z.coerce.number().int().min(1).max(1000).default(1),
+}).strict();
+export type CollegeContentQuery = z.infer<typeof collegeContentQuerySchema>;
+
+export function collegeContentTypes(kind: CollegeContentKind) {
+  return kind === "VIDEO" ? ["VIDEO", "YOUTUBE"] as const : ["RESOURCE"] as const;
+}
+
+export function collegeContentHref(kind: CollegeContentKind, query: CollegeContentQuery) {
+  const base = kind === "VIDEO" ? "/college/videos" : "/college/resources";
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.status !== "ALL") params.set("status", query.status);
+  if (query.page > 1) params.set("page", String(query.page));
+  return params.size ? base + "?" + params.toString() : base;
+}
+
+export function collegeContentDuration(seconds: number | null) {
+  if (seconds === null) return "Not recorded";
+  const minutes = Math.floor(seconds / 60);
+  const remaining = seconds % 60;
+  return `${minutes}:${String(remaining).padStart(2, "0")}`;
+}
+
+export function collegeContentPageCount(total: number) {
+  return Math.max(1, Math.ceil(total / COLLEGE_CONTENT_PAGE_SIZE));
+}
+
+export function collegeContentSearchParams(
+  params: Record<string, string | string[] | undefined>,
+) {
+  const raw: Record<string, string> = {};
+  for (const key of ["q", "status", "page"] as const) {
+    const value = params[key];
+    if (typeof value === "string") raw[key] = value;
+    else if (value !== undefined) return null;
+  }
+  return raw;
+}

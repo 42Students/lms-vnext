@@ -12,6 +12,8 @@ const deliveredRoutes = [
   "semester-courses",
   "faculty-assignment",
   "lessons",
+  "videos",
+  "resources",
   "course-progress",
   "semesters",
   "batches",
@@ -45,6 +47,7 @@ describe("College Admin read-first page boundaries", () => {
       "src/components/academics/college-academic-directory.tsx",
       "src/components/academics/college-structure-directory.tsx",
       "src/components/courses/college-learning-directory.tsx",
+      "src/components/courses/college-content-aggregate.tsx",
     ]) {
       const content = readFileSync(join(process.cwd(), file), "utf8");
       expect(content).toMatch(/\.items\.length === 0/);
