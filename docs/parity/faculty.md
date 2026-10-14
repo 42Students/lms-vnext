@@ -820,3 +820,18 @@ Updated pure-model tests and the in-test PostgreSQL success/denial audit
 fixture cover PUBLISHED→CLOSED→ARCHIVED (the latter only with zero attempts).
 This is authored rather than independently executed PostgreSQL/browser
 evidence; no Faculty page status is promoted from PARTIAL.
+
+## Faculty assessment aggregate lifecycle controls (2026-10-14)
+
+PARTIAL: Faculty All Assignments and All Quizzes cards now link to their
+exact-Section authoring workspace and show confirmation-gated PUBLISH/ARCHIVE
+or PUBLISH/CLOSE/ARCHIVE controls (only for actual Faculty-owned entries).
+These reuse the existing strict, same-origin authenticated Faculty command
+routes, current teaching grant, optimistic version, transaction audit and
+submission/attempt protections. Shared Offering cards expose no mutation.
+A pure unit suite checks every status/kind combination, safe confirmation
+messages and narrow version-token command bodies. Successful saves refresh
+the server-owned list, with explicit error/status feedback; no client state
+is treated as proof of authorization. Actual PostgreSQL and authenticated
+browser/keyboard/mobile execution, published edit parity, archived-list parity
+and richer legacy modals remain OPEN. All Assessments/Quizzes remain PARTIAL.
