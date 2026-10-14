@@ -1,15 +1,12 @@
 import { z } from "zod";
 import { facultySubmissionFilterSchema } from "./faculty-assignment-submissions-model";
 
-export const facultyReportCsvRequestSchema = z.object({
-  kind: z.enum(["assignment","quiz"]),
-  assessmentId: z.string().uuid(),
-  deliveryId: z.string().uuid(),
-  filter: facultySubmissionFilterSchema.optional(),
-}).strict().refine(input=>input.kind==="assignment"||
-    input.filter===undefined||input.filter==="ALL",{
-  message:"Quiz reports do not accept assignment grading filters",
-});
+export const facultyReportCsvRequestSchema = z.discriminatedUnion("kind",[
+  z.object({kind:z.literal("assignment"),assessmentId:z.string().uuid(),
+    deliveryId:z.string().uuid(),filter:facultySubmissionFilterSchema.optional()}).strict(),
+  z.object({kind:z.literal("quiz"),assessmentId:z.string().uuid(),
+    deliveryId:z.string().uuid(),filter:z.enum(["ALL","ATTEMPTED","NOT_ATTEMPTED"]).optional()}).strict(),
+]);
 
 export function facultyReportCsvHref(raw: unknown) {
   const input = facultyReportCsvRequestSchema.parse(raw);

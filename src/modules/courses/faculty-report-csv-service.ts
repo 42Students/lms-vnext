@@ -12,7 +12,7 @@ import {
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
 import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
-import {capFacultyQuizCsvRows,facultyQuizCsvNotice} from "./faculty-quiz-csv-cap";
+import {capFacultyQuizCsvRows,facultyQuizCsvNotice,selectFacultyQuizCsvRows} from "./faculty-quiz-csv-cap";
 
 /** A GET export re-runs the persisted Section authorization; never trust cached UI report props. */
 export async function getFacultyReportCsvForDownload(
@@ -71,7 +71,9 @@ export async function getFacultyReportCsvForDownload(
       context,query.assessmentId,query.deliveryId,
     );
     const {quiz,latestAttempts,notAttemptedLearners} = report;
-    const capped=capFacultyQuizCsvRows(latestAttempts,notAttemptedLearners);
+    const selected=selectFacultyQuizCsvRows(latestAttempts,notAttemptedLearners,
+      query.filter??"ALL");
+    const capped=capFacultyQuizCsvRows(selected.attempted,selected.missing);
     omittedRows=capped.omittedRows;
     input = {
       kind:"quiz",title:quiz.title,sectionName:quiz.sectionName,

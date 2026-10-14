@@ -46,6 +46,18 @@ export default async function FacultyQuizReportPage({
           Individual attempts &amp; question accuracy →
         </Link>
       </div>
+      <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
+        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
+          className="min-h-10 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
+          Export attempted only
+        </Link>
+        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
+          className="min-h-10 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
+          Export not attempted only
+        </Link>
+      </nav>
       <FacultyReportCsvDownload
         notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
         href={facultyReportCsvHref({
