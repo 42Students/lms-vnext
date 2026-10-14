@@ -69,7 +69,9 @@ export async function updateOwnLearnerContacts(
     const [locked]=await tx.select({document:learnerProfiles.profileDocument})
       .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membership.id))
       .for("update").limit(1);
-    const current=learnerProfileDocumentSchema.parse(locked?.document??{}).contacts;
+    const current=learnerProfileDocumentSchema.shape.contacts.parse(
+      (locked?.document as Record<string,unknown>|null|undefined)?.contacts,
+    );
     if(input.expectedContacts && learnerContactsAreStale(current,input.expectedContacts))
       throw new PeopleServiceError("LEARNER_CONTACT_STALE");
     if(!learnerContactsAreStale(current,input.contacts))return {contacts:current};
