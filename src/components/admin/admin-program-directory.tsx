@@ -3,6 +3,7 @@
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ProgramActions } from "@/components/academics/academics-actions";
+import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
@@ -64,12 +65,13 @@ export function AdminProgramDirectory({
 
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const terms = Number(durationTerms);
-    if (!departmentId || !name.trim() || !code.trim() ||
-        !Number.isInteger(terms) || terms < 1 || terms > 24) {
+    const parsed = createCollegeProgramSchema.safeParse({
+      departmentId, name, code, durationTerms: Number(durationTerms),
+    });
+    if (!parsed.success) {
       showToast({
         tone: "error", title: "Check program details",
-        description: "Choose a department, name, code, and 1–24 academic terms.",
+        description: parsed.error.issues[0]?.message ?? "Enter a valid department, program, code and duration.",
       });
       return;
     }
@@ -78,10 +80,7 @@ export function AdminProgramDirectory({
         const response = await fetch("/api/academics/programs", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            departmentId, name: name.trim(), code: code.trim(),
-            durationTerms: terms,
-          }),
+          body: JSON.stringify(parsed.data),
         });
         if (!response.ok) {
           const payload = await response.json().catch(() => null);
