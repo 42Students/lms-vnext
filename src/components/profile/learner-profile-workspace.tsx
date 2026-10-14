@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
+import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -181,7 +182,8 @@ export function LearnerProfileWorkspace(props: {
     () => learnerProfileChecklist(document),
     [document],
   );
-  const percent = checklist.percentage;
+  const coverage=learnerProfileCareerCoverage(checklist);
+  const percent=coverage.percentage??0;
 
   // Preserve unsaved local edits; adopt a new server snapshot only when
   // the on-screen document was still equal to the previous saved snapshot.
@@ -385,13 +387,27 @@ export function LearnerProfileWorkspace(props: {
             Review full checklist
           </Link>
           <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>
-            {checklist.completed} of {checklist.total} sections filled
+            {coverage.completed} of {coverage.total} career sections filled
           </StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">
           This reflects fields saved in your profile, not verification or placement eligibility.
-          Sensitive identity information is optional. Select a section to review or edit it.
+          Sensitive identity information is optional and excluded from this career-profile score. Select a section to review or edit it.
         </p>
+        {coverage.next ? (
+          <p role="status" className="mt-3 text-sm text-body">
+            Suggested next section:{" "}
+            <Link href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
+              className="font-semibold text-primary-text underline">
+              {coverage.next.label}
+            </Link>. This does not establish identity verification or placement eligibility.
+          </p>
+        ) : (
+          <p role="status" className="mt-3 text-sm text-body">
+            All non-sensitive career sections contain saved information.
+            This is not a verification or placement eligibility decision.
+          </p>
+        )}
         <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {checklist.items.map(item => (
             <li key={item.section}>

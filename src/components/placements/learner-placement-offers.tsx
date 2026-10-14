@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
+import {learnerOfferResponseTiming,prioritizeLearnerOffers} from "@/modules/placements/learner-offer-response-timing-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -65,9 +66,10 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,
+  offers,snapshotNowIso,
 }: {
   offers: readonly LearnerPlacementOfferItem[];
+  snapshotNowIso:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -76,6 +78,7 @@ export function LearnerPlacementOffers({
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineOffer, setDeclineOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineReason, setDeclineReason] = useState("");
+  const sortedOffers=prioritizeLearnerOffers(offers,snapshotNowIso);
   const preview = confirmOffer
     ? learnerOfferAcceptancePreview({
         offerId: confirmOffer.offerId,
@@ -86,7 +89,7 @@ export function LearnerPlacementOffers({
         joiningDate: confirmOffer.joiningDate,
         expiresAt: confirmOffer.expiresAt,
         status: confirmOffer.status,
-      })
+      },new Date(snapshotNowIso))
     : null;
 
   async function respond(
@@ -172,7 +175,7 @@ export function LearnerPlacementOffers({
       </div>
 
       <div className="grid gap-4">
-        {offers.map((item) => (
+        {sortedOffers.map((item) => (
           <article
             key={item.offerId}
             className="rounded-xl border border-border bg-surface p-5"
@@ -257,7 +260,18 @@ export function LearnerPlacementOffers({
               </p>
             </div>
 
-            {item.status === "ISSUED" ? (
+            {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
+              <p role="status" className="mt-4 text-sm font-semibold text-error">
+                The recorded response deadline has passed. You cannot respond to this offer.
+                Contact your placement cell for clarification.
+              </p>
+            ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="SOON" ? (
+              <p role="status" className="mt-4 text-sm font-semibold text-warning">
+                Response due within 48 hours. Review the offer terms before confirming.
+              </p>
+            ) : null}
+
+            {learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button
                   size="sm"
