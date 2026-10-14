@@ -74,6 +74,8 @@ export function LearnerPlacementOffers({
   const [pendingId, setPendingId] =
     useState<string | null>(null);
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
+  const [declineOffer, setDeclineOffer] = useState<LearnerPlacementOfferItem | null>(null);
+  const [declineReason, setDeclineReason] = useState("");
   const preview = confirmOffer
     ? learnerOfferAcceptancePreview({
         offerId: confirmOffer.offerId,
@@ -91,14 +93,7 @@ export function LearnerPlacementOffers({
     offerId: string,
     action: "ACCEPT" | "DECLINE",
   ) {
-    let reason: string | null = null;
-    if (action === "DECLINE") {
-      reason =
-        window.prompt(
-          "Optional reason for declining this offer",
-        )?.trim() || null;
-    }
-
+    const reason = action === "DECLINE" ? declineReason.trim() || null : null;
     setPendingId(offerId);
     try {
       const response = await fetch(
@@ -143,6 +138,8 @@ export function LearnerPlacementOffers({
             : "Your response is recorded in the offer history.",
       });
       setConfirmOffer(null);
+      setDeclineOffer(null);
+      setDeclineReason("");
       router.refresh();
     } catch (error) {
       showToast({
@@ -280,12 +277,7 @@ export function LearnerPlacementOffers({
                   disabled={
                     pendingId !== null
                   }
-                  onClick={() =>
-                    respond(
-                      item.offerId,
-                      "DECLINE",
-                    )
-                  }
+                  onClick={() => { setDeclineReason(""); setDeclineOffer(item); }}
                 >
                   Decline offer
                 </Button>
@@ -321,6 +313,37 @@ export function LearnerPlacementOffers({
         ))}
       </div>
 
+      <Dialog
+        open={declineOffer !== null}
+        onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}
+        title="Confirm offer decline"
+        description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
+        footer={<>
+          <Button variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
+            Keep offer pending
+          </Button>
+          <Button disabled={pendingId !== null || declineReason.length > 2000}
+            onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
+            {pendingId !== null ? "Saving…" : "Confirm decline"}
+          </Button>
+        </>}
+      >
+        {declineOffer ? <div className="space-y-3">
+          <p className="text-sm font-semibold text-foreground">
+            {declineOffer.companyName} · {declineOffer.roleTitle}
+          </p>
+          <p className="text-sm text-body">
+            Recorded CTC: {formatMoney(declineOffer.annualCtcInr) ?? "Not specified"}.
+            The server rechecks the status and deadline on confirmation.
+          </p>
+          <label className="block text-xs font-semibold text-body" htmlFor="offer-decline-reason">
+            Reason (optional, up to 2000 characters)
+          </label>
+          <textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}
+            onChange={(event) => setDeclineReason(event.target.value)}
+            className="min-h-24 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground" />
+        </div> : null}
+      </Dialog>
       <Dialog
         open={confirmOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) setConfirmOffer(null); }}
