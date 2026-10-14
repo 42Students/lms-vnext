@@ -565,3 +565,6 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-14 Chat 6 / Super Admin Activity Log export — PARTIAL:** /admin/audit reuses Activity Center filtering (module, importance, actor UUID, event/subject type, IST from/to) and detail drill-ins. Added privileged /api/activity/admin-export with 1,000-row capped cursor iteration, dynamic admin-scope authorization, BOM UTF-8 CSV and formula-neutralization of every text cell; timestamps formatted IST and no actor email/phone columns. Pure unit and disposable PG in-test event/foreign-college/wrong-role denial tests authored, not executed. Remaining: legacy action/entity search UI and audit taxonomy, full pagination/browser/export acceptance and runtime gates.
+
+
+**2026-10-14 Chat 6 / Project Templates catalogue — PARTIAL:** Added global template title/status filters, 20-row server pagination, responsive cards and active college-assignment counts scoped to current Super Admin global/org/college safety selection. Global mutation/create remains unscoped-only; selected scope keeps read-only template metadata. Pure model + isolated PostgreSQL in-test template/assignment/foreign-count/wrong-role tests authored, unexecuted. Remaining: legacy editor sections, assignment workflows, versions/revision UX, large-volume browser and DB gates.
