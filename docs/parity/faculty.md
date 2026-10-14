@@ -62,11 +62,12 @@ remain open.
 - [ ] Loading/no-session/error states.
 - [ ] Audit metadata for corrections is preserved.
 
-### Discussions
-- [ ] Feed/read behavior matches.
-- [ ] Faculty post/reply/moderation actions match.
-- [ ] Empty/loading/error states.
-- [x] Course/class isolation.
+### Discussions — DONE (evidence accepted 2026-10-14)
+- [x] Feed/read behavior matches the registered Section chat contract: exact teaching Section, paged history, current highlights and bounded polling.
+- [x] Faculty post/reply/pin/unpin/delete behavior matches the live legacy classroom chat contract; stale-token and cross-Section requests are denied, audit retained. Pinned-strip unpin works for an out-of-page highlight.
+- [x] Empty/loading/error and retry states exist; empty Faculty discussions offer welcome/focus draft starters, and the browser suite exercised empty starter controls.
+- [x] Course/class isolation is enforced.
+Evidence: `1f374255579a3e2e09cc65a69c14c11276abb3be` CI [38595677626](https://github.com/42Students/lms-vnext/actions/runs/38595677626) had 25 passing browser cases including all Discussions cases, plus `faculty-c4-reports-audit-contact.test.ts` 3/3, `learner-course-discussion-actions.test.ts` 3/3 and `learner-discussion-mobile.test.ts` 2/2 on real disposable PostgreSQL. Unit, typecheck and build jobs passed. Full CI is red due to other surfaces, **not** evidence of failed Discussion acceptance. DB10 Section notices are a separate blocked product surface, not silently claimed as completed by this chat acceptance.
 
 ## Page: Contacts
 **Legacy:** `/teacher/contacts/[contactsTab]`  
