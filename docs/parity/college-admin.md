@@ -520,6 +520,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 ## Page: People Directory
 
+**Filtered CSV report PARTIAL (chat-9, 2026-10-14):** /college/people offers a server-authenticated 1,000-membership CSV export using its search, role and status filters. Every page rechecks College Admin permission and current-college scope; exported names, contact, roles and timestamps are formula-neutralized and capped with explicit truncation header and footer. Identity UID and suspension reasons are withheld. Pure model and isolated PG success/foreign/wrong-role tests authored. Remaining: executed PG/browser/type/lint evidence, exact legacy export contract, full-scale paging/snapshot consistency and complete profile UX parity.
+
 **Combined directory filters PARTIAL (chat-9, 2026-10-14):** /college/people now filters persisted memberships by server-scoped college, name/email/phone, role and status before counted pagination. All-role search includes multi-role memberships once; existing onboarding, role and lifecycle dialogs remain. Strict Zod query, encoded filter-preserving pagination, empty/loading/error/reset states and authored pure-model and isolated PostgreSQL positive/foreign/wrong-role tests. Remaining: legacy field/column parity, profile drawer and lifecycle UX parity, 50-row pagination/browser evidence and independently executed PostgreSQL/type/lint tests.
 
 **Legacy:** `/college-admin/people`

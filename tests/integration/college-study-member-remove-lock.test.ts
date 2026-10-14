@@ -48,7 +48,7 @@ describe.skipIf(!enabled)("Study group atomic Remove & Lock isolated PG", () => 
     expect(second.state).toBe("WAITLISTED");
     await expect(manageCollegeStudyMember(admin, id.group, {
       action: "REMOVE_AND_LOCK", membershipId: first.membershipId,
-      expectedVersion: first.version - 1, confirm: true,
+      expectedVersion: first.version + 1, confirm: true,
     })).rejects.toMatchObject({ code: "GROUP_MEMBER_STALE" });
     const removed = await manageCollegeStudyMember(admin, id.group, {
       action: "REMOVE_AND_LOCK", membershipId: first.membershipId,

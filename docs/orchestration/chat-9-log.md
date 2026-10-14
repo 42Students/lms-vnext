@@ -20,3 +20,7 @@ This document records implementation scope only, not closure or release approval
 - Before: two separate Remove and Lock requests could leave a removed member unlocked on a partial failure.
 - After: strict version-token + confirmation POST drives one row-locked transaction changing state REMOVED+isLocked, preserving group member history and immutable activity audit, with existing FIFO eligible waitlist promotion. Admin detail exposes a single confirmed action; same-origin route reused.
 - Authored pure-model/unit and isolated-PG success, stale, foreign-college non-leaking and wrong-role tests. Remaining legacy rule forms, manual waitlist moderation, full roster pagination, executed quality/browser gates.
+
+## Item 4 — Filtered People CSV report — PARTIAL (2026-10-14)
+
+New College Admin-only bounded CSV of persisted, filtered memberships. Tenant-scoped service with 1,000-row limit, formula neutralization, truncation disclosure and private UID exclusion. Model/isolated PG positive and denial tests authored, not executed. Remaining: precise legacy report parity, bulk consistency and runtime/browser proof. Also fixed Item 3 stale-version test to use a positive nonmatching version instead of a Zod-invalid zero.
