@@ -69,6 +69,8 @@ function errorText(payload: {
       return "Another active hall in this college already has that name.";
     case "HALL_IN_USE":
       return `It has ${payload.upcomingClasses ?? "some"} upcoming class(es). Move or cancel them first.`;
+    case "HALL_CAPACITY_CONFLICT":
+      return "The new capacity is below the configured capacity of an upcoming scheduled class.";
     case "DEPARTMENT_NOT_FOUND":
       return "That department isn't an active department of this college.";
     case "INVALID_REQUEST":

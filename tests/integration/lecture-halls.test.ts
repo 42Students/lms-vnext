@@ -91,6 +91,7 @@ afterAll(async () => {
       await cleanup.query("DELETE FROM section_schedule_events WHERE id=$1", [id]);
     }
     for (const id of hallIds) {
+      await cleanup.query("DELETE FROM activity_events WHERE subject_type='lecture_hall' AND subject_id=$1", [id]);
       await cleanup.query("DELETE FROM lecture_halls WHERE id=$1", [id]);
     }
     await cleanup.query("SET session_replication_role = DEFAULT");

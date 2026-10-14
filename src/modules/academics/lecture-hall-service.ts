@@ -6,9 +6,13 @@ import {
   departments,
   lectureHalls,
   sectionScheduleEvents,
+  sections,
 } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { lectureHallScheduledConflict } from "./lecture-hall-conflict-model";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
 /**
  * Lecture halls (rooms) of a college. Managed by College Admin and scoped
@@ -31,6 +35,7 @@ export type LectureHallErrorCode =
   | "HALL_NOT_FOUND"
   | "HALL_NAME_TAKEN"
   | "HALL_IN_USE"
+  | "HALL_CAPACITY_CONFLICT"
   | "DEPARTMENT_NOT_FOUND";
 
 export class LectureHallError extends Error {
@@ -129,12 +134,14 @@ function authorize(
   });
 }
 
+type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
 async function assertDepartmentInCollege(
-  collegeId: string,
+  tx: Tx, collegeId: string,
   departmentId: string | null | undefined,
 ) {
   if (!departmentId) return;
-  const [row] = await getDb()
+  const [row] = await tx
     .select({ id: departments.id })
     .from(departments)
     .where(
@@ -220,42 +227,36 @@ export async function listLectureHalls(
   };
 }
 
-export async function createLectureHall(
-  context: RequestContext,
-  rawInput: unknown,
-) {
+export async function createLectureHall(context: RequestContext, rawInput: unknown) {
   const input = createLectureHallSchema.parse(rawInput);
   const college = await loadCollege(input.collegeId);
   authorize(context, college);
-  await assertDepartmentInCollege(college.id, input.departmentId);
-
   try {
-    const [created] = await getDb()
-      .insert(lectureHalls)
-      .values({
+    return await getDb().transaction(async tx => {
+      await assertDepartmentInCollege(tx, college.id, input.departmentId);
+      const [created] = await tx.insert(lectureHalls).values({
         collegeId: college.id,
         name: input.name,
         capacity: input.capacity,
         roomType: input.roomType,
         description: input.description,
         departmentId: input.departmentId ?? null,
-      })
-      .returning();
-    return created!;
+      }).returning();
+      if (!created) throw new LectureHallError("HALL_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_LECTURE_HALL_CREATED,
+        collegeId: college.id, organizationId: college.organizationId,
+        subjectType: "lecture_hall", subjectId: created.id,
+        subjectLabel: created.name, summary: "Lecture hall created",
+        metadata: { roomType: created.roomType, capacity: created.capacity,
+          departmentId: created.departmentId },
+      });
+      return created;
+    });
   } catch (error) {
     if (isUniqueViolation(error)) throw new LectureHallError("HALL_NAME_TAKEN");
     throw error;
   }
-}
-
-async function loadHall(hallId: string) {
-  const [hall] = await getDb()
-    .select()
-    .from(lectureHalls)
-    .where(eq(lectureHalls.id, hallId))
-    .limit(1);
-  if (!hall) throw new LectureHallError("HALL_NOT_FOUND");
-  return hall;
 }
 
 export async function updateLectureHall(
@@ -265,43 +266,65 @@ export async function updateLectureHall(
 ) {
   const hallId = z.string().uuid().parse(hallIdInput);
   const input = updateLectureHallSchema.parse(rawInput);
-  const hall = await loadHall(hallId);
-  const college = await loadCollege(hall.collegeId);
-  authorize(context, college);
-
-  if (input.departmentId !== undefined) {
-    await assertDepartmentInCollege(college.id, input.departmentId);
-  }
-
-  // An archived hall must not have upcoming classes in it.
-  if (input.status === "ARCHIVED" && hall.status !== "ARCHIVED") {
-    const [row] = await getDb()
-      .select({ n: sql<number>`count(*)::int` })
-      .from(sectionScheduleEvents)
-      .where(
-        and(
-          eq(sectionScheduleEvents.lectureHallId, hall.id),
-          eq(sectionScheduleEvents.status, "SCHEDULED"),
-          gt(sectionScheduleEvents.endsAt, new Date()),
-        ),
-      );
-    if ((row?.n ?? 0) > 0) {
-      throw new LectureHallError("HALL_IN_USE", { upcomingClasses: row.n });
-    }
-  }
-
-  const { departmentId, ...rest } = input;
   try {
-    const [updated] = await getDb()
-      .update(lectureHalls)
-      .set({
+    return await getDb().transaction(async tx => {
+      // Lock first: pending schedule inserts need a foreign-key lock on this room.
+      // This prevents archive or capacity changes racing newly scheduled classes.
+      const [hall] = await tx.select().from(lectureHalls)
+        .where(eq(lectureHalls.id, hallId)).for("update").limit(1);
+      if (!hall) throw new LectureHallError("HALL_NOT_FOUND");
+      const college = await loadCollege(hall.collegeId);
+      authorize(context, college);
+      if (input.departmentId !== undefined) {
+        await assertDepartmentInCollege(tx, college.id, input.departmentId);
+      }
+
+      if ((input.status === "ARCHIVED" && hall.status !== "ARCHIVED") ||
+          (input.capacity !== undefined && input.capacity < hall.capacity)) {
+        const busy = await tx.select({
+          eventId: sectionScheduleEvents.id,
+          classCapacity: sections.capacity,
+        }).from(sectionScheduleEvents)
+          .leftJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
+          .where(and(
+            eq(sectionScheduleEvents.lectureHallId, hall.id),
+            eq(sectionScheduleEvents.status, "SCHEDULED"),
+            gt(sectionScheduleEvents.endsAt, new Date()),
+          ));
+        const conflict = lectureHallScheduledConflict({
+          archiving: input.status === "ARCHIVED" && hall.status !== "ARCHIVED",
+          nextCapacity: input.capacity,
+          scheduledCapacityRows: busy.map(row => row.classCapacity),
+        });
+        if (conflict) {
+          throw new LectureHallError(conflict, { upcomingClasses: busy.length });
+        }
+      }
+
+      const { departmentId, ...rest } = input;
+      const [updated] = await tx.update(lectureHalls).set({
         ...rest,
         ...(departmentId !== undefined ? { departmentId } : {}),
         updatedAt: new Date(),
-      })
-      .where(eq(lectureHalls.id, hall.id))
-      .returning();
-    return updated!;
+      }).where(eq(lectureHalls.id, hall.id)).returning();
+      if (!updated) throw new LectureHallError("HALL_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_LECTURE_HALL_UPDATED,
+        collegeId: college.id, organizationId: college.organizationId,
+        subjectType: "lecture_hall", subjectId: updated.id,
+        subjectLabel: updated.name,
+        summary: updated.status === "ARCHIVED" ? "Lecture hall archived"
+          : hall.status === "ARCHIVED" && updated.status === "ACTIVE" ? "Lecture hall restored"
+          : "Lecture hall updated",
+        metadata: {
+          before: { name: hall.name, roomType: hall.roomType, capacity: hall.capacity,
+            status: hall.status, departmentId: hall.departmentId },
+          after: { name: updated.name, roomType: updated.roomType, capacity: updated.capacity,
+            status: updated.status, departmentId: updated.departmentId },
+        },
+      });
+      return updated;
+    });
   } catch (error) {
     if (isUniqueViolation(error)) throw new LectureHallError("HALL_NAME_TAKEN");
     throw error;
