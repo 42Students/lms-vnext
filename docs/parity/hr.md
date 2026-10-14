@@ -385,3 +385,6 @@ Legacy states:
 
 
 **2026-10-14 Chat 10 / Applicant review drawer — PARTIAL:** Scoped, read-only applicant panel opened from shortlisted recruiter-visible list; active college membership/user status and exact company job guard checked before contact display, IST application date, mobile bottom sheet, non-leaking missing candidate. Unit and isolated PG role/foreign tests authored, not executed. Remaining: recruiter notes/ratings and round-specific review write schema, full legacy share marker, pagination beyond 200, runtime/browser privacy evidence.
+
+
+**2026-10-14 Chat 10 / Offers and selection read view — PARTIAL:** Persisted shared-offer versions now show reply expiry, accepted/declined/issued counts and explicit joining outcomes; selected-candidate readiness inferred ONLY from completed APPLIED PASS rounds. LOI kind and recruiter selection sending remain explicitly unsupported (no registered LOI row, no external sending). Scoped service/Pure-model/isolated PG tests authored, not executed. Remaining: final selection confirmation, OFFER/LOI issuance and upstream approval, response workflows, complete legacy table & browser/PG proof.

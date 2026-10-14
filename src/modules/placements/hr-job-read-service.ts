@@ -2,7 +2,7 @@ import "server-only";
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementOffers, users } from "@/db/schema";
+  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, projectSharedApplicants } from "./hr-job-applicants-model";
@@ -36,8 +36,12 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     db.select({
       id: placementOffers.id, status: placementOffers.status, role: placementOffers.roleTitle,
       annualCtcInr: placementOffers.annualCtcInr, joiningDate: placementOffers.joiningDate,
-      issuedAt: placementOffers.issuedAt, name: users.displayName,
+      issuedAt: placementOffers.issuedAt, expiresAt: placementOffers.expiresAt,
+      applicationId: placementOffers.applicationId,
+      joiningStatus: placementJoiningOutcomes.status,
+      name: users.displayName,
     }).from(placementOffers)
+      .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
       .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
