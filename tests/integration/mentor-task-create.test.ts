@@ -67,7 +67,7 @@ async function fixture(){
       overview:{goal:"Build a task",deliverables:["Task"]},
       releases:[{key:"release-a",title:"Release",sequence:0}],
       sprints:[{key:"sprint-a",releaseKey:"release-a",title:"Sprint",sequence:0}],
-      tasks:[],resources:[],
+      tasks:[{key:"task-a",sprintKey:"sprint-a",title:"Seeded template task",priority:"MEDIUM" as const,sequence:0}],resources:[],
     },
   });
   tracked.templates.push(created.template.id);
@@ -98,7 +98,7 @@ describe("Mentor task create — migrated PostgreSQL",()=>{
     const created=await createMentorProjectTask(mentor,params,input);
     expect(created).toMatchObject({
       projectId:project.id,sprintId:sprint.id,title:input.title,
-      priority:"HIGH",status:"TODO",sequence:0,
+      priority:"HIGH",status:"TODO",sequence:1,
     });
     const saved=await pool.query<{id:string}>(
       "select id from project_tasks where project_id=$1 and id=$2",[project.id,created.id],
@@ -122,6 +122,6 @@ describe("Mentor task create — migrated PostgreSQL",()=>{
     const count=await pool.query<{total:number}>(
       "select count(*)::int as total from project_tasks where project_id=$1",[project.id],
     );
-    expect(count.rows[0]?.total).toBe(1);
+    expect(count.rows[0]?.total).toBe(2);
   });
 });
