@@ -110,3 +110,27 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.activeOfferCount).toBe(1);
   });
 });
+
+describe("L11-014 needs-attention ordering",()=>{
+ it("shows the earliest effective schedule, not all assessments before interviews",()=>{
+  const result=learnerPlacementDashboard({...empty,rounds:[
+   round("later-test","TEST","2026-10-16T08:00:00Z"),
+   round("early-interview","INTERVIEW","2026-10-14T08:00:00Z"),
+   round("middle-test","VENDOR_TEST","2026-10-15T08:00:00Z"),
+   round("late-interview","GD","2026-10-17T08:00:00Z"),
+  ]},now);
+  expect(result.needsAttention.map(x=>x.roundId)).toEqual([
+   "early-interview","middle-test","later-test"
+  ]);
+  expect(result.fullAttentionCount).toBe(4);
+  expect(result.nextAction.title).toBe("middle-test");
+ });
+ it("applies an approved reschedule before sorting its attention time",()=>{
+  const result=learnerPlacementDashboard({...empty,rounds:[
+   round("rescheduled","TEST","2026-10-14T08:00:00Z",
+     {scheduledAt:new Date("2026-10-17T08:00:00Z")}),
+   round("interview","INTERVIEW","2026-10-15T08:00:00Z"),
+  ]},now);
+  expect(result.needsAttention.map(x=>x.roundId)).toEqual(["interview","rescheduled"]);
+ });
+});

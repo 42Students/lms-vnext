@@ -1137,3 +1137,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L29-005 PARTIAL:** Learner Notifications now highlights up to three genuinely college-pinned, learner-visible announcements with a mobile-wrapping, accessible detail action. Pins are sourced solely from the existing authorized college announcement reader; personal notifications cannot be promoted to a pinned college notice even with a forged client flag. Announcement-read status remains separate from personal receipts, and source failure never fabricates a zero. Pure unit and persisted own-learner authorization/notification tests authored; runtime, announcement-producer and browser checks pending.
+
+
+**2026-10-15 chat-5 L11-014 PARTIAL (round 4):** Needs Attention preview now preserves true chronological ordering across authorized interview and assessment rounds rather than presenting every later test ahead of an earlier interview. Approved reschedules are the effective schedule, with stable ties and a truthful full-count overflow. Fixed-date pure-model regressions authored. PG/browser/CI execution pending.
