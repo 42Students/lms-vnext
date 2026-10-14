@@ -72,7 +72,8 @@ export async function saveTpoCompanyPerson(
   const companyId = z.string().uuid().parse(rawCompanyId);
   const input = companyContactPersonSchema.parse(rawInput);
   const db = getDb();
-  return db.transaction(async tx => {
+  try {
+    return await db.transaction(async tx => {
     const [relationship] = await tx.select({
       id: placementCompanyRelationships.id,
     }).from(placementCompanyRelationships).where(and(
@@ -133,5 +134,19 @@ export async function saveTpoCompanyPerson(
       note: companyContactChangeNote("EDIT"), createdByUserId: actorUserId,
     });
     return { id: updated.id, updatedAt: timestamp.toISOString(), unchanged: false };
-  });
+    });
+  } catch (error) {
+    // Convert only the known college contact duplicate-email constraint;
+    // other database faults must never be mislabeled as duplicates.
+    let cause: unknown = error;
+    for (let depth = 0; depth < 4 && cause && typeof cause === "object"; depth++) {
+      const pg = cause as { code?: unknown; constraint?: unknown; cause?: unknown };
+      if (pg.code === "23505" &&
+          pg.constraint === "placement_tpo_leads_college_email_uq") {
+        throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+      }
+      cause = pg.cause;
+    }
+    throw error;
+  }
 }
