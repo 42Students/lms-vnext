@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
@@ -21,6 +21,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import {
   COLLEGE_STRUCTURE_PAGE_SIZE,
   collegeStructureQuerySchema,
+  collegeClassQuerySchema,
   collegeStructureTotalPages,
 } from "./college-structure-directory-model";
 
@@ -59,7 +60,7 @@ function scopedPrograms(collegeId: string) {
 
 /** Registered section/learner-enrollment tables only; never infers scheduled attendance. */
 export async function listCollegeClasses(context: RequestContext, raw: unknown) {
-  const query = collegeStructureQuerySchema.parse(raw);
+  const query = collegeClassQuerySchema.parse(raw);
   const collegeId = ownCollege(context);
   const db = getDb();
   const scoped = db.select({
@@ -88,6 +89,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.minimumCapacity !== undefined ? gte(sections.capacity, query.minimumCapacity) : undefined,
       query.status === "ALL" ? undefined : eq(sections.status, query.status),
       query.q ? or(
         ilike(sections.name, searchPattern(query.q)),
