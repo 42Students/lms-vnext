@@ -62,6 +62,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         aria-current={query.data.view === option.view ? "page" : undefined}
         className={query.data.view === option.view ? "rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary" : "rounded-md border border-border px-4 py-2 text-sm text-body"}>
         {option.label} ({option.count})</Link>)}</nav>
+    {query.data.view!=="WAITING"?<div className="flex justify-end">
+      <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
+        .replace("/hr/drives","/api/placements/recruiter/drives/export")}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+        Export matching drives CSV
+      </Link>
+    </div>:null}
     <form method="get" action="/hr/drives" className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="collegeId" value={selectedCollege} />
       <input type="hidden" name="view" value={query.data.view} />
