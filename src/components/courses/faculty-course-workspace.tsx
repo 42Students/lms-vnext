@@ -1,3 +1,4 @@
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -232,6 +233,7 @@ function AssignmentItem({
         Assignment Report
       </Link>
       <FacultyAssignmentReview
+        filesEnabled={assignmentFilesRuntimeEnabled()}
         assignmentId={item.id}
         deliveryId={deliveryId}
         maxPoints={item.maxPoints}

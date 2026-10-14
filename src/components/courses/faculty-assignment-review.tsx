@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { useRouter } from "next/navigation";
 import {
   type FormEvent,
@@ -21,7 +23,7 @@ type Submission = {
   assignmentId: string;
   deliveryId: string;
   membershipId: string;
-  submissionType: "TEXT" | "LINK";
+  submissionType: "TEXT" | "LINK" | "FILE";
   textContent: string | null;
   submissionUrl: string | null;
   submittedAt: string;
@@ -53,6 +55,7 @@ function formatDateTime(value: string) {
   }
 
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -62,11 +65,17 @@ function SubmissionGradeCard({
   submission,
   maxPoints,
   onUpdated,
+  filesEnabled,
 }: {
   submission: Submission;
   maxPoints: number;
+  filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
 }) {
+  const content = facultySubmissionContentView({
+    id:submission.id,submissionType:submission.submissionType,
+    textContent:submission.textContent,submissionUrl:submission.submissionUrl,
+  },filesEnabled);
   const actions =
     assignmentSubmissionActions({
       gradingStatus:submission.gradingStatus,gradePublished:submission.gradePublished,
@@ -263,21 +272,14 @@ function SubmissionGradeCard({
       </div>
 
       <div className="mt-3 rounded-md bg-[var(--lms-neutral-50)] p-3">
-        {submission.submissionType ===
-        "TEXT" ? (
-          <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">
-            {submission.textContent}
-          </p>
-        ) : submission.submissionUrl ? (
-          <a
-            href={submission.submissionUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm font-semibold text-primary-text hover:text-primary-hover"
-          >
-            Open learner submission ↗
-          </a>
-        ) : null}
+        {content.kind === "TEXT" ? (
+          <p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p>
+        ) : content.kind === "FILE" || content.kind === "LINK" ? (
+          <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
+            className="inline-flex min-h-10 items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
+            {content.label}
+          </Link>
+        ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
       </div>
 
       <form
@@ -387,7 +389,9 @@ export function FacultyAssignmentReview({
   deliveryId,
   maxPoints,
   status,
+  filesEnabled,
 }: {
+  filesEnabled: boolean;
   assignmentId: string;
   deliveryId: string;
   maxPoints: number;
@@ -519,6 +523,7 @@ export function FacultyAssignmentReview({
                 key={`${submission.id}:${submission.version}`}
                 submission={submission}
                 maxPoints={maxPoints}
+                filesEnabled={filesEnabled}
                 onUpdated={(updated) => {
                   setSubmissions((current) =>
                     current?.map((item) =>

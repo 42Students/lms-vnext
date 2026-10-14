@@ -1,3 +1,4 @@
+import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
 import { commandFacultyAttendanceSchedule } from "@/modules/attendance/faculty-schedule-mutation-service";
@@ -23,7 +24,7 @@ import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assig
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment, updateCourseAssignment } from "@/modules/courses/assignment-service";
-import {gradeAssignmentSubmission,publishAssignmentGrade} from "@/modules/courses/assignment-submission-service";
+import {gradeAssignmentSubmission,publishAssignmentGrade,listAssignmentSubmissions} from "@/modules/courses/assignment-submission-service";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {commandFacultyQuizResults} from "@/modules/courses/faculty-quiz-results-command-service";
@@ -548,6 +549,18 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     await pool.query("update course_teaching_assignments set ended_at=now() where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     const revoked=await getFacultyCourseList(facultyOnly,{});
     expect(revoked.items).toEqual([]);
+  });
+  it("projects real submission content from an authorized Faculty reader without widening scope",async()=>{
+    const {delivery,assignment}=await fixture();
+    const row=await pool.query<{id:string}>("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Own learner response') returning id",[assignment.id,delivery.id,testLearnerMembershipId]);
+    const submissions=await listAssignmentSubmissions(facultyOnly,assignment.id,delivery.id);
+    const submission=submissions.find(item=>item.id===row.rows[0]!.id)!;
+    expect(facultySubmissionContentView({id:submission.id,submissionType:submission.submissionType,
+      textContent:submission.textContent,submissionUrl:submission.submissionUrl},false))
+      .toEqual({kind:"TEXT",text:"Own learner response"});
+    await expect(listAssignmentSubmissions(learner,assignment.id,delivery.id)).rejects.toBeDefined();
+    await expect(listAssignmentSubmissions(facultyOnly,assignment.id,SEED_IDS.collegeB)).rejects.toBeDefined();
+    await expect(listAssignmentSubmissions({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},assignment.id,delivery.id)).rejects.toBeDefined();
   });
   it("persists IST Faculty schedule inputs and reschedules with microsecond-safe tokens",async()=>{
     const {delivery}=await fixture();

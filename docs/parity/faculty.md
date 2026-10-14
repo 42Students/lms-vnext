@@ -1270,3 +1270,17 @@ invalid/duplicate/forged selectors. Fresh Faculty Section PG fixtures cover
 success, wrong-role/foreign selector, forbidden college injection and revocation.
 GET-only; stale write tokens do not apply. Remaining: PostgreSQL execution and
 legacy/browser/mobile list acceptance. No DONE promotion.
+
+## 2026-10-15 Faculty submitted-file review entry point — PARTIAL
+The Assignment grading drawer now handles FILE alongside TEXT and LINK.
+Readiness is computed on the server and passed to each review caller; when
+ready, the link uses only the existing authenticated assignment file endpoint,
+which rechecks scope and delegates to storage signed-read helpers. No object
+key, bucket path, receipt metadata or signed URL is embedded in list payloads;
+prefetch is disabled. Unready files and unsafe/missing links have explicit
+states. Submitted text retains line breaks and review timestamps use IST.
+Pure tests cover safe content projection, runtime gating and URL/path injection.
+The fresh Section PG reader fixture covers real persisted text and wrong-role/
+foreign-scope denial. Real FILE receipt/R2 read acceptance remains BLOCKED by
+DB06_ASSIGNMENT_FILES_READY/storage attestation and PostgreSQL execution; no
+file workflow or existing DONE report row is promoted by this UI wiring.
