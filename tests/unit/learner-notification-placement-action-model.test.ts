@@ -14,6 +14,50 @@ describe("learner placement notification action links",()=>{
     expect(learnerNotificationPlacementAction("/learn/my-placements/assessments"))
       .toEqual({href:"/learn/my-placements/assessments",label:"View assessments"});
   });
+  it("normalizes an interview action to validated own-round selectors",()=>{
+    const round="92929292-9292-4929-8929-929292929292";
+    expect(learnerNotificationPlacementAction(
+      "/learn/my-placements/interviews?roundId="+round+"&applicationId="+id+"&collegeId=foreign"
+    )).toEqual({href:"/learn/my-placements/interviews?applicationId="+id+"&roundId="+round,label:"View interview details"});
+    expect(learnerNotificationPlacementAction("/learn/my-placements/interviews")).toEqual(
+      {href:"/learn/my-placements/interviews",label:"View interviews"});
+    for(const query of ["?roundId="+round,"?applicationId="+id,
+      "?applicationId="+id+"&roundId=bad",
+      "?applicationId="+id+"&roundId="+round+"&roundId="+round]){
+      expect(learnerNotificationPlacementAction("/learn/my-placements/interviews"+query)).toBeNull();
+    }
+  });
+  it("opens exact own application detail and history without caller-supplied selectors",()=>{
+    const root="/learn/my-placements/applications/"+id;
+    expect(learnerNotificationPlacementAction(root+"?collegeId=forged"))
+      .toEqual({href:root,label:"View your application"});
+    expect(learnerNotificationPlacementAction(root+"/history?userId=forged"))
+      .toEqual({href:root+"/history",label:"View application history"});
+    expect(learnerNotificationPlacementAction("/learn/my-placements/applications/not-a-uuid")).toBeNull();
+    expect(learnerNotificationPlacementAction(root+"/secret")).toBeNull();
+  });
+  it("uses only canonical learner-course URLs without forged selectors",()=>{
+    const root="/learn/courses/"+id;
+    expect(learnerNotificationPlacementAction("/learn/courses?collegeId=foreign"))
+      .toEqual({href:"/learn/courses",label:"View courses"});
+    expect(learnerNotificationPlacementAction(root+"?membershipId=foreign"))
+      .toEqual({href:root,label:"View course"});
+    expect(learnerNotificationPlacementAction(root+"/home?userId=foreign"))
+      .toEqual({href:root+"/home",label:"View course"});
+    expect(learnerNotificationPlacementAction("/learn/courses/bad")).toBeNull();
+    expect(learnerNotificationPlacementAction(root+"/private")).toBeNull();
+  });
+  it("canonicalizes only project links with allowed tab selectors",()=>{
+    const root="/learn/projects/"+id;
+    expect(learnerNotificationPlacementAction(root+"?tab=board&collegeId=forged"))
+      .toEqual({href:root+"?tab=board",label:"View project board"});
+    expect(learnerNotificationPlacementAction(root+"?tab=delivery"))
+      .toEqual({href:root+"?tab=delivery",label:"View project delivery"});
+    expect(learnerNotificationPlacementAction("/learn/projects?userId=other"))
+      .toEqual({href:"/learn/projects",label:"View projects"});
+    expect(learnerNotificationPlacementAction(root+"?tab=private")).toBeNull();
+    expect(learnerNotificationPlacementAction("/learn/projects/not-a-uuid")).toBeNull();
+  });
   it("rejects malformed, duplicate, cross-role and external actions",()=>{
     for(const value of [
       "/learn/my-placements/applications?applicationId=bad",

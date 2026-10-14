@@ -38,12 +38,15 @@ export function facultyQuizDraftIssue(
 
 /** Switching a multiselect question to single choice must not retain multiple
  * marked answers; ensure a defined answer even in an incomplete draft. */
-export function facultyChangeQuizChoiceType<T extends { correct: boolean }>(
-  question: { type: "SINGLE_CHOICE" | "MULTIPLE_CHOICE"; options: T[] },
+export function facultyChangeQuizChoiceType<
+  T extends { correct: boolean },
+  Q extends { type: "SINGLE_CHOICE" | "MULTIPLE_CHOICE"; options: T[] },
+>(
+  question: Q,
   nextType: "SINGLE_CHOICE" | "MULTIPLE_CHOICE",
-) {
+): Q {
   if (nextType === "MULTIPLE_CHOICE") {
-    return { ...question, type: nextType };
+    return { ...question, type: nextType } as Q;
   }
   const firstCorrect = question.options.findIndex((option) => option.correct);
   const chosen = firstCorrect === -1 ? 0 : firstCorrect;

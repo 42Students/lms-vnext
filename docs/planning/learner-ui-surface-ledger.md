@@ -358,7 +358,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L11-001 | Exact placement tabs | PlacementsTabsLayout | learner placement tabs | FIXED |
-| L11-002 | First-run onboarding hero | placements dashboard | placements home | UNCHECKED |
+| L11-002 | First-run onboarding hero | learner placements dashboard | guided rules, real job browsing and optional preferences links appear only when persisted own application feed confirms a true first run; no fabricated completion status when a source fails. Pure model and fresh own-learner PG tests authored; PARTIAL pending static/runtime/browser and legacy onboarding comparison | PARTIAL |
 | L11-003 | Partial-source error alert | placements home | authenticated learner gate before parallel independent settled source reads; warns of failed sections, retry button, preserves loaded sections, masks failed dashboard metrics as unknown rather than zero; pure and fresh-learner PostgreSQL tests authored. PARTIAL pending CI, error-injection and browser recovery acceptance | PARTIAL |
 | L11-004 | Hero greeting | placements dashboard | placements home | UNCHECKED |
 | L11-005 | Next-action priority | placements dashboard | issued still-actionable offer expiring within 24h takes priority over planned round; expired/accepted offers excluded, existing assessment/interview logic otherwise unchanged; on offer-read failure hero remains unknown rather than misleading. PARTIAL pending fresh-PG/tsc/eslint and real expiry-boundary/browser acceptance | PARTIAL |
@@ -509,19 +509,19 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L17-001 | Route is materialized, not placeholder | CareerCalendarContent | calendar page | FIXED |
-| L17-002 | Agenda mode | CareerCalendarContent | career calendar | GAP |
-| L17-003 | Month mode | CareerCalendarContent | career calendar | GAP |
-| L17-004 | Week mode | CareerCalendarContent | career calendar | GAP |
-| L17-005 | Day mode | CareerCalendarContent | career calendar | GAP |
-| L17-006 | Previous / Today / Next | CareerCalendarContent | career calendar | GAP |
+| L17-002 | Agenda mode | career calendar | distinct rolling 30-day agenda anchored to selected IST date, with 30-day navigation and actual chronologically ordered own rounds rather than mirroring month view; pure unit + owned PG test authored. PARTIAL pending execution, browser navigation and source-parity acceptance | PARTIAL |
+| L17-003 | Month mode | career calendar | dedicated 42-cell month grid now summarizes scoped actual assessment/interview/other rounds in the current IST month; month totals reflect persisted event selection, not job deadlines guessed from unknown sources. Pure and self-fixtured PostgreSQL tests authored; PARTIAL until execution, desktop/mobile browser and legacy source verification | PARTIAL |
+| L17-004 | Week mode | career calendar | mobile week shows all seven consecutive IST calendar days including genuine empty days, not just days containing known rounds; authorized saved schedule remains source. Unit and own PG tests authored. PARTIAL pending execution, mobile/keyboard and legacy calendar acceptance | PARTIAL |
+| L17-005 | Day mode | career calendar | selected IST day now has its own explicit schedule overview with accurately sorted first/last persisted round instants, no fabricated attendance or completion; pure-model and authorized PG checks authored. PARTIAL pending runtime, mobile/browser and legacy acceptance | PARTIAL |
+| L17-006 | Previous / Today / Next | career calendar | previous/next now use view-specific day/week/30-day agenda/month shifts but disable correctly at strictly validated 2000–2100 IST date boundaries; Today remains an explicit fresh-day action. Pure model and authorized PG tests authored; PARTIAL pending runtime, navigation browser history and legacy controls acceptance | PARTIAL |
 | L17-007 | Date picker | learner career calendar | date input with strict valid YYYY-MM-DD IST day keys; existing owned persisted round filter remains; pure and fresh-learner PG tests authored. PARTIAL pending executed PostgreSQL, Vitest, TypeScript/ESLint, calendar browser/mobile and timezone acceptance | PARTIAL |
-| L17-008 | Event-type filters | CareerCalendarContent | career calendar | GAP |
-| L17-009 | Event chips | CareerCalendarContent | career calendar | GAP |
+| L17-008 | Event-type filters | CareerCalendarContent | strict learner URL event kind + date/view; refresh/history persistence and own persisted event filters; PARTIAL pending PG/browser acceptance | PARTIAL |
+| L17-009 | Event chips | career calendar | month/week desktop grid shows up to two persisted authorized round labels/types per IST day, with overflow count and day navigation; pure model and own-fixture PG checks authored. PARTIAL pending executed tests, direct event-chip action, keyboard/screen reader and mobile/desktop browser parity | PARTIAL |
 | L17-010 | Selected-event detail drawer | learner career calendar | event cards now open own-scoped detail drawer with real IST time, employer, kind, approved-reschedule cue and exact assessment/interview deep link; never shows provider secrets. PARTIAL pending PG/TypeScript/ESLint and mobile/browser acceptance | PARTIAL |
 | L17-011 | Event action/deep links | CareerCalendarContent | career rounds | FIXED |
-| L17-012 | Partial-source failure + retry | CareerCalendarContent | career calendar | GAP |
+| L17-012 | Partial-source failure + retry | CareerCalendarContent | dedicated loading + hard-failure retry preserves calendar URL; PARTIAL pending PG/browser error injection and legacy partial-source acceptance | PARTIAL |
 | L17-013 | Empty calendar state | CareerCalendarContent | career calendar | FIXED |
-| L17-014 | Timezone handling | CareerCalendarContent | career rounds | UNCHECKED |
+| L17-014 | Timezone handling | career calendar | .ics export now uses exactly the visible IST day/week/month/30-day event period and active kind filter, with unmodified real UTC instants; no calendar provider URL/meeting credentials. Pure model + own persisted PG checks authored. PARTIAL pending native calendar import, leap/IST boundary, browser and executed tests | PARTIAL |
 | L17-015 | Mobile agenda fallback | learner career calendar | month/week show accessible mobile IST day-grouped agenda rather than 38rem horizontal grid; same persisted filtered own events, details and exact deep links; pure and fresh-learner PG tests authored. PARTIAL pending executed tests, responsive screen-reader and browser acceptance | PARTIAL |
 
 ## L18 — Placement Cell
@@ -766,8 +766,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-026 | Contact deep-link scroll | profile query section | strict Zod ?section=contacts route input, live target scroll, responsive completion checklist deep links | FIXED |
 | L30-027 | Connect-accounts deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-028 | Optional-section partial failure isolation | removed from current learner Profile composition | no separate optional placement-section fetches | RETIRED |
-| L30-029 | Loading skeleton | ProfileSkeleton | profile route | UNCHECKED |
-| L30-030 | Hard-error + Retry | profile route | profile route | UNCHECKED |
+| L30-029 | Loading skeleton | ProfileSkeleton | responsive academic identity, introduction and section-shaped placeholders; PARTIAL pending browser/mobile exact parity | PARTIAL |
+| L30-030 | Hard-error + Retry | profile route | honest hard failure retry/exit plus independent academic-summary recovery after live owned profile gate; PARTIAL pending PG/browser retry and unsaved edits acceptance | PARTIAL |
 | L30-031 | Visibility refresh | profile route | guarded visibility-triggered router.refresh after 45s, manual saved-profile refresh, and reconciliation of newer server props only when on-screen document matches previous saved state (unsaved changes protected); PARTIAL pending fresh PostgreSQL/unit, tsc/eslint, multi-tab browser and concurrent-editor acceptance | PARTIAL |
 | L30-032 | Role fence/redirect | profile route | server context | FIXED |
 | L30-033 | Mobile profile cards/forms | profile responsive | profile workspace | UNCHECKED |
@@ -781,6 +781,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-041 | Education marksheet upload/replace/view, PDF/JPG/PNG ≤5 MB | MarksheetUpload + private docs | no vNext verification/private-doc flow | GAP |
 | L30-042 | Aadhaar/PAN private document upload/view tied to Identity verification | identity + PrivateDocLink | no vNext verification/private-doc flow | GAP |
 | L30-043 | Verification status refresh while page remains visible | ProfileVerificationCard polling | no vNext equivalent | GAP |
+
+| L30-044 | Whole-profile save conflict protection + audit | learner Profile edit workflow | strict saved baseline, locked live own-profile write, stale-before-no-op, private-value-free field-name audit; PARTIAL pending PG and multi-tab/browser acceptance | PARTIAL |
 
 ## L31 — Conditional Drive Day learner entry
 

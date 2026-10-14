@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
+import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-onboarding-steps-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -46,6 +47,7 @@ export function LearnerPlacementsDashboard({
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
+  const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
       {next ? <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
@@ -80,6 +82,22 @@ export function LearnerPlacementsDashboard({
           Your current applications or schedule have not been treated as empty.
         </p>
       )}
+
+      {onboarding.length>0 ? (
+        <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="First placement steps">
+          <h3 className="m-0 text-base font-semibold text-foreground">Get started with placements</h3>
+          <p className="mt-1 text-sm text-body">These are useful starting points, not completed or verified milestones.</p>
+          <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+            {onboarding.map((step,index)=>(
+              <li key={step.href} className="min-w-0 rounded-lg border border-border p-3">
+                <p className="text-xs font-bold uppercase text-primary-text">Step {index+1}</p>
+                <Link href={step.href} className="mt-2 block min-h-11 break-words text-sm font-semibold text-primary-text underline underline-offset-4">{step.label} →</Link>
+                <p className="mt-1 text-xs leading-5 text-body">{step.detail}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
