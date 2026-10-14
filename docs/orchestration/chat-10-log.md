@@ -14,3 +14,5 @@
 - 2026-10-14 — Results-due calendar PARTIAL: bounded round due-at query, IST due cards, no fabricated slot/notifications, unit+isolated PG authored; unexecuted.
 
 - 2026-10-14 — Drive Detail Overview PARTIAL: employer-scoped summary / deadline state and nav, model/tests, runtime not executed.
+
+- 2026-10-14 — Drive List structured filters PARTIAL: work mode/employment/urgency + 20-row paging, unit/PG authored; backend-wide source listing remains to paginate at DB.
