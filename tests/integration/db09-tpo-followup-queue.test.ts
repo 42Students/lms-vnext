@@ -9,6 +9,7 @@ import {
   createConfirmedTpoFollowup,
   completeConfirmedTpoFollowup,
   getTpoDueFollowupQueue,
+  getTpoFollowupQueueCsv,
 } from "@/modules/placements/tpo-followup-queue-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -20,6 +21,7 @@ const pool = enabled
   ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 })
   : null;
 const leadIds = new Set<string>();
+let addedTpoRoleId:string|null=null;
 
 const tpo: RequestContext = {
   user: {
@@ -85,6 +87,10 @@ async function fixture() {
 describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL", () => {
   beforeAll(async () => {
     if (!pool) throw new Error("Disposable PostgreSQL is required");
+    const role=await pool.query<{id:string}>(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,\u0027TPO\u0027) ON CONFLICT DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership]);
+    addedTpoRoleId=role.rows[0]?.id??null;
     const [tables] = (await pool.query(
       "SELECT to_regclass('public.placement_tpo_leads') AS leads, " +
       "to_regclass('public.placement_tpo_followups') AS followups, " +
@@ -104,6 +110,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
   afterEach(async () => { await cleanup(); });
   afterAll(async () => {
     await cleanup();
+    if(addedTpoRoleId&&pool)await pool.query("DELETE FROM membership_roles WHERE id=$1",[addedTpoRoleId]);
     await pool?.end();
     await closeDatabaseConnection();
   });
@@ -117,7 +124,13 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     });
     expect(created.leadId).toBe(leadId);
     const queue = await getTpoDueFollowupQueue(tpo);
+    const exportData=await getTpoFollowupQueueCsv(tpo,{});
+    expect(exportData.csv).toContain("Follow-up ID");
+    expect(exportData.csv).toContain("Follow-up");
     expect(queue.rows.some((row) => row.id === created.id)).toBe(true);
+    const mine=await getTpoDueFollowupQueue(tpo,undefined,{scope:"MINE"});
+    expect(mine.rows.some(row=>row.id===created.id)).toBe(true);
+    await expect(getTpoDueFollowupQueue(tpo,undefined,{scope:"FOREIGN"})).rejects.toBeDefined();
     const databaseDate = (await pool.query(
       "SELECT to_char(due_at AT TIME ZONE 'UTC', " +
       "'YYYY-MM-DD\"T\"HH24:MI:SS') AS due_text, done_at " +
@@ -154,6 +167,37 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     expect(after.rows.some((row) => row.id === created.id)).toBe(false);
   });
 
+  it("separates due from next-seven-day tasks using persisted scheduled times",async()=>{
+    const leadId=await fixture();
+    const upcoming=new Date(Date.now()+3*86400000).toISOString();
+    const task=await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt:upcoming});
+    expect((await getTpoDueFollowupQueue(tpo)).rows.some(row=>row.id===task.id)).toBe(false);
+    expect((await getTpoDueFollowupQueue(tpo,undefined,{window:"NEXT_7_DAYS"})).rows.some(row=>row.id===task.id)).toBe(true);
+  });
+
+  it("searches scoped lead names literally before applying the queue cap",async()=>{
+    const leadId=await fixture();
+    const task=await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt:new Date(Date.now()-60000).toISOString()});
+    expect((await getTpoDueFollowupQueue(tpo,undefined,{q:"Follow-up"})).rows.some(row=>row.id===task.id)).toBe(true);
+    expect((await getTpoDueFollowupQueue(tpo,undefined,{q:"%_not_real"})).rows.some(row=>row.id===task.id)).toBe(false);
+  });
+
+  it("paginates stored follow-ups without hiding records beyond page one",async()=>{
+    const leadId=await fixture();
+    const dueAt=new Date(Date.now()-60000).toISOString();
+    const created=[];
+    for(let i=0;i<28;i++)created.push(await createConfirmedTpoFollowup(tpo,{confirmed:true,leadId,dueAt}));
+    const page1=await getTpoDueFollowupQueue(tpo,undefined,{q:"Follow-up",page:1});
+    expect(page1.rows).toHaveLength(25);
+    const other=await getTpoDueFollowupQueue(tpo,undefined,{q:"Follow-up",page:2});
+    expect(other.total).toBeGreaterThanOrEqual(28);
+    expect(other.rows.length).toBeGreaterThanOrEqual(3);
+    expect(other.page).toBe(2);
+    const allIds=[...page1.rows,...other.rows].map(x=>x.id);
+    expect(new Set(allIds).size).toBe(allIds.length);
+    expect(created.every(row=>allIds.includes(row.id))).toBe(true);
+  });
+
   it("rejects wrong roles and foreign college reads and writes without changing records", async () => {
     if (!pool) throw new Error("Disposable PostgreSQL is required");
     const leadId = await fixture();
@@ -168,6 +212,9 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
       confirmed: true, leadId, dueAt,
     })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(getTpoDueFollowupQueue(learner)).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoFollowupQueueCsv(learner,{})).rejects.toBeInstanceOf(AuthorizationError);
+    const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+    await expect(getTpoDueFollowupQueue(forged)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(createConfirmedTpoFollowup(foreign, {
       confirmed: true, leadId, dueAt,
     })).rejects.toBeDefined();
@@ -175,6 +222,7 @@ describe.skipIf(!enabled)("DB09 confirmed follow-up queue on isolated PostgreSQL
     const created = await createConfirmedTpoFollowup(tpo, {
       confirmed: true, leadId, dueAt,
     });
+    await expect(getTpoFollowupQueueCsv(foreign,{})).rejects.toBeInstanceOf(AuthorizationError);
     await expect(completeConfirmedTpoFollowup(learner, created.id, {
       confirmed: true, expectedDueAt: created.dueAt,
       outcome: "OTHER", note: "Wrong role",

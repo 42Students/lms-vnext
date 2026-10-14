@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
 
 type DueRow = {
   id: string;
@@ -11,6 +12,8 @@ type DueRow = {
   companyName: string | null;
   dueAt: string;
   note: string | null;
+  phoneNorm:string|null;
+  canContact:boolean;
   overdue: boolean;
 };
 type Lead = { id: string; name: string; companyName: string | null };
@@ -21,6 +24,9 @@ type Queue = {
   hasMoreDue: boolean;
   leads: Lead[];
   hasMoreLeads: boolean;
+  page:number;pageSize:number;total:number;totalPages:number;
+  scope:"MINE"|"TEAM";
+  window:"DUE"|"NEXT_7_DAYS";
 };
 
 const field = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
@@ -76,7 +82,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         note: createNote.trim() || null,
       });
       setDueLocal(""); setCreateNote("");
-      setSuccess("Follow-up scheduled. Future-dated tasks appear here only when due.");
+      setSuccess("Follow-up scheduled. Use the Due now / Next 7 days views to locate open tasks.");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Follow-up scheduling failed.");
@@ -162,16 +168,16 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-base font-semibold text-foreground">
-            Follow-ups due ({data.rows.length}{data.hasMoreDue ? "+" : ""})
+            {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.total})
           </h2>
           <p className="mt-1 text-sm text-body">
-            Open tasks due now or earlier. Future tasks appear when due.
-            The list is limited to the earliest 200 rows; it is not a company-wide total.
+            {data.window==="DUE"?"Open tasks due now or earlier.":"Open tasks scheduled from now through the next seven days."}
+            This is a 25-row page of the selected ownership and date window, not a college-wide total.
           </p>
         </div>
         {data.rows.length === 0 ? (
           <p role="status" className="p-5 text-sm text-body">
-            No open follow-ups are due at this time. Future tasks are not counted as due.
+            {data.window==="DUE"?"No open follow-ups are due at this time.":"No open follow-ups are scheduled in the next seven days."}
           </p>
         ) : (
           <div className="divide-y divide-border">
@@ -185,6 +191,10 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                     <p className="mt-1 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)}
                     </p>
+                    {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="inline-flex min-h-10 items-center text-primary-text hover:underline">Call recruiter ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-primary-text hover:underline">Open WhatsApp ↗</a>:null}
+                    </div>:null}
                   </div>
                   <button type="button" disabled={pending}
                     onClick={() => {
