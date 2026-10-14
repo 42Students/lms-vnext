@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { z } from "zod";
+import { hidesFacultyQuizRouteError } from "@/modules/courses/faculty-quiz-report-route-errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -12,6 +15,7 @@ export default async function FacultyQuizAttemptPage({
   params:Promise<{quizId:string}>;searchParams:Promise<Query>;
 }) {
   const [{quizId},raw]=await Promise.all([params,searchParams]);
+  if (!z.string().uuid().safeParse(quizId).success) notFound();
   const search=facultyQuizAttemptSearchSchema.safeParse(raw);
   const parsed=facultyQuizAttemptsQuerySchema.safeParse({
     quizId,...(search.success?search.data:{deliveryId:undefined}),
@@ -21,7 +25,13 @@ export default async function FacultyQuizAttemptPage({
     <Link href="/teacher/allQuizzes" className="text-primary-text underline">All Quizzes</Link>
   </section>;
   const context=await getCurrentRequestContext();
-  const data=await getFacultyQuizAttemptDrilldown(context,parsed.data);
+  let data: Awaited<ReturnType<typeof getFacultyQuizAttemptDrilldown>>;
+  try {
+    data = await getFacultyQuizAttemptDrilldown(context, parsed.data);
+  } catch (error) {
+    if (hidesFacultyQuizRouteError(error)) notFound();
+    throw error;
+  }
   const back="/teacher/report/quiz/"+encodeURIComponent(quizId)+
     "?deliveryId="+encodeURIComponent(data.query.deliveryId);
   return <div className="space-y-6">

@@ -1358,3 +1358,6 @@ Faculty inbox destinations are now normalized through a pure same-origin Faculty
 
 ## 2026-10-15 Faculty inbox strict query parsing — PARTIAL
 The existing 50-row persisted Faculty notification feed now rejects duplicate `view` values, unknown URL selectors, malformed unread filters and incomplete/forged cursor pairs with a recoverable newest-page link instead of silently widening scope. A pure Zod model and unit cases cover valid cursor and denial states. Real Faculty PG/browser verification and producer/deep-link parity remain open.
+
+## 2026-10-15 Faculty Quiz attempt report private 404 — PARTIAL
+Malformed Quiz path IDs now use `notFound()` rather than a generic report error, and missing/foreign/mismatched Quiz or teaching-Section service errors become a non-leaking 404. Invalid pagination and delivery queries retain a recoverable inline error; genuine database errors propagate. New typed pure-model tests cover the error boundary. Exact PostgreSQL positive/foreign/role and mobile browser acceptance remain open; All Quizzes is still PARTIAL.
