@@ -18,6 +18,8 @@ import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-aut
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {createLessonContent,transitionLessonContent} from "@/modules/courses/lesson-content-service";
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
+import {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
+import {getFacultyReportCsvForDownload} from "@/modules/courses/faculty-report-csv-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL is mandatory.");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -131,6 +133,48 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   await expect(getFacultyLiveClasses({
    ...faculty,membership:{...faculty.membership!,status:"SUSPENDED"},
   },{view:"ALL"})).rejects.toBeDefined();
+ });
+ it("serves a real Section Assignment report and regenerates privacy-safe CSV with deny checks",async()=>{
+  const {delivery,lesson}=await fixture();
+  const created=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
+    action:"CREATE",lessonId:lesson.id,sequence:4,title:"Faculty Report "+tag,
+    description:"Assignment report acceptance",dueAt:null,maxPoints:10,confirmed:true,
+  });
+  const published=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
+    action:"PUBLISH",assignmentId:created.id,
+    expectedUpdatedAt:created.updatedAt.toISOString(),confirmed:true,
+  });
+  expect(published.status).toBe("PUBLISHED");
+  const report=await getFacultyAssignmentReport(faculty,created.id,delivery.id);
+  expect(report.assignment).toMatchObject({
+    id:created.id,deliveryId:delivery.id,title:"Faculty Report "+tag,maxPoints:10,
+  });
+  expect(report.metrics).toMatchObject({
+    eligibleLearners:0,submitted:0,missing:0,graded:0,averagePercent:null,
+  });
+  expect(report.distribution.every(bucket=>bucket.count===0)).toBe(true);
+  const file=await getFacultyReportCsvForDownload(faculty,{
+    kind:"assignment",assessmentId:created.id,deliveryId:delivery.id,
+  });
+  expect(file.filename.startsWith("faculty-assignment-report-")).toBe(true);
+  expect(file.filename.endsWith(".csv")).toBe(true);
+  expect(file.csv).toContain('"Learner","Response","Score","Percent","Submitted at (IST)","Details"');
+  expect(file.csv).not.toContain("@example.");
+  expect(file.csv).not.toContain("learner.seed@example.com");
+  expect(file.omittedRows).toBe(0);
+  await expect(getFacultyAssignmentReport(learner,created.id,delivery.id)).rejects.toBeDefined();
+  await expect(getFacultyAssignmentReport(faculty,created.id,SEED_IDS.collegeB)).rejects.toBeDefined();
+  await expect(getFacultyAssignmentReport({...faculty,
+    membership:{...faculty.membership!,status:"SUSPENDED"}},created.id,delivery.id)).rejects.toBeDefined();
+  await expect(getFacultyReportCsvForDownload(learner,{
+    kind:"assignment",assessmentId:created.id,deliveryId:delivery.id,
+  })).rejects.toBeDefined();
+  await expect(getFacultyReportCsvForDownload(faculty,{
+    kind:"assignment",assessmentId:created.id,deliveryId:SEED_IDS.collegeB,
+  })).rejects.toBeDefined();
+  await expect(getFacultyReportCsvForDownload(faculty,{
+    kind:"assignment",assessmentId:created.id,deliveryId:delivery.id,collegeId:SEED_IDS.collegeB,
+  })).rejects.toBeDefined();
  });
  it("creates and audits Assignment draft, rejects stale/foreign, then publishes and archives",async()=>{
   const {delivery,lesson}=await fixture();
