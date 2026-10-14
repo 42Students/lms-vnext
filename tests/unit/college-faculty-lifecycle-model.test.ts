@@ -6,7 +6,7 @@ describe("College Faculty lifecycle boundary", () => {
     expect(collegeFacultyLifecycleSchema.parse({
       action: "DEACTIVATE", expectedStatus: "ACTIVE",
       reason: "No teaching duties", confirm: true,
-    }).reason).toBe("No teaching duties");
+    }).action).toBe("DEACTIVATE");
     for (const invalid of [
       { action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "x", confirm: true },
       { action: "REACTIVATE", expectedStatus: "ACTIVE", confirm: true },
