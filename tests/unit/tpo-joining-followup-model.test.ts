@@ -16,6 +16,7 @@ it("never infers joining from accepted offers, unknown dates or deferred status"
  expect(r.counts).toEqual({accepted:4,pending:2,deferred:1,joined:1,didNotJoin:0,dueWithRecordedDate:1,dateMissing:1});
  expect(r.rows).toHaveLength(3);
  expect(projectTpoJoiningFollowups(facts,"2026-10-14","DATE_DUE").rows.map(x=>x.offerId)).toEqual(["due"]);
+ expect(projectTpoJoiningFollowups(facts,"2026-10-14","DATE_MISSING").rows.map(x=>x.offerId)).toEqual(["pending"]);
  expect(tpoJoiningFollowupCsv(r,"-Season").csv).toContain("'=Company");
 });
 it("caps CSV and rejects invalid filters",()=>{
@@ -26,5 +27,6 @@ it("caps CSV and rejects invalid filters",()=>{
  const csv=tpoJoiningFollowupCsv(r,"Year");
  expect(csv.truncated).toBe(true);expect(csv.csv).toContain("TRUNCATED");
  expect(tpoJoiningFollowupQuerySchema.safeParse({state:"JOINED"}).success).toBe(false);
+ expect(tpoJoiningFollowupQuerySchema.safeParse({state:"DATE_MISSING"}).success).toBe(true);
 });
 });
