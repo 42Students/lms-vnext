@@ -75,6 +75,9 @@ for(let i=0;i<25;i++){
  const app=(await pool.query<{id:string}>("INSERT INTO placement_applications(job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
   [jobId,ids.role,member,user])).rows[0]!.id;extraApps.push(app);
 }
+const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
+expect(alphabetical.rows.length).toBeGreaterThan(0);
+expect(alphabetical.rows.map(row=>row.student??"").slice(0,2)).toEqual([...alphabetical.rows.map(row=>row.student??"").slice(0,2)].sort());
 const first=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:1});
 const second=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:2});
 expect(first.rows).toHaveLength(25);expect(second.rows).toHaveLength(1);

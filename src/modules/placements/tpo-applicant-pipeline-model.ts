@@ -5,6 +5,7 @@ export const tpoApplicantPipelineParams = z.object({
   search: z.string().trim().max(100).default(""),
   channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
   eligibility:z.enum(["ALL","ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"]).default("ALL"),
+  sort:z.enum(["NEWEST","OLDEST","LEARNER_NAME"]).default("NEWEST"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
 export function tpoApplicantPipelinePage(total:number,requestedPage:number){

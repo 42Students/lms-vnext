@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users } from "@/db/schema";
@@ -77,12 +77,14 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
      eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
-    .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
+    .orderBy(input.sort==="OLDEST"?asc(placementApplications.submittedAt):
+      input.sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
+      placementApplications.id)
     .limit(pagination.pageSize).offset(pagination.offset);
    return {counts:totals,...pagination,rows:records.map(row=>({
     ...row,submittedAt:row.submittedAt.toISOString(),
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,...projection};
 }
