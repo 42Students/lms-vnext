@@ -153,3 +153,19 @@ Legacy oracles for this batch: FE `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`, BE
 
 **Do not tick the page contract above as fully CLOSED:** navigation shell, feature-policy failures, all tab/detail workflows, latest production UI fidelity, activity completeness, mobile/browser, privacy/storage-backed resource uploads and source semantic mappings remain unverified. W01 owns shared sidebar navigation and the migration journal. W06 owns shared inbox/announcement infrastructure.
 
+
+## Mentor portfolio review queue and activity (2026-10-14)
+
+Source-authored, read-only `/mentor/reviews` and `/mentor/activity` are
+reachable from the existing Projects screen. Review queue filters the persisted
+assigned-project submission alerts to actual pending final-delivery reviews,
+with search and pagination, and links to existing authorized Delivery review
+controls. The activity page projects fixed safe labels from registered
+`activity_events` tied to active same-college Mentor project assignments;
+raw event summaries, actor details and metadata are not returned.
+Both require current MENTOR role, central projects.read college permission,
+optional Projects enablement and active assignment. Invalid URL filters fail
+closed. Denial-path PostgreSQL tests and pure model tests are authored, NOT
+represented as executed evidence. Legacy full history coverage, response
+analytics, browser/mobile evidence and independent functional verification
+remain open. No parity checklist boxes are checked solely from source work.
