@@ -87,7 +87,7 @@ export default async function TpoCompanyDetailPage({
           <div className="flex flex-wrap gap-2">
             {relationship?.relationshipStatus === "ACTIVE" ? (
               <Link
-                href={`/tpo/placements/new/draft?companyId=${encodeURIComponent(company.id)}`}
+                href={`/tpo/placements/new/draft?companyId=${encodeURIComponent(company.companyId)}`}
                 className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
               >
                 Create draft drive

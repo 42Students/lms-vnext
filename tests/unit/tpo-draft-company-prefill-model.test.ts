@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   resolveTpoDraftCompanyRelationshipId,
+  resolveTpoDraftCompanyByName,
   tpoDraftCompanyPrefillSchema,
 } from "@/modules/placements/tpo-draft-company-prefill-model";
 
@@ -16,6 +17,18 @@ describe("TPO draft company prefill", () => {
       .toBeNull();
     expect(resolveTpoDraftCompanyRelationshipId(id, []))
       .toBeNull();
+  });
+
+  it("requires one exact active college relationship for recruiter name prefill", () => {
+    const companies = [{ name: "Acme India", relationshipId }];
+    expect(resolveTpoDraftCompanyByName("  acme india  ", companies)).toBe(relationshipId);
+    expect(resolveTpoDraftCompanyByName("Not in college", companies)).toBeNull();
+    expect(resolveTpoDraftCompanyByName("Acme", companies)).toBeNull();
+    expect(resolveTpoDraftCompanyByName("Acme India", [
+      ...companies, { name: "ACME INDIA", relationshipId: foreign },
+    ])).toBeNull();
+    expect(tpoDraftCompanyPrefillSchema.parse({ company: "  Acme India " }).company)
+      .toBe("Acme India");
   });
 
   it("rejects relationship IDs, tenant injection and invalid URL hints", () => {

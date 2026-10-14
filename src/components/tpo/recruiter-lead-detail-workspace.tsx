@@ -289,6 +289,14 @@ export function RecruiterLeadDetailWorkspace({
               <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.manualStage.replace("_", " ")}</p>
             </div>
             <div className="flex flex-wrap gap-2">
+              {lead.companyName && lead.manualStage !== "NOT_NOW" ? (
+                <Link
+                  href={"/tpo/placements/new/draft?company=" + encodeURIComponent(lead.companyName)}
+                  className={button}
+                >
+                  Create drive…
+                </Link>
+              ) : null}
               <button type="button" className={button} onClick={openEdit}>Edit details</button>
               {lead.manualStage !== "CONTACTED" ? (
                 <button type="button" className={button} disabled={saving} onClick={() => void mutate(
