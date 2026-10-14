@@ -165,6 +165,20 @@ export function LearnerPlacementsDashboard({
           </Link>
         </aside>
       ) : null}
+      {display.urgentInterview ? (
+        <aside aria-label="Upcoming interview action"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase text-primary-text">Interview in the next seven IST days</p>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentInterview.roundName} · {display.urgentInterview.companyName}</p>
+            <p className="mt-1 text-xs text-body">{formatWhen(display.urgentInterview.when)} · Scheduled, not attendance-confirmed</p>
+          </div>
+          <Link href={display.urgentInterview.href}
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            Review interview →
+          </Link>
+        </aside>
+      ) : null}
       {display.activeOffers !== null && display.activeOffers > 0 ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning bg-surface px-5 py-4">
           <div>

@@ -1149,3 +1149,6 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-006 PARTIAL (round 4):** Dashboard now exposes the nearest actual upcoming assessment as an independent, authorized assessment action, even if the general hero instead promotes an earlier interview or an expiring offer. Approved reschedule and own-learner deep-link selectors are preserved; no scheduled start is called an employer deadline. Fixed-clock model regression authored. Typecheck, PG and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L11-007 PARTIAL (round 4):** Dashboard now separately offers a direct action to the earliest owned upcoming interview, even if a different assessment or offer owns the primary hero. It uses the current saved/approved interview time and the existing application+round membership-scoped destination; it never infers attended/confirmed outcomes. Fixed-date regression authored; PG/browser acceptance pending.
