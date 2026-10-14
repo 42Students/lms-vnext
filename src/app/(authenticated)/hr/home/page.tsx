@@ -10,6 +10,7 @@ import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/re
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
+import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -54,7 +55,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   ];
   return <div className="space-y-6">
     <PageHeader eyebrow="Employer Recruiter" title="Today"
-      description={recruiter.companyName + " · " + grant.collegeName + ". Your live employer hiring activity."} />
+      description={recruiter.companyName + " · " + grant.collegeName + ". Your live employer hiring activity."}
+      actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        Request a Drive · preview
+      </Link>} />
     {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}

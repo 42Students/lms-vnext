@@ -430,3 +430,6 @@ Legacy states:
 
 
 **2026-10-14 chat-10 / Request a Drive read-first draft — PARTIAL:** New `/hr/drives/new` page with authorized college chooser, local form for role/work/CTC/CGPA/rounds, validation, student-visible preview, Start Over and clipboard copy. `?from=` copies only an exact company/college-authorized published/closed drive for Hire Again preview; `?fix=` explicitly blocked until request-change persistence exists. No draft persisted, external sending, fake approval or file feature. Pure model/unit + in-test PG success/foreign-company/college/wrong-role tests authored, not executed. Remaining full legacy agreement/JD/eligibility and request submission lifecycle, restored draft, fix/send, browser acceptance.
+
+
+**2026-10-14 chat-10 / Request Drive / Hire Again deep links — PARTIAL:** Recruiter Today and Drives pages now advertise their scoped local Request a Drive preview; authorized Drive Detail exposes Hire Again preview from exact company-owned job. Every generated link validates UUID and carries selected college; target server rechecks grant and relationship before job clone. Pure model plus in-test PG own-company fixture extended; not executed. Remaining full persisted submission/fix/resend and browser acceptance.
