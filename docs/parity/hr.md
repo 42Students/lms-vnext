@@ -499,3 +499,6 @@ Legacy states:
 
 
 **2026-10-15 chat-10 / employer hiring activity CSV — PARTIAL:** Company/college-scoped history export caps at 200, formula-neutralizes titles, uses fixed event labels and IST timestamps without raw audit metadata or contacts. Rechecks scope before its second bounded page. Pure-model unit and in-test PG scope assertions added, unexecuted. Remaining browser acceptance and full-history export.
+
+
+**2026-10-15 chat-10 / Request Drive round ordering — PARTIAL:** Accessible Up/Down controls reorder unsent rounds with boundary guards and immutable draft projection; no network writes or approval state is fabricated. Unit tests authored, not run. Browser acceptance remains.
