@@ -8,7 +8,8 @@ export const hrInterviewSlotCreateSchema=z.strictObject({
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  meetingLocation:z.string().trim().max(500).optional(),
  panelLabel:z.string().trim().max(160).optional(),
- capacity:z.coerce.number().int().min(1).max(100),
+ capacity:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
+  .pipe(z.number().int().min(1).max(100)),
 }).refine(row=>row.endAt.getTime()>row.startAt.getTime()&&
  row.endAt.getTime()-row.startAt.getTime()<=8*60*60*1000,{
  message:"Slot must have a positive duration of at most eight hours",
