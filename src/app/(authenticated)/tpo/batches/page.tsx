@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
+import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
@@ -10,12 +11,14 @@ import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
 export const dynamic="force-dynamic";
 
-export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[]}>}){
+export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[]}>}){
  const raw=await searchParams,parsed=batchDirectoryFilterSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q,state:Array.isArray(raw.state)?raw.state[0]:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
  const departmentParsed=tpoBatchDepartmentSchema.safeParse(Array.isArray(raw.department)?raw.department[0]:raw.department);
  const deadlineParsed=tpoBatchDeadlineFilterSchema.safeParse(Array.isArray(raw.deadline)?raw.deadline[0]:raw.deadline);
+ const pageParsed=tpoBatchPageSchema.safeParse({page:Array.isArray(raw.page)?raw.page[0]:raw.page,pageSize:Array.isArray(raw.pageSize)?raw.pageSize[0]:raw.pageSize});
+ if(!pageParsed.success)return <div role="alert">Invalid batch page. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!deadlineParsed.success)return <div role="alert">Invalid deadline filter. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!departmentParsed.success)return <div role="alert">Invalid department filter. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!programParsed.success)return <div role="alert">Invalid program filter. <Link href="/tpo/batches">Clear filters</Link></div>;
@@ -24,6 +27,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const data=await listTpoBatches(await getCurrentRequestContext());
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
  const batches=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
+ const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
+ const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
@@ -36,6 +41,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
    <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
    <label className="text-sm">Sort<select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></select></label>
+   <label className="text-sm">Page size<select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="12">12</option><option value="24">24</option><option value="48">48</option></select></label>
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
   </form>
   {!data.ready&&deadlineParsed.data!=="ALL"?<p role="status" className="text-sm">Deadline filtering is unavailable until lifecycle storage is registered. Showing all matching batch names.</p>:null}
@@ -44,8 +50,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Total batches",summary.total],["Planning",summary.planning],["Invited",summary.invited],["Finished",summary.finished],
   ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:label==="Total batches"?value:"—"}</dd></div>)}</dl>
-  <p className="text-sm text-muted-foreground">{batches.length} matching batches</p>
-  {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batches.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+  <p className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to}</p>
+  <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
+   {batchPage.hasPrev?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,pageParsed.data.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,pageParsed.data.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+   {batchPage.total>0&&batchPage.items.length===0?<Link href={tpoBatchPageHref(pageFilters,1,pageParsed.data.pageSize)} className="text-primary-text underline">Return to page 1</Link>:null}
+  </nav>
+  {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
     <p className="text-sm text-muted-foreground">Eligibility split and journey counts: open Students to review verified records.</p>
