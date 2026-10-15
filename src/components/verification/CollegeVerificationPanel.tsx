@@ -57,7 +57,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     const failure=await response.json().catch(()=>({error:"REQUEST_FAILED"})) as {error?:string};
     throw Error(failure.error??"Bulk review was not accepted");
    }
-   const data=parseCollegeBulkReviewReceipt(await response.json(),selectedRows);
+   const data=parseCollegeBulkReviewReceipt(await response.json(),body.items);
    setBulkResult({...data,labels:describeBulkReviewOutcomeRows(data.outcomes,selectedRows)});setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(safeCollegeBulkReviewFailure(error));}
   finally{setBulkBusy(false);}
