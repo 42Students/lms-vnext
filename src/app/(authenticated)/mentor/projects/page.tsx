@@ -1,5 +1,5 @@
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
-import { matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
+import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
 import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
@@ -74,7 +74,7 @@ export default async function MentorProjectsPage({
       ),
     ]);
 
-  const workCounts = query.work ? await getMentorProjectWorkCounts(context) : null;
+  const workCounts = await getMentorProjectWorkCounts(context);
   const alerts = new Map<
     string,
     Set<string>
@@ -272,6 +272,9 @@ export default async function MentorProjectsPage({
               row.project.status,
             updatedAt:
               row.project.updatedAt,
+            progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent,
+            progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
+            readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             participation:
               row.isPrimaryMentor
                 ? "Primary mentor"
