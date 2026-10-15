@@ -50,3 +50,8 @@ export function facultyManualGradePublishPrompt(points:number|null,max:number,fe
  return "Publish this saved grade to the learner?\nScore: "+safeScore+"\n"+details+
  "\nConfirm publication. This action makes the score and feedback learner-visible.";
 }
+
+/** Stale optimistic token: server has a newer submission row. */
+export function facultyManualGradeNeedsRefresh(status:number):boolean{
+ return status===409;
+}
