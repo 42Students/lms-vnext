@@ -224,18 +224,22 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         </form>
       </section>
 
-      <section aria-label={title + " results"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-xl border border-border bg-surface">
+        <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all semester or batch columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {semesters ? "program terms" : "cohorts"}
         </p>
         {data.items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
+          <div role="status" className="space-y-2 p-6 text-sm text-body">
+           <p>
             {data.total === 0
               ? semesters
                 ? "No program terms match these filters. An academic period is not substituted for an unconfigured semester."
                 : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
               : "No records exist on this page. Select an earlier page."}
-          </p>
+           </p>
+           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
+          </div>
         ) : (
           <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">

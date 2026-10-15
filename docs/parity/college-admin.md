@@ -1514,3 +1514,42 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **Chat-9 college contact/verification hardening (2026-10-15) — PARTIAL:** The Contacts tab pivot now drops an impossible Faculty-only / Learner-only audience combination while preserving other filters, exact-member bookmarks have a reversible directory exit, filtered-empty states have a same-tab reset, and the pager offers first/last jumps retaining query context. Verification filter drafts run the same cross-field guards as page/export before navigation, stale private detail dialogs close on queue changes, unknown server failure text is not echoed, and bulk outcome receipts must match only submitted eligible candidate keys and authoritative aggregate counts. Dedicated unit tests are authored; no executed unit, PostgreSQL, browser, privacy or cross-role acceptance evidence is claimed for this batch.
 
 **Chat-9 URL/validation round PARTIAL (2026-10-15):** College Contacts now gives bounded, non-leaking specific explanations for invalid joined-date windows, impossible academic combinations and role/audience contradictions before any directory read, with generic fallback for unrecognized errors. Automated unit cases authored; not executed in this connector-only round. Live/browser and exact legacy wording acceptance remain open.
+**2026-10-15 Super Admin template creation safety (chat-3, source-authored):** Direct `/admin/projects/templates/new` navigation in a selected college/organization scope now renders a non-leaking access-denied panel with a route back to the catalogue instead of throwing `project-template.manage`; unscoped global creation retains its permission gate. Regression guard and scoped permission checks authored; actual browser acceptance pending.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** batch start-date order rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** missing progression versus recorded term rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** unrecorded academic year versus year filter rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** missing progression versus academic year filter rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
+
+**College Admin Semesters filter validation PARTIAL (2026-10-15 chat-3):** Recorded credits cannot simultaneously be required by a numeric bound and classified as UNSET. Shared page/CSV refinement and regression cases authored, execution/browser/oracle acceptance pending.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective semester interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective required versus allowed picks rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective linked period date interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** exact elective semester inside selected interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** unlinked elective period without linked-only selectors rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Classes filter validation PARTIAL (2026-10-15 chat-3):** Reversed linked academic-period date bounds now fail identically in the class page query and same-college CSV; authored unit cases, executed PG/browser and legacy parity pending.
+
+**College Admin directory validation feedback PARTIAL (2026-10-15 chat-3):** Classes, Electives, Batches and Semesters error states now render bounded, actionable field-specific messages for contradictory filters instead of a generic failure. Invalid raw values and internal authorization strings are not echoed; unit tests authored, browser verification pending.
+
+**College Admin semesters and batches empty-state recovery PARTIAL (2026-10-15 chat-3):** Both directories show a keyboard-reachable clear-filters action without choosing another college or exposing tenant data, including empty pages beyond the last result. Regression guard added, browser/accessibility validation pending.
+
+**College Admin classes and electives empty-state recovery PARTIAL (2026-10-15 chat-3):** Both directories show a keyboard-reachable clear-filters action without choosing another college or exposing tenant data, including empty pages beyond the last result. Regression guard added, browser/accessibility validation pending.
+
+**College Admin semester and batch mobile table accessibility PARTIAL (2026-10-15 chat-3):** Result table region has a bounded scroll container, keyboard focus, semantic region label and a small-screen horizontal-scroll hint. Desktop layout unchanged; source regression test authored, actual touch and screen-reader checks pending.
+
+**College Admin class and elective mobile table accessibility PARTIAL (2026-10-15 chat-3):** Result table region has a bounded scroll container, keyboard focus, semantic region label and a small-screen horizontal-scroll hint. Desktop layout unchanged; source regression test authored, actual touch and screen-reader checks pending.
+
+**College Admin Electives CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
+
+**College Admin Semesters CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
+
+**College Admin Batches CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.

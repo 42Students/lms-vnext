@@ -55,4 +55,8 @@ describe("College classes safe CSV export", () => {
     expect(classesExportHref({q:"",status:"ACTIVE",classCode:"B&26"})).toContain("classCode=B%2626");
   });
 
+ it("rejects reversed period date bounds in class CSV",()=>{
+  expect(collegeClassesExportSchema.safeParse({periodStartsOnOrAfter:"2026-12-30",periodEndsOnOrBefore:"2026-12-29"}).success).toBe(false);
+  expect(collegeClassesExportSchema.safeParse({periodStartsOnOrAfter:"2026-12-29",periodEndsOnOrBefore:"2026-12-30"}).success).toBe(true);
+ });
 });

@@ -32,11 +32,13 @@ export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 
-export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET"}>>(schema:T){
+export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET";periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string}>>(schema:T){
   return schema.refine(q=>q.minimumCapacity===undefined||q.maximumCapacity===undefined||q.minimumCapacity<=q.maximumCapacity,
     {path:["maximumCapacity"],message:"Maximum class capacity must not be below minimum"})
     .refine(q=>q.capacityState!=="UNSET"||(q.minimumCapacity===undefined&&q.maximumCapacity===undefined),
-      {path:["capacityState"],message:"Unconfigured class capacity cannot be combined with numeric capacity bounds"});
+      {path:["capacityState"],message:"Unconfigured class capacity cannot be combined with numeric capacity bounds"})
+    .refine(q=>q.periodStartsOnOrAfter===undefined||q.periodEndsOnOrBefore===undefined||q.periodStartsOnOrAfter<=q.periodEndsOnOrBefore,
+      {path:["periodEndsOnOrBefore"],message:"Class period end limit cannot precede start limit"});
 }
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
@@ -63,9 +65,21 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
 
-export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
-  return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
-    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
+export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
+ minimumCredits?:number;maximumCredits?:number;semesterFrom?:number;semesterThrough?:number;minimumRequiredPicks?:number;maximumAllowedPicks?:number;periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string;semesterNumber?:number;periodState?:"ALL"|"LINKED"|"UNLINKED";periodCode?:string;periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";
+}>>(schema:T){
+ return schema.refine(q=>q.minimumCredits===undefined||q.maximumCredits===undefined||q.minimumCredits<=q.maximumCredits,
+  {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"})
+ .refine(q=>q.semesterFrom===undefined||q.semesterThrough===undefined||q.semesterFrom<=q.semesterThrough,
+  {path:["semesterThrough"],message:"Last semester must not precede first semester"})
+ .refine(q=>q.minimumRequiredPicks===undefined||q.maximumAllowedPicks===undefined||q.minimumRequiredPicks<=q.maximumAllowedPicks,
+  {path:["maximumAllowedPicks"],message:"Maximum allowed choices cannot be below minimum required choices"})
+ .refine(q=>q.periodStartsOnOrAfter===undefined||q.periodEndsOnOrBefore===undefined||q.periodStartsOnOrAfter<=q.periodEndsOnOrBefore,
+  {path:["periodEndsOnOrBefore"],message:"Linked period end limit cannot precede its start limit"})
+ .refine(q=>q.semesterNumber===undefined||((q.semesterFrom===undefined||q.semesterNumber>=q.semesterFrom)&&(q.semesterThrough===undefined||q.semesterNumber<=q.semesterThrough)),
+  {path:["semesterNumber"],message:"Exact semester must fall within the selected semester interval"})
+ .refine(q=>q.periodState!=="UNLINKED"||(q.periodCode===undefined&&(q.periodLifecycle===undefined||q.periodLifecycle==="ALL")&&q.periodStartsOnOrAfter===undefined&&q.periodEndsOnOrBefore===undefined),
+  {path:["periodState"],message:"Unlinked electives cannot be filtered by a linked academic period"});
 }
 export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;

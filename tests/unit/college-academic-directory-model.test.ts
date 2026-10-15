@@ -154,4 +154,34 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({activeLearnerState:"HAS_ACTIVE"}))).toContain("activeLearnerState=HAS_ACTIVE");
   });
 
+ it("rejects batch start-date order but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-09-10",startOnOrBefore:"2026-09-09"});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("Batch start-date end limit must not precede start limit");
+  expect(collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
+ });
+ it("rejects missing progression versus recorded term but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({progression:"MISSING",currentTerm:2});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("A missing progression record cannot have a recorded current term");
+  expect(collegeBatchDirectorySchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
+ });
+ it("rejects unrecorded academic year versus year filter but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({academicYearState:"UNRECORDED",yearStart:2026});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("An unrecorded academic year cannot match a year-start filter");
+  expect(collegeBatchDirectorySchema.safeParse({academicYearState:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
+ it("rejects missing progression versus academic year filter but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({progression:"MISSING",yearStart:2026});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("A missing progression record cannot match a recorded academic year");
+  expect(collegeBatchDirectorySchema.safeParse({progression:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
+ it("rejects unconfigured semester credits combined with numeric credit bounds",()=>{
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET",minimumCredits:0}).success).toBe(false);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET",maximumCredits:6}).success).toBe(false);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET"}).success).toBe(true);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"CONFIGURED",minimumCredits:6}).success).toBe(true);
+ });
 });
