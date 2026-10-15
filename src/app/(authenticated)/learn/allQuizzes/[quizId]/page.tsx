@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
 import {
-  learnerAttemptResultLabel, learnerQuizAttemptDateLabel, ownQuizHistorySelection,
+  learnerAttemptResultLabel, learnerQuizAttemptDateLabel, learnerQuizQuestionAwardLabel, ownQuizHistorySelection,
 } from "@/modules/courses/learner-quiz-history-model";
 
 type Props={
@@ -66,7 +66,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
             Question {index+1}: {answer.prompt}
           </h3>
           <p className="mt-2 text-sm text-body">
-            Awarded {answer.pointsAwarded ?? 0} / {answer.pointsPossible} points
+            {learnerQuizQuestionAwardLabel(answer.pointsAwarded,answer.pointsPossible)}
           </p>
           <ul className="mt-2 space-y-1 text-sm text-body">
             {(answer.options ?? []).filter(option=>answer.selectedOptionIds.includes(option.id)).map(option=>
