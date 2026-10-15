@@ -48,7 +48,7 @@ describe("W03 mentor project list legacy discovery contract", () => {
     expect(list).toContain("item.href ??");
   });
 
-  it("does not fake the missing legacy blocker filter", () => {
-    expect(page).toContain("does not yet persist the workspace blocker field");
+  it("does not fake the missing legacy blocker filter or show an invented notice", () => {
+    expect(page).not.toContain("does not yet persist the workspace blocker field");
   });
 });
