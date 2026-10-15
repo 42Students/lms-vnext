@@ -29,7 +29,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    description="Only messages shared with your currently authorized recruiter account and college are visible."/>
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 items-center text-primary-text">Back to conversations</Link>
-  <p className="text-sm text-body">{result.total} messages · Page {result.page} of {result.pages}</p>
+  <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
+  {result.unread>0?<form method="post"
+   action={"/api/placements/recruiter/conversations/"+result.thread.id+"/acknowledge"}>
+    <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     Mark placement cell messages as read
+    </button>
+   </form>:null}
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {result.messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">
