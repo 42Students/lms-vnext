@@ -63,3 +63,5 @@ export * from "./placement-debarments";
 export * from "./placement-public-page";
 export * from "./placement-public-joins";
 export * from "./placement-public-enquiries";
+export * from "./db10-announcements";
+export * from "./db10-bug-tracker";
