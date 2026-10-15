@@ -3,7 +3,7 @@ import type {MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
-  attention:z.enum(["ALL","OVERDUE_REQUESTED"]).default("ALL"),
+  attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED"]).default("ALL"),
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -37,7 +37,10 @@ export function filterMentorCalendar(
   };
   return meetings.filter(row=>
     (!query.attention||query.attention==="ALL"||
-      (row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()))&&
+      (query.attention==="OVERDUE_REQUESTED"
+        ? row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()
+        : row.status==="SCHEDULED"&&Date.parse(row.startsAt)>=now.getTime()&&
+          Date.parse(row.startsAt)<=now.getTime()+48*3600000))&&
     (query.status==="ALL"||row.status===query.status)&&
     (!query.type||query.type==="ALL"||row.meetingType===query.type)&&
     (!query.projectState||query.projectState==="ALL"||row.projectStatus===query.projectState)&&
