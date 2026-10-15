@@ -83,8 +83,8 @@ async function fixture(collegeId = SEED_IDS.collegeA) {
 async function cleanup() {
   if (!pool) return;
   if (offers.length) {
-    await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id = ANY($1::uuid[]))", [offers]);
-    await pool.query("DELETE FROM activity_events WHERE subject_id = ANY($1::uuid[])", [offers]);
+    await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id = ANY($1::text[]))", [offers]);
+    await pool.query("DELETE FROM activity_events WHERE subject_id = ANY($1::text[])", [offers]);
     for (const table of ["placement_joining_history", "placement_joining_outcomes", "placement_offer_status_history"]) {
       await pool.query("DELETE FROM " + table + " WHERE offer_id = ANY($1::uuid[])", [offers]);
     }

@@ -162,6 +162,9 @@ function blueprint() {
 }
 
 async function cleanup() {
+  for (const table of ["project_task_comments", "project_submission_reviews", "project_task_submissions", "project_submissions", "project_evaluations", "project_delivery_events", "project_meetings", "project_resource_files"]) {
+    await pool.query(`delete from ${table} where project_id in (select id from project_instances where slug like 'p5-%')`);
+  }
   await pool.query(
     `delete from project_members
      where project_id in (

@@ -485,7 +485,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       [project.id],
     );
     expect(audit.rows.map(row=>row.event_type).sort()).toEqual([
-      "projects.delivery.draft_created","projects.delivery.draft_created",
+      "projects.delivery.draft_created","projects.delivery.draft_created","projects.delivery.locked",
       "projects.delivery.reviewed","projects.delivery.reviewed",
       "projects.delivery.submitted","projects.delivery.submitted",
     ].sort());

@@ -17,7 +17,7 @@ import {
   publishPlacementJob,
 } from "@/modules/placements/job-service";
 import {
-  grantPlacementRecruiter,
+  grantPlacementRecruiter as grantPlacementRecruiterRaw,
   listOwnRecruiterPlacementJobs,
   revokePlacementRecruiterGrant,
 } from "@/modules/placements/recruiter-service";
@@ -154,6 +154,20 @@ async function createRecruiterUser() {
       "Seed Recruiter",
     ],
   );
+}
+
+// T-S1-01: context hydration fails closed for NULL-validity / unverified
+// grants, and the legacy grant service still inserts defaults. Activate here.
+async function grantPlacementRecruiter(
+  ...args: Parameters<typeof grantPlacementRecruiterRaw>
+) {
+  const result = await grantPlacementRecruiterRaw(...args);
+  await pool.query(
+    `update placement_recruiter_college_grants
+        set verification_status='VERIFIED', valid_until=now()+interval '30 days'
+      where status='ACTIVE' and valid_until is null`,
+  );
+  return result;
 }
 
 beforeEach(async () => {

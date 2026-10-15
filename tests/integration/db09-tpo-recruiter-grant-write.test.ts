@@ -28,6 +28,8 @@ async function fixture(collegeId: string = SEED_IDS.collegeA) {
     "INSERT INTO placement_companies (name, created_by_user_id) VALUES ($1,$2) RETURNING id",
     ["TPO grant " + token, SEED_IDS.facultyUser],
   )).rows[0];
+  // T-S1-01: grants take their validity from the college setting; ensure the row exists.
+  await pool.query("INSERT INTO placement_tpo_college_settings (college_id) VALUES ($1) ON CONFLICT (college_id) DO NOTHING", [collegeId]);
   if (!user || !company) throw new Error("Fixture failed");
   fixtureRows.users.push(user.id);
   fixtureRows.companies.push(company.id);
