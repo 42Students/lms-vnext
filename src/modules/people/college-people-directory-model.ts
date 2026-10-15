@@ -28,3 +28,8 @@ export function parseCollegePeopleDirectorySearchParams(raw:Record<string,string
  }
  return collegePeopleDirectoryFilterSchema.parse(Object.fromEntries(entries));
 }
+
+/** Page and sort must never turn an otherwise empty directory into a false filtered result. */
+export function collegePeopleHasFilters(filter:CollegePeopleDirectoryFilter):boolean {
+ return Boolean(filter.q)||filter.role!=="ALL"||filter.status!=="ALL";
+}
