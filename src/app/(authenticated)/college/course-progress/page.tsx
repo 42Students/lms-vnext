@@ -38,6 +38,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       liveClassPresence:first(params.liveClassPresence),
       videoContentState:first(params.videoContentState),
       publishedContentState:first(params.publishedContentState),
+      hiddenContentState:first(params.hiddenContentState),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
