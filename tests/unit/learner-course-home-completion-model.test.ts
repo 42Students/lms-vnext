@@ -25,3 +25,16 @@ describe("Course Home mixed missed and actionable work",()=>{
   expect(outcome.title).toBe("Continue learning");
  });
 });
+
+describe("unpublished learner Course Home",()=>{
+ it("does not invite learners to start an absent published path",()=>{
+  expect(learnerCourseHomeCompletion({
+   itemsTotal:0,itemsCompleted:0,itemsMissed:0,readOnly:false,hasPublishedPath:false,
+  }).title).toBe("Learning path not published");
+ });
+ it("keeps historical courses read only",()=>{
+  expect(learnerCourseHomeCompletion({
+   itemsTotal:0,itemsCompleted:0,itemsMissed:0,readOnly:true,hasPublishedPath:false,
+  }).title).toBe("Review the Learning Path");
+ });
+});
