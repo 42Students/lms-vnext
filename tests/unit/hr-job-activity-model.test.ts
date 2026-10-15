@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {hrActivityQuerySchema,projectHrJobActivity,hrActivityEventFilter,hrActivityHasNext} from "@/modules/placements/hr-job-activity-model";
+import {hrActivityQuerySchema,projectHrJobActivity,hrActivityEventFilter,hrActivityHasNext,searchHrActivityJobs} from "@/modules/placements/hr-job-activity-model";
 describe("HR hiring activity",()=>{
  it("filters cross-company and private event types without projecting sensitive summaries",()=>{
   const events=[
@@ -22,5 +22,8 @@ describe("HR hiring activity",()=>{
   expect(hrActivityQuerySchema.safeParse({page:"not-a-number"}).success).toBe(false);
   expect(hrActivityHasNext(41,40)).toBe(true);
   expect(hrActivityHasNext(40,40)).toBe(false);
+  expect(hrActivityQuerySchema.safeParse({q:"x".repeat(121)}).success).toBe(false);
+  expect(searchHrActivityJobs([{title:"Engineer"},{title:"Designer"}],"engi"))
+    .toEqual([{title:"Engineer"}]);
  });
 });

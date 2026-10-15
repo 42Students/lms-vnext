@@ -9,7 +9,7 @@ export async function GET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const query=hrActivityQuerySchema.parse({
-   collegeId:params.get("collegeId")??undefined,kind:params.get("kind")??undefined,
+   collegeId:params.get("collegeId")??undefined,kind:params.get("kind")??undefined,q:params.get("q")??undefined,
    limit:100,page:1,
   });
   const context=await getCurrentRequestContext();

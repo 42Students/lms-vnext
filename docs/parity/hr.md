@@ -571,3 +571,27 @@ Legacy states:
 
 
 **2026-10-15 chat-10 R5 / Activity query typing repair — PARTIAL:** Read-only HR Activity route now declares `page` in the typed Next searchParams and parses it through the existing strict Zod schema, preserving bounded numeric page validation. Additional unit bounds authored; runtime TypeScript/browser gates still pending. Avoids the reported TS property error while retaining company/college authorization.
+
+
+**2026-10-15 chat-10 R6 / Drive portfolio CSV — PARTIAL:** Recruiter Drives exports up to 200 company+college-granted published/closed records after existing lifecycle/search/employment/mode/deadline filters and sorting, neutralizes spreadsheet formulas, formats IST deadline, omits learner contact and reports cap. Pure unit authored, execution and browser download pending.
+
+
+**2026-10-15 chat-10 R6 / Drives deadline-attention cards — PARTIAL:** Company+college-scoped non-archived published drives expose next-seven-day and recorded-past-deadline action links with explicit no-auto-closure caveat. Filters exclude other colleges, archived and closed jobs, and limit surfaced cards; pure unit authored, execution/browser acceptance pending.
+
+
+**2026-10-15 chat-10 R6 / Calendar next-visible-event correctness — PARTIAL:** Upcoming event highlight now compares real round/deadline starts against recorded results-due timestamps and honors selected calendar category; selected-category empty states use visible count rather than unfiltered totals. Pure model/unit for priority and unsupported SLOT types authored; execution/browser validation pending.
+
+
+**2026-10-15 chat-10 R6 / Request a Drive duplicate round — PARTIAL:** Recruiter can duplicate a local hiring round with a generated collision-free editable name, insertion after the source, and a strict 12-round cap; previews are invalidated without saving or sending. Pure unit/Zod checks authored, runtime acceptance pending.
+
+
+**2026-10-15 chat-10 R6 / Draft destructive-reset guard — PARTIAL:** Start Over now confirms before discarding any edited or Hire Again-prefilled draft and clears the exact browser-tab scoped saved copy only after confirmation. Pure work-detection tests authored; no server writes, browser acceptance remains.
+
+
+**2026-10-15 chat-10 R6 / Hiring activity drive-title search — PARTIAL:** Activity history adds bounded role/drive-name URL search after the exact company+college authorized job allowlist, with stable published/closed filters, pagination, and matching CSV export. Unit and in-test PG company-scope assertions authored; tests/browser gates pending.
+
+
+**2026-10-15 chat-10 R6 / Company report current-page funnel totals — PARTIAL:** Adds clear page-only sums for authorized persisted application and outstanding/accepted/declined/joined offer counts, explicitly avoiding claims about full employer totals or distinct candidate identities. No new backend query/contact exposure. Pure aggregate model/unit authored; runtime/browser checks pending.
+
+
+**2026-10-15 chat-10 R6 / Team state correctness — PARTIAL:** Company & Team distinguishes a true self-only authorized roster from zero persisted members, search misses and out-of-range pages; matching teammate rows remain visible, including the You marker. Pure unit cases authored; PG/browser validation pending.
