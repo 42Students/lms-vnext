@@ -105,6 +105,12 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.contentType !== "ALL" ? exists(db.select({id: lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId, courseLessons.id),eq(lessonContents.contentType, query.contentType)))) : undefined,
+      query.departmentCode ? eq(departments.name,query.departmentCode) : undefined,
+      query.courseStatus !== "ALL" ? eq(courses.status,query.courseStatus) : undefined,
+      query.periodStatus !== "ALL" ? eq(academicPeriods.status,query.periodStatus) : undefined,
+      query.cohortStatus !== "ALL" ? eq(cohorts.status,query.cohortStatus) : undefined,
+      query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
@@ -201,6 +207,11 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.departmentCode ? eq(departments.name,query.departmentCode) : undefined,
+      query.courseStatus !== "ALL" ? eq(courses.status,query.courseStatus) : undefined,
+      query.periodStatus !== "ALL" ? eq(academicPeriods.status,query.periodStatus) : undefined,
+      query.cohortStatus !== "ALL" ? eq(cohorts.status,query.cohortStatus) : undefined,
+      query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.departmentName?eq(departments.name,query.departmentName):undefined,
       query.activityState==="RECORDED"?persistedContentActivity:
         query.activityState==="UNRECORDED"?not(persistedContentActivity):undefined,
