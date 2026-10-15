@@ -44,7 +44,7 @@ const superAdminItems: ShellNavItem[] = [
     shortLabel: "C",
     icon: "/assets/images/common/calender.svg",
   },
-  { label: "HR Accounts", href: "/admin/hr", shortLabel: "H" },
+  { label: "Recruiter Accounts", href: "/admin/recruiters", shortLabel: "R" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
   { label: "Settings", href: "/admin/settings", shortLabel: "S" },
