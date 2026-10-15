@@ -9,6 +9,7 @@ export function facultyFollowUpPageCsv(rows:readonly ExportRow[]):string{
  const quote=(value:string)=>{ const normalized=value.replace(/[\u0000-\u001f\u007f-\u009f]/g," "); return '"'+(/^\s*[=+@-]/.test(normalized)?"'"+normalized:normalized).replaceAll('"','""')+'"'; };
  const lines=[["Type","Assessment","Course","Section","Due UTC","Missing responses","Additional hidden in preview"]];
  for(const row of rows){
+  if (![row.missingCount,row.hiddenCount].every(n=>Number.isSafeInteger(n)&&n>=0) || row.hiddenCount>row.missingCount) throw new Error("INVALID_FOLLOWUP_CSV_COUNTS");
   lines.push([row.kind,row.title,row.courseName,row.sectionName,
    row.dueAt && Number.isFinite(row.dueAt.getTime()) ? row.dueAt.toISOString() : "Unknown",String(row.missingCount),String(row.hiddenCount)]);
  }
