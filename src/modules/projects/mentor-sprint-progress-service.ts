@@ -54,12 +54,17 @@ export async function getMentorSprintProgress(
   const filters = and(
     inArray(projectSprints.projectId, ids),
     query.projectId?eq(projectSprints.projectId,query.projectId):undefined,
-    query.taskAttention==="ALL"?undefined:sql`exists(
-      select 1 from project_tasks mentor_pending_task
-      where mentor_pending_task.sprint_id=${projectSprints.id}
-        and mentor_pending_task.project_id=${projectSprints.projectId}
-        and mentor_pending_task.status=${query.taskAttention}::text
-    )`,
+    query.taskAttention==="ALL"?undefined:
+      query.taskAttention==="NO_TASKS"?sql`not exists(
+        select 1 from project_tasks mentor_existing_task
+        where mentor_existing_task.sprint_id=${projectSprints.id}
+          and mentor_existing_task.project_id=${projectSprints.projectId}
+      )`:sql`exists(
+        select 1 from project_tasks mentor_pending_task
+        where mentor_pending_task.sprint_id=${projectSprints.id}
+          and mentor_pending_task.project_id=${projectSprints.projectId}
+          and mentor_pending_task.status=${query.taskAttention}::text
+      )`,
     eq(projectInstances.collegeId, membership.collegeId),
     ne(projectInstances.status, "ARCHIVED"),
     eq(projectReleases.projectId, projectInstances.id),

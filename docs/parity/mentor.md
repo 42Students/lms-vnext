@@ -1173,3 +1173,8 @@ The existing live same-college current-assignment Team coverage screen supports 
 ## 2026-10-15 chat-11 — most-mentors current Mentor team triage (PARTIAL)
 
 The existing live same-college current-assignment Team coverage screen supports most mentors first using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
+
+
+## 2026-10-15 chat-11 — no-recorded-tasks Sprint attention (PARTIAL)
+
+The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints without recorded tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.

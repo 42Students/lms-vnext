@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const mentorSprintProgressQuerySchema = z.object({
   order:z.enum(["PROJECT","ACTIVE_FIRST"]).default("PROJECT"),
-  taskAttention:z.enum(["ALL","BLOCKED","IN_REVIEW"]).default("ALL"),
+  taskAttention:z.enum(["ALL","BLOCKED","IN_REVIEW","NO_TASKS"]).default("ALL"),
   projectId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
   state: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED"]).default("ALL"),
   release: z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
