@@ -365,3 +365,12 @@ export function facultyQuizLoadedBankIssue(status:string|undefined,questionCount
 export function facultyQuizRetryNeedsConfirmation(dirty:boolean,loading:boolean):boolean {
  return dirty&&!loading;
 }
+
+/** Keep the preflight aligned with the Section-scoped server title conflict. */
+export function facultyQuizTitleConflict(
+ rows:readonly {id:string;title:string}[],title:string,ownQuizId:string|undefined,
+):boolean {
+ const normalized=title.trim().toLocaleLowerCase();
+ return Boolean(normalized)&&rows.some(row=>row.id!==ownQuizId&&
+  row.title.trim().toLocaleLowerCase()===normalized);
+}
