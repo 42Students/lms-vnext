@@ -29,5 +29,10 @@ describe("college semester CSV",()=>{
   expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",creditState:"UNSET"})).toContain("creditState=UNSET");
  });
 
+ it("programStatus is preserved in semesters CSV",()=>{
+  expect(semesterCsvSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
 });
 

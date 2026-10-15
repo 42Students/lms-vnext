@@ -225,4 +225,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("semester parent program lifecycle is scoped to own persisted college records",async()=>{
+    const [positive,negative,foreign]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,programStatus:"ACTIVE"}),
+      listCollegeSemesters(adminA,{q:label,programStatus:"ARCHIVED"}),
+      listCollegeSemesters(adminB,{q:label,programStatus:"ACTIVE"}),
+    ]);
+    expect(positive.items.map(row=>row.id)).toContain(ids.term);
+    expect(negative.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

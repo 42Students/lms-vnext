@@ -89,6 +89,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
         query.creditState === "UNSET" ? isNull(programTerms.totalCredits) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.q ? or(
         ilike(programTerms.name, likePattern(query.q)),
         ilike(programs.name, likePattern(query.q)),

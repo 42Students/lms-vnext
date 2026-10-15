@@ -14,6 +14,7 @@ export const collegeSemesterDirectoryBaseSchema = z.object({
   minimumCredits: z.coerce.number().int().min(0).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(0).max(500).optional(),
   creditState: z.enum(["ALL", "CONFIGURED", "UNSET"]).optional(),
+  programStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).optional(),
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
@@ -52,6 +53,7 @@ export function academicDirectoryHref(
   if ("currentTerm" in query && query.currentTerm !== undefined) params.set("currentTerm",String(query.currentTerm));
   if ("progression" in query && query.progression !== "ALL") params.set("progression",query.progression);
   if (query.status !== "ALL") params.set("status", query.status);
+  if ("programStatus" in query && query.programStatus && query.programStatus !== "ALL") params.set("programStatus", query.programStatus);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -64,7 +66,7 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
