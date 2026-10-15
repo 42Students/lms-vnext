@@ -7,6 +7,7 @@ import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modu
 import {displayVerificationQueueOrder} from "@/modules/verification/queue-order";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {verificationQueueCardPresentation} from "@/modules/verification/queue-card-action";
+import {collegeVerificationLegacyCopy} from "@/modules/verification/college-legacy-verification-copy";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
@@ -14,11 +15,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;legacyCollegeCopy?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -31,7 +32,9 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
   <header className="space-y-2">
    <h1 className="text-xl font-semibold">Profile verification</h1>
-   <p className="text-sm text-muted-foreground">Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided.</p>
+   <p className="text-sm text-muted-foreground">{legacyCollegeCopy
+    ? collegeVerificationLegacyCopy.subtitle
+    : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}</p>
   </header>
   <nav aria-label="Verification status" className="flex flex-wrap gap-2">
    {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
@@ -55,7 +58,14 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
     {onRetry&&<button type="button" className="rounded-md border px-3 py-2" onClick={onRetry}>Retry</button>}</div>:
-   visible.length===0?<p role="status" className="rounded-md border p-4">No matching verification requests on this page.</p>:
+   visible.length===0?<div role="status" className="rounded-md border p-4">
+     {legacyCollegeCopy && counts[tab]===0
+      ? <><p className="font-semibold">{tab==="WAITING"
+          ? collegeVerificationLegacyCopy.emptyWaiting
+          : collegeVerificationLegacyCopy.emptyDecided}</p>
+         <p className="mt-1 text-sm text-muted-foreground">{collegeVerificationLegacyCopy.emptyDescription}</p></>
+      : <p>No matching verification requests on this page.</p>}
+    </div>:
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
