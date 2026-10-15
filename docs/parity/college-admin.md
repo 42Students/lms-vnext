@@ -1244,3 +1244,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 College Admin Batches PARTIAL:** Added batch start on or after over registered, same-college start-period dates, with strict date validation and matching CSV. Unit and isolated PG fixtures authored; browser/executed DB and exact legacy parity open.
 
 **2026-10-15 College Admin Batches PARTIAL:** Added batch start on/before registered start-period date with Zod/CSV and own-college tests. PG execution/browser/oracle validation remain open.
+
+**2026-10-15 Batches PARTIAL:** Batch active class evidence now filters only persisted own-college classes, with URL/CSV and unit/isolated-PG assertions. Exact legacy UI and executed PG/browser acceptance still open.

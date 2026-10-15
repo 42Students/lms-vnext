@@ -144,4 +144,9 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({startOnOrBefore:"2026-07-01"}))).toContain("startOnOrBefore=2026-07-01");
   });
 
+  it("activeClassState supports persisted-only choices and safe pagination URLs",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({activeClassState:"GUESSED"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({activeClassState:"HAS_ACTIVE"}))).toContain("activeClassState=HAS_ACTIVE");
+  });
+
 });
