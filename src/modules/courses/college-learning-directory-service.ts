@@ -204,6 +204,8 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
       query.departmentName?eq(departments.name,query.departmentName):undefined,
       query.activityState==="RECORDED"?persistedContentActivity:
         query.activityState==="UNRECORDED"?not(persistedContentActivity):undefined,
+      query.publishedPathPresence==="HAS_PUBLISHED_PATH"?exists(db.select({id:courseLearningPaths.id}).from(courseLearningPaths).where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(courseLearningPaths.status,"PUBLISHED")))):
+        query.publishedPathPresence==="NO_PUBLISHED_PATH"?not(exists(db.select({id:courseLearningPaths.id}).from(courseLearningPaths).where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(courseLearningPaths.status,"PUBLISHED"))))):undefined,
       query.learningPathPresence==="HAS_PATH"?exists(db.select({id:courseLearningPaths.id}).from(courseLearningPaths).where(eq(courseLearningPaths.offeringId,courseOfferings.id))):
         query.learningPathPresence==="NO_PATH"?not(exists(db.select({id:courseLearningPaths.id}).from(courseLearningPaths).where(eq(courseLearningPaths.offeringId,courseOfferings.id)))):undefined,
       query.completionEvidence==="COMPLETED_CONTENT"?completedContentActivity:
