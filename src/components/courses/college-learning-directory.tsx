@@ -76,6 +76,32 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Course offering type
+              <select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any offering type</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Course department name (exact)
+              <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Authored lesson items
+              <select name="contentPresence" defaultValue={data.query.contentPresence??"ALL"}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_CONTENT">Contains authored content</option>
+                <option value="EMPTY">No content authored</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Learning path lifecycle
               <select name="pathStatus" defaultValue={data.query.pathStatus}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
