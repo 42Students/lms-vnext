@@ -1,4 +1,4 @@
-import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid,verificationSectionEvidenceFiltersValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid,verificationSectionEvidenceFiltersValid,verificationWaitingAttentionValid} from "./queue-filters";
 import {verificationSubmissionWindowValid} from "./queue-waiting-since";
 /** Reject ambiguous duplicate keys rather than silently taking the last value. */
 export function parseVerificationExportQuery(params:URLSearchParams){
@@ -8,7 +8,7 @@ export function parseVerificationExportQuery(params:URLSearchParams){
   raw[key]=params.get(key)??"";
  }
  const parsed=verificationQueueFilters.safeParse(raw);
- if(!parsed.success||!verificationSubmissionWindowValid(parsed.data)||!verificationWaitingStateValid(parsed.data)||!verificationEnrollmentFiltersValid(parsed.data)||!verificationAgeBandValid(parsed.data)||!verificationSectionEvidenceFiltersValid(parsed.data))
+ if(!parsed.success||!verificationSubmissionWindowValid(parsed.data)||!verificationWaitingStateValid(parsed.data)||!verificationEnrollmentFiltersValid(parsed.data)||!verificationAgeBandValid(parsed.data)||!verificationSectionEvidenceFiltersValid(parsed.data)||!verificationWaitingAttentionValid(parsed.data))
   throw new Error("VERIFICATION_FILTER_NOT_SUPPORTED");
  return parsed.data;
 }

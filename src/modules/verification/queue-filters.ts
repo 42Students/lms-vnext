@@ -39,3 +39,8 @@ export function verificationAgeBandValid(filter:{tab:string;ageBand:string}):boo
 export function verificationSectionEvidenceFiltersValid(filter:{kind?:string;marksheets:string;attention:string}):boolean{
  return filter.kind!=="IDENTITY"||filter.marksheets==="ANY"&&filter.attention!=="MISSING_MARKSHEET";
 }
+
+/** Waiting-only attention cues cannot appear in past-decision tabs. */
+export function verificationWaitingAttentionValid(filter:{tab:string;attention:string}):boolean{
+ return filter.tab==="WAITING"||filter.attention!=="VERIFIED_DETAILS_CHANGED"&&filter.attention!=="WAITING_OVER_WEEK";
+}
