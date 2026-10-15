@@ -49,11 +49,17 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"))));
+ const teachingInRole=(role:typeof courseTeachingAssignments.role.enumValues[number])=>exists(db.select({assignmentId:courseTeachingAssignments.id}).from(courseTeachingAssignments)
+  .innerJoin(courseSectionDeliveries,and(eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId),isNull(courseSectionDeliveries.endedAt)))
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+  .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt),eq(courseTeachingAssignments.role,role))));
  const activeTeaching=exists(db.select({assignmentId:courseTeachingAssignments.id}).from(courseTeachingAssignments)
   .innerJoin(courseSectionDeliveries,and(eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId),isNull(courseSectionDeliveries.endedAt)))
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt))));
- return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inSection,inProgram,inCohort,inEmploymentType,inFacultyDepartment,activeEnrollment,activeTeaching};
+ return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inSection,inProgram,inCohort,inEmploymentType,inFacultyDepartment,activeEnrollment,activeTeaching,teachingInRole};
 }

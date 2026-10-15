@@ -30,3 +30,5 @@ describe("College contact academic program selector",()=>{it("persists a strict 
 describe("College Contacts active class selection",()=>{it("persists only a strict section UUID",()=>{const sectionId="00000000-0000-4000-8000-000000000102";expect(collegeContactsHref(collegeContactsQuerySchema.parse({sectionId}))).toContain("sectionId="+sectionId);expect(collegeContactsQuerySchema.safeParse({sectionId:"other-tenant"}).success).toBe(false);});});
 
 describe("Contacts employment type filter",()=>{it("round-trips bounded Faculty employment type",()=>{expect(collegeContactsHref(collegeContactsQuerySchema.parse({employmentType:"VISITING"}))).toContain("employmentType=VISITING");expect(collegeContactsQuerySchema.safeParse({employmentType:"X".repeat(129)}).success).toBe(false);});});
+
+describe("Active Faculty teaching-role contact filter",()=>{it("round-trips only registered teaching roles",()=>{const input=collegeContactsQuerySchema.parse({teachingRole:"CO_TEACHER"});expect(collegeContactsHref(input)).toContain("teachingRole=CO_TEACHER");expect(collegeContactsQuerySchema.safeParse({teachingRole:"PROFESSOR"}).success).toBe(false);});});

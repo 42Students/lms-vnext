@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
 export const COLLEGE_CONTACTS_PAGE_SIZE=25;
 export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
@@ -22,12 +23,16 @@ export const collegeContactsQuerySchema=z.strictObject({
   registrationPresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
   rollPresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
   teaching:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
+  teachingRole:z.union([z.literal("ALL"),z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
   enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   sort:z.enum(["NAME","NAME_DESC","NEWEST","OLDEST"]).default("NAME"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
+export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string}):boolean {
+ return !(filter.teaching==="NONE"&&filter.teachingRole!=="ALL");
+}
 export function contactDateWindowValid(filter:{joinedFrom?:string;joinedThrough?:string}):boolean {
  return !(filter.joinedFrom&&filter.joinedThrough&&filter.joinedFrom>filter.joinedThrough);
 }
@@ -59,6 +64,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.registrationPresence!=="ALL")params.set("registrationPresence",filter.registrationPresence);
  if(filter.rollPresence!=="ALL")params.set("rollPresence",filter.rollPresence);
  if(filter.teaching!=="ALL")params.set("teaching",filter.teaching);
+ if(filter.teachingRole!=="ALL")params.set("teachingRole",filter.teachingRole);
  if(filter.enrollment!=="ALL")params.set("enrollment",filter.enrollment);
  if(filter.sort!=="NAME")params.set("sort",filter.sort);
  if(filter.page!==1)params.set("page",String(filter.page));
@@ -77,5 +83,6 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
  }
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
+ if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
  return filter;
 }
