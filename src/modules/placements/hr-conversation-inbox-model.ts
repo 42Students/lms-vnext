@@ -47,3 +47,7 @@ export function scopeRecruiterConversations<T extends {jobId:string|null}>(
  return rows.filter(row=>scope==="ALL"||
   (scope==="GENERAL"?row.jobId===null:row.jobId!==null));
 }
+
+export function countScopedConversations<T>(rows:readonly T[]):number{
+ return rows.length;
+}

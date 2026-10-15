@@ -74,7 +74,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
    unread:byThread.get(t.id)??0,
    preview:byPreview.get(t.id)??null,
-  })),pages:pagination.pages,page:pagination.page,total:filtered.length,
+  })),pages:pagination.pages,page:pagination.page,total:ordered.length,
   first:pagination.first,last:pagination.last,
   unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
 }
