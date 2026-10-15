@@ -18,7 +18,7 @@ export {fileStatusDescriptor,storageErrorMessage};
 export const PROJECT_FILE_LIMIT=200;
 export function projectResourceFileDeclaration(file:Pick<File,"name"|"size"|"type">){
   const result=validateStorageDeclaration("project-resource",{
-    originalName:file.name,contentType:file.type||guessContentTypeFromName("project-resource",file.name),
+    originalName:file.name,contentType:file.type||guessContentTypeFromName("project-resource",file.name)||"",
     sizeBytes:file.size,
   });
   return result.ok?{ok:true as const,...result.value}:{ok:false as const,error:result.code};
