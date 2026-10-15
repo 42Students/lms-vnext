@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists} from "drizzle-orm";
+import {and,eq,exists,not} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProgramEnrollments,sectionEnrollments,sections,cohorts,programs,departments} from "@/db/schema";
 import type {VerificationQueueFilters} from "./queue-filters";
@@ -10,6 +10,10 @@ import {verificationEnrollmentFilterMode} from "./enrollment-mode";
 export function verificationEnrollmentPredicates(collegeId:string,filter:VerificationQueueFilters){
  const db=getDb();
  const mode=verificationEnrollmentFilterMode(filter);
+ const hasEnrollment=exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+  .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"))));
  const cohortOrBranch=mode==="PROGRAM"?exists(
   db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
@@ -43,5 +47,5 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
      filter.branchId?eq(departments.id,filter.branchId):undefined,
      filter.programId?eq(programs.id,filter.programId):undefined)))
  ):undefined;
- return [cohortOrBranch,section] as const;
+ return [cohortOrBranch,section,filter.enrollment==="ACTIVE"?hasEnrollment:filter.enrollment==="NONE"?not(hasEnrollment):undefined] as const;
 }
