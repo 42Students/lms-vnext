@@ -7,6 +7,8 @@ describe("college teaching roster export",()=>{
   expect(facultyAssignmentCsvSchema.safeParse({page:10}).success).toBe(false);
   expect(facultyAssignmentCsvSchema.safeParse({role:"OWNER"}).success).toBe(false);
   expect(facultyAssignmentCsvSchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
+  expect(facultyAssignmentCsvSchema.safeParse({sectionCode:"x".repeat(65)}).success).toBe(false);
+  expect(facultyAssignmentCsvHref({q:"",role:"ALL",status:"ACTIVE",sectionCode:"A-1"})).toContain("sectionCode=A-1");
   expect(facultyAssignmentCsvHref({q:"",role:"ALL",status:"ACTIVE",courseCode:"CS-1"})).toContain("courseCode=CS-1");
   expect(exportParams(new URLSearchParams("status=ALL&status=ENDED"))).toBeNull();
   expect(facultyAssignmentCsvHref({q:"",role:"TA",status:"ACTIVE"})).toContain("role=TA");
