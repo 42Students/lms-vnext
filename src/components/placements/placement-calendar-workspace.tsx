@@ -1,3 +1,4 @@
+import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
@@ -523,7 +524,7 @@ export async function PlacementCalendarWorkspace({
         }
         title={
           isTpo
-            ? "Placement Calendar"
+            ? TPO_OWNER_PAGE_COPY.calendar
             : "Placement Interview Calendar"
         }
         description={
