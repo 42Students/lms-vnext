@@ -1233,3 +1233,8 @@ The Mentor Board now explicitly distinguishes Sprints without persisted task row
 ## 2026-10-15 chat-11 new round — task-review-state-evidence (PARTIAL)
 
 Mentor Task cards now identify a real pending review only when the task is IN_REVIEW and its latest recorded attempt is SUBMITTED; stale or absent submissions do not produce phantom review-needed messages. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — task-feedback-deep-link (PARTIAL)
+
+Mentors can open the exact currently assigned task's authorized recorded-feedback history from its Board card when a submission attempt exists, rather than searching another page. The target retains its own persisted membership/college permission checks. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.

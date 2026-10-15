@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -628,6 +628,12 @@ export function ProjectWorkspace({
                                   <p role="status" className="mt-2 text-xs font-semibold text-primary-text">
                                     Submitted attempt v{latestAttempt?.version} is waiting for Mentor review.
                                   </p>
+                                ) : null}
+                                {mode==="MENTOR" && latestAttempt ? (
+                                  <Link href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
+                                    className="mt-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                                    Review recorded task feedback →
+                                  </Link>
                                 ) : null}
                                 {latestAttempt ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
