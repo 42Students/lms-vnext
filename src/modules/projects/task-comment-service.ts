@@ -1,0 +1,61 @@
+import "server-only";
+import {and,asc,eq,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {projectInstances,projectTaskComments,projectTasks} from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import type {RequestContext} from "@/modules/identity/context";
+import {requireProjectReadAccess} from "./access";
+import {ProjectsServiceError} from "./errors";
+import {projectTaskCommentInputSchema} from "./pr-s2-04-task-fields-model";
+import {projectTaskIdSchema} from "./validation";
+
+export async function listProjectTaskComments(context:RequestContext,projectId:string,taskIdInput:string){
+ const scope=await requireProjectReadAccess(context,projectId);
+ const taskId=projectTaskIdSchema.parse(taskIdInput);
+ const [task]=await getDb().select({id:projectTasks.id}).from(projectTasks)
+  .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId))).limit(1);
+ if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
+ return getDb().select().from(projectTaskComments).where(and(
+   eq(projectTaskComments.projectId,scope.project.id),eq(projectTaskComments.taskId,taskId),
+ )).orderBy(asc(projectTaskComments.createdAt),asc(projectTaskComments.id));
+}
+export async function postProjectTaskComment(context:RequestContext,projectId:string,taskIdInput:string,raw:unknown){
+ const scope=await requireProjectReadAccess(context,projectId);
+ if(scope.access==="OBSERVER"||!context.membership||context.membership.collegeId!==scope.collegeId)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const taskId=projectTaskIdSchema.parse(taskIdInput);
+ const input=projectTaskCommentInputSchema.parse(raw);
+ const authorMembershipId=context.membership.id;
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
+  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
+   throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const [task]=await tx.select().from(projectTasks).where(and(
+    eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId),
+  )).for("update").limit(1);
+  if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
+  if(task.updatedAt.getTime()!==Date.parse(input.expectedTaskUpdatedAt))
+   throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const [updated]=await tx.update(projectTasks)
+    .set({updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1))})
+    .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id),
+     sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedTaskUpdatedAt).toISOString()}::timestamptz`))
+    .returning({id:projectTasks.id});
+  if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const [comment]=await tx.insert(projectTaskComments).values({
+   projectId:scope.project.id,taskId,authorMembershipId,body:input.body,
+  }).returning();
+  if(!comment)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+    subjectType:"project_task",subjectId:taskId,subjectLabel:task.title,
+    summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id},
+    groupKey:"project:"+scope.project.id,
+  });
+  return comment;
+ });
+}

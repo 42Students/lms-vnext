@@ -25,7 +25,7 @@ describe("PR-S2-02: task review owns DONE and IN_REVIEW", () => {
   it("locks the task in its transaction and records status activity", () => {
     const fn = lifecycle.split("export async function updateProjectTaskStatus(")[1]?.split("export async function unshipProjectRelease(")[0] ?? "";
     expect(fn).toContain('recordActivityEventInTransaction(tx, context');
-    expect(fn).toContain('eq(projectTasks.updatedAt, lockedTask.updatedAt)');
+    expect(fn).toContain("date_trunc('milliseconds', ${projectTasks.updatedAt})");
     expect(fn).toContain('.for("update").limit(1)');
   });
 });

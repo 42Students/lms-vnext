@@ -1639,3 +1639,35 @@ Readiness now projects the latest approved submission's durable reopen event and
 - Projects wording: adjusted Mentor/Learner/Admin workspace headings and empty states to the exact legacy catalogue, including one account-level section strip. Source tests added; full button/form/table/browser/mobile text parity remains open.
 
 No `as never` casts or protected schema changes were introduced. Tests authored in this round have not been executed here. The orchestrator must run the named disposable PostgreSQL integration cases and focused tests against this SHA before certifying any of these items.
+
+### PR-S2-04 0090 validation and registered field models
+
+Task create/edit validation accepts registered taskType, estimatePoints, blockerReason and dueDate; detail change detection extends to all four. Next task transaction and comment paths must enforce these validated columns. Migration 0090 is registered; no staged migrations should be reapplied.
+
+### PR-S2-04 0090 registered task comments runtime
+
+The new task-comment service and GET/POST route use registered `project_task_comments`, enforce exact project+task row scope and membership, deny read-only observers from posting, and serialize optimistic task writes in a PostgreSQL transaction. Read and write services are separate. Tests include source contracts; disposable PostgreSQL acceptance is pending.
+
+### PR-S2-07 registered 0091 reopen state (committed)
+
+Reopen now atomically writes the latest APPROVED submission's `reopened_at` field under a project/submission row lock and PostgreSQL millisecond CAS, checks evaluations, requires scoped actor membership, and inserts immutable `project_delivery_events(REOPENED)`. Learner draft/readiness paths consult persisted `reopened_at` instead of activity log hints. Separate LOCKED events and file attachment writes follow in subsequent commits. DB acceptance not yet run.
+
+### PR-S2-07 0091 approval locking
+
+APPROVED review now persists `locked_at` and emits append-only LOCKED delivery event in the same transaction for a college-scoped actor membership. Global system-admin reviews without a college membership still record the standard audited event but cannot supply the 0091 event actor (non-null FK); those approval records remain persisted locked. The separately authorized reopen endpoint requires a real college membership and a matching approved/locked row. Disposable PostgreSQL and Super Admin acceptance remain open.
+
+### PR-S2-07 0091 attachments runtime
+
+Learner delivery draft create/edit now accepts up to 10 typed FILE/LINK attachments. FILE references are checked against READY project uploads and TEAM-visible linked resources inside the same transaction; unsafe schemes, foreign/private files and duplicate metadata are rejected. Updates only alter draft attachments, never reviewed submissions. Every explicit metadata mutation writes immutable ATTACHMENTS_CHANGED project_delivery_events. PostgreSQL acceptance and browser remain pending.
+
+### PR-S2-04 and PR-S2-07 0090/0091 acceptance cases
+
+P5 PostgreSQL tests cover task fields, comments and stale task tokens. P6B tests now assert locked_at, reopened_at, append-only LOCKED/REOPENED/ATTACHMENTS_CHANGED rows, safe link metadata roundtrips and rejected unsafe schemes. Deprecated proposal files are historical only; never reapply after registered migrations 0090/0091. These tests are authored, NOT run.
+
+### PR-S2-04 legacy task metadata and comments UI
+
+Mentor create/edit forms now expose 0090 Estimate, Type, Due date and Blocker reason and remove obsolete storage-unavailable warnings. Learner/Mentor/Admin task cards have an on-demand Comments panel with authorized read and member-authorized writes to the registered service. Exact legacy field labels covered by source tests. Real browser/mobile acceptance still outstanding.
+
+### PR-S2-07 Learner delivery metadata UI / exact legacy Projects copy
+
+The learner final-draft form now preserves existing validated 0091 FILE entries and edits 0091 LINK attachments (Additional files & links / Add link), with a bounded list and registered schema write payload. No browser file picker is added: files must first exist as READY project uploads; direct file-reference authoring remains a follow-up. Removed invented heading descriptions in the shared Mentor/Learner/Admin workspace. Confirmed one workspace section strip plus the account's own route-level strip in source. Browser visual, screen-reader, responsive and full exact-word audit are still open.

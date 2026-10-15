@@ -13,6 +13,7 @@ import { projectMutation } from "./project-api";
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
   acceptanceCriteria:string|null;priority:string;updatedAt:string;
+  taskType:string|null;estimatePoints:number|null;dueDate:string|null;blockerReason:string|null;
 };
 export function MentorTaskDetailsEdit(props:Props) {
   const router=useRouter();
@@ -23,17 +24,25 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [description,setDescription]=useState(props.description??"");
   const [criteria,setCriteria]=useState(props.acceptanceCriteria??"");
   const [priority,setPriority]=useState(props.priority);
+  const [taskType,setTaskType]=useState(props.taskType??"");
+  const [estimate,setEstimate]=useState(props.estimatePoints?.toString()??"");
+  const [dueDate,setDueDate]=useState(props.dueDate??"");
+  const [blockerReason,setBlockerReason]=useState(props.blockerReason??"");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==props.title ||
     (description.trim()||null)!==(props.description??null) ||
     (criteria.trim()||null)!==(props.acceptanceCriteria??null) ||
-    priority!==props.priority;
+    priority!==props.priority || taskType!==(props.taskType??"") ||
+    estimate!==(props.estimatePoints?.toString()??"") || dueDate!==(props.dueDate??"") ||
+    blockerReason.trim()!==(props.blockerReason??"");
   function begin() {
     setTitle(props.title);
     setDescription(props.description??"");
     setCriteria(props.acceptanceCriteria??"");
     setPriority(props.priority);
+    setTaskType(props.taskType??"");setEstimate(props.estimatePoints?.toString()??"");
+    setDueDate(props.dueDate??"");setBlockerReason(props.blockerReason??"");
     setError(null);setOpen(true);
   }
   function review(event:FormEvent<HTMLFormElement>) {
@@ -55,6 +64,8 @@ export function MentorTaskDetailsEdit(props:Props) {
           title:title.trim(),description:description.trim()||null,
           acceptanceCriteria:criteria.trim()||null,
           priority,expectedUpdatedAt:props.updatedAt,
+          taskType:taskType||null,estimatePoints:estimate!==""?Number(estimate):null,
+          dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         },
       );
       setConfirmOpen(false);
@@ -89,6 +100,25 @@ export function MentorTaskDetailsEdit(props:Props) {
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Estimate
+          <Input type="number" min={0} max={1000} value={estimate}
+            onChange={e=>setEstimate(e.target.value)}/>
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Type
+          <select className="rounded border border-border p-2" value={taskType}
+            onChange={e=>setTaskType(e.target.value)}>
+            <option value="">Not specified</option><option value="STORY">Story</option>
+            <option value="BUG">Bug</option><option value="CHORE">Chore</option>
+            <option value="SPIKE">Spike</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Due date
+          <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Blocker reason
+          <Textarea maxLength={4000} value={blockerReason}
+            onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">

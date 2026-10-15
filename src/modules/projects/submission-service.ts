@@ -6,7 +6,6 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {activityEvents} from "@/db/schema";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
@@ -17,6 +16,9 @@ import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {
   projectInstances,
   projectSubmissionReviews,
+  projectDeliveryEvents,
+  projectResourceFiles,
+  projectResources,
   projectSubmissions,
   projectReleases,
   projectSprints,
@@ -131,26 +133,37 @@ export async function createProjectSubmissionDraft(
       }
 
       const [latest] = await tx
-        .select({ id: projectSubmissions.id, version: projectSubmissions.version, status: projectSubmissions.status })
+        .select({ id: projectSubmissions.id, version: projectSubmissions.version, status: projectSubmissions.status, reopenedAt:projectSubmissions.reopenedAt })
         .from(projectSubmissions)
         .where(eq(projectSubmissions.projectId, scope.project.id))
         .orderBy(desc(projectSubmissions.version))
         .limit(1);
       // Approved deliveries are immutable. A newer version is possible only
       // after an explicit mentor/admin reopen event on that exact approved row.
-      let approvedReopened=false;
-      if(latest?.status==="APPROVED"){
-        const [reopened]=await tx.select({id:activityEvents.id}).from(activityEvents)
-          .where(and(
-            eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED),
-            eq(activityEvents.collegeId,scope.collegeId),
-            eq(activityEvents.subjectType,"project_submission"),
-            eq(activityEvents.subjectId,latest.id),
-          )).limit(1);
-        approvedReopened=Boolean(reopened);
-      }
+      const approvedReopened=latest?.status==="APPROVED" && Boolean(latest.reopenedAt);
       if(!projectSubmissionAllowsNewDraft(latest?.status) && !approvedReopened){
         throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+      }
+      // A FILE reference must belong to this project and be READY. Never let
+      // a learner attach a foreign or mentor-only resource by guessing its UUID.
+      for(const attachment of input.attachments??[]){
+        if(attachment.kind!=="FILE")continue;
+        const [file]=await tx.select({
+          id:projectResourceFiles.id,status:projectResourceFiles.status,
+          resourceId:projectResourceFiles.resourceId,
+        }).from(projectResourceFiles).where(and(
+          eq(projectResourceFiles.id,attachment.fileId!),
+          eq(projectResourceFiles.projectId,scope.project.id),
+        )).limit(1);
+        if(!file||file.status!=="READY")
+          throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+        if(file.resourceId){
+          const [resource]=await tx.select({status:projectResources.status,visibility:projectResources.visibility})
+            .from(projectResources).where(and(eq(projectResources.id,file.resourceId),
+              eq(projectResources.projectId,scope.project.id))).limit(1);
+          if(!resource||resource.status!=="ACTIVE"||resource.visibility!=="TEAM")
+            throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+        }
       }
       const version = (latest?.version ?? 0) + 1;
 
@@ -163,11 +176,18 @@ export async function createProjectSubmissionDraft(
           sourceUrl: input.sourceUrl ?? null,
           demoUrl: input.demoUrl ?? null,
           notes: input.notes ?? null,
+          attachments:input.attachments??[],
           createdByMembershipId: scope.membershipId,
         })
         .returning();
 
       if (!draft) throw new Error("Project delivery draft insert returned no row");
+      if(input.attachments?.length){
+        await tx.insert(projectDeliveryEvents).values({
+          projectId:scope.project.id,submissionId:draft.id,eventType:"ATTACHMENTS_CHANGED",
+          actorMembershipId:scope.membershipId,reason:"Delivery attachment metadata added",
+        });
+      }
       await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
         action: "DRAFT_CREATED", collegeId: scope.collegeId,
         organizationId: scope.organizationId, projectId: scope.project.id,
@@ -234,6 +254,28 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    // A FILE reference must belong to this project and be READY. Never let
+      // a learner attach a foreign or mentor-only resource by guessing its UUID.
+      for(const attachment of input.attachments??[]){
+        if(attachment.kind!=="FILE")continue;
+        const [file]=await tx.select({
+          id:projectResourceFiles.id,status:projectResourceFiles.status,
+          resourceId:projectResourceFiles.resourceId,
+        }).from(projectResourceFiles).where(and(
+          eq(projectResourceFiles.id,attachment.fileId!),
+          eq(projectResourceFiles.projectId,scope.project.id),
+        )).limit(1);
+        if(!file||file.status!=="READY")
+          throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+        if(file.resourceId){
+          const [resource]=await tx.select({status:projectResources.status,visibility:projectResources.visibility})
+            .from(projectResources).where(and(eq(projectResources.id,file.resourceId),
+              eq(projectResources.projectId,scope.project.id))).limit(1);
+          if(!resource||resource.status!=="ACTIVE"||resource.visibility!=="TEAM")
+            throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+        }
+      }
+
     const [updated] = await tx
       .update(projectSubmissions)
       .set({
@@ -241,6 +283,7 @@ export async function updateProjectSubmissionDraft(
         sourceUrl: input.sourceUrl ?? null,
         demoUrl: input.demoUrl ?? null,
         notes: input.notes ?? null,
+        ...(input.attachments!==undefined?{attachments:input.attachments}:{}),
         updatedAt: new Date(),
       })
       .where(
@@ -253,11 +296,15 @@ export async function updateProjectSubmissionDraft(
       .returning();
 
     if (!updated) {
-      throw new ProjectsServiceError(
-        "PROJECT_SUBMISSION_INVALID_STATE",
-      );
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
-
+    if(input.attachments!==undefined){
+      await tx.insert(projectDeliveryEvents).values({
+        projectId:scope.project.id,submissionId:updated.id,
+        eventType:"ATTACHMENTS_CHANGED",actorMembershipId:scope.membershipId,
+        reason:"Delivery attachment metadata updated",
+      });
+    }
     await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
       action: "DRAFT_UPDATED", collegeId: scope.collegeId,
       organizationId: scope.organizationId, projectId: scope.project.id,
@@ -445,6 +492,7 @@ export async function reviewProjectSubmission(
         .update(projectSubmissions)
         .set({
           status: input.decision,
+          ...(input.decision==="APPROVED"?{lockedAt:new Date(),reopenedAt:null}:{}),
           updatedAt: new Date(),
         })
         .where(
@@ -470,6 +518,13 @@ export async function reviewProjectSubmission(
         decision: input.decision,
       }));
       if(input.decision==="APPROVED"){
+        // Registered 0091 event row is immutable; supersede no prior review.
+        if(context.membership?.id){
+          await tx.insert(projectDeliveryEvents).values({
+            projectId:scope.project.id,submissionId:updated.id,eventType:"LOCKED",
+            actorMembershipId:context.membership.id,reason:"Submission approved",
+          });
+        }
         await recordActivityEventInTransaction(tx,context,projectDeliveryActivity({
           action:"LOCKED",collegeId:scope.collegeId,organizationId:scope.organizationId,
           projectId:scope.project.id,submissionId:updated.id,version:updated.version,
