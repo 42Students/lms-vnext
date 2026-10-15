@@ -40,16 +40,19 @@ export function facultyVideoStatusBadge(status:FacultyVideoProcessingStatus):Fac
  }
 }
 
-export type FacultyVideoListFilter={
- search:string;status:FacultyVideoProcessingStatus|"ALL";
-};
+export const facultyVideoListFilterSchema=z.object({
+ search:z.string().trim().max(120).default(""),
+ status:z.enum(["ALL","QUEUED","UPLOADING","PROCESSING","READY","FAILED","BLOCKED"]).default("ALL"),
+}).strict();
+export type FacultyVideoListFilter=z.infer<typeof facultyVideoListFilterSchema>;
 /** Searching operates only on safe title metadata, never hidden keys/URLs. */
 export function facultyFilterLessonVideos(
  rows:readonly FacultyLessonVideo[],query:FacultyVideoListFilter,
 ):FacultyLessonVideo[]{
- const term=query.search.trim().toLocaleLowerCase();
+ const valid=facultyVideoListFilterSchema.parse(query);
+ const term=valid.search.toLocaleLowerCase();
  return rows.filter(row=>
-  (query.status==="ALL"||row.processingStatus===query.status)&&
+  (valid.status==="ALL"||row.processingStatus===valid.status)&&
   (!term||row.title.toLocaleLowerCase().includes(term)));
 }
 
