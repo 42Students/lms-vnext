@@ -32,6 +32,8 @@ export async function getFacultyAssessmentResults(
     ...overview.assignments.map(row => ({
       id:row.id, kind:"ASSIGNMENT" as const, status:row.status,
       title:row.title, courseName:row.courseName, sectionName:row.sectionName,
+      courseCode:row.courseCode,sectionCode:row.sectionCode,
+      courseCode:row.courseCode,sectionCode:row.sectionCode,
       deliveryId:row.deliveryId, dueAt:row.dueAt,
     })),
     ...overview.quizzes.map(row => ({

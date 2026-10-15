@@ -41,7 +41,7 @@ export default async function FacultyAssessmentResultsPage({
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"
-          placeholder="Assessment, course or Section" />
+          placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
         <select name="kind" defaultValue={data.query.kind}
