@@ -1183,3 +1183,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Settings invalid-filter early return — PARTIAL:** Validate strict `q`/`section` URL before any settings inventory database read while retaining the central Super Admin authorization fence before returning an error. Invalid params no longer cause avoidable selected-college policy queries; unit route contract authored, browser execution open.
+
+
+**2026-10-15 chat-6 Recruiter Accounts literal search — PARTIAL:** Scoped recruiter directory text search escapes `%`, `_` and backslash before parameterized ILIKE, preventing user-provided wildcard expansion to unrelated recruiters while keeping existing DB visibility predicates and count/page consistent. Pure escaping tests authored; isolated PG and browser acceptance pending.
