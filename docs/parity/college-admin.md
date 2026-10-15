@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Department-code Classes filter PARTIAL (chat-3, 2026-10-15):** Exact bounded code is matched against the owning program department under existing college join, before paging and in capped CSV. Source unit and isolated PG own/foreign/absence tests authored, but not executed; browser/legacy parity open.
+
 **Period end date on or before PARTIAL (chat-3, 2026-10-15):** Inclusive ISO calendar-date filtering uses persisted academic-period end boundary, not inferred class or attendance dates. Page/CSV selector and unit/isolated PostgreSQL tenant regression fixtures authored; runtime/browser validation remains open.
 
 **Period start date on or after PARTIAL (chat-3, 2026-10-15):** Inclusive ISO calendar-date filtering uses persisted academic-period start boundary, not inferred class or attendance dates. Page/CSV selector and unit/isolated PostgreSQL tenant regression fixtures authored; runtime/browser validation remains open.

@@ -192,4 +192,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({periodEndsOnOrBefore:"2026-15-41"}).success).toBe(false);
     expect(readCollegeStructureParams({periodEndsOnOrBefore:""})).toEqual({});
   });
+  it("validates exact department code and retains it in scoped pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({departmentCode:"CS&IT"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("departmentCode=CS%26IT");
+    expect(classesExportHref(query)).toContain("departmentCode=CS%26IT");
+    expect(collegeClassQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({departmentCode:""})).toEqual({});
+  });
 });
