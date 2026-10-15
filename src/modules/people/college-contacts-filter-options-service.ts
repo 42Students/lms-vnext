@@ -21,7 +21,12 @@ export async function listCollegeContactFilterOptions(context:RequestContext){
    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,actor.collegeId)))
    .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201);
-  return {cohorts:cohortRows.slice(0,200).map(r=>({id:r.id,label:r.programName+" · "+r.name})),
+  const departmentRows=await tx.select({id:departments.id,name:departments.name})
+   .from(departments).where(and(eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt)))
+   .orderBy(asc(departments.name),asc(departments.id)).limit(201);
+  return {departments:departmentRows.slice(0,200).map(r=>({id:r.id,label:r.name})),
+   departmentsTruncated:departmentRows.length>200,
+   cohorts:cohortRows.slice(0,200).map(r=>({id:r.id,label:r.programName+" · "+r.name})),
    cohortsTruncated:cohortRows.length>200};
  });
 }

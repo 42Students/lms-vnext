@@ -53,6 +53,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.departmentPresence==="ASSIGNED"?and(faculty,academic.hasPrimaryDepartment):filter.departmentPresence==="MISSING"?and(faculty,not(academic.hasPrimaryDepartment)):undefined,
    filter.classPresence==="ASSIGNED"?and(learner,academic.activeClass):filter.classPresence==="NONE"?and(learner,not(academic.activeClass)):undefined,
    filter.cohortId?and(learner,academic.inCohort(filter.cohortId)):undefined,
+   filter.facultyDepartmentId?and(faculty,academic.inFacultyDepartment(filter.facultyDepartmentId)):undefined,
    search?or(
     ilike(users.displayName,search),
     // Only staff who are not also learners may be located by email.
