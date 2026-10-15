@@ -10,6 +10,7 @@ import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move"
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
+import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -31,6 +32,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const [groups,setGroups]=useState<ProjectTeam[]>([]);
   const [loading,setLoading]=useState(true);
   const [rosterLoading,setRosterLoading]=useState(false);
+  const [rosterRefreshKey,setRosterRefreshKey]=useState(0);
   const [pending,setPending]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
@@ -60,7 +62,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
       .catch(e=>{if(!controller.signal.aborted)setError(e instanceof Error?e.message:"Could not load class roster");})
       .finally(()=>{if(!controller.signal.aborted)setRosterLoading(false);});
     return()=>controller.abort();
-  },[collegeId,classId]);
+  },[collegeId,classId,rosterRefreshKey]);
   useEffect(()=>{
     // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
     if(!roster){setGroups([]);return;}
@@ -135,6 +137,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
         </label>:null}
       </>:null}
     </div>
+    {classId?<div className="flex flex-wrap items-center gap-3">
+      <Button variant="secondary" disabled={!canRefreshClassTeamRoster(classId,rosterLoading,pending)}
+        onClick={()=>setRosterRefreshKey(value=>value+1)}>Refresh class roster</Button>
+      <p className="text-xs text-muted-foreground">Refresh after enrollment changes or a stale preview before retrying creation.</p>
+    </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2" aria-label="Adjustable team preview">
