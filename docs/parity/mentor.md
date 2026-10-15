@@ -1608,3 +1608,7 @@ Prepared migration proposal for blocker_reason, due_date, estimate_points, task_
 ### PR-S2-07 final delivery lock/reopen/attachments — PROPOSED / NOT DONE
 
 Safe immutable lock/reopen history and attachments require additional registered persistence. Proposed project_submissions fields, composite project/submission FK and delivery event table under docs/proposed-migrations; built standalone validation and guard models with tests. No endpoint is wired and the existing APPROVED review is not rewritten or silently reopened. Orchestrator must register schema, add atomic gate to draft creation and implement secure attachment verification before marking done.
+
+### Legacy Projects wording and one-strip audit — partial
+
+Compared Mentor and Learner Project tabs with exact legacy-copy-A labels, and College/Admin project strips with legacy-copy-A/B. Learner section tabs now exclude the non-legacy Final Delivery tab while retaining a separately reachable Final delivery action. Mentor Task Allocation no longer claims the now-registered assignee column is unavailable. College workspace route uses exactly the workspace section strip; Mentor/Learner pages only render their account section strip. Source-level label tests added; full modal/button/page text and browser visual audit remain outstanding.
