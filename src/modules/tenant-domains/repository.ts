@@ -6,6 +6,7 @@ import {
   desc,
   eq,
   ne,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -303,15 +304,19 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     return domain;
   },
 
-  async deleteDomain(domainId) {
+  async deleteDomain(domainId, confirmationHost) {
     const db = getDb();
     const [deleted] = await db
       .delete(tenantDomains)
-      .where(eq(tenantDomains.id, domainId))
+      .where(and(eq(tenantDomains.id, domainId),or(
+        eq(tenantDomains.isPrimary,false),
+        and(eq(tenantDomains.isPrimary,true),eq(tenantDomains.host,confirmationHost ?? "")),
+      )))
       .returning({ id: tenantDomains.id });
 
     if (!deleted) {
-      throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const existing = await loadDomainFromDb(domainId);
+      throw new TenantDomainServiceError(existing ? "PRIMARY_HOST_CONFIRMATION_REQUIRED" : "DOMAIN_NOT_FOUND");
     }
   },
 
