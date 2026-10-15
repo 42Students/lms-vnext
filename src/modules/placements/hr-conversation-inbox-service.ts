@@ -1,4 +1,7 @@
 import "server-only";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listMessageThreads} from "./tpo-messaging-service";
@@ -22,9 +25,22 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const filtered=filterRecruiterConversations(threads,knownJobIds,query.q,titles);
+ const visible=filtered.slice(0,100);
+ const counts=visible.length?await getDb().select({
+   threadId:placementTpoMessages.threadId,
+   unread:sql<number>`count(*)::integer`,
+  }).from(placementTpoMessages)
+   .where(and(
+    inArray(placementTpoMessages.threadId,visible.map(row=>row.id)),
+    eq(placementTpoMessages.senderType,"TPO"),
+    isNull(placementTpoMessages.readAt),
+   )).groupBy(placementTpoMessages.threadId):[];
+ const byThread=new Map(counts.map(row=>[row.threadId,Number(row.unread)]));
  return {status:"READY" as const,choices:grants,collegeId,
-  items:filtered.slice(0,100).map(t=>({
+  items:visible.map(t=>({
    id:t.id,jobId:t.jobId,jobTitle:t.jobId?(titles.get(t.jobId)??"Authorized drive"):"General conversation",
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
-  })),truncated:filtered.length>100};
+   unread:byThread.get(t.id)??0,
+  })),truncated:filtered.length>100,
+  unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
 }
