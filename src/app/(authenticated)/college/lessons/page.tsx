@@ -44,6 +44,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       lessonId:first(params.lessonId)||undefined,
       offeringId:first(params.offeringId)||undefined,
       pathId:first(params.pathId)||undefined,
+      minContentCount:first(params.minContentCount)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

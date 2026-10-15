@@ -345,4 +345,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("pathId=");
   });
 
+  it("restricts minimum content count to persisted non-negative bounded counts",()=>{
+    for(const n of ["0","-1","1001","1.5"])expect(collegeLessonQuerySchema.safeParse({minContentCount:n}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({minContentCount:2});
+    expect(collegeLearningHref("LESSONS",q)).toContain("minContentCount=2");
+    expect(lessonsCsvHref(q)).toContain("minContentCount=2");
+  });
+
 });
