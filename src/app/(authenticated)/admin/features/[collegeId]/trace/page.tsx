@@ -81,6 +81,7 @@ export default async function SuperAdminLearnerAccessTracePage({
       q: strictParams.q || undefined,
       overridesOnly: strictParams.overridesOnly || undefined,
       overridesModule: strictParams.overridesModule || undefined,
+      storedValue: strictParams.storedValue || undefined,
       page:
         strictParams.page || undefined,
       membershipId:
@@ -208,6 +209,11 @@ export default async function SuperAdminLearnerAccessTracePage({
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
             </select>
           </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
+            <select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -290,7 +296,9 @@ export default async function SuperAdminLearnerAccessTracePage({
                               page,
                               overridesOnly: query.overridesOnly,
                     overridesModule: query.overridesModule,
+                    storedValue: query.storedValue,
                               overridesModule: query.overridesModule,
+                    storedValue: query.storedValue,
                               membershipId:
                                 learner.membershipId,
                             },
