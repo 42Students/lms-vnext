@@ -1,4 +1,5 @@
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
+import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
@@ -64,6 +65,7 @@ export default async function LearnerOffersPage({
   ]);
   const requests = requestRead.items;
   const snapshotNowIso = new Date().toISOString();
+  const expiredIssuedCount=learnerExpiredIssuedOffers(offers.items,Date.parse(snapshotNowIso));
   const kindInput=learnerOfferKindSchema.safeParse(query.kind ?? "all");
   const kind=kindInput.success?kindInput.data:"all";
   const joiningInput=learnerJoiningFilterSchema.safeParse(query.joining ?? "all");
@@ -120,6 +122,14 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {view==="pending"&&expiredIssuedCount>0 ? (
+        <p role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+          {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.
+          <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 font-semibold text-primary-text underline">
+            View expired issued offers
+          </Link>
+        </p>
+      ) : null}
       <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
