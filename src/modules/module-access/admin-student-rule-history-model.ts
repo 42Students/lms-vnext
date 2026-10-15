@@ -48,3 +48,11 @@ export function studentRuleHistoryHref(collegeId:string,membershipId:string,
  if(next){query.set("beforeOccurredAt",next.beforeOccurredAt.toISOString());query.set("beforeId",next.beforeId);}
  return query.size?base+"?"+query.toString():base;
 }
+
+/** Reuse exactly the same validated, college-scoped filters for the CSV page export. */
+export function studentRuleHistoryExportHref(collegeId:string,membershipId:string,
+ cursor:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives",
+ actorName:string,from:string,to:string){
+ return studentRuleHistoryHref(collegeId,membershipId,cursor,module,actorName,from,to)
+  .replace("/history","/history/export");
+}
