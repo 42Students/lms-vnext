@@ -86,3 +86,12 @@ export function facultyAssignmentCommandError(status:number,body:unknown):string
  if(status>=500)return "The save could not be confirmed. Reload before retrying.";
  return "The assignment change was rejected. Review the form or reload the Section.";
 }
+
+/** A no-op draft cannot be saved; the persisted command rejects unchanged fields. */
+export function facultyAssignmentCanSaveDraft(
+ current:{title:string;description:string|null;dueAt:string|null;maxPoints:number}|null,
+ draft:{title:string;description:string;dueAt:string;maxPoints:number},
+ pending:boolean,confirmed:boolean,
+){
+ return Boolean(current)&&!pending&&confirmed&&facultyAssignmentDraftDirty(current!,draft);
+}
