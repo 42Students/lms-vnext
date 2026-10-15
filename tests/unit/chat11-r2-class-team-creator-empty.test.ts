@@ -12,3 +12,8 @@ it("explains the missing upstream template assignment",()=>{
 it("does not show blocking empty states for a ready workspace",()=>{
  expect(classTeamCreatorEmptyMessages(false,2,3)).toEqual({classes:null,templates:null});
 });
+
+it("does not confuse a failed classes API request with an empty college",()=>{
+ expect(classTeamCreatorEmptyMessages(false,0,1,true).classes).toBeNull();
+ expect(classTeamCreatorEmptyMessages(false,0,1,false).classes).toMatch(/No active classes/);
+});
