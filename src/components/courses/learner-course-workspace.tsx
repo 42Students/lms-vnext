@@ -1,3 +1,4 @@
+import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -570,9 +571,9 @@ export function LearnerCourseWorkspace({
 }) {
   const summary = workspace.summary;
   const measuredProgress = learnerRoadmapMeasuredProgress(summary);
-  const activeFilter = ["all", "lectures", "resources", "assessments", "live-sessions"].includes(filter)
-    ? filter
-    : "all";
+  const activeFilter = resolveLearnerRoadmapFocusFilter(
+    filter, focusLessonId, focusContentId, workspace.lessons,
+  );
 
   const filters = [
     { key: "all", label: "All" },

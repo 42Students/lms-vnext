@@ -1372,3 +1372,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 standalone quiz deadline display (2026-10-15):** quiz-attempt deadline labels use the persisted instant in Asia/Kolkata (including midnight crossing) and distinguish missing from malformed deadline data. Server submission fencing remains unchanged. Unit tests authored; mobile/browser/clock-edge acceptance still pending.
 
 **Chat-7 round 2 / Course Home overdue next action (PARTIAL):** unsubmitted published assignments with past due dates are now offered as the first actionable Course Home step with an explicit late-submission notice and exact lesson/item link. Future-only update feed remains chronological. Model tests authored; saved data, legacy visual and browser parity still required.
+
+**Chat-7 round 2 / Learning Path deep links (PARTIAL; L3-006/037):** an exact learner-authorized lesson/item focus now selects its own resource/lecture/assessment/live filter even if the copied URL carried an incompatible filter. Missing/forged item IDs never reveal other lessons. Pure regressions authored; browser Back/Forward and modal verification remain.
