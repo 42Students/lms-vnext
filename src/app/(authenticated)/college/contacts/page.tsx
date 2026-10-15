@@ -178,7 +178,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   </div>
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
-   {results.items.length===0?<p className="rounded-lg border p-4 text-sm">No matching contacts in this college.</p>:
+   {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear filters in this tab</Link></div>:
     <ul className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
      {results.items.map(contact=><li key={contact.membershipId} className="min-w-0 space-y-2 rounded-lg border bg-surface p-4">
       <h2 className="break-words font-semibold">{contact.name}</h2>
