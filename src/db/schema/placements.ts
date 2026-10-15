@@ -1123,6 +1123,10 @@ export const placementJobRounds = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("hr_interview_round_job_parent_uq").on(
+      table.id,
+      table.jobId,
+    ),
     uniqueIndex(
       "placement_job_rounds_active_sequence_uq",
     )
