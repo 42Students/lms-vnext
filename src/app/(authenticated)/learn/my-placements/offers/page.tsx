@@ -14,6 +14,7 @@ import { LearnerPlacementOffers } from "@/components/placements/learner-placemen
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
 import {listOwnPlacementRequests} from "@/modules/placements/request-service";
+import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {
   learnerOfferViewSchema,
   type LearnerOfferView,
@@ -48,9 +49,11 @@ export default async function LearnerOffersPage({
   const searchTerm = parsedSearch.success ? parsedSearch.data : "";
   const dueOnly = query.due === "1";
   const context = await getCurrentRequestContext();
-  const [offers,requests] = await Promise.all([
-    getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
+  const [offers,requestRead] = await Promise.all([
+    getOwnLearnerOfferBrowse(context,view),
+    readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
   ]);
+  const requests = requestRead.items;
   const snapshotNowIso = new Date().toISOString();
   const kindInput=learnerOfferKindSchema.safeParse(query.kind ?? "all");
   const kind=kindInput.success?kindInput.data:"all";
@@ -176,6 +179,7 @@ export default async function LearnerOffersPage({
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
         </div>
       ) : null}
+      {!requestRead.available ? <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
@@ -189,6 +193,7 @@ export default async function LearnerOffersPage({
         </section>
       ) : (
         <LearnerPlacementOffers
+          extensionsAvailable={requestRead.available}
           preserveOrder
           extensionRequests={requests.map(row=>({
             offerId:row.request.offerId,status:row.request.status,
