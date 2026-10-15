@@ -118,4 +118,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({cohortStatus:"PLANNED",page:2}))).toContain("cohortStatus=PLANNED");
   });
 
+  it("lessons periodStatus respects database lifecycle enums and URL state",()=>{
+    expect(collegeLessonQuerySchema.safeParse({periodStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
+  });
+
 });
