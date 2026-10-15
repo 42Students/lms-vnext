@@ -132,6 +132,23 @@ export function roleDirectoryNextIstDayStart(day: string): Date {return new Date
 
 /** Impossible combinations should be rejected, not rendered as a misleading empty college roster. */
 export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirectoryKind, filter: CollegeRoleDirectoryQuery): void {
+  // Apply the same role-specific restrictions to the page and CSV as the persisted service.
+  if(kind==="FACULTY"){
+   if(filter.sectionId)throw new RangeError("FACULTY_SECTION_FILTER_UNSUPPORTED");
+   if(filter.programId)throw new RangeError("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
+   if(filter.cohortId)throw new RangeError("FACULTY_COHORT_FILTER_UNSUPPORTED");
+   if(filter.classPresence!=="ALL")throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
+   if(filter.registrationPresence!=="ALL")throw new RangeError("FACULTY_REGISTRATION_FILTER_UNSUPPORTED");
+   if(filter.rollPresence!=="ALL")throw new RangeError("FACULTY_ROLL_FILTER_UNSUPPORTED");
+   if(filter.enrollment!=="ALL")throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
+  }else{
+   if(filter.teachingRole!=="ALL")throw new RangeError("LEARNER_TEACHING_ROLE_UNSUPPORTED");
+   if(filter.teaching!=="ALL")throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
+   if(filter.employmentType)throw new RangeError("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
+   if(filter.departmentPresence!=="ALL")throw new RangeError("LEARNER_PRIMARY_DEPARTMENT_FILTER_UNSUPPORTED");
+   if(filter.titlePresence!=="ALL")throw new RangeError("LEARNER_ACADEMIC_TITLE_FILTER_UNSUPPORTED");
+   if(filter.facultyDepartmentId)throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.teaching === "NONE" && filter.teachingRole !== "ALL") {
     throw new RangeError("FACULTY_TEACHING_FILTER_CONFLICT");
   }
