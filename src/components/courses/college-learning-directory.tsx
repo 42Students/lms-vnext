@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeLearningHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
+import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -573,6 +573,10 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                       <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
                         className="font-semibold text-primary-text hover:underline">{item.courseName} ({item.courseCode})</Link>
                       <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
+                      <Link href={collegeOfferingLessonsHref(item.offeringId)}
+                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
+                        View authored lessons
+                      </Link>
                     </td>
                     <td className="px-4 py-4 text-body">{item.offeringStatus}</td>
                     <td className="px-4 py-4 text-body">{collegeProgressDescription(item)}</td>
