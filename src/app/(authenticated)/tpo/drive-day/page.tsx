@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {tpoLiveRoundTiming} from "@/modules/placements/tpo-live-round-timing-model";
 import {summarizeTpoLiveTriage} from "@/modules/placements/tpo-live-triage-summary-model";
 import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/placements/tpo-live-round-search-model";
 import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements/tpo-drive-day-sort-model";
@@ -85,6 +86,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                         timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
                       }) : "unknown"
                     } IST</p>
+                    {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
                   <Link href={"/tpo/drive-day/" + round.id}
                     className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
