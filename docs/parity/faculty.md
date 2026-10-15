@@ -1570,3 +1570,18 @@ The `chatgpt/chat-4` round beginning at `c0f9c23c00c5e73666bca6aefd31f16f5e24bd4
 - **Important metadata distinction:** Published/CLOSED metadata-only edits remain possible even if the immutable question-bank GET fails; failed DRAFT question-bank edits remain blocked.
 
 **PARTIAL / acceptance pending:** no TypeScript, lint, PostgreSQL or authenticated desktop/mobile browser gate was executed at this batch SHA. Database-persisted legacy `shuffleQuestions`/`shuffleOptions` and randomized learner rendering still require orchestrator DB06 registration and follow-through; the staged-only SQL is not production parity. No master matrix row was promoted to DONE. The sole DATABASE tracker remains unchanged pending its independent gates.
+
+## 2026-10-15 Faculty Quiz question-bank usability round — PARTIAL (chat-4)
+
+The latest `chatgpt/chat-4` round merged the current main before implementation and authored ten separate, pushed Faculty Quiz editor changes. This remains **PARTIAL**; it does not represent registered database shuffle parity or acceptance.
+
+- Search the Faculty Quiz selector by title or lifecycle state while retaining the currently selected Quiz so edits are not lost by filtering.
+- Search long question banks by question number, prompt or answer text. This only filters the rendered editor; the persisted order and full bank remain intact.
+- Show shared-Zod question validation beside each question and a live correct-answer count.
+- Insert a new choice question after any existing question and move any question directly to the first or last position while preserving the save-time sequence normalization.
+- Insert an unchecked answer after a selected option without modifying existing correctness flags.
+- Confirm deletion of an option marked correct before the grading key is adjusted, and confirm deletion of an authored question with a bounded prompt preview.
+- Paste separated answer choices through an explicit input action, rejecting blanks, duplicates, overlength and a 20-answer overflow. A brand-new empty question gets exactly one marked-correct first answer.
+- Ten dedicated `tests/unit/faculty-quiz-round7-*.test.ts` files cover these models and negative boundaries.
+
+**Acceptance not claimed:** no repo-local TypeScript/ESLint/Vitest/PostgreSQL or authenticated browser checks have executed for these commits; repository GitHub Actions for the branch have not been observed. The existing command route remains the sole write boundary and its prior role/tenant checks were not changed. Full legacy choice Quiz parity still depends on orchestrator-owned DB06 persisted shuffle registration, learner-visible randomized rendering, and current browser/attempt recovery evidence. Do not mark Faculty All Quizzes DONE on this evidence alone.
