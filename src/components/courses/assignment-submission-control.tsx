@@ -13,6 +13,7 @@ import { AssignmentFileSubmissionControl } from "./assignment-file-submission-co
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
 import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
+import { learnerAssignmentFinalConfirmation } from "@/modules/courses/learner-assignment-confirmation-model";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -67,6 +68,11 @@ export function AssignmentSubmissionControl({
         flight.current.end();
         return;
       }
+    }
+
+    if (!window.confirm(learnerAssignmentFinalConfirmation(submissionType))) {
+      flight.current.end();
+      return;
     }
 
     setSubmitting(true);
@@ -132,7 +138,7 @@ export function AssignmentSubmissionControl({
       onSubmit={submit}
       className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4"
     >
-      <fieldset disabled={submitting}>
+      <fieldset disabled={submitting && submissionType !== "FILE"}>
         <legend className="text-sm font-semibold text-foreground">
           Submit assignment
         </legend>
@@ -149,6 +155,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
+            disabled={submitting}
             variant={
               submissionType === "TEXT"
                 ? "primary"
@@ -166,6 +173,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
+            disabled={submitting}
             variant={
               submissionType === "LINK"
                 ? "primary"
@@ -180,7 +188,7 @@ export function AssignmentSubmissionControl({
           >
             HTTPS link
           </Button>
-          <Button type="button" size="sm" disabled={!fileUploadsEnabled}
+          <Button type="button" size="sm" disabled={!fileUploadsEnabled || submitting}
             variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             File upload
@@ -215,6 +223,7 @@ export function AssignmentSubmissionControl({
             <Input
               type="url"
               inputMode="url"
+              maxLength={2048}
               value={submissionUrl}
               onChange={(event) =>
                 setSubmissionUrl(

@@ -118,6 +118,7 @@ const linkSubmissionSchema = z.object({
   submissionUrl: z
     .string()
     .trim()
+    .max(2048)
     .url()
     .refine(
       (value) =>
