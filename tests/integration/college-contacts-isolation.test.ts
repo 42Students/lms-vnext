@@ -62,5 +62,5 @@ describe.skipIf(!enabled)("read-only college contact isolation",()=>{
   expect(report.csv).not.toContain("Contact "+ids.u2.slice(0,8));
   await expect(exportCollegeContactsCsv(wrong,{tab:"STUDENT"})).rejects.toBeInstanceOf(AuthorizationError);
  });
-
+ it("limits profile availability to current-college role records",async()=>{const rows=await listCollegeContacts(admin,{profile:"UNPROFILED",tab:"STUDENT",q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(true);expect(rows.items.some(x=>x.membershipId===ids.m2)).toBe(false);await expect(listCollegeContacts(wrong,{profile:"PROFILED"})).rejects.toBeInstanceOf(AuthorizationError);});
 });
