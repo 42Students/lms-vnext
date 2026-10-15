@@ -2,12 +2,13 @@
 
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
-import {authoringDueInstant,authoringLocalDateTime} from "@/modules/courses/faculty-authoring-datetime-model";
+import {authoringDueInstant} from "@/modules/courses/faculty-authoring-datetime-model";
+import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
   id:string;deliveryId:string;title:string;startsAt:string;endsAt:string;
-  expectedUpdatedAt:string|null;
+  expectedUpdatedAt:string|null;meetingUrl:string|null;
 };
 export function FacultyLiveClassEditor({
   choices,sessions,
@@ -27,6 +28,21 @@ export function FacultyLiveClassEditor({
   const deliveryId=action==="CREATE"?choice?.deliveryId:chosen?.deliveryId;
   const ready=Boolean(deliveryId && (action==="CREATE" ? lessonId :
     chosen?.expectedUpdatedAt));
+  function preloadSession(id:string){
+    setSelectedId(id);
+    const found=sessions.find(item=>item.id===id);
+    if(found){
+      const draft=facultyLiveEditorDraft(found);
+      setTitle(draft.title);setMeetingUrl(draft.meetingUrl);
+      setStartsAt(draft.startsAt);setEndsAt(draft.endsAt);
+    }
+    setError(null);
+  }
+  function changeAction(next:typeof action){
+    setAction(next);
+    if(next!=="CREATE"&&chosen)preloadSession(chosen.id);
+    setError(null);
+  }
   async function save(){
     if(!deliveryId||pending||!ready)return;
     const verb=action==="CREATE"?"schedule":action==="EDIT"?"reschedule":"cancel";
@@ -60,7 +76,7 @@ export function FacultyLiveClassEditor({
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="grid gap-1 text-sm">Action
-        <select value={action} onChange={e=>setAction(e.target.value as typeof action)}
+        <select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
           className="min-h-10 rounded border border-border bg-background p-2">
           <option value="CREATE">Schedule</option><option value="EDIT">Reschedule / edit</option>
           <option value="CANCEL">Cancel</option>
@@ -76,7 +92,7 @@ export function FacultyLiveClassEditor({
           </select>
         </label> :
         <label className="grid gap-1 text-sm">Published session
-          <select value={selectedId} onChange={e=>setSelectedId(e.target.value)}
+          <select value={selectedId} onChange={e=>preloadSession(e.target.value)}
             className="min-h-10 rounded border border-border bg-background p-2">
             {sessions.map(x=><option key={x.id} value={x.id}>{x.title}</option>)}
           </select>
