@@ -11,9 +11,13 @@ export type ProjectResourceFile=z.infer<typeof projectResourceFileSchema>;
 /** Client-side presentation boundary only; an authenticated server must enforce access independently. */
 export function filesForProjectResource(projectId:string,resourceId:string,records:readonly unknown[]){
  z.string().uuid().parse(projectId);z.string().uuid().parse(resourceId);
+ const scoped=records.map(record=>projectResourceFileSchema.parse(record))
+  .filter(row=>row.projectId===projectId&&row.resourceId===resourceId&&row.status!=="DELETED");
  const seen=new Set<string>();
- return records.map(record=>projectResourceFileSchema.parse(record))
-  .filter(row=>row.projectId===projectId&&row.resourceId===resourceId&&row.status!=="DELETED")
-  .filter(row=>{if(seen.has(row.id))return false;seen.add(row.id);return true;})
-  .sort((a,b)=>b.createdAt.localeCompare(a.createdAt)||a.id.localeCompare(b.id));
+ for(const row of scoped){
+  if(seen.has(row.id))throw new Error("RESOURCE_FILE_DUPLICATE_METADATA");
+  seen.add(row.id);
+ }
+ return scoped.sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)||
+  a.id.localeCompare(b.id));
 }
