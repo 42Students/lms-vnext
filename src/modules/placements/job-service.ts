@@ -6,12 +6,15 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
   placementCompanies,
+  placementDebarmentDriveEvents,
+  placementDebarments,
   placementJobs,
   placementJobRoleOptions,
   placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
+import { isDebarmentActive } from "./batch-registration-policy";
 import {
   requirePlacementJobSeasonActive,
 } from "./season-service";
@@ -463,6 +466,33 @@ export async function publishPlacementJob(
       throw new PlacementsServiceError(
         "PLACEMENT_JOB_NOT_PUBLISHABLE",
       );
+    }
+
+    // P-S1-08: A debarment measured in subsequent drives counts at
+    // publication, whether or not the excluded learner ever applies.
+    // The registered DB08 trigger increments drives_counted and appends
+    // immutable history only for a newly inserted (debarment, job) pair.
+    const localDateParts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(now);
+    const datePart = (type: string) =>
+      localDateParts.find((part) => part.type === type)?.value ?? "";
+    const collegeToday = `${datePart("year")}-${datePart("month")}-${datePart("day")}`;
+    const countableDebarments = await tx.select().from(placementDebarments)
+      .where(and(
+        eq(placementDebarments.collegeId, published.collegeId),
+        isNull(placementDebarments.liftedAt),
+      ))
+      .for("update");
+    for (const debarment of countableDebarments) {
+      // Date-based bans are governed by calendar date, not drive count.
+      if (debarment.untilDate !== null || debarment.untilDrives === null ||
+          !isDebarmentActive(debarment, collegeToday)) continue;
+      await tx.insert(placementDebarmentDriveEvents).values({
+        debarmentId: debarment.id,
+        jobId: published.id,
+        recordedByUserId: context.user.id,
+      }).onConflictDoNothing();
     }
 
     await recordActivityEventInTransaction(
