@@ -1,4 +1,4 @@
-if(q.cohortStatus&&q.cohortStatus!=="ALL")p.set("cohortStatus",q.cohortStatus);import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
+if(q.programStatus&&q.programStatus!=="ALL")p.set("programStatus",q.programStatus);if(q.cohortStatus&&q.cohortStatus!=="ALL")p.set("cohortStatus",q.cohortStatus);import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
 import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
 
 export const CLASSES_EXPORT_CAP = 1000;
@@ -9,7 +9,7 @@ export type ClassExportRow = {
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; }) {
+export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
@@ -19,6 +19,7 @@ export function classesExportHref(raw: { q: string; programId?: string; cohortCo
   if (raw.maximumCapacity !== undefined) params.set("maximumCapacity",String(raw.maximumCapacity));
   if (raw.status !== "ACTIVE") params.set("status", raw.status);
   if(raw.cohortStatus&&raw.cohortStatus!=="ALL")params.set("cohortStatus",raw.cohortStatus);
+  if(raw.programStatus&&raw.programStatus!=="ALL")params.set("programStatus",raw.programStatus);
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
 

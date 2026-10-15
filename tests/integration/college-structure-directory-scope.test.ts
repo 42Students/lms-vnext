@@ -205,4 +205,17 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("programStatus uses the persisted same-college academic relation",async()=>{
+    const statusRow=await pool!.query<{status:string}>("SELECT status FROM programs WHERE id=$1",[ids.program]);
+    const expected=statusRow.rows[0]!.status;
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,programStatus:expected}),
+      listCollegeClasses(adminA,{q:key,programStatus:(expected==="ACTIVE"?"ARCHIVED":"ACTIVE")}),
+      listCollegeClasses(adminB,{q:key,programStatus:expected}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

@@ -40,4 +40,9 @@ describe("College classes safe CSV export", () => {
   expect(classesExportHref({q:"",status:"ACTIVE",cohortStatus:"ACTIVE"})).toContain("cohortStatus=ACTIVE");
  });
 
+ it("programStatus is applied to classes CSV",()=>{
+  expect(collegeClassesExportSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+  expect(classesExportHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
 });
