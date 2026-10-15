@@ -1,4 +1,4 @@
-import {facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
+import {emptyFacultyProfileDocument,facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
 
 /** Protect local Faculty drafts from a malformed 2xx response. */
 export class FacultyProfileSaveResponseError extends Error {
@@ -10,7 +10,10 @@ export function facultyProfileSaveReceipt(raw:unknown,expectedVersion:number):Fa
  const payload=raw as Record<string,unknown>;
  if(!payload.document||typeof payload.document!=="object"||Array.isArray(payload.document))
   throw new FacultyProfileSaveResponseError();
- const parsed=facultyProfileDocumentSchema.safeParse(payload.document);
+ const persisted=payload.document as Record<string,unknown>;
+ if(Object.keys(emptyFacultyProfileDocument).some(key=>!Object.hasOwn(persisted,key)))
+  throw new FacultyProfileSaveResponseError();
+ const parsed=facultyProfileDocumentSchema.safeParse(persisted);
  if(!parsed.success)throw new FacultyProfileSaveResponseError();
  if(typeof payload.version!=="number"||!Number.isSafeInteger(payload.version)||
     payload.version<=expectedVersion)throw new FacultyProfileSaveResponseError();
