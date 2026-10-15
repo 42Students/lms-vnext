@@ -7,12 +7,14 @@ import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learn
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
+import {learnerOfferApplicationHref} from "@/modules/placements/learner-offer-application-link-model";
 import {learnerOfferResponseTiming,prioritizeLearnerOffers} from "@/modules/placements/learner-offer-response-timing-model";
 import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
   from "@/modules/placements/learner-offer-pending-request-model";
 import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -201,6 +203,18 @@ export function LearnerPlacementOffers({
     }catch(error){setExtensionError(error instanceof Error?error.message:"Unable to request extension.");}
     finally{setPendingId(null);}
   }
+  function downloadOwnOffers(){
+    const csv=learnerOffersCsv(sortedOffers);
+    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    try {
+      const link=document.createElement("a");
+      link.href=url;
+      link.download="my-placement-offers.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {URL.revokeObjectURL(url);}
+  }
   if (offers.length === 0) {
     return null;
   }
@@ -216,6 +230,10 @@ export function LearnerPlacementOffers({
         </p>
       </div>
 
+      <button type="button" onClick={downloadOwnOffers}
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+        Export displayed offers CSV
+      </button>
       <div className="grid gap-4">
         {sortedOffers.map((item) => (
           <article
@@ -280,6 +298,12 @@ export function LearnerPlacementOffers({
               </div>
             </div>
 
+            {learnerOfferApplicationHref(item.applicationId) ? (
+              <Link href={learnerOfferApplicationHref(item.applicationId)!}
+                className="mt-3 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                View related application
+              </Link>
+            ) : null}
             {learnerOfferHref(item.offerId) ? (
               <Link href={learnerOfferHref(item.offerId)!}
                 className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">

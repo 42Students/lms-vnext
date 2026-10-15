@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
+import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
+
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue,toggleFacultyProfileCollapsed} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -30,6 +34,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
 }) {
   const [rows, setRows] = useState<T[]>(() => initial.map(row => ({ ...row })));
   const [changed, setChanged] = useState(false);
+  useFacultyProfileUnsavedWarning(changed);
+  const [search,setSearch]=useState("");
+  const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
+  const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
+    facultyProfileRecordMatches(row,fields.map(field=>field.name),facultyProfileActiveSearch(search,rows.length)));
+  const sectionIssue=facultyProfileRepeatableIssue(section,rows);
   const missingRequired = rows.some(row => fields.some(field =>
     field.required && (typeof row[field.name] !== "string" || !String(row[field.name]).trim()),
   ));
@@ -41,21 +51,32 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (changed && !pending && !missingRequired) void onSave(section, rows);
+    if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
-    <form aria-label={title} onSubmit={submit}
+    <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
       className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
+      {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
+        <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+          className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
+      </label>:null}
+      {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
+      {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
-        {rows.map((row, index) => (
+        {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <button type="button" className="mb-3 min-h-10 rounded-md border border-border px-3 text-sm"
+              aria-expanded={!collapsedIds.includes(row.id)}
+              onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
+              {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
+            </button>
+            {!collapsedIds.includes(row.id)?<div className="grid gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -79,6 +100,14 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                   )}
                 </label>;
               })}
+            </div>:null}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
+                setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
+              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</button>
+              <button type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
+                setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
+              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</button>
             </div>
             <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
@@ -102,11 +131,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           onClick={() => { setRows(current => [...current, create()]); setChanged(true); }}>
           Add {title.toLowerCase()} record
         </button>
-        <button type="submit" disabled={!changed || pending || missingRequired}
+        <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
           className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
+      {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
       {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
         onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
