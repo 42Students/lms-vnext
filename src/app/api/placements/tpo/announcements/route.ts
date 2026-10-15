@@ -11,8 +11,11 @@ export async function POST(request:Request){
  if(!form)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const parsed=z.object({
   title:z.string(),message:z.string(),pinned:z.boolean(),
+  sendAt:z.string().optional(),showUntil:z.string().optional(),
  }).strict().safeParse({
   title:form.get("title"),message:form.get("message"),pinned:form.get("pinned")==="on",
+  sendAt:String(form.get("sendAt")??"")||undefined,
+  showUntil:String(form.get("showUntil")??"")||undefined,
  });
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
@@ -21,7 +24,7 @@ export async function POST(request:Request){
   return NextResponse.redirect(new URL("/tpo/announcements?tab=yours",request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
+  if(error instanceof z.ZodError || (error instanceof Error&&error.message==="TPO_NOTICE_INVALID_TIME"))return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(error instanceof Error && error.message==="ANNOUNCEMENTS_NOT_REGISTERED")
    return NextResponse.json({error:"ANNOUNCEMENTS_NOT_REGISTERED"},{status:503});
   throw error;
