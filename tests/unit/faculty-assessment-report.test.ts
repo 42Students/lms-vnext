@@ -124,3 +124,13 @@ describe("Faculty fractional grade bands", () => {
     expect(bands.map(bucket => bucket.count)).toEqual([1, 1, 1, 1, 1]);
   });
 });
+
+
+describe("Faculty assignment score precision", () => {
+  it("rounds the final average, not individual fractional marks", () => {
+    const rows = [{ pointsAwarded: 1, gradingStatus: "GRADED" }, { pointsAwarded: 2, gradingStatus: "GRADED" }];
+    const summary = assignmentScoreSummary(rows, 6);
+    expect(summary.averagePercent).toBe(25);
+    expect(summary.distribution.reduce((count, bucket) => count + bucket.count, 0)).toBe(2);
+  });
+});

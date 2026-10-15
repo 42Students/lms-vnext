@@ -127,14 +127,7 @@ export function assignmentScoreSummary(
     ) {
       return [];
     }
-    return [
-      Math.min(
-        100,
-        Math.round(
-          (row.pointsAwarded / maxPoints) * 100,
-        ),
-      ),
-    ];
+    return [Math.min(100, (row.pointsAwarded / maxPoints) * 100)];
   });
   return {
     averagePercent:
