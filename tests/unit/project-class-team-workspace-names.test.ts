@@ -16,7 +16,7 @@ describe("class team workspace names", () => {
     expect(() => planClassTeamWorkspaceNames("Capstone", "valid", [{ name: "A", membershipIds: [] }])).toThrow();
   });
   it("pads team suffixes for stable lexical sorting", () => {
-    const teams = Array.from({ length: 12 }, (_, index) => ({ name: String(index + 1), membershipIds: [a] }));
+    const teams = Array.from({ length: 12 }, (_, index) => ({ name: String(index + 1), membershipIds: ["00000000-0000-4000-8000-0000000001" + String(index).padStart(2, "0")] }));
     const result = planClassTeamWorkspaceNames("Capstone", "capstone", teams);
     expect(result[0].slug).toBe("capstone-team-01");
     expect(result[11].slug).toBe("capstone-team-12");
