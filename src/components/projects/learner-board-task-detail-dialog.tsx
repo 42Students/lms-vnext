@@ -3,6 +3,8 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
+import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modules/projects/learner-board-task-attention-tone-model";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
 import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
@@ -35,15 +37,15 @@ export function LearnerBoardTaskDetailDialog({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project Board task</p>
-          <h2 id="learner-task-dialog-title" className="mt-1 text-lg font-semibold">{task.title}</h2>
+          <h2 id="learner-task-dialog-title" className="mt-1 break-words text-lg font-semibold">{task.title}</h2>
         </div>
         <form method="dialog">
           <button className="min-h-11 rounded-lg border border-border px-3 text-sm font-semibold" aria-label="Close task details">Close</button>
         </form>
       </div>
       <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
-        <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1 font-semibold">{learnerBoardTaskStatusLabel(task.status)}</dd></div>
-        <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1 font-semibold">{learnerBoardTaskPriorityLabel(task.priority)}</dd></div>
+        <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskStatusTone(task.status)}>{learnerBoardTaskStatusLabel(task.status)}</StatusBadge></dd></div>
+        <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskPriorityTone(task.priority)}>{learnerBoardTaskPriorityLabel(task.priority)}</StatusBadge></dd></div>
         <div className="col-span-2"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
       </dl>
       <section className="mt-5">
