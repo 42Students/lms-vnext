@@ -4,17 +4,18 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {mentorResourceDirectoryQuerySchema,mentorResourceDirectoryCsv}
  from "@/modules/projects/mentor-resource-directory-model";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export async function GET(request:Request,{params}:RouteContext){
  try{
   const {projectId}=await params,url=new URL(request.url);
+  const filters=singleValueMentorExportFilters(url.searchParams,
+   ["required","link","description","order","search"]);
+  if(!filters)return NextResponse.json({error:"INVALID_RESOURCE_FILTERS"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});
   const query=mentorResourceDirectoryQuerySchema.parse({
-   projectId,required:url.searchParams.get("required")??undefined,
-   link:url.searchParams.get("link")??undefined,
-   description:url.searchParams.get("description")??undefined,
-   order:url.searchParams.get("order")??undefined,
-   search:url.searchParams.get("search")??undefined,page:1,
+   projectId,...filters,page:1,
   });
   const data=await getMentorResourceDirectory(await getCurrentRequestContext(),query);
   if(!data.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
