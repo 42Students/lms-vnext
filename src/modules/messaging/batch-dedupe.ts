@@ -10,3 +10,10 @@ export function dedupeBatch(requests: readonly OutboundSendRequest[]): OutboundS
     return true;
   });
 }
+
+/** Collision-free in-memory key; opaque keyed recipient only, never a raw address. */
+export function opaqueBatchAttemptKey(
+ channel:"EMAIL"|"SMS",recipientKey:string,purpose:string,templateKey:string,
+):string{
+ return JSON.stringify([channel,recipientKey,purpose,templateKey]);
+}
