@@ -1,5 +1,5 @@
 /** A bounded request parser for Faculty Quiz authoring; Zod still validates command fields. */
-export const FACULTY_QUIZ_COMMAND_LIMIT_BYTES=8*1024*1024;
+export const FACULTY_QUIZ_COMMAND_LIMIT_BYTES=16*1024*1024;
 export class FacultyQuizBodyError extends Error {
  constructor(public readonly code:"FACULTY_QUIZ_BODY_TOO_LARGE"|"INVALID_QUIZ_JSON"|"UNSUPPORTED_QUIZ_CONTENT_TYPE",public readonly status:400|413|415){
   super(code);
