@@ -26,6 +26,13 @@ export const learnerAssignmentUploadGrantSchema = z.object({ grant: z.object({
   requiredHeaders: z.record(z.string(), z.string()), originalName: z.string().min(1).max(255),
 }).strict() }).strict();
 
+export function validateLearnerAssignmentUploadGrant(input: unknown, nowMs: number) {
+  const { grant } = learnerAssignmentUploadGrantSchema.parse(input);
+  const lifetimeMs = Date.parse(grant.expiresAt) - nowMs;
+  if (lifetimeMs <= 0 || lifetimeMs > 15 * 60 * 1000) throw new Error("Upload permission expired or invalid.");
+  return grant;
+}
+
 export function learnerAssignmentFilePayload(deliveryId: string, receiptId: string, confirmed: boolean) {
   return z.object({ deliveryId: z.string().uuid(), uploadReceiptId: z.string().uuid(),
     submissionType: z.literal("FILE"), confirmed: z.literal(true) }).strict().parse({
