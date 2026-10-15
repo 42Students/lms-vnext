@@ -1188,3 +1188,8 @@ The authorized current assigned-Mentor Sprint progress UI and its existing cappe
 ## 2026-10-15 chat-11 — done-task-attention Sprint attention (PARTIAL)
 
 The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints with recorded done tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
+
+
+## 2026-10-15 chat-11 — project-state-review-history (PARTIAL)
+
+The currently-assigned Mentor delivery-decision history filters by persisted Project PLANNED/ACTIVE/COMPLETED/ARCHIVED lifecycle without widening project membership scope. Only registered review metadata is shown. The UI, Zod query, SQL-scoped service and pagination URL are updated together. A focused source regression is authored, not executed. Independent PostgreSQL, TypeScript, lint, mobile/desktop browser, current legacy-oracle and upstream-producer verification remain OPEN; this does not close the Mentor Delivery review row.

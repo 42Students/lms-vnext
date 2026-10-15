@@ -52,6 +52,7 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
     query.projectId?eq(projectSubmissionReviews.projectId,query.projectId):undefined,
     query.version!==undefined?eq(projectSubmissions.version,query.version):undefined,
     eq(projectInstances.collegeId,membership.collegeId),
+    query.projectState==="ALL"?undefined:eq(projectInstances.status,query.projectState),
     cutoff?gte(projectSubmissionReviews.reviewedAt,cutoff):undefined,
     query.search?ilike(projectInstances.title,"%"+mentorReviewHistoryLiteralSearch(query.search)+"%"):undefined,
     query.decision==="ALL" ? undefined :
