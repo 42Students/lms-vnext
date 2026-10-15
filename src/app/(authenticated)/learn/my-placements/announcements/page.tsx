@@ -162,7 +162,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </form>
       {alertQ ? <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p> : null}
       {personalAlerts.available ?
-        <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} /> :
+        <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} /> :
         <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ})}
