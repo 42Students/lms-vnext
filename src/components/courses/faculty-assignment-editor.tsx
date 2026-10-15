@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -59,6 +59,9 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
    if(!response.ok)throw new Error("Unable to save. The item may have changed; refresh and retry.");
+   const receipt:unknown=await response.json().catch(()=>null);
+   if(!facultyAssignmentCommandReceipt(receipt,{action,deliveryId,
+      assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
    setConfirmed(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save changes.");}
   finally{setPending(false);}
