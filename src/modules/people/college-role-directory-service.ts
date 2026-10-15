@@ -59,6 +59,9 @@ export async function listCollegeRoleDirectory(
     collegeId,
   });
 
+  if (kind === "FACULTY" && filter.programId) {
+    throw new RangeError("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.cohortId) {
     throw new RangeError("FACULTY_COHORT_FILTER_UNSUPPORTED");
   }
@@ -132,6 +135,10 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(sectionEnrollments.status, "ACTIVE"),
     )));
+  const belongsToProgram = filter.programId ? exists(db.select({enrollmentId:learnerProgramEnrollments.id})
+    .from(learnerProgramEnrollments).innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.programId,filter.programId),eq(learnerProgramEnrollments.status,"ACTIVE")))) : undefined;
   const belongsToCohort = filter.cohortId ? exists(db.select({enrollmentId:learnerProgramEnrollments.id})
     .from(learnerProgramEnrollments)
     .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
@@ -241,6 +248,7 @@ export async function listCollegeRoleDirectory(
         ? (filter.registrationPresence === "PRESENT" ? hasRegistration : not(hasRegistration)) : undefined,
       kind === "FACULTY" ? matchesEmployment : undefined,
       kind === "LEARNER" ? belongsToCohort : undefined,
+      kind === "LEARNER" ? belongsToProgram : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
@@ -364,6 +372,9 @@ export async function listCollegeRoleDirectory(
   const departmentRows = kind === "FACULTY" ? await db.select({id:departments.id,name:departments.name})
     .from(departments).where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
     .orderBy(asc(departments.name),asc(departments.id)).limit(201) : [];
+  const programRows = kind === "LEARNER" ? await db.select({id:programs.id,name:programs.name})
+    .from(programs).innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .orderBy(asc(programs.name),asc(programs.id)).limit(201) : [];
   const cohortRows = kind === "LEARNER" ? await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
     .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
@@ -378,6 +389,8 @@ export async function listCollegeRoleDirectory(
     kind, filter, items, total,
     employmentOptions,
     employmentOptionsTruncated:employmentRows.length>100,
+    programOptions:programRows.slice(0,200),
+    programOptionsTruncated:programRows.length>200,
     cohortOptions:cohortRows.slice(0,200),
     cohortOptionsTruncated:cohortRows.length>200,
     departmentOptions:departmentRows.slice(0,200),
