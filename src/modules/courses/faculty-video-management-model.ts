@@ -120,3 +120,20 @@ export function facultyVideoVisibilityLabel(
  if(video.contentStatus!=="PUBLISHED"||!lessonPublished)return "Not published to learners";
  return video.visibleToStudents?"Visible to eligible learners":"Hidden from learners";
 }
+
+export const facultyVideoVisibilityIntentSchema=z.object({
+ action:z.literal("SET_VISIBILITY"),
+ contentId:z.string().uuid(),
+ lessonId:z.string().uuid(),
+ deliveryId:z.string().uuid().nullable(),
+ visibleToStudents:z.boolean(),
+ expectedUpdatedAt:z.iso.datetime({offset:true}),
+ confirmed:z.literal(true),
+}).strict();
+/** Enabling access is impossible until the complete publication/readiness gate passes. */
+export function facultyVideoCanEnableVisibility(
+ video:FacultyLessonVideo,context:{canManage:boolean;lessonPublished:boolean},
+):boolean {
+ return context.canManage&&context.lessonPublished&&
+   video.contentStatus==="PUBLISHED"&&video.processingStatus==="READY";
+}
