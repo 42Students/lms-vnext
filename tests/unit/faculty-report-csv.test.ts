@@ -9,7 +9,7 @@ const basic = {
   kind: "quiz" as const,
   title: "Java Quiz", sectionName: "A",
   rows: [{
-    name:"రాము",email:"ramu@example.edu",
+    name:"రాము",
     status:"ATTEMPTED" as const,score:"8/10",percent:80,
     submittedAt:"2026-10-14T09:00:00.000Z",note:"Attempt 1",
   }],
@@ -33,7 +33,6 @@ describe("Faculty authorized assessment CSV",() => {
     const result=facultyReportCsv({...basic,rows:[{
       ...basic.rows[0],
       name:"  =HYPERLINK(\"https://evil.example\")",
-      email:"+999999999",
       note:"@IMPORTXML(1,2)",
     }]});
     expect(result).toContain('"\'  =HYPERLINK(""https://evil.example"")"');
@@ -49,6 +48,7 @@ describe("Faculty authorized assessment CSV",() => {
   });
   it("strictly rejects untrusted fields, invalid kinds and percentages",() => {
     expect(facultyReportCsvSchema.safeParse({...basic,collegeId:"foreign"}).success).toBe(false);
+    expect(facultyReportCsvSchema.safeParse({...basic,rows:[{...basic.rows[0],email:"secret@example.edu"}]}).success).toBe(false);
     expect(facultyReportCsvSchema.safeParse({...basic,kind:"custom"}).success).toBe(false);
     expect(facultyReportCsvSchema.safeParse({...basic,rows:[{...basic.rows[0],percent:120}]}).success).toBe(false);
   });
@@ -62,7 +62,7 @@ describe("Faculty authorized assessment CSV",() => {
   });
   it("caps both export kinds without reintroducing formulas or email",()=>{
     const rows=Array.from({length:620},(_,i)=>({...basic.rows[0],
-      name:i===0?"=HYPERLINK(1)":"Learner "+i,email:"secret"+i+"@example.edu"}));
+      name:i===0?"=HYPERLINK(1)":"Learner "+i}));
     const bounded=capFacultyReportCsvRows(rows);
     expect(bounded.rows).toHaveLength(500);
     expect(bounded.omittedRows).toBe(120);
