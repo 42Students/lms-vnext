@@ -10,7 +10,9 @@ import {
   generateCode,
   maskEmail,
   maskPhone,
+  generateToken,
   safeEqualHex,
+  sessionDigest,
 } from "./crypto";
 
 /**
@@ -36,6 +38,10 @@ export const MAX_SENDS_PER_CONTACT_TOTAL = 8;
 export const MAX_SENDS_PER_ADDRESS = 20;
 export const SEND_WINDOW_MINUTES = 10;
 export const EMAIL_RESEND_GAP_SECONDS = 30;
+/** Hard cap on email re-sends per challenge (resend_attempts column). */
+export const MAX_EMAIL_RESENDS = 5;
+/** Coarse shared bucket for requests whose address could not be determined. */
+export const UNKNOWN_ADDRESS_TAG = "unknown-address";
 
 export type LoginErrorCode =
   | "INVALID_CONTACT"
@@ -112,6 +118,18 @@ export type AttemptRecord = {
   verificationAttempts: number;
   expiresAt: Date;
   usedAt: Date | null;
+  /** Database clock at load time; expiry is judged against this when present. */
+  dbNow?: Date;
+};
+
+export type SessionIssue = {
+  /** keyed digest of the new opaque token */
+  digest: string;
+  maxAgeSeconds: number;
+  userAgent?: string | null;
+  ipAddress?: string | null;
+  /** digest of the session cookie being replaced; revoked in the same transaction */
+  previousDigest?: string | null;
 };
 
 export interface LoginRepository {
@@ -120,6 +138,8 @@ export interface LoginRepository {
   findUserById(userId: string): Promise<LoginUser | null>;
   listMemberships(userId: string): Promise<LoginMembership[]>;
   isSuperAdmin(userId: string): Promise<boolean>;
+  /** True when the user is an active recruiter with any active college grant. */
+  hasAnyRecruiterGrant(userId: string): Promise<boolean>;
   /** True when the user is an active recruiter with a grant at the college. */
   hasRecruiterGrantAtCollege(
     userId: string,
@@ -155,11 +175,20 @@ export interface LoginRepository {
     id: string,
     mac: string,
     gapSeconds: number,
+    maxResends?: number,
   ): Promise<boolean>;
   /** Atomic: increments tries only while < 5, unused and unexpired. */
   reserveVerification(id: string): Promise<boolean>;
-  /** Atomic single-winner consume; clears every code MAC. */
-  consumeAttempt(id: string): Promise<boolean>;
+  /**
+   * Atomic single-winner consume; clears every code MAC. When `session` is
+   * given, the device session is created (and the previous one revoked) in the
+   * same transaction, so a failed insert never burns the code.
+   */
+  consumeAttempt(
+    id: string,
+    userId?: string,
+    session?: SessionIssue,
+  ): Promise<boolean>;
 }
 
 export type LoginDependencies = {
@@ -219,9 +248,22 @@ async function assertCanSignInHere(
     throw new LoginError("ACCOUNT_DISABLED");
   }
 
-  if (!tenantCollegeId) return;
-
   const memberships = await deps.repository.listMemberships(user.id);
+
+  if (!tenantCollegeId) {
+    // Platform host: a person must still hold something that grants access,
+    // never only suspended or ended memberships.
+    if (memberships.some((membership) => membership.status === "ACTIVE")) {
+      return;
+    }
+    if (await deps.repository.isSuperAdmin(user.id)) return;
+    if (await deps.repository.hasAnyRecruiterGrant(user.id)) return;
+    if (memberships.some((membership) => membership.status === "SUSPENDED")) {
+      throw new LoginError("ACCOUNT_SUSPENDED");
+    }
+    throw new LoginError("NO_ACCOUNT_FOR_DOMAIN");
+  }
+
   const here = memberships.find(
     (membership) => membership.collegeId === tenantCollegeId,
   );
@@ -298,7 +340,8 @@ export async function startLogin(
     contactFingerprint: fingerprint,
     smsCodeMac: sms ? codeMac(deps.config.secret, "sms", attemptId, sms.code) : null,
     emailCodeMac: mail ? codeMac(deps.config.secret, "email", attemptId, mail.code) : null,
-    ipTag: input.ipTag ?? null,
+    // Never skip the per-address cap: unknown addresses share one coarse bucket.
+    ipTag: input.ipTag ?? UNKNOWN_ADDRESS_TAG,
     rateLimit: {
       windowMinutes: SEND_WINDOW_MINUTES,
       perContactAndAddress: MAX_SENDS_PER_CONTACT,
@@ -346,7 +389,8 @@ async function loadLiveAttempt(
   const attempt = await deps.repository.loadAttempt(attemptId);
 
   if (!attempt || attempt.usedAt) throw new LoginError("INVALID_ATTEMPT");
-  if (attempt.expiresAt.getTime() <= deps.now().getTime()) {
+  const clock = (attempt.dbNow ?? deps.now()).getTime();
+  if (attempt.expiresAt.getTime() <= clock) {
     throw new LoginError("OTP_EXPIRED");
   }
   if (attempt.collegeId !== tenantCollegeId) {
@@ -384,6 +428,7 @@ export async function sendEmailFallback(
     attempt.id,
     codeMac(deps.config.secret, "email", attempt.id, code),
     EMAIL_RESEND_GAP_SECONDS,
+    MAX_EMAIL_RESENDS,
   );
   if (!stored) {
     throw new LoginError("TOO_SOON", EMAIL_RESEND_GAP_SECONDS);
@@ -412,6 +457,8 @@ export type VerifiedLogin = {
   isSuperAdmin: boolean;
   /** The membership implied by the college host, if any. */
   tenantMembershipId: string | null;
+  /** Present when a session was requested; created atomically with the consume. */
+  session: { token: string; maxAgeSeconds: number } | null;
 };
 
 export async function verifyLogin(
@@ -421,6 +468,13 @@ export async function verifyLogin(
     /** Email code; required when the account is a platform administrator. */
     secondCode?: string;
     tenantCollegeId: string | null;
+    /** When set, the device session is issued in the same transaction as the consume. */
+    session?: {
+      userAgent?: string | null;
+      ipAddress?: string | null;
+      maxAgeSeconds: number;
+      previousToken?: string | null;
+    };
   },
   deps: LoginDependencies,
 ): Promise<VerifiedLogin> {
@@ -430,11 +484,30 @@ export async function verifyLogin(
     input.tenantCollegeId,
   );
 
+  // A missing second factor is a request error, not a guess: reject it
+  // before it can spend the shared verification budget.
+  const strong = await deps.repository.isSuperAdmin(attempt.userId);
+  if (strong && !input.secondCode) {
+    throw new LoginError("SECOND_FACTOR_REQUIRED");
+  }
+
   // One shared, atomic budget across SMS and email.
   const reserved = await deps.repository.reserveVerification(attempt.id);
-  if (!reserved) throw new LoginError("OTP_ATTEMPTS_EXCEEDED");
+  if (!reserved) {
+    // Re-load to report the real reason instead of always "attempts exceeded".
+    const fresh = await deps.repository.loadAttempt(attempt.id);
+    if (!fresh || fresh.usedAt) throw new LoginError("INVALID_ATTEMPT");
+    const freshClock = (fresh.dbNow ?? deps.now()).getTime();
+    if (fresh.expiresAt.getTime() <= freshClock) {
+      throw new LoginError("OTP_EXPIRED");
+    }
+    if (fresh.verificationAttempts >= 5) {
+      throw new LoginError("OTP_ATTEMPTS_EXCEEDED");
+    }
+    throw new LoginError("INVALID_ATTEMPT");
+  }
 
-  const now = deps.now().getTime();
+  const now = (attempt.dbNow ?? deps.now()).getTime();
   const live = (mac: string | null, expiresAt: Date | null) =>
     mac !== null && expiresAt !== null && expiresAt.getTime() > now
       ? mac
@@ -453,13 +526,11 @@ export async function verifyLogin(
       stored,
     );
 
-  const strong = await deps.repository.isSuperAdmin(attempt.userId);
   if (strong) {
     // Both factors must match, each against its own channel.
-    if (!input.secondCode) throw new LoginError("SECOND_FACTOR_REQUIRED");
     // Evaluate both so timing does not reveal which failed.
     const smsOk = matches("sms", smsMac, input.code);
-    const emailOk = matches("email", emailMac, input.secondCode);
+    const emailOk = matches("email", emailMac, input.secondCode ?? "");
     if (!(smsOk && emailOk)) throw new LoginError("INCORRECT_OTP");
   } else {
     // Either channel's code is enough for everyone else.
@@ -473,7 +544,26 @@ export async function verifyLogin(
   if (!user) throw new LoginError("INVALID_ATTEMPT");
   await assertCanSignInHere(deps, user, input.tenantCollegeId);
 
-  const consumed = await deps.repository.consumeAttempt(attempt.id);
+  let issued: { token: string; maxAgeSeconds: number } | null = null;
+  let sessionIssue: SessionIssue | undefined;
+  if (input.session) {
+    const token = generateToken();
+    issued = { token, maxAgeSeconds: input.session.maxAgeSeconds };
+    sessionIssue = {
+      digest: sessionDigest(deps.config.secret, token),
+      maxAgeSeconds: input.session.maxAgeSeconds,
+      userAgent: input.session.userAgent ?? null,
+      ipAddress: input.session.ipAddress ?? null,
+      previousDigest: input.session.previousToken
+        ? sessionDigest(deps.config.secret, input.session.previousToken)
+        : null,
+    };
+  }
+  const consumed = await deps.repository.consumeAttempt(
+    attempt.id,
+    user.id,
+    sessionIssue,
+  );
   if (!consumed) throw new LoginError("INVALID_ATTEMPT");
 
   const memberships = await deps.repository.listMemberships(user.id);
@@ -490,5 +580,6 @@ export async function verifyLogin(
     memberships,
     isSuperAdmin: await deps.repository.isSuperAdmin(user.id),
     tenantMembershipId: tenantMembership?.id ?? null,
+    session: issued,
   };
 }

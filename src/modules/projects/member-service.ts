@@ -9,6 +9,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { containsLikePattern } from "@/lib/sql-match";
 import {randomUUID} from "node:crypto";
 import {projectTeamAuditInput} from "./mentor-team-audit-model";
 import { mayRemovePrimaryProjectMentor } from "./primary-mentor-policy";
@@ -149,8 +150,8 @@ export async function listProjectMemberCandidates(
   const query = projectMemberCandidateQuerySchema.parse(rawQuery);
   const search = query.q
     ? or(
-        ilike(users.displayName, `%${query.q}%`),
-        ilike(users.email, `%${query.q}%`),
+        ilike(users.displayName, containsLikePattern(query.q)),
+        ilike(users.email, containsLikePattern(query.q)),
       )
     : undefined;
 
@@ -209,8 +210,8 @@ export async function listProjectMentorCandidates(
     );
   const search = query.q
     ? or(
-        ilike(users.displayName, `%${query.q}%`),
-        ilike(users.email, `%${query.q}%`),
+        ilike(users.displayName, containsLikePattern(query.q)),
+        ilike(users.email, containsLikePattern(query.q)),
       )
     : undefined;
 

@@ -818,6 +818,19 @@ export const drizzlePeopleRepository:
           ),
         );
 
+      if (input.action !== "REACTIVATE") {
+        // A suspended or ended membership must not keep working sessions:
+        // end every device session of the person (they can sign in again for
+        // any other membership they still hold).
+        await tx.execute(sql`
+          UPDATE identity_device_sessions
+          SET revoked_at = now(),
+              revoked_by_user_id = ${mutation.context.user.id},
+              revocation_reason = ${input.action === "SUSPEND" ? "MEMBERSHIP_SUSPENDED" : "MEMBERSHIP_ENDED"}
+          WHERE user_id = ${mutation.person.user.id} AND revoked_at IS NULL
+        `);
+      }
+
       const eventType =
         input.action === "SUSPEND"
           ? ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_SUSPENDED

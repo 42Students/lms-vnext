@@ -15,6 +15,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: secret,
         cookieSecret: secret,
@@ -27,6 +28,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: undefined,
         configuredSecret: secret,
         cookieSecret: secret,
@@ -39,6 +41,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: undefined,
         cookieSecret: secret,
@@ -49,6 +52,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: "too-short",
         cookieSecret: "too-short",
@@ -59,6 +63,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: secret,
         cookieSecret:
@@ -72,6 +77,7 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "test",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: secret,
         cookieSecret: secret,
@@ -84,11 +90,27 @@ describe("E2E identity harness", () => {
     expect(
       resolveE2eIdentityUid({
         nodeEnv: "production",
+        appEnv: "development",
         enabled: "true",
         configuredSecret: secret,
         cookieSecret: secret,
         identityUid: "seed-superadmin",
       }),
     ).toBeNull();
+  });
+
+  it("requires APP_ENV=development in addition to NODE_ENV", () => {
+    for (const appEnv of [undefined, "production", "staging", "test"]) {
+      expect(
+        resolveE2eIdentityUid({
+          nodeEnv: "test",
+          appEnv,
+          enabled: "true",
+          configuredSecret: secret,
+          cookieSecret: secret,
+          identityUid: "seed-superadmin",
+        }),
+      ).toBeNull();
+    }
   });
 });
