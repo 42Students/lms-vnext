@@ -4,7 +4,7 @@ import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
-import { resolveLearnerOfferFocus, learnerOfferFocusMissing } from "@/modules/placements/learner-offer-deep-link-model";
+import { resolveLearnerOfferFocus, learnerOfferFocusMissing, learnerOfferRecoveryHref } from "@/modules/placements/learner-offer-deep-link-model";
 import {learnerOfferKindSchema,filterOwnOffersByKind} from "@/modules/placements/learner-offer-kind-model";
 import {learnerJoiningFilterSchema,filterOwnOffersByJoining} from "@/modules/placements/learner-offer-joining-filter-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
@@ -174,7 +174,7 @@ export default async function LearnerOffersPage({
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
-          <Link href="/learn/my-placements/offers" className="ml-2 font-semibold text-primary-text underline">Show all my offers</Link>
+          <Link href={learnerOfferRecoveryHref(query.focus)} className="ml-2 font-semibold text-primary-text underline">Find this offer in all my offers</Link>
         </p>
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
