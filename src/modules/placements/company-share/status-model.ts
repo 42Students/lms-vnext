@@ -14,3 +14,15 @@ export function companyShareEmptyMessage(status:CompanyShareStatus){
 export function shouldDisplayNewCompanyShare(status:CompanyShareStatus){
  return status==="ALL"||status==="ACTIVE";
 }
+
+export function companyShareLifecycleStatus(
+ link:{expiresAt:string;revokedAt:string|null},asOf:Date,
+):"ACTIVE"|"EXPIRED"|"REVOKED"{
+ if(link.revokedAt!==null)return "REVOKED";
+ const expiry=new Date(link.expiresAt).getTime();
+ if(!Number.isFinite(expiry)||expiry<=asOf.getTime())return "EXPIRED";
+ return "ACTIVE";
+}
+export function companyShareLifecycleLabel(status:"ACTIVE"|"EXPIRED"|"REVOKED"){
+ return status==="ACTIVE"?"Active":status==="EXPIRED"?"Expired":"Revoked";
+}

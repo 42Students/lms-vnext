@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
+import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
 import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
@@ -8,6 +8,7 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
  jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
 }){
  const [links,setLinks]=useState(initialLinks);
+ const [asOf] = useState(() => new Date());
  const [days,setDays]=useState(2);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
@@ -78,7 +79,7 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
     <span>Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
-     {link.revokedAt?" Revoked":" Not revoked (validity checked when opened)"}</span>
+     {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads
     </span>
