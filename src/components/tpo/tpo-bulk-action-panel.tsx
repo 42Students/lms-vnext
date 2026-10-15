@@ -31,9 +31,13 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
   });
-  if(!response.ok)throw new Error(response.status===409
-    ?"The preview expired or rows changed. Preview again."
-    :"The action could not be verified. Review access and try again.");
+  if(!response.ok)throw new Error(
+    response.status===409?"The preview expired or rows changed. Preview again.":
+    response.status===503?"Bulk applications are unavailable until database registration is verified.":
+    response.status===400?"Selection or screening details are invalid. Review and preview again.":
+    response.status===403?"You no longer have permission to perform this action.":
+    "The action could not be verified. Refresh and try again."
+  );
   return response.json() as Promise<unknown>;
  }
  async function startPreview(){
@@ -50,7 +54,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
    const result=await post("preview",next) as PreviewResponse;
    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Invalid preview");
    setPreview(result);setPlan(next);
-  }catch{setError("Preview unavailable. Refresh the roster and try again.");}
+  }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
   finally{setBusy(false);}
  }
  async function confirm(){
@@ -66,7 +70,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
    setOutcomes(response.outcomes);
    setSelected([]);
    router.refresh();
-  }catch{setError("Confirmation failed or some records changed. Preview again before retrying.");setPreview(null);setPlan(null);}
+  }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
   finally{setBusy(false);}
  }
  const options=target==="STUDENTS"
