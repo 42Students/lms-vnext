@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Reverse-name Contacts sorting PARTIAL (2026-10-15, chat-9):** Contacts All/Faculty/Student tabs now support case-insensitive Z–A persisted-name order with deterministic UUID ties and identical ordering for export. Query schema and UI tests authored; database/browser evidence pending.
+
+
 **Longest-serving Contacts order PARTIAL (2026-10-15, chat-9):** A typed OLDEST order pages by persisted join time then membership UUID, avoiding page churn on identical timestamps. Corresponding URL, UI and export filters preserve order. DB/browser execution pending.
 
 
