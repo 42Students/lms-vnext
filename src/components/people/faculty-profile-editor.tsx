@@ -2,8 +2,8 @@
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileNeedsReload,facultyProfileSaveFailure} from "@/modules/people/faculty-profile-error-model";
-import {facultyProfileSaveReceipt} from "@/modules/people/faculty-profile-save-response";
+import {facultyProfileNeedsReload,facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
@@ -55,7 +55,12 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    setDocument(result.document);setVersion(result.version);
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
    setSuccess("Profile saved.");
-  }catch{setError("Unable to connect. Your unsaved changes remain in this form.");}
+  }catch(error){
+   if(error instanceof FacultyProfileSaveResponseError){
+    setNeedsReload(true);
+    setError(facultyProfileUnconfirmedSaveMessage());
+   }else setError("Unable to verify the save. The server may have received your request; check the latest profile before retrying.");
+  }
   finally{saveInFlight.current=false;setPending(false);}
  }
  return <div className="space-y-5">
