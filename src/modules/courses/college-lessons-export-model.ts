@@ -31,6 +31,7 @@ export function lessonsCsvHref(q: Partial<Omit<CollegeLessonQuery,"page">>) {
  if(q.sequenceThrough!==undefined)p.set("sequenceThrough",String(q.sequenceThrough));
  if(q.lessonName)p.set("lessonName",q.lessonName);
  if(q.contentAudience&&q.contentAudience!=="ALL")p.set("contentAudience",q.contentAudience);
+ if(q.hiddenPublished&&q.hiddenPublished!=="ALL")p.set("hiddenPublished",q.hiddenPublished);
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {
