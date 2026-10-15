@@ -6,6 +6,8 @@ import {
   count,
   desc,
   eq,
+  ilike,
+  or,
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
@@ -31,6 +33,7 @@ import {
 import {
   requirePlacementManageScope,
 } from "./scope";
+import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
 
 const PAGE_SIZE = 25;
 
@@ -133,6 +136,10 @@ export async function listTpoRecruiterAccess(
           placementCompanyRelationships.collegeId,
           collegeId,
         ),
+        query.q ? or(
+          ilike(users.displayName,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
+          ilike(placementCompanies.name,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
+        ) : undefined,
         query.status === "ALL"
           ? undefined
           : eq(

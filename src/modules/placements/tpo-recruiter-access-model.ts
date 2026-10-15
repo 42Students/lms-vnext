@@ -15,6 +15,7 @@ export const tpoRecruiterAccessQuerySchema =
     status: z
       .enum(TPO_RECRUITER_ACCESS_FILTERS)
       .default("ALL"),
+    q: z.string().trim().max(80).default(""),
     page: z.coerce
       .number()
       .int()
@@ -103,10 +104,12 @@ export function toTpoRecruiterGrantView(
 export function tpoRecruiterAccessHref(
   filters: {
     status?: TpoRecruiterAccessQuery["status"];
+    q?: string;
     page?: number;
   } = {},
 ): string {
   const params = new URLSearchParams();
+  if (filters.q) params.set("q",filters.q);
 
   if (
     filters.status &&

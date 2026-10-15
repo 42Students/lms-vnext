@@ -36,6 +36,7 @@ import {
 type SearchParams = {
   status?: string | string[];
   page?: string | string[];
+  q?: string | string[];
 };
 
 function first(
@@ -67,6 +68,7 @@ export default async function TpoRecruiterAccessPage({
     tpoRecruiterAccessQuerySchema.safeParse({
       status:
         first(params.status) || undefined,
+      q: first(params.q) || "",
       page:
         first(params.page) || undefined,
     });
@@ -183,6 +185,12 @@ export default async function TpoRecruiterAccessPage({
             </select>
           </label>
 
+          <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
+            Search recruiter or company
+            <input type="search" name="q" defaultValue={query.q} maxLength={80}
+              placeholder="Name contains..."
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -328,6 +336,7 @@ export default async function TpoRecruiterAccessPage({
               <Link
                 href={tpoRecruiterAccessHref({
                   status: query.status,
+                  q:query.q,
                   page: page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
