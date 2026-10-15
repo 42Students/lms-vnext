@@ -11,6 +11,7 @@ import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from 
 import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules/verification/selection-model";
 import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-display";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
+import {canStartVerificationBulkPreview} from "@/modules/verification/bulk-action-guard";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
@@ -32,7 +33,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
  function choose(row:VerificationQueueCard,checked:boolean){
   if(bulkBusy)return;
-  setBulkAction(null);
+  setBulkAction(null);setBulkReason("");
   setSelection(current=>{
    const next=new Set([...current].filter(key=>available.has(key))),key=verificationSelectionKey(row);
    if(checked&&next.size<20)next.add(key);else if(!checked)next.delete(key);
@@ -83,10 +84,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
-    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("VERIFY")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
-    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("SEND_BACK")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));setBulkAction(null);setBulkReason("");}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());setBulkAction(null);setBulkReason("");}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
+    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
+    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
    </div>
    {bulkAction&&<div className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
@@ -96,7 +97,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
     </ul>
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
-     <textarea value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
+     <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
      <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
     </label>}
