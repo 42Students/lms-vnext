@@ -1,4 +1,5 @@
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import {learnerRoadmapFilterRecoveryNotice} from "@/modules/courses/learner-roadmap-filter-recovery-model";
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialog-key-model";
@@ -578,6 +579,7 @@ export function LearnerCourseWorkspace({
   const summary = workspace.summary;
   const emptyState = learnerRoadmapEmptyState(Boolean(workspace.learningPath),workspace.lessons);
   const measuredProgress = learnerRoadmapMeasuredProgress(summary);
+  const filterNotice=learnerRoadmapFilterRecoveryNotice(filter);
   const activeFilter = resolveLearnerRoadmapFocusFilter(
     filter, focusLessonId, focusContentId, workspace.lessons,
   );
@@ -651,6 +653,7 @@ export function LearnerCourseWorkspace({
 
   return (
     <div className="space-y-5">
+      {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
         <p className="m-0 text-sm text-body">
