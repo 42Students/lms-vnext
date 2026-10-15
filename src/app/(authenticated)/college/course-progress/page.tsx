@@ -26,6 +26,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       activityState:first(params.activityState),
       completionEvidence:first(params.completionEvidence),learningPathPresence:first(params.learningPathPresence),publishedPathPresence:first(params.publishedPathPresence),
       offeringType:first(params.offeringType)||undefined,
+      programStatus:first(params.programStatus),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

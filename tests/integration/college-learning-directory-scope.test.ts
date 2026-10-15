@@ -374,4 +374,15 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("course progress programStatus is derived from same-college parent state",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,programStatus:"ACTIVE"}),
+      listCollegeCourseProgress(own,{q:name,programStatus:"ARCHIVED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,programStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
