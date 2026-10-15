@@ -60,3 +60,11 @@ export function facultyContentDraftChanged(a:FacultyContentDraftSnapshot,b:Facul
   return a.title!==b.title || a.notes!==b.notes || a.url!==b.url ||
     a.duration!==b.duration || a.starts!==b.starts || a.ends!==b.ends;
 }
+
+/** Closing must never drop a pending save or silently discard a changed form. */
+export function facultyContentMayChangeOpen(
+  nextOpen:boolean, changed:boolean, saving:boolean, confirmDiscard:()=>boolean,
+){
+  if(saving) return false;
+  return nextOpen || !changed || confirmDiscard();
+}
