@@ -1584,3 +1584,7 @@ With migration 0082 registered, task submission now enforces an exact persisted 
 ### PR-S2-03 0082 assignment write path
 
 The new mentor/admin PATCH task-assignee mutation validates an active same-project LEARNER membership and college under the project+task row locks, requires expectedUpdatedAt and rejects review-owned/finished tasks. Matching source tests added; PostgreSQL and user interaction remain open.
+
+### PR-S2-08 registered 0083 — enforced role-kind and mutation permission
+
+Project access resolves persisted role_kind and can_mutate, projecting observers/reviewers/QA as read-only even if their base role is MENTOR; project lifecycle mutation requires explicit writable MENTOR/CO_MENTOR status. College Admin add/update services now validate role kinds and prohibit read-only writes, including demoting an active primary. Project member list projects both fields. Test execution and PostgreSQL denial evidence outstanding.
