@@ -13,7 +13,6 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
  const collegeId=z.uuid().parse(rawCollege),input=collegeRuleWriteSchema.parse(raw);
- if(input.action==="INHERIT")throw new StudentRuleConflict("INHERIT_NOT_AVAILABLE");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
@@ -25,15 +24,20 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
   const before=existing?{enabled:existing.enabled,locked:existing.locked}:null;
   if(!collegeRuleSame(input.expected,before))throw new StudentRuleConflict("STALE_RULE");
   if(collegeRuleNoChange(before,input))return {module:input.module,enabled:existing?.enabled??null,locked:existing?.locked??false,unchanged:true};
-  if(existing)await tx.update(moduleAccessRules).set({enabled:input.enabled,locked:input.locked,updatedAt:new Date(),updatedByUserId:context.user.id}).where(eq(moduleAccessRules.id,existing.id));
-  else await tx.insert(moduleAccessRules).values({scopeType:"COLLEGE",scopeId:college.id,module:input.module,enabled:input.enabled,locked:input.locked,updatedByUserId:context.user.id});
+  if(input.action==="INHERIT"){
+   if(existing)await tx.delete(moduleAccessRules).where(eq(moduleAccessRules.id,existing.id));
+  }else if(existing){
+   await tx.update(moduleAccessRules).set({enabled:input.enabled,locked:input.locked,updatedAt:new Date(),updatedByUserId:context.user.id}).where(eq(moduleAccessRules.id,existing.id));
+  }else{
+   await tx.insert(moduleAccessRules).values({scopeType:"COLLEGE",scopeId:college.id,module:input.module,enabled:input.enabled,locked:input.locked,updatedByUserId:context.user.id});
+  }
   await tx.insert(activityEvents).values({
    collegeId:college.id,organizationId:college.organizationId,actorUserId:context.user.id,module:"PLATFORM",
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_MODULE_RULE_CHANGED,importance:"HIGH",
    subjectType:"COLLEGE",subjectId:college.id,
    summary:"Super Admin changed a college module rule",
-   metadata:{module:input.module,before,after:{enabled:input.enabled,locked:input.locked}},
+   metadata:{module:input.module,before,after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked}},
   });
-  return {module:input.module,enabled:input.enabled,locked:input.locked,unchanged:false};
+  return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked,unchanged:false};
  });
 }
