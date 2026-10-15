@@ -1153,3 +1153,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings IST end-date filter (PARTIAL):** Upper bound is exclusive midnight the following IST day so records throughout the selected end date are included. Reversed ranges fail server Zod validation; query travels into CSV and cursor links. Source unit authored, PG/browser acceptance open.
+
+
+**2026-10-15 chat-6 DB10 single-notice audit transaction (PARTIAL):** A Super Admin per-college notice is now inserted in the same PostgreSQL transaction as the high-importance Activity Log publication receipt, mirroring multi-college broadcast attribution. Failure of activity insertion rolls back notice creation; event metadata includes only notice ID and audience type, not message bodies or contacts. Disposable PG verification source authored; runtime/browser acceptance open.
