@@ -214,4 +214,114 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(semesters.total).toBe(0);
     expect(batches.total).toBe(0);
   });
+  it("filters semesters by recorded credit configuration within the admin college", async () => {
+    const [configured,missing,foreign] = await Promise.all([
+      listCollegeSemesters(adminA,{q:label,creditState:"CONFIGURED"}),
+      listCollegeSemesters(adminA,{q:label,creditState:"UNSET"}),
+      listCollegeSemesters(adminB,{q:label,creditState:"CONFIGURED"}),
+    ]);
+    expect(configured.items.map(row=>row.id)).toContain(ids.term);
+    expect(missing.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("semester parent program lifecycle is scoped to own persisted college records",async()=>{
+    const [positive,negative,foreign]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,programStatus:"ACTIVE"}),
+      listCollegeSemesters(adminA,{q:label,programStatus:"ARCHIVED"}),
+      listCollegeSemesters(adminB,{q:label,programStatus:"ACTIVE"}),
+    ]);
+    expect(positive.items.map(row=>row.id)).toContain(ids.term);
+    expect(negative.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("mappingState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,mappingState:"MAPPED"}),
+      listCollegeSemesters(adminA,{q:label,mappingState:"UNMAPPED"}),
+      listCollegeSemesters(adminB,{q:label,mappingState:"MAPPED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.term);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("expectedEndState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,expectedEndState:"UNSET"}),
+      listCollegeBatches(adminA,{q:label,expectedEndState:"SET"}),
+      listCollegeBatches(adminB,{q:label,expectedEndState:"UNSET"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("academicYearState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,academicYearState:"RECORDED"}),
+      listCollegeBatches(adminA,{q:label,academicYearState:"UNRECORDED"}),
+      listCollegeBatches(adminB,{q:label,academicYearState:"RECORDED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("filters batches by college-owned parent program status",async()=>{
+    const [own,archived,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,programStatus:"ACTIVE"}),
+      listCollegeBatches(adminA,{q:label,programStatus:"ARCHIVED"}),
+      listCollegeBatches(adminB,{q:label,programStatus:"ACTIVE"}),
+    ]);
+    expect(own.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(archived.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("startOnOrAfter filters college-owned persisted cohort period starts",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,startOnOrAfter:"2026-06-30"}),
+      listCollegeBatches(adminA,{q:label,startOnOrAfter:"2026-07-02"}),
+      listCollegeBatches(adminB,{q:label,startOnOrAfter:"2026-06-30"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("startOnOrBefore filters registered own-college cohort period starts",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,startOnOrBefore:"2026-07-02"}),
+      listCollegeBatches(adminA,{q:label,startOnOrBefore:"2026-06-30"}),
+      listCollegeBatches(adminB,{q:label,startOnOrBefore:"2026-07-02"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("activeClassState filters only registered classes in the owning college",async()=>{
+    const [matching,empty,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,activeClassState:"HAS_ACTIVE"}),
+      listCollegeBatches(adminA,{q:label,activeClassState:"NONE_ACTIVE"}),
+      listCollegeBatches(adminB,{q:label,activeClassState:"HAS_ACTIVE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(empty.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("activeLearnerState filters only registered learner enrollments in the owning college",async()=>{
+    const [matching,empty,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,activeLearnerState:"NONE_ACTIVE"}),
+      listCollegeBatches(adminA,{q:label,activeLearnerState:"HAS_ACTIVE"}),
+      listCollegeBatches(adminB,{q:label,activeLearnerState:"NONE_ACTIVE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(empty.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
