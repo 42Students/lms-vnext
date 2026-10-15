@@ -266,6 +266,7 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Class capacity combination validation PARTIAL (2026-10-15):** Contradictory minimum/maximum seat filters and numeric bounds combined with UNSET capacity are rejected consistently by the directory and CSV validation; valid adjacent bounds remain supported. Unit tests authored; execution open.
 **Unconfigured capacity filter PARTIAL (2026-10-15):** Admin Classes now distinguish NULL configured class capacity from numeric seat counts before pagination/export. Filter state is URL-persistent and strictly validated; own-college fixture checks genuine unset rows rather than treating them as zero. Acceptance pending.
 
 **Batch-code filter PARTIAL (2026-10-15):** Classes now support an exact batch/cohort-code filter against persisted in-college records. Filter state is preserved in pagination and the capped CSV, with bounded input and own-college PostgreSQL fixture assertions. Browser/mobile acceptance still open.
