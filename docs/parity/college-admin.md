@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Verification drawer keyboard dismissal PARTIAL (chat-9):** The private review drawer restores focus to the opener, focuses Close on entry and handles Escape. Dismissal is disabled while a decision request is in flight, avoiding an ambiguous discarded view. Pure keyboard-state tests authored; focus-trap and mobile browser acceptance remain open.
+
 **Review drawer recovery PARTIAL (chat-9):** Authorized staff can explicitly retry an unsuccessful private verification-detail read without closing the drawer, clearing stale error/detail state before the new GET. No automatic repeated private reads or false success. Unit regression authored; browser/network acceptance remains open.
 
 **Newest-first verification ordering repair PARTIAL (chat-9):** The shared card grid now respects the server-selected OLDEST/NEWEST mode instead of always reversing newest pages back into ascending order. The queue and CSV also tie-break same-timestamp, same-learner Education/Identity rows by section; attention flags use one captured read clock. Pure ordering tests authored, PostgreSQL/browser acceptance open.
