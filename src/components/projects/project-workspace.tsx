@@ -2,6 +2,7 @@ import Link from "next/link";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
+import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -979,6 +980,12 @@ export function ProjectWorkspace({
               })
             )}
           </div>
+          <ProjectResourceFilesSection
+            projectId={workspace.project.id}
+            mode={mode}
+            status={workspace.project.status}
+            currentMembershipId={currentMembershipId}
+          />
         </section> : null}
 
         {show("meetings") ? <section className="space-y-3">

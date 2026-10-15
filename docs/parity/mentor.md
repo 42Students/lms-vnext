@@ -1565,3 +1565,7 @@ P5 integration cases no longer cast forbidden DONE/IN_REVIEW writes. They assert
 ## 2026-10-16 chat-11 Project file UI contract (SOURCE IMPLEMENTED; NOT EXECUTED)
 
 The Projects Resources tab UI adopts the registered project-resource-file endpoints and storage/ui-models presentation rules; grant URLs must be HTTPS, status READY is the only downloadable state, upload size is limited to 50 MiB, and client-supplied declarations match server policy. Source tests are authored, not executed. The protected storage module is unchanged.
+
+## 2026-10-16 chat-11 Project resource file tab — backend connected (PARTIAL)
+
+The registered, tenant-scoped Project Resource File service is now loaded in the existing Learner/Mentor/Admin Resources section without replacing legacy links/notes. Upload controls are hidden for learner, archived/completed projects and users lacking an owning membership; the backend independently enforces permission checks. The client handles signed grant -> exact-header XHR PUT -> complete, progress, retries, metadata editing, delete, and READY-only downloads. Signed grant URLs are never rendered or persisted. Manager error states show failed/quarantined/verifying via src/modules/storage/ui-models. Browser, a real R2 roundtrip, infection scanner readiness, mobile, role-negative, and PostgreSQL acceptance remain **UNRUN**; do not mark family DONE.
