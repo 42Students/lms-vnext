@@ -1,3 +1,5 @@
+import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
+import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
@@ -862,16 +864,16 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return content ? (
-                          <div
+                          <LearnerRoadmapItemDialog
                             key={item.id}
-                            className={
-                              focusContentId === item.id
-                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                                : ""
-                            }
+                            title={content.title}
+                            kind="Content"
+                            progress={item.progress.status}
+                            initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                            highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <ContentCard content={content} deliveryId={deliveryId} readOnly={readOnly} />
-                          </div>
+                          </LearnerRoadmapItemDialog>
                         ) : null;
                       }
 
@@ -880,16 +882,16 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return assignment ? (
-                          <div
+                          <LearnerRoadmapItemDialog
                             key={item.id}
-                            className={
-                              focusContentId === item.id
-                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                                : ""
-                            }
+                            title={assignment.title}
+                            kind="Assignment"
+                            progress={item.progress.status}
+                            initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                            highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <AssignmentCard assignment={assignment} deliveryId={deliveryId} readOnly={readOnly} />
-                          </div>
+                          </LearnerRoadmapItemDialog>
                         ) : null;
                       }
 
@@ -897,16 +899,16 @@ export function LearnerCourseWorkspace({
                         (candidate) => candidate.id === item.id,
                       );
                       return quiz ? (
-                        <div
+                        <LearnerRoadmapItemDialog
                           key={item.id}
-                          className={
-                            focusContentId === item.id
-                              ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                              : ""
-                          }
+                          title={quiz.title}
+                          kind="Quiz"
+                          progress={item.progress.status}
+                          initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                          highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                         >
                           <QuizCard quiz={quiz} deliveryId={deliveryId} readOnly={readOnly} />
-                        </div>
+                        </LearnerRoadmapItemDialog>
                       ) : null;
                     })}
                   </div>
