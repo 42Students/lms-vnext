@@ -1,0 +1,2 @@
+import {describe,it,expect} from "vitest";import {visibleContactDetails} from "@/modules/people/college-contacts-privacy";
+describe("Student export privacy",()=>{it("keeps email masked for all read-only use",()=>{const shown=visibleContactDetails({email:"a@example.edu",phone:"9876543210",isLearner:true});expect(shown.email).toBe("a•••@example.edu");expect(shown.phone).toBe("•••• 3210");});});

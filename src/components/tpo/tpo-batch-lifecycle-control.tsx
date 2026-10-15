@@ -5,6 +5,7 @@ type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string}
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  if(!state)return <p role="status" className="text-sm text-muted-foreground">Create and invite this batch before finishing it.</p>;
+ const expectedVersion=state.expectedVersion;
  const action=state.finishedAt?"REOPEN" as const:"FINISH" as const;
  const disabled=busy||(action==="FINISH"&&!state.invitedAt);
  async function submit(){
@@ -15,7 +16,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
   try{
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/lifecycle",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({action,expectedVersion:state.expectedVersion}),
+    body:JSON.stringify({action,expectedVersion:expectedVersion}),
    });
    const data=await response.json() as {error?:string};
    if(!response.ok)throw Error(response.status===409?"Batch changed. Refresh before taking this action.":data.error??"Unable to change batch state.");

@@ -155,8 +155,43 @@ describe.skipIf(!enabled)("College Admin assessment aggregates — disposable Po
       ]);
     expect(ownAssignments.items.map((item) => item.id)).toContain(ids.assignment);
     expect(ownQuizzes.items.map((item) => item.id)).toContain(ids.quiz);
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const mine=await listCollegeAssessmentAggregate(adminA,kind,{courseCode:code});
+      const missing=await listCollegeAssessmentAggregate(adminA,kind,{courseCode:"OTHER-COURSE"});
+      expect(mine.items).toHaveLength(1);
+      expect(missing.items).toEqual([]);
+    }
     expect(foreignAssignments.items).toEqual([]);
     expect(foreignQuizzes.items).toEqual([]);
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const [ownPeriod,missingPeriod]=await Promise.all([
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,periodCode:code}),
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,periodCode:"wrong-period"}),
+      ]);
+      expect(ownPeriod.items).toHaveLength(1);
+      expect(missingPeriod.items).toEqual([]);
+    }
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const [missingDeadline,scheduled]=await Promise.all([
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,duePresence:"UNSCHEDULED"}),
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,duePresence:"SCHEDULED"}),
+      ]);
+      expect(missingDeadline.items).toHaveLength(1);
+      expect(scheduled.items).toEqual([]);
+    }
+    const [unreleased,released]=await Promise.all([
+      listCollegeAssessmentAggregate(adminA,"QUIZ",{q:code,results:"HIDDEN"}),
+      listCollegeAssessmentAggregate(adminA,"QUIZ",{q:code,results:"PUBLISHED"}),
+    ]);
+    expect(unreleased.items.map(r=>r.id)).toContain(ids.quiz);
+    expect(unreleased.items.find(r=>r.id===ids.quiz)?.resultsPublished).toBe(false);
+    expect(released.items).toEqual([]);
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const shared=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SHARED"});
+      const section=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SECTION"});
+      expect(shared.items).toHaveLength(1);
+      expect(section.items).toEqual([]);
+    }
   });
 
   it("denies learners and fails closed on foreign college parameters", async () => {

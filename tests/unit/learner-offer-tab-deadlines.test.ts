@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerOfferExpiry} from "@/modules/placements/learner-offer-expiry-model";it("leaves absent offer deadlines unknown rather than urgent",()=>{expect(learnerOfferExpiry(null,1)).toEqual({kind:"UNKNOWN",daysRemaining:null});});

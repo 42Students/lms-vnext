@@ -33,7 +33,12 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   const matches=and(eq(collegeMemberships.collegeId,claim.collegeId),
    filter.tab==="FACULTY"?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
    filter.status==="ALL"?undefined:eq(collegeMemberships.status,filter.status),
-   search?or(ilike(users.displayName,search),ilike(users.email,search)):undefined);
+   search?or(
+    ilike(users.displayName,search),
+    // Only staff who are not also learners may be located by email.
+    // A masked learner contact must not become guessable via search queries.
+    and(faculty,sql`not (${learner})`,ilike(users.email,search))
+   ):undefined);
   const [countRow]=await tx.select({total:count()}).from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(matches);
