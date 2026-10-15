@@ -20,3 +20,17 @@ export function projectTpoRoundResultTable(rows:readonly RoundResultEntry[],roun
    remaining:eligible.filter(row=>row.resultStatus===null).length},
  };
 }
+
+export const tpoRoundResultViewSchema=z.object({
+ q:z.string().trim().max(100).default(""),
+ status:z.enum(["ALL","NOT_RECORDED","STAGED","APPLIED"]).default("ALL"),
+}).strict();
+export function filterTpoRoundResultRows<T extends {student:string|null;role:string;resultStatus:string|null}>(
+ rows:readonly T[],query:z.infer<typeof tpoRoundResultViewSchema>,
+){
+ const term=query.q.toLocaleLowerCase("en-IN");
+ return rows.filter(row=>
+  (query.status==="ALL"||(query.status==="NOT_RECORDED"?row.resultStatus===null:row.resultStatus===query.status))&&
+  (!term||row.student?.toLocaleLowerCase("en-IN").includes(term)||row.role.toLocaleLowerCase("en-IN").includes(term))
+ );
+}
