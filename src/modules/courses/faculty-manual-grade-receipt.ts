@@ -29,3 +29,9 @@ export function facultyManualGradeReceipt(raw:unknown,current:FacultyGradeReceip
   throw new FacultyManualGradeReceiptError();
  return result;
 }
+
+/** One in-flight write per learner submission; avoids concurrent stale token reuse. */
+export function beginFacultyManualGradeOperation(lock:{current:boolean}):boolean{
+ if(lock.current)return false;
+ lock.current=true;return true;
+}
