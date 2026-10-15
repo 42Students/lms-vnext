@@ -61,6 +61,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   finally{setBulkBusy(false);}
  }
  function navigate(patch:Record<string,string>){
+  setSelected(null);
   setSelection(new Set());resetBulkFeedback();
   const params=new URLSearchParams(query);
   Object.entries(patch).forEach(([key,value])=>{if(value)params.set(key,value);else params.delete(key);});
