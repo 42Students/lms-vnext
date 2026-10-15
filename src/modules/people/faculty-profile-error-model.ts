@@ -42,3 +42,9 @@ export function facultyProfileSaveSectionLabel(section:string):string {
 export function facultyProfileReloadRequired(code:string|undefined,status:number):boolean{
  return facultyProfileNeedsReload(code)||status===409;
 }
+
+/** Success labels disclose section and optimistic revision only, never profile values. */
+export function facultyProfileSavedStatus(section:string,version:number):string{
+ const label=facultyProfileSaveSectionLabel(section);
+ return label+" saved (revision "+version+").";
+}
