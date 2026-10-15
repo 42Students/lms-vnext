@@ -9,7 +9,8 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoReadCollege } from "./tpo-surface-access";
-import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
+import {escapeLiteralApplicantSearch,clampCompanySharePage} from "./company-share/public-filter-model";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {
   projectRecruiterVisibleShortlist, tpoShareableShortlistQuerySchema,
 } from "./tpo-shareable-shortlist-model";
@@ -26,6 +27,7 @@ export async function getTpoShareableShortlist(
   options: { exportAll?: boolean } = {},
 ) {
   const college = await requireTpoReadCollege(context);
+  await requirePersistedTpoMembership(context,college.id);
   const query = tpoShareableShortlistQuerySchema.parse(rawQuery);
   const db = getDb();
   const [job] = await db.select({
@@ -66,16 +68,17 @@ export async function getTpoShareableShortlist(
     .innerJoin(users, eq(users.id, collegeMemberships.userId))
     .where(filter);
   const total = counter?.total ?? 0;
+  const pagination=clampCompanySharePage(query.page,total);
   const exportAll = options.exportAll === true;
   const records = await base()
     .orderBy(asc(users.displayName), asc(placementApplications.id))
     .limit(exportAll ? 500 : 25)
-    .offset(exportAll ? 0 : (query.page - 1) * 25);
+    .offset(exportAll ? 0 : (pagination.page - 1) * 25);
   return {
     job, total,
     rows: projectRecruiterVisibleShortlist(records),
-    page: exportAll ? 1 : query.page,
-    totalPages: Math.max(1, Math.ceil(total / 25)),
+    page: exportAll ? 1 : pagination.page,
+    totalPages: pagination.totalPages,
     truncated: exportAll && total > 500,
   };
 }
