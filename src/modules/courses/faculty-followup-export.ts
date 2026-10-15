@@ -10,7 +10,7 @@ export function facultyFollowUpPageCsv(rows:readonly ExportRow[]):string{
  const lines=[["Type","Assessment","Course","Section","Due UTC","Missing responses","Additional hidden in preview"]];
  for(const row of rows){
   lines.push([row.kind,row.title,row.courseName,row.sectionName,
-   row.dueAt?.toISOString()??"Unknown",String(row.missingCount),String(row.hiddenCount)]);
+   row.dueAt && Number.isFinite(row.dueAt.getTime()) ? row.dueAt.toISOString() : "Unknown",String(row.missingCount),String(row.hiddenCount)]);
  }
  return "\uFEFF"+lines.map(line=>line.map(quote).join(",")).join("\r\n")+"\r\n";
 }
