@@ -21,7 +21,7 @@ export function learnerAssignmentFileRequest(deliveryId: string, file: { name: s
 
 export const learnerAssignmentUploadGrantSchema = z.object({ grant: z.object({
   receiptId: z.string().uuid(), method: z.literal("PUT"),
-  uploadUrl: z.string().url().refine(value => new URL(value).protocol === "https:", "A secure upload URL is required"),
+  uploadUrl: z.string().url().refine(value => { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password && !url.hash; }, "A secure upload URL is required"),
   expiresAt: z.iso.datetime({ offset: true }),
   requiredHeaders: z.record(z.string(), z.string()), originalName: z.string().min(1).max(255),
 }).strict() }).strict();

@@ -19,7 +19,9 @@ describe("learner assignment private-file boundary", () => {
     expect(learnerAssignmentFilePayload(delivery, receipt, true)).toMatchObject({ submissionType: "FILE", uploadReceiptId: receipt });
     expect(() => learnerAssignmentFilePayload(delivery, receipt, false)).toThrow();
     expect(() => learnerAssignmentFilePayload(delivery, "forged", true)).toThrow();
-    expect(learnerAssignmentUploadGrantSchema.safeParse({ grant: { ...grant, uploadUrl: "http://storage.example.test" } }).success).toBe(false);
+    for (const url of ["http://storage.example.test", "https://user:secret@storage.example.test/file", "https://storage.example.test/file#fragment"]) {
+      expect(learnerAssignmentUploadGrantSchema.safeParse({ grant: { ...grant, uploadUrl: url } }).success).toBe(false);
+    }
   });
   it("uploads only to the signed URL without app cookies and never auto-submits", async () => {
     const fetcher = vi.fn<typeof fetch>()
