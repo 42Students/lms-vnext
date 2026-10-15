@@ -16,6 +16,7 @@ import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-cale
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
+import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
@@ -69,6 +70,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
+  const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,unread:unreadAction?.value??0});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -91,6 +93,18 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
+    <section aria-label="Next recruiter actions" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <h2 className="text-lg font-semibold text-foreground">Next up</h2>
+      <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
+      {actionQueue.length ? <ul className="grid gap-3 sm:grid-cols-2">
+        {actionQueue.map(task => <li key={task.key}>
+          <Link href={task.href} className="block min-w-0 rounded-lg border border-border p-4 hover:border-primary">
+            <span className="block break-words font-semibold text-primary-text">{task.label}</span>
+            <span className="mt-1 block text-xs text-body">{task.description}</span>
+          </Link>
+        </li>)}
+      </ul> : <p role="status" className="text-sm text-body">Nothing needs a quick link right now.</p>}
+    </section>
     <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-foreground">Live hiring drives</h2>
