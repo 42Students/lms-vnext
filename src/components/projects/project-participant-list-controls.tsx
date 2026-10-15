@@ -8,6 +8,7 @@ export type ProjectParticipantListQuery = {
     | "ACTIVE"
     | "COMPLETED"
     | "ARCHIVED";
+  assignment?: "PRIMARY" | "SUPPORTING";
   attention?:
     | "MENTOR_REVIEW"
     | "MENTOR_REQUESTED"
@@ -111,6 +112,13 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
+      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
+        <select name="assignment" defaultValue={query.assignment ?? ""}
+          className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+          <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
+        </select>
+      </label>) : null}
+
       {learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Work attention
@@ -190,6 +198,7 @@ export function ProjectParticipantPagination({
     if (query.status) {
       params.set("status", query.status);
     }
+    if (query.assignment) params.set("assignment", query.assignment);
     if (query.attention) {
       params.set(
         "attention",
