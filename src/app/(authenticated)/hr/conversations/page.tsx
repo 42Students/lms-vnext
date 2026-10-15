@@ -30,6 +30,16 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      className="rounded-md border border-border px-4 py-3 text-primary-text">{g.collegeName}</Link>)}
    </nav>:null}
+   <section className="rounded-xl border border-border bg-surface p-4">
+    <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
+    <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
+    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
+      <input name="collegeId" type="hidden" value={result.collegeId}/>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        Open general conversation
+      </button>
+    </form>
+   </section>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
     <input type="hidden" name="collegeId" value={result.collegeId}/>
     <label className="flex-1 text-sm text-body">Search by conversation or drive ID
