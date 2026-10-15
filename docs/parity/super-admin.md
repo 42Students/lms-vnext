@@ -1054,3 +1054,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 broadcast local-time preflight (PARTIAL):** Publication review now remains disabled for invalid local datetimes or expiry preceding schedule; no silent invalid-date fallback or thrown ISO conversion. Tests authored; mobile/browser evidence open.
+
+
+**2026-10-15 chat-6 scoped composer local-time preflight (PARTIAL):** Create and edit both validate local schedule/expiry rather than converting malformed input into an immediate notice. Source and timing-model unit tests authored, interactive parity pending.

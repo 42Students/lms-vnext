@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { safeAnnouncementLink } from "@/modules/announcements/link-model";
+import { announcementLocalTiming } from "@/modules/announcements/local-timing-model";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -37,12 +38,6 @@ function localInputValue(value: string | null) {
   const date = new Date(value);
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
   return local.toISOString().slice(0, 16);
-}
-
-function isoOrNull(value: string) {
-  if (!value.trim()) return null;
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? date.toISOString() : null;
 }
 
 function splitTarget(value: string) {
@@ -75,6 +70,7 @@ export function AnnouncementAdminWorkspace({
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
   const [editConsent,setEditConsent]=useState(false);
+  const createTiming = announcementLocalTiming(scheduledAt, expiresAt);
   const [reviewPublish,setReviewPublish]=useState(false);
   const targetLabels = useMemo(
     () => new Map(targets.map((entry) => [`${entry.type}:${entry.id}`, entry.label])),
@@ -90,7 +86,7 @@ export function AnnouncementAdminWorkspace({
   }
 
   function create() {
-    if (!target) return;
+    if (!target || !createTiming.valid) return;
     const receiver = splitTarget(target);
     startTransition(async () => {
       const response = await fetch("/api/announcements/admin", {
@@ -100,8 +96,8 @@ export function AnnouncementAdminWorkspace({
           ...receiver,
           title,
           message,
-          scheduledAt: isoOrNull(scheduledAt),
-          expiresAt: isoOrNull(expiresAt),
+          scheduledAt: createTiming.scheduledAt,
+          expiresAt: createTiming.expiresAt,
           isPinned: pinned,
           publishConsent:requiresPublicationConsent?true:undefined,
         }),
@@ -161,6 +157,11 @@ export function AnnouncementAdminWorkspace({
     const data = new FormData(form);
     const targetValue = String(data.get("target") ?? "");
     const receiver = splitTarget(targetValue);
+    const editTiming = announcementLocalTiming(String(data.get("scheduledAt") ?? ""), String(data.get("expiresAt") ?? ""));
+    if (!editTiming.valid) {
+      showToast({tone:"error",title:"Invalid announcement timing",description:"Expiry must be after the scheduled time."});
+      return;
+    }
     startTransition(async () => {
       const response = await fetch(`/api/announcements/${editing.id}`, {
         method: "PATCH",
@@ -170,8 +171,8 @@ export function AnnouncementAdminWorkspace({
           ...receiver,
           title: String(data.get("title") ?? ""),
           message: String(data.get("message") ?? ""),
-          scheduledAt: isoOrNull(String(data.get("scheduledAt") ?? "")),
-          expiresAt: isoOrNull(String(data.get("expiresAt") ?? "")),
+          scheduledAt: editTiming.scheduledAt,
+          expiresAt: editTiming.expiresAt,
           isPinned: data.get("isPinned") === "on",
           publishConsent:requiresPublicationConsent?true:undefined,
         }),
@@ -241,8 +242,9 @@ export function AnnouncementAdminWorkspace({
               <input type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
             </label>
+            {!createTiming.valid?<p role="alert" className="md:col-span-2 text-sm text-danger-text">Invalid timing: expiry must follow the schedule.</p>:null}
             <div className="md:col-span-2">
-              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
+              <Button disabled={pending || !title.trim() || !message.trim() || !target || !createTiming.valid} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
                 {requiresPublicationConsent?"Review publication":pending?"Creating…":"Create announcement"}
               </Button>
             </div>
@@ -303,7 +305,7 @@ export function AnnouncementAdminWorkspace({
         {platformAnnouncementPublicationSummary({
           receiverType:splitTarget(target).receiverType,
           receiverLabel:targetLabels.get(target)??"Selected audience",
-          title,scheduledAt:isoOrNull(scheduledAt),expiresAt:isoOrNull(expiresAt),isPinned:pinned,
+          title,scheduledAt:createTiming.scheduledAt,expiresAt:createTiming.expiresAt,isPinned:pinned,
         }).map(line=><li key={line}>{line}</li>)}
        </ul>
        <p className="mt-3 text-xs text-muted-foreground">You are confirming publication to the selected audience. No external outbound delivery is initiated.</p>
