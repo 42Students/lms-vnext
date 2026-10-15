@@ -21,3 +21,9 @@ describe("contact role audience",()=>{it("supports exact faculty-only, learner-o
  }
  expect(collegeContactsQuerySchema.safeParse({audience:"TPO"}).success).toBe(false);
 });});
+
+describe("contact name initial",()=>{it("only accepts a single normalized A–Z name prefix",()=>{
+ expect(collegeContactsQuerySchema.parse({initial:"A"}).initial).toBe("A");
+ expect(collegeContactsQuerySchema.safeParse({initial:"AA"}).success).toBe(false);
+ expect(collegeContactsQuerySchema.safeParse({initial:"%"}).success).toBe(false);
+});});

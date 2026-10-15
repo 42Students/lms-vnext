@@ -33,6 +33,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   const matches=and(eq(collegeMemberships.collegeId,claim.collegeId),
    filter.tab==="FACULTY"?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
    filter.status==="ALL"?undefined:eq(collegeMemberships.status,filter.status),
+   filter.initial?ilike(users.displayName,filter.initial+"%"):undefined,
    filter.accountStatus==="ALL"?undefined:eq(users.platformStatus,filter.accountStatus),
    filter.audience==="FACULTY_ONLY"?and(faculty,sql`not (${learner})`):
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):
