@@ -198,6 +198,38 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [liveLesson,archivedLesson]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,lessonStatus:"ACTIVE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,lessonStatus:"ARCHIVED"}),
+    ]);
+    expect(liveLesson.items.map(row=>row.id)).toContain(ids.resource);
+    expect(archivedLesson.items).toEqual([]);
+    const [coreContent,electiveContent]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"CORE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"ELECTIVE"}),
+    ]);
+    expect(coreContent.items.map(row=>row.id)).toContain(ids.resource);
+    expect(electiveContent.items).toEqual([]);
+    const dep=await pool!.query<{name:string}>("SELECT name FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const [sameDepartment,wrongDepartment]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentName:dep.rows[0]!.name}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentName:"NO-SUCH-DEPARTMENT"}),
+    ]);
+    expect(sameDepartment.items.map(row=>row.id)).toContain(ids.resource);
+    expect(wrongDepartment.items).toEqual([]);
+    const [draftPath, publishedPath]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,pathStatus:"DRAFT"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,pathStatus:"PUBLISHED"}),
+    ]);
+    expect(draftPath.items.map(row=>row.id)).toContain(ids.resource);
+    expect(publishedPath.items).toEqual([]);
+    const [matchingPeriod,absentPeriod]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:label}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:"NO-SUCH-PERIOD"}),
+    ]);
+    expect(matchingPeriod.items.map(item=>item.id)).toContain(ids.resource);
+    expect(absentPeriod.items).toEqual([]);
+    expect((await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label,periodCode:"NO-SUCH-PERIOD"})).csv).not.toContain(label);
     const [sameBatch,missingBatch]=await Promise.all([
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:label}),
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:"not-this-batch"}),

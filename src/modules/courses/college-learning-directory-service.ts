@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, inArray, sql, type Column } from "drizzle-orm";
+import { and, asc, count, eq, exists, inArray, not, sql, type Column } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -105,6 +105,11 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
+      query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
+      query.departmentName?eq(departments.name,query.departmentName):undefined,
+      query.contentPresence&&query.contentPresence!=="ALL" ?
+        (query.contentPresence==="HAS_CONTENT" ? exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))) :
+          not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))))) : undefined,
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
