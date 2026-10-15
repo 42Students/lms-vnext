@@ -30,12 +30,13 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    const response=await fetch("/api/admin/announcements/broadcast",{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({audienceMode:mode,collegeIds:mode==="ALL_COLLEGES"?[]:selected,
+     reviewedCollegeIds:mode==="ALL_COLLEGES"?colleges.map(c=>c.id):selected,
      title,message,scheduledAt:timing.scheduledAt,expiresAt:timing.expiresAt,
      isPinned:pinned,publishConsent:true}),
    });
    const data:unknown=await response.json().catch(()=>null);
    if(!response.ok){
-    setFeedback(response.status===503?"Announcements database is not yet ready.":response.status===403?"You are not authorized for this audience.":"Publication failed. Review the audience, timing and permissions.");
+    setFeedback(response.status===503?"Announcements database is not yet ready.":response.status===409?"The authorized college audience changed since review. Reload and review it again.":response.status===403?"You are not authorized for this audience.":"Publication failed. Review the audience, timing and permissions.");
     return;
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
