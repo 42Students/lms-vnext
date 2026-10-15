@@ -21,6 +21,7 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
   ]},
   sharedGroup(0),
   sharedGroup(1),
+  sharedGroup(2),
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
