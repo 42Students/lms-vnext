@@ -60,6 +60,7 @@ const change = scope.extend({
 const bulkInput = z.object({
   collegeId: uuid,
   changes: z.array(change).min(1).max(2000),
+  expectedCohortId: uuid.optional(),
 }).strict();
 const undoInput = z.object({
   collegeId: uuid,
@@ -293,6 +294,16 @@ export async function decidePlacementParticipation(
     let changedCount = 0;
     for (const item of changes) {
       await assertTargetCollege(tx, input.collegeId, item);
+      if (input.expectedCohortId && item.scopeType === "MEMBERSHIP") {
+        const [activeEnrollment] = await tx.select({ id: learnerProgramEnrollments.id })
+          .from(learnerProgramEnrollments)
+          .where(and(
+            eq(learnerProgramEnrollments.membershipId, item.scopeId),
+            eq(learnerProgramEnrollments.cohortId, input.expectedCohortId),
+            eq(learnerProgramEnrollments.status, "ACTIVE"),
+          )).limit(1);
+        if (!activeEnrollment) throw new PlacementBatchError("DB08_ACTION_STALE");
+      }
       const current = await readDecision(tx, input.collegeId, item);
       const before = {
         status: current?.status ?? null,
