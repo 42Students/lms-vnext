@@ -33,6 +33,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
 }) {
   const [rows, setRows] = useState<T[]>(() => initial.map(row => ({ ...row })));
   const [changed, setChanged] = useState(false);
+  useFacultyProfileUnsavedWarning(changed);
   const [search,setSearch]=useState("");
   const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
