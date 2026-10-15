@@ -22,7 +22,7 @@ export const mentorActivityQuerySchema = z.object({
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","PAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM"]).default("ALL"),
+  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM","DELIVERIES"]).default("ALL"),
   ...paging,
 }).strict();
 
@@ -63,6 +63,7 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.project.created": return "Project created";
     case "projects.project.archived": return "Project archived";
     case "projects.project.restored": return "Project restored";
+    case "projects.project.completed": return "Project completed";
     case "projects.project.deleted": return "Project deleted";
     case "projects.mentor.reassigned": return "Mentor reassigned";
     case "projects.readiness.overridden": return "Readiness decision updated";
@@ -77,6 +78,9 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.task.details_updated": return "Task details updated";
     case "projects.task.submitted": return "Task submission";
     case "projects.task.reviewed": return "Task review decision recorded";
+    case "projects.delivery.draft_created": return "Final delivery draft created";
+    case "projects.delivery.draft_updated": return "Final delivery draft updated";
+    case "projects.delivery.submitted": return "Final delivery submitted";
     case "projects.delivery.reviewed": return "Final delivery review decision recorded";
     case "projects.meeting.decided": return "Meeting decision recorded";
     case "projects.meeting.notes_updated": return "Meeting outcome notes updated";
@@ -111,7 +115,7 @@ export function mentorPortfolioHref(
 }
 
 /** Zero-min-width grid protects long assigned-project names on mobile. */
-export const mentorActivityFormLayout = "grid min-w-0 w-full grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4 [&_label]:w-full [&_label]:min-w-0 [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full";
+export const mentorActivityFormLayout = "grid w-full min-w-0 max-w-full grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4 [&_label]:w-full [&_label]:min-w-0 [&_label]:max-w-full [&_input]:w-full [&_input]:min-w-0 [&_input]:max-w-full [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full [&_select]:truncate [&_button]:min-w-0 [&_a]:min-w-0";
 
 export function mentorActivityPagination(total:number, requested:number, pageSize:number){
  const totalPages=Math.max(1,Math.ceil(total/pageSize));
@@ -136,3 +140,7 @@ export function mentorActivityImportanceLabel(importance:string){
 }
 
 export type MentorActivityQuery = z.infer<typeof mentorActivityQuerySchema>;
+
+/** Responsive queue filters do not impose large minimum grid widths. */
+export const mentorDeliveryReviewMobileForm =
+  "flex min-w-0 max-w-full flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_input]:min-w-0 [&_input]:max-w-full [&_select]:min-w-0 [&_select]:max-w-full";
