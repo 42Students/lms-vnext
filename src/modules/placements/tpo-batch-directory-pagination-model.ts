@@ -17,3 +17,11 @@ export function tpoBatchPageHref(filters:Record<string,string|undefined>,page:nu
  q.set("page",String(page));q.set("pageSize",String(pageSize));
  return "/tpo/batches?"+q.toString();
 }
+
+/** A filter reset keeps the operator's page-size preference only. */
+export function tpoBatchClearFiltersHref(pageSize:number){
+ return tpoBatchPageHref({},1,pageSize);
+}
+export function tpoBatchEmptyReason(sourceCount:number,matchingCount:number){
+ return sourceCount===0?"NO_BATCHES" as const:matchingCount===0?"NO_MATCH" as const:null;
+}
