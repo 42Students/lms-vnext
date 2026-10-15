@@ -49,6 +49,7 @@ export type LearnerCourseListRow = {
   };
   lastActivity: string | null;
   overdueAssignments?: number;
+  firstOverdue?: {lessonId:string;itemId:string;title:string}|null;
   nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
@@ -455,6 +456,19 @@ export function LearnerCourseList({
                       </div>
                     </div>
                     </Link>
+                    {!row.readOnly && row.firstOverdue && learnerCourseNextItemHref({
+                      readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
+                      nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
+                    }) ? (
+                      <Link
+                        href={learnerCourseNextItemHref({
+                          readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
+                          nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
+                        })!}
+                        className="mt-2 flex min-h-11 items-center justify-center rounded-lg border border-warning px-3 text-sm font-semibold text-foreground">
+                        Open overdue assignment: {row.firstOverdue.title}
+                      </Link>
+                    ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
                         className="mt-2 flex min-h-11 items-center justify-center rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">

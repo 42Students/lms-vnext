@@ -1380,3 +1380,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Quiz deadline clock:** the attempt now refreshes once per second in the last 60 seconds, every five seconds within ten minutes and every thirty seconds otherwise. The server remains final authority; client controls now catch deadlines without the previous 30-second lag. Unit tests authored, browser timing proof pending.
 
 **Chat-7 round 2 / Aggregate assessment quick states (PARTIAL; L6/L7):** All Assignments/All Quizzes expose count-backed, keyboard-accessible one-tap Needs action, Due soon, Overdue/missed and Published results filters. Counts share the existing persisted-state policy and don't expose unpublished scores. Models and unit cases authored; browser/PG parity remains open.
+
+**Chat-7 round 2 / Course card overdue navigation (PARTIAL):** active Course cards now deep-link to the earliest real overdue unsubmitted assignment under the exact learner-authorized lesson; destination UUIDs are validated by the existing guarded link model. Submitted and historical work cannot present an action. Unit model cases authored; runtime/browser acceptance pending.
