@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange,collegeRulePreview,collegeRuleReadSnapshot} from "@/modules/module-access/admin-college-rule-model";
+import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange,collegeRulePreview,collegeRuleReadSnapshot,hasCollegeAncestorLock} from "@/modules/module-access/admin-college-rule-model";
 describe("college feature policy model",()=>{
  it("accepts only validated optimistic SET or INHERIT inputs",()=>{
   expect(collegeRuleWriteSchema.safeParse({action:"SET",module:"placements",enabled:false,locked:true,expected:null}).success).toBe(true);
@@ -22,5 +22,10 @@ describe("college feature policy model",()=>{
  it("inherit is distinct from stored Off, including locked states",()=>{
   expect(collegeRuleNoChange({enabled:false,locked:true},{action:"INHERIT",module:"projects",expected:{enabled:false,locked:true}})).toBe(false);
   expect(collegeRuleWriteSchema.safeParse({action:"INHERIT",module:"placements",expected:{enabled:false,locked:true}}).success).toBe(true);
+ });
+ it("denies writes masked by any broad locked policy",()=>{
+  expect(hasCollegeAncestorLock([{locked:false},{locked:true}])).toBe(true);
+  expect(hasCollegeAncestorLock([{locked:false}])).toBe(false);
+  expect(hasCollegeAncestorLock([])).toBe(false);
  });
 });

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
@@ -7,7 +7,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {StudentRuleConflict} from "./admin-student-rule-write";
-import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange} from "./admin-college-rule-model";
+import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange,hasCollegeAncestorLock} from "./admin-college-rule-model";
 
 export async function writeSuperAdminCollegeRule(context:RequestContext,rawCollege:string,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
@@ -24,6 +24,15 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
   const before=existing?{enabled:existing.enabled,locked:existing.locked}:null;
   if(!collegeRuleSame(input.expected,before))throw new StudentRuleConflict("STALE_RULE");
   if(collegeRuleNoChange(before,input))return {module:input.module,enabled:existing?.enabled??null,locked:existing?.locked??false,unchanged:true};
+  if(input.action==="SET"){
+   const ancestors=await tx.select({locked:moduleAccessRules.locked})
+    .from(moduleAccessRules)
+    .where(and(eq(moduleAccessRules.module,input.module),
+     or(and(eq(moduleAccessRules.scopeType,"ORGANIZATION"),eq(moduleAccessRules.scopeId,college.organizationId)),
+       and(eq(moduleAccessRules.scopeType,"GLOBAL"),isNull(moduleAccessRules.scopeId)))))
+    .for("share");
+   if(hasCollegeAncestorLock(ancestors))throw new StudentRuleConflict("ANCESTOR_LOCKED");
+  }
   if(input.action==="INHERIT"){
    if(existing)await tx.delete(moduleAccessRules).where(eq(moduleAccessRules.id,existing.id));
   }else if(existing){
