@@ -18,7 +18,7 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_NO_ATTENTION"
     | "LEARNER_ACTION";
   work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS" | "ALL_DONE" | "HAS_DONE_TASKS";
-  sort?: "RECENT" | "TITLE" | "PROGRESS" | "PROGRESS_DESC";
+  sort?: "RECENT" | "TITLE" | "PROGRESS" | "PROGRESS_DESC" | "OPEN_TASKS";
   page?: number;
   pageSize?: number;
 };
@@ -114,7 +114,7 @@ export function ProjectParticipantListControls({
 
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
         <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
-          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option>
+          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option>
         </select></label>) : null}
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
         <select name="assignment" defaultValue={query.assignment ?? ""}
