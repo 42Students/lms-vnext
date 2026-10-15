@@ -1,7 +1,7 @@
 import "server-only";
-import {and,desc,eq,like} from "drizzle-orm";
+import {and,desc,eq,isNull,like} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementTpoMessages} from "@/db/schema/tpo-collaboration";
+import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {listHrConversations} from "./hr-conversation-inbox-service";
 import {readRecruiterThreadMessages} from "./tpo-messaging-service";
@@ -18,7 +18,12 @@ export async function listHrDriveProposals(context:RequestContext,raw:unknown={}
  });
  if(inbox.status!=="READY")
   return {status:inbox.status,collegeId:null,choices:inbox.choices,items:[],limited:false};
- const thread=inbox.items.find(item=>item.jobId===null);
+ const [thread]=await getDb().select({id:placementTpoMessageThreads.id})
+  .from(placementTpoMessageThreads).where(and(
+   eq(placementTpoMessageThreads.collegeId,inbox.collegeId),
+   eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
+   isNull(placementTpoMessageThreads.jobId),
+  )).limit(1);
  if(!thread)
   return {status:"READY" as const,collegeId:inbox.collegeId,choices:inbox.choices,
    items:[],limited:false};
