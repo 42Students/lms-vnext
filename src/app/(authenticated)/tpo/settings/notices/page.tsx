@@ -5,6 +5,7 @@ import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placeme
 import {getTpoPrepReadiness} from "@/modules/placements/tpo-configuration-read-service";
 import {tpoStudentNoticesOverview} from "@/modules/placements/tpo-student-notices-overview-model";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
+import {tpoStudentNoticeNavigation} from "@/modules/placements/tpo-student-notice-navigation-model";
 export const dynamic="force-dynamic";
 export default async function TpoStudentNoticesSettings(){
  const ctx=await getCurrentRequestContext();
@@ -12,6 +13,7 @@ export default async function TpoStudentNoticesSettings(){
  const [announcements,prep]=await Promise.all([
   listTpoPlacementAnnouncements(ctx,"yours"),getTpoPrepReadiness(ctx),
  ]);
+ const destinations=tpoStudentNoticeNavigation();
  const view=tpoStudentNoticesOverview({announcementsReady:announcements.status==="READY",noticeCount:announcements.items.length,prepReady:prep.ready});
  return <main className="min-w-0 space-y-5">
   <TpoSettingsNav active="notices"/>
@@ -28,6 +30,9 @@ export default async function TpoStudentNoticesSettings(){
    <p role="status" className="text-sm">{view.prepSummary}</p>
    <Link href={view.prepHref} className="inline-flex min-h-11 items-center text-primary-text underline">Configure available preparation courses</Link>
   </section>
-  <Link href="/tpo/settings/notifications" className="text-sm text-primary-text underline">Review my personal notification preferences</Link>
+  <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
+    <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-primary-text underline">Open personal notifications inbox</Link>
+    <Link href={destinations.preferences} className="inline-flex min-h-11 items-center text-primary-text underline">Review notification preferences</Link>
+  </nav>
  </main>;
 }
