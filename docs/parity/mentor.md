@@ -1353,3 +1353,8 @@ Source regression in existing seeded disposable PostgreSQL suite for Resource ac
 ## 2026-10-15 chat-11 — resource-cross-role-write-denials (PARTIAL)
 
 Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.
+
+
+## 2026-10-15 chat-11 — registered Project Team activity (PARTIAL)
+
+Added fixed-label, registered Team membership add/change/end activity event types and safe TEAM selectors on both Mentor project and cross-project feeds. Activity filters still require current persisted Mentor assignment; labels disclose neither member name, contact, actor identity nor raw metadata. Producer commits follow and independent PostgreSQL/browser execution is pending.
