@@ -3,19 +3,10 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { facultyResultsQuerySchema, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
+import { parseFacultyResultsSearchParams, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 
-type Search = {
-  kind?: string | string[];
-  status?: string | string[];
-  deliveryId?: string | string[];
-  search?: string | string[];
-  page?: string | string[];
-};
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
+type Search = Record<string,string|string[]|undefined>;
 
 export default async function FacultyAssessmentResultsPage({
   searchParams,
@@ -23,13 +14,7 @@ export default async function FacultyAssessmentResultsPage({
   searchParams: Promise<Search>;
 }) {
   const raw = await searchParams;
-  const parsed = facultyResultsQuerySchema.safeParse({
-    kind: first(raw.kind) ?? undefined,
-    status: first(raw.status) ?? undefined,
-    deliveryId: first(raw.deliveryId) || undefined,
-    search: first(raw.search) ?? undefined,
-    page: first(raw.page) ?? undefined,
-  });
+  const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
       <h1 className="text-xl font-semibold">Invalid assessment filters</h1>
