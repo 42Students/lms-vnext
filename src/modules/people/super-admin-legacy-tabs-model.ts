@@ -20,6 +20,7 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
     {label:"Colleges",href:"/admin/colleges"},
   ]},
   sharedGroup(0),
+  sharedGroup(1),
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
