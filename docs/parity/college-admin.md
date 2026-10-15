@@ -1256,3 +1256,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Electives PARTIAL:** Elective selection choice constraints reflects persisted, tenant-scoped min/max choice constraints, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
 
 **2026-10-15 Electives PARTIAL:** Elective active offering presence reflects persisted, tenant-scoped active linked course offerings, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
+
+**2026-10-15 Electives PARTIAL:** Slot academic-year evidence now distinguishes persisted null from configured values across list/CSV. Browser/executed PostgreSQL and legacy acceptance remain open.

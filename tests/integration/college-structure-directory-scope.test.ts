@@ -287,4 +287,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("academicYearState reflects nullable persisted slot academic years only",async()=>{
+    const [missing,recorded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,academicYearState:"MISSING"}),
+      listCollegeElectives(adminA,{q:key,academicYearState:"RECORDED"}),
+      listCollegeElectives(adminB,{q:key,academicYearState:"MISSING"}),
+    ]);
+    expect(missing.items.map(row=>row.id)).toContain(ids.elective);
+    expect(recorded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
