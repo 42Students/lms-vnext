@@ -40,7 +40,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
-import { evaluatePlacementEligibility } from "./eligibility-service";
+import { evaluatePlacementEligibility, isPlacementJobTargetCohort } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -315,6 +315,8 @@ async function lockLearnerApplicationGateInputs(
     .from(placementCandidateAcademicEvidence)
     .where(eq(placementCandidateAcademicEvidence.membershipId, membershipId))
     .for("share");
+
+  return { programId: enrollment.programId, cohortId: enrollment.cohortId };
 }
 
 async function resolveApplicationRoleOption(
@@ -650,12 +652,23 @@ export async function applyToPlacementJob(
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
       }
 
-      await lockLearnerApplicationGateInputs(
+      const enrollment = await lockLearnerApplicationGateInputs(
         tx,
         context,
         job.id,
         membership.id,
       );
+      // P-S1-03: a manual per-learner INCLUDE override cannot bypass
+      // a drive restricted to other programs or cohorts.
+      const [targetPolicy] = await tx.select({
+        allowedProgramIds: placementJobEligibilityPolicies.allowedProgramIds,
+        allowedCohortIds: placementJobEligibilityPolicies.allowedCohortIds,
+      }).from(placementJobEligibilityPolicies)
+        .where(eq(placementJobEligibilityPolicies.jobId, job.id))
+        .for("share").limit(1);
+      if (!isPlacementJobTargetCohort(targetPolicy, enrollment)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
       // Re-run both the paid/inherited placement gate and the job-specific
       // policy after the ordering locks above. The pre-transaction checks are
       // fail-fast only; this live result is the one persisted with application.
