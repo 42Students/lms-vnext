@@ -12,4 +12,9 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({module:"all"}).success).toBe(false);
   expect(adminFeaturesHref({module:"electives",page:2})).toContain("module=electives");
  });
+ it("restricts stored On/Off values while retaining scoped paging",()=>{
+  expect(adminFeatureQuerySchema.parse({storedState:"OFF"}).storedState).toBe("OFF");
+  expect(adminFeatureQuerySchema.safeParse({storedState:"INHERIT"}).success).toBe(false);
+  expect(adminFeaturesHref({module:"projects",storedState:"OFF",page:3})).toContain("storedState=OFF");
+ });
 });

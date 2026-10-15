@@ -194,10 +194,11 @@ export async function listSuperAdminFeatureControls(
     );
   }
 
-  if (query.module) conditions.push(sql`exists (
+  if (query.module || query.storedState !== "ALL") conditions.push(sql`exists (
     select 1 from module_access_rules rule
     where rule.scope_type = 'COLLEGE' and rule.scope_id = ${colleges.id}
-      and rule.module::text = ${query.module}::text
+    ${query.module ? sql`and rule.module::text = ${query.module}::text` : sql``}
+    ${query.storedState !== "ALL" ? sql`and rule.enabled = ${query.storedState === "ON"}` : sql``}
   )`);
   const where = and(...conditions);
   const db = getDb();
@@ -255,6 +256,7 @@ export async function listSuperAdminFeatureControls(
     q: query.q,
     sort: query.sort,
     moduleFilter: query.module ?? null,
+    stateFilter: query.storedState,
     page: query.page,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
