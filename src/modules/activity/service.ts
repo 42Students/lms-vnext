@@ -8,6 +8,7 @@ import {
   lte,
   or,
   type SQL,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -84,6 +85,7 @@ const activityFilterSchema = z
       .max(80)
       .optional(),
     subjectId: z.string().trim().min(1).max(500).optional(),
+    metadataModule:z.enum(["projects","electives"]).optional(),
     ...adminAuditTextFilterSchema.shape,
     from: activityDateSchema("from").optional(),
     to: activityDateSchema("to").optional(),
@@ -569,6 +571,9 @@ export async function listActivityEvents(
   }
   if (input.subjectId) {
     conditions.push(eq(activityEvents.subjectId, input.subjectId));
+  }
+  if (input.metadataModule) {
+    conditions.push(sql`${activityEvents.metadata} ->> 'module' = ${input.metadataModule}`);
   }
   if (input.actorName) conditions.push(ilike(users.displayName, auditLiteralLikePattern(input.actorName)));
   if (input.q) {
