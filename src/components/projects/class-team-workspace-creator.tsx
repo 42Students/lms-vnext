@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creat
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
 import {classTeamCreationFeedback} from "@/modules/projects/class-team-create-feedback-model";
+import {mayBeginClassTeamCreation} from "@/modules/projects/class-team-create-once-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -36,6 +37,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const [rosterLoading,setRosterLoading]=useState(false);
   const [rosterRefreshKey,setRosterRefreshKey]=useState(0);
   const [pending,setPending]=useState(false);
+  const createInFlight=useRef(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
   useEffect(()=>{
@@ -80,7 +82,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
   const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
-    if(!roster||!groups.length||!balanced)return;
+    if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced)))return;
+    createInFlight.current=true;
     setPending(true);setError("");setNotice("");
     try {
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
@@ -94,6 +97,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     } catch(e) {
       setError(classTeamCreationFeedback(e));
     } finally {
+      createInFlight.current=false;
       setPending(false);
     }
   }
