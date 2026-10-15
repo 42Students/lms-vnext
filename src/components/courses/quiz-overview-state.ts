@@ -33,7 +33,7 @@ export function quizOverviewActionState(
       review: true,
     };
   }
-  if (closed && item.resultsPublished && item.attemptsUsed > 0) {
+  if ((closed || expired || exhausted) && item.resultsPublished && item.attemptsUsed > 0) {
     return {
       label: "Results published",
       tone: "success" as const,
