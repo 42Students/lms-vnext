@@ -199,3 +199,5 @@ describe("Contradictory role-directory filters",()=>{
 });
 
 describe("College role roster masked Contacts drilldown",()=>{it("links the exact membership without accepting a forged URL segment",()=>{const id="00000000-0000-4000-8000-000000000149";expect(collegeRoleContactHref(id)).toBe("/college/contacts/"+id);expect(()=>collegeRoleContactHref("../other-college")).toThrow();});});
+
+describe("Student role directory academic program",()=>{it("round-trips an exact program selector without leaking onto Faculty routes",()=>{const programId="00000000-0000-4000-8000-000000000099";const query=collegeRoleDirectoryQuerySchema.parse({programId});expect(collegeRoleDirectoryHref("LEARNER",query)).toContain("programId="+programId);expect(collegeRoleDirectoryHref("FACULTY",query)).not.toContain("programId");expect(collegeRoleDirectoryQuerySchema.safeParse({programId:"foreign"}).success).toBe(false);});});
