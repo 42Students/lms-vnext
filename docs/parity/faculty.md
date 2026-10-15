@@ -1718,3 +1718,12 @@ This branch contains twelve new, independently pushed source items: scoped assig
 
 
 **Round 18 follow-up:** The submission review drawer now maps authentication, scope-denial, throttling and outage statuses to bounded non-leaking messages. The video list filter is a strict, length-bounded model contract. These are independently committed tests (items 18 and 19); acceptance remains PARTIAL.
+
+
+## 2026-10-15 Faculty report drill-down filtering — PARTIAL (chat-4 round 19)
+
+The existing exact-delivery Faculty Quiz attempt page now validates canonical pagination and supports oldest/newest ordering, scoped learner-name search, and the authorized latest-per-learner versus all-attempts view. The page preserves these selectors through reset, sort and pagination while question-accuracy metrics remain based on the latest attempt per learner. Four focused Vitest regression files are authored under `tests/unit/faculty-quiz-round19-{1..4}.test.ts`.
+
+The existing exact-Section Assignment submissions report now validates canonical pagination without changing its API drawer schema, supports oldest/newest ordering, name search of authorized submissions, private-versus-published grade visibility, more specific no-result descriptions, responsive/wrapping navigation, and truthful text about which filters the existing server-authorized CSV includes. Six focused unit regressions are authored at `tests/unit/faculty-submissions-round19-{5..10}.test.ts`. The CSV still re-evaluates Section permissions server-side and does not accept the page-only name/grade-visibility/sort fields.
+
+**PARTIAL acceptance:** These are source-authored, separately pushed page/model changes with tests written but not executed in this connector session. Do not mark any Faculty parity row or tracker task DONE until Vitest, TypeScript, ESLint, auth/foreign Section database checks, desktop/mobile browser and legacy UI parity are independently proven. No AI code, storage backend or migration was modified.
