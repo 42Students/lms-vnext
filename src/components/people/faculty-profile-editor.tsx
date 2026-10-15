@@ -4,10 +4,13 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 import { FacultyProfileSkills } from "./faculty-profile-skills";
+import { FacultyProfileRepeatable } from "./faculty-profile-repeatable";
+import { newFacultyLanguage } from "@/modules/people/faculty-profile-row-factories";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
 const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
 const ADDRESS_FIELDS = [{name:"currentAddress",label:"Current address",maxLength:2000,multiline:true},{name:"currentCity",label:"Current city",maxLength:160},{name:"currentState",label:"Current state",maxLength:160},{name:"currentPincode",label:"Current postal code",maxLength:16},{name:"permanentAddress",label:"Permanent address",maxLength:2000,multiline:true},{name:"permanentCity",label:"Permanent city",maxLength:160},{name:"permanentState",label:"Permanent state",maxLength:160},{name:"permanentPincode",label:"Permanent postal code",maxLength:16}] as const;
 const SOCIAL_PROFILES_FIELDS = [{name:"linkedIn",label:"LinkedIn",maxLength:500,type:"url"},{name:"github",label:"GitHub",maxLength:500,type:"url"},{name:"portfolio",label:"Portfolio",maxLength:500,type:"url"},{name:"twitter",label:"X / Twitter",maxLength:500,type:"url"},{name:"googleScholar",label:"Google Scholar",maxLength:500,type:"url"},{name:"researchGate",label:"ResearchGate",maxLength:500,type:"url"}] as const;
+const LANGUAGE_FIELDS = [{name:"language",label:"Language",maxLength:120,required:true},{name:"proficiency",label:"Proficiency",maxLength:64}] as const;
 export function FacultyProfileEditor({initialDocument,initialVersion}:{
  initialDocument:FacultyProfileDocument;initialVersion:number;
 }){
@@ -60,5 +63,10 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    fields={SOCIAL_PROFILES_FIELDS}
    initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
   <FacultyProfileSkills key={"skills-"+version} initial={document.skills} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"languages-"+version}
+   section="languages" title="Languages"
+   description="Edit your own languages records. Removals are drafts until saved."
+   initial={document.languages} fields={LANGUAGE_FIELDS} maxItems={30}
+   create={newFacultyLanguage} pending={pending} onSave={save}/>
  </div>;
 }
