@@ -1,6 +1,7 @@
 import {tpoCohortHistoryCsvHref} from "@/modules/placements/tpo-batch-history-csv-model";
 import Link from "next/link";
 import {batchHistoryViewSchema,filterTpoBatchHistoryKind,filterTpoBatchHistoryOutcome} from "@/modules/placements/tpo-batch-history-view-model";
+import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-undo-model";
 import { TpoBatchUndoControl } from "@/components/tpo/tpo-batch-undo-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -11,7 +12,8 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  const filters=batchHistoryViewSchema.safeParse({kind:Array.isArray(raw.kind)?raw.kind[0]:raw.kind,after:Array.isArray(raw.after)?raw.after[0]:raw.after});
  if(!filters.success)return <main role="alert">Invalid history filter. <Link href={"/tpo/batches/"+batchId+"/history"}>Reset</Link></main>;
  const {batch,events,ready}=await listTpoBatchHistory(await getCurrentRequestContext(),batchId);
- const visible=filterTpoBatchHistoryOutcome(filterTpoBatchHistoryKind(events,filters.data.kind),filters.data.after);
+ const annotated=actionableBatchHistory(events);
+ const visible=filterTpoBatchHistoryOutcome(filterTpoBatchHistoryKind(annotated,filters.data.kind),filters.data.after);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{batch.name} — Decision history</h1>
  <Link href={"/tpo/batches/"+batchId} className="text-primary-text underline">Batch overview</Link>
  <p className="text-sm text-muted-foreground">Last 100 cohort-level eligibility events, newest first. Individual learner decisions are shown in the learner detail. Undo is permitted only when no later change makes the action stale.</p>
@@ -22,7 +24,7 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  <strong>{e.kind==="UNDO"?"Undo":"Decision"}: {e.before??"NOT_DECIDED"} → {e.after??"NOT_DECIDED"}</strong>
  <p className="mt-1 text-xs text-muted-foreground">{e.occurredAt.toISOString()} · action {e.actionId}</p>
  {e.reversesActionId?<p className="text-xs">Reverses {e.reversesActionId}</p>:null}
- {e.kind==="DECIDE"?<TpoBatchUndoControl batchId={batchId} actionId={e.actionId}/>:null}
+ {e.canRequestUndo?<TpoBatchUndoControl batchId={batchId} actionId={e.actionId}/>:null}
  </li>)}</ol>}
  </main>;
 }
