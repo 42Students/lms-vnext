@@ -10,7 +10,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {AnnouncementError} from "./errors";
 import {canAccessAnnouncements} from "./actor-status-model";
-import {superAdminCollegeBroadcastSchema,requestedBroadcastCollegeIds} from "./super-admin-college-broadcast-model";
+import {superAdminCollegeBroadcastSchema,requestedBroadcastCollegeIds,sameReviewedBroadcastAudience} from "./super-admin-college-broadcast-model";
 /** Scoped active-college directory independent of the single-college announcement composer. */
 export async function listSuperAdminBroadcastColleges(context:RequestContext){
  if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.read");
@@ -47,6 +47,8 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
   .from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
   .where(and(...restrictions)).orderBy(colleges.id).limit(501);
  if(targets.length===0||targets.length>500)throw new AnnouncementError("TARGET_NOT_FOUND");
+ if(input.reviewedCollegeIds && !sameReviewedBroadcastAudience(input.reviewedCollegeIds,targets.map(row=>row.id)))
+  throw new AnnouncementError("STALE_AUDIENCE");
  if(input.audienceMode==="SELECTED_COLLEGES"&&targets.length!==requested.length)throw new AnnouncementError("TARGET_NOT_FOUND");
  for(const target of targets){
   requirePermission(context,"college.manage",{organizationId:target.organizationId,collegeId:target.id});

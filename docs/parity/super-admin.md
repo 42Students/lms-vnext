@@ -1138,3 +1138,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 announcement sender filter (PARTIAL):** Added persisted sender-type filter with DB10 allowed enums for Super Admin history, API and CSV; retains filter when paging and toggling deleted visibility. Unit validation authored, runtime/browser evidence open.
+
+
+**2026-10-15 chat-6 broadcast reviewed college-set fence (PARTIAL):** Publication now optionally verifies the exact reviewed college IDs against resolved active/authorized targets, returning a recoverable 409 on directory drift instead of silently changing the broadcast audience. The Super Admin UI sends reviewed IDs and explains re-review. Does not claim snapshot-isolated active-college locks or provider delivery; unit source tests authored.
