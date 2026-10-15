@@ -10,14 +10,17 @@ export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true})
 });
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
- q:string;courseCode?:string;status:string;format:string;scope:string;
+ q:string;courseCode?:string;programCode?:string;cohortCode?:string;status:string;format:string;scope:string;visibility?:string;
  view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;offeringStatus?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
  if(q.courseCode)p.set("courseCode",q.courseCode);
+ if(kind!=="LIVE_CLASS"&&q.programCode)p.set("programCode",q.programCode);
+ if(kind!=="LIVE_CLASS"&&q.cohortCode)p.set("cohortCode",q.cohortCode);
  if(q.status!=="ALL")p.set("status",q.status);
  if(q.scope!=="ALL")p.set("scope",q.scope);
+ if(kind!=="LIVE_CLASS"&&q.visibility&&q.visibility!=="ALL")p.set("visibility",q.visibility);
  if(kind!=="LIVE_CLASS"&&q.offeringStatus&&q.offeringStatus!=="ALL")p.set("offeringStatus",q.offeringStatus);
  if(q.format!=="ALL"&&kind==="VIDEO")p.set("format",q.format);
  if(kind==="LIVE_CLASS"&&q.view&&q.view!=="ALL")p.set("view",q.view);
@@ -41,12 +44,12 @@ export function renderCollegeLiveClassCsv(rows:readonly {
 export function renderCollegeContentMetadataCsv(rows:readonly {
  title:string;contentType:string;status:string;courseName:string;courseCode:string;
  cohortName:string;periodName:string;lessonName:string;learningPathTitle:string;
- deliveryId:string|null;durationSeconds:number|null;
+ deliveryId:string|null;durationSeconds:number|null;visibleToStudents:boolean;
 }[],truncated:boolean){
  return buildCollegeDirectoryCsv(["Title","Type","Publication","Course","Course code",
-  "Batch","Period","Lesson","Path","Audience","Duration (seconds)"],
+  "Batch","Period","Lesson","Path","Audience","Visible to students","Duration (seconds)"],
   rows.map(r=>[r.title,r.contentType,r.status,r.courseName,r.courseCode,
    r.cohortName,r.periodName,r.lessonName,r.learningPathTitle,
    r.deliveryId?"Section-specific":"Shared offering",
-   r.durationSeconds===null?"":String(r.durationSeconds)]),truncated,CONTENT_METADATA_EXPORT_CAP);
+   r.visibleToStudents?"Yes":"No",r.durationSeconds===null?"":String(r.durationSeconds)]),truncated,CONTENT_METADATA_EXPORT_CAP);
 }

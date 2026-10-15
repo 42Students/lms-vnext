@@ -10,6 +10,7 @@ import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
 import {matchesWaitingSince} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
 import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
@@ -17,9 +18,9 @@ import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/
 export class VerificationQueueLimitError extends Error {
  constructor(){super("VERIFICATION_QUEUE_LIMIT_REACHED");}
 }
-export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown) {
+export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown,superAdminCollegeId?:string) {
  const filter=verificationQueueFilters.parse(raw);
- const scope=await requireCollegeVerificationActor(context);
+ const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  // Cap the working set and FAIL LOUDLY rather than silently reporting
  // truncated counts. Indexed DB-side paging is a later optimization.

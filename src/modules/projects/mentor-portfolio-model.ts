@@ -6,11 +6,16 @@ const paging = {
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
 };
 export const mentorReviewQuerySchema = z.object({
+  projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+  age: z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","OLDER_THAN_7_DAYS"]).default("ALL"),
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object({
+  projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
+  order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS"]).default("ALL"),
   ...paging,
@@ -30,9 +35,16 @@ export function pageMentorPortfolio<T>(
 export function selectMentorReviewQueue(
   alerts: readonly MentorProjectAttention[], search: string,
   order: "NEWEST"|"OLDEST" = "NEWEST",
+  age: "ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"OLDER_THAN_7_DAYS" = "ALL", now: Date = new Date(),
 ) {
   const term = search.trim().toLowerCase();
   return alerts.filter(a => a.kind === "REVIEW")
+    .filter(a => { if(age==="ALL")return true;
+      const elapsed=now.getTime()-new Date(a.occurredAt).getTime();
+      if(!Number.isFinite(elapsed)||elapsed<0)return false;
+      if(age==="OLDER_THAN_7_DAYS")return elapsed>7*86400000;
+      return elapsed<=(age==="LAST_7_DAYS"?7:30)*86400000;
+    })
     .filter(a => !term ||
       [a.title, a.description].some(v => v.toLowerCase().includes(term)))
     .sort((a,b) => (order === "OLDEST"
@@ -64,13 +76,18 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number; order?: string; importance?: string; view?: string },
+  query: { search?: string; page?: number; pageSize?: number; order?: string; projectStatus?: string; age?: string; importance?: string; view?: string; window?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
   if (area === "reviews" && query.order && query.order !== "NEWEST") params.set("order", query.order);
+  if (area === "reviews" && query.age && query.age !== "ALL") params.set("age",query.age);
+  if (area === "reviews" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
   if (area === "activity" && query.importance && query.importance !== "ALL") params.set("importance",query.importance);
   if (area === "activity" && query.view && query.view !== "ALL") params.set("view",query.view);
+  if (area === "activity" && query.window && query.window !== "ALL")params.set("window",query.window);
+  if (area === "activity" && query.order && query.order !== "NEWEST")params.set("order",query.order);
+  if (area === "activity" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
   if (query.page && query.page > 1) params.set("page", String(query.page));
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
   return "/mentor/" + area + (params.size ? "?" + params.toString() : "");

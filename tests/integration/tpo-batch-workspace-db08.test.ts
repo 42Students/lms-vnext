@@ -20,7 +20,7 @@ async function actor(collegeId:string,role:"TPO"|"LEARNER"):Promise<RequestConte
  fixtures.users.push(userId);fixtures.memberships.push(membershipId);
  await pool.query("INSERT INTO users (id,identity_uid,display_name) VALUES ($1::uuid,$2::text,'TPO Fixture')",[userId,"tpo-batch-"+userId]);
  await pool.query("INSERT INTO college_memberships (id,user_id,college_id) VALUES ($1::uuid,$2::uuid,$3::uuid)",[membershipId,userId,collegeId]);
- await pool.query("INSERT INTO membership_roles (membership_id,role) VALUES ($1::uuid,$2::text)",[membershipId,role]);
+ await pool.query("INSERT INTO membership_roles (membership_id,role) VALUES ($1::uuid,$2::membership_role)",[membershipId,role]);
  return {user:{id:userId,identityUid:"tpo-batch-"+userId,platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:membershipId,collegeId,organizationId:SEED_IDS.organization,status:"ACTIVE",roles:[role]}};
 }

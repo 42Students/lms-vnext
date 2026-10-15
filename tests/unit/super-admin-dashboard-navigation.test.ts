@@ -8,8 +8,8 @@ describe("Super Admin dashboard global vs college navigation", () => {
     ]);
   });
   it("exposes only known college-scoped destinations, no writes embedded in links", () => {
-    expect(SUPER_ADMIN_COLLEGE_LINKS).toHaveLength(6);
-    expect(SUPER_ADMIN_COLLEGE_LINKS.every(link => link.href.startsWith("/admin/"))).toBe(true);
-    expect(new Set(SUPER_ADMIN_COLLEGE_LINKS.map(link => link.href)).size).toBe(6);
+    expect(SUPER_ADMIN_COLLEGE_LINKS).toHaveLength(8);
+    expect(SUPER_ADMIN_COLLEGE_LINKS.every(link => link.href.startsWith("/admin/")||link.href==="/tracker/audit-findings")).toBe(true);
+    expect(new Set(SUPER_ADMIN_COLLEGE_LINKS.map(link => link.href)).size).toBe(8);
   });
 });
