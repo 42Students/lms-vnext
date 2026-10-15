@@ -7,6 +7,7 @@ import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learn
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
+import {learnerOfferApplicationHref} from "@/modules/placements/learner-offer-application-link-model";
 import {learnerOfferResponseTiming,prioritizeLearnerOffers} from "@/modules/placements/learner-offer-response-timing-model";
 import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
   from "@/modules/placements/learner-offer-pending-request-model";
@@ -297,6 +298,12 @@ export function LearnerPlacementOffers({
               </div>
             </div>
 
+            {learnerOfferApplicationHref(item.applicationId) ? (
+              <Link href={learnerOfferApplicationHref(item.applicationId)!}
+                className="mt-3 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                View related application
+              </Link>
+            ) : null}
             {learnerOfferHref(item.offerId) ? (
               <Link href={learnerOfferHref(item.offerId)!}
                 className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
