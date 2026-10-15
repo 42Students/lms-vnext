@@ -1519,3 +1519,7 @@ Sprint close has an explicit **NO_CARRY_OVER** policy: open or in-review tasks b
 ## Phase 2 PR-S2-05 — audited readiness override (source implemented, execution pending)
 
 College Admin may record the legacy **Force unlock (ready)** / **Force block (not ready)** / **Clear override** decisions with a note on both force states. The latest college-scoped registered activity event is the override source of truth, written under the project row lock and exposed on the readiness read API. The submission transaction independently rechecks the effective gate (including FORCE_BLOCK), rather than trusting a client-only readiness flag. Raw task/sprint/release completion remains unaltered. No new table or UI wording is introduced. Commit reference: see Git history. A real PostgreSQL race/tenant-negative test and full UI/browser parity remain OPEN.
+
+## Phase 2 PR-S2-08 — expanded Project member role kinds (STAGED / NOT DONE)
+
+The proposed member model distinguishes MENTOR, CO_MENTOR, OBSERVER, REVIEWER and QA and includes an explicit persisted can_mutate flag. Source-only policy denies all observer/QA/reviewer mutations even when a flag is incorrectly true. Migration SQL is staged only; the existing registered member table and runtime access guards are unchanged. **Do not treat read-only observer accounts as supported until the orchestrator registers the migration, active-role/tenant joins and authorization/service/UI wiring are executed and verified.** Commit reference is in branch history.
