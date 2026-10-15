@@ -34,6 +34,7 @@ type Fixture={periodId:string;programId:string;cohortId:string;sectionId:string;
 let active:Fixture|null=null;
 async function cleanup(){
  const f=active;if(!f)return;
+ await pool.query("delete from section_schedule_events where section_id=$1::uuid",[f.sectionId]);
  await pool.query("delete from lesson_contents where lesson_id=$1",[f.lessonId]);
  await pool.query("delete from course_lessons where id=$1",[f.lessonId]);
  await pool.query("delete from course_learning_paths where id=$1",[f.pathId]);
@@ -133,5 +134,20 @@ describe("Faculty live scheduling persisted revocation",()=>{
    await pool.query("insert into membership_roles(membership_id,role) values($1::uuid,$2::membership_role) on conflict do nothing",
     [SEED_IDS.facultyCollegeAMembership,"FACULTY"]);
   }
+ });
+});
+
+describe("Faculty live class schedule event occupancy",()=>{
+ it("rejects times already occupied by the same Section calendar",async()=>{
+  const {delivery,lesson}=await fixture();
+  await pool.query("insert into section_schedule_events(section_id,faculty_membership_id,title,starts_at,ends_at) values ($1::uuid,$2::uuid,$3::text,$4::timestamptz,$5::timestamptz)",
+   [active!.sectionId,SEED_IDS.facultyCollegeAMembership,"Classroom occupied",
+    "2026-10-23T09:00:00+05:30","2026-10-23T10:00:00+05:30"]);
+  await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
+   action:"CREATE",lessonId:lesson.id,title:"Conflicting online session",
+   meetingUrl:"https://meet.example.org/conflict",
+   startsAt:"2026-10-23T09:30:00+05:30",
+   endsAt:"2026-10-23T10:30:00+05:30",confirm:true,
+  })).rejects.toMatchObject({code:"SCHEDULE_EVENT_CONFLICT"});
  });
 });
