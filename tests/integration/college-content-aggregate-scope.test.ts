@@ -158,6 +158,14 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
       listCollegeContentAggregate(adminA, "VIDEO", { q: label }),
       listCollegeContentAggregate(adminA, "RESOURCE", { q: label }),
     ]);
+    const [activeResources,archivedResources]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringStatus:"ACTIVE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringStatus:"ARCHIVED"}),
+    ]);
+    expect(activeResources.items.map(row=>row.id)).toContain(ids.resource);
+    expect(archivedResources.items).toEqual([]);
+    expect((await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label,offeringStatus:"ACTIVE"})).csv)
+      .toContain(label);
     const resourceCsv=await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label});
     expect(resourceCsv.csv).toContain(label);
     expect(resourceCsv.csv).not.toContain("test-only private notes");
@@ -229,6 +237,14 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     const unknown=await listCollegeContentAggregate(adminA,"LIVE_CLASS",{courseCode:"NEVER-MATCH"});
     expect(exact.items.map(r=>r.id)).toContain(ids.live);
     expect(unknown.items).toEqual([]);
+    const [sharedSessions,sectionSessions]=await Promise.all([
+      listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,scope:"SHARED"}),
+      listCollegeContentAggregate(adminA,"LIVE_CLASS",{q:label,scope:"SECTION"}),
+    ]);
+    expect(sharedSessions.items.map(row=>row.id)).toContain(ids.live);
+    expect(sectionSessions.items).toEqual([]);
+    const sectionCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label,scope:"SECTION"});
+    expect(sectionCsv.csv).not.toContain(label);
     const liveCsv=await exportCollegeContentMetadata(adminA,"LIVE_CLASS",{q:label});
     expect(liveCsv.csv).toContain(label);
     expect(liveCsv.csv).toContain("Starts at (UTC)");

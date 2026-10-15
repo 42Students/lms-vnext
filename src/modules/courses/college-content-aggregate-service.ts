@@ -99,9 +99,11 @@ export async function listCollegeContentAggregate(
       inArray(lessonContents.contentType,
         kind === "VIDEO" && query.format !== "ALL" ? [query.format] : [...collegeContentTypes(kind)]),
       query.status === "ALL" ? undefined : eq(lessonContents.status, query.status),
+      kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL"
+        ? eq(courseOfferings.status,query.offeringStatus) : undefined,
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
-      kind !== "LIVE_CLASS" && query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
-      kind !== "LIVE_CLASS" && query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
+      query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
+      query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
       live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
       live?.view === "PAST" ? lt(lessonContents.endsAt,new Date()) : undefined,
       live?.from ? gte(lessonContents.endsAt,istDayBoundary(live.from)) : undefined,

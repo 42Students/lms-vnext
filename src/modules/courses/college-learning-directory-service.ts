@@ -104,7 +104,10 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
+      query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.q ? sql`(${courseLessons.name} ilike ${searchLike(query.q)} or
         ${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)})` : undefined,
@@ -167,6 +170,9 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
+      query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.q ? sql`(${courses.name} ilike ${searchLike(query.q)} or
         ${courses.code} ilike ${searchLike(query.q)} or
         ${cohorts.name} ilike ${searchLike(query.q)})` : undefined,

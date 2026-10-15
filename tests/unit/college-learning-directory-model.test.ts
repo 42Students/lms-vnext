@@ -37,12 +37,31 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(progress.pathname).toBe("/college/course-progress");
     expect(progress.searchParams.get("q")).toBe("a & b");
     expect(collegeProgressQuerySchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({cohortCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({cohortCode:"B-2026"})))
+      .toContain("cohortCode=B-2026");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({periodCode:"2026-FALL"})))
+      .toContain("periodCode=2026-FALL");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({programCode:"CS & EE"})))
+      .toContain("programCode=CS+%26+EE");
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({courseCode:"CS 101"})))
       .toContain("courseCode=CS+101");
     const lifecycle = collegeLessonQuerySchema.parse({ offeringStatus: "ARCHIVED" });
     expect(collegeLearningHref("LESSONS", lifecycle)).toContain("offeringStatus=ARCHIVED");
     expect(collegeLessonQuerySchema.safeParse({ offeringStatus: "SUSPENDED" }).success).toBe(false);
+    expect(collegeLessonQuerySchema.parse({pathStatus:"PUBLISHED"}).pathStatus).toBe("PUBLISHED");
+    expect(collegeLessonQuerySchema.safeParse({ pathStatus: "ACTIVE" }).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({pathStatus:"ARCHIVED"})))
+      .toContain("pathStatus=ARCHIVED");
     expect(collegeLessonQuerySchema.safeParse({ courseCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({ programCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({ periodCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({periodCode:"2026-FALL"})))
+      .toContain("periodCode=2026-FALL");
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({programCode:"PROG & CS"})))
+      .toContain("programCode=PROG+%26+CS");
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({courseCode:"CS 101"})))
       .toContain("courseCode=CS+101");
     expect(progress.searchParams.has("collegeId")).toBe(false);

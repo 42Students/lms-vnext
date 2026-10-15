@@ -17,12 +17,13 @@ export function istDayBoundary(day:string,nextDay=false){
  const [year,month,date]=day.split("-").map(Number);
  return new Date(Date.UTC(year,month-1,date+(nextDay?1:0))-330*60000);
 }
-export function collegeLiveClassHref(query:{q:string;courseCode?:string;status:string;page:number;view:"ALL"|"UPCOMING"|"PAST";from?:string;to?:string}){
+export function collegeLiveClassHref(query:{q:string;courseCode?:string;status:string;page:number;view:"ALL"|"UPCOMING"|"PAST";from?:string;to?:string;scope?:"ALL"|"SHARED"|"SECTION"}){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
  if(query.status!=="ALL")p.set("status",query.status);
  if(query.view!=="ALL")p.set("view",query.view);
+ if(query.scope&&query.scope!=="ALL")p.set("scope",query.scope);
  if(query.from)p.set("from",query.from);
  if(query.to)p.set("to",query.to);
  if(query.page>1)p.set("page",String(query.page));
