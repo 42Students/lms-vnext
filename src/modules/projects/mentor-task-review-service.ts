@@ -12,6 +12,7 @@ import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import {
   mentorTaskReviewQuerySchema, mentorTaskReviewSummary, mentorTaskReviewLiteralSearch,
+  mentorTaskReviewAgeBoundary,
 } from "./mentor-task-review-model";
 
 type PendingTaskReview = {
@@ -58,15 +59,15 @@ export async function getMentorTaskReviews(
   }
 
   const escaped=mentorTaskReviewLiteralSearch(query.search);
-  const cutoff=query.age==="ALL"?null:new Date(new Date().getTime()-7*86400000);
+  const ageBoundary=mentorTaskReviewAgeBoundary(query.age,new Date());
   const conditions = and(
     inArray(projectTaskSubmissions.projectId, selectedIds),
     query.projectId?eq(projectTaskSubmissions.projectId,query.projectId):undefined,
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
-    cutoff?(query.age==="OLDER_THAN_7_DAYS"
-      ? lt(projectTaskSubmissions.submittedAt,cutoff)
-      : gte(projectTaskSubmissions.submittedAt,cutoff)):undefined,
+    ageBoundary?(ageBoundary.older
+      ? lt(projectTaskSubmissions.submittedAt,ageBoundary.cutoff)
+      : gte(projectTaskSubmissions.submittedAt,ageBoundary.cutoff)):undefined,
     query.priority==="ALL"?undefined:eq(projectTasks.priority,query.priority),
     query.version===undefined?undefined:eq(projectTaskSubmissions.version,query.version),
     sql`not exists (select 1 from project_task_submissions newer

@@ -2,7 +2,8 @@ import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-tea
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
-import { compareMentorProjects, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
+import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
+import { compareMentorProjects, compareMentorProjectsByMostProgress, compareMentorProjectsByOpenTasks, compareMentorProjectsByTeamSize, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
@@ -53,9 +54,7 @@ export default async function MentorProjectsPage({
 
   const params = await searchParams;
   const parsed = mentorProjectListQuerySchema.safeParse(
-    Object.fromEntries(Object.entries(params).map(([key, value]) => [
-      key, Array.isArray(value) ? value[0] : value,
-    ])),
+    singleValueMentorFilters(params),
   );
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
@@ -170,6 +169,19 @@ export default async function MentorProjectsPage({
       ? compareMentorProjectsByProgress(a.project,b.project,
           mentorTaskProgress(workCounts.get(a.project.id))?.percent,
           mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+      : query.sort === "PROGRESS_DESC"
+      ? compareMentorProjectsByMostProgress(a.project,b.project,
+          mentorTaskProgress(workCounts.get(a.project.id))?.percent,
+          mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+      : query.sort === "OPEN_TASKS"
+      ? compareMentorProjectsByOpenTasks(a.project,b.project,
+          workCounts.get(a.project.id)?.open ?? 0, workCounts.get(b.project.id)?.open ?? 0)
+      : query.sort === "TEAM_SIZE_DESC"
+      ? compareMentorProjectsByTeamSize(a.project,b.project,
+          teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"LARGEST")
+      : query.sort === "TEAM_SIZE_ASC"
+      ? compareMentorProjectsByTeamSize(a.project,b.project,
+          teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"SMALLEST")
       : compareMentorProjects(a.project,b.project,query.sort));
 
   const total = filtered.length;
@@ -309,7 +321,7 @@ export default async function MentorProjectsPage({
         emptyDescription={
           query.search ||
           query.status ||
-          query.attention || query.assignment
+          query.attention || query.assignment || query.work
             ? "Clear or change the filters to see other assigned Projects."
             : "Projects appear here when a College Admin assigns your Mentor membership to the team."
         }
