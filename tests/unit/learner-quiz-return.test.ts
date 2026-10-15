@@ -8,6 +8,6 @@ describe("learner quiz post-submission navigation cleanup",()=>{
     const dispose=scheduleLearnerQuizReturn(action,2000,schedule,cancel);
     expect(schedule).toHaveBeenCalledWith(action,2000);
     dispose();expect(cancel).toHaveBeenCalledWith(11);
-    handler?.();expect(action).not.toHaveBeenCalled();
+    expect(handler).toBeNull();expect(action).not.toHaveBeenCalled();
   });
 });

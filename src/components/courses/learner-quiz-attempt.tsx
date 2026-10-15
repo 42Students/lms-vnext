@@ -8,6 +8,7 @@ import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
+import { learnerQuizSubmitDeadlineOpen } from "@/modules/courses/learner-quiz-submit-deadline-model";
 import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
@@ -239,6 +240,13 @@ export function LearnerQuizAttempt() {
         : "Submit this quiz attempt? You cannot edit this attempt after submission.";
 
     if (!window.confirm(confirmation)) return;
+    // Confirm dialogs may stay open past the server-enforced deadline.
+    const confirmedAtMs = Date.now();
+    if (!learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, confirmedAtMs)) {
+      setNowMs(confirmedAtMs);
+      setError("This quiz deadline has passed. Your answers were not submitted.");
+      return;
+    }
 
     if (submitLockKey && typeof window !== "undefined") {
       try {
