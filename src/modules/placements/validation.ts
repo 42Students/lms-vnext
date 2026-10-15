@@ -549,6 +549,8 @@ export const placementEligibilityPolicyInputSchema = z
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
+    allowedSectionIds: z.array(z.string().uuid()).max(100)
+      .transform(values => [...new Set(values)]).optional().default([]),
     minCgpa: cgpaSchema.nullable().optional().default(null),
     maxActiveBacklogs: z
       .number()

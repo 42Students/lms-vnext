@@ -16,6 +16,8 @@ import {
   placementJobEligibilityPolicies,
   placementJobs,
   programs,
+  sections,
+  sectionEnrollments,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -48,6 +50,7 @@ async function validateEligibilityAcademicScope(
   collegeId: string,
   allowedProgramIds: readonly string[],
   allowedCohortIds: readonly string[],
+  allowedSectionIds: readonly string[],
 ) {
   if (allowedProgramIds.length > 0) {
     const rows = await tx
@@ -98,6 +101,22 @@ async function validateEligibilityAcademicScope(
       throw new PlacementsServiceError(
         "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
       );
+    }
+  }
+  if (allowedSectionIds.length) {
+    const rows = await tx.select({ id: sections.id }).from(sections)
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(and(
+        inArray(sections.id, [...allowedSectionIds]),
+        eq(departments.collegeId, collegeId),
+        isNull(departments.archivedAt),
+        eq(sections.status, "ACTIVE"),
+        eq(programs.status, "ACTIVE"),
+      )).for("share");
+    if (rows.length !== new Set(allowedSectionIds).size) {
+      throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
     }
   }
 }
@@ -509,6 +528,7 @@ export async function getJobEligibilityPolicy(
       jobId,
       allowedProgramIds: [] as string[],
       allowedCohortIds: [] as string[],
+      allowedSectionIds: [] as string[],
       minCgpa: null as number | null,
       maxActiveBacklogs: null as number | null,
       maxPastBacklogs: null as number | null,
@@ -533,6 +553,7 @@ export async function getJobEligibilityPolicy(
       policy.allowedProgramIds,
     allowedCohortIds:
       policy.allowedCohortIds,
+    allowedSectionIds: policy.allowedSectionIds,
     minCgpa: unscaleHundredths(
       policy.minCgpaHundredths,
     ),
@@ -591,6 +612,7 @@ export async function upsertJobEligibilityPolicy(
   const values = {
     allowedProgramIds: input.allowedProgramIds,
     allowedCohortIds: input.allowedCohortIds,
+    allowedSectionIds: input.allowedSectionIds,
     minCgpaHundredths: scaleHundredths(
       input.minCgpa,
     ),
@@ -633,6 +655,7 @@ export async function upsertJobEligibilityPolicy(
       liveJob.collegeId,
       input.allowedProgramIds,
       input.allowedCohortIds,
+      input.allowedSectionIds,
     );
     const [row] = await tx
       .insert(placementJobEligibilityPolicies)
@@ -997,6 +1020,27 @@ export async function evaluatePlacementEligibility(
       }],
       override: null,
     };
+  }
+
+  // P-S2-04: the real migrated section whitelist is an authorization gate,
+  // not an optional evidence warning. INCLUDE cannot override it.
+  if (policy?.allowedSectionIds.length) {
+    const activeSections = enrollment ? await db.select({id: sections.id})
+      .from(sectionEnrollments)
+      .innerJoin(sections, eq(sections.id, sectionEnrollments.sectionId))
+      .where(and(
+        eq(sectionEnrollments.learnerEnrollmentId, enrollment.id),
+        eq(sectionEnrollments.status, "ACTIVE"),
+        eq(sections.status, "ACTIVE"),
+        eq(sections.cohortId, enrollment.cohortId),
+      )) : [];
+    if (!isPlacementJobTargetSection(policy.allowedSectionIds,
+      activeSections.map(row => row.id))) {
+      return { status: "INELIGIBLE", checks: [{
+        criterion: "Cohort", status: "FAIL", actual: null,
+        required: "Eligible cohort", detail: "Cohort is not eligible",
+      }], override: null };
+    }
   }
 
   // P-S2-01: SELF academic evidence must never satisfy a verified-only
