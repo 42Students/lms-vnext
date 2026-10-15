@@ -9,7 +9,7 @@ import {requirePersistedTpoMembership} from "../tpo-persisted-actor-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
-import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "./staged-schema";
+import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "@/db/schema/placement-company-shares";
 import { companyShareAuditTotals } from "./audit-model";
 import {canIssueCompanyApplicantShare} from "./issue-policy";
 import { companyShareStatusSchema } from "./status-model";
