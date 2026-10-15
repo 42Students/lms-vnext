@@ -402,7 +402,7 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
   it("filters classes by the persisted department belonging to their College Admin",async()=>{
-    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const department=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const code=department.rows[0]!.code;
     const [matching,excluded,foreign]=await Promise.all([
       listCollegeClasses(adminA,{q:key,departmentCode:code}),
@@ -444,7 +444,7 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(csvForeign.csv).not.toContain(key);
   });
   it("Elective owning department code filters persisted own-college slots and exports",async()=>{
-    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);const departmentCode=department.rows[0]!.code;
+    const department=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);const departmentCode=department.rows[0]!.code;
     const [own,missing,foreign,csvOwn,csvForeign]=await Promise.all([
       listCollegeElectives(adminA,{q:key,departmentCode:departmentCode}),
       listCollegeElectives(adminA,{q:key,departmentCode:"NOT-A-DEPARTMENT"}),
