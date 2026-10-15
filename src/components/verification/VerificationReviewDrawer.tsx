@@ -63,7 +63,12 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    });
    if(!response.ok){
     const payload=await response.json().catch(()=>({error:"UNAVAILABLE"})) as {error?:string};
-    throw Error(payload.error==="STALE_VERSION"?"This review changed. Close and refresh before deciding.":payload.error??"Decision failed");
+    if(payload.error==="STALE_VERSION"){
+     setDetail(null);
+     setPendingAction(null);
+     throw Error("The request changed since it was opened. Reload the current details before deciding again.");
+    }
+    throw Error(payload.error??"Decision failed");
    }
    setPendingAction(null);onSaved();
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
