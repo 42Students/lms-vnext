@@ -7,6 +7,7 @@ import {
   listAnnouncementsForAdmin,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { parseAnnouncementAdminApiQuery } from "@/modules/announcements/admin-api-query";
 
 export const runtime = "nodejs";
 
@@ -16,13 +17,9 @@ export async function GET(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const params = new URL(request.url).searchParams;
-    const page = await listAnnouncementsForAdmin(context, {
-      includeDeleted: params.get("includeDeleted") ?? undefined,
-      beforeCreatedAt: params.get("beforeCreatedAt") ?? undefined,
-      beforeId: params.get("beforeId") ?? undefined,
-      limit: params.get("limit") ?? undefined,
-    });
+    const query = parseAnnouncementAdminApiQuery(new URL(request.url).searchParams);
+    if (!query) return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
+    const page = await listAnnouncementsForAdmin(context, query);
     return NextResponse.json(page);
   } catch (error) {
     return announcementApiError(error);
