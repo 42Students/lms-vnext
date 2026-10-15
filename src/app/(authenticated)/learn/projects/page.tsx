@@ -121,9 +121,7 @@ export default async function LearnerProjectsPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Projects"
-      />
+      <PageHeader title="Projects" description="Choose a project to open its workspace." />
 
       <LearnerProjectMobileFilters query={{ ...query, page }} />
       <div className="hidden sm:block">
@@ -179,9 +177,7 @@ export default async function LearnerProjectsPage({
         />
       </div>
 
-      <p className="m-0 text-xs leading-5 text-muted-foreground">
-        Legacy also exposes explicit workspace blocker attention. DB07 vNext does not yet persist that blocker field, so this page does not infer a false Blocked signal from unrelated task states.
-      </p>
+
     </div>
   );
 }
