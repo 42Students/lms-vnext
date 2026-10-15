@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, count, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  academicPeriods,
   assignmentSubmissions,
   courseAssignments,
   courseLearningPaths,
@@ -70,6 +71,7 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
         query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
@@ -95,6 +97,7 @@ export async function listCollegeAssessmentAggregate(
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_assignment_scope");
     const [totals, items] = await Promise.all([
       db.select({ total: count() }).from(scoped),
@@ -111,6 +114,7 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
@@ -138,6 +142,7 @@ export async function listCollegeAssessmentAggregate(
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_quiz_scope");
     const [totals, items] = await Promise.all([
       db.select({ total: count() }).from(scoped),

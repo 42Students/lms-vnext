@@ -17,7 +17,7 @@ export default async function CollegeQuizzesPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const params = await searchParams;
-  const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), results:one(params.results), page: one(params.page) };
+  const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,periodCode:one(params.periodCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), results:one(params.results), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
     Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined)),
   );

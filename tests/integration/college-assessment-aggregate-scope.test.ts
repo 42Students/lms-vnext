@@ -164,6 +164,14 @@ describe.skipIf(!enabled)("College Admin assessment aggregates — disposable Po
     expect(foreignAssignments.items).toEqual([]);
     expect(foreignQuizzes.items).toEqual([]);
     for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const [ownPeriod,missingPeriod]=await Promise.all([
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,periodCode:code}),
+        listCollegeAssessmentAggregate(adminA,kind,{q:code,periodCode:"wrong-period"}),
+      ]);
+      expect(ownPeriod.items).toHaveLength(1);
+      expect(missingPeriod.items).toEqual([]);
+    }
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
       const [missingDeadline,scheduled]=await Promise.all([
         listCollegeAssessmentAggregate(adminA,kind,{q:code,duePresence:"UNSCHEDULED"}),
         listCollegeAssessmentAggregate(adminA,kind,{q:code,duePresence:"SCHEDULED"}),
