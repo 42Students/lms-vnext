@@ -44,3 +44,8 @@ export function facultySubmissionReviewEmptyLabel(filter:"ALL"|"UNGRADED"|"GRADE
  case "LATE":return "No submissions matched the late-submission filter.";
  }
 }
+
+/** A closed drawer cannot accept results from a previously dispatched request. */
+export function facultyReviewRequestCurrent(request:number, latest:number):boolean {
+ return Number.isSafeInteger(request)&&request===latest;
+}
