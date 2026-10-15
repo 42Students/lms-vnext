@@ -1,17 +1,21 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,ne,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   courseLearningPaths,courseLessons,lessonContents,
+  courseTeachingAssignments,courseSectionDeliveries,sectionScheduleEvents,
 } from "@/db/schema";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 import {listFacultyCourseDeliveries} from "./faculty-course-service";
+import {facultyLiveDeliveryLockKey} from "./faculty-live-lock-model";
+import {facultyLivePublishedMutationAllowed} from "./faculty-live-published-policy";
 import {facultyLiveMutationParamsSchema,facultyLiveMutationSchema,
   facultyLiveWindow} from "./faculty-live-mutation-model";
 
@@ -37,6 +41,32 @@ export async function commandFacultyLiveClass(
   return db.transaction(async tx=>{
     // Serialize this Faculty actor's session writes, including across Sections.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"faculty-live:"+context.user.id}))`);
+    // Serialize co-teachers for this Section, not just requests from one actor.
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${facultyLiveDeliveryLockKey(params.deliveryId)}))`);
+    // Rebuild the actor under SHARE locks, then assert the exact active Section.
+    // A stale cookie cannot preserve write access after role or class revocation.
+    let persisted:RequestContext;
+    try {
+      persisted=await assertPersistedPlatformPermission(tx,context,"courses.read",{
+        collegeId:membership.collegeId,organizationId:membership.organizationId,
+      });
+    } catch {
+      throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+    }
+    if(!persisted.membership?.roles.includes("FACULTY")||
+      persisted.membership.id!==membership.id)
+      throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+    const [teaching]=await tx.select({id:courseTeachingAssignments.id})
+      .from(courseTeachingAssignments)
+      .innerJoin(courseSectionDeliveries,
+        eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+      .where(and(
+        eq(courseTeachingAssignments.membershipId,membership.id),
+        eq(courseTeachingAssignments.deliveryId,params.deliveryId),
+        isNull(courseTeachingAssignments.endedAt),
+        isNull(courseSectionDeliveries.endedAt),
+      )).for("share").limit(1);
+    if(!teaching)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
     const [lesson]=input.action==="CREATE" ?
       await tx.select({id:courseLessons.id}).from(courseLessons)
         .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
@@ -52,10 +82,13 @@ export async function commandFacultyLiveClass(
         eq(lessonContents.deliveryId,params.deliveryId),
         eq(lessonContents.contentType,"LIVE_CLASS"),
       )).for("update").limit(1);
-      if(!current || current.status==="ARCHIVED" ||
-        current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+      if(!current || current.status==="ARCHIVED")
         throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
-      if(input.action==="CANCEL" && current.status!=="PUBLISHED")
+      if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+        throw new CoursesServiceError("LESSON_CONTENT_STALE_VERSION");
+      // Draft or retired content cannot be rescheduled or cancelled through
+      // the published-session editor, even with a forged version token.
+      if(!facultyLivePublishedMutationAllowed(current.status))
         throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
     }
     if(dateFields){
@@ -70,6 +103,17 @@ export async function commandFacultyLiveClass(
           current?ne(lessonContents.id,current.id):undefined,
         )).limit(1);
       if(overlaps.length)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+      // Legacy Section events and this instructor's other timetabled classes
+      // are real occupancy; do not schedule an overlapping video meeting.
+      const busy=await tx.select({id:sectionScheduleEvents.id})
+        .from(sectionScheduleEvents).where(and(
+          eq(sectionScheduleEvents.status,"SCHEDULED"),
+          or(eq(sectionScheduleEvents.sectionId,owned.sectionId),
+            eq(sectionScheduleEvents.facultyMembershipId,membership.id)),
+          sql`${sectionScheduleEvents.startsAt} < ${new Date(dateFields.endsAt)}`,
+          sql`${sectionScheduleEvents.endsAt} > ${new Date(dateFields.startsAt)}`,
+        )).limit(1);
+      if(busy.length)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
     }
     let updated:typeof lessonContents.$inferSelect|undefined;
     const now=new Date(Math.max(Date.now(),(current?.updatedAt.getTime()??0)+1));
