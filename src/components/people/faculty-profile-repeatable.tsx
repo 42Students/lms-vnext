@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
+
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
