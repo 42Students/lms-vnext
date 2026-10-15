@@ -143,6 +143,14 @@ export default async function AnnouncementsPage({
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Search</button>
         <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
       </form>
+      <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
+        ...(includeDeleted ? {deleted:"1"} : {}),
+        ...(params.q ? {q:params.q} : {}),
+        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
+        ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
+        ...(params.beforeId ? {beforeId:params.beforeId} : {}),
+      }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent/>
       {next ? (
