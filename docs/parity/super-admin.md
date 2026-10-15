@@ -899,3 +899,69 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 locked descendant hierarchy filter (PARTIAL):** The selected-college module hierarchy now filters persisted locked rows, composed safely with module and academic scope predicates in both the SQL count and page queries. UI/typed enum/pagination and PostgreSQL fixture authored; tests not executed. No authority to change lock state, and effective learner results still require the resolver trace.
+
+
+**2026-10-15 chat-6 round: targeted learner override module filter — PARTIAL.** Persisted active-learner override queue can narrow to Projects/Electives/Placements stored rules, paired with existing all/only/locked modes. The SQL `exists` stays college-scoped by each verified membership; links preserve the selector and Zod disallows unknown modules. Placements membership rules are displayed as stored-but-ignored, never effective. Tests authored, not executed; editing/drawer and browser acceptance open.
+
+
+**2026-10-15 chat-6: stored On/Off student-override filter — PARTIAL.** Active college learner search now narrows membership-stored enabled/disabled values (and existing locked/module filter) through typed query + persisted SQL `exists`, with page deep-links retaining the selection. This is *stored* state, not necessarily effective access where an ancestor lock wins. Tests authored, not executed; editable controls/browser parity open.
+
+
+**2026-10-15 chat-6: stored-value hierarchy filter — PARTIAL.** Read-only Super Admin module hierarchy now filters persisted On/Off rules together with module, academic level and lock state, applying exactly the same SQL predicates to page/count and preserving them in pagination. The existing resolver still determines effective learner access; tests authored, not run.
+
+
+**2026-10-15 chat-6: scoped UUID drill-in — PARTIAL.** Super Admin hierarchy allows exact scoped UUID only when the academic scope type is explicitly selected and validated. Learner access-trace links into its own membership record for stored-rule review; SQL still joins each rule to persisted college ownership. Authored PostgreSQL tests, not executed; no write/edit capability or final drawer parity claimed.
+
+
+**2026-10-15 chat-6: readiness check status filtering — PARTIAL.** Selected-college Readiness Gate can focus on failures, unknowns or passes while its ten-source overall verdict and totals are never recalculated from a filtered subset. Scope remains Super Admin + college, filter strict Zod; unit tests authored, unexecuted. Runtime/browser acceptance open.
+
+
+**2026-10-15 chat-6: Readiness CSV evidence export — PARTIAL.** Authorized read-only GET reuses college-scoped readiness service and exports all checks, not the selected UI subset, as formula-neutralized CSV. It does not claim runtime DNS/login or production launch approval; caches disabled. Pure and disposable-PostgreSQL tests authored, not executed; browser/download gates open.
+
+
+**2026-10-15 chat-6: readiness area filters — PARTIAL.** Ten persisted checks can be organized into tenant lifecycle, academics, people, placements and domains, composed with status, without altering totals, evidence or readiness decision. Typed area model and unit tests authored but not run. Legacy/browser readiness workflow remains open.
+
+
+**2026-10-15 chat-6: relationship owner assignment filter — PARTIAL.** Super Admin company relationships can be filtered by persisted owner membership presence, not inferred user names. Count/rows/CSV-page/pagination share the same college/organization permissioned SQL filters, without querying contact data. Strict unit and disposable PG tests authored, not executed.
+
+
+**2026-10-15 chat-6: company website-completeness filter — PARTIAL.** Employer directory distinguishes recorded nonblank website URL from missing/whitespace-only metadata with scoped SQL and strict Zod. Count, pagination and page CSV use the same filter. This is not network verification or trust certification. Tests authored, not executed.
+
+
+**2026-10-15 chat-6: recently changed company relationships — PARTIAL.** Super Admin Companies now supports 7/30/90-day server-side `updated_at` windows. The time window is calculated once per scoped database request and applied to both count and page; current query and CSV link retain selection. No event-history claim or guessed change types. Unit and disposable-PG tests authored, not executed.
+
+
+**2026-10-15 chat-6 post-round source corrections:** Removed duplicate JSX object keys in student trace, repaired the readiness filter test's callback syntax, retained all company filters through Next-page links, and made explicitly supplied learner stored-rule selectors narrow the queue even when the broad mode remains selected. Tests remain authored/unexecuted.
+
+
+**2026-10-15 chat-6 learner override detail (PARTIAL):** Added explicit Super Admin college/member scoped read-only student override details, linked from the existing verified access trace. The three module cards distinguish persisted member-level values from effective resolver decisions and disclose no student contacts. Pure tests authored, not executed; edit actions, lock mutations, audit and browser gates still open.
+
+
+**2026-10-15 chat-6 student rule SET endpoint — PARTIAL:** Introduced same-origin, strict-payload PUT for an unlocked Projects/Electives membership override. Service checks Super Admin, selected-college resource permissions, persisted active learner role and global-user lifecycle, blocks a resolved broader lock, and writes the rule plus actor/tenant-scoped audit event in one transaction. Placements member edits and locked writes are rejected. Unit/disposable PG tests authored, not executed; browser UI, full row serialization/concurrency and real PG validation remain open.
+
+
+**2026-10-15 chat-6 student INHERIT mutation — PARTIAL:** Server write contract now explicitly supports removing an existing Projects/Electives membership rule, distinct from writing an Off value. Missing rule is a no-op without invented audit, while actual removal writes tenant-scoped audit metadata in the same transaction. Strict discriminated Zod denies mixed actions. Tests authored, unexecuted; client editing and concurrency gates remain open.
+
+
+**2026-10-15 chat-6 student lock mutation — PARTIAL:** Explicit membership-level Projects/Electives lock states may now be set/cleared with the authenticated rule write and atomic audit record. The server still forbids ignored Placements member edits and denies overrides masked by a broader locked scope. Exact enabled/locked values are both written; unit and negative PG fixtures authored, unexecuted. UI and concurrency acceptance open.
+
+
+**2026-10-15 chat-6 optimistic member-rule edits — PARTIAL:** Every SET/INHERIT request now includes the caller's previously observed stored state (including locked bit). The mutation serializes on the persisted college membership row and rejects an updated rule with 409 STALE_RULE instead of blind overwrite; audit and update stay in one transaction. Pure and negative PG tests authored, unexecuted; browser concurrent editing and ancestor rule races remain open.
+
+
+**2026-10-15 chat-6 student override editor (PARTIAL):** Added selected-college/learner interactive Projects and Electives Inherit/On/Off and membership-lock controls, with explicit destructive confirmation, optimistic expected state, same-origin PUT, human-readable error feedback, and refreshed trace. Placements remains read-only; broader locked ancestry disables actions. Pure UI payload tests authored, unexecuted; actual browser and PostgreSQL write/lock certification still required.
+
+
+**2026-10-15 chat-6 student rule recheck endpoint — PARTIAL:** Added authenticated, Super Admin-scoped GET returning only membership stored On/Off/lock and resolver flags, `no-store` cache, no student contacts or identity. Editor can recheck and reload observed optimistic state after a conflict rather than overriding blindly. Pure unit tests authored; real PostgreSQL and browser stale-edit checks remain OPEN.
+
+
+**2026-10-15 chat-6 auditable no-op suppression — PARTIAL:** After college/member authorization and strict expected-state check, identical SET requests or INHERIT of an already-inherited rule return an `unchanged` result without rewriting timestamps or inserting misleading activity events. Actual edits retain the same transactional audit. Pure regression authored; persistence/runtime proof still open.
+
+
+**2026-10-15 chat-6 ancestor-lock transactional recheck — PARTIAL:** SET writes now additionally read the persisted Projects/Electives ancestor scopes under PostgreSQL shared row locks *inside* the membership write transaction and reject a stored ancestor lock before updating. This narrows stale trace decisions and prevents concurrent edits of existing ancestor rows while the transaction commits. Insert-phantom and academic-enrollment races remain open for independent PG certification; tests authored/unexecuted.
+
+
+**2026-10-15 chat-6 student override/lock activity history — PARTIAL:** Added role-fenced, exact learner/college-scoped history linked from the editor. A verified active learner lookup precedes a 40-event scoped Activity Log query; pure projection exposes actor display name, time, module, old/new stored values only, never arbitrary metadata or contact information. Older history links to the audited filter surface. Unit/PG tests authored, not executed; production browser/retention/history certification open.
+
+
+**2026-10-15 chat-6 source correction:** Moved mutation Zod contract to the pure module for isolated Vitest imports, removed the invalid union-property unit assertion, and made malformed JSON return a deterministic 400 rather than an unhandled server error. Real execution remains open.

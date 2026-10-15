@@ -115,4 +115,21 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({offeringState:"HAS_ACTIVE"}))).toContain("offeringState=HAS_ACTIVE");
   });
 
+  it("elective academicYearState is not inferred from the period",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({academicYearState:"ASSUMED"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({academicYearState:"MISSING"}))).toContain("academicYearState=MISSING");
+  });
+
+  it("elective linked period code is bounded and escaped",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({periodCode:""})).toEqual({});
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({periodCode:"P&26"}))).toContain("periodCode=P%2626");
+  });
+
+  it("omits blank exact-code selectors and rejects repeated values", () => {
+    expect(readCollegeStructureParams({classCode:"",periodCode:""})).toEqual({});
+    expect(readCollegeStructureParams({classCode:["A","B"]})).toBeNull();
+    expect(readCollegeStructureParams({periodCode:["A","B"]})).toBeNull();
+  });
+
 });
