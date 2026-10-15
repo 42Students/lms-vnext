@@ -29,6 +29,8 @@ import {
   placementEligibilityOverrides,
   placementJobs,
   placementJobEligibilityPolicies,
+  placementCollegeRules,
+  placementOffers,
   placementBatchRegistrations,
   placementJobRoleOptions,
   programs,
@@ -50,6 +52,7 @@ import { getOwnPlacementParticipationAccess } from "./batch-participation-servic
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
+import { canAddPlacementHeldOffer } from "./held-offer-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   createPlacementApplicationInputSchema,
@@ -747,6 +750,7 @@ export async function applyToPlacementJob(
         id: placementJobRoleOptions.id,
         status: placementJobRoleOptions.status,
         jobId: placementJobRoleOptions.jobId,
+        minimumAnnualCtcInr: placementJobRoleOptions.minimumAnnualCtcInr,
       }).from(placementJobRoleOptions)
         .where(eq(placementJobRoleOptions.id, roleOption.id))
         .for("update").limit(1);
@@ -757,6 +761,36 @@ export async function applyToPlacementJob(
       if (resolveApplicationChannel(liveJob.applicationMode, input) !== channel ||
           (channel === "EXTERNAL" && !liveJob.externalApplicationUrl)) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_CHANNEL_INVALID");
+      }
+
+      // P-S1-05: check official held offers under the same learner's
+      // membership lock acquired above. NULL CTC is not an uplift bypass.
+      const [rules] = await tx.select({
+        maxHeldOffers: placementCollegeRules.maxHeldOffers,
+        upliftPct: placementCollegeRules.upliftPct,
+      }).from(placementCollegeRules)
+        .where(eq(placementCollegeRules.collegeId, job.collegeId))
+        .for("share").limit(1);
+      const heldOffers = await tx.select({
+        kind: placementOffers.kind,
+        status: placementOffers.status,
+        annualCtcInr: placementOffers.annualCtcInr,
+      }).from(placementOffers)
+        .innerJoin(placementApplications, eq(
+          placementApplications.id, placementOffers.applicationId,
+        )).where(eq(placementApplications.membershipId, membership.id))
+        .for("share");
+      if (!canAddPlacementHeldOffer({
+        maxHeldOffers: rules?.maxHeldOffers ?? 1,
+        upliftPct: rules?.upliftPct ?? 40,
+        nextAnnualCtcInr: liveRole.minimumAnnualCtcInr ??
+          job.minimumAnnualCtcInr,
+        // No registered isDream job column yet; never guess that a job
+        // qualifies for an exemption.
+        isDream: false,
+        heldOffers,
+      })) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
 
       const [application] = await tx
