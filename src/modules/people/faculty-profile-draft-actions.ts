@@ -18,3 +18,9 @@ export function restoreFacultyMetadataDraft(
   .filter((entry):entry is [string,string]=>typeof entry[1]==="string" && facultyMetadataEditableKey(entry[0]))
   .map(([key,value])=>({id:newId(),key,value}));
 }
+
+/** Skill removal always identifies one draft record and never changes its snapshot. */
+export function removeFacultySkillDraft<T extends {id:string}>(saved:readonly T[],id:string):T[]{
+ if(!saved.some(row=>row.id===id))return [...saved];
+ return saved.filter(row=>row.id!==id);
+}
