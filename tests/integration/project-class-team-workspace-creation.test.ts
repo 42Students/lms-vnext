@@ -89,7 +89,7 @@ describe.skipIf(!enabled)("Class-to-team workspace creation (isolated PostgreSQL
  afterAll(async()=>{try{await cleanup();}finally{await pool?.end();await closeDatabaseConnection();}});
  async function request(mode:"TEAMS"|"WHOLE_CLASS",tail:string) {
   const roster=await loadClassTeamRoster(admin,SEED_IDS.collegeA,ids.section);
-  const teams=previewClassTeams({mode,students:roster.members,teamSize:1,order:"ROLL"});
+  const teams=previewClassTeams({mode,students:roster.members.map(({membershipId,rollNumber})=>({membershipId,rollNumber})),teamSize:1,order:"ROLL"});
   return {collegeId:SEED_IDS.collegeA,classId:ids.section,templateId,
    rosterRevision:roster.revision,baseTitle:prefix,baseSlug:prefix+"-"+tail,teams,expectedPreviewVersion:previewVersion(teams)};
  }
