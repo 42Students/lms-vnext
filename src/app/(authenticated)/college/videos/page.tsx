@@ -20,7 +20,7 @@ export default async function CollegeVideosPage({
   if (!parsed.success) {
     return (
       <div className="space-y-5">
-        <PageHeader eyebrow="College Admin · Courses & Content" title="Video Content" />
+        <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
           action={<Link href="/college/videos" className="font-semibold text-primary-text">Clear filters</Link>} />
