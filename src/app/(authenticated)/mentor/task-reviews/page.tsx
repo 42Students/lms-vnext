@@ -5,6 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-service";
+import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import {
   mentorTaskReviewHref, mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
 } from "@/modules/projects/mentor-task-review-model";
@@ -20,26 +21,17 @@ type Params = {
   version?: string | string[];
   order?: string | string[];
 };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 export default async function MentorTaskReviewsPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
-  const parsed = mentorTaskReviewQuerySchema.safeParse({
-    search: first(raw.search) ?? undefined,
-    projectId: first(raw.projectId) ?? undefined,
-    assignment:first(raw.assignment) ?? undefined,
-    page: first(raw.page) ?? undefined,
-    pageSize: first(raw.pageSize) ?? undefined,
-    priority: first(raw.priority) ?? undefined,
-    age: first(raw.age) ?? undefined,
-    version: first(raw.version) ?? undefined,
-    order: first(raw.order) ?? undefined,
-  });
+  const parsed = mentorTaskReviewQuerySchema.safeParse(singleValueMentorFilters({
+    search:raw.search,projectId:raw.projectId,assignment:raw.assignment,
+    page:raw.page,pageSize:raw.pageSize,priority:raw.priority,
+    age:raw.age,version:raw.version,order:raw.order,
+  }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid task review filters</h1>
     <Link href="/mentor/task-reviews" className="text-primary-text underline">
@@ -108,7 +100,7 @@ export default async function MentorTaskReviewsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
           <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option>
+            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
