@@ -6,20 +6,20 @@ import {
   mentorProjectActivityHref,mentorProjectActivityQuerySchema,
 } from "@/modules/projects/mentor-project-activity-model";
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 
 type Params={importance?:string|string[];view?:string|string[];window?:string|string[];page?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 
 export default async function MentorProjectActivityHistoryPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}) {
   const [{projectId},raw]=await Promise.all([params,searchParams]);
-  const parsed=mentorProjectActivityQuerySchema.safeParse({
-    projectId,importance:first(raw.importance)??undefined,
-    view:first(raw.view)??undefined,
-    window:first(raw.window)??undefined,
-    page:first(raw.page)??undefined,
+  const filters=singleValueMentorFilters({
+    importance:raw.importance,view:raw.view,window:raw.window,page:raw.page,
   });
+  const parsed=mentorProjectActivityQuerySchema.safeParse(
+    filters ? {projectId,...filters} : null,
+  );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
     <Link href="/mentor/projects" className="text-primary-text underline">
