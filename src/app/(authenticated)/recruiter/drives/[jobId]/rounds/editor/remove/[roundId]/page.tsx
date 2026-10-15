@@ -1,0 +1,1 @@
+export {default} from "@/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page";

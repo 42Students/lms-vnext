@@ -755,3 +755,28 @@ export async function sendRecruiterDriveProposal(context:RequestContext,raw:unkn
   return {threadId:thread.id,messageId:message.id,replayed:false};
  });
 }
+
+/**
+ * Minimal recruiter-only guard for proposal history.
+ * Revalidates the registered ACTIVE grant without fetching private conversation bodies.
+ */
+export async function verifyRecruiterGeneralThreadAccess(
+ context:RequestContext,rawThreadId:unknown,rawCollegeId:unknown,
+):Promise<void>{
+ const threadId=threadIdSchema.parse(rawThreadId);
+ const collegeId=collegeIdSchema.parse(rawCollegeId);
+ if(context.recruiter?.status!=="ACTIVE" || context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ await getDb().transaction(async tx=>{
+  const [thread]=await tx.select({id:placementTpoMessageThreads.id})
+   .from(placementTpoMessageThreads).where(and(
+    eq(placementTpoMessageThreads.id,threadId),
+    eq(placementTpoMessageThreads.collegeId,collegeId),
+    eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
+    isNull(placementTpoMessageThreads.jobId),
+   )).for("share").limit(1);
+  if(!thread)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+ });
+}
