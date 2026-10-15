@@ -9,3 +9,9 @@ export function companyShareAuditPageHref(jobId:string,kind:string,page:number){
  if(page>1)params.set("page",String(page));
  return params.size?base+"?"+params.toString():base;
 }
+
+/** Audit views can disappear from a filtered slice as its URL becomes stale. */
+export function clampCompanyShareAuditPage(page:number,total:number){
+ const totalPages=Math.max(1,Math.ceil(Math.max(0,total)/COMPANY_SHARE_AUDIT_PAGE_SIZE));
+ return {page:Math.min(Math.max(page,1),totalPages),totalPages};
+}

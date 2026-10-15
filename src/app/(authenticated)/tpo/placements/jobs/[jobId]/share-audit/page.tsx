@@ -46,7 +46,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   {!result.ready?<p role="status" className="rounded border border-border p-5">
    Access history is unavailable until the share-audit migration is registered.
   </p>:result.entries.length===0?<p role="status" className="rounded border border-border p-5">
-   No share-page views or CSV downloads are recorded for this drive.
+   No share-page views or CSV downloads match this event filter for this drive.
   </p>:<div className="overflow-x-auto rounded-xl border border-border">
    <table className="w-full min-w-[28rem] text-left text-sm">
     <thead><tr><th className="p-3">Link prefix</th><th className="p-3">Action</th>
@@ -59,7 +59,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    </table>
   </div>}
   {result.ready?<nav aria-label="Access history pages" className="flex flex-wrap gap-4 text-sm">
-   <span>Audit page {result.page}, up to 25 events per page</span>
+   <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
     className="font-semibold text-primary-text underline">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
