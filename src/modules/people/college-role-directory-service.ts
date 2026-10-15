@@ -95,7 +95,7 @@ export async function listCollegeRoleDirectory(
   return getDb().transaction(async db => {
   const checked = await assertPersistedPlatformPermission(db, context, "people.manage", {
     collegeId,
-    organizationId: context.membership.organizationId,
+    organizationId: actorMembership.organizationId,
   });
   if (!checked.membership || checked.membership.id !== actorMembership.id ||
       checked.membership.collegeId !== collegeId ||
