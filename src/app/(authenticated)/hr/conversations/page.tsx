@@ -5,14 +5,14 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
-type Query={collegeId?:string|string[];q?:string|string[]};
+type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 export default async function RecruiterConversationsPage({searchParams}:{searchParams:Promise<Query>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q)});
+ const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q),page:first(raw.page)});
  if(!parsed.success)return <main role="alert" className="space-y-3 p-5">
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
@@ -40,7 +40,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
-   {result.truncated?<p role="status" className="text-sm text-body">Showing the latest 100 conversations.</p>:null}
+   <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="space-y-3">
     {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.id}
@@ -52,6 +52,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?"Last update "+when(row.lastMessageAt):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
+   <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
+    {result.page>1?<Link href={"/hr/conversations?collegeId="+result.collegeId+
+      "&q="+encodeURIComponent(parsed.data.q)+"&page="+(result.page-1)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/hr/conversations?collegeId="+result.collegeId+
+      "&q="+encodeURIComponent(parsed.data.q)+"&page="+(result.page+1)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
+   </nav>
   </>}
  </main>;
 }
