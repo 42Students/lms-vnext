@@ -5,6 +5,8 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import { updateCollegeContentStudentVisibility } from "@/modules/courses/college-content-visibility-service";
+import { CoursesServiceError } from "@/modules/courses/errors";
 import {exportCollegeContentMetadata} from "@/modules/courses/college-content-export-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -272,6 +274,36 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     await expect(listCollegeContentAggregate(adminA,"LIVE_CLASS",{collegeId:SEED_IDS.collegeB}))
       .rejects.toBeDefined();
   });
+  it("commits administrator-only visibility decisions, auditing and rejecting stale or foreign writes",async()=>{
+    const row=await pool!.query<{updated_at:Date}>(
+      "select updated_at from lesson_contents where id=$1",[ids.resource]);
+    const version=row.rows[0]!.updated_at.toISOString();
+    const command={lessonContentId:ids.resource,visibleToStudents:false,
+      expectedUpdatedAt:version,confirmed:true};
+    await expect(updateCollegeContentStudentVisibility(nonAdmin,command))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(updateCollegeContentStudentVisibility(adminB,command))
+      .rejects.toMatchObject({code:"LESSON_CONTENT_NOT_FOUND"});
+    const hidden=await updateCollegeContentStudentVisibility(adminA,command);
+    expect(hidden.visibleToStudents).toBe(false);
+    await expect(updateCollegeContentStudentVisibility(adminA,command))
+      .rejects.toBeInstanceOf(CoursesServiceError);
+    const [hiddenRows,visibleRows]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,visibility:"HIDDEN"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,visibility:"VISIBLE"}),
+    ]);
+    expect(hiddenRows.items.map(r=>r.id)).toContain(ids.resource);
+    expect(visibleRows.items.map(r=>r.id)).not.toContain(ids.resource);
+    const audit=await pool!.query<{event_type:string}>(
+      "select event_type from activity_events where subject_id=$1 and event_type=$2",
+      [ids.resource,"courses.lesson_content.visibility_changed"]);
+    expect(audit.rows.length).toBeGreaterThan(0);
+    const restored=await updateCollegeContentStudentVisibility(adminA,{
+      ...command,visibleToStudents:true,expectedUpdatedAt:hidden.updatedAt.toISOString(),
+    });
+    expect(restored.visibleToStudents).toBe(true);
+  });
+
   it("enforces tenant and role denials for both kinds", async () => {
     for (const kind of ["VIDEO", "RESOURCE"] as const) {
       const other = await listCollegeContentAggregate(adminB, kind, { q: label });
