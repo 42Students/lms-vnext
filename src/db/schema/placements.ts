@@ -105,6 +105,10 @@ export const placementCompanyRelationships = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("outside_drives_relationship_college_parent_uq").on(
+      table.id,
+      table.collegeId,
+    ),
     uniqueIndex("placement_company_relationships_college_company_uq").on(
       table.collegeId,
       table.companyId,
@@ -1123,6 +1127,10 @@ export const placementJobRounds = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("hr_interview_round_job_parent_uq").on(
+      table.id,
+      table.jobId,
+    ),
     uniqueIndex(
       "placement_job_rounds_active_sequence_uq",
     )

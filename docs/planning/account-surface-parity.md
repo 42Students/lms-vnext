@@ -618,10 +618,10 @@ Important rules:
 | --- | --- | --- |
 | Browser login | Replaced by first-party Exotel/ZeptoMail OTP (no Identity Platform project needed). | DONE |
 | Live session restoration | Opaque device sessions (digest stored, revocable per device); verified live: session survives requests, logout/revocation ends it, signed-in devices page. | DONE |
-| Assignment file upload | Cloud Storage upload receipt/signing required. | BLOCKED |
-| Signed VIDEO playback | Cloud Storage signed delivery required. | BLOCKED |
-| Project file resource uploads | Same Cloud Storage dependency. | BLOCKED |
-| Vertex AI-backed quality runs | Provider/config dependency; does not block non-AI parity work. | BLOCKED |
+| Assignment file upload | Cloud Storage upload receipt/signing required. | MISSING — UNBLOCKED 2026-10-15 (owner decision 10): build now on the dev R2 bucket with the dev-only prefix; real private bucket and scanner are production work later. |
+| Signed VIDEO playback | Cloud Storage signed delivery required. | MISSING — UNBLOCKED 2026-10-15 (owner decision 11): implement video fully now (upload, processing metadata, signed playback, access control, management) on the dev R2 bucket; legacy-bucket read adapter if credentials allow. |
+| Project file resource uploads | Same Cloud Storage dependency. | MISSING — UNBLOCKED 2026-10-15 (owner decision 10): build now on the dev R2 bucket with the dev-only prefix. |
+| Vertex AI-backed quality runs | Provider/config dependency; does not block non-AI parity work. | OUT OF SCOPE — owner decision 12 (2026-10-15): Vertex AI and all AI features dropped everywhere, including code; excluded from counts. |
 
 ---
 
