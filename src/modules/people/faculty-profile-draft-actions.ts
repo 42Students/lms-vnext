@@ -99,3 +99,10 @@ export function facultyMoveSkillRecord<T extends {id:string}>(
  const next=[...rows];const [item]=next.splice(index,1);next.splice(toIndex,0,item!);
  return next;
 }
+
+/** Search displayed editable metadata, never private/typed fields filtered upstream. */
+export function facultyProfileMetadataMatches(entry:{key:string;value:string},query:string):boolean{
+ const term=query.trim().toLocaleLowerCase();
+ return !term||entry.key.toLocaleLowerCase().includes(term)||
+  entry.value.toLocaleLowerCase().includes(term);
+}
