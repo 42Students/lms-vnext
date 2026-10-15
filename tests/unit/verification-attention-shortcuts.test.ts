@@ -4,7 +4,8 @@ describe("college verification attention shortcuts",()=>{
  it("deep-links to the waiting queue with a clean first page for each legacy flag",()=>{
   expect(verificationAttentionShortcuts).toHaveLength(3);
   for(const item of verificationAttentionShortcuts){
-   expect(verificationAttentionShortcutPatch(item.attention)).toEqual({tab:"WAITING",attention:item.attention,page:"1"});
+   expect(verificationAttentionShortcutPatch(item.attention)).toEqual({tab:"WAITING",attention:item.attention,page:"1",waitingState:"ALL",ageBand:"ANY",
+    ...(item.attention==="MISSING_MARKSHEET"?{kind:"EDUCATION",marksheets:"ANY"}:{})});
   }
  });
 });

@@ -51,6 +51,14 @@ describe.skipIf(!enabled)("read-only college contact isolation",()=>{
  it("denies wrong-role access, even for a same-college claim",async()=>{
   await expect(listCollegeContacts(wrong,{})).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("never reveals foreign exact-member bookmarks or bypasses persisted College Admin authorization",async()=>{
+  const own=await listCollegeContacts(admin,{membershipId:ids.m1});
+  expect(own.items.some(row=>row.membershipId===ids.m1)).toBe(true);
+  expect(own.items.some(row=>row.membershipId===ids.m2)).toBe(false);
+  const foreign=await listCollegeContacts(admin,{membershipId:ids.m2});
+  expect(foreign.total).toBe(0);
+  await expect(listCollegeContacts(wrong,{membershipId:ids.m1})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("never returns foreign-college matches despite a direct query",async()=>{
   const found=await listCollegeContacts(admin,{q:ids.u2.slice(0,8),tab:"STUDENT"});
   expect(found.items.some(x=>x.membershipId===ids.m2)).toBe(false);
