@@ -137,7 +137,7 @@ export default async function FacultyAssessmentResultsPage({
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
-      Only five assessments are summarized per page to bound database work.
+      At most ten assessments are summarized per page to bound database work.
       Results use existing authorized Section report readers. Missing responses
       are not graded failures, and unknown averages are not zero.
       Draft/private results are not evidence of learner-visible grades.
