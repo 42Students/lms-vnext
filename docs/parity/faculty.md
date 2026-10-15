@@ -1530,3 +1530,16 @@ The next Faculty backlog round added independent section-authoring workflows to 
 **Still PARTIAL / not production-ready:** proposed Faculty private-document columns are not registered through the canonical migration journal; the editor displays an explicit storage unavailable state until deployment. No GitHub CI, real PostgreSQL or authenticated mobile/browser gate was run by this chat. Faculty contact changes, sensitive identification, photo/document uploads and exact legacy Profile completeness remain blocked. Blueprint scheduling/visibility and persisted Quiz shuffle (DB06) are independent PARTIAL surfaces and are not claimed finished.
 
 **Release rule:** no DONE promotion until migration registration, success and negative database tests, and mobile browser acceptance for this exact SHA.
+
+## 2026-10-15 Faculty Blueprint live-class follow-up — PARTIAL (chat-4)
+
+This round used the current Faculty PARTIAL Blueprint row as the next unbuilt work; the existing MISSING rows in section 8 belong to other account lanes. No master matrix status was changed.
+
+- The live-class editor interprets all `datetime-local` fields as **IST**, regardless of browser timezone. Opening a published session preloads its title, sanitized HTTPS meeting link, and start/end instants; switching back to CREATE clears previous-session values.
+- The client validates a complete strict create/edit/cancel command **before** asking for confirmation. Dropdown options identify course + Section, and destructive cancellation explicitly names the selected live class and its course/Section. A successful mutation resets the draft, refreshes the page and shows an accessible success message.
+- Server writes now verify persisted active Faculty status, actual teaching assignment and non-ended delivery **inside the write transaction**, in addition to existing read-time checks. Revocation denies are non-leaking; the PostgreSQL integration test restores the exact seeded role ID after mutation.
+- Transaction advisory locks serialize co-teachers scheduling on the same delivery. The conflict preflight now rejects occupied registered Section schedule events and conflicting instructor events, as well as existing published LIVE_CLASS overlaps. Concurrency across independent scheduling write systems still needs an executed acceptance gate.
+- Edit/cancel actions are restricted to published live content. Stale version tokens return the existing typed `LESSON_CONTENT_STALE_VERSION` error, distinguished in UI from schedule conflict and permission revocation. Audit metadata continues to exclude meeting URLs.
+- Authored tests: fixed-IST conversion, persisted revocation, timetable conflict, published-only mutation policy, edit hydration, strict pre-confirm validation, Section disambiguation, exact cancellation, typed recovery messages, create-form resets and success feedback.
+
+**PARTIAL, not DONE:** no local TypeScript, unit, database, CI or authenticated 375px browser gates were executed in this chat. Exact legacy Blueprint content authoring, recorded multi-instructor/room scheduling edge cases and registered student-visibility end-to-end acceptance are still outstanding. The independently blocked Quiz shuffle and private profile-document migrations were not altered.
