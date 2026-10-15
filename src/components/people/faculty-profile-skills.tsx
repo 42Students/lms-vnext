@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches,facultyMoveSkillRecord} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
@@ -36,6 +36,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
      className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
    </label>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
+  {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
@@ -47,10 +48,10 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
-      <button type="button" disabled={pending||index===0}
+      <button type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
        className="min-h-10 rounded-md border border-border px-3 text-sm">Move up</button>
-      <button type="button" disabled={pending||index===rows.length-1}
+      <button type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
        className="min-h-10 rounded-md border border-border px-3 text-sm">Move down</button>
     </div>
