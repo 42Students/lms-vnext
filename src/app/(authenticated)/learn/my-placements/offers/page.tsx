@@ -63,6 +63,12 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {expiringSoon > 0 && view !== "pending" ? (
+        <Link href="/learn/my-placements/offers?status=pending"
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
+        </Link>
+      ) : null}
       {expiringSoon > 0 ? (
         <div role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
