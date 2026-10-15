@@ -1476,3 +1476,5 @@ legacy-oracle and cross-role acceptance are still required. No master-matrix DON
 Learner ledger CLOSED status is claimed from these changes.
 
 **2026-10-15 chat-5 parity hardening — offer expiry (PARTIAL):** confirmation preview now denies at the exact persisted expiry instant and on invalid server clocks, matching the protected offer-action deadline. Regression authored; runtime/browser/PG acceptance remains open.
+
+**2026-10-15 chat-5 parity hardening — offers history (PARTIAL):** own-offer browse dates now fail closed to a stable bottom-of-list ordering rather than a NaN comparator. No offer status or authorization semantics were changed; history/date browser evidence still pending.
