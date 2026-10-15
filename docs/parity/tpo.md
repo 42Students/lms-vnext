@@ -2065,3 +2065,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 academic CSV validation hardening:** The preview parser now rejects blank/scientific notation numeric cells rather than coercing blank grades/backlogs to zero, and its typed match function retains the parsed fields used by the client preview. Unit cases authored; executed TypeScript/Vitest/browser results remain open.
 
 **Chat-2 academic CSV parser correction:** Repaired regex-literal escapes so numeric validation recognizes actual decimal digits and decimal separators (not literal backslash sequences); blank/scientific values still reject. This is a source correction, not executed-test certification.
+
+**Chat-2 academic preview typing correction:** The client state now carries complete parsed academic preview rows (CGPA/backlogs + match flag) instead of the erased generic return type. Runtime build and browser acceptance still unexecuted.
