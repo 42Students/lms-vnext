@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
+import { FacultyProfileSkills } from "./faculty-profile-skills";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
 const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
 const ADDRESS_FIELDS = [{name:"currentAddress",label:"Current address",maxLength:2000,multiline:true},{name:"currentCity",label:"Current city",maxLength:160},{name:"currentState",label:"Current state",maxLength:160},{name:"currentPincode",label:"Current postal code",maxLength:16},{name:"permanentAddress",label:"Permanent address",maxLength:2000,multiline:true},{name:"permanentCity",label:"Permanent city",maxLength:160},{name:"permanentState",label:"Permanent state",maxLength:160},{name:"permanentPincode",label:"Permanent postal code",maxLength:16}] as const;
@@ -51,5 +52,6 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    description="Optional HTTPS links to professional work and research."
    fields={SOCIAL_PROFILES_FIELDS}
    initial={document.socialProfiles} pending={pending} onSave={save}/>
+  <FacultyProfileSkills key={"skills-"+version} initial={document.skills} pending={pending} onSave={save}/>
  </div>;
 }
