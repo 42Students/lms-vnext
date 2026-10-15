@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerAssignmentFileAccept, learnerAssignmentFilePayload } from "@/modules/courses/learner-assignment-file-model";
 import { transferLearnerAssignmentFile } from "./assignment-file-transfer";
+import { selectLearnerAssignmentFile } from "@/modules/courses/learner-assignment-file-selection-model";
 import { courseApiError } from "./learner-course-api";
 
 type UploadedFile = Awaited<ReturnType<typeof transferLearnerAssignmentFile>>;
@@ -55,7 +56,7 @@ export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBu
     <label className="block text-sm font-semibold text-body">Assignment file
       <input type="file" accept={learnerAssignmentFileAccept} disabled={busy}
         className="mt-2 block min-h-11 w-full max-w-full text-sm"
-        onChange={event => { setFile(event.target.files?.[0] ?? null); setUploaded(null); setConfirmed(false); setError(null); }} />
+        onChange={event => { const selection = selectLearnerAssignmentFile(deliveryId, event.target.files?.[0] ?? null); setFile(selection.file); setUploaded(null); setConfirmed(false); setError(selection.error); }} />
     </label>
     <p className="text-xs leading-5 text-muted-foreground">Choose one supported document, image or ZIP file up to 50 MB. Uploading does not submit the assignment. Files must pass security checks before final submission.</p>
     <Button type="button" disabled={busy || !file} onClick={() => void perform("UPLOAD")}>{busy && !uploaded ? "Uploading…" : "Upload file"}</Button>
