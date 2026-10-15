@@ -12,6 +12,8 @@ export function collegeContactAcademicScope(collegeId:string){
   .where(and(eq(learnerProfiles.membershipId,collegeMemberships.id),sql`nullif(btrim(${learnerProfiles.rollNumber}), '') is not null`)));
  const hasRegistration=exists(db.select({memberId:learnerProfiles.membershipId}).from(learnerProfiles)
   .where(and(eq(learnerProfiles.membershipId,collegeMemberships.id),sql`nullif(btrim(${learnerProfiles.registrationNumber}), '') is not null`)));
+ const hasAcademicTitle=exists(db.select({memberId:facultyProfiles.membershipId}).from(facultyProfiles)
+  .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),sql`nullif(btrim(${facultyProfiles.academicTitle}), '') is not null`)));
  const activeEnrollment=exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
@@ -22,5 +24,5 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt))));
- return {learnerProfile,facultyProfile,hasRoll,hasRegistration,activeEnrollment,activeTeaching};
+ return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,activeEnrollment,activeTeaching};
 }
