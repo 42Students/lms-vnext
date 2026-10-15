@@ -43,6 +43,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
+  videoContentState:z.enum(["ALL","HAS_VIDEO","NO_VIDEO"]).default("ALL"),
   liveClassPresence:z.enum(["ALL","HAS_LIVE","NO_LIVE"]).default("ALL"),
   resourcePresence:z.enum(["ALL","HAS_RESOURCES","NO_RESOURCES"]).default("ALL"),
   quizPresence:z.enum(["ALL","HAS_QUIZZES","NO_QUIZZES"]).default("ALL"),
@@ -71,6 +72,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="PROGRESS"&&"videoContentState" in query&&query.videoContentState!=="ALL")params.set("videoContentState",query.videoContentState);
   if(kind==="LESSONS"&&"liveEvidence" in query&&query.liveEvidence!=="ALL")params.set("liveEvidence",query.liveEvidence);
   if(kind==="LESSONS"&&"resourceEvidence" in query&&query.resourceEvidence!=="ALL")params.set("resourceEvidence",query.resourceEvidence);
   if(kind==="LESSONS"&&"videoEvidence" in query&&query.videoEvidence!=="ALL")params.set("videoEvidence",query.videoEvidence);
