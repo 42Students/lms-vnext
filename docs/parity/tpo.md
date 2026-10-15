@@ -2085,3 +2085,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Live Drive Day filtered CSV — PARTIAL:** New read-only scoped GET uses the exact authorized TPO live-round reader and validated focus/search/sort query, capped at 20; includes no learner-level PII, neutralizes spreadsheet formulas and labels truncation via response header. Preserves compatibility for older filter tests with unspecified roster totals; PG/browser execution pending.
 
 **Chat-2 / Live round drive navigation — PARTIAL:** Each TPO live round now links to its persisted parent drive via authorized job ID, independently guarded by the existing drive workspace; no mutable job state is inferred.
+
+**Chat-2 / Live round venue — PARTIAL:** TPO live cards now include persisted round venue or an explicit unrecorded label; location and attendance are never inferred. Existing job-scoped permissions remain unchanged.
