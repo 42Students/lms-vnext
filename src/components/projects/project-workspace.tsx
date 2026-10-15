@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -602,7 +602,7 @@ export function ProjectWorkspace({
                                     {task.description}
                                   </p>
                                 ) : null}
-                                {mode === "LEARNER" && learnerTaskCriteriaPreview(task.acceptanceCriteria) ? (
+                                {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
                                   <details className="mt-2 rounded-lg border border-border bg-surface-subtle px-3 py-2">
                                     <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-primary-text">
                                       Acceptance criteria

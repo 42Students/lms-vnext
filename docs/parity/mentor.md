@@ -1213,3 +1213,8 @@ Added a persisted Project-state and deliberately backdated review fixture for as
 ## 2026-10-15 chat-11 new round — safe-external-project-links (PARTIAL)
 
 The shared Project workspace now rejects credential-bearing, non-HTTP(S), malformed and oversized external URL values before rendering source/demo/resource/meeting links. Existing clean HTTP(S) links remain usable. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — mentor-task-acceptance-criteria (PARTIAL)
+
+Mentors can now expand the same registered task acceptance criteria that Learners see, directly from the Board during review; blanks never display a false rubric. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
