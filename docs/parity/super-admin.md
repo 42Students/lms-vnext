@@ -1177,3 +1177,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Organizations scoped empty state — PARTIAL:** Added a clear no-visible-active-organization state, avoiding a silent blank table under restrictive scopes; create affordance remains permission-gated. Responsive page and authored unit source check; browser acceptance pending.
+
+
+**2026-10-15 chat-6 Domains no-selection authorization fence — PARTIAL:** Before showing the choose-college informational empty state, the Super Admin domains route now requires central `admin-scope.select`, so an unauthorized signed-in user cannot enumerate the existence or expected shape of this administration surface. Exact college lookups still require the domains service guard. Unit role and page contract authored; browser evidence open.
