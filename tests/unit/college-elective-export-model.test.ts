@@ -124,4 +124,8 @@ describe("college electives CSV",()=>{
   expect(electiveCsvSchema.safeParse({semesterNumber:3,semesterFrom:4,semesterThrough:6}).success).toBe(false);
   expect(electiveCsvSchema.safeParse({semesterNumber:4,semesterFrom:4,semesterThrough:6}).success).toBe(true);
  });
+ it("rejects unlinked elective period without linked-only selectors during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({periodState:"UNLINKED",periodLifecycle:"ACTIVE"}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({periodState:"LINKED",periodLifecycle:"ACTIVE"}).success).toBe(true);
+ });
 });

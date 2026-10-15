@@ -75,7 +75,9 @@ export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
  .refine(q=>q.periodStartsOnOrAfter===undefined||q.periodEndsOnOrBefore===undefined||q.periodStartsOnOrAfter<=q.periodEndsOnOrBefore,
   {path:["periodEndsOnOrBefore"],message:"Linked period end limit cannot precede its start limit"})
  .refine(q=>q.semesterNumber===undefined||((q.semesterFrom===undefined||q.semesterNumber>=q.semesterFrom)&&(q.semesterThrough===undefined||q.semesterNumber<=q.semesterThrough)),
-  {path:["semesterNumber"],message:"Exact semester must fall within the selected semester interval"});
+  {path:["semesterNumber"],message:"Exact semester must fall within the selected semester interval"})
+ .refine(q=>q.periodState!=="UNLINKED"||(q.periodCode===undefined&&(q.periodLifecycle===undefined||q.periodLifecycle==="ALL")&&q.periodStartsOnOrAfter===undefined&&q.periodEndsOnOrBefore===undefined),
+  {path:["periodState"],message:"Unlinked electives cannot be filtered by a linked academic period"});
 }
 export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
