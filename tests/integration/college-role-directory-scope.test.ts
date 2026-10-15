@@ -338,3 +338,5 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     expect(result.items).toEqual([]);
   });
 });
+
+// Filtered role CSV reuses the same scoped reader, rather than a generic unfiltered people export.
