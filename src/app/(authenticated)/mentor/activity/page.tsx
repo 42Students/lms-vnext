@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -19,6 +19,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     window: first(raw.window) ?? undefined,
     order:first(raw.order) ?? undefined,
     projectStatus:first(raw.projectStatus) ?? undefined,
+    projectId:first(raw.projectId) ?? undefined,
     view: first(raw.view) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -34,13 +35,19 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className="flex items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form action="/mentor/activity" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="ALL">All importance</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+            <option value="">All assigned projects</option>
+            {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded event group
