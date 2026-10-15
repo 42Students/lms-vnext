@@ -30,10 +30,21 @@ describe.skipIf(!enabled)("DB10 tracker persisted workflow and scoped issue hist
    const scoped={...admin,adminScope:{collegeId:SEED_IDS.collegeA}};
    const rows=await listBugTrackerIssuesForAdmin(scoped,{q:publicId,limit:50});
    expect(rows.items.map(item=>item.id)).toContain(reportId);
+   const byWorkflow=await listBugTrackerIssuesForAdmin(scoped,{
+    q:publicId,accountRole:"LEARNER",resolution:"UNRESOLVED",
+    retestStatus:"NOT_RETESTED",productionVerified:false,limit:50,
+   });
+   expect(byWorkflow.items.map(item=>item.id)).toContain(reportId);
+   const checkedOnly=await listBugTrackerIssuesForAdmin(scoped,{q:publicId,productionVerified:true,limit:50});
+   expect(checkedOnly.items.map(item=>item.id)).not.toContain(reportId);
+   const facultyOnly=await listBugTrackerIssuesForAdmin(scoped,{q:publicId,accountRole:"FACULTY",limit:50});
+   expect(facultyOnly.items.map(item=>item.id)).not.toContain(reportId);
    const before=await getBugTrackerIssueForAdmin(scoped,publicId);
    expect(before.report.version).toBe(0);
    const after=await updateBugTrackerWorkflowForAdmin(scoped,publicId,{expectedVersion:0,status:"FIXING"});
    expect(after.status).toBe("FIXING");
+   const fixingOnly=await listBugTrackerIssuesForAdmin(scoped,{q:publicId,status:"FIXING",limit:50});
+   expect(fixingOnly.items.map(item=>item.id)).toContain(reportId);
    expect(after.version).toBe(1);
    const detail=await getBugTrackerIssueForAdmin(scoped,publicId);
    expect(detail.activities.some(event=>event.type==="STATUS_CHANGED")).toBe(true);
