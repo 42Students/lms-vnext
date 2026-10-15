@@ -1,7 +1,8 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { profileVerifications } from "@/db/schema/profile-verification";
+import { profileVerifications, profilePrivateDocumentReceipts } from "@/db/schema/profile-verification";
+import {learnerPrivateEvidenceSummary} from "./learner-private-evidence-model";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireOwnLearnerProfileAccess } from "@/modules/people/learner-profile-access-service";
 import { learnerVerificationStatus } from "./learner-verification-status-model";
@@ -21,6 +22,13 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
     decidedAt: profileVerifications.decidedAt,
   }).from(profileVerifications)
     .where(eq(profileVerifications.learnerMembershipId, member.id));
+  const receiptRows=await getDb().select({
+    purpose:profilePrivateDocumentReceipts.purpose,
+    scanStatus:profilePrivateDocumentReceipts.scanStatus,
+    revokedAt:profilePrivateDocumentReceipts.revokedAt,
+    retentionUntil:profilePrivateDocumentReceipts.retentionUntil,
+  }).from(profilePrivateDocumentReceipts).where(eq(profilePrivateDocumentReceipts.owningMembershipId,member.id));
+  const evidence=learnerPrivateEvidenceSummary(receiptRows,new Date());
   const select = (section: "EDUCATION" | "IDENTITY") => {
     const row = rows.find(r => r.section === section);
     const view = learnerVerificationStatus(section,
@@ -34,5 +42,5 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
       decidedAt:row?.decidedAt?.toISOString()??null,
     };
   };
-  return { education: select("EDUCATION"), identity: select("IDENTITY") };
+  return { education: select("EDUCATION"), identity: select("IDENTITY"), evidence };
 }
