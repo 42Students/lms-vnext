@@ -55,3 +55,9 @@ export function facultyAssignmentSwitchNeedsConfirmation(
  if(existing)return facultyAssignmentDraftDirty(existing,draft);
  return Boolean(draft.title.trim()||draft.description.trim()||draft.dueAt||draft.maxPoints!==10);
 }
+
+/** Archiving remains a confirmed, non-destructive lifecycle transition. */
+export function facultyAssignmentArchiveWarning(title:string){
+ const name=title.trim().slice(0,120)||"this assignment";
+ return "Archive "+name+"? It will leave active course views, but historical submission and audit records remain.";
+}
