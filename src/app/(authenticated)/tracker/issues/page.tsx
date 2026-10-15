@@ -9,15 +9,12 @@ import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-servic
 import {
   BUG_ENVIRONMENTS,
   BUG_SEVERITIES,
-  trackerAdminListSchema,
 } from "@/modules/bug-tracker/admin-validation";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-const one = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function TrackerIssuesPage({
   searchParams,
 }: {
@@ -26,18 +23,7 @@ export default async function TrackerIssuesPage({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) redirect("/dashboard");
 
-  const params = await searchParams;
-  const raw = {
-    status: one(params.status),
-    severity: one(params.severity),
-    environment: one(params.environment),
-    q: one(params.q),
-    sort: one(params.sort),
-    beforeCreatedAt: one(params.beforeCreatedAt),
-    beforeId: one(params.beforeId),
-    limit: 50,
-  };
-  const parsed = trackerAdminListSchema.safeParse(raw);
+  const parsed = parseTrackerIssuesPageParams(await searchParams);
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
@@ -58,7 +44,7 @@ export default async function TrackerIssuesPage({
     );
   }
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
@@ -73,8 +59,8 @@ export default async function TrackerIssuesPage({
     );
   }
 
-  const page = await listBugTrackerIssuesForAdmin(context, parsed.data);
-  const current = parsed.data;
+  const page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+  const current = parsed.display;
   const next = new URLSearchParams();
   if (current.status) next.set("status", current.status);
   if (current.severity) next.set("severity", current.severity);
