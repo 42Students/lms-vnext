@@ -8,3 +8,10 @@ export function hrSentProposalHistoryHref(input:{collegeId:string;q?:string;page
  query.set("sort",input.sort??"LATEST");
  return "/hr/drives/proposals?"+query.toString();
 }
+
+export function hrSentProposalExportHref(input:{
+ collegeId:string;q?:string;page?:number;sort?:"LATEST"|"OLDEST";
+}){
+ const params=new URL(hrSentProposalHistoryHref(input),"https://safe.example").searchParams;
+ return "/api/placements/recruiter/drives/proposals/export?"+params.toString();
+}
