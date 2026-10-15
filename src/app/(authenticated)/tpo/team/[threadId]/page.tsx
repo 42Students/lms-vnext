@@ -25,6 +25,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
    description="Private conversation between the named college team participants."/>
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">Back to team conversations</Link>
+  <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
+   <button type="submit"
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    Mark this conversation's alerts as read
+   </button>
+  </form>
   <ol aria-label="Private team messages" className="space-y-3">
    {result.messages.map(message=><li key={message.id}
     className="min-w-0 rounded-xl border border-border bg-surface p-4">
