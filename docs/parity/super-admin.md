@@ -1111,3 +1111,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings verified-state filter (PARTIAL):** The persisted `production_verified` boolean can now be filtered as Yes/No/All, including false without treating it as absent; status survives pagination/export without exposing private metadata. Validation tests authored, browser/DB evidence open.
+
+
+**2026-10-15 chat-6 bounded tracker activity history (PARTIAL):** DB10 issue/finding details now retrieve a deterministic newest-first 50-event page with timestamp/UUID keyset cursor and an Older audit events link. Both detail routes and the private API validate incomplete/duplicate cursors; scoped ownership is verified before activity data loads. Authored cursor tests; high-volume PG/browser acceptance remains open.
