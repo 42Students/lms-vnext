@@ -80,6 +80,14 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Maximum slot credits
+              <input name="maximumCredits" type="number" min={1} max={500} step={1}
+                defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Semester number
               <input name="semesterNumber" type="number" min={1} max={24} step={1}
                 defaultValue={data.query.semesterNumber ?? ""} placeholder="All semesters"
