@@ -4,8 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
 
-export function OrganizationCreateForm() {
+export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +29,18 @@ export function OrganizationCreateForm() {
         return;
       }
 
+      if (advanceToCollege) {
+        const payload:unknown=await response.json().catch(()=>null);
+        const href=createdOrganizationStepHref(payload);
+        if (!href) {
+          setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
+          router.refresh();
+          return;
+        }
+        router.push(href);
+        router.refresh();
+        return;
+      }
       setName("");
       router.refresh();
     });
