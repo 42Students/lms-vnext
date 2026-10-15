@@ -1484,3 +1484,5 @@ Learner ledger CLOSED status is claimed from these changes.
 **2026-10-15 chat-5 parity hardening — L14 application stage (PARTIAL):** a stage no longer present among the learner's own persisted applications is explicitly identified and falls back to all stages without discarding other search/view/sort facets. Browser Back/Forward and source-query acceptance pending.
 
 **2026-10-15 chat-5 parity hardening — L29 inbox pinned preview (PARTIAL):** pinned college announcements now obey the selected domain, search and unread-personal filters, so the Job/Unread tabs no longer display unrelated announcement cards above filtered results. No read-state mutation is inferred; mobile/browser verification outstanding.
+
+**2026-10-15 chat-5 parity hardening — L29 notification empties (PARTIAL):** when a loaded learner inbox has records but the selected category/unread/search has none, the empty state no longer incorrectly says no notifications have arrived. Full-history paging and responsive proof remain pending.

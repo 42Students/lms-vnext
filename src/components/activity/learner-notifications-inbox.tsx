@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
 import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
+import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-label-model";
 import {learnerPinnedAnnouncementPreview} from "@/modules/activity/learner-pinned-announcements-model";
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
@@ -196,7 +197,7 @@ export function LearnerNotificationsInbox({
       {visible.length === 0 ? (
         <div className="space-y-3">
           <NotificationList items={[]} emptyText={
-            active === "all" ? "No notifications yet" : `No ${learnerNotificationCategories.find((tab) => tab.key === active)?.label ?? "matching"} notifications yet`
+            learnerInboxEmptyLabel({total:combined.length,category:active,unread,search})
           } />
           {filtered ? (
             <button type="button" onClick={resetFilters}
